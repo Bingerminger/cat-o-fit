@@ -4,6 +4,26 @@ Alle nennenswerten Änderungen an Cat-O-Fit werden hier dokumentiert.
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/),
 Versionierung nach [SemVer](https://semver.org/lang/de/).
 
+## [3.15.1] – 2026-07-15 – Schnellstart, Feinschliff & Social-Preview
+
+### Neu
+- **Schnellstart im README:** drei Einstiegswege Schritt für Schritt – Docker mit
+  einem Befehl, Synology Container Manager ganz ohne Kommandozeile (inkl. fertigem
+  Compose-Block) und der klassische Weg ohne Docker – plus „Die ersten 5 Minuten
+  in der App".
+- **Social-Preview-Banner** (1280×640) für die Repo-Vorschau auf GitHub
+  (`docs/assets/promo/social-preview.png` + Vorlage `social-preview.html`).
+
+### Geändert
+- Promo-Banner, Handbuch und Ersteinrichtung nennen die korrekten Demodaten-
+  Dimensionen: **„bis zu 32 Profile"** und eine **komplette Beispiel-Familie mit
+  Teams** (statt veraltet „10 Profile" bzw. „zwei Demo-Mitglieder").
+- Endnutzer-Texte formulieren serverneutral („dein Server/NAS" statt nur
+  „Synology") – im Handbuch und in der In-App-Hilfe. Die Apple-Health-Anleitung
+  erklärt den `Authorization`-Header jetzt als optional (nur bei vorgeschalteter
+  Basic-Auth) und ohne internes Umgebungs-Konzept.
+- `.ics`-Export: PRODID-Schreibweise „Cat-O-Fit".
+
 ## [3.15.0] – 2026-07-15 – Erstveröffentlichung
 
 Cat-O-Fit erscheint erstmals öffentlich – als ausgereifte Trainings-, Fitness- &

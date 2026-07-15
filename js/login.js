@@ -109,7 +109,7 @@ function renderSetup(view) {
       stepLabel(2),
       el('h3', { style: { margin: '4px 0 10px' }, text: `Hallo ${st.name}! Wie möchtest du starten?` }),
       el('div', { class: 'col gap-3' }, [
-        choice('✨', 'Mit Demodaten starten', 'Beispiel-Wettkampf, Trainingshistorie und zwei Demo-Mitglieder – ideal zum Ausprobieren.', () => choose(true)),
+        choice('✨', 'Mit Demodaten starten', 'Beispiel-Wettkampf, Trainingshistorie und eine komplette Beispiel-Familie mit Teams – ideal zum Ausprobieren.', () => choose(true)),
         choice('📭', 'Leer starten', 'Nur dein Konto. Mitglieder und Ziele legst du selbst an.', () => choose(false)),
       ]),
       el('button', { class: 'btn btn--ghost btn--block mt-3', onclick: step1 }, [icon('arrowLeft'), 'Zurück']),

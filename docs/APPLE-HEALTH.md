@@ -29,10 +29,11 @@ kostenlose App **Health Auto Export – JSON+CSV** (App Store).
 2. Als Typ **„REST API"** wählen.
 3. **URL**: die kopierte Endpunkt-URL einfügen.
 4. **Method** `POST`, **Format** `JSON`.
-5. **Headers → hinzufügen**:
-   - Schlüssel `Authorization`, Wert `Basic <base64>` – das ist die **Anmeldung der Website**
-     (der `.htpasswd`-Login, mit dem ihr auch die Seite öffnet). `<base64>` = `benutzer:passwort`
-     Base64-kodiert, z. B. im Terminal: `printf 'benutzer:passwort' | base64`.
+5. **Nur falls** deine Instanz zusätzlich hinter einer Server-Anmeldung liegt (Basic Auth /
+   `.htpasswd`): unter **Headers → hinzufügen** den Schlüssel `Authorization` mit dem Wert
+   `Basic <base64>` eintragen – `<base64>` = `benutzer:passwort` Base64-kodiert, z. B. im
+   Terminal: `printf 'benutzer:passwort' | base64`. Ohne Server-Anmeldung überspringst du
+   diesen Schritt einfach.
 6. **Health Metrics** auswählen: Weight/Body Mass, Body Fat %, Lean Body Mass, Resting Heart Rate,
    Heart Rate Variability, VO₂ Max, Sleep Analysis, Step Count, Active Energy.
 7. **Workouts** einschalten.
