@@ -1,0 +1,226 @@
+[
+  {
+    "id": "demo-d0-0",
+    "date": "2026-07-04",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 420,
+    "protein": 22,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d0-1",
+    "date": "2026-07-04",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 620,
+    "protein": 45,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d0-2",
+    "date": "2026-07-04",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 410,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d0-3",
+    "date": "2026-07-04",
+    "title": "Skyr mit Beeren",
+    "kcal": 180,
+    "protein": 18,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d1-0",
+    "date": "2026-07-03",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 420,
+    "protein": 22,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d1-1",
+    "date": "2026-07-03",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 620,
+    "protein": 45,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d1-2",
+    "date": "2026-07-03",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 410,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d1-3",
+    "date": "2026-07-03",
+    "title": "Skyr mit Beeren",
+    "kcal": 180,
+    "protein": 18,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d2-0",
+    "date": "2026-07-02",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 420,
+    "protein": 22,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d2-1",
+    "date": "2026-07-02",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 620,
+    "protein": 45,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d2-2",
+    "date": "2026-07-02",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 410,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d2-3",
+    "date": "2026-07-02",
+    "title": "Skyr mit Beeren",
+    "kcal": 180,
+    "protein": 18,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d3-0",
+    "date": "2026-07-01",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 420,
+    "protein": 22,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d3-1",
+    "date": "2026-07-01",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 620,
+    "protein": 45,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d3-2",
+    "date": "2026-07-01",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 410,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d3-3",
+    "date": "2026-07-01",
+    "title": "Skyr mit Beeren",
+    "kcal": 180,
+    "protein": 18,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d4-0",
+    "date": "2026-06-30",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 420,
+    "protein": 22,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d4-1",
+    "date": "2026-06-30",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 620,
+    "protein": 45,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d4-2",
+    "date": "2026-06-30",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 410,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d4-3",
+    "date": "2026-06-30",
+    "title": "Skyr mit Beeren",
+    "kcal": 180,
+    "protein": 18,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d5-0",
+    "date": "2026-06-29",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 420,
+    "protein": 22,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d5-1",
+    "date": "2026-06-29",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 620,
+    "protein": 45,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d5-2",
+    "date": "2026-06-29",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 410,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d5-3",
+    "date": "2026-06-29",
+    "title": "Skyr mit Beeren",
+    "kcal": 180,
+    "protein": 18,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d6-0",
+    "date": "2026-06-28",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 420,
+    "protein": 22,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d6-1",
+    "date": "2026-06-28",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 620,
+    "protein": 45,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d6-2",
+    "date": "2026-06-28",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 410,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d6-3",
+    "date": "2026-06-28",
+    "title": "Skyr mit Beeren",
+    "kcal": 180,
+    "protein": 18,
+    "source": "cooked"
+  }
+]

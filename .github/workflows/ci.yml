@@ -1,0 +1,29 @@
+name: CI
+
+# Unit- & Regressionstests bei jedem Push auf main und bei jedem Pull Request.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: Unit- & Regressionstests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ['22.x', '24.x']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node ${{ matrix.node-version }} einrichten
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      # Keine Dependencies (Vanilla JS, kein Build) – die Tests laufen mit dem
+      # Node-eigenen Test-Runner (node:test). Daher direkt ausführen.
+      - name: Tests ausführen
+        run: npm test

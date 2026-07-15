@@ -1,0 +1,36 @@
+[
+  {
+    "id": "demo-cl1",
+    "text": "Dehnen & Faszienrolle nach dem Lauf",
+    "recurring": true,
+    "category": "training",
+    "checked": false
+  },
+  {
+    "id": "demo-cl2",
+    "text": "2 Liter Wasser trinken",
+    "recurring": true,
+    "category": "health",
+    "checked": true
+  },
+  {
+    "id": "demo-cl3",
+    "text": "Mind. 7 Stunden Schlaf",
+    "recurring": true,
+    "category": "health",
+    "checked": false
+  },
+  {
+    "id": "demo-cl4",
+    "text": "Neue Laufschuhe einlaufen",
+    "dueDate": "2026-07-08",
+    "category": "training"
+  },
+  {
+    "id": "demo-cl5",
+    "text": "Startunterlagen Halbmarathon abholen",
+    "dueDate": "2026-09-10",
+    "time": "17:00",
+    "category": "appointment"
+  }
+]

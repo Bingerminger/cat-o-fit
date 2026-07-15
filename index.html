@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+  <title>Cat-O-Fit · Fitness &amp; Health</title>
+  <meta name="description" content="Fitness-, Health- &amp; Trainings-App für Team und Familie – Wettkämpfe und Programme planen, ausführen und auswerten." />
+
+  <!-- PWA / iOS -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#18b48a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Cat-O-Fit" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-180.png" />
+  <link rel="icon" type="image/svg+xml" href="assets/icons/icon.svg" />
+
+  <!-- Stylesheets (lokal, keine CDNs) -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/cards.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/calendar.css" />
+  <link rel="stylesheet" href="css/session.css" />
+  <link rel="stylesheet" href="css/workout-mode.css" />
+  <link rel="stylesheet" href="css/family.css" />
+  <link rel="stylesheet" href="css/report.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body class="is-anon">
+  <!-- App-Gerüst (startet abgemeldet: Menüs erst nach dem Login, siehe session-gate.js) -->
+  <div id="app">
+    <!-- Kopfzeile: Titel + Kontextaktionen (wird pro View gefüllt) -->
+    <header id="app-header" class="app-header">
+      <div class="app-header__inner">
+        <button id="header-back" class="icon-btn header-back" hidden aria-label="Zurück"></button>
+        <div class="app-header__titles">
+          <h1 id="header-title" class="app-header__title">Cat-O-Fit</h1>
+          <p id="header-subtitle" class="app-header__subtitle"></p>
+        </div>
+        <div id="header-actions" class="app-header__actions"></div>
+      </div>
+    </header>
+
+    <!-- Banner: ein Admin verwaltet gerade ein anderes Mitglied -->
+    <div id="manage-banner" class="manage-banner" hidden></div>
+
+    <!-- Optionale Seitennavigation (iPad / große Screens) -->
+    <nav id="sidebar" class="sidebar" aria-label="Hauptnavigation"></nav>
+
+    <!-- Haupt-Renderbereich -->
+    <main id="view" class="view" tabindex="-1"></main>
+
+    <!-- Daumenfreundliche untere Navigation (Smartphone) -->
+    <nav id="bottom-nav" class="bottom-nav" aria-label="Hauptnavigation"></nav>
+  </div>
+
+  <!-- Overlays -->
+  <div id="modal-root" class="modal-root" aria-hidden="true"></div>
+  <div id="toast-root" class="toast-root" aria-live="polite"></div>
+  <div id="sync-indicator" class="sync-indicator" hidden></div>
+
+  <!-- Diagnose: macht aus einer „weißen Seite" eine erklärende Meldung, falls die
+       ES-Module nicht ausgeführt werden (häufig auf Servern: falscher MIME-Typ für
+       .js oder eine fehlende Datei). Bewusst KLASSISCHES Skript (kein Modul). -->
+  <script>
+    (function () {
+      var errs = [];
+      window.addEventListener('error', function (e) {
+        if (e && e.target && e.target !== window && (e.target.tagName === 'SCRIPT' || e.target.tagName === 'LINK')) {
+          errs.push('Konnte nicht laden: ' + (e.target.src || e.target.href || ''));
+        } else if (e && e.message) { errs.push(e.message); }
+      }, true);
+      window.addEventListener('unhandledrejection', function (e) {
+        errs.push('Fehler: ' + ((e.reason && e.reason.message) || e.reason || 'unbekannt'));
+      });
+      window.addEventListener('load', function () {
+        setTimeout(function () {
+          if (window.__catofitBooted) return;                    // App läuft – alles gut
+          var view = document.getElementById('view');
+          if (view && view.children.length) return;              // hat doch gerendert
+          var ranScript = !!window.__catofitModuleLoaded;
+          var esc = function (s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); };
+          var box = document.createElement('div');
+          box.setAttribute('style', 'position:fixed;inset:0;padding:24px;max-width:680px;margin:0 auto;font:15px/1.55 -apple-system,system-ui,sans-serif;background:#fff;color:#1a1a1a;overflow:auto;z-index:99999');
+          box.innerHTML =
+            '<h2 style="margin:0 0 10px">Die App konnte nicht starten</h2>'
+            + (ranScript
+              ? '<p>Das Programm wurde geladen, brach aber beim Start ab. Bitte die Seite neu laden; bleibt es so, hilft die Meldung unten weiter.</p>'
+              : '<p>Die App-Seite wurde geladen, aber der Programmcode (JavaScript) wurde <b>nicht ausgeführt</b>. Auf einem Server (z. B. Synology) sind die häufigsten Ursachen:</p>'
+                + '<ul style="padding-left:1.2em">'
+                + '<li><b>Falscher Dateityp (MIME):</b> Die <code>.js</code>-Dateien müssen als <code>text/javascript</code> ausgeliefert werden. Die mitgelieferte <code>.htaccess</code> stellt das für Apache ein; bei Nginx im Web-Station-Profil den MIME-Typ für <code>js</code> ergänzen.</li>'
+                + '<li><b>Fehlende Datei:</b> Beim Hochladen <u>alle</u> Dateien im Ordner <code>js/</code> übertragen (auch neue wie <code>exercises.js</code>, <code>goals.js</code>, <code>sha256.js</code>).</li>'
+                + '</ul>')
+            + (errs.length ? '<p style="margin-top:14px"><b>Technische Meldung:</b></p><pre style="white-space:pre-wrap;background:#f3f3f3;padding:10px;border-radius:8px;font-size:13px">' + esc(errs.join('\n')) + '</pre>' : '')
+            + '<p style="margin-top:14px"><button onclick="location.reload()" style="padding:10px 18px;border:0;border-radius:10px;background:#18b48a;color:#fff;font-weight:600;font-size:15px">Neu laden</button></p>';
+          document.body.appendChild(box);
+        }, 8000);
+      });
+    })();
+  </script>
+
+  <!-- Einstiegspunkt (ES-Module, kein Build-Schritt) -->
+  <script type="module" src="js/app.js"></script>
+  <noscript>Diese App benötigt JavaScript.</noscript>
+</body>
+</html>

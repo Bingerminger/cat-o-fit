@@ -1,0 +1,113 @@
+/* =========================================================================
+   calendar.css — Monats- und Wochenansicht, Drag & Drop, Tagesmarker.
+   ========================================================================= */
+
+.cal-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--sp-2); margin-bottom: var(--sp-3);
+}
+.cal-toolbar__label { font-size: 1.06rem; font-weight: 750; }
+
+/* ---------- Monatsraster ---------- */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+.cal-grid__dow {
+  text-align: center;
+  font-size: 0.66rem; font-weight: 700; text-transform: uppercase;
+  color: var(--text-3);
+  padding-bottom: 4px;
+}
+.cal-cell {
+  position: relative;
+  min-height: 60px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 4px;
+  display: flex; flex-direction: column; gap: 3px;
+  overflow: hidden;
+}
+.cal-cell--out { opacity: 0.4; }
+.cal-cell--today { box-shadow: inset 0 0 0 2px var(--accent); }
+.cal-cell--race { background: color-mix(in srgb, var(--warn) 14%, var(--surface)); }
+.cal-cell__num { font-size: 0.74rem; font-weight: 700; color: var(--text-2); }
+.cal-weather { font-size: 0.56rem; font-weight: 600; color: var(--text-2); white-space: nowrap; line-height: 1; }
+.cal-day__weather { font-size: 0.8rem; color: var(--text-2); white-space: nowrap; }
+
+/* Zyklus */
+.cal-cycle-dot { width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 0 1.5px var(--surface); }
+.cycle-tag { font-size: 0.62rem; font-weight: 700; padding: 2px 7px; border-radius: var(--r-pill); white-space: nowrap; }
+.cycle-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.cycle-strip__day { height: 24px; border-radius: 6px; }
+.cycle-strip__day.is-today { box-shadow: inset 0 0 0 2px var(--text); }
+.cal-cell--today .cal-cell__num { color: var(--accent); }
+.cal-cell__dots { display: flex; flex-wrap: wrap; gap: 3px; margin-top: auto; }
+.cal-dot { width: 8px; height: 8px; border-radius: 50%; }
+.cal-cell.drag-over { background: var(--accent-soft); border-color: var(--accent); }
+
+/* Drag-Hinweis für Einheiten in Zellen */
+.cal-chip {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 0.62rem; font-weight: 650;
+  padding: 2px 4px;
+  border-radius: 5px;
+  color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cal-chip.dragging { opacity: 0.5; }
+
+/* ---------- Wochenansicht (Liste je Tag) ---------- */
+.cal-week { display: flex; flex-direction: column; gap: var(--sp-3); }
+.cal-day {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.cal-day.drag-over { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.cal-day__head {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--surface-2);
+}
+.cal-day__head.is-today { background: var(--accent-soft); }
+.cal-day__dow { font-weight: 750; }
+.cal-day__date { color: var(--text-2); font-size: 0.84rem; }
+.cal-day__count { margin-left: auto; color: var(--text-3); font-size: 0.78rem; }
+.cal-day__units { padding: var(--sp-2) var(--sp-4) var(--sp-3); display: flex; flex-direction: column; }
+.cal-unit {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-2) 0;
+  border-bottom: 1px solid var(--border);
+}
+.cal-unit:last-child { border-bottom: none; }
+.cal-unit__body { flex: 1; min-width: 0; }
+.cal-unit__title { font-weight: 650; font-size: 0.9rem; }
+.cal-unit__meta { font-size: 0.76rem; color: var(--text-2); }
+.cal-unit--done .cal-unit__title { color: var(--text-2); }
+.cal-unit--done .cal-unit__title::before { content: "✓ "; color: var(--good); font-weight: 800; }
+.cal-unit--missed .cal-unit__title { color: var(--bad); }
+.cal-unit--overdue { box-shadow: inset 3px 0 0 #f5a623; padding-left: 6px; }
+.cal-unit--overdue .cal-unit__title { color: color-mix(in srgb, #f5a623 85%, var(--text)); }
+.cal-unit__handle { color: var(--text-3); cursor: grab; touch-action: none; padding: 4px; }
+.cal-unit__handle svg { width: 18px; height: 18px; }
+.cal-day__rest { padding: var(--sp-3) var(--sp-4); color: var(--text-3); font-size: 0.84rem; }
+
+/* Termine (datierte Checklisten-Punkte) im Kalender */
+.cal-dot--task { border-radius: 2px; }   /* eckig -> klar von runden Trainings-Punkten getrennt */
+.cal-unit--task { padding-left: 2px; }
+.cal-task__icon { display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; width: 26px; }
+.cal-task__icon svg { width: 18px; height: 18px; }
+
+/* schwebendes Drag-Abbild beim Touch-Reschedule */
+.drag-ghost {
+  position: fixed; z-index: 80; pointer-events: none;
+  padding: 6px 10px; border-radius: var(--r-sm);
+  background: var(--accent); color: #fff;
+  font-size: 0.8rem; font-weight: 650;
+  box-shadow: var(--shadow-3);
+  opacity: 0.95;
+}

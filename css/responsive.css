@@ -1,0 +1,116 @@
+/* =========================================================================
+   responsive.css — iPad-/Desktop-Layout (Sidebar), große Screens, Landscape.
+   Mobile-first: alles davor gilt fürs iPhone.
+   ========================================================================= */
+
+/* ---------- Tablet / Desktop: Sidebar statt Bottom-Nav ---------- */
+@media (min-width: 820px) {
+  :root { --maxw: 760px; }
+
+  #app {
+    display: grid;
+    /* minmax(0, …): der Inhaltsbereich darf NICHT auf die intrinsische Breite
+       breiter Kinder (z. B. die Jahres-Heatmap) wachsen – sonst scrollt die
+       ganze Seite seitlich statt nur das jeweilige Scroll-Element. */
+    grid-template-columns: 248px minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "sidebar header"
+      "sidebar view";
+  }
+  .app-header { grid-area: header; min-width: 0; }
+  .view { grid-area: view; min-width: 0; }
+
+  .bottom-nav { display: none; }
+
+  /* Abgemeldet: keine Sidebar, Layout einspaltig (kein leerer Sidebar-Spalt). */
+  body.is-anon .sidebar { display: none; }
+  body.is-anon #app {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "header" "view";
+  }
+
+  .sidebar {
+    grid-area: sidebar;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: calc(env(safe-area-inset-top) + var(--sp-4)) var(--sp-3) var(--sp-4);
+    background: var(--bg-elev);
+    border-right: 1px solid var(--border);
+    position: sticky; top: 0;
+    height: 100dvh;
+    overflow-y: auto;
+  }
+  .sidebar__brand {
+    display: flex; align-items: center; gap: var(--sp-2);
+    padding: 0 var(--sp-3) var(--sp-5);
+    font-weight: 800; font-size: 1.2rem; letter-spacing: -0.02em;
+  }
+  .sidebar__brand img { width: 30px; height: 30px; }
+  .sidebar__version {
+    margin-left: auto;
+    font-size: 0.68rem; font-weight: 650; letter-spacing: 0;
+    color: var(--text-2); opacity: 0.7;
+  }
+  .sidebar__item {
+    display: flex; align-items: center; gap: var(--sp-3);
+    padding: var(--sp-3) var(--sp-3);
+    border-radius: var(--r-md);
+    color: var(--text-2);
+    font-weight: 650; font-size: 0.94rem;
+  }
+  .sidebar__item svg { width: 22px; height: 22px; flex: 0 0 auto; }
+  .sidebar__item:hover { background: var(--surface-2); color: var(--text); }
+  .sidebar__item.is-active { background: var(--accent-soft); color: var(--accent-strong); }
+  .sidebar__sep { height: 1px; background: var(--border); margin: var(--sp-3) var(--sp-3); }
+  .sidebar__spacer { flex: 1 1 auto; }
+  .sidebar__foot {
+    display: flex; flex-direction: column; gap: var(--sp-2);
+    border-top: 1px solid var(--border);
+    margin-top: var(--sp-2); padding-top: var(--sp-3);
+  }
+  .sidebar__user { display: flex; align-items: center; gap: var(--sp-2); padding: 0 var(--sp-2); }
+  .sidebar__avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 1.05rem; flex: 0 0 auto;
+  }
+  .sidebar__user-meta { min-width: 0; }
+  .sidebar__user-name { font-weight: 700; font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sidebar__user-role { font-size: .72rem; color: var(--text-2); }
+
+  .view {
+    padding-bottom: calc(var(--sp-8));
+  }
+  .fab { bottom: var(--sp-6); right: var(--sp-6); }
+
+  /* Hinweis: .target-grid und .week-stats passen sich über ihre eigenen
+     (inhaltsabhängigen) Grids an – kein fixes Spaltenraster auf großen Screens,
+     sonst rutschen wenige Kacheln in die linke Hälfte (unausgewogen). */
+  .ex-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ---------- Breiter iPad / Desktop ---------- */
+@media (min-width: 1180px) {
+  :root { --maxw: 920px; }
+  #app { grid-template-columns: 280px minmax(0, 1fr); }
+}
+
+/* ---------- Kleine Smartphones ---------- */
+@media (max-width: 360px) {
+  :root { --sp-4: 14px; }
+  .app-header__title { font-size: 1.2rem; }
+  .hero__title { font-size: 1.3rem; }
+}
+
+/* ---------- Querformat: Workout-Timer kompakter ---------- */
+@media (orientation: landscape) and (max-height: 480px) {
+  .workout__time { font-size: clamp(2.6rem, 14vh, 4rem); }
+  .workout__counters { padding: var(--sp-2) var(--sp-4); }
+  .workout__controls .btn { min-height: 52px; }
+}
+
+/* ---------- Zeiger vs. Touch ---------- */
+@media (hover: none) {
+  .icon-btn:hover { background: transparent; }
+}

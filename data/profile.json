@@ -1,0 +1,192 @@
+{
+  "id": "profile",
+  "name": "Nora",
+  "heightCm": 179,
+  "weightKg": 72,
+  "targetWeightKg": 69,
+  "birthYear": 1990,
+  "sex": "w",
+  "maxHr": 190,
+  "restHr": 52,
+  "thresholdPaceSecPerKm": 312,
+  "goals": [
+    "Körperfett reduzieren",
+    "Muskelmasse erhöhen",
+    "Halbmarathon unter 1:55 h"
+  ],
+  "hrZones": [
+    {
+      "zone": 1,
+      "name": "Regeneration",
+      "minPct": 50,
+      "maxPct": 60,
+      "min": 95,
+      "max": 114,
+      "color": "#7fb8ff"
+    },
+    {
+      "zone": 2,
+      "name": "Grundlage (GA1)",
+      "minPct": 60,
+      "maxPct": 70,
+      "min": 114,
+      "max": 133,
+      "color": "#43c59e"
+    },
+    {
+      "zone": 3,
+      "name": "Tempo (GA2)",
+      "minPct": 70,
+      "maxPct": 80,
+      "min": 133,
+      "max": 152,
+      "color": "#f5c451"
+    },
+    {
+      "zone": 4,
+      "name": "Schwelle",
+      "minPct": 80,
+      "maxPct": 90,
+      "min": 152,
+      "max": 171,
+      "color": "#f59145"
+    },
+    {
+      "zone": 5,
+      "name": "VO2max",
+      "minPct": 90,
+      "maxPct": 100,
+      "min": 171,
+      "max": 190,
+      "color": "#ef5d6c"
+    }
+  ],
+  "paceZones": {
+    "recovery": {
+      "label": "Regeneration",
+      "min": 390,
+      "max": 410,
+      "hrZone": 1
+    },
+    "easy": {
+      "label": "Locker / Easy",
+      "min": 360,
+      "max": 385,
+      "hrZone": 2
+    },
+    "long": {
+      "label": "Long Run",
+      "min": 350,
+      "max": 375,
+      "hrZone": 2
+    },
+    "marathon": {
+      "label": "Marathon-Pace",
+      "min": 335,
+      "max": 345,
+      "hrZone": 3
+    },
+    "race_hm": {
+      "label": "HM-Wettkampf",
+      "min": 324,
+      "max": 330,
+      "hrZone": 3
+    },
+    "threshold": {
+      "label": "Schwelle / Tempo",
+      "min": 305,
+      "max": 318,
+      "hrZone": 4
+    },
+    "vo2": {
+      "label": "Intervalle (VO2max)",
+      "min": 282,
+      "max": 300,
+      "hrZone": 5
+    },
+    "repetition": {
+      "label": "Wiederholungen",
+      "min": 268,
+      "max": 282,
+      "hrZone": 5
+    }
+  },
+  "settings": {
+    "theme": "system",
+    "accent": "#18b48a",
+    "weekStart": 1,
+    "units": "metric",
+    "weather": true,
+    "location": {
+      "name": "Dresden",
+      "country": "DE",
+      "lat": 51.0504,
+      "lon": 13.7373
+    },
+    "modules": {
+      "cycle": true,
+      "nutrition": true,
+      "shopping": true,
+      "checklist": true,
+      "strength": true
+    },
+    "metricsEnabled": {
+      "weight": true,
+      "bodyFat": true,
+      "muscleMass": true,
+      "visceralFat": true,
+      "restingHr": true,
+      "hrv": true,
+      "vo2max": true,
+      "sleepHours": true,
+      "energy": true,
+      "mood": true
+    },
+    "weeklyGoals": {
+      "activeMinutes": 240,
+      "trainingDays": 4
+    },
+    "healthGoals": [
+      {
+        "id": "demo-g1",
+        "metric": "weight",
+        "target": 69,
+        "start": 75,
+        "deadline": "2026-09-12"
+      },
+      {
+        "id": "demo-g2",
+        "metric": "bodyFat",
+        "target": 24,
+        "start": 28,
+        "deadline": "2026-09-12"
+      },
+      {
+        "id": "demo-g3",
+        "metric": "restingHr",
+        "target": 50,
+        "start": 56,
+        "deadline": "2026-09-12"
+      }
+    ],
+    "exerciseUsage": {
+      "plank": 11,
+      "glute_bridge": 9,
+      "hip_flexor_stretch": 8,
+      "cat_cow": 8,
+      "hamstring_stretch": 7,
+      "calf_stretch": 6,
+      "child_pose": 5,
+      "dead_bug": 4,
+      "squat": 4,
+      "side_plank": 3,
+      "superman": 3,
+      "bird_dog": 2,
+      "figure_four": 2,
+      "lunge": 2,
+      "supine_twist": 1
+    }
+  },
+  "createdAt": "2026-07-04T08:00:00+02:00",
+  "updatedAt": "2026-07-04T08:00:00+02:00"
+}

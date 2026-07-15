@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .banner {
+    width: 1200px; height: 630px; position: relative; overflow: hidden;
+    background:
+      radial-gradient(900px 520px at 16% 8%,  rgba(43,212,155,.30), transparent 60%),
+      radial-gradient(820px 560px at 92% 18%, rgba(124,92,255,.34), transparent 58%),
+      radial-gradient(760px 620px at 78% 108%, rgba(255,93,143,.30), transparent 55%),
+      radial-gradient(700px 520px at 30% 118%, rgba(255,138,61,.22), transparent 55%),
+      linear-gradient(135deg, #0a1722 0%, #0c1b2b 45%, #0a1320 100%);
+    display: flex; align-items: center;
+  }
+  /* energetische Lichtstrahlen */
+  .rays { position: absolute; inset: 0; z-index: 1; opacity: .5;
+    background: repeating-conic-gradient(from 210deg at 86% 26%,
+      rgba(255,255,255,.05) 0deg 2deg, transparent 2deg 13deg); mix-blend-mode: screen; }
+  .grain { position: absolute; inset: 0; z-index: 1;
+    background: radial-gradient(circle at 50% 50%, transparent 60%, rgba(0,0,0,.35) 100%); }
+
+  .left { width: 588px; padding: 0 0 0 76px; color: #fff; z-index: 4; }
+  .logo-row { display: flex; align-items: center; gap: 18px; margin-bottom: 26px; }
+  .logo-row .ic { width: 96px; height: 96px; border-radius: 24px; display: grid; place-items: center;
+    background: linear-gradient(150deg, #1bd6a0, #12b4d6 60%, #3d8bff);
+    box-shadow: 0 12px 34px rgba(27,214,160,.45), inset 0 2px 6px rgba(255,255,255,.4); }
+  .logo-row .ic img { width: 60px; height: 60px; filter: drop-shadow(0 2px 4px rgba(0,0,0,.3)); }
+  .logo-row .name { font-size: 40px; font-weight: 850; letter-spacing: -.5px;
+    background: linear-gradient(90deg, #fff, #cfeede); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  h1 { font-size: 56px; line-height: 1.05; font-weight: 880; letter-spacing: -1.4px; margin-bottom: 20px; }
+  h1 .g1 { background: linear-gradient(92deg, #ffffff 0%, #d7f6ec 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  h1 .accent { background: linear-gradient(92deg, #2bd49b 0%, #46e3c0 45%, #5ad1ff 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent; }
+  p.tag { font-size: 21px; line-height: 1.5; color: #c4d3e0; margin-bottom: 28px; max-width: 500px; }
+
+  ul { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+  li { font-size: 18px; color: #eaf2f8; display: flex; align-items: center; gap: 13px; font-weight: 600; }
+  li .dot { width: 30px; height: 30px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0; box-shadow: 0 6px 16px rgba(0,0,0,.3); }
+  li.c1 .dot { background: linear-gradient(150deg,#1bd6a0,#13b6a6); }
+  li.c2 .dot { background: linear-gradient(150deg,#7c5cff,#9b7bff); }
+  li.c3 .dot { background: linear-gradient(150deg,#ff5d8f,#ff8a3d); }
+
+  .badges { margin-top: 30px; display: flex; gap: 11px; }
+  .badge { font-size: 13.5px; font-weight: 750; color: #eafff7; padding: 8px 15px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.07); backdrop-filter: blur(4px); }
+  .badge.b1 { border-color: rgba(43,212,155,.5);  box-shadow: 0 0 0 1px rgba(43,212,155,.15), 0 8px 20px rgba(43,212,155,.2); }
+  .badge.b2 { border-color: rgba(124,92,255,.5);  box-shadow: 0 0 0 1px rgba(124,92,255,.15), 0 8px 20px rgba(124,92,255,.2); }
+  .badge.b3 { border-color: rgba(255,93,143,.5);  box-shadow: 0 0 0 1px rgba(255,93,143,.15), 0 8px 20px rgba(255,93,143,.2); }
+
+  .phones { position: absolute; right: -6px; top: 0; bottom: 0; width: 660px; z-index: 3; }
+  /* farbige Glow-Halos hinter den Phones */
+  .halo { position: absolute; border-radius: 50%; filter: blur(46px); z-index: 1; }
+  .halo.h1 { width: 380px; height: 380px; right: 250px; top: 150px; background: rgba(43,212,155,.5); }
+  .halo.h2 { width: 340px; height: 340px; right: 60px;  top: 70px;  background: rgba(124,92,255,.5); }
+  .halo.h3 { width: 300px; height: 300px; right: 0;     top: 340px; background: rgba(255,93,143,.42); }
+  .phone {
+    position: absolute; width: 270px; border-radius: 36px; overflow: hidden; z-index: 2;
+    background: #0b1117; border: 7px solid #20303f; box-shadow: 0 30px 70px rgba(0,0,0,.6);
+  }
+  .phone::after { content:""; position:absolute; inset:0; border-radius:30px; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.08); }
+  .phone img { width: 100%; display: block; object-fit: cover; object-position: top; height: 560px; }
+  .p1 { right: 372px; top: 100px; transform: rotate(-7deg); z-index: 2; }
+  .p2 { right: 96px;  top: 38px;  transform: rotate(5deg);  z-index: 4; }
+  .p3 { right: 4px;   top: 338px; transform: rotate(-3deg); width: 232px; z-index: 1; opacity: .97; }
+</style>
+</head>
+<body>
+  <div class="banner">
+    <div class="rays"></div>
+    <div class="grain"></div>
+    <div class="left">
+      <div class="logo-row">
+        <span class="ic"><img src="../../../assets/icons/icon.svg" alt="" /></span>
+        <span class="name">Cat-O-Fit</span>
+      </div>
+      <h1><span class="g1">Fitness &amp; Health</span><br>für <span class="accent">Team &amp; Familie</span></h1>
+      <p class="tag">Wettkämpfe, Trainingsprogramme, Statistik, Ernährung &amp; Werte – lokal, privat, ohne Datenbank.</p>
+      <ul>
+        <li class="c1"><span class="dot">🏃</span> Periodisierte Pläne &amp; Programme – mit oder ohne Wettkampf</li>
+        <li class="c2"><span class="dot">📊</span> Wochenziele, Coach-Hinweise, Urkunden &amp; Jahres-Heatmap</li>
+        <li class="c3"><span class="dot">🔒</span> Bis zu 10 Profile · Admin-Vollbackup · Zyklus strikt privat</li>
+      </ul>
+      <div class="badges">
+        <span class="badge b1">PWA · iPhone &amp; iPad</span>
+        <span class="badge b2">0 Abhängigkeiten</span>
+        <span class="badge b3">MIT-Lizenz</span>
+      </div>
+    </div>
+    <div class="phones">
+      <div class="halo h1"></div><div class="halo h2"></div><div class="halo h3"></div>
+      <div class="phone p1"><img src="../09-statistik.png" alt="" /></div>
+      <div class="phone p2"><img src="../01-dashboard.png" alt="" /></div>
+      <div class="phone p3"><img src="../12-erfolge.png" alt="" /></div>
+    </div>
+  </div>
+</body>
+</html>

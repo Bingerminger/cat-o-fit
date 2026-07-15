@@ -1,0 +1,10 @@
+{
+  "name": "catofit",
+  "version": "3.15.0",
+  "private": true,
+  "type": "module",
+  "description": "Trainings-, Fitness- & Health-PWA für Team und Familie (Vanilla JS, kein Build-Schritt, keine Datenbank).",
+  "scripts": {
+    "test": "node --import ./test-setup.js --test \"test/**/*.test.js\""
+  }
+}

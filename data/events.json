@@ -1,0 +1,15 @@
+[
+  {
+    "id": "demo-e1",
+    "name": "Stadtlauf Halbmarathon",
+    "kind": "race",
+    "date": "2026-09-12",
+    "distanceType": "HM",
+    "distanceKm": 21.0975,
+    "targetTime": "01:55:00",
+    "priority": "A",
+    "location": "Dresden, Altstadt",
+    "status": "geplant",
+    "createdAt": "2026-05-23"
+  }
+]

@@ -1,0 +1,27 @@
+# Cat-O-Fit – Server-Hinweise für die statische App-Shell.
+#
+# WICHTIG: ES-Module (<script type="module">) werden vom Browser nur ausgeführt,
+# wenn der Server die .js-Dateien mit einem JavaScript-MIME-Typ ausliefert.
+# Liefert der Server sie als text/plain oder application/octet-stream, bleibt die
+# Seite weiß. Diese Regeln stellen den korrekten Typ sicher.
+#
+# Synology Web Station mit Apache-Backend wertet diese Datei aus. Beim Nginx-
+# Backend wird sie ignoriert – dort liefert Nginx .js standardmäßig korrekt aus;
+# falls nicht, im Web-Station-Profil den MIME-Typ "js -> text/javascript" setzen.
+
+<IfModule mod_mime.c>
+  AddType text/javascript            .js .mjs
+  AddType application/json           .json
+  AddType application/manifest+json  .webmanifest
+  AddType image/svg+xml              .svg
+</IfModule>
+
+# App-Shell nie hart cachen: Der Browser darf speichern, MUSS aber vor Gebrauch
+# revalidieren (liefert 304, wenn unverändert). So kommen neue Releases sofort an –
+# auch im normalen Tab OHNE Service-Worker (bisher wurden js/css heuristisch
+# gecacht und zeigten nach einem Release weiter die alte Version).
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|js|mjs|css|webmanifest)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>

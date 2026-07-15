@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: "🔒 Sicherheitslücke melden"
+    url: https://github.com/Bingerminger/cat-o-fit/security/advisories/new
+    about: "Sicherheitsrelevantes bitte vertraulich melden – nicht als öffentliches Issue (siehe SECURITY.md)."
+  - name: "📖 Benutzerhandbuch"
+    url: https://github.com/Bingerminger/cat-o-fit/blob/main/docs/BENUTZERHANDBUCH.md
+    about: "Viele Fragen beantwortet das Handbuch bereits."

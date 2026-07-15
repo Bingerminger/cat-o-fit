@@ -1,0 +1,112 @@
+[
+  {
+    "id": "demo-n1",
+    "category": "fruehstueck",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 420,
+    "protein": 22,
+    "tags": [
+      "proteinreich",
+      "vegetarisch",
+      "meal-prep"
+    ],
+    "ingredients": [
+      "60 g Haferflocken",
+      "150 g Skyr",
+      "150 ml Milch",
+      "100 g Beeren",
+      "1 EL Honig"
+    ],
+    "plannedServings": 3
+  },
+  {
+    "id": "demo-n2",
+    "category": "fruehstueck",
+    "title": "Protein-Porridge mit Banane",
+    "kcal": 450,
+    "protein": 30,
+    "tags": [
+      "proteinreich",
+      "vegetarisch"
+    ],
+    "ingredients": [
+      "60 g Haferflocken",
+      "30 g Proteinpulver",
+      "250 ml Milch",
+      "1 Banane"
+    ],
+    "plannedServings": 2
+  },
+  {
+    "id": "demo-n3",
+    "category": "mittag",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 620,
+    "protein": 45,
+    "tags": [
+      "proteinreich",
+      "meal-prep"
+    ],
+    "ingredients": [
+      "150 g Hähnchen",
+      "80 g Reis",
+      "200 g Brokkoli",
+      "1 EL Öl"
+    ],
+    "plannedServings": 4
+  },
+  {
+    "id": "demo-n4",
+    "category": "mittag",
+    "title": "Lachs mit Süßkartoffel & Spinat",
+    "kcal": 580,
+    "protein": 38,
+    "tags": [
+      "proteinreich",
+      "omega-3"
+    ],
+    "ingredients": [
+      "150 g Lachs",
+      "250 g Süßkartoffel",
+      "Spinat",
+      "1 EL Öl"
+    ],
+    "plannedServings": 2
+  },
+  {
+    "id": "demo-n5",
+    "category": "abend",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 410,
+    "protein": 30,
+    "tags": [
+      "proteinreich",
+      "vegetarisch",
+      "low-carb"
+    ],
+    "ingredients": [
+      "3 Eier",
+      "50 g Feta",
+      "200 g Tomaten",
+      "Spinat"
+    ],
+    "plannedServings": 3
+  },
+  {
+    "id": "demo-n6",
+    "category": "snack",
+    "title": "Skyr mit Beeren",
+    "kcal": 180,
+    "protein": 18,
+    "tags": [
+      "proteinreich",
+      "vegetarisch",
+      "schnell"
+    ],
+    "ingredients": [
+      "150 g Skyr",
+      "100 g Beeren"
+    ],
+    "plannedServings": 4
+  }
+]

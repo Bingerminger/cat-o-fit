@@ -1,0 +1,296 @@
+/* =========================================================================
+   cards.css — wiederverwendbare Karten, Listen, Kennzahlen, Trainingstyp-Icons.
+   ========================================================================= */
+
+.card {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  padding: var(--sp-4);
+  box-shadow: var(--shadow-1);
+  border: 1px solid var(--border);
+}
+.card + .card { margin-top: var(--sp-3); }
+.card--pad-lg { padding: var(--sp-5); }
+.card--flat { box-shadow: none; background: var(--surface-2); border-color: transparent; }
+.card--accent {
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: var(--accent-contrast);
+  border: none;
+}
+.card--accent .muted, .card--accent .dim { color: rgba(255, 255, 255, 0.78); }
+.card--link { display: block; transition: transform 0.12s ease; }
+.card--link:active { transform: scale(0.985); }
+
+.card__head { display: flex; align-items: center; gap: var(--sp-3); margin-bottom: var(--sp-3); }
+.card__title { font-size: 1rem; font-weight: 700; flex: 1; }
+
+/* ---------- Trainingstyp-Icon (farbiger Kreis) ---------- */
+.type-icon {
+  flex: 0 0 auto;
+  width: 42px; height: 42px;
+  border-radius: var(--r-sm);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fff;
+  position: relative;
+}
+.type-icon svg { width: 22px; height: 22px; }
+.type-icon--sm { width: 32px; height: 32px; border-radius: var(--r-xs); }
+.type-icon--sm svg { width: 18px; height: 18px; }
+.type-icon--lg { width: 56px; height: 56px; border-radius: var(--r-md); }
+.type-icon--lg svg { width: 28px; height: 28px; }
+
+/* ---------- Liste ---------- */
+.list { display: flex; flex-direction: column; }
+.list-item {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-3) 0;
+  min-height: 56px;
+  border-bottom: 1px solid var(--border);
+}
+.list-item:last-child { border-bottom: none; }
+.list-item__body { flex: 1 1 auto; min-width: 0; }
+.list-item__title { font-weight: 650; font-size: 0.96rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.list-item__sub { font-size: 0.8rem; color: var(--text-2); margin-top: 1px; }
+.list-item__meta { text-align: right; flex: 0 0 auto; color: var(--text-2); font-size: 0.82rem; }
+.list-item__chev { color: var(--text-3); flex: 0 0 auto; }
+.list-item__chev svg { width: 18px; height: 18px; }
+.list-card { background: var(--surface); border-radius: var(--r-lg); padding: 0 var(--sp-4); box-shadow: var(--shadow-1); border: 1px solid var(--border); }
+
+/* ---------- Kennzahlen ---------- */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: var(--sp-3);
+}
+.stat {
+  background: var(--surface);
+  border-radius: var(--r-md);
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--border);
+}
+.stat__val { font-family: var(--font-num); font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
+.stat__label { font-size: 0.74rem; color: var(--text-2); font-weight: 600; margin-top: 2px; }
+.stat__unit { font-size: 0.7em; color: var(--text-2); font-weight: 600; margin-left: 2px; }
+
+/* ---------- Metrik-Kachel (Health) ---------- */
+.metric-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--sp-3) var(--sp-4);
+  display: flex; flex-direction: column; gap: var(--sp-1);
+}
+.metric-tile__top { display: flex; align-items: center; justify-content: space-between; }
+.metric-tile__name { font-size: 0.78rem; font-weight: 650; color: var(--text-2); }
+.metric-tile__val { font-family: var(--font-num); font-size: 1.4rem; font-weight: 800; }
+.metric-tile__delta { font-size: 0.74rem; font-weight: 700; }
+
+/* ---------- Fortschrittsbalken ---------- */
+.progress {
+  height: 8px;
+  background: var(--surface-3);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+}
+.progress__fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: var(--r-pill);
+  transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.progress--good .progress__fill { background: var(--good); }
+.progress--warn .progress__fill { background: var(--warn); }
+
+/* ---------- Fortschrittsring (für SVG-Charts) ---------- */
+.ring-wrap { position: relative; display: inline-grid; place-items: center; }
+.ring-wrap__center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+}
+.ring-wrap__val { font-family: var(--font-num); font-weight: 800; font-size: 1.3rem; line-height: 1; }
+.ring-wrap__label { font-size: 0.68rem; color: var(--text-2); margin-top: 2px; }
+
+/* ---------- Countdown ---------- */
+.countdown { display: flex; gap: var(--sp-3); }
+.countdown__unit { text-align: center; }
+.countdown__num { font-family: var(--font-num); font-size: 1.7rem; font-weight: 800; line-height: 1; }
+.countdown__cap { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.8; }
+
+/* ---------- Priorität / Phase Tags ---------- */
+.tag-prio {
+  width: 24px; height: 24px; border-radius: var(--r-xs);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.78rem; font-weight: 800; color: #fff;
+}
+.tag-prio--A { background: var(--bad); }
+.tag-prio--B { background: var(--warn); }
+.tag-prio--C { background: var(--text-3); }
+
+.phase-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: var(--r-pill);
+  font-size: 0.74rem; font-weight: 700;
+  color: #fff;
+}
+
+/* ---------- Soll-Ist Vergleichszeile ---------- */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--border);
+}
+.compare:last-child { border-bottom: none; }
+.compare__label { grid-column: 1 / -1; font-size: 0.74rem; color: var(--text-2); font-weight: 650; margin-bottom: 2px; }
+.compare__plan { text-align: left; color: var(--text-2); }
+.compare__arrow { color: var(--text-3); }
+.compare__real { text-align: right; font-weight: 750; }
+.compare__val { font-family: var(--font-num); font-size: 1.05rem; }
+
+/* ---------- Hilfe / Wissensbasis ---------- */
+.help-container { display: flex; flex-direction: column; gap: var(--sp-2); }
+.help-article { overflow: hidden; }
+.help-article__head {
+  display: flex; align-items: center; gap: var(--sp-3);
+  width: 100%; text-align: left;
+  padding: var(--sp-4); min-height: 56px;
+}
+.help-article__q { flex: 1; font-weight: 650; font-size: 0.95rem; }
+.help-article__chev { transition: transform 0.25s ease; flex: 0 0 auto; }
+.help-article__chev svg { width: 18px; height: 18px; }
+.help-article__body { padding: 0 var(--sp-4) var(--sp-4); }
+.help-p { color: var(--text-2); font-size: 0.9rem; line-height: 1.55; margin-bottom: var(--sp-3); }
+.help-p:last-child { margin-bottom: 0; }
+.help-steps { margin: var(--sp-1) 0 var(--sp-3); padding: 0; counter-reset: step; display: flex; flex-direction: column; gap: var(--sp-2); }
+.help-steps li {
+  position: relative; padding-left: 34px; list-style: none;
+  font-size: 0.9rem; line-height: 1.45; color: var(--text);
+  counter-increment: step;
+}
+.help-steps li::before {
+  content: counter(step);
+  position: absolute; left: 0; top: -1px;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--accent-soft); color: var(--accent-strong);
+  font-size: 0.76rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+.help-tip {
+  display: flex; gap: var(--sp-2); align-items: flex-start;
+  background: var(--accent-softer);
+  border-radius: var(--r-sm);
+  padding: 10px 12px; margin: var(--sp-2) 0 var(--sp-1);
+  font-size: 0.85rem; color: var(--text-2); line-height: 1.45;
+}
+.help-tip svg { color: var(--accent); width: 16px; flex: 0 0 auto; margin-top: 1px; }
+
+/* ---------- Erfolge / Badges ---------- */
+.badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }
+.badge-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md);
+  padding: 14px 10px 12px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  opacity: 0.5; filter: grayscale(0.7);
+  min-width: 0;
+}
+.badge-card.is-unlocked {
+  opacity: 1; filter: none;
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  box-shadow: var(--shadow-1);
+}
+.badge-card__emoji { font-size: 2rem; line-height: 1; }
+.badge-card__name { font-weight: 700; font-size: 0.82rem; max-width: 100%; overflow-wrap: break-word; hyphens: none; }
+.badge-card__desc { font-size: 0.7rem; color: var(--text-2); line-height: 1.25; max-width: 100%; overflow-wrap: break-word; hyphens: none; }
+.badge-card__check { font-size: 0.68rem; font-weight: 800; color: var(--good); margin-top: 2px; }
+.badge-card__prog { font-size: 0.66rem; color: var(--text-3); font-family: var(--font-num); }
+.badge-progress { width: 100%; height: 5px; background: var(--surface-3); border-radius: var(--r-pill); overflow: hidden; margin-top: 4px; }
+.badge-progress > i { display: block; height: 100%; background: var(--accent); border-radius: var(--r-pill); }
+.badge-tier-head {
+  display: flex; align-items: center; gap: 8px;
+  margin: 18px 2px 8px; font-weight: 750; font-size: 0.86rem;
+}
+.badge-tier-dot { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto; box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 12%, transparent); }
+.badge-tier-label { flex: 1 1 auto; letter-spacing: .01em; }
+.badge-tier-count { font-size: 0.74rem; color: var(--text-3); font-family: var(--font-num); font-weight: 700; }
+
+/* Obere Aufwand-Stufen als prächtige Banner mit Verlauf & Glanzkante */
+.badge-tier-head--t4, .badge-tier-head--t3 {
+  padding: 9px 13px; border-radius: 14px; margin-top: 20px;
+  position: relative; overflow: hidden; color: #fff;
+}
+.badge-tier-head--t4 .badge-tier-count, .badge-tier-head--t3 .badge-tier-count { color: rgba(255,255,255,.85); }
+.badge-tier-head--t4 .badge-tier-dot, .badge-tier-head--t3 .badge-tier-dot { background: rgba(255,255,255,.9) !important; box-shadow: 0 0 0 3px rgba(255,255,255,.25); }
+.badge-tier-head--t4 {
+  background: linear-gradient(110deg, #f5a623 0%, #ff8a3d 55%, #f5b300 100%);
+  box-shadow: 0 6px 18px rgba(240, 160, 40, .35);
+}
+.badge-tier-head--t3 {
+  background: linear-gradient(110deg, #7c5cff 0%, #9a6bff 55%, #6a5cff 100%);
+  box-shadow: 0 6px 16px rgba(124, 92, 255, .32);
+}
+/* dezenter Lichtschimmer oben */
+.badge-tier-head--t4::after, .badge-tier-head--t3::after {
+  content: ''; position: absolute; inset: 0 0 auto 0; height: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,.28), transparent); pointer-events: none;
+}
+
+/* Freigeschaltete Karten der oberen Stufen glänzen */
+.badge-card--t4.is-unlocked {
+  background: linear-gradient(165deg, color-mix(in srgb, #f5b300 14%, var(--surface)), color-mix(in srgb, #ff8a3d 10%, var(--surface)));
+  border-color: color-mix(in srgb, #f5a623 55%, var(--border));
+  box-shadow: 0 6px 18px rgba(235, 165, 50, .26), inset 0 0 0 1px color-mix(in srgb, #f5b300 30%, transparent);
+}
+.badge-card--t4.is-unlocked .badge-card__emoji { filter: drop-shadow(0 2px 5px rgba(220, 150, 30, .45)); }
+.badge-card--t4.is-unlocked .badge-card__check { color: #c8841a; }
+.badge-card--t3.is-unlocked {
+  background: linear-gradient(165deg, color-mix(in srgb, #7c5cff 13%, var(--surface)), color-mix(in srgb, #9a6bff 9%, var(--surface)));
+  border-color: color-mix(in srgb, #7c5cff 50%, var(--border));
+  box-shadow: 0 5px 14px rgba(124, 92, 255, .22);
+}
+.badge-card--t3.is-unlocked .badge-card__check { color: #7c5cff; }
+
+/* ---------- Übungs-Bibliothek ---------- */
+.ex-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-3); }
+.ex-card {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: var(--sp-3); text-align: center;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md);
+  cursor: pointer; transition: border-color .15s ease, transform .1s ease;
+}
+.ex-card:hover { border-color: var(--accent); }
+.ex-card:active { transform: scale(.98); }
+.ex-card__art { width: 100%; aspect-ratio: 12 / 10; }
+.ex-card__art svg { width: 100%; height: 100%; }
+.ex-card__name { font-weight: 700; font-size: .9rem; line-height: 1.15; }
+.ex-card__meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.ex-detail__art {
+  width: 100%; max-width: 240px; margin: 0 auto; aspect-ratio: 12 / 10;
+  background: var(--surface-2); border-radius: var(--r-md); padding: 8px;
+}
+.ex-detail__art svg { width: 100%; height: 100%; }
+.ex-steps { margin: var(--sp-2) 0 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 6px; }
+.ex-steps li { font-size: .9rem; line-height: 1.45; }
+
+/* ---------- Interaktive Liniencharts: Wrapper + Scrubber-Tooltip ---------- */
+.chart-wrap { position: relative; touch-action: pan-y; -webkit-tap-highlight-color: transparent; }
+.chart-wrap:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--r-sm); }
+.chart-tip {
+  position: absolute; top: 2px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 5; pointer-events: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-2);
+  padding: 5px 9px;
+  font-size: 0.72rem; line-height: 1.4; white-space: nowrap;
+}
+.chart-tip[hidden] { display: none; }
+.chart-tip__title { font-size: 0.68rem; font-weight: 650; color: var(--text-3); }
+.chart-tip__row { display: flex; align-items: center; gap: 5px; }
+.chart-tip__row b { font-family: var(--font-num); font-size: 0.8rem; font-weight: 800; }
+.chart-tip__name { color: var(--text-2); }
+.chart-tip__key { width: 10px; height: 2.5px; border-radius: var(--r-pill); flex: 0 0 auto; }

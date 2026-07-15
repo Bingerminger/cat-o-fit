@@ -1,0 +1,176 @@
+/* =========================================================================
+   family.css — Familiendashboard (Einstiegs- und Login-Seite).
+   ========================================================================= */
+
+.family-hero {
+  padding: var(--sp-6) var(--sp-1) var(--sp-4);
+  text-align: center;
+}
+.family-hero__brand {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em;
+}
+.family-hero__v {
+  font-size: 0.64rem; font-weight: 650; color: var(--text-2); opacity: 0.75;
+  border: 1px solid var(--border); border-radius: var(--r-pill);
+  padding: 1px 7px; margin-left: 2px;
+}
+.family-hero__title {
+  font-size: 1.6rem; font-weight: 820; letter-spacing: -0.02em;
+  margin-top: var(--sp-4); margin-bottom: 2px;
+}
+
+.member-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--sp-3);
+  padding: var(--sp-2) 0 var(--sp-7);
+}
+.member-card {
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  padding: var(--sp-4) var(--sp-3);
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--r-lg); cursor: pointer; text-align: center;
+  color: var(--text); font: inherit;
+  transition: transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+}
+.member-card:hover, .member-card:focus-visible {
+  transform: translateY(-2px); border-color: var(--accent);
+  box-shadow: var(--shadow-2);
+}
+.member-card:active { transform: translateY(0); }
+.member-card__avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 1.9rem;
+  line-height: 1;
+}
+.member-card__name { font-weight: 750; font-size: 1.02rem; }
+.member-card__meta { display: flex; align-items: center; gap: 6px; }
+.member-card__lock { font-size: 0.8rem; line-height: 1; }
+.member-card__goal {
+  font-size: 0.76rem; line-height: 1.3; min-height: 1.1em;
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* PIN-Dialog */
+.pin-dialog { display: flex; flex-direction: column; gap: var(--sp-3); align-items: stretch; }
+.pin-dialog__who { display: flex; align-items: center; gap: var(--sp-2); justify-content: center; }
+.pin-dialog__who .member-card__avatar { width: 44px; height: 44px; font-size: 1.4rem; }
+.pin-dialog__name { font-weight: 750; font-size: 1.1rem; }
+.pin-input {
+  font-size: 1.5rem; text-align: center; letter-spacing: 0.35em;
+  padding: var(--sp-3); border-radius: var(--r-md);
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); width: 100%;
+}
+.pin-input:focus { outline: none; border-color: var(--accent); }
+.pin-err { color: var(--bad); font-size: 0.84rem; text-align: center; }
+
+/* Mitglied-Editor: Emoji-/Farb-Picker */
+.picker-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.picker-chip {
+  width: 40px; height: 40px; border-radius: var(--r-md);
+  border: 1px solid var(--border); background: var(--surface);
+  font-size: 1.3rem; line-height: 1; cursor: pointer;
+  display: grid; place-items: center;
+}
+.picker-chip.is-sel { border-color: var(--accent); background: var(--accent-soft); }
+.picker-dot {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 3px solid transparent; cursor: pointer; padding: 0;
+}
+.picker-dot.is-sel { border-color: var(--text); }
+
+/* Banner: ein Admin verwaltet gerade ein anderes Mitglied */
+.manage-banner {
+  display: flex; align-items: center; gap: var(--sp-2);
+  padding: 8px var(--sp-4);
+  background: var(--accent-soft); color: var(--accent-strong);
+  font-size: 0.84rem; font-weight: 650;
+  border-bottom: 1px solid var(--border);
+}
+.manage-banner__back {
+  margin-left: auto; cursor: pointer;
+  background: var(--accent); color: var(--accent-contrast);
+  border: none; border-radius: var(--r-pill);
+  padding: 4px 12px; font-size: 0.8rem; font-weight: 700;
+}
+
+/* Familiendashboard: Kennzahlen pro Mitglied */
+.member-card__metrics {
+  display: flex; gap: 12px; margin-top: 6px; flex-wrap: wrap; justify-content: center;
+}
+.member-metric { text-align: center; min-width: 46px; }
+.member-metric__val { font-weight: 750; font-size: 0.9rem; }
+.member-metric__label {
+  font-size: 0.62rem; color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.03em;
+}
+
+/* Konto-Kopf im „Mehr"-Sheet (iPhone): wer ist angemeldet + Abmelden */
+.sheet-account {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: var(--sp-3); margin-bottom: var(--sp-3);
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+}
+.sheet-account__avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 1.4rem; flex: 0 0 auto;
+}
+.sheet-account__name { font-weight: 750; font-size: 1rem; }
+
+/* Familien-Wochenzusammenfassung */
+.family-summary {
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 65%, #3d8bff));
+  color: var(--accent-contrast);
+  border-radius: var(--r-lg); padding: var(--sp-4);
+  margin: 0 0 var(--sp-4);   /* volle Inhaltsbreite – wie die Karten darunter (kein eigener max-width-Deckel) */
+}
+.family-summary__title {
+  font-size: 0.76rem; font-weight: 650; opacity: 0.92;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.family-summary__stats { display: flex; gap: var(--sp-4); margin-top: var(--sp-2); }
+.family-summary__stat { flex: 1; }
+.family-summary__num { font-size: 1.5rem; font-weight: 820; line-height: 1.1; }
+.family-summary__lbl { font-size: 0.74rem; opacity: 0.9; }
+
+/* ---------- Team-Dashboard: Intro, Badges, Aktivität, Wettkämpfe ---------- */
+.team-intro {
+  display: flex; align-items: center; gap: var(--sp-2);
+  color: var(--text-2); font-size: 0.9rem; font-weight: 600;
+  padding: var(--sp-1) 0 var(--sp-2);
+}
+/* Kacheln auf dem Team-Dashboard sind reine Anzeige (kein Login mehr). */
+.member-card--static { cursor: default; }
+.member-card--static:hover, .member-card--static:focus-visible {
+  transform: none; border-color: var(--border); box-shadow: var(--shadow-1);
+}
+
+.team-badge__head { display: flex; align-items: center; gap: var(--sp-2); margin-bottom: 2px; }
+.team-badge__emoji { font-size: 1.2rem; line-height: 1; }
+.team-badge__title { font-weight: 750; font-size: 0.98rem; }
+
+.milestone-bar { height: 8px; border-radius: var(--r-pill); background: var(--surface-2); overflow: hidden; margin-top: 8px; }
+.milestone-bar__fill { height: 100%; border-radius: var(--r-pill); background: linear-gradient(90deg, var(--accent), var(--accent-strong)); transition: width 0.4s ease; }
+
+.activity-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px 4px 4px; border-radius: var(--r-pill);
+  background: var(--surface-2); border: 1px solid var(--border);
+  font-size: 0.82rem; font-weight: 650; color: var(--text-2);
+}
+.activity-chip.is-on { color: var(--text); border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+.activity-chip.is-top { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-strong); }
+.activity-chip__ava { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 0.9rem; }
+.activity-chip__mark { font-size: 0.8rem; }
+
+.race-row { display: flex; align-items: center; gap: var(--sp-3); }
+.race-row__dot { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto; }
+.race-row__name { font-weight: 700; font-size: 0.92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.race-row__cd { text-align: center; min-width: 40px; flex: 0 0 auto; }
+
+/* ---------- Ersteinrichtung (Assistent) ---------- */
+.setup-card { max-width: 440px; margin: 0 auto; }
+.setup-choice { width: 100%; text-align: left; }

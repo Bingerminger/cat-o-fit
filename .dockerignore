@@ -1,0 +1,23 @@
+# Versionskontrolle & GitHub
+.git
+.github
+.gitignore
+.editorconfig
+
+# Doku, Tests & Entwickler-Werkzeuge (nicht Teil der laufenden App)
+docs
+test
+test-setup.js
+tools
+node_modules
+scratch
+package.json
+*.md
+
+# Demo-Seeds bleiben draußen: Der Container startet bewusst mit leerer Instanz
+# (Ersteinrichtungs-Assistent, Demodaten dort ladbar); data/.htaccess kommt mit.
+data/*.json
+
+# Docker-Selbstbezug
+docker-compose.yml
+.dockerignore

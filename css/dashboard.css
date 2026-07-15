@@ -1,0 +1,87 @@
+/* =========================================================================
+   dashboard.css — Tages-/Wochenübersicht, Hero-Countdown, Schnellaktionen.
+   ========================================================================= */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(140deg, var(--accent), var(--accent-strong));
+  color: var(--accent-contrast);
+  border-radius: var(--r-xl);
+  padding: var(--sp-5);
+  box-shadow: var(--shadow-2);
+}
+.hero::after {
+  content: "";
+  position: absolute; right: -40px; top: -40px;
+  width: 180px; height: 180px; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+}
+.hero__eyebrow {
+  font-size: 0.74rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.06em; opacity: 0.85;
+}
+.hero__title { font-size: 1.5rem; font-weight: 800; margin: 2px 0 var(--sp-4); position: relative; }
+.hero__row { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--sp-3); position: relative; }
+
+.greeting { margin-bottom: var(--sp-2); }
+.greeting__hi { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; }
+.greeting__sub { color: var(--text-2); font-size: 0.9rem; }
+
+/* Heutiges Training */
+.today-card__none {
+  display: flex; align-items: center; gap: var(--sp-3);
+  color: var(--text-2);
+}
+
+/* Wochenstreifen (7 Tage Mini-Übersicht) */
+.week-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.week-strip__day {
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  padding: var(--sp-2) 2px;
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  min-height: 64px;
+}
+.week-strip__day.is-today { box-shadow: inset 0 0 0 2px var(--accent); }
+.week-strip__dow { font-size: 0.64rem; font-weight: 700; color: var(--text-3); text-transform: uppercase; }
+.week-strip__dot { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; }
+.week-strip__dot svg { width: 12px; height: 12px; color: #fff; }
+.week-strip__rest { width: 7px; height: 7px; border-radius: 50%; background: var(--border-2); }
+.week-strip__date { font-size: 0.72rem; font-weight: 700; }
+.week-strip__done { position: relative; }
+.week-strip__done::after {
+  content: ""; position: absolute; right: -2px; bottom: -2px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--good); border: 1.5px solid var(--surface);
+}
+
+/* Schnellaktionen */
+.quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: var(--sp-3); }
+.quick-action {
+  display: flex; flex-direction: column; align-items: center; gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-1);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: 0.72rem; font-weight: 650; color: var(--text-2);
+  text-align: center;
+}
+.quick-action:active { transform: scale(0.95); }
+.quick-action__ico {
+  width: 40px; height: 40px; border-radius: var(--r-pill);
+  display: grid; place-items: center;
+  background: var(--accent-soft); color: var(--accent-strong);
+}
+.quick-action__ico svg { width: 20px; height: 20px; }
+
+/* Wochen-Kennzahlen-Block */
+/* minmax(0,1fr) statt 1fr: garantiert exakt gleich breite Spalten – sonst können
+   die Boxen in Safari je nach Inhalt unterschiedlich breit werden. */
+.week-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); align-items: stretch; }
+/* Im Grid darf die globale „.card + .card"-Regel keinen Versatz erzeugen. */
+.week-stats > .card + .card { margin-top: 0; }
+
+/* Streak */
+.streak { display: inline-flex; align-items: center; gap: 6px; font-weight: 750; }
+.streak svg { width: 18px; height: 18px; color: var(--warn); }

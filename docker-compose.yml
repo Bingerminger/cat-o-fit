@@ -1,0 +1,27 @@
+# =============================================================================
+# Cat-O-Fit per Docker Compose — läuft auf amd64 und arm64
+# (Mac, Synology Container Manager, jeder Docker-Host).
+#
+#   docker compose up -d      → App unter http://localhost:8080
+#
+# Standard ist das fertige Image aus der GitHub Container Registry; zum
+# Selberbauen einmalig `docker compose build` ausführen (nutzt das Dockerfile
+# in diesem Verzeichnis).
+#
+# Synology-Tipp (Container Manager → Projekt): statt des benannten Volumes
+# einen Ordner binden, z. B.
+#   - /volume1/docker/cat-o-fit/data:/var/www/html/data
+# =============================================================================
+services:
+  cat-o-fit:
+    image: ghcr.io/bingerminger/cat-o-fit:latest
+    build: .
+    container_name: cat-o-fit
+    ports:
+      - "8080:80"
+    volumes:
+      - cat-o-fit-data:/var/www/html/data
+    restart: unless-stopped
+
+volumes:
+  cat-o-fit-data:

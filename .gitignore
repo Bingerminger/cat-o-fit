@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# Atomare Schreib-Temporärdateien der PHP-Persistenz
+data/.tmp_*
+
+# Laufzeit-Datenablage (wird von ensure_bootstrap() aus den flachen Seeds erzeugt).
+# Der Repo-Seed bleibt bewusst die flache Struktur (data/<area>.json); beim ersten
+# Start migriert der Server sie automatisch zur ersten Familie.
+data/users/
+data/family/
+data/.bootstrap.lock
+
+# Open-Food-Facts-Nährwert-Cache (Laufzeit, maschinenspezifisch)
+data/foodfacts.json
+
+# Lokale Entwickler-Werkzeuge & Arbeitsverzeichnisse (maschinenspezifisch)
+.playwright-mcp/
+scratch/
+graphify-out/
+.understand-anything/
+.claude/
+*.log
