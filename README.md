@@ -32,6 +32,65 @@ Hintergrund-Sync zwischen den Geräten.
 > Vom periodisierten Wettkampfplan über Kraft- und Gesundheitsprogramme bis zu Ernährung,
 > Werte-Tracking und Statistik – jede Person im Haushalt mit eigenem Profil, Zyklusdaten strikt privat.
 
+## Schnellstart
+
+Cat-O-Fit läuft **bei dir zu Hause** – nichts landet in einer fremden Cloud. Wähle den
+Weg, der zu dir passt; danach führt dich die App selbst durch die Ersteinrichtung.
+
+### Weg 1 · Docker am Mac/PC oder Server (am schnellsten)
+
+Voraussetzung: [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+(Mac/Windows) bzw. Docker (Linux) ist installiert. Dann genügt ein Befehl:
+
+```bash
+docker run -d --name cat-o-fit -p 8080:80 \
+  -v cat-o-fit-data:/var/www/html/data \
+  ghcr.io/bingerminger/cat-o-fit:latest
+```
+
+Jetzt im Browser **http://localhost:8080** öffnen – fertig. Das Image läuft auf
+Intel/AMD **und** Apple Silicon/ARM.
+
+### Weg 2 · Synology NAS per Container Manager (ohne Kommandozeile)
+
+1. Im **Paket-Zentrum** den **Container Manager** installieren (falls noch nicht vorhanden).
+2. Container Manager öffnen → **Projekt** → **Erstellen**.
+3. Projektname `cat-o-fit`; als Pfad z. B. `/docker/cat-o-fit` anlegen/auswählen.
+4. Quelle „**docker-compose.yml erstellen**" wählen und diesen Inhalt einfügen:
+
+   ```yaml
+   services:
+     cat-o-fit:
+       image: ghcr.io/bingerminger/cat-o-fit:latest
+       ports:
+         - "8080:80"
+       volumes:
+         - /volume1/docker/cat-o-fit/data:/var/www/html/data
+       restart: unless-stopped
+   ```
+
+5. **Weiter → Fertig.** Die App läuft nun unter `http://<ip-deiner-synology>:8080`.
+   (Ist Port 8080 schon belegt, einfach die erste Zahl ändern, z. B. `8081:80`.)
+6. Deine Daten liegen als normale Dateien unter `/volume1/docker/cat-o-fit/data` –
+   ideal für die Synology-Datensicherung (z. B. Hyper Backup).
+
+### Weg 3 · Ohne Docker: Webspace oder Synology Web Station
+
+Alle Projektdateien in einen PHP-fähigen Web-Ordner kopieren und dem Webserver
+Schreibrechte auf `data/` geben – die ausführliche Klick-Anleitung steht unter
+[Einrichtung auf der Synology Web Station](#einrichtung-auf-der-synology-web-station).
+
+### Die ersten 5 Minuten in der App
+
+1. Beim ersten Öffnen startet der **Ersteinrichtungs-Assistent**: Namen eingeben,
+   PIN wählen – fertig.
+2. Neugierig? **„Mit Demodaten starten"** füllt die App mit einer Beispiel-Familie zum
+   Ausprobieren; „App zurücksetzen" (Einstellungen, Admin) macht alles wieder leer.
+3. Aufs **iPhone/iPad** holen: Adresse in Safari öffnen → **Teilen → „Zum
+   Home-Bildschirm"** – Cat-O-Fit startet dann wie eine echte App im Vollbild.
+4. Von unterwegs nutzbar & PWA-Installation: **HTTPS** einrichten (Synology:
+   Anwendungsportal → Reverse-Proxy mit Zertifikat).
+
 ## 📖 Dokumentation
 
 - **[Benutzerhandbuch](docs/BENUTZERHANDBUCH.md)** – Schritt-für-Schritt-Anleitungen mit
@@ -178,33 +237,24 @@ Hintergrund-Sync zwischen den Geräten.
 
 ---
 
-## Schnellstart mit Docker
+## Docker im Detail
 
-Für Mac, Synology (Container Manager) und jeden anderen Docker-Host – das Image ist
-**Multi-Arch** (`linux/amd64` + `linux/arm64`, läuft also auf Intel/AMD **und**
-Apple Silicon/ARM-NAS).
+Das Image ist **Multi-Arch** (`linux/amd64` + `linux/arm64`) und wird bei jedem Release
+automatisch gebaut und in die GitHub Container Registry veröffentlicht
+(`ghcr.io/bingerminger/cat-o-fit`, Tags: `latest`, `3.15`, `3.15.0`, …). Der schnellste
+Einstieg steht oben im [Schnellstart](#schnellstart).
 
-```bash
-# Variante 1: fertiges Image aus der GitHub Container Registry
-docker run -d --name cat-o-fit -p 8080:80 \
-  -v cat-o-fit-data:/var/www/html/data \
-  ghcr.io/bingerminger/cat-o-fit:latest
-
-# Variante 2: Repo klonen und mit Compose starten (baut das Image bei Bedarf selbst)
-docker compose up -d
-```
-
-Danach `http://localhost:8080` öffnen – der Container startet mit **leerer Instanz** und
-führt durch die **Ersteinrichtung** (Admin anlegen, optional Demodaten laden).
-
-- **Daten:** liegen im Volume `cat-o-fit-data` (bzw. im gebundenen Ordner) und überstehen
-  Updates; `data/` ist im Container zusätzlich serverseitig gegen direkten Webzugriff gesperrt.
-- **Update:** `docker compose pull && docker compose up -d` – die Daten bleiben im Volume.
-- **Synology (Container Manager):** Projekt anlegen, Inhalt der `docker-compose.yml`
-  einfügen; für die Daten statt des benannten Volumes einen Ordner binden, z. B.
-  `/volume1/docker/cat-o-fit/data:/var/www/html/data`.
+- **Selbst bauen statt ziehen:** Repo klonen und `docker compose up -d` – die
+  `docker-compose.yml` im Repo nutzt bei Bedarf das `Dockerfile`.
+- **Leerer Erststart:** Der Container enthält bewusst keine Demo-Daten und startet mit
+  der **Ersteinrichtung** (Admin anlegen, optional Demodaten laden).
+- **Daten:** liegen im Volume bzw. im gebundenen Ordner (`/var/www/html/data`) und
+  überstehen Updates; `data/` ist im Container zusätzlich serverseitig gegen direkten
+  Webzugriff gesperrt.
+- **Update:** `docker compose pull && docker compose up -d` – die Daten bleiben erhalten.
 - **PHP-Voreinstellungen:** Uploads bis 1 GB (Apple-Health-Voll-Import) und Zeitzone
   Europe/Berlin sind vorkonfiguriert (`docker/php.ini`).
+- **Healthcheck** ist eingebaut (API-Ping) – der Status erscheint z. B. in `docker ps`.
 - **HTTPS:** für die PWA-Installation den Container hinter einen Reverse-Proxy mit gültigem
   Zertifikat legen (Synology: Anwendungsportal → Reverse-Proxy).
 
@@ -318,7 +368,7 @@ cat-o-fit/
     ics.php               .ics-Generierung (RFC 5545, TZID Europe/Berlin)
     health-import.php     Apple-Health-Export (XMLReader-Streaming)
   data/                   JSON-Daten (durch .htaccess geschützt)
-  css/                    style, cards, dashboard, calendar, session, workout-mode, family, responsive
+  css/                    style, cards, dashboard, calendar, session, workout-mode, family, report, responsive
   js/                     app, router, storage, api-client, ui, charts + alle View-Module
   assets/icons/           App-Icons (SVG + PNG)
   test/                   Unit- & Regressionstests (node:test, *.test.js)

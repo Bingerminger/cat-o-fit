@@ -320,7 +320,7 @@ cat-o-fit/
 3. Per HTTPS aufrufen; `api/api.php?action=ping` muss `{"ok":true}` liefern.
 
 **Docker** (Multi-Arch: amd64 + arm64) – Details im
-[README](../README.md#schnellstart-mit-docker):
+[README](../README.md#docker-im-detail):
 
 ```bash
 docker compose up -d   # Image bauen/ziehen; App auf Port 8080, data/ im Volume

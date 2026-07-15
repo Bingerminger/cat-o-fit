@@ -29,7 +29,7 @@ function content(name) {
           q: `Willkommen, ${name}!`,
           body: [
             { p: `Cat-O-Fit ist deine persönliche Fitness- & Health-App, ${name}. Du verfolgst damit deine Ziele – einen Zielwettkampf oder ein Trainingsprogramm ohne Wettkampf (Fitness, Kraft, Abnehmen, Beweglichkeit): Du legst dein Ziel an, bekommst dafür einen Plan, trainierst – und siehst Schritt für Schritt deinen Fortschritt.` },
-            { p: 'Alles läuft auf deiner eigenen Synology und speichert sofort lokal – auch ohne Internet, mitten im Training.' },
+            { p: 'Alles läuft auf deinem eigenen Server oder NAS und speichert sofort lokal – auch ohne Internet, mitten im Training.' },
             { tip: 'Du kannst die App auf den Home-Bildschirm legen (Teilen-Symbol in Safari → „Zum Home-Bildschirm"). Dann startet sie wie eine echte App im Vollbild.' },
           ],
         },
@@ -447,7 +447,7 @@ function content(name) {
           body: [
             { p: 'Aktiviere ihn in den Einstellungen (Module) und markiere deinen Periodenbeginn. Cat-O-Fit berechnet daraus deine Zykluslänge, die aktuelle Phase (Menstruation/Follikel/Ovulation/Luteal) und die Prognose der nächsten Periode.' },
             { p: 'An deinen Menstruationstagen sind Einheiten „geschützt": Du kannst sie ohne Wertung verschieben oder auslassen – sie zählen nicht als verpasst und schmälern weder Plan-Einhaltung noch Momentum. Trainierst du trotzdem, gibt es das Abzeichen „Harte Kämpferin" 🥊.' },
-            { tip: 'Sensible Daten bleiben lokal auf deiner Synology – das Modul ist jederzeit abschaltbar.' },
+            { tip: 'Sensible Daten bleiben lokal auf deinem eigenen Server – das Modul ist jederzeit abschaltbar.' },
             { link: { label: 'Zum Zykluskalender', hash: '#/zyklus' } },
           ],
         },
@@ -457,7 +457,7 @@ function content(name) {
       id: 'faq', title: 'Gut zu wissen', icon: 'bell',
       articles: [
         { q: 'Funktioniert die App offline?', body: [{ p: 'Ja. Cat-O-Fit speichert jede Änderung sofort lokal und synchronisiert im Hintergrund, sobald wieder Verbindung besteht – ideal fürs Training unterwegs.' }] },
-        { q: 'Sind meine Daten sicher?', body: [{ p: 'Deine Daten liegen als Dateien auf deiner eigenen Synology, nicht in einer fremden Cloud. Über die Einstellungen → „Daten & Sicherung" kannst du jederzeit dein persönliches Backup exportieren (inkl. deiner privaten Zyklusdaten). Admins können zusätzlich ein Familien-Vollbackup aller Mitglieder sichern und im Notfall autoritativ wiederherstellen – aus Datenschutzgründen ohne fremde Zyklusdaten.' }] },
+        { q: 'Sind meine Daten sicher?', body: [{ p: 'Deine Daten liegen als Dateien auf deinem eigenen Server oder NAS, nicht in einer fremden Cloud. Über die Einstellungen → „Daten & Sicherung" kannst du jederzeit dein persönliches Backup exportieren (inkl. deiner privaten Zyklusdaten). Admins können zusätzlich ein Familien-Vollbackup aller Mitglieder sichern und im Notfall autoritativ wiederherstellen – aus Datenschutzgründen ohne fremde Zyklusdaten.' }] },
         {
           q: 'Können mehrere Personen Cat-O-Fit nutzen?',
           body: [

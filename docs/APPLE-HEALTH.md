@@ -79,12 +79,11 @@ gemergt (deine Stimmung/Energie/Notizen bleiben), und ein manuell geloggtes Trai
 ein deckungsgleiches importiertes.
 
 ## Sicherheit & Umgebungen
-- Der Endpunkt liegt **hinter dem `.htpasswd`** der Seite; zusätzlich schützt ihn dein
-  **persönliches Token**.
-- **Produktion und Abnahme sind strikt getrennt.** Die in den Einstellungen angezeigte URL zeigt
-  jeweils auf die eigene Umgebung; Token und Daten sind pro Nutzer **und** pro Umgebung isoliert.
-  Für die Produktion die PROD-URL (`…/cat-o-fit/…`) verwenden, für Tests die Abnahme
-  (`…/cat-o-fit-acc/…`).
+- Der Endpunkt ist durch dein **persönliches Token** geschützt. Liegt deine Instanz zusätzlich
+  hinter einer Server-Anmeldung (Basic Auth/`.htpasswd`), gilt beides.
+- **Mehrere Instanzen? Kein Problem.** Betreibst du Cat-O-Fit mehrfach unter derselben Adresse
+  (z. B. eine zusätzliche Test-Instanz), sind Token und Daten pro Nutzer **und** pro Instanz
+  isoliert; die in den Einstellungen angezeigte URL gehört immer zur gerade genutzten Instanz.
 - **Token neu erzeugen** (Health-Import → Apple Health → ⟳) macht die alte URL ungültig – dann in
   „Health Auto Export" die URL ersetzen.
 

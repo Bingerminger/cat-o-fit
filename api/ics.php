@@ -335,7 +335,7 @@ if ($scope === 'session') {
 $cal = [];
 $cal[] = 'BEGIN:VCALENDAR';
 $cal[] = 'VERSION:2.0';
-$cal[] = 'PRODID:-//Catofit//Lauftraining//DE';
+$cal[] = 'PRODID:-//Cat-O-Fit//Lauftraining//DE';
 $cal[] = 'CALSCALE:GREGORIAN';
 $cal[] = 'METHOD:PUBLISH';
 $cal[] = 'X-WR-CALNAME:Catofit Training';

@@ -40,7 +40,7 @@ Cat-O-Fit dreht sich um **deine Zielwettkämpfe**. Der rote Faden ist immer glei
 
 Du legst ein Event an (z. B. den Dresden Halbmarathon), bekommst dafür automatisch einen
 periodisierten Plan, trainierst nach Kalender – und siehst, wie du dich entwickelst. Alles
-speichert sofort lokal auf deiner Synology, auch ohne Internet mitten im Lauf.
+speichert sofort lokal auf deinem eigenen Server oder NAS, auch ohne Internet mitten im Lauf.
 
 > 💡 **Tipp:** Lege die App über das Teilen-Symbol in Safari „Zum Home-Bildschirm". Dann
 > startet sie wie eine echte App im Vollbild.
@@ -56,8 +56,9 @@ Sportmannschaft oder Familie.
 
 **Ersteinrichtung (erster Start):** Beim allerersten Start führt dich ein kurzer Assistent durch zwei
 Schritte: Du legst zuerst eine:n **Administrator:in** an (Name, optionale PIN) und wählst dann, ob
-**Demodaten** geladen werden (Beispiel-Wettkampf, Trainingshistorie und zwei Demo-Mitglieder zum
-Ausprobieren) oder ob du **leer startest**. Als Admin kannst du danach jederzeit weitere Mitglieder anlegen.
+**Demodaten** geladen werden (Beispiel-Wettkampf, Trainingshistorie und eine komplette
+Beispiel-Familie mit mehreren Mitgliedern und Teams zum Ausprobieren) oder ob du **leer
+startest**. Als Admin kannst du danach jederzeit weitere Mitglieder anlegen.
 
 **Anmelden:** Solange niemand angemeldet ist, zeigt Cat-O-Fit nur den **Anmelde-Dialog** mit den
 Profil-Kacheln – ganz ohne Menüs. Tippe auf dein Profil und gib (falls gesetzt) deine **PIN** ein; danach
@@ -596,7 +597,7 @@ Eine zyklusbewusste, rücksichtsvolle Trainingsplanung – **opt-in** und jederz
    noch Momentum.
 4. Trainierst du trotzdem, gibt es das Abzeichen **„Harte Kämpferin" 🥊**.
 
-> 🔒 **Datenschutz:** Diese sensiblen Daten bleiben – wie alles in Cat-O-Fit – lokal auf deiner Synology.
+> 🔒 **Datenschutz:** Diese sensiblen Daten bleiben – wie alles in Cat-O-Fit – lokal auf deinem eigenen Server oder NAS.
 
 <br clear="all" />
 
@@ -751,7 +752,7 @@ Synchronisierung läuft im Hintergrund, sobald wieder Verbindung besteht.
 zusammen – bearbeitest du auf beiden Geräten verschiedene Dinge, bleiben **beide** erhalten. Nichts
 geht verloren, auch wenn die Uhren der Geräte leicht abweichen.
 
-**Sind meine Daten sicher?** Sie liegen als Dateien auf deiner eigenen Synology, nicht in
+**Sind meine Daten sicher?** Sie liegen als Dateien auf deinem eigenen Server oder NAS, nicht in
 einer fremden Cloud. Über die Einstellungen kannst du jederzeit ein Backup exportieren.
 
 **Wie zuverlässig sind Erinnerungen?** Am verlässlichsten über den **Kalender-Export (.ics)** –
@@ -765,7 +766,7 @@ neueste Version.
 ## Team & Familie (umgesetzt)
 
 Cat-O-Fit ist längst **mehrbenutzerfähig**: Bis zu **32 Personen** – ob Laufgruppe, Sportmannschaft
-oder Familie – nutzen die App auf derselben Synology, jede mit eigenen Events, Plänen, Trainings und
+oder Familie – nutzen die App auf demselben Server, jede mit eigenen Events, Plänen, Trainings und
 Körperwerten. Wie Anmeldung, Rollen und gemeinsame Listen funktionieren, steht oben unter
 [Team/Familie & Anmeldung](#teamfamilie--anmeldung). „Nora" in diesem Handbuch steht stellvertretend
 für die jeweils angemeldete Person.
