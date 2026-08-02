@@ -601,7 +601,8 @@ knapp, und das kostet Leistung, lange bevor eine Blutarmut entsteht. Cat-O-Fit z
    bewusst nicht.
 2. **Wert erfassen:** Analyt wählen (17 sportrelevante von Ferritin über Vitamin D bis fT3),
    Datum, Messwert und Einheit. Die **Einheit lässt sich umstellen** – Vitamin D etwa steht auf
-   Befunden mal in ng/ml, mal in nmol/l (Faktor 2,5, eine häufige Verwechslung).
+   Befunden mal in ng/ml, mal in nmol/l (Faktor 2,5, eine häufige Verwechslung). Dazu der
+   **Referenzbereich deines Labors** (siehe unten) und optional eine Notiz.
 3. **Einordnung:** Antippen zeigt Verlauf, beide Korridore und eine Erklärung. Fällt ein Wert
    über mehrere Messungen, rechnet die App aus, **wann** er den günstigen Bereich verlässt –
    ein guter Termin für die nächste Kontrolle.
@@ -632,6 +633,51 @@ ein, zeigt ein Balkendiagramm deine **Einnahmetreue** der letzten drei Wochen.
 Im Beispiel oben liegt das **Ferritin bei 34 µg/l**: laut Labor (15–300) unauffällig, im
 Sport-Zielbereich (40–200) aber zu niedrig – und die Kurve zeigt, dass es seit einem Jahr
 kontinuierlich fällt. Genau solche Verläufe sieht man in einem einzelnen Befund nicht.
+
+### Woher bekomme ich die Werte? (Deutschland)
+
+Vier bis fünf Wege führen zu einem Laborbefund – sie unterscheiden sich vor allem darin,
+**wer zahlt** und wie sportnah die Auswahl der Werte ist.
+
+| Weg | Was drin ist | Kosten |
+|---|---|---|
+| **Sportmedizinische Untersuchung** ⭐ | Der eigentlich passende Weg: Ärztin oder Arzt mit Zusatzbezeichnung **Sportmedizin**, oft an sportmedizinischen Instituten, Unikliniken oder in größeren Praxen. Meist Blutbild, Eisenstatus, Leber- und Nierenwerte – häufig zusammen mit einer Leistungsdiagnostik. | ca. **100–300 €** |
+| **Haus- oder Facharztpraxis** | Auf Kassenkosten nur bei **medizinischer Indikation** (Beschwerden, konkreter Verdacht). „Ferritin, weil ich viel laufe" ist keine – das läuft als Selbstzahlerleistung (IGeL). | Kasse bei Indikation, sonst ca. **20–60 €** |
+| **Check-up 35** | Gesetzliche Vorsorge: einmalig zwischen 18 und 34, danach alle drei Jahre. Cholesterin, Blutzucker, Urinstatus – **weder Ferritin noch Vitamin D**. | Kassenleistung |
+| **Einsende-/Selbstzahlerlabor** | Testkit für zu Hause (Blut aus der Fingerbeere) oder venöse Blutentnahme als Selbstzahler bei einem klassischen Labor. | ca. **30–150 €** |
+| **Blutspende** | Hämoglobin bei jeder Spende; manche Spendedienste bestimmen bei regelmäßigen Spender:innen zusätzlich das **Ferritin**. | kostenlos |
+
+> 💰 **Wenig bekannt:** Viele gesetzliche Krankenkassen **bezuschussen den Sportcheck** als
+> freiwillige Satzungsleistung – häufig 100–150 € alle ein bis zwei Jahre. Ein Anruf bei
+> deiner Kasse lohnt sich, bevor du selbst zahlst.
+
+> 🔬 **Für Verläufe wichtig:** Möglichst beim **selben Labor und Verfahren** bleiben. Blut aus
+> der Fingerbeere ist empfindlicher in der Vorbereitung als eine venöse Blutentnahme – kleine
+> Sprünge zwischen zwei Anbietern sind oft Messunterschiede und keine echte Veränderung.
+> Regelmäßiges Blutspenden senkt übrigens die Eisenspeicher spürbar; als Ausdauersportler:in
+> lohnt dann der Blick aufs Ferritin besonders.
+
+### Warum du den Referenzbereich deines Labors einträgst
+
+In Deutschland gibt es **keine bundesweit einheitlichen Referenzbereiche**. Jedes Labor legt
+eigene fest – abhängig von Messmethode, Gerät und Vergleichsgruppe. Bei Ferritin, fT3 oder
+Vitamin B12 unterscheiden sie sich spürbar. Deshalb steht der Bereich immer **auf deinem
+Befund** neben dem Wert: Er gehört dazu.
+
+Beim Erfassen sind darum zwei Felder **„Referenzbereich deines Labors"** vorbelegt – mit einem
+üblichen Bereich. Steht auf deinem Befund etwas anderes, trag es einfach ein: Cat-O-Fit
+bewertet den Wert dann gegen *dein* Labor, und der sportliche Zielkorridor bleibt als zweite
+Ebene daneben bestehen.
+
+**Was dagegen sehr wohl geregelt ist:** Die Qualitätssicherung der Labore (Richtlinie der
+Bundesärztekammer, **RiliBÄK**, mit verpflichtenden Ringversuchen), häufig ergänzt durch eine
+Akkreditierung nach **DIN EN ISO 15189**. Für die Übermittlung an Praxen gibt es mit **LDT**
+einen deutschen Standard, international **HL7 FHIR**; über die **elektronische Patientenakte
+(ePA)** kommen Befunde zunehmend digital bei dir an.
+
+**Nicht geregelt sind sportspezifische Zielwerte.** Was Cat-O-Fit als Sport-Zielkorridor zeigt
+(etwa Ferritin über 40 statt über 15), stammt aus sportmedizinischer Fachliteratur und
+internationalen Positionspapieren – nicht aus einer deutschen Norm.
 
 > 🔒 **Privat wie der Zyklus:** Laborwerte und Ergänzungen sieht **nur du** – auch Admins nicht.
 > Sie bleiben aus dem Familien-Vollbackup heraus; in deinem persönlichen Backup sind sie dabei.

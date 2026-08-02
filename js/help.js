@@ -262,6 +262,27 @@ function content(name) {
           { p: 'Die Darstellungen sind bewusst symbolisch und ersetzen keine individuelle Anleitung.' },
           { link: { label: 'Öffnen', hash: '#/uebungen' } },
         ] },
+        { q: 'Woher bekomme ich meine Laborwerte?', body: [
+          { p: 'In Deutschland führen mehrere Wege zu einem Befund – sie unterscheiden sich vor allem darin, wer zahlt und wie sportnah die Auswahl der Werte ist.' },
+          { steps: [
+            'Sportmedizinische Untersuchung (passt am besten): Ärztin oder Arzt mit Zusatzbezeichnung Sportmedizin, oft an sportmedizinischen Instituten oder Unikliniken – meist Blutbild, Eisenstatus und Organwerte, häufig mit Leistungsdiagnostik. Etwa 100–300 €.',
+            'Haus- oder Facharztpraxis: Auf Kassenkosten nur bei medizinischer Indikation. „Ferritin, weil ich viel laufe" zählt nicht dazu – das läuft als Selbstzahlerleistung, etwa 20–60 €.',
+            'Check-up 35: Die gesetzliche Vorsorge (ab 18 einmalig, ab 35 alle drei Jahre) bringt Cholesterin, Blutzucker und Urin – aber weder Ferritin noch Vitamin D.',
+            'Einsende- oder Selbstzahlerlabor: Testkit für zu Hause oder venöse Blutentnahme als Selbstzahler, etwa 30–150 €.',
+            'Blutspende: Hämoglobin bei jeder Spende; manche Dienste bestimmen bei Vielspendern auch das Ferritin.',
+          ] },
+          { tip: 'Viele gesetzliche Krankenkassen bezuschussen den Sportcheck als freiwillige Satzungsleistung – oft 100–150 € alle ein bis zwei Jahre. Das wissen die wenigsten: einfach vorher bei deiner Kasse nachfragen.' },
+          { p: 'Für Verlaufsvergleiche möglichst beim selben Labor und Verfahren bleiben. Blut aus der Fingerbeere ist empfindlicher in der Vorbereitung als eine venöse Blutentnahme; kleine Sprünge zwischen zwei Anbietern sind oft Messunterschiede und keine echte Veränderung.' },
+        ] },
+        { q: 'Warum trage ich den Referenzbereich meines Labors ein?', body: [
+          { p: 'Weil es in Deutschland KEINE bundesweit einheitlichen Referenzbereiche gibt: Jedes Labor legt eigene fest – abhängig von Messmethode, Gerät und Vergleichsgruppe. Bei Ferritin, fT3 oder Vitamin B12 unterscheiden sie sich spürbar. Deshalb steht der Bereich immer auf deinem Befund neben dem Wert.' },
+          { steps: [
+            'Beim Erfassen eines Werts sind zwei Felder „Referenzbereich deines Labors" vorbelegt – mit einem üblichen Bereich.',
+            'Steht auf deinem Befund etwas anderes, trag es einfach dort ein.',
+            'Cat-O-Fit bewertet den Wert dann gegen DEIN Labor. Der sportliche Zielkorridor bleibt als zweite Ebene daneben bestehen.',
+          ] },
+          { p: 'Was normiert ist: Qualitätssicherung und Ringversuche der Labore (RiliBÄK), viele Labore zusätzlich nach DIN EN ISO 15189 akkreditiert. Nicht normiert sind die Referenzbereiche selbst – und sportspezifische Zielwerte gibt es offiziell ohnehin nicht; die Sport-Zielkorridore hier stammen aus sportmedizinischer Fachliteratur.' },
+        ] },
         { q: 'Labor & Ergänzung', body: [
           { p: 'Werte aus deinem Laborbefund erfassen, ihren Verlauf verfolgen und sportbezogen einordnen lassen. Der Clou: Laborbereiche gelten für die Allgemeinbevölkerung – ein Ferritin von 25 µg/l ist „normal", für Ausdauertraining aber knapp. Cat-O-Fit zeigt dir beide Korridore.' },
           { steps: [

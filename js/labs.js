@@ -148,12 +148,32 @@ export function toCanonical(key, value, unit) {
   return f ? Math.round(v * f * 1000) / 1000 : null;
 }
 
-/** Referenzbereich – geschlechtsabhängig, wo hinterlegt. */
-export function refRange(key, sex) {
+/**
+ * Referenzbereich eines Analyten.
+ *
+ * WICHTIG: In Deutschland gibt es KEINE bundesweit einheitlichen Referenzbereiche –
+ * jedes Labor gibt eigene an, abhängig von Messmethode, Gerät und Referenzkollektiv
+ * (bei Ferritin, fT3 oder B12 unterscheiden sie sich spürbar). Deshalb hat der auf
+ * dem eigenen Befund abgedruckte Bereich IMMER Vorrang vor dem hinterlegten
+ * Standardwert; der Standard ist nur die Rückfallebene, wenn nichts erfasst wurde.
+ *
+ * @param {object|null} record Laborwert-Datensatz mit optionalem refLow/refHigh
+ */
+export function refRange(key, sex, record = null) {
+  const lo = Number(record && record.refLow);
+  const hi = Number(record && record.refHigh);
+  if (Number.isFinite(lo) && Number.isFinite(hi) && hi > lo) return [lo, hi];
   const a = ANALYTES[key];
   if (!a) return null;
   if (a.bySex && sex && a.bySex[sex]) return a.bySex[sex];
   return a.ref || null;
+}
+
+/** Stammt der Referenzbereich dieses Datensatzes vom eigenen Labor? */
+export function hasOwnRef(record) {
+  const lo = Number(record && record.refLow);
+  const hi = Number(record && record.refHigh);
+  return Number.isFinite(lo) && Number.isFinite(hi) && hi > lo;
 }
 
 /* ------------------------------ Bewertung -------------------------------- */
@@ -178,12 +198,14 @@ export function series(labs = [], key) {
  * @returns {{status, label, tone, ref, sport, blocked?:string}}
  *   status: 'niedrig' | 'grenzwertig' | 'gut' | 'hoch' | 'unbeurteilbar' | 'unbekannt'
  */
-export function assess(key, value, { sex = null, labs = [], today = null } = {}) {
+export function assess(key, value, { sex = null, labs = [], today = null, record = null } = {}) {
   const a = ANALYTES[key];
   const v = Number(value);
   if (!a || !Number.isFinite(v)) return { status: 'unbekannt', label: 'unbekannt', tone: 'neutral' };
 
-  const ref = refRange(key, sex);
+  // Der Referenzbereich des eigenen Befunds schlägt den hinterlegten Standard.
+  const ref = refRange(key, sex, record);
+  const ownRef = hasOwnRef(record);
   const sport = a.sport || null;
 
   // Kontext-Prüfung: manche Werte sind bei Entzündung schlicht nicht beurteilbar.
@@ -197,11 +219,11 @@ export function assess(key, value, { sex = null, labs = [], today = null } = {})
     }
   }
 
-  if (ref && v < ref[0]) return { status: 'niedrig', label: 'unter dem Referenzbereich', tone: 'bad', ref, sport };
-  if (ref && v > ref[1]) return { status: 'hoch', label: 'über dem Referenzbereich', tone: 'bad', ref, sport };
-  if (sport && v < sport[0]) return { status: 'grenzwertig', label: 'im Normbereich, für Sport eher knapp', tone: 'warn', ref, sport };
-  if (sport && v > sport[1]) return { status: 'grenzwertig', label: 'im Normbereich, aber hoch', tone: 'warn', ref, sport };
-  return { status: 'gut', label: 'im günstigen Bereich', tone: 'good', ref, sport };
+  if (ref && v < ref[0]) return { status: 'niedrig', label: 'unter dem Referenzbereich', tone: 'bad', ref, sport, ownRef };
+  if (ref && v > ref[1]) return { status: 'hoch', label: 'über dem Referenzbereich', tone: 'bad', ref, sport, ownRef };
+  if (sport && v < sport[0]) return { status: 'grenzwertig', label: 'im Normbereich, für Sport eher knapp', tone: 'warn', ref, sport, ownRef };
+  if (sport && v > sport[1]) return { status: 'grenzwertig', label: 'im Normbereich, aber hoch', tone: 'warn', ref, sport, ownRef };
+  return { status: 'gut', label: 'im günstigen Bereich', tone: 'good', ref, sport, ownRef };
 }
 
 /**
@@ -231,9 +253,10 @@ export function trend(labs = [], key, { days = 540, sex = null } = {}) {
   const perMonth = Math.round(slope * 30 * 100) / 100;
   const dir = Math.abs(perMonth) < 0.01 ? 'flat' : (perMonth > 0 ? 'up' : 'down');
 
-  // Projektion nur, wenn es Richtung Grenzwert geht.
+  // Projektion nur, wenn es Richtung Grenzwert geht. Maßgeblich ist der
+  // Referenzbereich des JÜNGSTEN Befunds (falls dort einer erfasst wurde).
   const a = ANALYTES[key];
-  const ref = refRange(key, sex);
+  const ref = refRange(key, sex, last);
   const target = a && a.sport ? a.sport : ref;
   let daysToLimit = null, limit = null;
   const cur = Number(last.value);
@@ -263,7 +286,7 @@ export function overview(labs = [], { sex = null, today = null } = {}) {
       return {
         key, label: a.label, group: a.group, unit: a.unit, hint: a.hint,
         value: Number(last.value), date: last.date, note: last.note || null,
-        assessment: assess(key, last.value, { sex, labs, today }),
+        assessment: assess(key, last.value, { sex, labs, today, record: last }),
         trend: trend(labs, key, { sex }),
       };
     })

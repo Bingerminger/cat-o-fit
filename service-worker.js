@@ -10,7 +10,7 @@
  * Bei jeder Versionserhöhung wird der alte Cache verworfen.
  */
 
-const VERSION = 'catofit-v104';
+const VERSION = 'catofit-v105';
 // Cache-Name pro Deployment-Pfad eindeutig: Produktion (/cat-o-fit/) und Abnahme
 // (/cat-o-fit-acc/) liegen auf DERSELBEN Origin und teilen sich sonst den
 // CacheStorage – dann landet die App-Shell der einen Umgebung in der anderen.
@@ -81,6 +81,7 @@ const SHELL_ASSETS = [
   './js/weather.js',
   './js/cycle.js',
   './js/labs.js',
+  './js/labsources.js',
   './js/labs-view.js',
   './js/supplements.js',
   './js/redflags.js',

@@ -4,6 +4,33 @@ Alle nennenswerten Änderungen an Cat-O-Fit werden hier dokumentiert.
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/),
 Versionierung nach [SemVer](https://semver.org/lang/de/).
 
+## [3.19.0] – 2026-08-02 – Referenzbereiche deines Labors, Hilfe zur Wertbeschaffung
+
+### Neu
+- **Der Referenzbereich deines eigenen Befunds zählt.** In Deutschland gibt es keine
+  bundesweit einheitlichen Referenzbereiche – jedes Labor legt eigene fest, abhängig von
+  Messmethode, Gerät und Vergleichsgruppe (bei Ferritin, fT3 oder B12 unterscheiden sie sich
+  spürbar). Bisher rechnete Cat-O-Fit immer gegen einen hinterlegten Standardwert und wirkte
+  damit genauer, als es sein konnte. Beim Erfassen stehen jetzt zwei Felder
+  **„Referenzbereich deines Labors"** bereit – vorbelegt mit einem üblichen Bereich, einfach
+  mit dem Wert vom Befund überschreibbar. Die Bewertung, die Trendprojektion und die
+  Zielmarkierung im Verlauf richten sich dann danach. Der sportliche Zielkorridor bleibt als
+  zweite Ebene unverändert bestehen.
+- **„Woher bekomme ich Laborwerte?"** – solange noch nichts erfasst ist, erklärt eine
+  aufklappbare Karte im Modul die Wege in Deutschland: sportmedizinische Untersuchung,
+  Haus-/Facharztpraxis, Check-up 35, Einsendelabor und Blutspende – jeweils mit dem, was
+  drin ist, ungefähren Kosten und einem praktischen Tipp. Darunter der Hinweis, den die
+  wenigsten kennen: **Viele Krankenkassen bezuschussen den Sportcheck** als freiwillige
+  Satzungsleistung.
+
+### Geändert
+- **Hilfe und Handbuch** erklären beides ausführlich: die Bezugswege als Tabelle mit Kosten,
+  warum der Referenzbereich zum Wert dazugehört, und was in Deutschland tatsächlich normiert
+  ist (RiliBÄK, DIN EN ISO 15189, LDT, ePA) – und was ausdrücklich nicht: die
+  Referenzbereiche selbst und sportspezifische Zielwerte.
+- Im Wert-Detail steht jetzt, ob der Referenzbereich **von deinem Labor** stammt oder der
+  übliche ist; im zweiten Fall lädt ein Hinweis dazu ein, ihn beim nächsten Mal einzutragen.
+
 ## [3.18.1] – 2026-08-02 – Hotfix: Achsenbeschriftungen in Balkendiagrammen
 
 ### Behoben

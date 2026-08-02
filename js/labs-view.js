@@ -23,6 +23,7 @@ import { moduleOff } from './nutrition.js';
 import {
   ANALYTES, ANALYTE_GROUPS, unitsFor, toCanonical, overview, series, refRange,
 } from './labs.js';
+import { LAB_SOURCES, LAB_SOURCES_TEASER } from './labsources.js';
 import { recommend, activePlans, takenOn, adherence, adherenceSeries, SUPPLEMENTS } from './supplements.js';
 import {
   eligibility, redFlags, energyAvailability, energyAvailabilitySeries,
@@ -112,6 +113,7 @@ export function render(view) {
   if (!rows.length) {
     view.appendChild(emptyState('flask', 'Noch keine Werte',
       'Trage Werte aus deinem Laborbefund ein – Cat-O-Fit ordnet sie sportbezogen ein und zeigt dir den Verlauf.'));
+    view.appendChild(sourcesCard());
   } else {
     view.appendChild(labStats(rows, labs));
     const list = el('div', { class: 'list-card' });
@@ -185,6 +187,31 @@ function introCard() {
     el('div', { class: 'card__title', text: 'Labor & Ergänzung' }),
     el('div', { class: 'muted mt-2', style: { fontSize: '.86rem' }, text: 'Erfasse Werte aus deinem Laborbefund, sieh ihren Verlauf und bekomme sportbezogene Einordnung – zum Beispiel, dass ein Ferritin von 25 zwar „normal" ist, für Ausdauertraining aber knapp.' }),
     el('div', { class: 'muted mt-2', style: { fontSize: '.86rem' }, text: 'Vorher eine kurze Frage zur Abgrenzung: Cat-O-Fit ist für gesunde Sportlerinnen und Sportler gedacht. Wer in ärztlicher Behandlung ist, Medikamente nimmt, schwanger ist oder eine Essstörung hat, nutzt das Modul nur zum Dokumentieren – Empfehlungen gibt die App dann bewusst nicht.' }),
+  ]);
+}
+
+/** „Woher bekomme ich Werte?" – aufklappbar, solange noch nichts erfasst ist. */
+function sourcesCard() {
+  const body = el('div', { hidden: true, style: { marginTop: '6px' } },
+    LAB_SOURCES.map((src, i) => el('div', { style: { padding: '8px 0', borderTop: i ? '1px solid var(--border)' : 'none' } }, [
+      el('div', { class: 'row gap-2', style: { alignItems: 'baseline' } }, [
+        el('div', { style: { fontWeight: '650', fontSize: '.86rem' }, text: src.title }),
+        src.best ? el('span', { class: 'chip chip--accent', style: { fontSize: '.62rem' }, text: 'passt am besten' }) : null,
+      ]),
+      el('div', { class: 'muted', style: { fontSize: '.82rem', marginTop: '2px' }, text: src.what }),
+      el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '2px' }, text: `Kosten: ${src.cost}` }),
+      el('div', { class: 'muted', style: { fontSize: '.8rem', marginTop: '4px' } }, [
+        el('strong', { text: 'Tipp: ' }), src.tip,
+      ]),
+    ])));
+  const head = el('button', {
+    class: 'btn btn--soft btn--block', style: { fontSize: '.84rem' },
+    onclick: () => { body.hidden = !body.hidden; },
+  }, [icon('info'), 'Woher bekomme ich Laborwerte?']);
+  return el('div', { class: 'card mt-3' }, [
+    el('div', { class: 'muted', style: { fontSize: '.84rem', marginBottom: '8px' }, text: LAB_SOURCES_TEASER }),
+    head, body,
+    el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '8px' }, text: 'Wichtig: Referenzbereiche sind in Deutschland nicht einheitlich – jedes Labor hat eigene. Trag beim Erfassen den Bereich von deinem Befund mit ein, dann bewertet Cat-O-Fit gegen dein Labor.' }),
   ]);
 }
 
@@ -272,9 +299,12 @@ function fillDetail(box, r) {
     }));
   }
   const ranges = [];
-  if (a.ref) ranges.push(`Referenz ${a.ref[0]}–${a.ref[1]} ${r.unit}`);
+  if (a.ref) ranges.push(`${a.ownRef ? 'Referenz deines Labors' : 'Referenz (üblich)'} ${a.ref[0]}–${a.ref[1]} ${r.unit}`);
   if (a.sport) ranges.push(`Sport-Zielbereich ${a.sport[0]}–${a.sport[1]} ${r.unit}`);
   if (ranges.length) box.appendChild(el('div', { class: 'dim', style: { fontSize: '.76rem' }, text: ranges.join(' · ') }));
+  if (a.ref && !a.ownRef) {
+    box.appendChild(el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '2px' }, text: 'Jedes Labor hat eigene Referenzbereiche – trag beim nächsten Wert den von deinem Befund ein, dann bewertet Cat-O-Fit gegen dein Labor.' }));
+  }
   if (a.blocked) box.appendChild(el('div', { class: 'muted mt-2', style: { fontSize: '.82rem' }, text: a.blocked }));
   if (r.hint) box.appendChild(el('div', { class: 'muted mt-2', style: { fontSize: '.82rem' }, text: r.hint }));
   if (r.trend && r.trend.daysToLimit != null) {
@@ -367,9 +397,20 @@ function openGateSheet() {
 function openValueSheet() {
   let key = 'ferritin';
   let unit = ANALYTES[key].unit;
+  const profile = store.profile();
   const dateI = input({ type: 'date', value: todayStr() });
   const valueI = input({ type: 'number', step: '0.01', inputmode: 'decimal', placeholder: 'Wert' });
   const noteI = input({ type: 'text', placeholder: 'Notiz (optional), z. B. Labor oder Anlass' });
+  // Referenzbereich des eigenen Befunds: In Deutschland gibt jedes Labor eigene
+  // Bereiche an (Methode/Gerät). Vorbelegt mit unserem Standard, damit sichtbar
+  // ist, wogegen bewertet wird – Abweichungen einfach überschreiben.
+  const refLoI = input({ type: 'number', step: '0.01', inputmode: 'decimal' });
+  const refHiI = input({ type: 'number', step: '0.01', inputmode: 'decimal' });
+  const fillRef = () => {
+    const r = refRange(key, profile.sex);
+    refLoI.value = r ? String(r[0]) : '';
+    refHiI.value = r ? String(r[1]) : '';
+  };
 
   const unitWrap = el('div', {});
   const drawUnits = () => {
@@ -386,9 +427,10 @@ function openValueSheet() {
     keys: Object.entries(ANALYTES).filter(([, a]) => a.group === g).map(([k, a]) => ({ value: k, label: a.label })),
   })).filter((g) => g.keys.length);
   const analyteSel = select(groups.flatMap((g) => g.keys), key);
-  analyteSel.addEventListener('change', () => { key = analyteSel.value; drawUnits(); hintBox.textContent = ANALYTES[key].hint || ''; });
+  analyteSel.addEventListener('change', () => { key = analyteSel.value; drawUnits(); fillRef(); hintBox.textContent = ANALYTES[key].hint || ''; });
   const hintBox = el('div', { class: 'muted', style: { fontSize: '.8rem', marginTop: '-4px' }, text: ANALYTES[key].hint || '' });
   drawUnits();
+  fillRef();
 
   openSheet({
     title: 'Laborwert erfassen',
@@ -397,14 +439,25 @@ function openValueSheet() {
       field('Datum', dateI),
       field('Messwert', valueI),
       unitWrap,
+      el('label', { class: 'field__label', text: 'Referenzbereich deines Labors' }),
+      el('div', { class: 'row gap-2' }, [
+        el('div', { class: 'grow' }, [refLoI]),
+        el('span', { class: 'muted', style: { alignSelf: 'center' }, text: 'bis' }),
+        el('div', { class: 'grow' }, [refHiI]),
+      ]),
+      el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '4px' }, text: 'Steht auf deinem Befund neben dem Wert. Jedes Labor hat eigene Bereiche – trag sie hier ein, dann bewertet Cat-O-Fit gegen DEIN Labor. Vorbelegt ist ein üblicher Bereich.' }),
       field('Notiz', noteI),
     ]),
     footer: el('button', { class: 'btn btn--primary btn--block', onclick: () => {
       const v = toCanonical(key, valueI.value, unit);
       if (v == null) { toast('Bitte einen gültigen Wert eingeben', 'bad'); return; }
+      // Referenzgrenzen in derselben Einheit wie der Messwert umrechnen.
+      const rLo = refLoI.value === '' ? null : toCanonical(key, refLoI.value, unit);
+      const rHi = refHiI.value === '' ? null : toCanonical(key, refHiI.value, unit);
       store.upsert('labs', {
         id: uid('lab'), analyte: key, value: v, unit: ANALYTES[key].unit,
         date: dateI.value || todayStr(), note: noteI.value.trim() || null,
+        refLow: rLo, refHigh: rHi,
         createdAt: nowIso(), updatedAt: nowIso(),
       });
       closeSheet(); toast('Wert gespeichert', 'good'); rerender();

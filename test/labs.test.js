@@ -5,12 +5,25 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { addDays } from '../js/ui.js';
-import { toCanonical, refRange, assess, trend, overview, unitsFor, latest } from '../js/labs.js';
+import { toCanonical, refRange, hasOwnRef, assess, trend, overview, unitsFor, latest } from '../js/labs.js';
+import { LAB_SOURCES, LAB_STANDARDS } from '../js/labsources.js';
 import { recommend, activePlans, takenOn, adherence } from '../js/supplements.js';
 import { eligibility, redFlags, energyAvailability, leanMass, EA_LOW } from '../js/redflags.js';
 
 const T = '2026-08-02';
-const lab = (analyte, value, date, extra = {}) => ({ id: `l-${analyte}-${date}`, analyte, value, date, ...extra });
+const lab = (analyte, value, date, extra = {}) => ({ id: `l-${analyte}-${date}-${value}`, analyte, value, date, ...extra });
+
+test('labsources: jeder Bezugsweg ist vollständig beschrieben', () => {
+  assert.ok(LAB_SOURCES.length >= 4);
+  LAB_SOURCES.forEach((s) => {
+    ['key', 'title', 'what', 'cost', 'tip'].forEach((f) => {
+      assert.ok(s[f] && String(s[f]).length > 3, `${s.key}: ${f} fehlt`);
+    });
+  });
+  // Genau ein Weg ist als „passt am besten" markiert (die Sportmedizin).
+  assert.equal(LAB_SOURCES.filter((s) => s.best).length, 1);
+  assert.ok(LAB_STANDARDS.regulated.length && LAB_STANDARDS.notRegulated.length);
+});
 
 /* ------------------------------ Einheiten -------------------------------- */
 
@@ -27,6 +40,47 @@ test('labs: Referenzbereich ist geschlechtsabhängig, wo es fachlich nötig ist'
   assert.deepEqual(refRange('hb', 'm'), [13.5, 17.5]);
   assert.deepEqual(refRange('hb', 'w'), [12.0, 16.0]);
   assert.deepEqual(refRange('ferritin', 'w'), [15, 300]); // ohne Geschlechtsunterschied
+});
+
+/* ------------- Referenzbereich des eigenen Labors (v3.19.0) --------------- */
+
+test('labs: der Referenzbereich vom eigenen Befund schlägt den Standard', () => {
+  // In Deutschland gibt jedes Labor eigene Bereiche an – der Befund gewinnt.
+  const rec = { analyte: 'ferritin', value: 14, date: T, refLow: 13, refHigh: 150 };
+  assert.deepEqual(refRange('ferritin', 'w', rec), [13, 150]);
+  // Ohne eigenen Bereich gilt weiter der hinterlegte Standard.
+  assert.deepEqual(refRange('ferritin', 'w', null), [15, 300]);
+  assert.equal(hasOwnRef(rec), true);
+  assert.equal(hasOwnRef({ analyte: 'ferritin', value: 14 }), false);
+});
+
+test('labs: eigener Referenzbereich ändert die Bewertung', () => {
+  const value = 14;
+  // Standard 15–300: 14 liegt darunter.
+  assert.equal(assess('ferritin', value, { sex: 'w' }).status, 'niedrig');
+  // Labor mit Untergrenze 13: derselbe Wert ist „im Normbereich" – aber für
+  // Sport weiterhin knapp, der sportliche Zielkorridor bleibt unberührt.
+  const own = assess('ferritin', value, { sex: 'w', record: { refLow: 13, refHigh: 150 } });
+  assert.equal(own.status, 'grenzwertig');
+  assert.deepEqual(own.ref, [13, 150]);
+  assert.equal(own.ownRef, true);
+});
+
+test('labs: unvollständige oder unsinnige Referenzangaben werden ignoriert', () => {
+  for (const rec of [{ refLow: 13 }, { refHigh: 150 }, { refLow: 200, refHigh: 20 }, { refLow: null, refHigh: null }]) {
+    assert.deepEqual(refRange('ferritin', 'w', rec), [15, 300], `Rückfall auf Standard bei ${JSON.stringify(rec)}`);
+    assert.equal(hasOwnRef(rec), false);
+  }
+});
+
+test('labs: Übersicht nutzt den Referenzbereich des jüngsten Befunds', () => {
+  const labs = [
+    lab('ferritin', 20, addDays(T, -200)),
+    lab('ferritin', 14, T, { refLow: 13, refHigh: 150 }),
+  ];
+  const row = overview(labs, { sex: 'w', today: T })[0];
+  assert.equal(row.assessment.ownRef, true);
+  assert.deepEqual(row.assessment.ref, [13, 150]);
 });
 
 /* ------------------------------ Bewertung -------------------------------- */
@@ -179,6 +233,22 @@ test('supplements: niedriges Ferritin führt zu einer laborgestützten Empfehlun
   assert.match(iron.reason, /Ferritin 18/);
   assert.match(iron.action, /abklären/);
   assert.ok(iron.food, 'Food-first-Hinweis vorhanden');
+});
+
+test('supplements: Empfehlung bewertet gegen DEN Referenzbereich des Befunds (v3.19.0)', () => {
+  // Gleicher Wert, eigener Laborbereich 13–150: die Werte-Liste sagt „im
+  // Normbereich, für Sport knapp" – die Empfehlung darunter muss dasselbe sagen.
+  const labs = [lab('ferritin', 14, T, { refLow: 13, refHigh: 150 })];
+  const iron = recommend({ labs, profile: { sex: 'w' }, sessions: [], today: T })
+    .items.find((i) => i.key === 'iron');
+  assert.ok(iron);
+  assert.match(iron.reason, /im Normbereich/);
+  assert.ok(!/unter dem Referenzbereich/.test(iron.reason), 'kein Widerspruch zur Werte-Liste');
+
+  // Ohne eigenen Bereich gilt weiter der Standard (15–300) -> „unter dem Referenzbereich".
+  const std = recommend({ labs: [lab('ferritin', 14, T)], profile: { sex: 'w' }, sessions: [], today: T })
+    .items.find((i) => i.key === 'iron');
+  assert.match(std.reason, /unter dem Referenzbereich/);
 });
 
 test('supplements: bei Entzündung wird Eisen ausgesetzt statt empfohlen', () => {

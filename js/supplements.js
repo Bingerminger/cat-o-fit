@@ -145,7 +145,9 @@ export function recommend({
   /* --- Eisen: ausschließlich laborgestützt ------------------------------- */
   const ferritin = latest(labs, 'ferritin', today);
   if (ferritin) {
-    const a = assess('ferritin', ferritin.value, { sex, labs, today });
+    // `record` mitgeben, damit der Referenzbereich DES BEFUNDS gilt – sonst
+    // bewertet die Empfehlung anders als die Werte-Liste darüber.
+    const a = assess('ferritin', ferritin.value, { sex, labs, today, record: ferritin });
     if (a.status === 'unbeurteilbar') {
       items.push(mk('iron', 2, a.blocked, 'Ferritin nach Abklingen der Entzündung erneut bestimmen lassen – vorher keine Eisengabe.', { holdOnly: true }));
     } else if (a.status === 'niedrig' || a.status === 'grenzwertig') {
@@ -165,7 +167,7 @@ export function recommend({
   /* --- Vitamin D: Laborwert oder Jahreszeit ------------------------------ */
   const vd = latest(labs, 'vitaminD', today);
   if (vd) {
-    const a = assess('vitaminD', vd.value, { sex, labs, today });
+    const a = assess('vitaminD', vd.value, { sex, labs, today, record: vd });
     if (a.status === 'niedrig' || a.status === 'grenzwertig') {
       items.push(mk('vitaminD', 1,
         `Vitamin D ${vd.value} nmol/l (${vd.date}) – ${a.status === 'niedrig' ? 'unter dem Referenzbereich' : 'für Sport eher knapp'}.`,
@@ -180,7 +182,7 @@ export function recommend({
   /* --- B12: Laborwert oder pflanzliche Ernährung ------------------------- */
   const b12 = latest(labs, 'b12', today);
   if (b12) {
-    const a = assess('b12', b12.value, { sex, labs, today });
+    const a = assess('b12', b12.value, { sex, labs, today, record: b12 });
     if (a.status !== 'gut' && a.status !== 'unbeurteilbar') {
       items.push(mk('b12', 1, `Holo-TC ${b12.value} pmol/l (${b12.date}) – ${a.label}.`,
         'Ergänzen und in drei Monaten kontrollieren.'));
@@ -195,7 +197,7 @@ export function recommend({
   const load = today ? acwr(sessions, today) : null;
   const highLoad = !!(load && !load.sparse && load.ratio != null && load.ratio > 1.1 && load.chronic > 0);
   if (mg) {
-    const a = assess('magnesium', mg.value, { sex, labs, today });
+    const a = assess('magnesium', mg.value, { sex, labs, today, record: mg });
     if (a.status !== 'gut' && a.status !== 'unbeurteilbar') {
       items.push(mk('magnesium', 2, `Magnesium ${mg.value} mmol/l (${mg.date}) – ${a.label}.`,
         'Abends ergänzen und auf magnesiumreiche Lebensmittel achten.'));
