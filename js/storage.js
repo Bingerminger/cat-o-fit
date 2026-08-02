@@ -889,6 +889,8 @@ export async function seedDemo(today = todayStr()) {
   if (d.self.cycle) replaceArea('cycle', d.self.cycle);
   if (d.self.checklist) replaceArea('checklist', d.self.checklist);
   if (d.self.shopping) replaceArea('shopping', d.self.shopping);
+  if (d.self.labs) replaceArea('labs', d.self.labs);
+  if (d.self.supplements) replaceArea('supplements', d.self.supplements);
   if (d.pantry) setFamilyPantry(d.pantry);  // gemeinsames Lager (Einkaufsliste zieht davon ab)
 
   // Echten, periodisierten Plan erzeugen (wie ein normaler Nutzer) und so rückdatieren,

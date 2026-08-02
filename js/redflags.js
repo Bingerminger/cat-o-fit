@@ -94,6 +94,29 @@ export function redFlags({ labs = [], cycle = [], today = null } = {}) {
 
 /* -------------------- Energieverfügbarkeit (RED-S/LEA) -------------------- */
 
+/**
+ * Verlauf der Energieverfügbarkeit: ein Punkt je Woche über `weeks` Wochen.
+ * Sportlerinnen und Sportler denken in Kurven – eine einzelne Momentaufnahme
+ * sagt wenig, der Verlauf zeigt, ob sich das Verhältnis von Essen und Training
+ * verschiebt (typisch: sinkt in Aufbauphasen, weil die Last steigt).
+ * @returns {Array<{label:string, value:number|null, date:string}>}
+ */
+export function energyAvailabilitySeries(args = {}, { weeks = 10 } = {}) {
+  const { today } = args;
+  if (!today) return [];
+  const out = [];
+  for (let w = weeks - 1; w >= 0; w--) {
+    const ref = addDays(today, -w * 7);
+    const ea = energyAvailability({ ...args, today: ref, days: 7, minDays: 3 });
+    out.push({
+      date: ref,
+      label: `${String(ref).slice(8, 10)}.${String(ref).slice(5, 7)}.`,
+      value: ea && ea.level !== 'unklar' ? ea.ea : null,
+    });
+  }
+  return out;
+}
+
 /** Schwellen nach gängiger sportmedizinischer Einordnung (kcal/kg fettfreie Masse/Tag). */
 export const EA_LOW = 30;
 export const EA_OPTIMAL = 45;

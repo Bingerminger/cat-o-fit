@@ -109,17 +109,19 @@ const PRIMARY_NAV = [
   { icon: 'flag', label: 'Ziele', hash: '#/events' },
   { icon: 'heart', label: 'Werte', hash: '#/health' },
 ];
+// Reihenfolge nach Themen: Gemeinschaft → Auswertung → Gesundheit → Ernährung &
+// Labor → Alltag & Training → System.
 const MORE_NAV = [
   { icon: 'grid', label: 'Team/Familie', hash: '#/family' },
-  { icon: 'trophy', label: 'Erfolge & Momentum', hash: '#/badges' },
-  { icon: 'dumbbell', label: 'Übungs-Bibliothek', hash: '#/uebungen' },
-  { icon: 'moon', label: 'Zyklus', hash: '#/zyklus', module: 'cycle' },
-  { icon: 'heart', label: 'Labor & Ergänzung', hash: '#/labor', module: 'labs' },
   { icon: 'chart', label: 'Statistik', hash: '#/stats' },
-  { icon: 'trophy', label: 'Berichte & Urkunden', hash: '#/reports' },
+  { icon: 'trophy', label: 'Erfolge & Momentum', hash: '#/badges' },
+  { icon: 'feather', label: 'Berichte & Urkunden', hash: '#/reports' },
+  { icon: 'moon', label: 'Zyklus', hash: '#/zyklus', module: 'cycle' },
   { icon: 'utensils', label: 'Ernährung', hash: '#/nutrition', module: 'nutrition' },
+  { icon: 'flask', label: 'Labor & Ergänzung', hash: '#/labor', module: 'labs' },
   { icon: 'cart', label: 'Einkaufsliste', hash: '#/shopping', module: 'shopping' },
   { icon: 'list', label: 'Checkliste & Erinnerungen', hash: '#/checklist', module: 'checklist' },
+  { icon: 'dumbbell', label: 'Übungs-Bibliothek', hash: '#/uebungen' },
   { icon: 'upload', label: 'Health-Import', hash: '#/import' },
   { icon: 'settings', label: 'Einstellungen', hash: '#/settings' },
   { icon: 'info', label: 'Hilfe & Wissen', hash: '#/hilfe' },

@@ -97,7 +97,9 @@ function demoMemberProfile(spec, today) {
     settings: {
       theme: 'system', accent: spec.color, weekStart: 1, units: 'metric', weather: true,
       location: { name: spec.city, country: 'DE', ...loc },
-      modules: { cycle: female, nutrition: true, shopping: true, checklist: true, strength: true },
+      modules: { cycle: female, nutrition: true, shopping: true, checklist: true, strength: true, labs: true },
+      // Abgrenzungs-Fragen beantwortet (alle „nein") -> Modul im vollen Umfang.
+      labsGate: { chronicCondition: false, medication: false, pregnancy: false, eatingDisorder: false, minor: false },
       metricsEnabled: { weight: true, bodyFat: true, muscleMass: true, visceralFat: true, restingHr: true, hrv: true, vo2max: true, sleepHours: true, energy: true, mood: true },
       weeklyGoals: { activeMinutes: spec.level === 'high' ? 300 : spec.level === 'low' ? 150 : 210, trainingDays: spec.level === 'high' ? 5 : spec.level === 'low' ? 3 : 4 },
     },
@@ -129,6 +131,82 @@ export function demoMemberData(prefix, today, { w0 = 78, seed = 1, level = 'mid'
     { id: `${prefix}-n2`, category: 'snack', title: `Skyr & Beeren · ${prefix}`, kcal: 180, protein: 18, tags: ['proteinreich', 'schnell'], ingredients: ['150 g Skyr', '100 g Beeren'], plannedServings: 3 },
   ];
   return { sessions, health, events, nutrition, plans: [] };
+}
+
+/* =========================================================================
+   Labor & Ergänzung — Demodaten
+   Bewusst als kleine Geschichten angelegt, damit jede Auswertung der App an
+   den Demodaten etwas Sinnvolles zeigt:
+     • Ferritin fällt über vier Messungen  -> Trendprojektion & Sport-Korridor
+     • Vitamin D unter dem Zielbereich     -> saisonale Empfehlung
+     • CRP bei einem Mitglied erhöht       -> „nicht beurteilbar" (Kontext)
+     • Magnesium/B12 im Zielbereich        -> „alles gut" als Gegenbeispiel
+   ========================================================================= */
+
+/** Laborwerte des Admins: vier Messzeitpunkte über ein Jahr, fallender Eisenspeicher. */
+export function demoLabs(today) {
+  const D = (n) => addDays(today, n);
+  const at = [-330, -220, -110, -12];              // vier Befunde übers Jahr
+  const ferritin = [78, 62, 47, 34];               // fällt deutlich -> Projektion
+  const vitD = [98, 74, 52, 46];                   // Sommer -> Winter
+  const hb = [13.6, 13.4, 13.2, 13.1];
+  const out = [];
+  let i = 0;
+  const add = (analyte, value, off, note = null) => out.push({
+    id: `demo-lab-${analyte}-${++i}`, analyte, value, unit: null,
+    date: D(off), note, source: 'demo',
+  });
+  at.forEach((off, k) => {
+    add('ferritin', ferritin[k], off, k === 3 ? 'Kontrolle nach der Aufbauphase' : null);
+    add('vitaminD', vitD[k], off);
+    add('hb', hb[k], off);
+    add('crp', k === 3 ? 1.8 : 2.4, off);          // unauffällig -> Ferritin beurteilbar
+  });
+  // Einzelwerte aus dem jüngsten Befund (zeigen „im Zielbereich")
+  add('b12', 68, -12);
+  add('magnesium', 1.72, -12);                     // knapp unter dem Sportbereich
+  add('ft3', 4.6, -12);
+  add('zinc', 13.2, -12);
+  return out;
+}
+
+/** Supplement-Plan des Admins + Einnahmehistorie (für die Einnahmetreue). */
+export function demoSupplements(today) {
+  const D = (n) => addDays(today, n);
+  const plans = [
+    { id: 'demo-sup-vd', _kind: 'plan', supplementKey: 'vitaminD', name: 'Vitamin D', dose: '1000 IE/Tag', timing: 'Zum Frühstück', active: true, from: D(-45), to: null, source: 'demo' },
+    { id: 'demo-sup-mg', _kind: 'plan', supplementKey: 'magnesium', name: 'Magnesium', dose: '300 mg/Tag', timing: 'Abends', active: true, from: D(-30), to: null, source: 'demo' },
+  ];
+  const intakes = [];
+  // Realistische Einnahmetreue: Vitamin D fast täglich, Magnesium mit Lücken.
+  for (let k = 0; k < 21; k++) {
+    if (k % 7 !== 5) intakes.push({ id: `demo-int-vd-${k}`, _kind: 'intake', planId: 'demo-sup-vd', date: D(-k), source: 'demo' });
+    if (k % 3 !== 0) intakes.push({ id: `demo-int-mg-${k}`, _kind: 'intake', planId: 'demo-sup-mg', date: D(-k), source: 'demo' });
+  }
+  return [...plans, ...intakes];
+}
+
+/** Laborwerte eines Mitglieds – je nach Typ eine andere, lehrreiche Konstellation. */
+export function demoMemberLabs(prefix, today, { sex = 'm', level = 'mid', seed = 1 } = {}) {
+  const D = (n) => addDays(today, n);
+  const out = [];
+  let i = 0;
+  const add = (analyte, value, off) => out.push({
+    id: `${prefix}-lab-${analyte}-${++i}`, analyte, value, unit: null, date: D(off), source: 'demo',
+  });
+  // Zwei Befunde: vor einem halben Jahr und aktuell.
+  const base = sex === 'w' ? 42 : 120;             // Frauen haben typisch niedrigere Speicher
+  const drift = level === 'high' ? -12 : 4;        // viel Training zehrt am Eisen
+  add('ferritin', base, -190);
+  add('ferritin', Math.max(12, base + drift), -20);
+  add('vitaminD', 62 + (seed % 5) * 6, -190);
+  add('vitaminD', 48 + (seed % 4) * 7, -20);
+  add('hb', sex === 'w' ? 13.2 : 15.1, -20);
+  // Ein Mitglied (seed 4) hat einen Infekt: CRP hoch -> Ferritin nicht beurteilbar.
+  add('crp', seed === 4 ? 14 : 1.6, -20);
+  if (seed % 3 === 0) add('b12', 44 + seed, -20);
+  if (seed % 2 === 0) add('magnesium', 1.9, -20);
+  return out;
 }
 
 /** Zyklus-Historie (~alle 28 Tage) über die letzten `n` Zyklen. */
@@ -208,7 +286,10 @@ export function buildDemo(today) {
   const settings = {
     theme: 'system', accent: '#18b48a', weekStart: 1, units: 'metric', weather: true,
     location: { name: 'Dresden', country: 'DE', lat: 51.0504, lon: 13.7373 },
-    modules: { cycle: true, nutrition: true, shopping: true, checklist: true, strength: true },
+    modules: { cycle: true, nutrition: true, shopping: true, checklist: true, strength: true, labs: true },
+    // Abgrenzungs-Fragen der Demo-Person beantwortet (alle „nein") – sonst stünde
+    // das Labor-Modul in der Demo dauerhaft im Einrichtungs-Schritt.
+    labsGate: { chronicCondition: false, medication: false, pregnancy: false, eatingDisorder: false, minor: false },
     metricsEnabled: {
       weight: true, bodyFat: true, muscleMass: true, visceralFat: true, restingHr: true,
       hrv: true, vo2max: true, sleepHours: true, energy: true, mood: true,
@@ -239,16 +320,26 @@ export function buildDemo(today) {
     { id: 'demo-n6', category: 'snack', title: 'Skyr mit Beeren', kcal: 180, protein: 18, tags: ['proteinreich', 'vegetarisch', 'schnell'], ingredients: ['150 g Skyr', '100 g Beeren'], plannedServings: 4 },
   ];
 
-  /* ---- Ess-Tagebuch: die letzten Tage (für Kalorienbilanz/Defizit-Verlauf) ---- */
+  /* ---- Ess-Tagebuch: acht Wochen (Kalorienbilanz + Verlauf der Energieversorgung) ----
+     Bewusst VOLLSTÄNDIG erfasste Tage mit realistischer Menge: Bei ~72 kg,
+     Grundumsatz ~1500 kcal und vier Trainingseinheiten pro Woche sind rund
+     2400 kcal stimmig. Zu knapp angesetzte Demo-Werte hätten die Energie-
+     versorgungs-Analyse dauerhaft auf „Erfassung unvollständig" stehen lassen. */
   const diary = [];
   const dayMeals = [
-    { title: 'Overnight Oats mit Beeren', kcal: 420, protein: 22 },
-    { title: 'Hähnchen-Reis-Bowl mit Brokkoli', kcal: 620, protein: 45 },
-    { title: 'Omelett mit Feta & Tomaten', kcal: 410, protein: 30 },
-    { title: 'Skyr mit Beeren', kcal: 180, protein: 18 },
+    { title: 'Overnight Oats mit Beeren', kcal: 520, protein: 28 },
+    { title: 'Hähnchen-Reis-Bowl mit Brokkoli', kcal: 720, protein: 48 },
+    { title: 'Omelett mit Feta & Tomaten', kcal: 520, protein: 32 },
+    { title: 'Skyr mit Beeren & Nüssen', kcal: 320, protein: 24 },
+    { title: 'Banane & Haferriegel', kcal: 300, protein: 8 },
   ];
-  for (let off = 0; off >= -6; off--) {
-    dayMeals.forEach((m, i) => diary.push({ id: `demo-d${-off}-${i}`, date: D(off), title: m.title, kcal: m.kcal, protein: m.protein, source: 'cooked' }));
+  for (let off = 0; off >= -55; off--) {
+    // Leichte Tagesschwankung (deterministisch) – kein Wert ist jeden Tag gleich.
+    const swing = 1 + NZ(-off, 0.07);
+    dayMeals.forEach((m, i) => diary.push({
+      id: `demo-d${-off}-${i}`, date: D(off), title: m.title,
+      kcal: Math.round(m.kcal * swing), protein: Math.round(m.protein * swing), source: 'cooked',
+    }));
   }
 
   /* ---- Gemeinsames Familien-Lager (Vorräte) – reduziert den Einkaufsbedarf ---- */
@@ -273,6 +364,10 @@ export function buildDemo(today) {
 
   /* ---- Zyklusdaten des Admins (eigene, strikt private Daten) ---- */
   const cycle = demoCycle(today);
+
+  /* ---- Labor & Ergänzung des Admins (ebenfalls strikt privat) ---- */
+  const labs = demoLabs(today);
+  const supplements = demoSupplements(today);
 
   /* ---- Checkliste & Erinnerungen (Routinen + Termine) ---- */
   const checklist = [
@@ -299,6 +394,8 @@ export function buildDemo(today) {
     const data = demoMemberData(`dm${idx}`, today, { w0: spec.w0, seed: idx + 1, level: spec.level, raceOffset: spec.race, sex: spec.sex });
     // Weibliche Mitglieder haben ihre EIGENEN, privaten Zyklusdaten (eindeutige IDs je Mitglied).
     if (spec.sex === 'w') data.cycle = demoCycle(today, 5).map((c, i) => ({ ...c, id: `dm${idx}-cyc${i + 1}` }));
+    // Eigene, private Laborwerte je Mitglied (PRIVATE_AREAS – für Admins unsichtbar).
+    data.labs = demoMemberLabs(`dm${idx}`, today, { sex: spec.sex, level: spec.level, seed: idx + 1 });
     return { name: spec.name, role: spec.role, emoji: spec.emoji, color: spec.color, sex: spec.sex, profile: demoMemberProfile(spec, today), data };
   });
 
@@ -311,5 +408,5 @@ export function buildDemo(today) {
     { name: 'Team Grün', emoji: '🟢', color: '#43c59e', memberNames: ['Henriette', 'Elif', 'Frido'] },
   ];
 
-  return { profile, settings, pantry, teams, self: { events, sessions, health, nutrition, diary, cycle, checklist, shopping }, members };
+  return { profile, settings, pantry, teams, self: { events, sessions, health, nutrition, diary, cycle, checklist, shopping, labs, supplements }, members };
 }

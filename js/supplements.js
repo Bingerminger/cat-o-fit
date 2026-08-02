@@ -267,6 +267,33 @@ export function takenOn(supplements = [], planId, date) {
     && s.planId === planId && s.date === date);
 }
 
+/** Tagesliste (ISO) der letzten `days` Tage, endend bei `today`. */
+function lastDays(today, days) {
+  const out = [];
+  for (let i = days - 1; i >= 0; i--) {
+    out.push(new Date(Date.parse(`${today}T00:00:00Z`) - i * 86400000).toISOString().slice(0, 10));
+  }
+  return out;
+}
+
+/**
+ * Einnahmetreue je Tag über `days` Tage – als Balkenreihe für die Anzeige.
+ * @returns {Array<{label:string, value:number, date:string}>} value = % des Tages
+ */
+export function adherenceSeries(supplements = [], today, days = 21) {
+  const plans = activePlans(supplements, today);
+  if (!plans.length || !today) return [];
+  return lastDays(today, days).map((d) => {
+    const due = plans.filter((p) => (!p.from || d >= p.from) && (!p.to || d <= p.to));
+    const taken = due.filter((p) => takenOn(supplements, p.id, d)).length;
+    return {
+      date: d,
+      label: `${d.slice(8, 10)}.${d.slice(5, 7)}.`,
+      value: due.length ? Math.round((taken / due.length) * 100) : 0,
+    };
+  });
+}
+
 /**
  * Einnahmetreue der letzten `days` Tage über alle aktiven Pläne.
  * @returns {{pct:number, taken:number, expected:number}|null}

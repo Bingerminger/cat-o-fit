@@ -10,7 +10,7 @@
  * Bei jeder Versionserhöhung wird der alte Cache verworfen.
  */
 
-const VERSION = 'catofit-v102';
+const VERSION = 'catofit-v103';
 // Cache-Name pro Deployment-Pfad eindeutig: Produktion (/cat-o-fit/) und Abnahme
 // (/cat-o-fit-acc/) liegen auf DERSELBEN Origin und teilen sich sonst den
 // CacheStorage – dann landet die App-Shell der einen Umgebung in der anderen.

@@ -65,6 +65,45 @@ function content(name) {
       id: 'usecases', title: 'So erreichst du dein Ziel', icon: 'target',
       articles: [
         {
+          q: 'Werte aus einem Diagramm ablesen',
+          body: [
+            { p: 'Jedes Verlaufsdiagramm gibt dir konkrete Zahlen – du musst nicht schätzen, was die Kurve gerade zeigt.' },
+            { steps: [
+              'Fahre mit dem Finger (oder am Rechner mit der Maus) über das Diagramm.',
+              'Eine Führungslinie springt zum nächstgelegenen Messpunkt, eine kleine Blase zeigt Datum und Wert.',
+              'Bei mehreren Kurven – etwa Fitness, Ermüdung und Form – siehst du alle drei Werte desselben Tages gleichzeitig.',
+              'Am Rechner geht es auch per Tastatur: mit den Pfeiltasten wandern, mit Escape schließen.',
+            ] },
+            { tip: 'Die Y-Achse zeigt runde Orientierungswerte mit dünnen Hilfslinien – so erkennst du den Bereich schon auf einen Blick, ohne das Diagramm anzufassen.' },
+          ],
+        },
+        {
+          q: 'Eine Einheit verschieben, ohne den Rest der Woche zu sprengen',
+          body: [
+            { p: 'Etwas kommt dazwischen – das ist normal. Wichtig ist, dass die Woche danach noch aufgeht.' },
+            { steps: [
+              'Öffne die Einheit und tippe auf „Verschieben" (im Kalender geht es auch per Ziehen).',
+              'Wähle das neue Datum. Cat-O-Fit prüft sofort: Liegt dort schon etwas? Steht am Tag davor oder danach eine fordernde Einheit?',
+              'Darunter siehst du die Auswirkung auf die Wochenbelastung – vorher und nachher.',
+              'Bestätige, wenn es passt. Die Einheit bleibt normal eingeplant und trägt nur den Vermerk „Verschoben".',
+            ] },
+            { tip: 'Die verschobene Einheit zählt weiter in Wochenbelastung und Wochen-Check mit – die Warnungen greifen also auch nach dem Verschieben.' },
+            { link: { label: 'Zum Kalender', hash: '#/calendar' } },
+          ],
+        },
+        {
+          q: 'Prüfen, ob deine Belastung noch gesund ist',
+          body: [
+            { p: 'Die Karte „Belastung & Form" auf „Heute" beantwortet drei Fragen, die im Profisport zur Steuerung dienen – in Klartext statt in Fachbegriffen.' },
+            { steps: [
+              'Steigerst du zu schnell? Das Verhältnis der letzten Woche zu den letzten vier Wochen (ACWR) sollte zwischen 0,8 und 1,3 liegen.',
+              'Bist du erholt? Fitness minus Ermüdung ergibt deine Form – ist sie positiv, ist ein harter Reiz gut drin.',
+              'Trainierst du zu gleichförmig? Ähneln sich alle Tage bei hoher Last, steigt das Risiko – harte und ganz lockere Tage im Wechsel sind besser.',
+            ] },
+            { tip: 'In den ersten vier Wochen sagt die Karte ehrlich „Datenbasis wächst noch", statt eine Bewertung zu erfinden. Kraft, Fußball und Radfahren zählen genauso mit wie Laufen.' },
+          ],
+        },
+        {
           q: 'Einen Wettkampf anlegen und den Plan erstellen',
           body: [
             { steps: [

@@ -4,6 +4,41 @@ Alle nennenswerten Änderungen an Cat-O-Fit werden hier dokumentiert.
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/),
 Versionierung nach [SemVer](https://semver.org/lang/de/).
 
+## [3.18.0] – 2026-08-02 – Auswertungen im Labor, klarere Navigation
+
+### Neu
+- **Labor & Ergänzung wird datengetrieben.** Sportlerinnen und Sportler denken in Kurven –
+  das Modul liefert sie jetzt:
+  - **Überblicks-Ring:** Wie viele Werte liegen im Sport-Zielbereich, wie viele solltest du
+    beobachten? Dazu Anzahl der Messungen, Termine und das Datum des letzten Befunds.
+  - **Mini-Verläufe in jeder Zeile:** Trend erkennen, ohne etwas aufzuklappen.
+  - **Verlauf der Energieversorgung** über die letzten Wochen als Kurve mit Richtwert-Linie –
+    damit wird sichtbar, ob sich das Verhältnis von Essen und Training verschiebt (es sinkt
+    typischerweise in Aufbauphasen).
+  - **Einnahmetreue** als Balkendiagramm der letzten drei Wochen.
+- **Demodaten für Labor & Ergänzung** – für die Beispiel-Person *und* alle neun
+  Demo-Mitglieder. Die Werte sind als kleine Geschichten angelegt, damit jede Auswertung
+  etwas Sinnvolles zeigt: ein über vier Messungen fallender Eisenspeicher (mit
+  Trendprojektion), ein im Winter absinkendes Vitamin D, ein Mitglied mit erhöhtem CRP
+  (Ferritin dadurch „nicht beurteilbar") und Werte im Zielbereich als Gegenbeispiel.
+
+### Geändert
+- **Eigenes Symbol für „Labor & Ergänzung"** (Erlenmeyerkolben) – vorher teilte es sich das
+  Herz-Symbol mit „Werte".
+- **Menü thematisch sortiert:** Team/Familie → Statistik → Erfolge & Momentum → Berichte &
+  Urkunden → Zyklus → Ernährung → Labor & Ergänzung → Einkaufsliste → Checkliste →
+  Übungs-Bibliothek → Health-Import → Einstellungen → Hilfe. „Berichte & Urkunden" hat dabei
+  ein eigenes Symbol bekommen (vorher wie „Erfolge").
+- **Demo-Ernährung realistisch:** Die Beispiel-Person aß laut Tagebuch nur ~1630 kcal bei
+  vier Trainingseinheiten pro Woche – zu wenig für ihr Pensum und damit ein irreführendes
+  Beispiel. Jetzt acht Wochen vollständig erfasste Tage mit stimmigen ~2400 kcal.
+- **Hilfe & Handbuch** um Anwendungsfälle zu den Funktionen seit 3.15 erweitert: Werte aus
+  Diagrammen ablesen, Einheiten verschieben ohne die Woche zu sprengen, Belastung prüfen –
+  jeweils mit Bildern.
+- **README** neu ausgerichtet: Cat-O-Fit als **quelloffener Sport-Datenhub für Team und
+  Familie** – warum verteilte Sportdaten ein Problem sind, was zusammenläuft und was „Open
+  Source" hier konkret bedeutet.
+
 ## [3.17.0] – 2026-08-02 – Labor & Ergänzung, Umfang nach Niveau
 
 ### Neu

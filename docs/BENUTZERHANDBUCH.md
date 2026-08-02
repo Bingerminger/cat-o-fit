@@ -25,6 +25,9 @@ alles auf einmal lesen.
   - [6. Daten aus Apple Health holen](#6-daten-aus-apple-health-holen)
   - [7. Erinnerungen aufs iPhone bekommen](#7-erinnerungen-aufs-iphone-bekommen)
   - [8. Deinen Fortschritt verstehen](#8-deinen-fortschritt-verstehen)
+  - [9. Werte aus einem Diagramm ablesen](#9-werte-aus-einem-diagramm-ablesen)
+  - [10. Prüfen, ob deine Belastung gesund ist](#10-prüfen-ob-deine-belastung-gesund-ist)
+  - [11. Laborwerte einordnen & ergänzen](#labor--ergänzung)
 - [Die Bereiche im Detail](#die-bereiche-im-detail)
 - [Trainingswissen](#trainingswissen)
 - [Tipps & FAQ](#tipps--faq)
@@ -353,6 +356,53 @@ Konsistenz zählt mehr als einzelne Top-Tage.
 
 ---
 
+## 9. Werte aus einem Diagramm ablesen
+
+<img src="assets/08-koerperwerte.png" width="260" align="right" alt="Körperwerte mit Scrubber-Tooltip" />
+
+Jede Kurve in Cat-O-Fit gibt dir **konkrete Zahlen** – du musst nicht schätzen, was sie
+gerade zeigt.
+
+1. Fahre mit dem **Finger** über das Diagramm (am Rechner mit der Maus).
+2. Eine Führungslinie springt zum nächstgelegenen Messpunkt, eine kleine Blase zeigt
+   **Datum und Wert**.
+3. Bei mehreren Kurven – etwa **Fitness, Ermüdung und Form** – siehst du alle Werte
+   desselben Tages gleichzeitig, farblich zugeordnet.
+4. Am Rechner geht es auch **per Tastatur**: mit den Pfeiltasten wandern, mit Escape schließen.
+
+> 💡 Die **Y-Achse** zeigt runde Orientierungswerte mit haarfeinen Hilfslinien – der Bereich
+> ist damit schon erkennbar, bevor du das Diagramm anfasst. Senkrechtes Scrollen auf dem
+> iPhone bleibt frei; das Diagramm fängt deinen Finger nicht ein.
+
+<br clear="all" />
+
+---
+
+## 10. Prüfen, ob deine Belastung gesund ist
+
+<img src="assets/44-aktuelle-form.png" width="260" align="right" alt="Belastung und Form" />
+
+Die Karte **„Belastung & Form"** auf „Heute" beantwortet drei Fragen, die im Profisport zur
+Steuerung dienen – als Klartext statt als Zahlenfriedhof:
+
+1. **Steigerst du zu schnell?** Das Verhältnis der letzten Woche zu den letzten vier Wochen
+   (Fachbegriff: ACWR) sollte zwischen **0,8 und 1,3** liegen. Darüber steigt das
+   Verletzungsrisiko messbar.
+2. **Bist du erholt?** Fitness minus Ermüdung ergibt deine **Form**. Ist sie positiv, ist ein
+   harter Reiz oder ein kleiner Test gut drin.
+3. **Trainierst du zu gleichförmig?** Ähneln sich alle Tage bei hoher Last (Monotonie), steigt
+   das Übertrainingsrisiko – harte und ganz lockere Tage im Wechsel sind besser.
+
+> 💡 **Alle Sportarten zählen mit** – Kraft, Fußball, Rad und Schwimmen genauso wie Laufen.
+> Die Last ergibt sich aus Dauer × Anstrengung, nicht aus Kilometern allein.
+
+> ⚖️ In den ersten vier Wochen sagt die Karte ehrlich **„Datenbasis wächst noch"**, statt
+> aus wenigen Tagen eine Bewertung zu erfinden.
+
+<br clear="all" />
+
+---
+
 ## Dein Coach & deine Erfolge
 
 <img src="assets/13-dashboard-coach.png" width="260" align="right" alt="Dashboard mit Coach und Momentum" />
@@ -534,6 +584,7 @@ Körperwerte festlegen: **Gewicht, Körperfett, Ruhepuls, HRV** oder **VO₂max*
 ## Labor & Ergänzung
 
 <img src="assets/60-labor.png" width="260" align="right" alt="Labor & Ergänzung" />
+<img src="assets/61-labor-detail.png" width="260" align="right" alt="Laborwert-Verlauf mit Referenz- und Sport-Zielbereich" />
 
 Viele Sportlerinnen und Sportler lassen regelmäßig Blut abnehmen – und legen den Befund
 danach in eine Schublade. Hier kannst du die Werte erfassen, ihren **Verlauf** verfolgen und
@@ -563,10 +614,17 @@ knapp, und das kostet Leistung, lange bevor eine Blutarmut entsteht. Cat-O-Fit z
    täglich ab – inklusive Einnahmetreue.
 
 > ⚡ **Energieversorgung:** Ganz oben schätzt Cat-O-Fit aus Ess-Tagebuch, Trainingsverbrauch
-> und fettfreier Masse, ob du **genug isst für das, was du trainierst**. Zu wenig Energie ist im
+> und fettfreier Masse, ob du **genug isst für das, was du trainierst** – als Zahl **und als
+> Kurve über die letzten Wochen**, mit dem Richtwert als Linie. Zu wenig Energie ist im
 > Ausdauersport das häufigere Problem als ein fehlendes Präparat – und die Ursache für
 > Leistungsabfall, Verletzungen und Zyklusstörungen. Sind zu wenige Mahlzeiten erfasst, sagt die
 > App das ehrlich, statt einen Mangel zu behaupten.
+
+**Was du auf einen Blick siehst:** Ein Ring zeigt, wie viele deiner Werte im Sport-Zielbereich
+liegen und wie viele du beobachten solltest. Jede Zeile trägt einen **Mini-Verlauf**, sodass
+du Trends erkennst, ohne etwas zu öffnen. Beim Antippen erscheint die volle Kurve mit
+**Referenz- und Sport-Zielbereich** sowie der Änderung pro Monat. Nimmst du etwas regelmäßig
+ein, zeigt ein Balkendiagramm deine **Einnahmetreue** der letzten drei Wochen.
 
 > 🔒 **Privat wie der Zyklus:** Laborwerte und Ergänzungen sieht **nur du** – auch Admins nicht.
 > Sie bleiben aus dem Familien-Vollbackup heraus; in deinem persönlichen Backup sind sie dabei.

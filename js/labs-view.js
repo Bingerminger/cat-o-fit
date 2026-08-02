@@ -18,13 +18,16 @@ import {
   toast, openSheet, closeSheet, field, input, select, confirmDialog, segmented,
 } from './ui.js';
 import { setHeader } from './router.js';
-import { lineChart } from './charts.js';
+import { lineChart, barChart, sparkline, donut } from './charts.js';
 import { moduleOff } from './nutrition.js';
 import {
   ANALYTES, ANALYTE_GROUPS, unitsFor, toCanonical, overview, series, refRange,
 } from './labs.js';
-import { recommend, activePlans, takenOn, adherence, SUPPLEMENTS } from './supplements.js';
-import { eligibility, redFlags, energyAvailability, GATE_QUESTIONS, EA_OPTIMAL } from './redflags.js';
+import { recommend, activePlans, takenOn, adherence, adherenceSeries, SUPPLEMENTS } from './supplements.js';
+import {
+  eligibility, redFlags, energyAvailability, energyAvailabilitySeries,
+  GATE_QUESTIONS, EA_OPTIMAL, EA_LOW,
+} from './redflags.js';
 
 const TONE_COLOR = { good: 'var(--good)', warn: 'var(--warn)', bad: 'var(--bad)', neutral: 'var(--text-3)' };
 
@@ -77,10 +80,11 @@ export function render(view) {
   ])));
 
   /* --- 2. Energieversorgung (RED-S) -------------------------------------- */
-  const ea = energyAvailability({
+  const eaArgs = {
     profile, health: store.get('health'), sessions: store.get('sessions'),
     diary: store.get('diary'), today,
-  });
+  };
+  const ea = energyAvailability(eaArgs);
   if (ea) {
     const tone = ea.level === 'kritisch' ? 'bad' : ea.level === 'niedrig' ? 'warn' : ea.level === 'unklar' ? 'neutral' : 'good';
     view.appendChild(el('div', { class: 'card mt-2', style: { borderLeft: `4px solid ${TONE_COLOR[tone]}` } }, [
@@ -97,6 +101,7 @@ export function render(view) {
         class: 'btn btn--soft mt-2', style: { fontSize: '.8rem' },
         onclick: () => { location.hash = '#/nutrition'; },
       }, [icon('utensils'), 'Zum Ess-Tagebuch']) : null,
+      eaChart(eaArgs),
     ]));
   }
 
@@ -105,12 +110,14 @@ export function render(view) {
 
   const rows = overview(labs, { sex: profile.sex, today });
   if (!rows.length) {
-    view.appendChild(emptyState('heart', 'Noch keine Werte',
+    view.appendChild(emptyState('flask', 'Noch keine Werte',
       'Trage Werte aus deinem Laborbefund ein – Cat-O-Fit ordnet sie sportbezogen ein und zeigt dir den Verlauf.'));
   } else {
+    view.appendChild(labStats(rows, labs));
     const list = el('div', { class: 'list-card' });
-    rows.forEach((r, i) => list.appendChild(valueRow(r, i)));
+    rows.forEach((r, i) => list.appendChild(valueRow(r, i, labs)));
     view.appendChild(list);
+    view.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: 'Antippen öffnet den Verlauf mit Referenz- und Sport-Zielbereich.' }));
   }
 
   /* --- 4. Vorschläge ----------------------------------------------------- */
@@ -152,7 +159,17 @@ export function render(view) {
     plans.forEach((p, i) => list.appendChild(planRow(p, today, i)));
     view.appendChild(list);
     const ad = adherence(supps, today);
-    if (ad) view.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: `Zuletzt ${ad.pct} % eingehalten (${ad.taken} von ${ad.expected} Einnahmen in 14 Tagen).` }));
+    if (ad) {
+      const ser = adherenceSeries(supps, today, 21);
+      view.appendChild(el('div', { class: 'card mt-2' }, [
+        el('div', { class: 'row row--between', style: { alignItems: 'baseline' } }, [
+          el('div', { class: 'card__title', style: { fontSize: '.9rem' }, text: 'Einnahmetreue' }),
+          el('div', { class: 'num', style: { fontWeight: '800', color: ad.pct >= 80 ? 'var(--good)' : ad.pct >= 50 ? 'var(--warn)' : 'var(--bad)' }, text: `${ad.pct} %` }),
+        ]),
+        el('div', { class: 'dim', style: { fontSize: '.76rem' }, text: `${ad.taken} von ${ad.expected} Einnahmen in 14 Tagen · Balken = letzte 21 Tage` }),
+        ser.length ? barChart(ser, { height: 90, unit: '%' }) : null,
+      ]));
+    }
   }
 
   view.appendChild(el('div', { class: 'card card--flat mt-4 row gap-2', style: { alignItems: 'flex-start' } }, [
@@ -171,12 +188,50 @@ function introCard() {
   ]);
 }
 
-function valueRow(r, i) {
+/** Kennzahlen-Zeile über allen Werten: Überblick auf einen Blick. */
+function labStats(rows, labs) {
+  const good = rows.filter((r) => r.assessment.status === 'gut').length;
+  const attention = rows.filter((r) => ['niedrig', 'hoch', 'grenzwertig'].includes(r.assessment.status)).length;
+  const measured = (labs || []).filter((l) => l && !l.deleted).length;
+  const dates = [...new Set((labs || []).filter((l) => l && !l.deleted).map((l) => l.date))].sort();
+  const last = dates.at(-1);
+
+  const seg = [
+    { value: good, color: 'var(--good)', label: 'im Zielbereich' },
+    { value: attention, color: 'var(--warn)', label: 'beachten' },
+    { value: rows.length - good - attention, color: 'var(--text-3)', label: 'ohne Bewertung' },
+  ].filter((s) => s.value > 0);
+
+  return el('div', { class: 'card' }, [
+    el('div', { class: 'row gap-3', style: { alignItems: 'center' } }, [
+      el('div', { style: { flex: '0 0 auto', width: '96px' } }, [donut(seg, { size: 96, centerValue: String(rows.length), centerLabel: 'Werte' })]),
+      el('div', { class: 'grow' }, [
+        el('div', { class: 'row gap-2', style: { alignItems: 'baseline' } }, [
+          el('span', { class: 'num', style: { fontWeight: '800', color: 'var(--good)' }, text: String(good) }),
+          el('span', { class: 'muted', style: { fontSize: '.82rem' }, text: 'im Sport-Zielbereich' }),
+        ]),
+        el('div', { class: 'row gap-2', style: { alignItems: 'baseline', marginTop: '2px' } }, [
+          el('span', { class: 'num', style: { fontWeight: '800', color: attention ? 'var(--warn)' : 'var(--text-3)' }, text: String(attention) }),
+          el('span', { class: 'muted', style: { fontSize: '.82rem' }, text: 'zum Beobachten' }),
+        ]),
+        el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '6px' }, text: `${measured} Messungen an ${dates.length} Terminen · zuletzt ${last ? fmtDate(last) : '–'}` }),
+      ]),
+    ]),
+  ]);
+}
+
+function valueRow(r, i, labs) {
   const a = r.assessment;
   const t = r.trend;
   const arrow = t ? (t.dir === 'up' ? '↑' : t.dir === 'down' ? '↓' : '→') : '';
   const sub = [fmtDate(r.date), a.label];
   if (t && t.dir !== 'flat') sub.push(`${arrow} ${String(Math.abs(t.perMonth)).replace('.', ',')} ${r.unit}/Monat`);
+
+  // Mini-Verlauf direkt in der Zeile: Trend erkennen, ohne aufzuklappen.
+  const pts = series(labs, r.key).map((l) => Number(l.value));
+  const spark = pts.length >= 3
+    ? el('span', { style: { width: '54px', flex: '0 0 auto', opacity: '.85' } }, [sparkline(pts, { color: TONE_COLOR[a.tone] })])
+    : null;
 
   const detail = el('div', { hidden: true, style: { padding: '4px 0 10px' } });
   const row = el('button', {
@@ -188,9 +243,20 @@ function valueRow(r, i) {
       el('div', { class: 'list-item__title', text: r.label }),
       el('div', { class: 'list-item__sub', text: sub.join(' · ') }),
     ]),
+    spark,
     el('span', { class: 'num', style: { fontWeight: '700' }, text: `${String(r.value).replace('.', ',')} ${r.unit}` }),
   ]);
   return el('div', {}, [row, detail]);
+}
+
+/** Verlauf der Energieverfügbarkeit über die letzten Wochen. */
+function eaChart(args) {
+  const ser = energyAvailabilitySeries(args, { weeks: 10 });
+  if (ser.filter((p) => p.value != null).length < 3) return null;
+  return el('div', { class: 'mt-2' }, [
+    el('div', { class: 'dim', style: { fontSize: '.74rem', marginBottom: '2px' }, text: `Verlauf der letzten Wochen · Linie = Richtwert ${EA_OPTIMAL}, kritisch unter ${EA_LOW}` }),
+    lineChart(ser, { height: 120, unit: 'kcal/kg', target: EA_OPTIMAL, targetLabel: 'Richtwert', fmt: (v) => String(Math.round(v)) }),
+  ]);
 }
 
 function fillDetail(box, r) {

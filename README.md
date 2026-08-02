@@ -2,35 +2,65 @@
 
 <img src="docs/assets/promo/banner.png" alt="Cat-O-Fit – Fitness & Health für Team & Familie" width="860" />
 
-# Cat-O-Fit · Fitness & Health
+# Cat-O-Fit · Der Sport-Datenhub für Team & Familie
 
-**Fitness, Health & Training für Team und Familie – lokal, ohne Datenbank, als installierbare PWA.**
+**Alle Trainings-, Gesundheits- und Ernährungsdaten deiner Familie an einem Ort – auf
+deinem eigenen Server. Quelloffen, ohne Cloud, ohne Abo, ohne Datenbank.**
 
 [![CI](https://github.com/Bingerminger/cat-o-fit/actions/workflows/ci.yml/badge.svg)](https://github.com/Bingerminger/cat-o-fit/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-success.svg)](LICENSE)
 [![dependencies: 0](https://img.shields.io/badge/dependencies-0-success.svg)](package.json)
+[![Tests](https://img.shields.io/badge/Tests-431-success.svg)](test/)
 [![PWA](https://img.shields.io/badge/PWA-installierbar-3d8bff.svg)](manifest.webmanifest)
 [![Docker](https://img.shields.io/badge/Docker-amd64%20%7C%20arm64-2496ed.svg)](docker-compose.yml)
+[![Self-hosted](https://img.shields.io/badge/100%25-selbst%20gehostet-7c5cff.svg)](#schnellstart)
 
 </div>
 
-> **English:** Cat-O-Fit is a self-hosted fitness, health & training PWA for teams and
-> families (up to 32 people) — periodized race plans, adaptive training-load management,
-> strength workouts, nutrition, body metrics and Apple Health import. Vanilla JS plus a
-> slim PHP backend: zero dependencies, no build step, no database, no cloud. Runs on any
-> PHP host (e.g. Synology Web Station) or via the multi-arch Docker image (amd64/arm64).
-> UI and documentation are currently German-only.
+> **English:** Cat-O-Fit is the self-hosted **sports data hub for teams and families** (up
+> to 32 people). Periodized race plans, professional training-load management (ACWR,
+> CTL/ATL/TSB), strength workouts, nutrition, body metrics, lab values and Apple Health
+> import — all in one place, on **your own** hardware. Vanilla JS plus a slim PHP backend:
+> zero dependencies, no build step, no database, no cloud, no subscription. Runs on any PHP
+> host (e.g. Synology Web Station) or via the multi-arch Docker image (amd64/arm64).
+> MIT-licensed. UI and documentation are currently German-only.
 
-Eine **Fitness-, Health- & Trainings-App für Team & Familie** (bis zu 32 Personen, jede mit
-eigenen Zielen) – für **Wettkämpfe** (Lauf, Triathlon, Hyrox) **und Trainingsprogramme ganz ohne
-Wettkampf** (allgemeine Fitness, Kraft, Abnehmen, Beweglichkeit). Gebaut für den Betrieb auf
-**eigener Hardware** – Synology Web Station, jeder PHP-Host oder **Docker** (amd64 & arm64) –
-und die primäre Nutzung auf **iPhone & iPad** (auch während des Trainings).
-Installierbar als PWA, offline-fähige App-Shell, lokale Daten als JSON (keine Datenbank),
-Hintergrund-Sync zwischen den Geräten.
+## Warum Cat-O-Fit?
+
+Sportdaten liegen heute überall verstreut: die Laufuhr in der einen Cloud, die Waage in der
+nächsten App, der Trainingsplan in einer Tabelle, der Laborbefund in einer Schublade. Für
+eine ganze Familie multipliziert sich das – und für jeden Dienst zahlst du mit Abo oder mit
+deinen Gesundheitsdaten.
+
+**Cat-O-Fit führt alles zusammen, und zwar bei dir zu Hause.**
+
+| | |
+|---|---|
+| 🏠 **Deine Daten bleiben deine** | Alles liegt als JSON auf deinem Server. Keine Cloud, kein Konto, kein Tracking, keine Weitergabe. Zyklus- und Laborwerte sind selbst vor Admins geschützt. |
+| 👨‍👩‍👧‍👦 **Eine App für alle** | Bis zu 32 Personen mit eigenen Zielen, Plänen und Werten – plus gemeinsames Team-Dashboard, Einkaufsliste und Vorratskammer. |
+| 📈 **Profi-Methodik, verständlich** | ACWR, Fitness/Ermüdung/Form nach Banister, VDOT nach Daniels, Monotonie nach Foster – als Klartext-Empfehlung statt als Zahlenfriedhof. |
+| 🔓 **Wirklich Open Source** | MIT-Lizenz, 0 Abhängigkeiten, kein Build-Schritt. Was im Repo liegt, läuft im Browser – nachlesbar, prüfbar, änderbar. |
+| ⚡ **In 2 Minuten startklar** | Ein Docker-Befehl oder Dateien auf den Webspace kopieren. Kein npm, kein Node, keine Datenbank. |
 
 > Vom periodisierten Wettkampfplan über Kraft- und Gesundheitsprogramme bis zu Ernährung,
-> Werte-Tracking und Statistik – jede Person im Haushalt mit eigenem Profil, Zyklusdaten strikt privat.
+> Laborwerten und Statistik – jede Person mit eigenem Profil, private Daten strikt privat.
+
+## Was zusammenläuft
+
+<div align="center">
+<img src="docs/assets/ipad-01-dashboard.png" width="420" alt="Dashboard mit Coach-Hinweisen und Belastungssteuerung" />
+<img src="docs/assets/ipad-60-labor.png" width="420" alt="Labor & Ergänzung mit Verläufen" />
+</div>
+
+**Training** – periodisierte Pläne für Lauf, Triathlon und Hyrox oder Programme ganz ohne
+Wettkampf · **Belastung** – ACWR, Form und Monotonie über alle Sportarten hinweg ·
+**Gesundheit** – Körperwerte, Apple-Health-Import, Zyklus, Laborwerte mit sportlicher
+Einordnung · **Ernährung** – Rezepte, Kalorienbilanz, Einkaufsliste mit gemeinsamem Lager ·
+**Gemeinschaft** – Teams, geteilte Kennzahlen, Erfolge und Urkunden.
+
+Läuft auf **eigener Hardware** (Synology Web Station, jeder PHP-Host oder Docker für amd64
+& arm64) und auf **iPhone & iPad** – installierbar als PWA, offline-fähig, mit
+Hintergrund-Sync zwischen allen Geräten.
 
 ## Schnellstart
 
@@ -215,7 +245,11 @@ Schreibrechte auf `data/` geben – die ausführliche Klick-Anleitung steht unte
   <img src="docs/assets/40-uebungen.png" width="220" alt="Übungs-Bibliothek mit symbolhaften Illustrationen" />
   <img src="docs/assets/41-uebung-detail.png" width="220" alt="Übungs-Detail mit Anleitung" />
   <img src="docs/assets/42-gesundheitsziele-coach.png" width="220" alt="Gesundheitsziele mit Fortschritt" />
-  <img src="docs/assets/60-labor.png" width="220" alt="Labor & Ergänzung mit sportbezogener Einordnung" />
+</p>
+<p>
+  <img src="docs/assets/60-labor.png" width="220" alt="Labor & Ergänzung: Energieversorgung und Werte-Übersicht" />
+  <img src="docs/assets/61-labor-detail.png" width="220" alt="Laborwert-Verlauf mit Referenz- und Sport-Zielbereich" />
+  <img src="docs/assets/16-kalender-wetter.png" width="220" alt="Kalender mit Wetter" />
 </p>
 
 **iPad** (Sidebar-Layout)
@@ -405,14 +439,29 @@ cat-o-fit/
 
 ---
 
-## Mitwirken & Lizenz
+## Open Source – und das ernst gemeint
 
-- **Mitwirken:** Bug- und Ideen-Meldungen über die [Issue-Vorlagen](.github/ISSUE_TEMPLATE/),
-  Code-Beiträge gemäß [CONTRIBUTING.md](CONTRIBUTING.md). Es gilt unser
-  [Verhaltenskodex](CODE_OF_CONDUCT.md).
-- **Sicherheit:** Schwachstellen bitte vertraulich melden – siehe [SECURITY.md](SECURITY.md).
-- **Lizenz:** [MIT](LICENSE). Drittanbieter-Hinweise in [CREDITS.md](CREDITS.md),
-  Markenhinweise in [TRADEMARKS.md](TRADEMARKS.md).
+Cat-O-Fit steht unter der **MIT-Lizenz**: nutzen, ändern, weitergeben, auch kommerziell.
+Kein Open-Core-Modell, keine Pro-Version, keine Funktion hinter einer Bezahlschranke.
+
+Was das praktisch bedeutet:
+
+- **Nachvollziehbar:** Kein Build-Schritt, keine Abhängigkeiten. Was im Repo liegt, läuft im
+  Browser – jede Berechnung ist im Klartext nachlesbar. Die Trainingslehre steckt in kleinen,
+  kommentierten Modulen (`load.js`, `vdot.js`, `energy.js`, `labs.js`), nicht in einer Blackbox.
+- **Prüfbar:** 431 Tests decken Logik *und* Ansichten ab, die CI läuft bei jedem Push.
+- **Unabhängig:** Kein Konto, kein Telemetrie-Rückkanal. Die einzige externe Verbindung ist
+  die optionale Wetterabfrage – abschaltbar.
+- **Deins:** Deine Daten liegen als lesbares JSON auf deinem Server. Kein Export-Ritual nötig,
+  wenn du gehen willst – du warst nie weg.
+
+**Mitmachen ist willkommen:** Bug- und Ideen-Meldungen über die
+[Issue-Vorlagen](.github/ISSUE_TEMPLATE/), Code-Beiträge gemäß [CONTRIBUTING.md](CONTRIBUTING.md),
+es gilt unser [Verhaltenskodex](CODE_OF_CONDUCT.md). Schwachstellen bitte vertraulich melden
+(siehe [SECURITY.md](SECURITY.md)). Drittanbieter-Hinweise in [CREDITS.md](CREDITS.md),
+Markenhinweise in [TRADEMARKS.md](TRADEMARKS.md).
+
+⭐ Wenn dir das Projekt gefällt, freut sich ein Stern – er hilft anderen, es zu finden.
 
 ---
 
