@@ -583,8 +583,7 @@ Körperwerte festlegen: **Gewicht, Körperfett, Ruhepuls, HRV** oder **VO₂max*
 
 ## Labor & Ergänzung
 
-<img src="assets/60-labor.png" width="260" align="right" alt="Labor & Ergänzung" />
-<img src="assets/61-labor-detail.png" width="260" align="right" alt="Laborwert-Verlauf mit Referenz- und Sport-Zielbereich" />
+<img src="assets/60-labor.png" width="260" align="right" alt="Labor & Ergänzung: Energieversorgung und Werte-Übersicht" />
 
 Viele Sportlerinnen und Sportler lassen regelmäßig Blut abnehmen – und legen den Befund
 danach in eine Schublade. Hier kannst du die Werte erfassen, ihren **Verlauf** verfolgen und
@@ -620,11 +619,19 @@ knapp, und das kostet Leistung, lange bevor eine Blutarmut entsteht. Cat-O-Fit z
 > Leistungsabfall, Verletzungen und Zyklusstörungen. Sind zu wenige Mahlzeiten erfasst, sagt die
 > App das ehrlich, statt einen Mangel zu behaupten.
 
+<br clear="all" />
+
 **Was du auf einen Blick siehst:** Ein Ring zeigt, wie viele deiner Werte im Sport-Zielbereich
 liegen und wie viele du beobachten solltest. Jede Zeile trägt einen **Mini-Verlauf**, sodass
 du Trends erkennst, ohne etwas zu öffnen. Beim Antippen erscheint die volle Kurve mit
 **Referenz- und Sport-Zielbereich** sowie der Änderung pro Monat. Nimmst du etwas regelmäßig
 ein, zeigt ein Balkendiagramm deine **Einnahmetreue** der letzten drei Wochen.
+
+<p><img src="assets/61-labor-detail.png" width="260" alt="Laborwert-Verlauf mit Referenz- und Sport-Zielbereich" /></p>
+
+Im Beispiel oben liegt das **Ferritin bei 34 µg/l**: laut Labor (15–300) unauffällig, im
+Sport-Zielbereich (40–200) aber zu niedrig – und die Kurve zeigt, dass es seit einem Jahr
+kontinuierlich fällt. Genau solche Verläufe sieht man in einem einzelnen Befund nicht.
 
 > 🔒 **Privat wie der Zyklus:** Laborwerte und Ergänzungen sieht **nur du** – auch Admins nicht.
 > Sie bleiben aus dem Familien-Vollbackup heraus; in deinem persönlichen Backup sind sie dabei.

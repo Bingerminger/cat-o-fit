@@ -48,8 +48,8 @@ deinen Gesundheitsdaten.
 ## Was zusammenläuft
 
 <div align="center">
-<img src="docs/assets/ipad-01-dashboard.png" width="420" alt="Dashboard mit Coach-Hinweisen und Belastungssteuerung" />
-<img src="docs/assets/ipad-60-labor.png" width="420" alt="Labor & Ergänzung mit Verläufen" />
+<img src="docs/assets/ipad-01-dashboard.png" width="390" alt="Dashboard mit Coach-Hinweisen und Belastungssteuerung" />
+<img src="docs/assets/ipad-60-labor.png" width="390" alt="Labor & Ergänzung mit Verläufen und Zielbereichen" />
 </div>
 
 **Training** – periodisierte Pläne für Lauf, Triathlon und Hyrox oder Programme ganz ohne
