@@ -11,7 +11,7 @@ import { weekPlan } from '../js/whatif.js';
 import { acwr, monotonyStrain, loadSummary, formSeries } from '../js/load.js';
 import { restDaySuggestion } from '../js/rolling.js';
 import { loadBalance } from '../js/fitness.js';
-import { makePhases, longRunStartKm, buildWeekUnits, DEFAULT_WEEK_TEMPLATE } from '../js/plans.js';
+import { makePhases, longRunStartKm, buildWeekUnits, supportRunKm, DEFAULT_WEEK_TEMPLATE } from '../js/plans.js';
 
 const T = '2026-06-17'; // Mittwoch
 
@@ -129,6 +129,34 @@ test('v3.16.0: Monotonie nutzt die Stichproben-Standardabweichung (Foster)', () 
   const m = monotonyStrain(sessions, T);
   // 2 Tage à 300, 5 Tage 0: Mittel 85,7; SD(n-1) ≈ 141,4 -> Monotonie ≈ 0,61.
   assert.ok(m.monotony > 0.55 && m.monotony < 0.68, `Monotonie ≈ 0,61, war ${m.monotony}`);
+});
+
+/* ---- Wochenumfang skaliert mit dem Niveau (v3.17.0) --------------------- */
+
+test('v3.17.0: Nebeneinheiten skalieren mit dem Long Run statt fester 8–9 km', () => {
+  // Einsteigerin (Long Run 10 km) vs. Fortgeschrittener (Long Run 30 km).
+  assert.equal(supportRunKm(10, 0.5), 5);
+  assert.equal(supportRunKm(30, 0.5), 15);
+  // Grenzen greifen: nie unter min, nie über max.
+  assert.equal(supportRunKm(4, 0.5, { min: 5, max: 16 }), 5);
+  assert.equal(supportRunKm(40, 0.5, { min: 5, max: 16 }), 16);
+  // Ohne Bezugsgröße der Mindestwert.
+  assert.equal(supportRunKm(null, 0.5, { min: 5 }), 5);
+});
+
+test('v3.17.0: der Wochenumfang wächst mit der Historie mit', () => {
+  const mkPlan = (baseLongKm) => ({
+    id: 'p', startDate: '2026-06-15', weeks: 8, eventId: 'e1',
+    phases: makePhases(8), weekTemplate: DEFAULT_WEEK_TEMPLATE, commitments: [], baseLongKm,
+  });
+  const event = { id: 'e1', date: '2026-08-09', distanceKm: 21.0975 };
+  const km = (plan) => buildWeekUnits(plan, event, {}, 3)
+    .filter((u) => ['easy', 'long', 'recovery'].includes(u.type))
+    .reduce((a, u) => a + (u.targetDistanceKm || 0), 0);
+  const beginner = km(mkPlan(null));
+  const advanced = km(mkPlan(20));
+  assert.ok(advanced > beginner * 1.3,
+    `erfahrene Läufer:innen bekommen deutlich mehr Umfang (${beginner} vs. ${advanced} km)`);
 });
 
 /* ---- Plan-Historie ------------------------------------------------------ */

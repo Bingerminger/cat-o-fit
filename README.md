@@ -170,6 +170,14 @@ Schreibrechte auf `data/` geben – die ausführliche Klick-Anleitung steht unte
 - **Ernährung**: ~48 fertige deutsche **Rezepte** (per „Rezept-Ideen laden") plus eigene Gerichte,
   **Kalorienbilanz** und kcal-/Eiweiß-**Schätzung** aus den Zutaten (kuratierte Nährwerttabelle +
   optional Open Food Facts). Daraus entsteht die **Einkaufsliste** mit gemeinsamem Lager.
+- **Labor & Ergänzung** (optional): Werte aus dem Laborbefund erfassen, im Verlauf verfolgen
+  und **sportbezogen** einordnen – Cat-O-Fit kennt neben dem Labor-Referenzbereich den für
+  Training günstigen Zielkorridor (ein Ferritin von 25 ist „normal", für Ausdauersport aber
+  knapp). Mit Kontextprüfung (Ferritin ist bei erhöhtem CRP nicht beurteilbar), Trend-Projektion,
+  **Energieverfügbarkeits-Screening (RED-S)** aus Ernährung und Trainingslast sowie Vorschlägen
+  zur Ergänzung – immer „food first", mit Begründung, Obergrenze und Wechselwirkungen. Für
+  **gesunde Sportler:innen**; bei Erkrankung, Medikation oder Schwangerschaft bleibt es beim
+  reinen Dokumentieren.
 - **Tages-Checkliste**, **Zykluskalender** sowie **Erfolge & Momentum** (Badges) – optional, abschaltbar.
 - **Sicherung & Recovery**: persönliches **Backup** (JSON, inkl. eigener Zyklusdaten) für alle;
   zusätzlich ein **Admin-Vollbackup** der ganzen Familie (alle Mitglieder, Rollen, Urkunden/Reports)
@@ -207,6 +215,7 @@ Schreibrechte auf `data/` geben – die ausführliche Klick-Anleitung steht unte
   <img src="docs/assets/40-uebungen.png" width="220" alt="Übungs-Bibliothek mit symbolhaften Illustrationen" />
   <img src="docs/assets/41-uebung-detail.png" width="220" alt="Übungs-Detail mit Anleitung" />
   <img src="docs/assets/42-gesundheitsziele-coach.png" width="220" alt="Gesundheitsziele mit Fortschritt" />
+  <img src="docs/assets/60-labor.png" width="220" alt="Labor & Ergänzung mit sportbezogener Einordnung" />
 </p>
 
 **iPad** (Sidebar-Layout)
@@ -341,7 +350,7 @@ bewusst als optionale Erweiterung offengehalten, nicht als Hauptmechanismus.
 
 ## Tests
 
-Logik **und** Views sind durch **407 Unit-, View- und Regressionstests** (47 Testdateien) abgesichert –
+Logik **und** Views sind durch **431 Unit-, View- und Regressionstests** (48 Testdateien) abgesichert –
 ohne Build und ohne Abhängigkeiten, mit dem Node-eigenen Test-Runner:
 
 ```bash

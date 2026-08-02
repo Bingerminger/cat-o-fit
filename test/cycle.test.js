@@ -60,6 +60,19 @@ test('isProtectedDay nur während der Menstruation', () => {
   assert.equal(isProtectedDay(addDays(REAL, 16)), false); // Lutealphase
 });
 
+test('v3.17.0: veraltete Prognosen schützen nicht mehr', () => {
+  seed();
+  // Ein prognostizierter Menstruationstag kurz nach dem letzten echten Eintrag
+  // schützt weiterhin (28-Tage-Zyklus -> REAL + 28 ist der nächste Start).
+  assert.equal(isProtectedDay(addDays(REAL, 28)), true, 'frische Prognose schützt');
+  // Vier Monate später ist die Prognose nicht mehr belastbar: Ohne neuen Eintrag
+  // würde sie sonst dauerhaft Einheiten „schadfrei" stellen und die
+  // Plan-Einhaltung stillschweigend schönen.
+  assert.equal(isProtectedDay(addDays(REAL, 28 * 5)), false, 'veraltete Prognose schützt nicht');
+  // Der echte Eintrag selbst bleibt immer geschützt.
+  assert.equal(isProtectedDay(REAL), true);
+});
+
 test('nächste Periode wird in die Zukunft prognostiziert', () => {
   seed();
   const next = nextPredictedStart();

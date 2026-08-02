@@ -23,6 +23,7 @@ import { render as renderHelp } from './help.js';
 import { render as renderBadges } from './badges.js';
 import { render as renderReports, renderDetail as renderReportDetail } from './reports.js';
 import { render as renderCycle } from './cycle.js';
+import { render as renderLabs } from './labs-view.js';
 import { render as renderExercises } from './exercises.js';
 import { render as renderFamily } from './family.js';
 import { render as renderFamilyAdmin } from './family-admin.js';
@@ -113,6 +114,7 @@ const MORE_NAV = [
   { icon: 'trophy', label: 'Erfolge & Momentum', hash: '#/badges' },
   { icon: 'dumbbell', label: 'Übungs-Bibliothek', hash: '#/uebungen' },
   { icon: 'moon', label: 'Zyklus', hash: '#/zyklus', module: 'cycle' },
+  { icon: 'heart', label: 'Labor & Ergänzung', hash: '#/labor', module: 'labs' },
   { icon: 'chart', label: 'Statistik', hash: '#/stats' },
   { icon: 'trophy', label: 'Berichte & Urkunden', hash: '#/reports' },
   { icon: 'utensils', label: 'Ernährung', hash: '#/nutrition', module: 'nutrition' },
@@ -290,6 +292,7 @@ function registerRoutes() {
   router.register('/reports', renderReports);
   router.register('/report/:id', (v, p) => renderReportDetail(v, p.id));
   router.register('/zyklus', renderCycle);
+  router.register('/labor', renderLabs);
   router.register('/uebungen', renderExercises);
   router.setNotFound((v) => navigate('#/'));
 }

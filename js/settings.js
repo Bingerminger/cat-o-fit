@@ -175,7 +175,7 @@ export function render(view) {
   view.appendChild(sectionHead('Module'));
   const mods = s.modules || {};
   const modList = el('div', { class: 'card' });
-  [['nutrition', 'Ernährung'], ['shopping', 'Einkaufsliste'], ['checklist', 'Tages-Checkliste'], ['strength', 'Krafttraining'], ['cycle', 'Zykluskalender']].forEach(([k, label], i) => {
+  [['nutrition', 'Ernährung'], ['shopping', 'Einkaufsliste'], ['checklist', 'Tages-Checkliste'], ['strength', 'Krafttraining'], ['cycle', 'Zykluskalender'], ['labs', 'Labor & Ergänzung']].forEach(([k, label], i) => {
     modList.appendChild(el('div', { class: 'row row--between', style: { padding: '10px 0', borderTop: i ? '1px solid var(--border)' : 'none' } }, [
       el('span', { text: label }),
       // Frische Module lesen (nicht den Render-Snapshot) -> mehrere Toggles überschreiben sich nicht.

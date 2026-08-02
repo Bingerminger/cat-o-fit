@@ -24,8 +24,8 @@ import { uid, nowIso, debounce, todayStr, addDays, weekStartMonday, diffDays, sc
 import { sha256Hex } from './sha256.js';
 import { buildDemo } from './demo.js';
 
-const AREAS = ['profile', 'events', 'plans', 'sessions', 'health', 'nutrition', 'diary', 'shopping', 'checklist', 'cycle', 'reports'];
-const ARRAY_AREAS = ['events', 'plans', 'sessions', 'health', 'nutrition', 'diary', 'shopping', 'checklist', 'cycle', 'reports'];
+const AREAS = ['profile', 'events', 'plans', 'sessions', 'health', 'nutrition', 'diary', 'shopping', 'checklist', 'cycle', 'reports', 'labs', 'supplements'];
+const ARRAY_AREAS = ['events', 'plans', 'sessions', 'health', 'nutrition', 'diary', 'shopping', 'checklist', 'cycle', 'reports', 'labs', 'supplements'];
 // Versiegelte Bereiche: append-only, nicht editier- oder löschbar (z. B. Urkunden/Reports).
 const SEALED_AREAS = ['reports'];
 // Alle Keys sind umgebungs-eindeutig (scopeKey), damit Prod & Abnahme auf
@@ -42,6 +42,7 @@ const state = {
   profile: {},
   events: [], plans: [], sessions: [], health: [],
   nutrition: [], shopping: [], checklist: [], cycle: [], reports: [], diary: [],
+  labs: [], supplements: [],
 };
 let revs = {};          // area -> letzte gesehene Server-rev (Hochwassermarke)
 let pendingOps = {};    // area -> ausstehende Ops des aktiven Nutzers
@@ -316,7 +317,11 @@ export async function syncNow() {
 
 /* ------------------------------ Export/Import --------------------------- */
 const EXPORT_VERSION = 1;
-const PRIVATE_AREAS = ['cycle'];   // strikt privat: nie beim Verwalten fremder Mitglieder ausgeben/exportieren
+// Strikt privat: nie beim Verwalten fremder Mitglieder ausgeben/exportieren.
+// `labs`/`supplements` sind Gesundheitsdaten im Sinne von Art. 9 DSGVO und werden
+// deshalb genauso behandelt wie der Zyklus – auch Admins sehen sie nicht, und sie
+// bleiben aus dem Familien-Vollbackup heraus (persönliches Backup enthält sie).
+const PRIVATE_AREAS = ['cycle', 'labs', 'supplements'];
 /** Darf der Bereich im aktuellen Kontext ausgegeben werden? Private Bereiche (Zyklus)
     sind beim Verwalten fremder Mitglieder (isManaging) tabu – nur die Person selbst sieht sie. */
 export function areaAllowed(area) { return !(isManaging() && PRIVATE_AREAS.includes(area)); }

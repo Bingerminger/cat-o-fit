@@ -51,6 +51,8 @@ function user_areas(): array
         'checklist' => 'array',
         'cycle'     => 'array',
         'reports'   => 'array',
+        'labs'      => 'array',   // Laborwerte (privat, wie cycle)
+        'supplements' => 'array', // Supplement-Plan + Einnahmen (privat)
     ];
 }
 

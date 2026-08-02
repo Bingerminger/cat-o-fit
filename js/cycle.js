@@ -91,10 +91,24 @@ export function cyclePhase(dateStr) {
   return { phase, cycleDay: day + 1, cycleLength: cl, periodLength: pl, predicted: !isReal, start };
 }
 
-/** Geschützter Tag = Menstruation (echt oder prognostiziert). */
+/** Wie lange eine Prognose ohne neuen echten Eintrag noch als belastbar gilt (Tage). */
+export const PREDICTION_MAX_AGE_DAYS = 92; // ~3 Monate
+
+/**
+ * Geschützter Tag = Menstruationstag.
+ *
+ * Echte (selbst eingetragene) Perioden schützen immer. Eine reine PROGNOSE zählt
+ * nur, solange der letzte echte Eintrag höchstens ~3 Monate zurückliegt: Danach
+ * ist sie nicht mehr belastbar (Zykluslänge ändert sich, Einträge fehlen), und
+ * geschützte Tage würden die Plan-Einhaltung stillschweigend schönen.
+ */
 export function isProtectedDay(dateStr) {
   const p = cyclePhase(dateStr);
-  return !!(p && p.phase === 'menstruation');
+  if (!p || p.phase !== 'menstruation') return false;
+  if (!p.predicted) return true;              // echter Eintrag -> immer geschützt
+  const last = lastStart();
+  if (!last) return false;
+  return diffDays(last, dateStr) <= PREDICTION_MAX_AGE_DAYS;
 }
 
 /* ------------------------------ Eingabe --------------------------------- */

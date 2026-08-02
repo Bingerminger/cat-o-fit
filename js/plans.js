@@ -214,6 +214,25 @@ function pace(pz, key) {
   return z ? { min: z.min, max: z.max, hrZone: z.hrZone } : null;
 }
 
+/**
+ * Umfang einer NEBENEINHEIT (zweiter Dauerlauf, Grundlagenlauf, Regeneration) als
+ * Anteil des Long Runs derselben Woche.
+ *
+ * Bis v3.16.0 standen hier feste 7–9 km – unabhängig davon, ob jemand für 5 km
+ * oder für einen Marathon trainiert und ob er 15 oder 60 km pro Woche läuft. Der
+ * Wochenumfang skalierte dadurch nicht mit dem Leistungsniveau: Für Einsteiger:innen
+ * war die Einheit zu lang, für Fortgeschrittene belanglos kurz. Über den Long Run
+ * wächst sie jetzt automatisch mit Progression, Deload und Tapering mit.
+ *
+ * Die Anteile folgen der gängigen Aufteilung: Long Run ≈ 30 % des Wochenumfangs,
+ * die zweite Umfangseinheit etwa halb so lang, der Regenerationslauf rund ein Drittel.
+ */
+export function supportRunKm(longKm, frac, { min = 4, max = 16 } = {}) {
+  const km = (Number(longKm) || 0) * frac;
+  if (!km) return min;
+  return Math.round(Math.max(min, Math.min(max, km)) * 2) / 2;
+}
+
 /** Pyramiden-Intervalle: aufsteigend bis `peakSec`, dann absteigend; je `restSec` Trabpause.
     Liefert variable Segmente für den Workout-Modus (feinere Struktur als uniforme Runden). */
 export function pyramidSegments(peakSec = 240, stepSec = 60, restSec = 90) {
@@ -241,6 +260,8 @@ export function distanceEmphasis(raceKm = 21.1) {
 
 function resolveRole(role, ctx) {
   const { plan, date, week, phase, weeks, raceKm, pz, isLast } = ctx;
+  // Long Run dieser Woche = Maßstab für alle übrigen Laufeinheiten (s. supportRunKm).
+  const longKm = longRunKm(week, weeks, raceKm, plan.baseLongKm);
   const mk = (type, extra = {}) => ({
     id: uid('u'), planId: plan.id, eventId: plan.eventId,
     date, dow: isoDow(date), week, phase: phase.key,
@@ -271,18 +292,23 @@ function resolveRole(role, ctx) {
 
     case 'recovery':
       if (isLast) return mk('recovery', { dist: 4, pace: pace(pz, 'recovery'), title: 'Locker auslaufen', desc: 'Ganz locker, Beine frei machen.' });
-      return mk('recovery', { dist: 5, pace: pace(pz, 'recovery'), title: 'Regenerationslauf', desc: 'Sehr locker in Z1–Z2, spürbar langsamer als der Dauerlauf – wenn es sich „fast zu leicht" anfühlt, ist es genau richtig. Die Beine sollen sich erholen, das Tempo ist Nebensache. Alternativ rückenschonend als lockere Radrunde.' });
+      return mk('recovery', {
+        dist: supportRunKm(longKm, 0.3, { min: 4, max: 8 }),
+        pace: pace(pz, 'recovery'), title: 'Regenerationslauf',
+        desc: 'Sehr locker in Z1–Z2, spürbar langsamer als der Dauerlauf – wenn es sich „fast zu leicht" anfühlt, ist es genau richtig. Die Beine sollen sich erholen, das Tempo ist Nebensache. Alternativ rückenschonend als lockere Radrunde.',
+      });
 
     case 'endurance': { // Donnerstag – zweite Laufeinheit (Umfang)
       if (isLast) return mk('easy', { dist: 4, pace: pace(pz, 'easy'), title: 'Lockerer Lauf (kurz)', desc: 'Locker, frisch bleiben vor dem Wettkampf.' });
-      const dist = phase.key === 'base' ? Math.min(9, 7 + Math.floor(week / 3)) : 8;
+      // Skaliert mit dem Long Run der Woche (~halb so lang) statt fester 8–9 km.
+      const dist = supportRunKm(longKm, 0.5, { min: 5, max: 16 });
       return mk('easy', { dist, pace: pace(pz, 'easy'), title: 'Lockerer Dauerlauf', desc: 'Gleichmäßig im Grundlagenbereich (Z2), Plaudertempo – du solltest dich nebenbei unterhalten können. Lieber etwas zu langsam als zu schnell; hier zählt der Umfang, nicht das Tempo. Bei Rückenbeschwerden alternativ als gleichmäßige Radrunde (Z2).' });
     }
 
     case 'quality': { // Dienstag – Schlüsselreiz, phasenabhängig
       if (isLast) return mk('tempo', { dist: 5, pace: pace(pz, 'race_hm'), title: 'Aktivierung', desc: '2 km locker, 3×2 min im Renntempo, 4 Steigerungen. Scharf, aber kurz.' });
       if (phase.key === 'base')
-        return mk('easy', { dist: 7 + Math.min(2, Math.floor(week / 2)), pace: pace(pz, 'easy'), title: 'Dauerlauf mit Steigerungen', desc: 'Lockerer Dauerlauf in Z2 (Plaudertempo). In den letzten 1–2 km dann 5–6 Steigerungsläufe à ~80–100 m: locker antraben, über ~20 m zügig auf ca. 90 % beschleunigen (schnell, aber nicht sprinten), dann auslaufen lassen. Dazwischen 60–90 s locker gehen/traben. Die Herzfrequenz ist hier nebensächlich – es geht um Spritzigkeit und saubere Technik.' });
+        return mk('easy', { dist: supportRunKm(longKm, 0.45, { min: 5, max: 14 }), pace: pace(pz, 'easy'), title: 'Dauerlauf mit Steigerungen', desc: 'Lockerer Dauerlauf in Z2 (Plaudertempo). In den letzten 1–2 km dann 5–6 Steigerungsläufe à ~80–100 m: locker antraben, über ~20 m zügig auf ca. 90 % beschleunigen (schnell, aber nicht sprinten), dann auslaufen lassen. Dazwischen 60–90 s locker gehen/traben. Die Herzfrequenz ist hier nebensächlich – es geht um Spritzigkeit und saubere Technik.' });
       const em = distanceEmphasis(raceKm);   // distanzspezifischer Schwerpunkt
       if (phase.key === 'build') {
         if (em.marathon) // Marathon: schwellendominant, lange ruhige Reize

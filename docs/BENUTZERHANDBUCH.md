@@ -531,6 +531,54 @@ Körperwerte festlegen: **Gewicht, Körperfett, Ruhepuls, HRV** oder **VO₂max*
 
 ---
 
+## Labor & Ergänzung
+
+<img src="assets/60-labor.png" width="260" align="right" alt="Labor & Ergänzung" />
+
+Viele Sportlerinnen und Sportler lassen regelmäßig Blut abnehmen – und legen den Befund
+danach in eine Schublade. Hier kannst du die Werte erfassen, ihren **Verlauf** verfolgen und
+sie **sportbezogen** einordnen lassen.
+
+**Warum sportbezogen?** Laborbereiche gelten für die Allgemeinbevölkerung. Ein **Ferritin von
+25 µg/l** ist laut Befund „normal" – für Ausdauertraining ist der Eisenspeicher damit aber
+knapp, und das kostet Leistung, lange bevor eine Blutarmut entsteht. Cat-O-Fit zeigt deshalb
+**beide** Korridore: den Referenzbereich des Labors und den für Training günstigen.
+
+1. **Einrichten:** Beim ersten Öffnen beantwortest du fünf kurze Fragen. Die App ist für
+   **gesunde** Sportlerinnen und Sportler gedacht – wer in ärztlicher Behandlung ist,
+   Medikamente nimmt, schwanger ist oder eine Essstörung hat, nutzt das Modul nur zum
+   **Dokumentieren**. Erfassen und Verlauf ansehen geht weiterhin, Empfehlungen gibt es dann
+   bewusst nicht.
+2. **Wert erfassen:** Analyt wählen (17 sportrelevante von Ferritin über Vitamin D bis fT3),
+   Datum, Messwert und Einheit. Die **Einheit lässt sich umstellen** – Vitamin D etwa steht auf
+   Befunden mal in ng/ml, mal in nmol/l (Faktor 2,5, eine häufige Verwechslung).
+3. **Einordnung:** Antippen zeigt Verlauf, beide Korridore und eine Erklärung. Fällt ein Wert
+   über mehrere Messungen, rechnet die App aus, **wann** er den günstigen Bereich verlässt –
+   ein guter Termin für die nächste Kontrolle.
+4. **Ergänzung:** Vorschläge kommen mit **Begründung**, üblicher Menge, Zeitpunkt, Obergrenze
+   und Wechselwirkungen. Immer zuerst der Weg über die Ernährung – ein Präparat füllt eine
+   Lücke, es ersetzt keinen Teller. **Eisen wird nie ohne Laborwert vorgeschlagen**: Auf
+   Verdacht eingenommen ist es bei vollen Speichern schädlich.
+5. **Plan & Abhaken:** Was du regelmäßig nimmst, trägst du unter „Dein Plan" ein und hakst es
+   täglich ab – inklusive Einnahmetreue.
+
+> ⚡ **Energieversorgung:** Ganz oben schätzt Cat-O-Fit aus Ess-Tagebuch, Trainingsverbrauch
+> und fettfreier Masse, ob du **genug isst für das, was du trainierst**. Zu wenig Energie ist im
+> Ausdauersport das häufigere Problem als ein fehlendes Präparat – und die Ursache für
+> Leistungsabfall, Verletzungen und Zyklusstörungen. Sind zu wenige Mahlzeiten erfasst, sagt die
+> App das ehrlich, statt einen Mangel zu behaupten.
+
+> 🔒 **Privat wie der Zyklus:** Laborwerte und Ergänzungen sieht **nur du** – auch Admins nicht.
+> Sie bleiben aus dem Familien-Vollbackup heraus; in deinem persönlichen Backup sind sie dabei.
+
+> ⚕️ Alle Angaben sind Orientierung, **keine Diagnose und keine Therapie**. Bei Beschwerden oder
+> auffälligen Werten gehört die Beurteilung in ärztliche Hände – bei kritischen Werten sagt die
+> App das ausdrücklich und hält sich mit Empfehlungen zurück.
+
+<br clear="all" />
+
+---
+
 ## Ernährung & Listen lernen mit
 
 <img src="assets/15-ernaehrung-lernen.png" width="260" align="right" alt="Ernährung mit Lieblingsgerichten" />
