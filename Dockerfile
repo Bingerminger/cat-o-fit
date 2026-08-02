@@ -8,11 +8,15 @@
 # =============================================================================
 FROM php:8.4-apache
 
-# zip für ZIP-Uploads des Apple-Health-Exports (XMLReader ist bereits enthalten).
+# zip für ZIP-Uploads des Apple-Health-Exports (XMLReader ist bereits enthalten),
+# opcache für vernünftige PHP-Performance auf NAS-Hardware.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends libzip-dev \
-    && docker-php-ext-install -j"$(nproc)" zip \
+    && docker-php-ext-install -j"$(nproc)" zip opcache \
     && rm -rf /var/lib/apt/lists/*
+
+# Zeitzone (überschreibbar: docker run -e TZ=Europe/Vienna …)
+ENV TZ=Europe/Berlin
 
 # Apache: .htaccess-Regeln der App aktivieren (MIME-Typen für ES-Module,
 # Cache-Control, data/-Schutz) + data/ zusätzlich serverseitig fest sperren.

@@ -237,7 +237,13 @@ function attachDrag(handle, unit) {
 }
 
 function reschedule(unit, newDate) {
-  saveUnitPatch(unit.planId, unit.id, { date: newDate, dow: isoDow(newDate), status: unit.status === 'erledigt' ? 'erledigt' : 'verschoben' });
+  // Status bleibt „geplant" (die Einheit findet statt, nur an einem anderen Tag);
+  // die Verschiebung merkt sich `movedFrom`. Siehe session.js openReschedule.
+  saveUnitPatch(unit.planId, unit.id, {
+    date: newDate, dow: isoDow(newDate),
+    status: unit.status === 'erledigt' ? 'erledigt' : 'geplant',
+    movedFrom: unit.movedFrom || unit.date,
+  });
   toast(`Verschoben auf ${fmtWeekday(newDate, true)}`, 'good');
   draw();
 }

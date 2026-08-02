@@ -16,6 +16,7 @@ import {
 import { setHeader } from './router.js';
 import { moduleOff } from './nutrition.js';
 import { gentleVariant } from './rolling.js';
+import { isOpen } from './planflow.js';
 import { applyAdapt } from './adapt.js';
 
 export const PHASE_META = {
@@ -114,7 +115,7 @@ const CYCLE_SKIP_TYPES = ['rest', 'recovery', 'mobility', 'walk', 'race'];
  */
 export function cycleSoftenTargets(units = [], startDate) {
   return (units || []).filter((u) => u && u.date === startDate && !u.fixed
-    && (u.status === 'geplant' || u.status == null)
+    && isOpen(u)
     && !CYCLE_SKIP_TYPES.includes(u.type));
 }
 

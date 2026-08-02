@@ -51,6 +51,12 @@ docker run -d --name cat-o-fit -p 8080:80 \
 Jetzt im Browser **http://localhost:8080** öffnen – fertig. Das Image läuft auf
 Intel/AMD **und** Apple Silicon/ARM.
 
+> ⚠️ **Wichtig:** Cat-O-Fit bringt bewusst **keine Server-Anmeldung** mit – die PIN
+> schützt nur das Profil in der Oberfläche, nicht die Daten auf dem Server. Betreibe
+> die App deshalb in deinem **eigenen, vertrauenswürdigen Netz**. Soll sie aus dem
+> Internet erreichbar sein, gehört ein **Reverse-Proxy mit HTTPS und
+> Authentifizierung** davor (Synology: Anwendungsportal → Reverse-Proxy).
+
 ### Weg 2 · Synology NAS per Container Manager (ohne Kommandozeile)
 
 1. Im **Paket-Zentrum** den **Container Manager** installieren (falls noch nicht vorhanden).
@@ -159,7 +165,8 @@ Schreibrechte auf `data/` geben – die ausführliche Klick-Anleitung steht unte
 - **.ics-Kalenderexport** (serverseitig, RFC 5545) mit VALARM-Erinnerungen für iOS.
 - **Statistik**: Ampel „Bin ich auf Plan?", Plan-Einhaltung, Wochenumfang, **Trainingsjahr-Heatmap**
   (GitHub-Stil), Trainingslast, ausgefallene Einheiten nach Grund, Einheiten-Verteilung,
-  **Werte & Ziele** (halten/verbessern) und **Wettkampfprognose** (Riegel-Schätzung).
+  **Werte & Ziele** (halten/verbessern) und **Wettkampfprognose** aus deiner geglätteten
+  Form (VDOT-Äquivalenzzeit; ersatzweise Riegel-Schätzung).
 - **Ernährung**: ~48 fertige deutsche **Rezepte** (per „Rezept-Ideen laden") plus eigene Gerichte,
   **Kalorienbilanz** und kcal-/Eiweiß-**Schätzung** aus den Zutaten (kuratierte Nährwerttabelle +
   optional Open Food Facts). Daraus entsteht die **Einkaufsliste** mit gemeinsamem Lager.
@@ -334,7 +341,7 @@ bewusst als optionale Erweiterung offengehalten, nicht als Hauptmechanismus.
 
 ## Tests
 
-Logik **und** Views sind durch **394 Unit-, View- und Regressionstests** (46 Testdateien) abgesichert –
+Logik **und** Views sind durch **407 Unit-, View- und Regressionstests** (47 Testdateien) abgesichert –
 ohne Build und ohne Abhängigkeiten, mit dem Node-eigenen Test-Runner:
 
 ```bash

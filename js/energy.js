@@ -29,12 +29,38 @@ export function bmr(profile = {}, today) {
   return Math.round(10 * kg + 6.25 * cm - 5 * age + s);
 }
 
-/** Geschätzter Energieverbrauch einer Einheit (kcal). */
-export function trainingKcal(session = {}, weightKg) {
+/** Lauf-Einheiten (Energieaufwand hängt hier an der Strecke, nicht am MET-Mittel). */
+const RUN_TYPES = ['easy', 'long', 'tempo', 'interval', 'race', 'run', 'recovery'];
+
+/**
+ * Geschätzter Energieverbrauch einer Einheit (kcal).
+ *
+ * @param {object} session
+ * @param {number} weightKg
+ * @param {{net?: boolean, activityFactor?: number}} [opts]
+ *   `net: true` zieht den Ruhe-/Alltagsumsatz ab, der für dieselbe Zeit ohnehin
+ *   im Tagesumsatz steckt – nur so darf der Wert auf den TDEE addiert werden
+ *   (sonst zählt der Grundumsatz der Trainingsstunde doppelt, ~100 kcal/h).
+ *   Für die reine Anzeige („verbrannt") bleibt der Brutto-Wert der Standard,
+ *   weil Uhren und Tracker ihn ebenfalls brutto ausweisen.
+ */
+export function trainingKcal(session = {}, weightKg, { net = false, activityFactor = 1.35 } = {}) {
   const kg = weightKg || 70;
+  const hours = session.durationSec ? session.durationSec / 3600 : null;
+  const baseline = net ? activityFactor : 0;   // in MET-Einheiten
+
+  // Laufen mit bekannter Strecke: ~1 kcal/kg/km brutto – geschwindigkeitsunabhängig
+  // und deutlich näher an der Realität als ein pauschaler MET-Wert. (Vorher nur
+  // als Fallback ohne Dauer genutzt, was 10 km in 50 min um ~33 % auseinanderlaufen ließ.)
+  if (session.distanceKm && RUN_TYPES.includes(session.type)) {
+    const gross = kg * session.distanceKm;
+    const rest = hours ? baseline * kg * hours : 0;
+    return Math.max(0, Math.round(gross - rest));
+  }
+
   const met = MET[session.type] || MET.other;
-  if (session.durationSec) return Math.round(met * kg * (session.durationSec / 3600));
-  if (session.distanceKm) return Math.round(kg * session.distanceKm); // Laufen: ~1 kcal/kg/km
+  if (hours) return Math.max(0, Math.round(Math.max(0, met - baseline) * kg * hours));
+  if (session.distanceKm) return Math.round(kg * session.distanceKm);
   return 0;
 }
 
@@ -45,26 +71,39 @@ const round10 = (v) => Math.round(v / 10) * 10;
  * `diary` = Ess-Tagebuch-Einträge ({ date, kcal }); die von heute zählen als gegessen.
  * @returns {object|null} null, wenn der Grundumsatz mangels Profilangaben fehlt.
  */
-export function energyBalance({ profile = {}, sessions = [], diary = [], today } = {}) {
+export function energyBalance({ profile = {}, sessions = [], diary = [], today, deficitKcal = null } = {}) {
   const base = bmr(profile, today);
   if (base == null) return null;
   const kg = profile.weightKg;
-  const tdeeBase = Math.round(base * (profile.activityFactor || 1.35)); // Alltag ohne Sport
+  const af = profile.activityFactor || 1.35;
+  const tdeeBase = Math.round(base * af); // Alltag ohne Sport
 
+  // NETTO-Trainingsverbrauch: der Ruheumsatz der Trainingsstunde steckt bereits
+  // in tdeeBase und darf nicht doppelt zählen.
   const trainingOut = sessions
     .filter((s) => s.date === today)
-    .reduce((a, s) => a + trainingKcal(s, kg), 0);
+    .reduce((a, s) => a + trainingKcal(s, kg, { net: true, activityFactor: af }), 0);
   const out = tdeeBase + trainingOut;
 
   const eaten = diary.filter((m) => m && !m.deleted && m.date === today && m.kcal);
   const intake = eaten.reduce((a, m) => a + (m.kcal || 0), 0);
   const hasIntake = eaten.length > 0;
 
-  // Empfehlung Richtung Zielgewicht
+  // Empfehlung Richtung Zielgewicht. `deficitKcal` kommt – wenn ein Plan läuft –
+  // aus dualgoal.js (phasenabhängig: Grundlage −450 … Tapering 0). Ohne Plan
+  // gilt der moderate Standardwert. Vorher rechnete diese Karte IMMER mit −400
+  // und widersprach damit dem Ziel-Cockpit (z. B. „auffüllen" im Tapering).
   const gap = (profile.targetWeightKg != null && kg != null) ? kg - profile.targetWeightKg : 0;
   const goal = gap > 0.5 ? 'abnehmen' : gap < -0.5 ? 'zunehmen' : 'halten';
-  const delta = goal === 'abnehmen' ? -400 : goal === 'zunehmen' ? 300 : 0;
-  const targetIntake = round10(out + delta);
+  const delta = goal === 'abnehmen' ? (deficitKcal != null ? deficitKcal : -400)
+    : goal === 'zunehmen' ? 300 : 0;
+
+  // SICHERHEITSUNTERGRENZE: Die Zufuhr darf nie unter den Grundumsatz rutschen.
+  // Dauerhaft zu wenig Energie bei viel Training führt zu Leistungsabfall,
+  // Zyklusstörungen und Verletzungen (RED-S) – ein Defizit wird deshalb gekappt.
+  const raw = out + delta;
+  const floored = delta < 0 && raw < base;
+  const targetIntake = round10(floored ? base : raw);
 
   const balance = intake - out;
   const diff = intake - targetIntake; // >0 zu viel, <0 zu wenig
@@ -75,7 +114,10 @@ export function energyBalance({ profile = {}, sessions = [], diary = [], today }
     else { status = 'niedrig'; hint = `Rund ${round10(-diff)} kcal unter dem Tagesziel – genug essen.`; }
   }
 
-  return { bmr: base, tdeeBase, trainingOut, out, intake, hasIntake, balance, goal, delta, targetIntake, status, hint };
+  if (floored) {
+    hint += ' Hinweis: Das Tagesziel liegt bereits auf deinem Grundumsatz – weniger zu essen wäre bei diesem Trainingsumfang kontraproduktiv.';
+  }
+  return { bmr: base, tdeeBase, trainingOut, out, intake, hasIntake, balance, goal, delta, targetIntake, status, hint, floored };
 }
 
 /* ---- kcal-Schätzung aus Zutaten (#26) ---- */
@@ -138,6 +180,11 @@ const NUTRI_100 = [
   // Fette, Nüsse, Süßes (energiedicht)
   [['olivenöl', 'rapsöl', 'öl'], 880, 0],
   [['erdnussbutter', 'mandelmus'], 600, 25],
+  // Substring-Fallen: „Buttermilch"/„Mandelmilch" müssen VOR „butter"/„mandel"
+  // stehen, sonst würden sie als Butter (740 kcal) bzw. Mandeln (580) gewertet.
+  [['buttermilch'], 37, 3],
+  [['mandelmilch'], 15, 1],
+  [['kokosmilch'], 180, 2],
   [['butter'], 740, 1],
   [['margarine'], 720, 0],
   [['walnuss'], 650, 15],

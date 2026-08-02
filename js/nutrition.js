@@ -12,6 +12,7 @@ import {
 import { setHeader } from './router.js';
 import { applyConsumption, parseIngredient } from './food.js';
 import { energyBalance, estimateNutrition, PORTION_KCAL } from './energy.js';
+import { recommendedDeficit } from './dualgoal.js';
 import { foodfactsLookup } from './api-client.js';
 
 const CATS = [
@@ -178,7 +179,15 @@ function addSuggestions(fresh) {
 
 /** Kalorienbilanz-Karte: verbraucht vs. eingenommen + Empfehlung (#23). */
 function balanceCard() {
-  const bal = energyBalance({ profile: store.profile(), sessions: store.get('sessions'), diary: store.get('diary'), today: todayStr() });
+  const today = todayStr();
+  // Phasenabhängiges Defizit aus dem laufenden Plan übernehmen (Grundlage −450 …
+  // Tapering 0), damit Ernährungskarte und Ziel-Cockpit dasselbe empfehlen.
+  const plan = store.get('plans').find((p) => p.startDate && p.endDate && p.startDate <= today && p.endDate >= today) || null;
+  const profile = store.profile();
+  const deficitKcal = plan
+    ? recommendedDeficit(plan, today, { currentKg: profile.weightKg, targetKg: profile.targetWeightKg }).kcal
+    : null;
+  const bal = energyBalance({ profile, sessions: store.get('sessions'), diary: store.get('diary'), today, deficitKcal });
   if (!bal) {
     return el('div', { class: 'card card--flat row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('info'), style: { color: 'var(--accent)', width: '18px', flex: '0 0 auto' } }),

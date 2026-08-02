@@ -186,7 +186,7 @@ export function renderDetail(view, id) {
         el('span', { class: 'type-icon', style: { background: 'var(--accent-soft)', color: 'var(--accent-strong)' }, html: iconSvg('target') }),
         el('div', { class: 'grow' }, [
           el('div', { class: 'num', style: { fontSize: '1.5rem', fontWeight: '800' }, text: fmtSecs(pred.seconds) }),
-          el('div', { class: 'muted', style: { fontSize: '0.8rem' }, text: `geschätzt aus ${pred.basis} (Riegel-Formel)` }),
+          el('div', { class: 'muted', style: { fontSize: '0.8rem' }, text: `geschätzt aus ${pred.basis}` }),
         ]),
       ]),
       el('div', { class: 'dim mt-2', style: { fontSize: '0.76rem' }, text: 'Nur eine grobe Näherung – Tagesform, Strecke und Wetter zählen am Renntag.' }),

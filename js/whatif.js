@@ -23,8 +23,9 @@ export function unitLoad(u) {
 /** Geplante Kennzahlen der Mo–So-Woche von dateStr: Belastung, harte Einheiten, Anzahl. */
 export function weekPlan(units = [], dateStr) {
   const ws = weekStartMonday(dateStr), we = addDays(ws, 6);
+  // Verschobene Einheiten zählen mit – sie belasten die Zielwoche (seit v3.16.0).
   const list = (units || []).filter((u) => u && !u.deleted && u.date >= ws && u.date <= we
-    && u.type !== 'rest' && u.status !== 'verpasst' && u.status !== 'verschoben');
+    && u.type !== 'rest' && u.status !== 'verpasst');
   return {
     load: list.reduce((s, u) => s + unitLoad(u), 0),
     hard: list.filter(isHard).length,

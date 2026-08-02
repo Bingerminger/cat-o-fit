@@ -16,16 +16,18 @@
    ========================================================================= */
 
 import { weekStartMonday, addDays, isoDow } from './ui.js';
-import { loadClass, isHard, findMakeupDay } from './planflow.js';
+import { loadClass, isHard, findMakeupDay, isOpen } from './planflow.js';
 
 const DOW = ['', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 export function dowShort(dateStr) { return DOW[isoDow(dateStr)] || ''; }
 
-/** Lastrelevante, nicht verpasste Einheiten der Mo–So-Woche von dateStr. */
+/** Lastrelevante, nicht verpasste Einheiten der Mo–So-Woche von dateStr.
+    Verschobene Einheiten zählen MIT: sie stehen am neuen Tag im Plan und können
+    dort sehr wohl kollidieren (seit v3.16.0, siehe planflow.js countsToLoad). */
 export function weekUnits(units = [], dateStr) {
   const ws = weekStartMonday(dateStr), we = addDays(ws, 6);
   return (units || []).filter((u) => u && !u.deleted && u.date >= ws && u.date <= we
-    && u.type !== 'rest' && u.status !== 'verpasst' && u.status !== 'verschoben');
+    && u.type !== 'rest' && u.status !== 'verpasst');
 }
 
 /** Prioritätsklasse einer Einheit (höher = behält bei Kollision Vorrang). */
@@ -123,8 +125,7 @@ export function weekTriage(units = [], dateStr) {
  * Reine Funktion. @returns {{date, move, keep, target}|null}
  */
 export function destackSuggestion(units = [], today, horizon = 10) {
-  const open = (u) => u && u.date >= today && u.type !== 'rest'
-    && (u.status === 'geplant' || u.status == null);
+  const open = (u) => u && u.date >= today && isOpen(u);
   const byDate = new Map();
   (units || []).forEach((u) => {
     if (!open(u) || addDays(today, horizon) < u.date) return;

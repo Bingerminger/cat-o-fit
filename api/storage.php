@@ -132,7 +132,17 @@ function read_store(string $area, string $scope, ?string $userId): array
     }
     $data = json_decode($raw, true);
     if (!is_array($data)) {
-        return ['rev' => 0, 'records' => []]; // beschädigt -> leer statt Crash
+        // BESCHÄDIGT: Niemals als „leerer Store" weiterarbeiten – der nächste
+        // Schreibvorgang würde den Datenbestand endgültig überschreiben. Statt-
+        // dessen die Datei beiseitelegen (Forensik/Rettung) und laut scheitern.
+        $backup = $path . '.corrupt-' . date('Ymd-His');
+        if (!is_file($backup)) {
+            @copy($path, $backup);
+        }
+        throw new RuntimeException(
+            "Datenbestand '{$area}' ist beschädigt und wurde als " . basename($backup)
+            . ' gesichert. Bitte aus einem Backup wiederherstellen.'
+        );
     }
     // Bereits Store-Format?
     if (array_key_exists('rev', $data) && array_key_exists('records', $data) && is_array($data['records'])) {
@@ -227,12 +237,18 @@ function write_store(string $area, array $store, string $scope, ?string $userId)
     try {
         $written = fwrite($fp, $json);
         fflush($fp);
+        // Daten vor dem rename wirklich auf die Platte zwingen: sonst kann der
+        // Verzeichnis-Eintrag einen Stromausfall überleben, der Inhalt aber nicht.
+        @fsync($fp);
     } finally {
         fclose($fp);
     }
-    if ($written === false) {
+    // WICHTIG: fwrite meldet bei voller Platte KEIN false, sondern eine zu kleine
+    // Byte-Zahl. Ohne diesen Vergleich landete eine abgeschnittene JSON-Datei
+    // atomar am Ziel – und beim nächsten Lesen wäre der Bereich unbrauchbar.
+    if ($written === false || $written !== strlen($json)) {
         @unlink($tmp);
-        throw new RuntimeException('Schreiben in Temp-Datei fehlgeschlagen.');
+        throw new RuntimeException('Schreiben in Temp-Datei unvollständig (Speicherplatz?).');
     }
     if (!rename($tmp, $target)) {
         @unlink($tmp);

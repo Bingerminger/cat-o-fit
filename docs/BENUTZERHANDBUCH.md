@@ -342,7 +342,9 @@ Unter **Statistik** siehst du auf einen Blick, wo du stehst:
 - **Einheiten-Verteilung:** das Verhältnis deiner Trainingsarten.
 - **Werte & Ziele:** Gewicht, Wochenumfang, lockeres Tempo, Ruhepuls und VO₂max – je mit Trendpfeil
   (↑/↓/→) und der Kennzeichnung **halten** oder **verbessern**, Gewicht in Richtung Zielgewicht.
-- **Wettkampfprognose:** eine grobe Schätzung deiner möglichen Zeit (Riegel-Formel).
+- **Wettkampfprognose:** eine Schätzung deiner möglichen Zeit aus deiner aktuellen,
+  über mehrere Wochen geglätteten Form – ein einzelner guter (oder schlechter) Lauf
+  verschiebt sie also nicht.
 
 Alles ist als **Orientierung** gedacht – keine Versprechen, sondern Anhaltspunkte.
 Konsistenz zählt mehr als einzelne Top-Tage.

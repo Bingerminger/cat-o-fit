@@ -18,13 +18,19 @@ export function loadClass(type) {
   return 'other';
 }
 
-/** Einheit zählt zur Wochenlast (nicht verpasst/verschoben, kein Ruhetag). */
+/** Einheit zählt zur Wochenlast (nicht verpasst, kein Ruhetag).
+    Hinweis: Seit v3.16.0 tragen verschobene Einheiten wieder den Status „geplant"
+    (Herkunft in `movedFrom`). Der Alt-Status „verschoben" aus früheren Versionen
+    zählt hier bewusst MIT – die Einheit steht ja am neuen Tag im Plan. */
 function countsToLoad(u) {
-  return u.type !== 'rest' && u.status !== 'verpasst' && u.status !== 'verschoben';
+  return u.type !== 'rest' && u.status !== 'verpasst';
 }
-/** Noch offene, veränderbare Einheit (weder erledigt noch verpasst/verschoben). */
-function isOpen(u) {
-  return u.type !== 'rest' && (u.status === 'geplant' || u.status == null);
+/** Noch offene, veränderbare Einheit (weder erledigt noch verpasst).
+    Zentrale Quelle für ALLE Module (rolling, triage, cycle): so bleibt der
+    Alt-Status „verschoben" an genau einer Stelle behandelt. */
+export function isOpen(u) {
+  return !!u && u.type !== 'rest'
+    && (u.status === 'geplant' || u.status === 'verschoben' || u.status == null);
 }
 
 /** Mo–So-Fenster eines Datums. */
@@ -43,7 +49,7 @@ export function unitsInWeek(units = [], dateStr) {
     Kandidaten für eine ganztägige Erholung (#4). Feste Termine bleiben außen vor. */
 export function dayLoadUnits(units = [], date) {
   return (units || []).filter((u) => u && u.date === date && !u.fixed
-    && (u.status === 'geplant' || u.status == null) && countsToLoad(u));
+    && isOpen(u) && countsToLoad(u));
 }
 
 /** Belastungsüberblick der Woche: Anzahl Einheiten und geplante/erledigte km. */
@@ -98,14 +104,14 @@ export function isHard(unit) {
 export function softenSuggestion(todaysUnits = [], readiness) {
   if (!readiness || typeof readiness.score !== 'number' || readiness.score >= 55) return null;
   // Feste Termine (Fußball/Spiele) nicht zum „lockerer machen" vorschlagen – die stehen fest.
-  const hard = todaysUnits.find((u) => isHard(u) && !u.fixed && (u.status === 'geplant' || u.status == null));
+  const hard = todaysUnits.find((u) => isHard(u) && !u.fixed && isOpen(u));
   return hard ? { unit: hard, score: readiness.score } : null;
 }
 
 /** Offene, lastrelevante Einheiten der nächsten `horizon` Tage – Kandidaten für eine Entlastung. */
 export function weekDeloadCandidates(units = [], today, horizon = 7) {
   const end = addDays(today, horizon);
-  return units.filter((u) => (u.status === 'geplant' || u.status == null) && countsToLoad(u) && u.date >= today && u.date <= end);
+  return units.filter((u) => isOpen(u) && countsToLoad(u) && u.date >= today && u.date <= end);
 }
 
 /** Progressions-Variante: Umfang ~12 % rauf (Typ bleibt) – wenn noch Reserven da sind. */

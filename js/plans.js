@@ -121,7 +121,15 @@ export function makePhases(weeks) {
     { key: 'taper', name: 'Tapering', color: '#b079e6', focus: 'Erholung & Schärfe', frac: 0.12 },
   ];
   if (weeks <= 1) return [{ ...defs[3], startWeek: 1, endWeek: weeks }];
-  const counts = defs.map((d) => Math.max(weeks >= 4 ? 1 : 0, Math.round(d.frac * weeks)));
+  // Kurzpläne (2–3 Wochen): die Rennwoche ist IMMER Tapering – ein voller
+  // Aufbaublock direkt vor dem Wettkampf wäre kontraproduktiv.
+  if (weeks < 4) {
+    return [
+      { ...defs[0], startWeek: 1, endWeek: weeks - 1 },
+      { ...defs[3], startWeek: weeks, endWeek: weeks },
+    ].filter((p) => p.startWeek <= p.endWeek).map(({ frac, ...p }) => p);
+  }
+  const counts = defs.map((d) => Math.max(1, Math.round(d.frac * weeks)));
   let sum = counts.reduce((a, b) => a + b, 0);
   while (sum > weeks) { counts[counts.indexOf(Math.max(...counts))]--; sum--; }
   while (sum < weeks) { counts[0]++; sum++; }
@@ -172,9 +180,23 @@ export function longRunPeak(raceKm) {
   return Math.round(Math.min(raceKm * 0.76, 32));          // Marathon (gedeckelt)
 }
 
+/** Einstiegs-Long-Run (km). Maßgeblich ist das TATSÄCHLICHE Niveau (`baseKm` aus
+    der Trainingshistorie); ohne Historie ein bewusst konservativer Einstieg, der
+    mit der Renndistanz nur moderat wächst. Früher galt `raceKm * 0.5` als
+    Untergrenze – das ergab bei einem Marathon 21 km in Woche 1, unabhängig vom
+    Trainingszustand (Verletzungsrisiko für Einsteiger:innen). */
+export function longRunStartKm(raceKm, baseKm) {
+  const peak = longRunPeak(raceKm);
+  const conservative = Math.min(12, Math.max(8, Math.round(raceKm * 0.35)));
+  // Vorhandene Historie hebt den Start – gedeckelt auf 90 % der Spitzendistanz,
+  // damit noch eine echte Progression übrig bleibt.
+  const fromHistory = baseKm ? Math.min(baseKm, peak * 0.9) : 0;
+  return Math.round(Math.min(peak, Math.max(conservative, fromHistory)) * 2) / 2;
+}
+
 function longRunKm(week, weeks, raceKm, baseKm) {
   const peak = longRunPeak(raceKm);
-  const startKm = Math.min(peak, Math.max(8, raceKm * 0.5, baseKm || 0));
+  const startKm = longRunStartKm(raceKm, baseKm);
   const buildEnd = weeks - 2;
   let km;
   if (week >= buildEnd) {
@@ -294,7 +316,10 @@ function resolveRole(role, ctx) {
       const withRace = phase.key === 'peak';
       return mk('long', {
         dist: km,
-        pace: pace(pz, withRace ? 'long' : 'long'),
+        // In der Spitzenphase enthält der Long Run einen Renntempo-Block – dann
+        // gilt die HM-Renntempo-Zone als Zielvorgabe (vorher stand hier zweimal
+        // 'long', der Renntempo-Teil stand nur im Text).
+        pace: pace(pz, withRace ? 'race_hm' : 'long'),
         title: `Long Run ${fmtKm(km, km % 1 ? 1 : 0)}`,
         desc: withRace
           ? `${fmtKm(km, km % 1 ? 1 : 0)} gesamt: locker in Z2 starten, in der Mitte ${Math.round(km * 0.4)} km im HM-Renntempo (Z3) am Stück, danach wieder locker auslaufen. Verpflegung & Trinken wie im Wettkampf üben. Rad-Alternative: ~1,5–2,5 h gleichmäßig (Z2) – dann aber heute keine zusätzliche Radtour.`
@@ -314,17 +339,29 @@ function resolveRole(role, ctx) {
   }
 }
 
+/** Renn-Pace-Zone und Taktik-Hinweis passend zur Distanz. Früher galt für JEDE
+    Distanz die HM-Zone samt „ab km 15" – beim 5 km sinnlos, beim Marathon riskant. */
+function raceProfile(raceKm) {
+  const km = Number(raceKm) || 21.0975;
+  if (km <= 6) return { zone: 'vo2', hrZone: 5, tactic: 'Kontrolliert anlaufen (nicht überziehen!), ab der Hälfte steigern und das letzte Drittel alles geben.' };
+  if (km <= 12) return { zone: 'threshold', hrZone: 4, tactic: 'Gleichmäßig im Schwellentempo, ab km 7 Stück für Stück steigern.' };
+  if (km <= 25) return { zone: 'race_hm', hrZone: 4, tactic: `Gleichmäßig anlaufen, ab km ${Math.round(km * 0.7)} alles geben.` };
+  return { zone: 'marathon', hrZone: 3, tactic: `Bewusst zurückhaltend anlaufen und gleichmäßig bleiben – das Rennen entscheidet sich ab km ${Math.round(km * 0.72)}. Verpflegung wie im Training.` };
+}
+
 function makeRaceUnit(plan, event, date, week, phase) {
+  const rp = raceProfile(event.distanceKm);
+  const z = store.profile().paceZones?.[rp.zone];
   return {
     id: uid('u'), planId: plan.id, eventId: plan.eventId,
     date, dow: isoDow(date), week, phase: phase.key,
     type: 'race', title: event.name,
     targetDistanceKm: event.distanceKm,
     targetDurationMin: null,
-    targetPaceSecPerKm: store.profile().paceZones?.race_hm?.min ?? null,
-    targetPaceMaxSecPerKm: store.profile().paceZones?.race_hm?.max ?? null,
-    targetHrZone: 4, time: '10:00',
-    description: `Wettkampf! Zielzeit ${event.targetTime}. Gleichmäßig anlaufen, ab km 15 alles geben.`,
+    targetPaceSecPerKm: z?.min ?? null,
+    targetPaceMaxSecPerKm: z?.max ?? null,
+    targetHrZone: rp.hrZone, time: '10:00',
+    description: `Wettkampf!${event.targetTime ? ` Zielzeit ${event.targetTime}.` : ''} ${rp.tactic}`,
     status: 'geplant', executedSessionId: null,
     createdAt: nowIso(), updatedAt: nowIso(),
   };
@@ -349,15 +386,57 @@ export function buildWeekUnits(plan, event, profile, week) {
     commitByDate.get(date).push(commitment);
   }
 
+  // Belegte Tage der Woche: feste Termine + reguläre Vorlagen-Tage. Grundlage
+  // für die Ausweich-Suche unten.
+  const templateDates = new Set(plan.weekTemplate.map((t) => addDays(weekStart, t.dow - 1)));
+  const usedDates = new Set([...templateDates, ...commitByDate.keys()]);
+
+  /** Freier Tag dieser Woche für eine verdrängte Einheit – möglichst nah am
+      ursprünglichen Tag, nie am Renntag oder danach, nie direkt neben einem
+      festen Termin (sonst entsteht die nächste Doppelbelastung). */
+  const findFreeDay = (wishDate) => {
+    const cands = [];
+    for (let d = 0; d < 7; d++) {
+      const date = addDays(weekStart, d);
+      if (usedDates.has(date)) continue;
+      if (event && date >= event.date) continue;
+      if (date < plan.startDate) continue;
+      const neighborCommit = commitByDate.has(addDays(date, -1)) || commitByDate.has(addDays(date, 1));
+      cands.push({ date, dist: Math.abs(diffDays(wishDate, date)), neighborCommit });
+    }
+    if (!cands.length) return null;
+    cands.sort((a, b) => (a.neighborCommit - b.neighborCommit) || (a.dist - b.dist));
+    return cands[0].date;
+  };
+
+  // Rollen, die bei einer Kollision AUSWEICHEN statt zu entfallen: die Reize, die
+  // das Ziel tragen. Lockeres (Regeneration/Mobility) entfällt an einem Termintag
+  // bewusst – der feste Termin ist an dem Tag die Belastung.
+  const RELOCATABLE = new Set(['quality', 'long', 'endurance', 'strength', 'swim', 'bike', 'long_bike', 'functional']);
+
   const out = [];
   for (const tpl of plan.weekTemplate) {
     const date = addDays(weekStart, tpl.dow - 1);
     if (event && date > event.date) continue;
     if (event && date === event.date) { out.push(makeRaceUnit(plan, event, date, week, phase)); continue; }
-    if (commitByDate.has(date)) continue;   // fester Termin an dem Tag -> Trainingseinheit entfällt
+    const blocked = commitByDate.has(date);
     for (const u of tpl.units) {
-      const unit = resolveRole(u.role, { plan, event, date, week, phase, weeks, raceKm, pz, isLast });
-      if (unit) out.push(unit);
+      // Fester Termin an dem Tag: Schlüsselreize weichen auf einen freien Tag aus,
+      // lockere Einheiten entfallen (früher entfiel ALLES – bei Fußball Di/Do
+      // verlor der Plan Schlüsseleinheit UND Umfang ersatzlos).
+      let useDate = date;
+      if (blocked) {
+        if (!RELOCATABLE.has(u.role)) continue;
+        const alt = findFreeDay(date);
+        if (!alt) continue;
+        useDate = alt;
+        usedDates.add(alt);
+      }
+      const unit = resolveRole(u.role, { plan, event, date: useDate, week, phase, weeks, raceKm, pz, isLast });
+      if (unit) {
+        if (blocked) unit.relocatedFrom = date;
+        out.push(unit);
+      }
     }
   }
   // Feste Termine als Einheiten einfügen – der Plan wurde um sie herum gebaut.
@@ -698,7 +777,11 @@ async function regenerate(plan, event) {
   }
   const histLong = recentLongRunKm(store.get('sessions'), todayStr());
   const baseLongKm = histLong >= 8 ? histLong : null;
-  const units = generatePlanUnits({ ...plan, baseLongKm }, event, store.profile());
+  const regenerated = generatePlanUnits({ ...plan, baseLongKm }, event, store.profile());
+  // Erledigte Einheiten (Historie + Session-Verknüpfung) bleiben erhalten – sonst
+  // verlöre der Plan seine Einhaltungs-Statistik. Zusage im Dialog wird so eingelöst.
+  const units = mergeRegeneratedWeek(plan.units || [], regenerated)
+    .sort((a, b) => a.date.localeCompare(b.date));
   store.patch('plans', plan.id, { units, baseLongKm, generated: true });
   toast('Plan neu generiert', 'good');
   navigate(`#/plan/${event.id}`);

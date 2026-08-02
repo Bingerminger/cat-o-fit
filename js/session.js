@@ -414,7 +414,11 @@ function openReschedule(plan, unit) {
     body: el('div', {}, [field('Neues Datum', dateI), warnBox]),
     footer: [
       el('button', { class: 'btn btn--ghost grow', text: 'Abbrechen', onclick: () => closeSheet() }),
-      el('button', { class: 'btn btn--primary grow', text: 'Verschieben', onclick: () => { saveUnitPatch(plan.id, unit.id, { date: dateI.value, dow: isoDow(dateI.value), status: 'verschoben' }); closeSheet(); toast('Verschoben', 'good'); setTimeout(() => location.reload(), 60); } }),
+      // WICHTIG: Der Status bleibt „geplant" – die Einheit findet ja statt, nur an
+      // einem anderen Tag. Die Verschiebung merkt sich `movedFrom` (Anzeige-Chip).
+      // Ein Status „verschoben" würde die Einheit aus Wochenlast, Ziel-Triage,
+      // What-if und Erholungsvorschlägen herausfallen lassen.
+      el('button', { class: 'btn btn--primary grow', text: 'Verschieben', onclick: () => { saveUnitPatch(plan.id, unit.id, { date: dateI.value, dow: isoDow(dateI.value), status: unit.status === 'erledigt' ? 'erledigt' : 'geplant', movedFrom: unit.movedFrom || unit.date }); closeSheet(); toast('Verschoben', 'good'); setTimeout(() => location.reload(), 60); } }),
     ],
   });
 }

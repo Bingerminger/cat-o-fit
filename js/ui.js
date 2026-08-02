@@ -213,6 +213,10 @@ export function effectiveStatus(unit, todayString = todayStr()) {
   if (unit.status === 'verpasst') return 'verpasst';
   if (unit.type === 'rest') return 'geplant';
   if (unit.date < todayString) return 'ueberfaellig';
+  // „Verschoben" ist seit v3.16.0 reine ANZEIGE (Herkunft in `movedFrom`) – der
+  // gespeicherte Status bleibt „geplant", damit die Einheit in Wochenlast,
+  // Ziel-Triage, What-if und Erholungsvorschlägen weiter mitzählt.
+  if (unit.movedFrom) return 'verschoben';
   return unit.status || 'geplant';
 }
 export function isOverdue(unit, todayString = todayStr()) { return effectiveStatus(unit, todayString) === 'ueberfaellig'; }

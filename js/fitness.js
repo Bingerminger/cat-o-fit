@@ -31,15 +31,24 @@ export function recentLongRunKm(sessions = [], today, days = 28) {
   return Math.round(max * 2) / 2;
 }
 
-/** Trainingslast: 7-Tage-Umfang gegen den 28-Tage-Schnitt (Acute/Chronic-Idee). */
+/**
+ * Trainingslast: akute gegen chronische Belastung (Acute:Chronic).
+ *
+ * Seit v3.16.0 auf der sRPE-Last statt auf Lauf-Kilometern – sonst zählten
+ * Kraft, Fußball, Rad und Schwimmen hier gar nicht, und die Statistik-Ampel
+ * konnte der ACWR-Karte auf dem Dashboard widersprechen. Schwellen sind mit
+ * `load.js acwr` identisch (Sweet Spot 0,8–1,3). Die km-Summen bleiben für die
+ * Anzeige erhalten.
+ */
 export function loadBalance(sessions = [], today) {
   const last7 = sumKm(sessions, today, 0, 7);
   const last28 = sumKm(sessions, today, 0, 28);
-  const avg7 = last28 / 4;
-  const ratio = avg7 > 0 ? last7 / avg7 : 0;
+  const acute = trainingLoad(sessions, today, 7) / 7;
+  const chronic = trainingLoad(sessions, today, 28) / 28;
+  const ratio = chronic > 0 ? acute / chronic : 0;
   let level = 'unklar';
-  if (ratio > 0) level = ratio > 1.4 ? 'hoch' : ratio < 0.7 ? 'niedrig' : 'ok';
-  return { last7, last28, ratio, level };
+  if (ratio > 0) level = ratio > 1.3 ? 'hoch' : ratio < 0.8 ? 'niedrig' : 'ok';
+  return { last7, last28, ratio, level, acute: Math.round(acute), chronic: Math.round(chronic) };
 }
 
 /** Geschätztes Belastungsempfinden je Einheitentyp, falls kein RPE erfasst wurde. */
@@ -117,7 +126,7 @@ export function planStatus({ plans = [], sessions = [], today, isProtectedDay = 
   else if (adherence >= 50) { reasons.push({ ok: false, text: `Plan zu ${adherence} % eingehalten – ein paar Einheiten fehlen.` }); bump('gelb'); }
   else { reasons.push({ ok: false, text: `Nur ${adherence} % der fälligen Einheiten erledigt.` }); bump('rot'); }
 
-  if (load.level === 'hoch') { reasons.push({ ok: false, text: 'Trainingslast steigt deutlich – Erholung einplanen.' }); bump(load.ratio > 1.6 ? 'rot' : 'gelb'); }
+  if (load.level === 'hoch') { reasons.push({ ok: false, text: 'Trainingslast steigt deutlich – Erholung einplanen.' }); bump(load.ratio > 1.5 ? 'rot' : 'gelb'); }
   else if (load.level === 'niedrig') reasons.push({ ok: null, text: 'Ruhigere Phase – gut zur Regeneration.' });
   else if (load.level === 'ok') reasons.push({ ok: true, text: 'Trainingslast im stabilen Bereich.' });
 
@@ -135,6 +144,22 @@ function lastVal(arr, key) {
   for (let i = arr.length - 1; i >= 0; i--) if (arr[i][key] != null) return arr[i][key];
   return null;
 }
+/**
+ * Median der Werte im Fenster [refDate−win+1 … refDate] – robuste Trendbasis.
+ * Gewicht schwankt tagesabhängig um ±1–2 kg (Wasser, Darminhalt, Glykogen), der
+ * Ruhepuls ebenso. Zwei EINZELNE Messpunkte zu vergleichen erzeugt deshalb
+ * Zufallstrends; der Median über eine Woche glättet das weg (Trendgewicht).
+ */
+function smoothVal(arr, key, refDate, win = 7) {
+  const vals = arr
+    .filter((x) => x[key] != null && x.date <= refDate && diffDays(x.date, refDate) < win)
+    .map((x) => x[key])
+    .sort((a, b) => a - b);
+  if (!vals.length) return null;
+  const m = Math.floor(vals.length / 2);
+  return vals.length % 2 ? vals[m] : (vals[m - 1] + vals[m]) / 2;
+}
+
 /** Jüngster Wert, der mindestens `minDaysAgo` Tage zurückliegt (Vergleichsbasis). */
 function valBefore(arr, key, today, minDaysAgo) {
   for (let i = arr.length - 1; i >= 0; i--) {
@@ -170,8 +195,12 @@ export function keyMetrics({ profile = {}, health = [], sessions = [], today } =
   const w = lastVal(h, 'weight') ?? profile.weightKg ?? null;
   const target = profile.targetWeightKg ?? null;
   if (w != null) {
-    const prev = valBefore(h, 'weight', today, 21);
-    const dir = dirOf(w, prev, 0.2);
+    // Angezeigt wird der zuletzt gemessene Wert; BEWERTET wird der geglättete
+    // Trend (7-Tage-Median jetzt vs. vor 4 Wochen) – sonst entscheidet der Zufall
+    // eines einzelnen Wiegetags über „verbessert/verschlechtert".
+    const cur7 = smoothVal(h, 'weight', today, 7) ?? w;
+    const prev = smoothVal(h, 'weight', addDays(today, -28), 10) ?? valBefore(h, 'weight', today, 21);
+    const dir = dirOf(cur7, prev, 0.3);
     let good = null, goal = null, hint = 'aktueller Wert';
     if (target != null) {
       const gap = w - target;
@@ -200,7 +229,9 @@ export function keyMetrics({ profile = {}, health = [], sessions = [], today } =
   // Ruhepuls — niedriger heißt fitter
   const rhr = lastVal(h, 'restingHr');
   if (rhr != null) {
-    const dir = dirOf(rhr, valBefore(h, 'restingHr', today, 21), 1);
+    const cur7 = smoothVal(h, 'restingHr', today, 7) ?? rhr;
+    const prevR = smoothVal(h, 'restingHr', addDays(today, -28), 10) ?? valBefore(h, 'restingHr', today, 21);
+    const dir = dirOf(cur7, prevR, 1);
     push({ key: 'restingHr', label: 'Ruhepuls', value: rhr, unit: 'bpm', dir, good: goodOf(dir, 'down'), goal: 'verbessern', hint: 'niedriger ist fitter', fmt: fmt0 });
   }
 

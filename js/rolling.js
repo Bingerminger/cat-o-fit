@@ -12,7 +12,7 @@
    ========================================================================= */
 
 import { addDays, diffDays } from './ui.js';
-import { isHard } from './planflow.js';
+import { isHard, isOpen } from './planflow.js';
 import { acwr, formToday, fmtRatio } from './load.js';
 
 /** War dieser Tag „hart" (erledigte fordernde Einheit oder fordernde Session)? */
@@ -86,12 +86,15 @@ export function restDaySuggestion({ plan = {}, sessions = [], today, horizon = 4
   // erhöhte Last MIT deutlich negativer Form. Die Form-Bedingung ist bewusst an
   // eine erhöhte ACWR gekoppelt – sonst triggert schon das Einschwingen der
   // CTL-Kurve (Ramp-up-Artefakt) bei ruhiger, gleichmäßiger Belastung.
-  const acwrHigh = ac.ratio != null && ac.ratio > 1.5;
-  const elevatedAndTired = ac.ratio != null && ac.ratio > 1.3 && form.ctl > 0 && form.form < -0.3 * form.ctl;
+  // `sparse` = noch keine 28 Tage Historie: dann ist der ACWR rechnerisch hoch,
+  // ohne dass jemand zu schnell gesteigert hätte (lauter Null-Tage im Nenner).
+  // In dieser Phase keine automatischen Erholungstage vorschlagen.
+  const acwrHigh = ac.ratio != null && !ac.sparse && ac.ratio > 1.5;
+  const elevatedAndTired = ac.ratio != null && !ac.sparse && ac.ratio > 1.3 && form.ctl > 0 && form.form < -0.3 * form.ctl;
   if (!(acwrHigh || elevatedAndTired || hardStreak >= 3)) return null;
 
   const cand = units
-    .filter((u) => !u.fixed && (u.status === 'geplant' || u.status == null) && isHard(u)
+    .filter((u) => !u.fixed && isOpen(u) && isHard(u)
       && u.date >= today && diffDays(today, u.date) <= horizon)
     .sort((a, b) => a.date.localeCompare(b.date))[0];
   if (!cand) return null;
@@ -116,7 +119,7 @@ export function footballFollowupEase({ units = [], sessions = [], today } = {}) 
   const when = hardFootballOn(today) ? 'heute' : (hardFootballOn(addDays(today, -1)) ? 'gestern' : null);
   if (!when) return null;
   const cand = (units || [])
-    .filter((u) => !u.fixed && (u.status === 'geplant' || u.status == null) && isHard(u)
+    .filter((u) => !u.fixed && isOpen(u) && isHard(u)
       && u.date >= today && diffDays(today, u.date) <= 2)
     .sort((a, b) => a.date.localeCompare(b.date))[0];
   return cand ? { date: cand.date, unit: cand, when } : null;

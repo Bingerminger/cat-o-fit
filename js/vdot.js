@@ -35,6 +35,27 @@ export function paceForPct(vdot, pct) {
   return Math.round(60000 / v);          // 1000 m bei v m/min -> Sekunden/km
 }
 
+/**
+ * Äquivalente Wettkampfzeit (Sekunden) für eine Distanz bei gegebenem VDOT –
+ * die Umkehrung von `vdotFromPerf` (Daniels' Äquivalenz-Zeiten). Löst
+ * `vo2AtSpeed(v)/pctMaxForTime(t) = vdot` per Bisektion; die Funktion ist in t
+ * streng monoton fallend, daher robust ohne Startwert.
+ */
+export function raceTimeFromVdot(vdot, distanceM) {
+  if (!vdot || !distanceM || distanceM < 400) return null;
+  const f = (tSec) => {
+    const tMin = tSec / 60;
+    return vo2AtSpeed(distanceM / tMin) / pctMaxForTime(tMin) - vdot;
+  };
+  let lo = 60, hi = 8 * 3600;              // 1 min … 8 h
+  if (f(lo) < 0 || f(hi) > 0) return null; // außerhalb des sinnvollen Bereichs
+  for (let i = 0; i < 60; i++) {
+    const mid = (lo + hi) / 2;
+    if (f(mid) > 0) lo = mid; else hi = mid;
+  }
+  return Math.round((lo + hi) / 2);
+}
+
 /** Intensitätsbereiche je Trainingszone als Anteil von VDOT [schnell, langsam]. */
 const ZONE_PCT = {
   recovery:  [0.66, 0.62],

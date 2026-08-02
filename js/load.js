@@ -13,7 +13,7 @@
    wird immer übergeben (keine Abhängigkeit von der Geräteuhr).
    ========================================================================= */
 
-import { addDays } from './ui.js';
+import { addDays, diffDays } from './ui.js';
 import { sessionLoad } from './fitness.js';
 
 const r1 = (v) => Math.round(v * 10) / 10;
@@ -54,14 +54,26 @@ export function acwr(sessions = [], today, { acute = 7, chronic = 28 } = {}) {
   const a = sum(series.slice(-acute)) / acute;
   const c = sum(series) / chronic;
   const ratio = c > 0 ? a / c : null;
+
+  // Reicht die HISTORIE für einen belastbaren chronischen Schnitt? Wer gerade
+  // erst anfängt (oder Altdaten nicht nachgetragen hat), hat lauter Null-Tage im
+  // Nenner – der ACWR schießt dann rechnerisch hoch, ohne dass jemand zu schnell
+  // gesteigert hätte. Solche Fälle werden als „aufbau" markiert statt als Risiko.
+  const first = (sessions || [])
+    .filter((s) => s && !s.deleted && s.date && s.date <= today)
+    .map((s) => s.date).sort()[0] || null;
+  const historyDays = first ? diffDays(first, today) + 1 : 0;
+  const sparse = historyDays < chronic;
+
   let zone = 'unklar', tone = 'neutral';
   if (ratio != null) {
-    if (ratio < 0.8) { zone = 'niedrig'; tone = 'neutral'; }
+    if (sparse) { zone = 'aufbau'; tone = 'neutral'; }
+    else if (ratio < 0.8) { zone = 'niedrig'; tone = 'neutral'; }
     else if (ratio <= 1.3) { zone = 'optimal'; tone = 'good'; }
     else if (ratio <= 1.5) { zone = 'erhöht'; tone = 'warn'; }
     else { zone = 'hoch'; tone = 'bad'; }
   }
-  return { acute: Math.round(a), chronic: Math.round(c), ratio, zone, tone };
+  return { acute: Math.round(a), chronic: Math.round(c), ratio, zone, tone, sparse, historyDays };
 }
 
 const CTL_TAU = 42;   // Fitness: langsame Glättung (~6 Wochen)
@@ -78,9 +90,14 @@ function ewma(daily, tau) {
  * Fitness (CTL), Ermüdung (ATL) und Form (TSB = CTL − ATL) als Zeitreihe der
  * letzten `days` Tage. `warmup` zusätzliche Tage vor dem sichtbaren Fenster
  * dienen dem Einschwingen der Glättung (sonst startet die Kurve künstlich bei 0).
+ *
+ * Der Warmup muss ein Vielfaches von CTL_TAU sein: Nach nur 42 Tagen stünde die
+ * Fitness erst bei ~63 % ihres Gleichgewichts, die Ermüdung (τ 7) aber längst bei
+ * 100 % – die angezeigte Form (CTL − ATL) wäre dauerhaft künstlich negativ.
+ * 180 Tage ≈ 4·τ bringen die Fitnesskurve praktisch vollständig zum Einschwingen.
  * @returns {Array<{date, ctl, atl, form}>}
  */
-export function formSeries(sessions = [], today, { days = 42, warmup = 42 } = {}) {
+export function formSeries(sessions = [], today, { days = 42, warmup = 180 } = {}) {
   const total = days + warmup;
   const daily = dailyLoadSeries(sessions, today, total);
   const ctl = ewma(daily, CTL_TAU);
@@ -108,7 +125,9 @@ export function monotonyStrain(sessions = [], today, { win = 7 } = {}) {
   const n = daily.length || 1;
   const weekLoad = daily.reduce((a, b) => a + b, 0);
   const mean = weekLoad / n;
-  const variance = daily.reduce((a, b) => a + (b - mean) ** 2, 0) / n;
+  // Stichproben-Varianz (n−1), wie in Fosters Originalarbeit – mit n wären die
+  // Monotonie-Werte systematisch ~8 % zu hoch und die Warnschwelle 2 zu scharf.
+  const variance = daily.reduce((a, b) => a + (b - mean) ** 2, 0) / Math.max(1, n - 1);
   const sd = Math.sqrt(variance);
   // sd = 0 (jeden Tag exakt gleich) -> maximal monoton; ohne Last -> 0.
   const monotony = sd > 0 ? mean / sd : (mean > 0 ? n : 0);
@@ -127,13 +146,18 @@ export function loadSummary(sessions = [], today) {
   const series = formSeries(sessions, today, { days: 42 });
   const form = series.at(-1) || { ctl: 0, atl: 0, form: 0 };
   const mono = monotonyStrain(sessions, today);
-  const hasData = ac.chronic > 0;
+  // Belastbar erst mit voller 28-Tage-Historie: sonst stünden lauter Null-Tage im
+  // chronischen Nenner und die Karte meldete „zu schnell gesteigert", obwohl nur
+  // die Datenbasis fehlt (typisch in den ersten Wochen nach der Einrichtung).
+  const hasData = ac.chronic > 0 && !ac.sparse;
 
   let headline, tone, advice;
   if (!hasData) {
-    headline = 'Noch zu wenig Daten';
+    headline = ac.chronic > 0 ? 'Datenbasis wächst noch' : 'Noch zu wenig Daten';
     tone = 'neutral';
-    advice = 'Trage ein paar Einheiten ein – dann zeigt dir die Kurve deine Fitness, Ermüdung und Form.';
+    advice = ac.chronic > 0
+      ? `Für eine belastbare Belastungssteuerung braucht es 4 Wochen Historie – du hast ${ac.historyDays} Tag${ac.historyDays === 1 ? '' : 'e'}. Bis dahin zeigt die Kurve schon den Verlauf, aber noch keine Bewertung.`
+      : 'Trage ein paar Einheiten ein – dann zeigt dir die Kurve deine Fitness, Ermüdung und Form.';
   } else if (ac.zone === 'hoch') {
     headline = 'Belastung zu schnell gestiegen';
     tone = 'bad';
