@@ -10,7 +10,7 @@ deinem eigenen Server. Quelloffen, ohne Cloud, ohne Abo, ohne Datenbank.**
 [![CI](https://github.com/Bingerminger/cat-o-fit/actions/workflows/ci.yml/badge.svg)](https://github.com/Bingerminger/cat-o-fit/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-success.svg)](LICENSE)
 [![dependencies: 0](https://img.shields.io/badge/dependencies-0-success.svg)](package.json)
-[![Tests](https://img.shields.io/badge/Tests-431-success.svg)](test/)
+[![Tests](https://img.shields.io/badge/Tests-435-success.svg)](test/)
 [![PWA](https://img.shields.io/badge/PWA-installierbar-3d8bff.svg)](manifest.webmanifest)
 [![Docker](https://img.shields.io/badge/Docker-amd64%20%7C%20arm64-2496ed.svg)](docker-compose.yml)
 [![Self-hosted](https://img.shields.io/badge/100%25-selbst%20gehostet-7c5cff.svg)](#schnellstart)
@@ -384,7 +384,7 @@ bewusst als optionale Erweiterung offengehalten, nicht als Hauptmechanismus.
 
 ## Tests
 
-Logik **und** Views sind durch **431 Unit-, View- und Regressionstests** (48 Testdateien) abgesichert –
+Logik **und** Views sind durch **435 Unit-, View- und Regressionstests** (48 Testdateien) abgesichert –
 ohne Build und ohne Abhängigkeiten, mit dem Node-eigenen Test-Runner:
 
 ```bash
@@ -449,7 +449,7 @@ Was das praktisch bedeutet:
 - **Nachvollziehbar:** Kein Build-Schritt, keine Abhängigkeiten. Was im Repo liegt, läuft im
   Browser – jede Berechnung ist im Klartext nachlesbar. Die Trainingslehre steckt in kleinen,
   kommentierten Modulen (`load.js`, `vdot.js`, `energy.js`, `labs.js`), nicht in einer Blackbox.
-- **Prüfbar:** 431 Tests decken Logik *und* Ansichten ab, die CI läuft bei jedem Push.
+- **Prüfbar:** 435 Tests decken Logik *und* Ansichten ab, die CI läuft bei jedem Push.
 - **Unabhängig:** Kein Konto, kein Telemetrie-Rückkanal. Die einzige externe Verbindung ist
   die optionale Wetterabfrage – abschaltbar.
 - **Deins:** Deine Daten liegen als lesbares JSON auf deinem Server. Kein Export-Ritual nötig,

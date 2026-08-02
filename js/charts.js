@@ -283,25 +283,53 @@ export function multiLineChart(series, opts = {}) {
 }
 
 /** Balkendiagramm. points: [{label, value, color?}] */
+/** Grobe Textbreite in SVG-Einheiten (systemnahe Schrift, ~0,55 em je Zeichen). */
+function estTextWidth(text, fontSize) {
+  return String(text ?? '').length * fontSize * 0.55;
+}
+
+/**
+ * Zeichnet nur so viele Beschriftungen, wie nebeneinander PASSEN – ausgedünnt
+ * vom letzten Balken aus, damit der jüngste Wert immer beschriftet ist.
+ * Ohne das überlappten bei vielen Balken (z. B. 21 Tage Einnahmetreue mit
+ * Datumsangaben wie „13.07.") sämtliche Achsenbeschriftungen zu Buchstabenbrei.
+ * @returns {(i:number) => boolean}
+ */
+function labelPicker(points, key, fontSize, step, n) {
+  const maxW = points.reduce((m, p) => Math.max(m, estTextWidth(p[key], fontSize)), 0);
+  if (!maxW || step <= 0) return () => true;
+  const every = Math.max(1, Math.ceil((maxW + 4) / step));   // +4 = Mindestluft
+  return (i) => (n - 1 - i) % every === 0;
+}
+
 export function barChart(points, opts = {}) {
   const W = 320, H = opts.height || 150;
   const padT = 16, padB = 22;
   const max = Math.max(1, ...points.map((p) => p.value || 0), opts.min || 0);
   const n = points.length || 1;
-  const gap = 8;
+  // Abstand adaptiv: bei vielen Balken schrumpft er, damit die Balken selbst
+  // sichtbar breit bleiben (21 Tage ergaben mit festen 8 px nur 7-px-Striche).
+  const gap = Math.max(1.5, Math.min(8, W / (n * 4)));
   const bw = (W - gap * (n + 1)) / n;
+  const step = bw + gap;
   const accent = cssVar('--accent', '#18b48a');
   const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, style: 'width:100%;height:auto' });
   // X-Achsen-Baseline + optionale Y-Skala (Orientierung, #22)
   svg.appendChild(s('line', { x1: gap / 2, y1: H - padB + 0.5, x2: W - gap / 2, y2: H - padB + 0.5, stroke: cssVar('--border', '#e3e7eb'), 'stroke-width': 1 }));
   if (opts.yUnit) svg.appendChild(txt(`${Math.round(max)} ${opts.yUnit}`, { x: 3, y: padT - 5, fill: cssVar('--text-3', '#9aa7b4'), 'font-size': 8.5 }));
+
+  const LABEL_FS = 9.5, VALUE_FS = 9;
+  const showLabel = labelPicker(points, 'label', LABEL_FS, step, n);
+  const valuePoints = points.map((p) => ({ v: opts.fmt ? opts.fmt(p.value) : p.value }));
+  const showValue = labelPicker(valuePoints, 'v', VALUE_FS, step, n);
+
   points.forEach((p, i) => {
     const h = ((p.value || 0) / max) * (H - padT - padB);
-    const px = gap + i * (bw + gap);
+    const px = gap + i * step;
     const py = H - padB - h;
     svg.appendChild(s('rect', { x: px, y: py, width: bw, height: Math.max(h, 1), rx: Math.min(5, bw / 2), fill: p.color || accent, opacity: p.dim ? 0.4 : 1 }));
-    if (opts.showValues && p.value) svg.appendChild(txt(opts.fmt ? opts.fmt(p.value) : p.value, { x: px + bw / 2, y: py - 4, 'text-anchor': 'middle', fill: cssVar('--text-2', '#888'), 'font-size': 9 }));
-    if (p.label) svg.appendChild(txt(p.label, { x: px + bw / 2, y: H - 7, 'text-anchor': 'middle', fill: cssVar('--text-3', '#999'), 'font-size': 9.5 }));
+    if (opts.showValues && p.value && showValue(i)) svg.appendChild(txt(valuePoints[i].v, { x: px + bw / 2, y: py - 4, 'text-anchor': 'middle', fill: cssVar('--text-2', '#888'), 'font-size': VALUE_FS }));
+    if (p.label && showLabel(i)) svg.appendChild(txt(p.label, { x: px + bw / 2, y: H - 7, 'text-anchor': 'middle', fill: cssVar('--text-3', '#999'), 'font-size': LABEL_FS }));
   });
   return svg;
 }

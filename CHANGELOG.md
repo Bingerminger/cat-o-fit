@@ -4,6 +4,26 @@ Alle nennenswerten Änderungen an Cat-O-Fit werden hier dokumentiert.
 Format angelehnt an [Keep a Changelog](https://keepachangelog.com/de/),
 Versionierung nach [SemVer](https://semver.org/lang/de/).
 
+## [3.18.1] – 2026-08-02 – Hotfix: Achsenbeschriftungen in Balkendiagrammen
+
+### Behoben
+- **Datumsangaben überlappten sich** unter der Einnahmetreue in „Labor & Ergänzung":
+  21 Balken teilten sich die Breite, die Beschriftungen („13.07.") standen als
+  Buchstabenbrei übereinander. Balkendiagramme zeichnen jetzt nur so viele
+  Beschriftungen, wie nebeneinander **passen** – ausgedünnt vom jüngsten Wert aus,
+  damit der aktuellste Balken immer beschriftet bleibt. Dasselbe gilt für die
+  Werte über den Balken.
+- **Balken bleiben sichtbar breit:** Der Abstand zwischen ihnen passt sich der
+  Anzahl an (bei 21 Tagen waren es vorher 7-Pixel-Striche). Diagramme mit wenigen
+  Balken – etwa der Wochenumfang in der Statistik – sehen unverändert aus und
+  behalten alle Beschriftungen.
+
+### Tests
+- Vier neue Chart-Tests prüfen die tatsächlichen x-Positionen der gezeichneten
+  Texte gegen ihre Breite: keine Überlappung bei vielen Balken, vollständige
+  Beschriftung bei wenigen, Ausdünnung auch der Werte, Mindest-Balkenbreite.
+  (Gegenprobe: Mit dem alten Code schlagen genau diese Tests fehl.)
+
 ## [3.18.0] – 2026-08-02 – Auswertungen im Labor, klarere Navigation
 
 ### Neu

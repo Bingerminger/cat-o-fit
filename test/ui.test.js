@@ -50,6 +50,78 @@ test('barChart: ein Balken (rect) je Datenpunkt + SVG-Wurzel', () => {
   assert.ok(svg.querySelectorAll('rect').length >= 3);
 });
 
+/* ---- Achsenbeschriftungen dürfen sich nie überlappen (Bug v3.18.0) ---------
+   Bei 21 Tagen Einnahmetreue standen die Datumsangaben („13.07.") als
+   Buchstabenbrei übereinander. Diese Helfer prüfen die tatsächlichen
+   x-Positionen der gezeichneten Texte gegen ihre geschätzte Breite. */
+const CHAR_W = 0.55; // ~Zeichenbreite je Schriftgrad, wie in charts.js
+function axisLabels(svg) {
+  return [...svg.querySelectorAll('text')]
+    .map((t) => ({
+      text: t.textContent,
+      x: parseFloat(t.getAttribute('x')),
+      y: parseFloat(t.getAttribute('y')),
+      fs: parseFloat(t.getAttribute('font-size')) || 9,
+      anchor: t.getAttribute('text-anchor'),
+    }))
+    .filter((t) => t.anchor === 'middle' && Number.isFinite(t.x));
+}
+/** Findet Paare, deren geschätzte Textkästen auf gleicher Höhe überlappen. */
+function overlaps(labels) {
+  const out = [];
+  const byRow = new Map();
+  labels.forEach((l) => {
+    const row = Math.round(l.y);
+    if (!byRow.has(row)) byRow.set(row, []);
+    byRow.get(row).push(l);
+  });
+  for (const row of byRow.values()) {
+    const sorted = row.slice().sort((a, b) => a.x - b.x);
+    for (let i = 1; i < sorted.length; i++) {
+      const a = sorted[i - 1], b = sorted[i];
+      const halfA = (a.text.length * a.fs * CHAR_W) / 2;
+      const halfB = (b.text.length * b.fs * CHAR_W) / 2;
+      if (a.x + halfA > b.x - halfB) out.push([a.text, b.text]);
+    }
+  }
+  return out;
+}
+
+test('barChart: Achsenbeschriftungen überlappen auch bei vielen Balken nicht', () => {
+  // 21 Tage mit Datumsangaben – der Fall aus „Labor & Ergänzung → Einnahmetreue".
+  const days = Array.from({ length: 21 }, (_, i) => ({
+    label: `${String((i % 28) + 1).padStart(2, '0')}.07.`, value: 40 + (i % 5) * 15,
+  }));
+  const svg = barChart(days, { height: 90 });
+  const labels = axisLabels(svg);
+  assert.ok(labels.length >= 2, 'einige Beschriftungen bleiben sichtbar');
+  assert.ok(labels.length < days.length, 'aber nicht alle 21 – es wird ausgedünnt');
+  assert.deepEqual(overlaps(labels), [], 'keine überlappenden Beschriftungen');
+  // Der jüngste Balken (rechts) trägt immer eine Beschriftung.
+  assert.equal(labels.at(-1).text, days.at(-1).label);
+});
+
+test('barChart: wenige Balken behalten ALLE Beschriftungen', () => {
+  const weeks = Array.from({ length: 8 }, (_, i) => ({ label: `${i + 1}.`, value: 30 + i }));
+  const svg = barChart(weeks, { showValues: true, yUnit: 'km' });
+  const labels = axisLabels(svg).filter((l) => /^\d+\.$/.test(l.text));
+  assert.equal(labels.length, 8, 'bei acht Wochen bleibt jede Woche beschriftet');
+  assert.deepEqual(overlaps(axisLabels(svg)), [], 'auch Werte über den Balken überlappen nicht');
+});
+
+test('barChart: auch die Werte über den Balken werden ausgedünnt', () => {
+  const many = Array.from({ length: 30 }, (_, i) => ({ label: '', value: 1000 + i }));
+  const svg = barChart(many, { showValues: true });
+  assert.deepEqual(overlaps(axisLabels(svg)), [], 'vierstellige Werte kollidieren nicht');
+});
+
+test('barChart: Balken bleiben auch bei vielen Datenpunkten sichtbar breit', () => {
+  const many = Array.from({ length: 21 }, (_, i) => ({ label: `${i}.`, value: 50 }));
+  const rects = [...barChart(many).querySelectorAll('rect')];
+  const w = parseFloat(rects[0].getAttribute('width'));
+  assert.ok(w > 9, `Balkenbreite ${w} – mit festem Abstand waren es nur ~6,9 px`);
+});
+
 test('heatmap: zeichnet viele Tageszellen + Legende getrennt', () => {
   const T = '2026-06-28';
   const sessions = [{ date: T, durationSec: 3600 }, { date: addDays(T, -10), distanceKm: 12 }];
