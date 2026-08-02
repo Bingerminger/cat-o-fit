@@ -15,7 +15,7 @@ IMPORTS     = int(sys.argv[7]) if len(sys.argv) > 7 else 2     # Importe/Nutzer 
 IMPORT_RECS = int(sys.argv[8]) if len(sys.argv) > 8 else 50    # Datensätze pro Import
 CONCURRENCY = int(sys.argv[9]) if len(sys.argv) > 9 else 40    # parallele Anfragen
 
-USER_AREAS = ['profile','events','plans','sessions','health','nutrition','diary','shopping','checklist','cycle','reports']
+USER_AREAS = ['profile','events','plans','sessions','health','nutrition','diary','shopping','checklist','cycle','reports','labs','supplements']
 
 def req(method, url, body=None):
     data = json.dumps(body).encode() if body is not None else None

@@ -92,8 +92,18 @@ mkdir -p "$QA/data"
 PHP_CLI_SERVER_WORKERS=8 php -S 127.0.0.1:8078 -t "$QA" &
 python3 tools/loadtest.py http://127.0.0.1:8078/api/api.php "$QA/data" 10 300 80 5 3 100 100
 #         BASE_URL                              DATA_DIR    NUSERS·WRITES·READS·BACKUPS·IMPORTS·IMPORT_RECS·CONCURRENCY
+
+# Dauerlast („Soak"): konstante Last über N Sekunden – zeigt, ob die Latenz mit
+# wachsenden JSON-Dateien wegläuft. Misst je 10-Sekunden-Fenster (Zeile
+# „Dauerlauf 60 s" in der Tabelle unten).
+python3 tools/loadtest_soak.py http://127.0.0.1:8078/api/api.php "$QA/data" 10 5000 500 60 100
+#         BASE_URL                                   DATA_DIR    NUSERS·MAXWRITES·CONCURRENCY·DAUER·IMPORT_RECS
+
 lsof -ti :8078 | xargs kill   # Server stoppen
 ```
+
+Beide Skripte prüfen alle **13** Nutzer-Bereiche auf Integrität (inkl. `labs` und
+`supplements` seit v3.17.0).
 
 **Referenz-Plattform** (anonymisiert – nur als Anhaltspunkt; auf der Synology bzw. anderer Hardware
 fallen die Zahlen anders aus): **Apple M1 Max · 10 Kerne · 64 GB RAM · macOS 26.5.1 · PHP 8.5.7**
