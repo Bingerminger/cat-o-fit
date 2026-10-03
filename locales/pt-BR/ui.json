@@ -1,0 +1,62 @@
+{
+  "format": {
+    "weekdaysShort": [
+      "dom.",
+      "seg.",
+      "ter.",
+      "qua.",
+      "qui.",
+      "sex.",
+      "sáb."
+    ],
+    "weekdaysLong": [
+      "domingo",
+      "segunda-feira",
+      "terça-feira",
+      "quarta-feira",
+      "quinta-feira",
+      "sexta-feira",
+      "sábado"
+    ],
+    "monthsShort": [
+      "jan.",
+      "fev.",
+      "mar.",
+      "abr.",
+      "mai.",
+      "jun.",
+      "jul.",
+      "ago.",
+      "set.",
+      "out.",
+      "nov.",
+      "dez."
+    ],
+    "monthsLong": [
+      "janeiro",
+      "fevereiro",
+      "março",
+      "abril",
+      "maio",
+      "junho",
+      "julho",
+      "agosto",
+      "setembro",
+      "outubro",
+      "novembro",
+      "dezembro"
+    ],
+    "date": "{weekday}, {day} de {month}",
+    "dateLong": "{weekday}, {day} de {month} de {year}",
+    "dayMonth": "{day} de {month}"
+  },
+  "settings": {
+    "language": {
+      "label": "Idioma",
+      "hint": "Vale para você em todos os seus dispositivos.",
+      "instance": "Como a instância ({language})",
+      "instanceLabel": "Idioma padrão",
+      "instanceHint": "Para novas pessoas e a tela de login."
+    }
+  }
+}

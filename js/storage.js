@@ -26,6 +26,7 @@ import { sha256Hex } from './sha256.js';
 import { migrateHealth } from './healthdata.js';
 import { migrateLabs } from './labs.js';
 import { migratePlans } from './program.js';
+import { locale } from './i18n.js';
 
 const AREAS = ['profile', 'events', 'plans', 'sessions', 'health', 'nutrition', 'diary', 'shopping', 'checklist', 'cycle', 'reports', 'labs', 'supplements'];
 const ARRAY_AREAS = ['events', 'plans', 'sessions', 'health', 'nutrition', 'diary', 'shopping', 'checklist', 'cycle', 'reports', 'labs', 'supplements'];
@@ -1684,6 +1685,11 @@ export async function createFirstAdmin({ name, pin } = {}) {
   }
   const id = uid('u');
   const p = String(pin);
+  // The language of the setup becomes the instance default – written before the admin, so a
+  // new instance is never mistaken for one set up before v4.0.0 (those default to German).
+  if (!(family.settings || {}).language) {
+    familyUpsert({ id: '__settings', _kind: 'settings', ...(family.settings || {}), language: locale() });
+  }
   familyUpsert({
     id, _kind: 'member', name: (name || 'Admin').trim(), role: 'admin',
     emoji: '🏃', color: '#18b48a', createdAt: nowIso(),

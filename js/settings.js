@@ -24,6 +24,13 @@ import { ageOf, weightGoalBlockReason } from './eligibility.js';
 import { weightNow, bmiFor } from './energy.js';
 import { currentHrvMethod, hrvLabel } from './healthdata.js';
 import { hrZonesFrom, estimateMaxHr } from './hrzones.js';
+import { t, languages } from './i18n.js';
+import { applyLanguage, instanceLanguage } from './language.js';
+
+/** Language options: the supported languages by their own names. */
+function languageOptions() {
+  return Object.entries(languages()).map(([value, label]) => ({ value, label }));
+}
 
 /** Gewicht und Körperfett sind „Gewichtsziele“ (gesperrt für Kinder, Schwangerschaft, Essstörung). */
 const WEIGHT_METRICS = ['weight', 'bodyFat'];
@@ -257,6 +264,18 @@ export function render(view) {
     el('span', { text: 'Erscheinungsbild' }),
     segmented([{ value: 'system', label: 'System' }, { value: 'light', label: 'Hell' }, { value: 'dark', label: 'Dunkel' }], s.theme || 'system', (v) => { store.setSetting('theme', v); window.dispatchEvent(new Event('catofit:theme')); }),
   ]));
+  // Language of this person; empty follows the instance default. app.js applies it on the
+  // profile change – except while an admin manages someone else (the admin's language stays).
+  const instName = languages()[instanceLanguage()] || instanceLanguage();
+  disp.appendChild(el('div', { class: 'row row--between wrap mb-1' }, [
+    el('span', { text: t('settings.language.label') }),
+    select([{ value: '', label: t('settings.language.instance', { language: instName }) }, ...languageOptions()],
+      s.language || '', {
+        'aria-label': t('settings.language.label'),
+        onchange: (e) => store.setSetting('language', e.target.value || null),
+      }),
+  ]));
+  disp.appendChild(el('div', { class: 'dim mb-4', style: { fontSize: '.74rem' }, text: t('settings.language.hint') }));
   disp.appendChild(el('div', { class: 'dim mb-2', style: { fontSize: '.74rem', fontWeight: '650' }, text: 'AKZENTFARBE' }));
   disp.appendChild(el('div', { class: 'row wrap gap-3' }, ACCENTS.map((c) => {
     const active = (s.accent || '#18b48a').toLowerCase() === c.toLowerCase();
@@ -374,6 +393,17 @@ export function render(view) {
         ]),
         el('span', { class: 'list-item__chev', html: iconSvg('chevronRight') }),
       ]),
+    ]));
+    // Instance default: sign-in screen and everyone without an own choice.
+    view.appendChild(el('div', { class: 'card' }, [
+      el('div', { class: 'row row--between wrap' }, [
+        el('span', { text: t('settings.language.instanceLabel') }),
+        select(languageOptions(), instanceLanguage(), {
+          'aria-label': t('settings.language.instanceLabel'),
+          onchange: async (e) => { store.setFamilySetting('language', e.target.value); await applyLanguage(); refreshView(); },
+        }),
+      ]),
+      el('div', { class: 'dim mt-1', style: { fontSize: '.74rem' }, text: t('settings.language.instanceHint') }),
     ]));
   }
 

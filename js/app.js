@@ -9,6 +9,8 @@ import { TAB_ITEMS, MORE_GROUPS, navMatches, visibleGroups, inMore, navLink, acc
 import { openCaptureSheet } from './capture.js';
 import { accentPalette } from './contrast.js';
 import { useHrReference } from './load.js';
+import { applyLanguage } from './language.js';
+import { loadLanguages } from './i18n.js';
 
 import { render as renderDashboard } from './dashboard.js';
 import { renderList as renderEvents, renderDetail as renderEvent } from './events.js';
@@ -304,6 +306,7 @@ function renderSidebarFoot() {
 async function doLogout() {
   closeSheet();
   await store.logout();
+  await applyLanguage();   // the sign-in screen speaks the instance language
   applyAuthChrome();
   if (location.hash.startsWith('#/login')) router.refresh();
   else navigate('#/login');
@@ -358,7 +361,8 @@ const refreshSoon = debounce(() => {
 }, 180);
 
 async function boot() {
-  await store.init();
+  await Promise.all([store.init(), loadLanguages()]);
+  await applyLanguage();   // catalogs before the first render
   // Fehlt einer Einheit die Anstrengung, schätzt die Belastung sie aus der Ø-HF – bezogen
   // auf die Max-HF der gerade angemeldeten Person.
   useHrReference(() => { const p = store.profile(); return p && Number(p.maxHr) > 0 ? { maxHr: Number(p.maxHr) } : null; });
@@ -407,6 +411,8 @@ async function boot() {
   // Hintergrund-Sync -> Plan sicherstellen, Theme/Wetter & Ansicht aktualisieren.
   store.onSync((area, origin) => {
     if (area === 'profile') { applyTheme(); maybeRefreshWeather(); }
+    // Sign-in, switching person or a language picked on another device.
+    if (area === 'profile' || area === 'family') applyLanguage().then((changed) => { if (changed) router.refresh(); });
     if (area === 'events' || area === 'plans') ensureGenerated();
     if (origin === 'sync') refreshSoon();
   });

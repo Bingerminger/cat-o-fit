@@ -27,7 +27,7 @@
 # auch im normalen Tab OHNE Service-Worker (bisher wurden js/css heuristisch
 # gecacht und zeigten nach einem Release weiter die alte Version).
 <IfModule mod_headers.c>
-  <FilesMatch "\.(html|js|mjs|css|webmanifest)$">
+  <FilesMatch "\.(html|js|mjs|css|webmanifest|json)$">
     Header set Cache-Control "no-cache"
   </FilesMatch>
 

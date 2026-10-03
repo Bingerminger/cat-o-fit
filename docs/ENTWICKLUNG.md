@@ -479,6 +479,32 @@ bestehende Geräte, der Health-Eingang und `.ics`-Links weiter funktionieren:
   SVG-/Markup-Schnipseln vorbehalten. Akzent- und Mitgliedsfarben nur als Hex (`safeAccent`).
   Abgesichert durch `test/xss-sweep.test.js` (präparierter Text in allen Feldern, alle Ansichten).
 
+## Translations (i18n, since v4.0.0)
+
+Development is in English from v4.0.0 on; this guide moves to English as a whole with v4.0.0.
+
+- **Catalogs:** `locales/<lang>/<area>.json`, nested keys, placeholders `{name}`, plurals
+  `key.one` / `key.other` (plus the `Intl.PluralRules` forms a language needs). English is the
+  source; lookup goes active language → English → key. The language list is
+  `locales/languages.json` (code → endonym): a new language is a folder plus one entry there.
+- **Code:** `t('section.key', params)`, `tp('section.key', count)`, `tList(…)` from `js/i18n.js`.
+  `ui` is loaded at start; bigger areas (`help`, `exercises`, `workouts`, `recipes`, `health`) via
+  `loadArea()`, and their keys start with the area name. Text is set with `el({ text })` as before –
+  a catalog string goes into `html` only if it is fixed markup without user data.
+- **Formats:** `js/format.js` (re-exported by `ui.js`) – weekday/month names and date patterns from
+  the catalog (`format.*`), separators from `Intl`. Never build dates or decimals by hand.
+- **Which language:** `js/language.js` – the person's `settings.language`, else the instance default
+  (`familySettings().language`, written at first setup), else German for instances set up before
+  v4.0.0, else the browser. While an admin manages someone else, the admin's language stays.
+- **Stored data stay as they are:** internal values (`erledigt`, categories …) are keys; only
+  their display is translated. No data migration.
+- **Tests run in German** (`test-setup.js`): the de catalog holds the texts shown before v4.0.0, so
+  existing assertions guard against regressions; switch with `await setLocale('en')`.
+  `test/i18n-catalog.test.js` checks keys, placeholders, plural forms, unknown and unused keys,
+  and keeps the modules in `TRANSLATED_MODULES` free of German literals – add each module there
+  once its text lives in the catalogs.
+- **Translators:** `locales/GLOSSARY.md` (tone, address, fixed terms), `locales/REVIEW.md`.
+
 ## Eine Änderung veröffentlichen (Checkliste)
 
 1. `js/version.js` **und** `package.json` `version` anheben (SemVer).

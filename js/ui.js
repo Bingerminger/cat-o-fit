@@ -245,19 +245,16 @@ export function effectiveStatus(unit, todayString = todayStr()) {
 export function isOverdue(unit, todayString = todayStr()) { return effectiveStatus(unit, todayString) === 'ueberfaellig'; }
 
 /* -------------------------------------------------------------------------
-   Formatierung (deutsch)
+   Formatting – dates and numbers in the active language live in format.js;
+   re-exported here so existing imports from ui.js keep working.
    ------------------------------------------------------------------------- */
-const WD_SHORT = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
-const WD_LONG  = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
-const MO_SHORT = ['Jan.', 'Feb.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.', 'Sept.', 'Okt.', 'Nov.', 'Dez.'];
-const MO_LONG  = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+import {
+  parseDate, fmtWeekday, fmtDate, fmtDateLong, fmtDayMonth, monthName, fmtKm, fmtNum, fmtDec, fmtInt,
+} from './format.js';
+export {
+  parseDate, fmtWeekday, fmtDate, fmtDateLong, fmtDayMonth, monthName, fmtKm, fmtNum, fmtDec, fmtInt,
+};
 
-/** "YYYY-MM-DD" -> lokales Date-Objekt (ohne Zeitzonen-Verschiebung). */
-export function parseDate(str) {
-  if (str instanceof Date) return str;
-  const [y, m, d] = String(str).split('-').map(Number);
-  return new Date(y, (m || 1) - 1, d || 1);
-}
 /** Date -> "YYYY-MM-DD" (lokal). */
 export function toDateStr(date) {
   const d = date instanceof Date ? date : parseDate(date);
@@ -275,12 +272,6 @@ export function diffDays(a, b) {
 export function isoDow(dateStr) { const d = parseDate(dateStr).getDay(); return d === 0 ? 7 : d; }
 /** Montag der Woche eines Datums. */
 export function weekStartMonday(dateStr) { return addDays(dateStr, -(isoDow(dateStr) - 1)); }
-
-export function fmtWeekday(dateStr, long = false) { return (long ? WD_LONG : WD_SHORT)[parseDate(dateStr).getDay()]; }
-export function fmtDate(dateStr) { const d = parseDate(dateStr); return `${WD_SHORT[d.getDay()]}, ${d.getDate()}. ${MO_SHORT[d.getMonth()]}`; }
-export function fmtDateLong(dateStr) { const d = parseDate(dateStr); return `${WD_LONG[d.getDay()]}, ${d.getDate()}. ${MO_LONG[d.getMonth()]} ${d.getFullYear()}`; }
-export function fmtDayMonth(dateStr) { const d = parseDate(dateStr); return `${d.getDate()}. ${MO_SHORT[d.getMonth()]}`; }
-export function monthName(monthIdx, long = true) { return (long ? MO_LONG : MO_SHORT)[monthIdx]; }
 
 /** Sekunden/km -> "m:ss". */
 export function fmtPace(sec) {
@@ -315,28 +306,6 @@ export function parseHms(str) {
   while (p.length < 3) p.unshift(0);
   return p[0] * 3600 + p[1] * 60 + p[2];
 }
-export function fmtKm(km, digits = 1) {
-  if (km == null) return '–';
-  return Number(km).toFixed(digits).replace('.', ',') + ' km';
-}
-export function fmtNum(n, digits = 1) {
-  if (n == null || Number.isNaN(n)) return '–';
-  return Number(n).toFixed(digits).replace('.', ',');
-}
-
-/** Bereits gerundete Zahl mit Dezimalkomma („7,5“); – für fehlende Werte. */
-export function fmtDec(v) {
-  return v == null || Number.isNaN(Number(v)) ? '–' : String(v).replace('.', ',');
-}
-
-/** Ganzzahl mit Tausenderpunkt (deutsche Schreibweise), z. B. 1.234. */
-export function fmtInt(n) {
-  if (n == null || Number.isNaN(Number(n))) return '–';
-  const sign = Number(n) < 0 ? '-' : '';
-  const abs = Math.abs(Math.round(Number(n)));
-  return sign + String(abs).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-}
-
 /* -------------------------------------------------------------------------
    Kleinkram
    ------------------------------------------------------------------------- */

@@ -1,0 +1,62 @@
+{
+  "format": {
+    "weekdaysShort": [
+      "So",
+      "Mo",
+      "Di",
+      "Mi",
+      "Do",
+      "Fr",
+      "Sa"
+    ],
+    "weekdaysLong": [
+      "Sonntag",
+      "Montag",
+      "Dienstag",
+      "Mittwoch",
+      "Donnerstag",
+      "Freitag",
+      "Samstag"
+    ],
+    "monthsShort": [
+      "Jan.",
+      "Feb.",
+      "März",
+      "Apr.",
+      "Mai",
+      "Juni",
+      "Juli",
+      "Aug.",
+      "Sept.",
+      "Okt.",
+      "Nov.",
+      "Dez."
+    ],
+    "monthsLong": [
+      "Januar",
+      "Februar",
+      "März",
+      "April",
+      "Mai",
+      "Juni",
+      "Juli",
+      "August",
+      "September",
+      "Oktober",
+      "November",
+      "Dezember"
+    ],
+    "date": "{weekday}, {day}. {month}",
+    "dateLong": "{weekday}, {day}. {month} {year}",
+    "dayMonth": "{day}. {month}"
+  },
+  "settings": {
+    "language": {
+      "label": "Sprache",
+      "hint": "Gilt für dich auf allen Geräten.",
+      "instance": "Wie die Instanz ({language})",
+      "instanceLabel": "Standardsprache",
+      "instanceHint": "Für neue Personen und die Anmeldung."
+    }
+  }
+}

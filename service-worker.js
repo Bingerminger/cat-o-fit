@@ -10,7 +10,7 @@
  * Bei jeder Versionserhöhung wird der alte Cache verworfen.
  */
 
-const VERSION = 'catofit-v114';
+const VERSION = 'catofit-v115';
 // Cache-Name pro Deployment-Pfad eindeutig: Produktion (/cat-o-fit/) und Abnahme
 // (/cat-o-fit-acc/) liegen auf DERSELBEN Origin und teilen sich sonst den
 // CacheStorage – dann landet die App-Shell der einen Umgebung in der anderen.
@@ -53,6 +53,10 @@ const SHELL_ASSETS = [
   './js/demo.js',
   './js/teamstats.js',
   './js/env.js',
+  './js/i18n.js',
+  './js/format.js',
+  './js/language.js',
+  './locales/languages.json',
   './js/ui.js',
   './js/charts.js',
   './js/dashboard.js',
@@ -139,10 +143,16 @@ const SHELL_ASSETS = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(SHELL_CACHE).then((cache) =>
+    caches.open(SHELL_CACHE).then(async (cache) => {
       // Einzeln hinzufügen, damit ein fehlendes Asset den Install nicht killt.
-      Promise.allSettled(SHELL_ASSETS.map((url) => cache.add(url)))
-    ).then(() => self.skipWaiting())
+      await Promise.allSettled(SHELL_ASSETS.map((url) => cache.add(url)));
+      // The ui catalog of every language, so a language switch also works offline;
+      // the list comes from languages.json, so a new language needs no change here.
+      try {
+        const langs = Object.keys(await (await fetch('./locales/languages.json', { cache: 'no-cache' })).json());
+        await Promise.allSettled(langs.map((l) => cache.add(`./locales/${l}/ui.json`)));
+      } catch { /* offline install: catalogs come with the runtime cache */ }
+    }).then(() => self.skipWaiting())
   );
 });
 

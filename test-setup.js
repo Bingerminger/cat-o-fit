@@ -436,3 +436,16 @@ function createFakeServer() {
   };
 }
 g.__fakeServer = createFakeServer();
+
+/* ------------------------------ Translations ------------------------------
+   Catalogs come from disk instead of fetch. Tests run in German by default:
+   the de catalog holds the texts the UI showed before v4.0.0, so the existing
+   German assertions guard against regressions. A test that needs another
+   language calls `await setLocale('en')` from js/i18n.js. */
+{
+  const { readFile } = await import('node:fs/promises');
+  const i18n = await import('./js/i18n.js');
+  i18n.setLoader(async (path) => JSON.parse(await readFile(new URL(`./locales/${path}`, import.meta.url), 'utf8')));
+  await i18n.loadLanguages();
+  await i18n.setLocale('de');
+}

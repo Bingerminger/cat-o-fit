@@ -1,0 +1,62 @@
+{
+  "format": {
+    "weekdaysShort": [
+      "zo",
+      "ma",
+      "di",
+      "wo",
+      "do",
+      "vr",
+      "za"
+    ],
+    "weekdaysLong": [
+      "zondag",
+      "maandag",
+      "dinsdag",
+      "woensdag",
+      "donderdag",
+      "vrijdag",
+      "zaterdag"
+    ],
+    "monthsShort": [
+      "jan",
+      "feb",
+      "mrt",
+      "apr",
+      "mei",
+      "jun",
+      "jul",
+      "aug",
+      "sep",
+      "okt",
+      "nov",
+      "dec"
+    ],
+    "monthsLong": [
+      "januari",
+      "februari",
+      "maart",
+      "april",
+      "mei",
+      "juni",
+      "juli",
+      "augustus",
+      "september",
+      "oktober",
+      "november",
+      "december"
+    ],
+    "date": "{weekday} {day} {month}",
+    "dateLong": "{weekday} {day} {month} {year}",
+    "dayMonth": "{day} {month}"
+  },
+  "settings": {
+    "language": {
+      "label": "Taal",
+      "hint": "Geldt voor jou op al je apparaten.",
+      "instance": "Zoals de instantie ({language})",
+      "instanceLabel": "Standaardtaal",
+      "instanceHint": "Voor nieuwe personen en het aanmeldscherm."
+    }
+  }
+}
