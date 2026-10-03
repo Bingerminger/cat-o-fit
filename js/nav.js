@@ -12,46 +12,48 @@
 import * as store from './storage.js';
 import { el, icon, iconSvg, safeAccent } from './ui.js';
 
+import { t } from './i18n.js';
+
 /** Tab-Leiste (iPhone). `action`: kein Link, sondern ein Knopf (Erfassen, Mehr). */
 export const TAB_ITEMS = [
-  { key: 'heute', icon: 'home', label: 'Heute', hash: '#/' },
-  { key: 'kalender', icon: 'calendar', label: 'Kalender', hash: '#/calendar' },
-  { key: 'erfassen', icon: 'plus', label: 'Erfassen', action: 'capture' },
-  { key: 'fortschritt', icon: 'chart', label: 'Fortschritt', hash: '#/stats', match: ['#/stats', '#/health', '#/badges', '#/reports', '#/report/', '#/import'] },
-  { key: 'mehr', icon: 'more', label: 'Mehr', action: 'more' },
+  { key: 'heute', icon: 'home', get label() { return t('nav.today'); }, hash: '#/' },
+  { key: 'kalender', icon: 'calendar', get label() { return t('nav.calendar'); }, hash: '#/calendar' },
+  { key: 'erfassen', icon: 'plus', get label() { return t('nav.capture'); }, action: 'capture' },
+  { key: 'fortschritt', icon: 'chart', get label() { return t('nav.progress'); }, hash: '#/stats', match: ['#/stats', '#/health', '#/badges', '#/reports', '#/report/', '#/import'] },
+  { key: 'mehr', icon: 'more', get label() { return t('nav.more'); }, action: 'more' },
 ];
 
 /** Reiter innerhalb von „Fortschritt“ – jeder ist eine eigene (bestehende) Route. */
 export const PROGRESS_TABS = [
-  { label: 'Training', hash: '#/stats' },
-  { label: 'Körper', hash: '#/health', match: ['#/health', '#/import'] },
-  { label: 'Erfolge', hash: '#/badges' },
-  { label: 'Berichte', hash: '#/reports', match: ['#/reports', '#/report/'] },
+  { get label() { return t('nav.tabs.training'); }, hash: '#/stats' },
+  { get label() { return t('nav.tabs.body'); }, hash: '#/health', match: ['#/health', '#/import'] },
+  { get label() { return t('nav.tabs.badges'); }, hash: '#/badges' },
+  { get label() { return t('nav.tabs.reports'); }, hash: '#/reports', match: ['#/reports', '#/report/'] },
 ];
 
 /** Zweite Ebene, nach Denkweise gegliedert. `module`: nur bei aktivem Modul,
     `admin`: nur für Administrator:innen, `self`: nicht beim Verwalten fremder Profile. */
 export const MORE_GROUPS = [
-  { title: 'Training', items: [
-    { icon: 'flag', label: 'Ziele & Pläne', hash: '#/events', match: ['#/events', '#/event/', '#/plan/'] },
-    { icon: 'dumbbell', label: 'Übungs-Bibliothek', hash: '#/uebungen' },
+  { id: 'training', get title() { return t('nav.groups.training'); }, items: [
+    { icon: 'flag', get label() { return t('nav.goalsPlans'); }, hash: '#/events', match: ['#/events', '#/event/', '#/plan/'] },
+    { icon: 'dumbbell', get label() { return t('nav.exercises'); }, hash: '#/uebungen' },
   ] },
-  { title: 'Gesundheit', items: [
-    { icon: 'moon', label: 'Zyklus', hash: '#/zyklus', module: 'cycle' },
-    { icon: 'flask', label: 'Labor & Ergänzung', hash: '#/labor', module: 'labs' },
+  { id: 'health', get title() { return t('nav.groups.health'); }, items: [
+    { icon: 'moon', get label() { return t('nav.cycle'); }, hash: '#/zyklus', module: 'cycle' },
+    { icon: 'flask', get label() { return t('nav.labs'); }, hash: '#/labor', module: 'labs' },
   ] },
-  { title: 'Ernährung & Haushalt', items: [
-    { icon: 'utensils', label: 'Ernährung', hash: '#/nutrition', module: 'nutrition' },
-    { icon: 'cart', label: 'Einkaufsliste', hash: '#/shopping', module: 'shopping' },
-    { icon: 'list', label: 'Checkliste', hash: '#/checklist', module: 'checklist' },
+  { id: 'household', get title() { return t('nav.groups.household'); }, items: [
+    { icon: 'utensils', get label() { return t('nav.nutrition'); }, hash: '#/nutrition', module: 'nutrition' },
+    { icon: 'cart', get label() { return t('nav.shopping'); }, hash: '#/shopping', module: 'shopping' },
+    { icon: 'list', get label() { return t('nav.checklist'); }, hash: '#/checklist', module: 'checklist' },
   ] },
-  { title: 'Team', items: [
-    { icon: 'grid', label: 'Team/Familie', hash: '#/family' },
-    { icon: 'user', label: 'Team verwalten', hash: '#/familie-verwalten', admin: true },
+  { id: 'team', get title() { return t('nav.groups.team'); }, items: [
+    { icon: 'grid', get label() { return t('nav.family'); }, hash: '#/family' },
+    { icon: 'user', get label() { return t('nav.manageTeam'); }, hash: '#/familie-verwalten', admin: true },
   ] },
-  { title: 'System', items: [
-    { icon: 'settings', label: 'Einstellungen', hash: '#/settings' },
-    { icon: 'info', label: 'Hilfe & Wissen', short: 'Hilfe', hash: '#/hilfe' },
+  { id: 'system', get title() { return t('nav.groups.system'); }, items: [
+    { icon: 'settings', get label() { return t('nav.settings'); }, hash: '#/settings' },
+    { icon: 'info', get label() { return t('nav.help'); }, get short() { return t('nav.helpShort'); }, hash: '#/hilfe' },
   ] },
 ];
 
@@ -89,13 +91,13 @@ export function inMore(path, isVisible = navVisible) {
 /** Reiter „Training · Körper · Erfolge · Berichte“ oben in den Fortschritt-Ansichten. */
 export function progressTabs(activeHash) {
   const path = activeHash || (typeof location !== 'undefined' ? location.hash : '');
-  return el('nav', { class: 'progress-tabs segmented', 'aria-label': 'Fortschritt' },
-    PROGRESS_TABS.map((t) => {
-      const active = navMatches(t, path);
+  return el('nav', { class: 'progress-tabs segmented', 'aria-label': t('nav.progressAria') },
+    PROGRESS_TABS.map((tab) => {
+      const active = navMatches(tab, path);
       return el('a', {
-        class: `segmented__opt ${active ? 'is-active' : ''}`, href: t.hash,
+        class: `segmented__opt ${active ? 'is-active' : ''}`, href: tab.hash,
         ...(active ? { 'aria-current': 'page' } : {}),
-      }, t.label);
+      }, tab.label);
     }));
 }
 
@@ -129,14 +131,14 @@ export function accountBlock({ onBack = null, onLogout = null } = {}) {
         style: color ? { background: color + '22', color } : {},
       }),
       el('div', { class: 'account__meta' }, [
-        el('div', { class: 'account__name', text: me.name || 'Mitglied' }),
-        el('div', { class: 'account__role', text: `${me.role === 'admin' ? 'Administrator:in' : 'Mitglied'} · angemeldet` }),
+        el('div', { class: 'account__name', text: me.name || t('account.member') }),
+        el('div', { class: 'account__role', text: me.role === 'admin' ? t('account.signedInAdmin') : t('account.signedInMember') }),
       ]),
-      onLogout ? el('button', { class: 'btn btn--ghost account__logout', type: 'button', onclick: onLogout }, [icon('arrowLeft'), 'Abmelden']) : null,
+      onLogout ? el('button', { class: 'btn btn--ghost account__logout', type: 'button', onclick: onLogout }, [icon('arrowLeft'), t('account.signOut')]) : null,
     ]),
     managed ? el('div', { class: 'account__managing', role: 'status' }, [
-      el('span', { class: 'account__managing-text', text: `verwaltet gerade: ${managed.name || 'ein Mitglied'}` }),
-      onBack ? el('button', { class: 'btn btn--soft account__back', type: 'button', onclick: onBack }, 'Zurück zu mir') : null,
+      el('span', { class: 'account__managing-text', text: t('account.managing', { name: managed.name || t('account.aMember') }) }),
+      onBack ? el('button', { class: 'btn btn--soft account__back', type: 'button', onclick: onBack }, t('account.backToMe')) : null,
     ]) : null,
   ]);
 }

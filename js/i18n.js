@@ -108,6 +108,9 @@ function lookup(lang, key) {
   return node;
 }
 function value(key) {
+  // Looked up before any catalog is loaded – i.e. at import time. Recorded for the guard in
+  // test/i18n-catalog.test.js; in the browser such a text would show its key.
+  if (!catalogs[current] && !catalogs[SOURCE_LANGUAGE]) (globalThis.__i18nEarly ||= []).push(String(key));
   const v = lookup(current, key);
   return v === undefined && current !== SOURCE_LANGUAGE ? lookup(SOURCE_LANGUAGE, key) : v;
 }

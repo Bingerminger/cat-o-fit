@@ -1,13 +1,13 @@
 {
-  "name": "Cat-O-Fit · Trainingsplanung für die Familie",
+  "name": "Cat-O-Fit · Training plans for the family",
   "short_name": "Cat-O-Fit",
-  "description": "Trainingsplanung für die ganze Familie – Wettkämpfe und Programme planen, trainieren und auswerten, mit Ernährung, Zyklus und Laborwerten im Blick.",
+  "description": "Training plans for the whole family – plan, train and review races and programmes, with nutrition, cycle and lab values in view.",
   "start_url": "./index.html#/",
   "scope": "./",
   "display": "standalone",
   "background_color": "#0f1318",
   "theme_color": "#18b48a",
-  "lang": "de",
+  "lang": "en",
   "dir": "ltr",
   "categories": ["health", "fitness", "sports"],
   "icons": [

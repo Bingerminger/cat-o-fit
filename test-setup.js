@@ -447,5 +447,6 @@ g.__fakeServer = createFakeServer();
   const i18n = await import('./js/i18n.js');
   i18n.setLoader(async (path) => JSON.parse(await readFile(new URL(`./locales/${path}`, import.meta.url), 'utf8')));
   await i18n.loadLanguages();
-  await i18n.setLocale('de');
+  // CATOFIT_I18N_SKIP: the import-time guard in test/i18n-catalog.test.js needs empty catalogs.
+  if (!process.env.CATOFIT_I18N_SKIP) await i18n.setLocale('de');
 }

@@ -10,7 +10,7 @@ import { openCaptureSheet } from './capture.js';
 import { accentPalette } from './contrast.js';
 import { useHrReference } from './load.js';
 import { applyLanguage } from './language.js';
-import { loadLanguages } from './i18n.js';
+import { loadLanguages, t, tp } from './i18n.js';
 
 import { render as renderDashboard } from './dashboard.js';
 import { renderList as renderEvents, renderDetail as renderEvent } from './events.js';
@@ -77,13 +77,13 @@ window.addEventListener('hashchange', () => closeSheet());
 window.addEventListener('catofit:weather', () => refreshSoon());
 // Gerätespeicher voll: Die letzte Änderung wurde zurückgenommen (nicht still verloren).
 window.addEventListener('catofit:storage-full', () => toast(
-  'Gerätespeicher voll – die letzte Änderung wurde nicht gespeichert. Schaffe Platz (z. B. Website-Daten anderer Seiten löschen) und versuche es erneut.',
+  t('sync.storageFull'),
   'bad', 7000,
 ));
 // Der Server hat Familien-Änderungen abgelehnt (dafür braucht es eine Admin-Anmeldung).
 window.addEventListener('catofit:ops-rejected', (e) => {
   const n = (e && e.detail && e.detail.count) || 1;
-  toast(`${n === 1 ? 'Eine Änderung' : `${n} Änderungen`} an der Familie hat der Server nicht übernommen: ${(e.detail && e.detail.reason) || 'Dafür braucht es eine Admin-Anmeldung mit Serververbindung.'}`, 'bad', 7000);
+  toast(tp('sync.opsRejected', n, { reason: (e.detail && e.detail.reason) || t('sync.opsRejectedReason') }), 'bad', 7000);
   refreshSoon();
 });
 // Die Server-Anmeldung ist abgelaufen: Zyklus, Labor und Ergänzungen synchronisieren erst
@@ -98,18 +98,18 @@ window.addEventListener('catofit:session-required', () => {
   const inp = el('input', { class: 'pin-input', type: 'password', inputmode: 'numeric', autocomplete: 'off', maxlength: '8', placeholder: '••••', 'aria-label': 'PIN' });
   const err = el('div', { class: 'pin-err', role: 'alert', hidden: true });
   const submit = async () => {
-    if (await store.reauth(inp.value)) { closeSheet(); toast('Wieder verbunden', 'good'); return; }
+    if (await store.reauth(inp.value)) { closeSheet(); toast(t('reauth.reconnected'), 'good'); return; }
     const e = store.lastLoginError();
-    err.textContent = (e && e.message) || 'Falsche PIN.'; err.hidden = false; inp.value = ''; inp.focus();
+    err.textContent = (e && e.message) || t('reauth.wrongPin'); err.hidden = false; inp.value = ''; inp.focus();
   };
   inp.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') submit(); });
   openSheet({
-    title: 'Bitte PIN bestätigen',
+    title: t('reauth.title'),
     body: el('div', { class: 'pin-dialog' }, [
-      el('div', { class: 'muted', style: { fontSize: '.86rem', textAlign: 'center' }, text: 'Die Anmeldung am Server ist abgelaufen. Zyklus, Labor und Ergänzungen werden erst nach deiner PIN wieder abgeglichen – nichts geht verloren.' }),
+      el('div', { class: 'muted', style: { fontSize: '.86rem', textAlign: 'center' }, text: t('reauth.text') }),
       inp, err,
-      el('button', { class: 'btn btn--primary btn--block', onclick: submit }, [icon('check'), 'Bestätigen']),
-      el('button', { class: 'btn btn--ghost btn--block', onclick: () => closeSheet() }, 'Später'),
+      el('button', { class: 'btn btn--primary btn--block', onclick: submit }, [icon('check'), t('common.confirm')]),
+      el('button', { class: 'btn btn--ghost btn--block', onclick: () => closeSheet() }, t('common.later')),
     ]),
     onClose: () => { reauthOpen = false; },
   });
@@ -186,10 +186,10 @@ function buildSidebar() {
   side.appendChild(el('button', {
     class: 'btn btn--primary btn--block sidebar__capture', type: 'button', 'aria-haspopup': 'dialog',
     onclick: () => openCaptureSheet(),
-  }, [icon('plus'), 'Erfassen']));
+  }, [icon('plus'), t('nav.capture')]));
   const list = el('div', { class: 'sidebar__list' });
   TAB_ITEMS.filter((t) => t.hash).forEach((t) => list.appendChild(track(navLink(t, { path }), t)));
-  visibleGroups().filter((g) => g.title !== 'System').forEach((g) => {
+  visibleGroups().filter((g) => g.id !== 'system').forEach((g) => {
     list.appendChild(el('div', { class: 'sidebar__group', text: g.title }));
     g.items.forEach((it) => list.appendChild(track(navLink(it, { path }), it)));
   });
@@ -232,7 +232,7 @@ function openMoreSheet() {
     });
     body.appendChild(grid);
   });
-  openSheet({ title: 'Mehr', body });
+  openSheet({ title: t('nav.more'), body });
 }
 
 /** Aktiven Menüeintrag markieren – auch „Mehr“ und „Fortschritt“ für ihre Unterseiten. */
@@ -263,13 +263,13 @@ function updateManageBanner() {
     banner.hidden = false;
     banner.innerHTML = '';
     banner.appendChild(el('span', { html: iconSvg('user'), 'aria-hidden': 'true', style: { width: '16px', flex: '0 0 auto' } }));
-    banner.appendChild(el('span', { text: `Du verwaltest gerade ${who ? who.name : 'ein Mitglied'}` }));
+    banner.appendChild(el('span', { text: t('account.managingBanner', { name: who ? who.name : t('account.aMember') }) }));
     // Kinder- und Jugendprofil: Eltern-Admins sollen sehen, dass hier keine Kalorien- und
     // Gewichtsziele gerechnet werden (Alter aus dem Geburtsjahr des Mitglieds).
     if (currentEligibility().minor) {
-      banner.appendChild(el('span', { class: 'manage-banner__note', title: 'Keine Kalorien- und Gewichtsziele, kein Abnehmprogramm, keine Leistungspräparate, Laborwerte nur dokumentiert.', text: '· Kinder- und Jugendprofil' }));
+      banner.appendChild(el('span', { class: 'manage-banner__note', title: t('account.minorNote'), text: t('account.minorProfile') }));
     }
-    banner.appendChild(el('button', { class: 'manage-banner__back', type: 'button', text: 'Zurück zu mir', onclick: backToSelf }));
+    banner.appendChild(el('button', { class: 'manage-banner__back', type: 'button', text: t('account.backToMe'), onclick: backToSelf }));
   } else {
     banner.hidden = true;
     banner.innerHTML = '';
@@ -293,11 +293,11 @@ function renderSidebarFoot() {
   if (!acct) return;                       // abgemeldet -> Sidebar ist ohnehin ausgeblendet
   foot.appendChild(acct);
   const path = navPath();
-  const system = (MORE_GROUPS.find((g) => g.title === 'System') || { items: [] }).items;
+  const system = (MORE_GROUPS.find((g) => g.id === 'system') || { items: [] }).items;
   foot.appendChild(el('div', { class: 'sidebar__sys' }, [
     ...system.map((it) => track(navLink(it, { cls: 'sidebar__sys-item', path, short: true }), it)),
     el('button', { class: 'sidebar__sys-item', type: 'button', onclick: doLogout }, [
-      el('span', { class: 'nav-ico', 'aria-hidden': 'true', html: iconSvg('arrowLeft') }), el('span', { text: 'Abmelden' }),
+      el('span', { class: 'nav-ico', 'aria-hidden': 'true', html: iconSvg('arrowLeft') }), el('span', { text: t('account.signOut') }),
     ]),
   ]));
 }

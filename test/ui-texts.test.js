@@ -111,11 +111,13 @@ test('DOC-15/DOC-16/DOC-20: Einstellungen ohne Krafttraining-Schalter, mit Open 
   assert.doesNotMatch(fa, /'User'/);
 });
 
-test('MKT-06: Titel und Manifest sprechen von Trainingsplanung', () => {
+test('MKT-06: title and manifest speak of training plans (English shell, German catalog)', () => {
   const html = readFileSync(new URL('index.html', ROOT), 'utf8');
   const manifest = JSON.parse(readFileSync(new URL('manifest.webmanifest', ROOT), 'utf8'));
-  assert.match(html, /<title>Cat-O-Fit · Trainingsplanung/);
-  assert.match(manifest.name, /Trainingsplanung/);
+  const de = JSON.parse(readFileSync(new URL('locales/de/ui.json', ROOT), 'utf8'));
+  assert.match(html, /<title>Cat-O-Fit · Training plans/);
+  assert.match(manifest.name, /Training plans/);
+  assert.match(de.app.title, /^Cat-O-Fit · Trainingsplanung/);
   assert.doesNotMatch(html + manifest.description, /Fitness-, Health-/);
 });
 

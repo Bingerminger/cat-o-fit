@@ -5,6 +5,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { LAZY_AREAS, SOURCE_LANGUAGE } from '../js/i18n.js';
 
 const ROOT = new URL('../', import.meta.url);
@@ -14,9 +15,15 @@ const AREAS = readdirSync(new URL(`locales/${SOURCE_LANGUAGE}/`, ROOT)).filter((
 const PLURAL = ['zero', 'one', 'two', 'few', 'many', 'other'];
 
 /** Modules whose user-facing text lives in the catalogs; P1 adds every module it converts. */
-const TRANSLATED_MODULES = ['js/i18n.js', 'js/format.js', 'js/language.js'];
+const TRANSLATED_MODULES = [
+  'js/i18n.js', 'js/format.js', 'js/language.js',
+  'js/ui.js', 'js/nav.js', 'js/app.js', 'js/login.js', 'js/api-client.js', 'js/session-gate.js', 'js/router.js',
+];
 /** Key prefixes the code builds at run time (e.g. `format.${x}`); listed here so they count as used. */
-const DYNAMIC_PREFIXES = ['format.'];   // format.js picks names and patterns via variables
+const DYNAMIC_PREFIXES = ['format.', 'sessionTypes.', 'feelings.', 'priorities.', 'status.', 'rpe.'];
+/** Languages that must have every key. The others fall back to English until their
+    translation pass (package P3); before the v4.0.0 release this list holds all languages. */
+const COMPLETE_LANGUAGES = ['en', 'de'];
 
 function flatten(obj, prefix = '', out = new Map()) {
   for (const [k, v] of Object.entries(obj)) {
@@ -46,6 +53,7 @@ test('same keys, same placeholders, non-empty texts, lists of equal length', () 
       for (const [key, v] of en) {
         const base = pluralBase(key);
         if (base && !cat.has(key) && key.endsWith('.one') && !cats.includes('one')) continue;
+        if (!cat.has(key) && !COMPLETE_LANGUAGES.includes(lang)) continue;   // pending translation
         assert.ok(cat.has(key), `${lang}/${area}: ${key} is missing`);
         const w = cat.get(key);
         if (Array.isArray(v)) {
@@ -53,8 +61,14 @@ test('same keys, same placeholders, non-empty texts, lists of equal length', () 
           assert.ok(w.every((x) => typeof x === 'string' && x.trim()), `${lang}/${area}: ${key} has empty entries`);
         } else {
           assert.ok(typeof w === 'string' && w.trim(), `${lang}/${area}: ${key} is empty`);
-          const ref = base ? en.get(`${base}.other`) : v;
-          assert.equal(placeholders(w), placeholders(ref), `${lang}/${area}: ${key} has different placeholders`);
+          if (base) {
+            // A plural form may leave out {count} ("one change"), but uses no other placeholders.
+            const allowed = placeholders(en.get(`${base}.other`)).split(',');
+            const own = placeholders(w).split(',').filter(Boolean);
+            assert.ok(own.every((p) => allowed.includes(p)), `${lang}/${area}: ${key} has unknown placeholders`);
+          } else {
+            assert.equal(placeholders(w), placeholders(v), `${lang}/${area}: ${key} has different placeholders`);
+          }
         }
       }
       for (const key of cat.keys()) {
@@ -87,6 +101,7 @@ function usedKeys() {
       used.set(m[1] === 'tp' ? `${m[2]}.other` : m[2], file);
     }
   }
+  for (const m of read('index.html').matchAll(/data-i18n(?:-aria)?="([A-Za-z0-9_.]+)"/g)) used.set(m[1], 'index.html');
   return used;
 }
 function enKeys() {
@@ -109,6 +124,19 @@ test('no catalog key goes unused', () => {
     const k = base ? `${base}.other` : key;
     assert.ok(used.has(k) || DYNAMIC_PREFIXES.some((p) => key.startsWith(p)), `locales/en: ${key} is never used`);
   }
+});
+
+test('no module calls t() while it is being imported (catalogs load later in the browser)', () => {
+  // A child process imports every module with empty catalogs; i18n.js records each lookup
+  // made before any catalog exists. Tests cannot see this otherwise: test-setup.js loads
+  // the catalogs before the first test file imports anything.
+  const files = jsFiles().filter((f) => !['js/app.js', 'js/boot-check.js'].includes(f));
+  const code = `for (const f of ${JSON.stringify(files)}) await import(new URL(f, ${JSON.stringify(ROOT.href)}).href);
+    process.stdout.write(JSON.stringify(globalThis.__i18nEarly || []));`;
+  const out = execFileSync(process.execPath, ['--import', './test-setup.js', '--input-type=module', '-e', code], {
+    cwd: new URL('.', ROOT), env: { ...process.env, CATOFIT_I18N_SKIP: '1' }, encoding: 'utf8',
+  });
+  assert.deepEqual(JSON.parse(out.trim().split('\n').at(-1)), [], 'keys looked up at import time – move them into a function');
 });
 
 test('translated modules contain no hard-coded German text', () => {

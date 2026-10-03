@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <!-- Zoomen bleibt erlaubt (WCAG 1.4.4); den Fokus-Zoom von iOS verhindern die 16-px-Felder. -->
@@ -9,8 +9,8 @@
        u. a. frame-ancestors (siehe .htaccess). -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://api.open-meteo.com https://geocoding-api.open-meteo.com; manifest-src 'self'; worker-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'" />
   <meta name="referrer" content="no-referrer" />
-  <title>Cat-O-Fit · Trainingsplanung für die ganze Familie</title>
-  <meta name="description" content="Trainingsplanung für die ganze Familie – Wettkämpfe und Programme planen, trainieren und auswerten, mit Ernährung, Zyklus und Laborwerten im Blick. Auf deinem eigenen Server." />
+  <title>Cat-O-Fit · Training plans for the whole family</title>
+  <meta name="description" content="Training plans for the whole family – plan, train and review races and programmes, with nutrition, cycle and lab values in view. On your own server." />
 
   <!-- PWA / iOS -->
   <link rel="manifest" href="manifest.webmanifest" />
@@ -44,14 +44,14 @@
 <body class="is-anon">
   <!-- Tastatur: erster Tab-Halt springt direkt in den Inhalt (Knopf statt #-Link, weil
        der Hash die Route ist) -->
-  <button type="button" id="skip-link" class="skip-link">Zum Inhalt springen</button>
+  <button type="button" id="skip-link" class="skip-link" data-i18n="a11y.skipToContent">Skip to content</button>
   <!-- App-Gerüst (startet abgemeldet: Menüs erst nach dem Login, siehe session-gate.js) -->
   <div id="app">
     <!-- Kopfzeile: Titel + Kontextaktionen (wird pro View gefüllt). Das Verwalten-Banner
          sitzt IM klebenden Kopf – so bleibt es auf iPhone, iPad und Mac immer oben sichtbar. -->
     <header id="app-header" class="app-header">
       <div class="app-header__inner">
-        <button id="header-back" class="icon-btn header-back" hidden aria-label="Zurück"></button>
+        <button id="header-back" class="icon-btn header-back" hidden aria-label="Back" data-i18n-aria="common.back"></button>
         <div class="app-header__titles">
           <h1 id="header-title" class="app-header__title" tabindex="-1">Cat-O-Fit</h1>
           <p id="header-subtitle" class="app-header__subtitle"></p>
@@ -63,13 +63,13 @@
     </header>
 
     <!-- Optionale Seitennavigation (iPad / große Screens) -->
-    <nav id="sidebar" class="sidebar" aria-label="Hauptnavigation"></nav>
+    <nav id="sidebar" class="sidebar" aria-label="Main navigation" data-i18n-aria="a11y.mainNav"></nav>
 
     <!-- Haupt-Renderbereich -->
     <main id="view" class="view" tabindex="-1"></main>
 
     <!-- Daumenfreundliche untere Navigation (Smartphone) -->
-    <nav id="bottom-nav" class="bottom-nav" aria-label="Hauptnavigation"></nav>
+    <nav id="bottom-nav" class="bottom-nav" aria-label="Main navigation" data-i18n-aria="a11y.mainNav"></nav>
   </div>
 
   <!-- Overlays -->
@@ -83,6 +83,6 @@
 
   <!-- Einstiegspunkt (ES-Module, kein Build-Schritt) -->
   <script type="module" src="js/app.js"></script>
-  <noscript>Diese App benötigt JavaScript.</noscript>
+  <noscript>This app needs JavaScript. · Diese App benötigt JavaScript.</noscript>
 </body>
 </html>

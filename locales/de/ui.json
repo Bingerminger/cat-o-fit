@@ -58,5 +58,288 @@
       "instanceLabel": "Standardsprache",
       "instanceHint": "Für neue Personen und die Anmeldung."
     }
+  },
+  "common": {
+    "undo": "Rückgängig",
+    "close": "Schließen",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "later": "Später",
+    "next": "Weiter",
+    "errorPrefix": "Fehler: ",
+    "back": "Zurück"
+  },
+  "dialog": {
+    "sure": "Sicher?",
+    "notice": "Hinweis"
+  },
+  "duration": {
+    "minutes": "Dauer in Minuten",
+    "seconds": "Sekunden"
+  },
+  "files": {
+    "shared": "„{name}“ wurde zum Sichern übergeben. Prüfe, dass sie in „Dateien“ (oder an einem anderen sicheren Ort) angekommen ist.",
+    "provided": "„{name}“ wurde bereitgestellt. Prüfe, dass die Datei gespeichert ist (Downloads bzw. „Dateien“), und bewahre sie sicher auf."
+  },
+  "sessionTypes": {
+    "recovery": {
+      "label": "Regeneration",
+      "short": "Reg."
+    },
+    "easy": {
+      "label": "Lockerer Lauf",
+      "short": "Easy"
+    },
+    "long": {
+      "label": "Long Run",
+      "short": "Long"
+    },
+    "tempo": {
+      "label": "Tempo / Schwelle",
+      "short": "Tempo"
+    },
+    "interval": {
+      "label": "Intervalle (VO2)",
+      "short": "Int."
+    },
+    "race": {
+      "label": "Wettkampf",
+      "short": "Race"
+    },
+    "strength": {
+      "label": "Kraft",
+      "short": "Kraft"
+    },
+    "mobility": {
+      "label": "Mobility",
+      "short": "Mob."
+    },
+    "cross": {
+      "label": "Cross-Training",
+      "short": "Cross"
+    },
+    "cross_bike": {
+      "label": "Radtour",
+      "short": "Rad"
+    },
+    "cross_football": {
+      "label": "Fußball",
+      "short": "Ball"
+    },
+    "match": {
+      "label": "Testspiel",
+      "short": "Spiel"
+    },
+    "camp": {
+      "label": "Trainingslager",
+      "short": "Camp"
+    },
+    "rest": {
+      "label": "Ruhetag",
+      "short": "Frei"
+    },
+    "run": {
+      "label": "Lauf",
+      "short": "Lauf"
+    },
+    "walk": {
+      "label": "Gehen / Spazieren",
+      "short": "Gehen"
+    },
+    "swim": {
+      "label": "Schwimmen",
+      "short": "Schw."
+    },
+    "hike": {
+      "label": "Wandern",
+      "short": "Wand."
+    },
+    "rowing": {
+      "label": "Rudern",
+      "short": "Rudern"
+    },
+    "tennis": {
+      "label": "Tennis",
+      "short": "Tennis"
+    },
+    "badminton": {
+      "label": "Badminton",
+      "short": "Bad."
+    },
+    "squash": {
+      "label": "Squash",
+      "short": "Squash"
+    },
+    "tabletennis": {
+      "label": "Tischtennis",
+      "short": "TT"
+    },
+    "spinning": {
+      "label": "Indoor-Cycling",
+      "short": "Spin."
+    },
+    "elliptical": {
+      "label": "Crosstrainer",
+      "short": "Cross."
+    },
+    "gym": {
+      "label": "Gerätetraining",
+      "short": "Gym"
+    },
+    "other": {
+      "label": "Training",
+      "short": "–"
+    }
+  },
+  "feelings": {
+    "schlecht": "schlecht",
+    "ok": "ok",
+    "gut": "gut",
+    "stark": "stark",
+    "top": "top"
+  },
+  "priorities": {
+    "A": "Hauptwettkampf",
+    "B": "Wichtig",
+    "C": "Vorbereitung"
+  },
+  "status": {
+    "geplant": "Geplant",
+    "erledigt": "Erledigt",
+    "verschoben": "Verschoben",
+    "verpasst": "Verpasst",
+    "ueberfaellig": "Überfällig"
+  },
+  "infoButton": {
+    "explain": "Erklärung: {label}",
+    "whatMeans": "Was bedeutet „{label}“?"
+  },
+  "rpe": {
+    "veryLight": "sehr leicht",
+    "light": "leicht",
+    "easy": "locker",
+    "moderate": "moderat",
+    "medium": "mittel",
+    "challenging": "fordernd",
+    "hard": "hart",
+    "veryHard": "sehr hart",
+    "extremelyHard": "extrem hart",
+    "maximal": "maximal"
+  },
+  "nav": {
+    "today": "Heute",
+    "calendar": "Kalender",
+    "capture": "Erfassen",
+    "progress": "Fortschritt",
+    "more": "Mehr",
+    "tabs": {
+      "training": "Training",
+      "body": "Körper",
+      "badges": "Erfolge",
+      "reports": "Berichte"
+    },
+    "groups": {
+      "training": "Training",
+      "health": "Gesundheit",
+      "household": "Ernährung & Haushalt",
+      "team": "Team",
+      "system": "System"
+    },
+    "goalsPlans": "Ziele & Pläne",
+    "exercises": "Übungs-Bibliothek",
+    "cycle": "Zyklus",
+    "labs": "Labor & Ergänzung",
+    "nutrition": "Ernährung",
+    "shopping": "Einkaufsliste",
+    "checklist": "Checkliste",
+    "family": "Team/Familie",
+    "manageTeam": "Team verwalten",
+    "settings": "Einstellungen",
+    "help": "Hilfe & Wissen",
+    "helpShort": "Hilfe",
+    "progressAria": "Fortschritt"
+  },
+  "account": {
+    "managing": "verwaltet gerade: {name}",
+    "member": "Mitglied",
+    "signOut": "Abmelden",
+    "backToMe": "Zurück zu mir",
+    "signedInAdmin": "Administrator:in · angemeldet",
+    "signedInMember": "Mitglied · angemeldet",
+    "aMember": "ein Mitglied",
+    "managingBanner": "Du verwaltest gerade {name}",
+    "minorNote": "Keine Kalorien- und Gewichtsziele, kein Abnehmprogramm, keine Leistungspräparate, Laborwerte nur dokumentiert.",
+    "minorProfile": "· Kinder- und Jugendprofil",
+    "admin": "Admin"
+  },
+  "sync": {
+    "opsRejected": {
+      "one": "Eine Änderung an der Familie hat der Server nicht übernommen: {reason}",
+      "other": "{count} Änderungen an der Familie hat der Server nicht übernommen: {reason}"
+    },
+    "storageFull": "Gerätespeicher voll – die letzte Änderung wurde nicht gespeichert. Schaffe Platz (z. B. Website-Daten anderer Seiten löschen) und versuche es erneut.",
+    "opsRejectedReason": "Dafür braucht es eine Admin-Anmeldung mit Serververbindung."
+  },
+  "reauth": {
+    "reconnected": "Wieder verbunden",
+    "wrongPin": "Falsche PIN.",
+    "title": "Bitte PIN bestätigen",
+    "text": "Die Anmeldung am Server ist abgelaufen. Zyklus, Labor und Ergänzungen werden erst nach deiner PIN wieder abgeglichen – nichts geht verloren."
+  },
+  "setup": {
+    "step": "SCHRITT {n} VON 2",
+    "hello": "Hallo {name}! Wie möchtest du starten?",
+    "welcome": "Willkommen!",
+    "intro": "Richte deine App in zwei Schritten ein.",
+    "serverEmptyTitle": "Der Server ist leer",
+    "serverEmptyText": "Er wurde neu aufgesetzt oder zurückgesetzt, die frühere Familie gibt es dort nicht mehr. Richte Cat-O-Fit neu ein – eine Sicherung spielst du danach unter Einstellungen → Daten & Sicherung ein.",
+    "yourName": "Dein Name",
+    "repeatPin": "PIN wiederholen",
+    "nameMissing": "Bitte gib einen Namen ein.",
+    "pinsDiffer": "Die beiden PINs stimmen nicht überein.",
+    "createAdmin": "Administrator:in anlegen",
+    "adminIntro": "Die erste Person ist Administrator:in und kann später weitere Mitglieder anlegen. Ihre PIN schützt die Verwaltung aller Profile.",
+    "name": "Name",
+    "loadingDemo": "Demodaten werden geladen …",
+    "settingUp": "App wird eingerichtet …",
+    "failed": "Einrichtung fehlgeschlagen",
+    "startDemo": "Mit Demodaten starten",
+    "startDemoText": "Beispiel-Wettkampf, Trainingshistorie und eine komplette Beispiel-Familie mit Teams – ideal zum Ausprobieren.",
+    "startEmpty": "Leer starten",
+    "startEmptyText": "Nur dein Konto. Mitglieder und Ziele legst du selbst an."
+  },
+  "login": {
+    "wrongPinLeft": {
+      "one": "Falsche PIN – noch {count} Versuch, dann folgt eine kurze Pause.",
+      "other": "Falsche PIN – noch {count} Versuche, dann folgt eine kurze Pause."
+    },
+    "locked": {
+      "one": "Zu viele Fehlversuche. Bitte in etwa {count} Minute erneut versuchen.",
+      "other": "Zu viele Fehlversuche. Bitte in etwa {count} Minuten erneut versuchen."
+    },
+    "signIn": "Anmelden",
+    "oneMoment": "Einen Moment …",
+    "loadingData": "Daten werden geladen …",
+    "whoTrains": "Wer trainiert?",
+    "failed": "Anmeldung fehlgeschlagen.",
+    "wrongPinRetry": "Falsche PIN – nochmal versuchen.",
+    "firstNeedsServer": "Die erste Anmeldung auf diesem Gerät braucht eine Verbindung zum Server.",
+    "enterPin": "PIN eingeben"
+  },
+  "errors": {
+    "load": "Ladefehler",
+    "save": "Speicherfehler",
+    "importFailed": "Import fehlgeschlagen",
+    "badResponse": "Ungültige Serverantwort.",
+    "uploadNetwork": "Netzwerkfehler beim Upload.",
+    "uploadTimeout": "Zeitüberschreitung beim Upload."
+  },
+  "app": {
+    "title": "Cat-O-Fit · Trainingsplanung für die ganze Familie",
+    "description": "Trainingsplanung für die ganze Familie – Wettkämpfe und Programme planen, trainieren und auswerten, mit Ernährung, Zyklus und Laborwerten im Blick. Auf deinem eigenen Server."
+  },
+  "a11y": {
+    "skipToContent": "Zum Inhalt springen",
+    "mainNav": "Hauptnavigation"
   }
 }

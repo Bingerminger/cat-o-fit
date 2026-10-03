@@ -1,3 +1,4 @@
+import { t } from './i18n.js';
 /* =========================================================================
    api-client.js — HTTP-Zugriff auf die PHP-API mit Retry.
    Seit v3.0.0 ist der Server die Merge-Autorität: Der Client schickt
@@ -68,7 +69,7 @@ export async function pullChanges(area, opts = {}) {
     method: 'GET', headers: { Accept: 'application/json' },
   });
   const json = await res.json();
-  if (!json.ok) throw new Error(json.error || 'Ladefehler');
+  if (!json.ok) throw new Error(json.error || t('errors.load'));
   return { rev: json.rev || 0, records: Array.isArray(json.records) ? json.records : [] };
 }
 
@@ -86,7 +87,7 @@ export async function pushOps(area, ops, opts = {}) {
     body: JSON.stringify(since != null ? { ops, since } : { ops }),
   });
   const json = await res.json();
-  if (!json.ok) throw new Error(json.error || 'Speicherfehler');
+  if (!json.ok) throw new Error(json.error || t('errors.save'));
   const ch = json.changes;
   return {
     rev: json.rev || 0,
@@ -100,7 +101,7 @@ export async function pushOps(area, ops, opts = {}) {
 export async function apiGet(area, opts = {}) {
   const res = await request(endpoint(area, opts), { method: 'GET', headers: { Accept: 'application/json' } });
   const json = await res.json();
-  if (!json.ok) throw new Error(json.error || 'Ladefehler');
+  if (!json.ok) throw new Error(json.error || t('errors.load'));
   return json.data;
 }
 
@@ -244,7 +245,7 @@ export async function pullAllChanges(user, since) {
     method: 'GET', headers: { Accept: 'application/json' },
   });
   const json = await res.json();
-  if (!json.ok) throw new Error(json.error || 'Ladefehler');
+  if (!json.ok) throw new Error(json.error || t('errors.load'));
   return { revs: json.revs || {}, changes: json.changes || {}, locked: Array.isArray(json.locked) ? json.locked : [] };
 }
 
@@ -263,12 +264,12 @@ export async function uploadHealthExport(file, onProgress) {
     xhr.onload = () => {
       try {
         const json = JSON.parse(xhr.responseText);
-        if (!json.ok) reject(new Error(json.error || 'Import fehlgeschlagen'));
+        if (!json.ok) reject(new Error(json.error || t('errors.importFailed')));
         else resolve(json);
-      } catch (e) { reject(new Error('Ungültige Serverantwort.')); }
+      } catch (e) { reject(new Error(t('errors.badResponse'))); }
     };
-    xhr.onerror = () => reject(new Error('Netzwerkfehler beim Upload.'));
-    xhr.ontimeout = () => reject(new Error('Zeitüberschreitung beim Upload.'));
+    xhr.onerror = () => reject(new Error(t('errors.uploadNetwork')));
+    xhr.ontimeout = () => reject(new Error(t('errors.uploadTimeout')));
     xhr.send(fd);
   });
 }

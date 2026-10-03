@@ -16,6 +16,7 @@
 /* Umgebungs-Isolation (APP_NS/scopeKey) lebt jetzt in env.js — hier nur
    re-exportiert, damit bestehende Importe aus ui.js gültig bleiben. */
 export { APP_NS, scopeKey } from './env.js';
+import { t } from './i18n.js';
 
 /* -------------------------------------------------------------------------
    DOM-Helfer
@@ -157,35 +158,41 @@ export function iconSvg(name, cls = '') {
 /* -------------------------------------------------------------------------
    Trainings-Taxonomie (Best Practice: Easy/Long/Tempo/Intervall/...)
    ------------------------------------------------------------------------- */
-export const SESSION_TYPES = {
-  recovery:       { label: 'Regeneration',     short: 'Reg.',   color: '#7fb8ff', icon: 'feather',  cat: 'run' },
-  easy:           { label: 'Lockerer Lauf',    short: 'Easy',   color: '#43c59e', icon: 'activity', cat: 'run' },
-  long:           { label: 'Long Run',         short: 'Long',   color: '#2bb0a3', icon: 'route',    cat: 'run' },
-  tempo:          { label: 'Tempo / Schwelle', short: 'Tempo',  color: '#f59145', icon: 'zap',      cat: 'run' },
-  interval:       { label: 'Intervalle (VO2)', short: 'Int.',   color: '#ef5d6c', icon: 'gauge',    cat: 'run' },
-  race:           { label: 'Wettkampf',        short: 'Race',   color: '#f5a623', icon: 'flag',     cat: 'run' },
-  strength:       { label: 'Kraft',            short: 'Kraft',  color: '#b079e6', icon: 'dumbbell', cat: 'strength' },
-  mobility:       { label: 'Mobility',         short: 'Mob.',   color: '#9aa7b4', icon: 'wind',     cat: 'mobility' },
-  cross:          { label: 'Cross-Training',   short: 'Cross',  color: '#6ec6ff', icon: 'activity', cat: 'cross' },
-  cross_bike:     { label: 'Radtour',          short: 'Rad',    color: '#5bc0eb', icon: 'bike',     cat: 'cross' },
-  cross_football: { label: 'Fußball',          short: 'Ball',   color: '#5cc97a', icon: 'ball',     cat: 'cross' },
-  match:          { label: 'Testspiel',        short: 'Spiel',  color: '#f5a623', icon: 'flag',     cat: 'cross' },
-  camp:           { label: 'Trainingslager',   short: 'Camp',   color: '#ef8a5d', icon: 'flame',    cat: 'cross' },
-  rest:           { label: 'Ruhetag',          short: 'Frei',   color: '#aeb8c2', icon: 'moon',     cat: 'rest' },
-  run:            { label: 'Lauf',             short: 'Lauf',   color: '#43c59e', icon: 'activity', cat: 'run' },
-  walk:           { label: 'Gehen / Spazieren', short: 'Gehen', color: '#9aa7b4', icon: 'route',    cat: 'cross' },
-  swim:           { label: 'Schwimmen',        short: 'Schw.',  color: '#19b9c9', icon: 'waves',    cat: 'cross' },
-  hike:           { label: 'Wandern',          short: 'Wand.',  color: '#6aa45f', icon: 'mountain', cat: 'cross' },
-  rowing:         { label: 'Rudern',           short: 'Rudern', color: '#3d8bff', icon: 'rowing',   cat: 'cross' },
-  tennis:         { label: 'Tennis',           short: 'Tennis', color: '#9acd32', icon: 'racket',   cat: 'cross' },
-  badminton:      { label: 'Badminton',        short: 'Bad.',   color: '#7ec850', icon: 'racket',   cat: 'cross' },
-  squash:         { label: 'Squash',           short: 'Squash', color: '#e6a33d', icon: 'racket',   cat: 'cross' },
-  tabletennis:    { label: 'Tischtennis',      short: 'TT',     color: '#5b7fff', icon: 'racket',   cat: 'cross' },
-  spinning:       { label: 'Indoor-Cycling',   short: 'Spin.',  color: '#5bc0eb', icon: 'bike',     cat: 'cross' },
-  elliptical:     { label: 'Crosstrainer',     short: 'Cross.', color: '#6ec6ff', icon: 'activity', cat: 'cross' },
-  gym:            { label: 'Gerätetraining',   short: 'Gym',    color: '#b079e6', icon: 'dumbbell', cat: 'strength' },
-  other:          { label: 'Training',         short: '–',      color: '#9aa7b4', icon: 'activity', cat: 'other' },
+const TYPE_STYLE = {
+  recovery:       { color: '#7fb8ff', icon: 'feather',  cat: 'run' },
+  easy:           { color: '#43c59e', icon: 'activity', cat: 'run' },
+  long:           { color: '#2bb0a3', icon: 'route',    cat: 'run' },
+  tempo:          { color: '#f59145', icon: 'zap',      cat: 'run' },
+  interval:       { color: '#ef5d6c', icon: 'gauge',    cat: 'run' },
+  race:           { color: '#f5a623', icon: 'flag',     cat: 'run' },
+  strength:       { color: '#b079e6', icon: 'dumbbell', cat: 'strength' },
+  mobility:       { color: '#9aa7b4', icon: 'wind',     cat: 'mobility' },
+  cross:          { color: '#6ec6ff', icon: 'activity', cat: 'cross' },
+  cross_bike:     { color: '#5bc0eb', icon: 'bike',     cat: 'cross' },
+  cross_football: { color: '#5cc97a', icon: 'ball',     cat: 'cross' },
+  match:          { color: '#f5a623', icon: 'flag',     cat: 'cross' },
+  camp:           { color: '#ef8a5d', icon: 'flame',    cat: 'cross' },
+  rest:           { color: '#aeb8c2', icon: 'moon',     cat: 'rest' },
+  run:            { color: '#43c59e', icon: 'activity', cat: 'run' },
+  walk:           { color: '#9aa7b4', icon: 'route',    cat: 'cross' },
+  swim:           { color: '#19b9c9', icon: 'waves',    cat: 'cross' },
+  hike:           { color: '#6aa45f', icon: 'mountain', cat: 'cross' },
+  rowing:         { color: '#3d8bff', icon: 'rowing',   cat: 'cross' },
+  tennis:         { color: '#9acd32', icon: 'racket',   cat: 'cross' },
+  badminton:      { color: '#7ec850', icon: 'racket',   cat: 'cross' },
+  squash:         { color: '#e6a33d', icon: 'racket',   cat: 'cross' },
+  tabletennis:    { color: '#5b7fff', icon: 'racket',   cat: 'cross' },
+  spinning:       { color: '#5bc0eb', icon: 'bike',     cat: 'cross' },
+  elliptical:     { color: '#6ec6ff', icon: 'activity', cat: 'cross' },
+  gym:            { color: '#b079e6', icon: 'dumbbell', cat: 'strength' },
+  other:          { color: '#9aa7b4', icon: 'activity', cat: 'other' },
 };
+/** Session types; label and short name are looked up in the active language on access. */
+export const SESSION_TYPES = Object.fromEntries(Object.entries(TYPE_STYLE).map(([k, style]) => [k, {
+  ...style,
+  get label() { return t(`sessionTypes.${k}.label`); },
+  get short() { return t(`sessionTypes.${k}.short`); },
+}]));
 
 export function typeMeta(type) { return SESSION_TYPES[type] || SESSION_TYPES.other; }
 
@@ -198,14 +205,18 @@ export function typeIcon(type, size = '') {
 }
 
 export const FEELINGS = [
-  { key: 'schlecht', emoji: '😣', label: 'schlecht' },
-  { key: 'ok',       emoji: '😐', label: 'ok' },
-  { key: 'gut',      emoji: '🙂', label: 'gut' },
-  { key: 'stark',    emoji: '💪', label: 'stark' },
-  { key: 'top',      emoji: '🤩', label: 'top' },
-];
+  { key: 'schlecht', emoji: '😣' },
+  { key: 'ok',       emoji: '😐' },
+  { key: 'gut',      emoji: '🙂' },
+  { key: 'stark',    emoji: '💪' },
+  { key: 'top',      emoji: '🤩' },
+].map((f) => ({ ...f, get label() { return t(`feelings.${f.key}`); } }));
 
-export const PRIORITIES = { A: 'Hauptwettkampf', B: 'Wichtig', C: 'Vorbereitung' };
+export const PRIORITIES = {
+  get A() { return t('priorities.A'); },
+  get B() { return t('priorities.B'); },
+  get C() { return t('priorities.C'); },
+};
 
 /** Trainingstypen als Optionsliste für Auswahlfelder (Läufe zuerst). */
 export const TYPE_OPTIONS = [
@@ -215,16 +226,16 @@ export const TYPE_OPTIONS = [
   'walk', 'hike',
   'tennis', 'badminton', 'squash', 'tabletennis', 'cross_football',
   'cross', 'match', 'camp', 'rest',
-].map((k) => ({ value: k, label: SESSION_TYPES[k].label }));
+].map((k) => ({ value: k, get label() { return SESSION_TYPES[k].label; } }));
 
 /** Status-Metadaten (inkl. abgeleitetem „überfällig“). */
-export const STATUS_META = {
-  geplant:    { label: 'Geplant',    color: 'var(--accent-text)', cls: 'geplant' },
-  erledigt:   { label: 'Erledigt',   color: 'var(--good-text)',   cls: 'erledigt' },
-  verschoben: { label: 'Verschoben', color: 'var(--warn-text)',   cls: 'verschoben' },
-  verpasst:   { label: 'Verpasst',   color: 'var(--bad-text)',    cls: 'verpasst' },
-  ueberfaellig: { label: 'Überfällig', color: '#f5a623',    cls: 'ueberfaellig' },
-};
+export const STATUS_META = Object.fromEntries(Object.entries({
+  geplant:    { color: 'var(--accent-text)', cls: 'geplant' },
+  erledigt:   { color: 'var(--good-text)',   cls: 'erledigt' },
+  verschoben: { color: 'var(--warn-text)',   cls: 'verschoben' },
+  verpasst:   { color: 'var(--bad-text)',    cls: 'verpasst' },
+  ueberfaellig: { color: '#f5a623',    cls: 'ueberfaellig' },
+}).map(([k, m]) => [k, { ...m, get label() { return t(`status.${k}`); } }]));
 
 /**
  * Effektiver Status einer geplanten Einheit – berücksichtigt „überfällig“
@@ -251,6 +262,7 @@ export function isOverdue(unit, todayString = todayStr()) { return effectiveStat
 import {
   parseDate, fmtWeekday, fmtDate, fmtDateLong, fmtDayMonth, monthName, fmtKm, fmtNum, fmtDec, fmtInt,
 } from './format.js';
+
 export {
   parseDate, fmtWeekday, fmtDate, fmtDateLong, fmtDayMonth, monthName, fmtKm, fmtNum, fmtDec, fmtInt,
 };
@@ -425,13 +437,13 @@ export async function saveFile(name, blob) {
 /** Neutrale Rückmeldung zu saveFile – ob die Datei wirklich gespeichert ist, weiß nur das Gerät. */
 export function savedFileMessage(result, name) {
   return result === 'shared'
-    ? `„${name}“ wurde zum Sichern übergeben. Prüfe, dass sie in „Dateien“ (oder an einem anderen sicheren Ort) angekommen ist.`
-    : `„${name}“ wurde bereitgestellt. Prüfe, dass die Datei gespeichert ist (Downloads bzw. „Dateien“), und bewahre sie sicher auf.`;
+    ? t('files.shared', { name })
+    : t('files.provided', { name });
 }
 
 /** Einzel-Löschung mit „Rückgängig“ (UI-30): `restore` holt den Datensatz zurück. */
 export function toastUndo(message, restore) {
-  toast(message, '', 6000, { label: 'Rückgängig', onClick: restore });
+  toast(message, '', 6000, { label: t('common.undo'), onClick: restore });
 }
 
 /* -------------------------------------------------------------------------
@@ -487,7 +499,7 @@ export function openSheet({ title = '', body = null, footer = null, onClose = nu
     el('div', { class: 'sheet__grip', 'aria-hidden': 'true' }),
     el('div', { class: 'sheet__head' }, [
       el('h2', { class: 'sheet__title', id: titleId, text: title }),
-      el('button', { class: 'icon-btn', type: 'button', 'aria-label': 'Schließen', title: 'Schließen', onclick: () => closeSheet() }, icon('x')),
+      el('button', { class: 'icon-btn', type: 'button', 'aria-label': t('common.close'), title: t('common.close'), onclick: () => closeSheet() }, icon('x')),
     ]),
     bodyEl,
   ]);
@@ -551,7 +563,7 @@ export function actionSheet(title, items) {
 }
 
 /** Bestätigungsdialog. Promise<boolean>. */
-export function confirmDialog({ title = 'Sicher?', message = '', confirmLabel = 'OK', cancelLabel = 'Abbrechen', danger = false } = {}) {
+export function confirmDialog({ title = t('dialog.sure'), message = '', confirmLabel = 'OK', cancelLabel = t('common.cancel'), danger = false } = {}) {
   return new Promise((resolve) => {
     let decided = false;
     const settle = (val) => { if (!decided) { decided = true; resolve(val); } };
@@ -574,7 +586,7 @@ export function confirmDialog({ title = 'Sicher?', message = '', confirmLabel = 
  * Liefert ein Promise, das bei OK/Schließen auflöst – so kann der Aufrufer
  * danach z. B. neu laden.
  */
-export function alertDialog({ title = 'Hinweis', message = '', okLabel = 'OK', tone = '' } = {}) {
+export function alertDialog({ title = t('dialog.notice'), message = '', okLabel = 'OK', tone = '' } = {}) {
   const prefix = tone === 'good' ? '✅ ' : tone === 'bad' ? '⚠️ ' : '';
   return new Promise((resolve) => {
     let done = false;
@@ -654,7 +666,7 @@ export function fieldError(control, message) {
 export function infoButton(articleId, label) {
   return el('button', {
     class: 'icon-btn info-btn', type: 'button', 'data-help': articleId,
-    'aria-label': `Erklärung: ${label}`, title: `Was bedeutet „${label}“?`,
+    'aria-label': t('infoButton.explain', { label }), title: t('infoButton.whatMeans', { label }),
     onclick: (e) => { e.stopPropagation(); import('./help.js').then((m) => m.openHelpArticle(articleId)); },
   }, icon('info'));
 }
@@ -713,7 +725,11 @@ export function segmented(options, value, onChange, { label = null } = {}) {
 
 /** Worte zur RPE-Skala (1–10). RPE ist die Grundlage der Belastung (sRPE) – ohne Anker
     trugen Familienmitglieder uneinheitlich ein (UI-25). */
-export const RPE_WORDS = ['', 'sehr leicht', 'leicht', 'locker', 'moderat', 'mittel', 'fordernd', 'hart', 'sehr hart', 'extrem hart', 'maximal'];
+const RPE_KEYS = ['', 'veryLight', 'light', 'easy', 'moderate', 'medium', 'challenging', 'hard', 'veryHard', 'extremelyHard', 'maximal'];
+/** RPE_WORDS[i] reads the word in the active language (a Proxy, so lookups happen on access). */
+export const RPE_WORDS = new Proxy(RPE_KEYS, {
+  get: (arr, p) => (typeof p === 'string' && /^\d+$/.test(p) ? (arr[p] ? t(`rpe.${arr[p]}`) : arr[p]) : Reflect.get(arr, p)),
+});
 
 /** Kleine Radiogruppe aus Knöpfen: `aria-checked`, ein Tab-Halt, Pfeiltasten. */
 function radioButtons(wrap, buttons, values, onPick) {
@@ -770,8 +786,8 @@ export function feelingPicker(value, onChange) {
 
 /** Dauer als „[45] min [30] s“ – beide Felder mit Einheit und Namen (UI-25). */
 export function durationFields({ min = '', sec = '' } = {}) {
-  const minI = input({ type: 'number', min: '0', inputmode: 'numeric', value: min, placeholder: '0', 'aria-label': 'Dauer in Minuten', class: 'input input--dur' });
-  const secI = input({ type: 'number', min: '0', max: '59', inputmode: 'numeric', value: sec, placeholder: '0', 'aria-label': 'Sekunden', class: 'input input--dur' });
+  const minI = input({ type: 'number', min: '0', inputmode: 'numeric', value: min, placeholder: '0', 'aria-label': t('duration.minutes'), class: 'input input--dur' });
+  const secI = input({ type: 'number', min: '0', max: '59', inputmode: 'numeric', value: sec, placeholder: '0', 'aria-label': t('duration.seconds'), class: 'input input--dur' });
   const node = el('div', { class: 'dur-fields' }, [
     minI, el('span', { class: 'dur-unit', 'aria-hidden': 'true', text: 'min' }),
     secI, el('span', { class: 'dur-unit', 'aria-hidden': 'true', text: 's' }),

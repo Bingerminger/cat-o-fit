@@ -58,5 +58,288 @@
       "instanceLabel": "Default language",
       "instanceHint": "For new people and the sign-in screen."
     }
+  },
+  "common": {
+    "undo": "Undo",
+    "close": "Close",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "later": "Later",
+    "next": "Next",
+    "errorPrefix": "Error: ",
+    "back": "Back"
+  },
+  "dialog": {
+    "sure": "Are you sure?",
+    "notice": "Note"
+  },
+  "duration": {
+    "minutes": "Duration in minutes",
+    "seconds": "Seconds"
+  },
+  "files": {
+    "shared": "“{name}” was handed over for saving. Check that it arrived in Files (or another safe place).",
+    "provided": "“{name}” is ready. Check that the file was saved (Downloads or Files) and keep it somewhere safe."
+  },
+  "sessionTypes": {
+    "recovery": {
+      "label": "Recovery",
+      "short": "Rec."
+    },
+    "easy": {
+      "label": "Easy run",
+      "short": "Easy"
+    },
+    "long": {
+      "label": "Long run",
+      "short": "Long"
+    },
+    "tempo": {
+      "label": "Tempo / threshold",
+      "short": "Tempo"
+    },
+    "interval": {
+      "label": "Intervals (VO2)",
+      "short": "Int."
+    },
+    "race": {
+      "label": "Race",
+      "short": "Race"
+    },
+    "strength": {
+      "label": "Strength",
+      "short": "Strength"
+    },
+    "mobility": {
+      "label": "Mobility",
+      "short": "Mob."
+    },
+    "cross": {
+      "label": "Cross-training",
+      "short": "Cross"
+    },
+    "cross_bike": {
+      "label": "Bike ride",
+      "short": "Bike"
+    },
+    "cross_football": {
+      "label": "Football",
+      "short": "Ball"
+    },
+    "match": {
+      "label": "Practice match",
+      "short": "Match"
+    },
+    "camp": {
+      "label": "Training camp",
+      "short": "Camp"
+    },
+    "rest": {
+      "label": "Rest day",
+      "short": "Rest"
+    },
+    "run": {
+      "label": "Run",
+      "short": "Run"
+    },
+    "walk": {
+      "label": "Walking",
+      "short": "Walk"
+    },
+    "swim": {
+      "label": "Swimming",
+      "short": "Swim"
+    },
+    "hike": {
+      "label": "Hiking",
+      "short": "Hike"
+    },
+    "rowing": {
+      "label": "Rowing",
+      "short": "Row"
+    },
+    "tennis": {
+      "label": "Tennis",
+      "short": "Tennis"
+    },
+    "badminton": {
+      "label": "Badminton",
+      "short": "Badm."
+    },
+    "squash": {
+      "label": "Squash",
+      "short": "Squash"
+    },
+    "tabletennis": {
+      "label": "Table tennis",
+      "short": "TT"
+    },
+    "spinning": {
+      "label": "Indoor cycling",
+      "short": "Spin"
+    },
+    "elliptical": {
+      "label": "Elliptical",
+      "short": "Ellip."
+    },
+    "gym": {
+      "label": "Gym training",
+      "short": "Gym"
+    },
+    "other": {
+      "label": "Workout",
+      "short": "–"
+    }
+  },
+  "feelings": {
+    "schlecht": "bad",
+    "ok": "okay",
+    "gut": "good",
+    "stark": "strong",
+    "top": "great"
+  },
+  "priorities": {
+    "A": "Main race",
+    "B": "Important",
+    "C": "Build-up"
+  },
+  "status": {
+    "geplant": "Planned",
+    "erledigt": "Done",
+    "verschoben": "Moved",
+    "verpasst": "Missed",
+    "ueberfaellig": "Overdue"
+  },
+  "infoButton": {
+    "explain": "Explanation: {label}",
+    "whatMeans": "What does “{label}” mean?"
+  },
+  "rpe": {
+    "veryLight": "very light",
+    "light": "light",
+    "easy": "easy",
+    "moderate": "moderate",
+    "medium": "somewhat hard",
+    "challenging": "challenging",
+    "hard": "hard",
+    "veryHard": "very hard",
+    "extremelyHard": "extremely hard",
+    "maximal": "maximal"
+  },
+  "nav": {
+    "today": "Today",
+    "calendar": "Calendar",
+    "capture": "Log",
+    "progress": "Progress",
+    "more": "More",
+    "tabs": {
+      "training": "Training",
+      "body": "Body",
+      "badges": "Badges",
+      "reports": "Reports"
+    },
+    "groups": {
+      "training": "Training",
+      "health": "Health",
+      "household": "Food & household",
+      "team": "Team",
+      "system": "System"
+    },
+    "goalsPlans": "Goals & plans",
+    "exercises": "Exercise library",
+    "cycle": "Cycle",
+    "labs": "Labs & supplements",
+    "nutrition": "Nutrition",
+    "shopping": "Shopping list",
+    "checklist": "Checklist",
+    "family": "Team/family",
+    "manageTeam": "Manage team",
+    "settings": "Settings",
+    "help": "Help & knowledge",
+    "helpShort": "Help",
+    "progressAria": "Progress"
+  },
+  "account": {
+    "managing": "now managing: {name}",
+    "member": "Member",
+    "signOut": "Sign out",
+    "backToMe": "Back to me",
+    "signedInAdmin": "Admin · signed in",
+    "signedInMember": "Member · signed in",
+    "aMember": "a member",
+    "managingBanner": "You are managing {name}",
+    "minorNote": "No calorie or weight targets, no weight-loss programme, no performance supplements, lab values documented only.",
+    "minorProfile": "· Child and youth profile",
+    "admin": "Admin"
+  },
+  "sync": {
+    "opsRejected": {
+      "one": "The server did not accept one change to the family: {reason}",
+      "other": "The server did not accept {count} changes to the family: {reason}"
+    },
+    "storageFull": "Device storage is full – the last change was not saved. Free up space (for example, delete website data of other sites) and try again.",
+    "opsRejectedReason": "This needs an admin signed in with a server connection."
+  },
+  "reauth": {
+    "reconnected": "Connected again",
+    "wrongPin": "Wrong PIN.",
+    "title": "Please confirm your PIN",
+    "text": "Your sign-in on the server has expired. Cycle, labs and supplements sync again once you enter your PIN – nothing is lost."
+  },
+  "setup": {
+    "step": "STEP {n} OF 2",
+    "hello": "Hi {name}! How would you like to start?",
+    "welcome": "Welcome!",
+    "intro": "Set up your app in two steps.",
+    "serverEmptyTitle": "The server is empty",
+    "serverEmptyText": "It was set up again or reset, and the earlier family is no longer there. Set up Cat-O-Fit again – you can restore a backup afterwards under Settings → Data & backup.",
+    "yourName": "Your name",
+    "repeatPin": "Repeat PIN",
+    "nameMissing": "Please enter a name.",
+    "pinsDiffer": "The two PINs do not match.",
+    "createAdmin": "Create the admin",
+    "adminIntro": "The first person is the admin and can add more members later. Their PIN protects the management of all profiles.",
+    "name": "Name",
+    "loadingDemo": "Loading demo data …",
+    "settingUp": "Setting up the app …",
+    "failed": "Setup failed",
+    "startDemo": "Start with demo data",
+    "startDemoText": "A sample race, training history and a complete sample family with teams – ideal for trying things out.",
+    "startEmpty": "Start empty",
+    "startEmptyText": "Just your account. You add members and goals yourself."
+  },
+  "login": {
+    "wrongPinLeft": {
+      "one": "Wrong PIN – {count} more try, then a short pause.",
+      "other": "Wrong PIN – {count} more tries, then a short pause."
+    },
+    "locked": {
+      "one": "Too many wrong tries. Please try again in about {count} minute.",
+      "other": "Too many wrong tries. Please try again in about {count} minutes."
+    },
+    "signIn": "Sign in",
+    "oneMoment": "One moment …",
+    "loadingData": "Loading data …",
+    "whoTrains": "Who is training?",
+    "failed": "Sign-in failed.",
+    "wrongPinRetry": "Wrong PIN – try again.",
+    "firstNeedsServer": "The first sign-in on this device needs a connection to the server.",
+    "enterPin": "Enter PIN"
+  },
+  "errors": {
+    "load": "Loading failed",
+    "save": "Saving failed",
+    "importFailed": "Import failed",
+    "badResponse": "Invalid server response.",
+    "uploadNetwork": "Network error during upload.",
+    "uploadTimeout": "Upload timed out."
+  },
+  "app": {
+    "title": "Cat-O-Fit · Training plans for the whole family",
+    "description": "Training plans for the whole family – plan, train and review races and programmes, with nutrition, cycle and lab values in view. On your own server."
+  },
+  "a11y": {
+    "skipToContent": "Skip to content",
+    "mainNav": "Main navigation"
   }
 }
