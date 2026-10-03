@@ -1,0 +1,3020 @@
+[
+  {
+    "id": "demo-d0-0",
+    "date": "2026-07-04",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 551,
+    "protein": 32,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d0-1",
+    "date": "2026-07-04",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 635,
+    "protein": 49,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d0-2",
+    "date": "2026-07-04",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 466,
+    "protein": 32,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d0-3",
+    "date": "2026-07-04",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 339,
+    "protein": 25,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d0-4",
+    "date": "2026-07-04",
+    "title": "Banane & Haferriegel",
+    "kcal": 318,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d0-5",
+    "date": "2026-07-04",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 233,
+    "protein": 13,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d1-0",
+    "date": "2026-07-03",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 488,
+    "protein": 28,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d1-1",
+    "date": "2026-07-03",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 563,
+    "protein": 43,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d1-2",
+    "date": "2026-07-03",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 413,
+    "protein": 28,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d1-3",
+    "date": "2026-07-03",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 300,
+    "protein": 23,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d1-4",
+    "date": "2026-07-03",
+    "title": "Banane & Haferriegel",
+    "kcal": 281,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d1-5",
+    "date": "2026-07-03",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 206,
+    "protein": 11,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-07-03",
+    "_kind": "day",
+    "date": "2026-07-03",
+    "complete": true
+  },
+  {
+    "id": "demo-d2-0",
+    "date": "2026-07-02",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 524,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d2-1",
+    "date": "2026-07-02",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 605,
+    "protein": 46,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d2-2",
+    "date": "2026-07-02",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 444,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d2-3",
+    "date": "2026-07-02",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 323,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d2-4",
+    "date": "2026-07-02",
+    "title": "Banane & Haferriegel",
+    "kcal": 302,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d2-5",
+    "date": "2026-07-02",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 222,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-07-02",
+    "_kind": "day",
+    "date": "2026-07-02",
+    "complete": true
+  },
+  {
+    "id": "demo-d3-0",
+    "date": "2026-07-01",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 511,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d3-1",
+    "date": "2026-07-01",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 589,
+    "protein": 45,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d3-2",
+    "date": "2026-07-01",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 432,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d3-3",
+    "date": "2026-07-01",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 314,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d3-4",
+    "date": "2026-07-01",
+    "title": "Banane & Haferriegel",
+    "kcal": 295,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d3-5",
+    "date": "2026-07-01",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 216,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-07-01",
+    "_kind": "day",
+    "date": "2026-07-01",
+    "complete": true
+  },
+  {
+    "id": "demo-d4-0",
+    "date": "2026-06-30",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 517,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d4-1",
+    "date": "2026-06-30",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 596,
+    "protein": 46,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d4-2",
+    "date": "2026-06-30",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 437,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d4-3",
+    "date": "2026-06-30",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 318,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d4-4",
+    "date": "2026-06-30",
+    "title": "Banane & Haferriegel",
+    "kcal": 298,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d4-5",
+    "date": "2026-06-30",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 219,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-30",
+    "_kind": "day",
+    "date": "2026-06-30",
+    "complete": true
+  },
+  {
+    "id": "demo-d5-0",
+    "date": "2026-06-29",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 529,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d5-1",
+    "date": "2026-06-29",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 611,
+    "protein": 47,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d5-2",
+    "date": "2026-06-29",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 448,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d5-3",
+    "date": "2026-06-29",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 326,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d5-4",
+    "date": "2026-06-29",
+    "title": "Banane & Haferriegel",
+    "kcal": 305,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d5-5",
+    "date": "2026-06-29",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 224,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-29",
+    "_kind": "day",
+    "date": "2026-06-29",
+    "complete": true
+  },
+  {
+    "id": "demo-d6-0",
+    "date": "2026-06-28",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 496,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d6-1",
+    "date": "2026-06-28",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 572,
+    "protein": 44,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d6-2",
+    "date": "2026-06-28",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 419,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d6-3",
+    "date": "2026-06-28",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 305,
+    "protein": 23,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d6-4",
+    "date": "2026-06-28",
+    "title": "Banane & Haferriegel",
+    "kcal": 286,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d6-5",
+    "date": "2026-06-28",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 210,
+    "protein": 11,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-28",
+    "_kind": "day",
+    "date": "2026-06-28",
+    "complete": true
+  },
+  {
+    "id": "demo-d7-0",
+    "date": "2026-06-27",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 508,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d7-1",
+    "date": "2026-06-27",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 586,
+    "protein": 45,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d7-2",
+    "date": "2026-06-27",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 429,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d7-3",
+    "date": "2026-06-27",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 312,
+    "protein": 23,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d7-4",
+    "date": "2026-06-27",
+    "title": "Banane & Haferriegel",
+    "kcal": 293,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d7-5",
+    "date": "2026-06-27",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 215,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-27",
+    "_kind": "day",
+    "date": "2026-06-27",
+    "complete": true
+  },
+  {
+    "id": "demo-d8-0",
+    "date": "2026-06-26",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 523,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d8-1",
+    "date": "2026-06-26",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 603,
+    "protein": 46,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d8-2",
+    "date": "2026-06-26",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 442,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d8-3",
+    "date": "2026-06-26",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 322,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d8-4",
+    "date": "2026-06-26",
+    "title": "Banane & Haferriegel",
+    "kcal": 302,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d8-5",
+    "date": "2026-06-26",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 221,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-26",
+    "_kind": "day",
+    "date": "2026-06-26",
+    "complete": true
+  },
+  {
+    "id": "demo-d9-0",
+    "date": "2026-06-25",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 554,
+    "protein": 32,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d9-1",
+    "date": "2026-06-25",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 640,
+    "protein": 49,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d9-2",
+    "date": "2026-06-25",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 469,
+    "protein": 32,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d9-3",
+    "date": "2026-06-25",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 341,
+    "protein": 26,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d9-4",
+    "date": "2026-06-25",
+    "title": "Banane & Haferriegel",
+    "kcal": 320,
+    "protein": 9,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d9-5",
+    "date": "2026-06-25",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 235,
+    "protein": 13,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-25",
+    "_kind": "day",
+    "date": "2026-06-25",
+    "complete": true
+  },
+  {
+    "id": "demo-d10-0",
+    "date": "2026-06-24",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 543,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d10-1",
+    "date": "2026-06-24",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 627,
+    "protein": 48,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d10-2",
+    "date": "2026-06-24",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 460,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d10-3",
+    "date": "2026-06-24",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 334,
+    "protein": 25,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d10-4",
+    "date": "2026-06-24",
+    "title": "Banane & Haferriegel",
+    "kcal": 313,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d10-5",
+    "date": "2026-06-24",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 230,
+    "protein": 13,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-24",
+    "_kind": "day",
+    "date": "2026-06-24",
+    "complete": true
+  },
+  {
+    "id": "demo-d11-0",
+    "date": "2026-06-23",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 497,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d11-1",
+    "date": "2026-06-23",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 573,
+    "protein": 44,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d11-2",
+    "date": "2026-06-23",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 420,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d11-3",
+    "date": "2026-06-23",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 306,
+    "protein": 23,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d11-4",
+    "date": "2026-06-23",
+    "title": "Banane & Haferriegel",
+    "kcal": 287,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d11-5",
+    "date": "2026-06-23",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 210,
+    "protein": 11,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-23",
+    "_kind": "day",
+    "date": "2026-06-23",
+    "complete": true
+  },
+  {
+    "id": "demo-d12-0",
+    "date": "2026-06-22",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 556,
+    "protein": 32,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d12-1",
+    "date": "2026-06-22",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 642,
+    "protein": 49,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d12-2",
+    "date": "2026-06-22",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 471,
+    "protein": 32,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d12-3",
+    "date": "2026-06-22",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 342,
+    "protein": 26,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d12-4",
+    "date": "2026-06-22",
+    "title": "Banane & Haferriegel",
+    "kcal": 321,
+    "protein": 9,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d12-5",
+    "date": "2026-06-22",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 235,
+    "protein": 13,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-22",
+    "_kind": "day",
+    "date": "2026-06-22",
+    "complete": true
+  },
+  {
+    "id": "demo-d13-0",
+    "date": "2026-06-21",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 543,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d13-1",
+    "date": "2026-06-21",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 627,
+    "protein": 48,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d13-2",
+    "date": "2026-06-21",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 459,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d13-3",
+    "date": "2026-06-21",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 334,
+    "protein": 25,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d13-4",
+    "date": "2026-06-21",
+    "title": "Banane & Haferriegel",
+    "kcal": 313,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d13-5",
+    "date": "2026-06-21",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 230,
+    "protein": 13,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-21",
+    "_kind": "day",
+    "date": "2026-06-21",
+    "complete": true
+  },
+  {
+    "id": "demo-d14-0",
+    "date": "2026-06-20",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 516,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d14-1",
+    "date": "2026-06-20",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 595,
+    "protein": 46,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d14-2",
+    "date": "2026-06-20",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 436,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d14-3",
+    "date": "2026-06-20",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 317,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d14-4",
+    "date": "2026-06-20",
+    "title": "Banane & Haferriegel",
+    "kcal": 298,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d14-5",
+    "date": "2026-06-20",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 218,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-20",
+    "_kind": "day",
+    "date": "2026-06-20",
+    "complete": true
+  },
+  {
+    "id": "demo-d15-0",
+    "date": "2026-06-19",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 551,
+    "protein": 32,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d15-1",
+    "date": "2026-06-19",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 636,
+    "protein": 49,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d15-2",
+    "date": "2026-06-19",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 466,
+    "protein": 32,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d15-3",
+    "date": "2026-06-19",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 339,
+    "protein": 25,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d15-4",
+    "date": "2026-06-19",
+    "title": "Banane & Haferriegel",
+    "kcal": 318,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d15-5",
+    "date": "2026-06-19",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 233,
+    "protein": 13,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-19",
+    "_kind": "day",
+    "date": "2026-06-19",
+    "complete": true
+  },
+  {
+    "id": "demo-d16-0",
+    "date": "2026-06-18",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 515,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d16-1",
+    "date": "2026-06-18",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 594,
+    "protein": 46,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d16-2",
+    "date": "2026-06-18",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 436,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d16-3",
+    "date": "2026-06-18",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 317,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d16-4",
+    "date": "2026-06-18",
+    "title": "Banane & Haferriegel",
+    "kcal": 297,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d16-5",
+    "date": "2026-06-18",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 218,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-18",
+    "_kind": "day",
+    "date": "2026-06-18",
+    "complete": true
+  },
+  {
+    "id": "demo-d17-0",
+    "date": "2026-06-17",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 530,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d17-1",
+    "date": "2026-06-17",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 612,
+    "protein": 47,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d17-2",
+    "date": "2026-06-17",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 449,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d17-3",
+    "date": "2026-06-17",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 326,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d17-4",
+    "date": "2026-06-17",
+    "title": "Banane & Haferriegel",
+    "kcal": 306,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d17-5",
+    "date": "2026-06-17",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 224,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-17",
+    "_kind": "day",
+    "date": "2026-06-17",
+    "complete": true
+  },
+  {
+    "id": "demo-d18-0",
+    "date": "2026-06-16",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 507,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d18-1",
+    "date": "2026-06-16",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 585,
+    "protein": 45,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d18-2",
+    "date": "2026-06-16",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 429,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d18-3",
+    "date": "2026-06-16",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 312,
+    "protein": 23,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d18-4",
+    "date": "2026-06-16",
+    "title": "Banane & Haferriegel",
+    "kcal": 293,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d18-5",
+    "date": "2026-06-16",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 215,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-16",
+    "_kind": "day",
+    "date": "2026-06-16",
+    "complete": true
+  },
+  {
+    "id": "demo-d19-0",
+    "date": "2026-06-15",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 539,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d19-1",
+    "date": "2026-06-15",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 622,
+    "protein": 48,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d19-2",
+    "date": "2026-06-15",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 456,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d19-3",
+    "date": "2026-06-15",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 332,
+    "protein": 25,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d19-4",
+    "date": "2026-06-15",
+    "title": "Banane & Haferriegel",
+    "kcal": 311,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d19-5",
+    "date": "2026-06-15",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 228,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-15",
+    "_kind": "day",
+    "date": "2026-06-15",
+    "complete": true
+  },
+  {
+    "id": "demo-d20-0",
+    "date": "2026-06-14",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 524,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d20-1",
+    "date": "2026-06-14",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 605,
+    "protein": 46,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d20-2",
+    "date": "2026-06-14",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 443,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d20-3",
+    "date": "2026-06-14",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 323,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d20-4",
+    "date": "2026-06-14",
+    "title": "Banane & Haferriegel",
+    "kcal": 302,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d20-5",
+    "date": "2026-06-14",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 222,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-14",
+    "_kind": "day",
+    "date": "2026-06-14",
+    "complete": true
+  },
+  {
+    "id": "demo-d21-0",
+    "date": "2026-06-13",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 532,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d21-1",
+    "date": "2026-06-13",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 614,
+    "protein": 47,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d21-2",
+    "date": "2026-06-13",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 450,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d21-3",
+    "date": "2026-06-13",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 327,
+    "protein": 25,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d21-4",
+    "date": "2026-06-13",
+    "title": "Banane & Haferriegel",
+    "kcal": 307,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d21-5",
+    "date": "2026-06-13",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 225,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-13",
+    "_kind": "day",
+    "date": "2026-06-13",
+    "complete": true
+  },
+  {
+    "id": "demo-d22-0",
+    "date": "2026-06-12",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 514,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d22-1",
+    "date": "2026-06-12",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 593,
+    "protein": 45,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d22-2",
+    "date": "2026-06-12",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 435,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d22-3",
+    "date": "2026-06-12",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 316,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d22-4",
+    "date": "2026-06-12",
+    "title": "Banane & Haferriegel",
+    "kcal": 297,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d22-5",
+    "date": "2026-06-12",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 218,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-12",
+    "_kind": "day",
+    "date": "2026-06-12",
+    "complete": true
+  },
+  {
+    "id": "demo-d23-0",
+    "date": "2026-06-11",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 493,
+    "protein": 28,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d23-1",
+    "date": "2026-06-11",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 569,
+    "protein": 44,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d23-2",
+    "date": "2026-06-11",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 418,
+    "protein": 28,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d23-3",
+    "date": "2026-06-11",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 304,
+    "protein": 23,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d23-4",
+    "date": "2026-06-11",
+    "title": "Banane & Haferriegel",
+    "kcal": 285,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d23-5",
+    "date": "2026-06-11",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 209,
+    "protein": 11,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-11",
+    "_kind": "day",
+    "date": "2026-06-11",
+    "complete": true
+  },
+  {
+    "id": "demo-d24-0",
+    "date": "2026-06-10",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 508,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d24-1",
+    "date": "2026-06-10",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 586,
+    "protein": 45,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d24-2",
+    "date": "2026-06-10",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 430,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d24-3",
+    "date": "2026-06-10",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 312,
+    "protein": 23,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d24-4",
+    "date": "2026-06-10",
+    "title": "Banane & Haferriegel",
+    "kcal": 293,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d24-5",
+    "date": "2026-06-10",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 215,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-10",
+    "_kind": "day",
+    "date": "2026-06-10",
+    "complete": true
+  },
+  {
+    "id": "demo-d25-0",
+    "date": "2026-06-09",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 520,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d25-1",
+    "date": "2026-06-09",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 600,
+    "protein": 46,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d25-2",
+    "date": "2026-06-09",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 440,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d25-3",
+    "date": "2026-06-09",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 320,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d25-4",
+    "date": "2026-06-09",
+    "title": "Banane & Haferriegel",
+    "kcal": 300,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d25-5",
+    "date": "2026-06-09",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 220,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-09",
+    "_kind": "day",
+    "date": "2026-06-09",
+    "complete": true
+  },
+  {
+    "id": "demo-d26-0",
+    "date": "2026-06-08",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 484,
+    "protein": 28,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d26-1",
+    "date": "2026-06-08",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 558,
+    "protein": 43,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d26-2",
+    "date": "2026-06-08",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 409,
+    "protein": 28,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d26-3",
+    "date": "2026-06-08",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 298,
+    "protein": 22,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d26-4",
+    "date": "2026-06-08",
+    "title": "Banane & Haferriegel",
+    "kcal": 279,
+    "protein": 7,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d26-5",
+    "date": "2026-06-08",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 205,
+    "protein": 11,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-08",
+    "_kind": "day",
+    "date": "2026-06-08",
+    "complete": true
+  },
+  {
+    "id": "demo-d27-0",
+    "date": "2026-06-07",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 495,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d27-1",
+    "date": "2026-06-07",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 572,
+    "protein": 44,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d27-2",
+    "date": "2026-06-07",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 419,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d27-3",
+    "date": "2026-06-07",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 305,
+    "protein": 23,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d27-4",
+    "date": "2026-06-07",
+    "title": "Banane & Haferriegel",
+    "kcal": 286,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d27-5",
+    "date": "2026-06-07",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 210,
+    "protein": 11,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-07",
+    "_kind": "day",
+    "date": "2026-06-07",
+    "complete": true
+  },
+  {
+    "id": "demo-d28-0",
+    "date": "2026-06-06",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 514,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d28-1",
+    "date": "2026-06-06",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 593,
+    "protein": 45,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d28-2",
+    "date": "2026-06-06",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 435,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d28-3",
+    "date": "2026-06-06",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 316,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d28-4",
+    "date": "2026-06-06",
+    "title": "Banane & Haferriegel",
+    "kcal": 297,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d28-5",
+    "date": "2026-06-06",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 218,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-06",
+    "_kind": "day",
+    "date": "2026-06-06",
+    "complete": true
+  },
+  {
+    "id": "demo-d29-0",
+    "date": "2026-06-05",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 555,
+    "protein": 32,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d29-1",
+    "date": "2026-06-05",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 641,
+    "protein": 49,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d29-2",
+    "date": "2026-06-05",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 470,
+    "protein": 32,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d29-3",
+    "date": "2026-06-05",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 342,
+    "protein": 26,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d29-4",
+    "date": "2026-06-05",
+    "title": "Banane & Haferriegel",
+    "kcal": 320,
+    "protein": 9,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d29-5",
+    "date": "2026-06-05",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 235,
+    "protein": 13,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-05",
+    "_kind": "day",
+    "date": "2026-06-05",
+    "complete": true
+  },
+  {
+    "id": "demo-d30-0",
+    "date": "2026-06-04",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 536,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d30-1",
+    "date": "2026-06-04",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 619,
+    "protein": 47,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d30-2",
+    "date": "2026-06-04",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 454,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d30-3",
+    "date": "2026-06-04",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 330,
+    "protein": 25,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d30-4",
+    "date": "2026-06-04",
+    "title": "Banane & Haferriegel",
+    "kcal": 309,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d30-5",
+    "date": "2026-06-04",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 227,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-04",
+    "_kind": "day",
+    "date": "2026-06-04",
+    "complete": true
+  },
+  {
+    "id": "demo-d31-0",
+    "date": "2026-06-03",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 504,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d31-1",
+    "date": "2026-06-03",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 582,
+    "protein": 45,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d31-2",
+    "date": "2026-06-03",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 427,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d31-3",
+    "date": "2026-06-03",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 310,
+    "protein": 23,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d31-4",
+    "date": "2026-06-03",
+    "title": "Banane & Haferriegel",
+    "kcal": 291,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d31-5",
+    "date": "2026-06-03",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 213,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-03",
+    "_kind": "day",
+    "date": "2026-06-03",
+    "complete": true
+  },
+  {
+    "id": "demo-d32-0",
+    "date": "2026-06-02",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 514,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d32-1",
+    "date": "2026-06-02",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 593,
+    "protein": 45,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d32-2",
+    "date": "2026-06-02",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 435,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d32-3",
+    "date": "2026-06-02",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 316,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d32-4",
+    "date": "2026-06-02",
+    "title": "Banane & Haferriegel",
+    "kcal": 297,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d32-5",
+    "date": "2026-06-02",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 217,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-02",
+    "_kind": "day",
+    "date": "2026-06-02",
+    "complete": true
+  },
+  {
+    "id": "demo-d33-0",
+    "date": "2026-06-01",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 498,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d33-1",
+    "date": "2026-06-01",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 575,
+    "protein": 44,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d33-2",
+    "date": "2026-06-01",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 422,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d33-3",
+    "date": "2026-06-01",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 307,
+    "protein": 23,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d33-4",
+    "date": "2026-06-01",
+    "title": "Banane & Haferriegel",
+    "kcal": 287,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d33-5",
+    "date": "2026-06-01",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 211,
+    "protein": 11,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-06-01",
+    "_kind": "day",
+    "date": "2026-06-01",
+    "complete": true
+  },
+  {
+    "id": "demo-d34-0",
+    "date": "2026-05-31",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 526,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d34-1",
+    "date": "2026-05-31",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 606,
+    "protein": 46,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d34-2",
+    "date": "2026-05-31",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 445,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d34-3",
+    "date": "2026-05-31",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 323,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d34-4",
+    "date": "2026-05-31",
+    "title": "Banane & Haferriegel",
+    "kcal": 303,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d34-5",
+    "date": "2026-05-31",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 222,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-31",
+    "_kind": "day",
+    "date": "2026-05-31",
+    "complete": true
+  },
+  {
+    "id": "demo-d35-0",
+    "date": "2026-05-30",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 555,
+    "protein": 32,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d35-1",
+    "date": "2026-05-30",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 640,
+    "protein": 49,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d35-2",
+    "date": "2026-05-30",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 470,
+    "protein": 32,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d35-3",
+    "date": "2026-05-30",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 342,
+    "protein": 26,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d35-4",
+    "date": "2026-05-30",
+    "title": "Banane & Haferriegel",
+    "kcal": 320,
+    "protein": 9,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d35-5",
+    "date": "2026-05-30",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 235,
+    "protein": 13,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-30",
+    "_kind": "day",
+    "date": "2026-05-30",
+    "complete": true
+  },
+  {
+    "id": "demo-d36-0",
+    "date": "2026-05-29",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 551,
+    "protein": 32,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d36-1",
+    "date": "2026-05-29",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 635,
+    "protein": 49,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d36-2",
+    "date": "2026-05-29",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 466,
+    "protein": 32,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d36-3",
+    "date": "2026-05-29",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 339,
+    "protein": 25,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d36-4",
+    "date": "2026-05-29",
+    "title": "Banane & Haferriegel",
+    "kcal": 318,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d36-5",
+    "date": "2026-05-29",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 233,
+    "protein": 13,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-29",
+    "_kind": "day",
+    "date": "2026-05-29",
+    "complete": true
+  },
+  {
+    "id": "demo-d37-0",
+    "date": "2026-05-28",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 518,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d37-1",
+    "date": "2026-05-28",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 598,
+    "protein": 46,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d37-2",
+    "date": "2026-05-28",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 438,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d37-3",
+    "date": "2026-05-28",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 319,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d37-4",
+    "date": "2026-05-28",
+    "title": "Banane & Haferriegel",
+    "kcal": 299,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d37-5",
+    "date": "2026-05-28",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 219,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-28",
+    "_kind": "day",
+    "date": "2026-05-28",
+    "complete": true
+  },
+  {
+    "id": "demo-d38-0",
+    "date": "2026-05-27",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 540,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d38-1",
+    "date": "2026-05-27",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 623,
+    "protein": 48,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d38-2",
+    "date": "2026-05-27",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 457,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d38-3",
+    "date": "2026-05-27",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 332,
+    "protein": 25,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d38-4",
+    "date": "2026-05-27",
+    "title": "Banane & Haferriegel",
+    "kcal": 311,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d38-5",
+    "date": "2026-05-27",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 228,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-27",
+    "_kind": "day",
+    "date": "2026-05-27",
+    "complete": true
+  },
+  {
+    "id": "demo-d39-0",
+    "date": "2026-05-26",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 527,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d39-1",
+    "date": "2026-05-26",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 608,
+    "protein": 47,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d39-2",
+    "date": "2026-05-26",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 446,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d39-3",
+    "date": "2026-05-26",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 324,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d39-4",
+    "date": "2026-05-26",
+    "title": "Banane & Haferriegel",
+    "kcal": 304,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d39-5",
+    "date": "2026-05-26",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 223,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-26",
+    "_kind": "day",
+    "date": "2026-05-26",
+    "complete": true
+  },
+  {
+    "id": "demo-d40-0",
+    "date": "2026-05-25",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 552,
+    "protein": 32,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d40-1",
+    "date": "2026-05-25",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 636,
+    "protein": 49,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d40-2",
+    "date": "2026-05-25",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 467,
+    "protein": 32,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d40-3",
+    "date": "2026-05-25",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 339,
+    "protein": 25,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d40-4",
+    "date": "2026-05-25",
+    "title": "Banane & Haferriegel",
+    "kcal": 318,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d40-5",
+    "date": "2026-05-25",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 233,
+    "protein": 13,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-25",
+    "_kind": "day",
+    "date": "2026-05-25",
+    "complete": true
+  },
+  {
+    "id": "demo-d41-0",
+    "date": "2026-05-24",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 517,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d41-1",
+    "date": "2026-05-24",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 596,
+    "protein": 46,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d41-2",
+    "date": "2026-05-24",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 437,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d41-3",
+    "date": "2026-05-24",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 318,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d41-4",
+    "date": "2026-05-24",
+    "title": "Banane & Haferriegel",
+    "kcal": 298,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d41-5",
+    "date": "2026-05-24",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 219,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-24",
+    "_kind": "day",
+    "date": "2026-05-24",
+    "complete": true
+  },
+  {
+    "id": "demo-d42-0",
+    "date": "2026-05-23",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 499,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d42-1",
+    "date": "2026-05-23",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 576,
+    "protein": 44,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d42-2",
+    "date": "2026-05-23",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 422,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d42-3",
+    "date": "2026-05-23",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 307,
+    "protein": 23,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d42-4",
+    "date": "2026-05-23",
+    "title": "Banane & Haferriegel",
+    "kcal": 288,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d42-5",
+    "date": "2026-05-23",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 211,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-23",
+    "_kind": "day",
+    "date": "2026-05-23",
+    "complete": true
+  },
+  {
+    "id": "demo-d43-0",
+    "date": "2026-05-22",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 534,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d43-1",
+    "date": "2026-05-22",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 616,
+    "protein": 47,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d43-2",
+    "date": "2026-05-22",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 452,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d43-3",
+    "date": "2026-05-22",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 329,
+    "protein": 25,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d43-4",
+    "date": "2026-05-22",
+    "title": "Banane & Haferriegel",
+    "kcal": 308,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d43-5",
+    "date": "2026-05-22",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 226,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-22",
+    "_kind": "day",
+    "date": "2026-05-22",
+    "complete": true
+  },
+  {
+    "id": "demo-d44-0",
+    "date": "2026-05-21",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 542,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d44-1",
+    "date": "2026-05-21",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 625,
+    "protein": 48,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d44-2",
+    "date": "2026-05-21",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 458,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d44-3",
+    "date": "2026-05-21",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 333,
+    "protein": 25,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d44-4",
+    "date": "2026-05-21",
+    "title": "Banane & Haferriegel",
+    "kcal": 312,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d44-5",
+    "date": "2026-05-21",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 229,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-21",
+    "_kind": "day",
+    "date": "2026-05-21",
+    "complete": true
+  },
+  {
+    "id": "demo-d45-0",
+    "date": "2026-05-20",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 504,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d45-1",
+    "date": "2026-05-20",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 582,
+    "protein": 45,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d45-2",
+    "date": "2026-05-20",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 427,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d45-3",
+    "date": "2026-05-20",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 310,
+    "protein": 23,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d45-4",
+    "date": "2026-05-20",
+    "title": "Banane & Haferriegel",
+    "kcal": 291,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d45-5",
+    "date": "2026-05-20",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 213,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-20",
+    "_kind": "day",
+    "date": "2026-05-20",
+    "complete": true
+  },
+  {
+    "id": "demo-d46-0",
+    "date": "2026-05-19",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 521,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d46-1",
+    "date": "2026-05-19",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 601,
+    "protein": 46,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d46-2",
+    "date": "2026-05-19",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 441,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d46-3",
+    "date": "2026-05-19",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 321,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d46-4",
+    "date": "2026-05-19",
+    "title": "Banane & Haferriegel",
+    "kcal": 301,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d46-5",
+    "date": "2026-05-19",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 220,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-19",
+    "_kind": "day",
+    "date": "2026-05-19",
+    "complete": true
+  },
+  {
+    "id": "demo-d47-0",
+    "date": "2026-05-18",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 494,
+    "protein": 28,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d47-1",
+    "date": "2026-05-18",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 570,
+    "protein": 44,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d47-2",
+    "date": "2026-05-18",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 418,
+    "protein": 28,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d47-3",
+    "date": "2026-05-18",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 304,
+    "protein": 23,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d47-4",
+    "date": "2026-05-18",
+    "title": "Banane & Haferriegel",
+    "kcal": 285,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d47-5",
+    "date": "2026-05-18",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 209,
+    "protein": 11,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-18",
+    "_kind": "day",
+    "date": "2026-05-18",
+    "complete": true
+  },
+  {
+    "id": "demo-d48-0",
+    "date": "2026-05-17",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 492,
+    "protein": 28,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d48-1",
+    "date": "2026-05-17",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 568,
+    "protein": 44,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d48-2",
+    "date": "2026-05-17",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 416,
+    "protein": 28,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d48-3",
+    "date": "2026-05-17",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 303,
+    "protein": 23,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d48-4",
+    "date": "2026-05-17",
+    "title": "Banane & Haferriegel",
+    "kcal": 284,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d48-5",
+    "date": "2026-05-17",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 208,
+    "protein": 11,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-17",
+    "_kind": "day",
+    "date": "2026-05-17",
+    "complete": true
+  },
+  {
+    "id": "demo-d49-0",
+    "date": "2026-05-16",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 506,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d49-1",
+    "date": "2026-05-16",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 583,
+    "protein": 45,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d49-2",
+    "date": "2026-05-16",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 428,
+    "protein": 29,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d49-3",
+    "date": "2026-05-16",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 311,
+    "protein": 23,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d49-4",
+    "date": "2026-05-16",
+    "title": "Banane & Haferriegel",
+    "kcal": 292,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d49-5",
+    "date": "2026-05-16",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 214,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-16",
+    "_kind": "day",
+    "date": "2026-05-16",
+    "complete": true
+  },
+  {
+    "id": "demo-d50-0",
+    "date": "2026-05-15",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 492,
+    "protein": 28,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d50-1",
+    "date": "2026-05-15",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 568,
+    "protein": 44,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d50-2",
+    "date": "2026-05-15",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 416,
+    "protein": 28,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d50-3",
+    "date": "2026-05-15",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 303,
+    "protein": 23,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d50-4",
+    "date": "2026-05-15",
+    "title": "Banane & Haferriegel",
+    "kcal": 284,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d50-5",
+    "date": "2026-05-15",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 208,
+    "protein": 11,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-15",
+    "_kind": "day",
+    "date": "2026-05-15",
+    "complete": true
+  },
+  {
+    "id": "demo-d51-0",
+    "date": "2026-05-14",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 543,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d51-1",
+    "date": "2026-05-14",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 626,
+    "protein": 48,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d51-2",
+    "date": "2026-05-14",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 459,
+    "protein": 31,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d51-3",
+    "date": "2026-05-14",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 334,
+    "protein": 25,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d51-4",
+    "date": "2026-05-14",
+    "title": "Banane & Haferriegel",
+    "kcal": 313,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d51-5",
+    "date": "2026-05-14",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 230,
+    "protein": 13,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-14",
+    "_kind": "day",
+    "date": "2026-05-14",
+    "complete": true
+  },
+  {
+    "id": "demo-d52-0",
+    "date": "2026-05-13",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 524,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d52-1",
+    "date": "2026-05-13",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 605,
+    "protein": 46,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d52-2",
+    "date": "2026-05-13",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 443,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d52-3",
+    "date": "2026-05-13",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 322,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d52-4",
+    "date": "2026-05-13",
+    "title": "Banane & Haferriegel",
+    "kcal": 302,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d52-5",
+    "date": "2026-05-13",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 222,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-13",
+    "_kind": "day",
+    "date": "2026-05-13",
+    "complete": true
+  },
+  {
+    "id": "demo-d53-0",
+    "date": "2026-05-12",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 513,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d53-1",
+    "date": "2026-05-12",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 592,
+    "protein": 45,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d53-2",
+    "date": "2026-05-12",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 434,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d53-3",
+    "date": "2026-05-12",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 316,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d53-4",
+    "date": "2026-05-12",
+    "title": "Banane & Haferriegel",
+    "kcal": 296,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d53-5",
+    "date": "2026-05-12",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 217,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-12",
+    "_kind": "day",
+    "date": "2026-05-12",
+    "complete": true
+  },
+  {
+    "id": "demo-d54-0",
+    "date": "2026-05-11",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 547,
+    "protein": 32,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d54-1",
+    "date": "2026-05-11",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 631,
+    "protein": 48,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d54-2",
+    "date": "2026-05-11",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 463,
+    "protein": 32,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d54-3",
+    "date": "2026-05-11",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 337,
+    "protein": 25,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d54-4",
+    "date": "2026-05-11",
+    "title": "Banane & Haferriegel",
+    "kcal": 316,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d54-5",
+    "date": "2026-05-11",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 231,
+    "protein": 13,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-11",
+    "_kind": "day",
+    "date": "2026-05-11",
+    "complete": true
+  },
+  {
+    "id": "demo-d55-0",
+    "date": "2026-05-10",
+    "title": "Overnight Oats mit Beeren",
+    "kcal": 518,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d55-1",
+    "date": "2026-05-10",
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "kcal": 598,
+    "protein": 46,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d55-2",
+    "date": "2026-05-10",
+    "title": "Omelett mit Feta & Tomaten",
+    "kcal": 438,
+    "protein": 30,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d55-3",
+    "date": "2026-05-10",
+    "title": "Skyr mit Beeren & Nüssen",
+    "kcal": 319,
+    "protein": 24,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d55-4",
+    "date": "2026-05-10",
+    "title": "Banane & Haferriegel",
+    "kcal": 299,
+    "protein": 8,
+    "source": "cooked"
+  },
+  {
+    "id": "demo-d55-5",
+    "date": "2026-05-10",
+    "title": "Vollkornbrot mit Käse",
+    "kcal": 219,
+    "protein": 12,
+    "source": "cooked"
+  },
+  {
+    "id": "day-2026-05-10",
+    "_kind": "day",
+    "date": "2026-05-10",
+    "complete": true
+  }
+]

@@ -1,0 +1,43 @@
+# =============================================================================
+# Cat-O-Fit per Docker Compose — läuft auf amd64 und arm64
+# (Mac, Synology Container Manager, jeder Docker-Host).
+#
+#   docker compose up -d      → App unter http://localhost:8080
+#
+# Standard ist das fertige Image aus der GitHub Container Registry. Selbst bauen:
+#   docker compose build && docker compose up -d
+# (nutzt das Dockerfile in diesem Verzeichnis).
+#
+# Synology-Tipp (Container Manager → Projekt): statt des benannten Volumes
+# einen Ordner binden, z. B.
+#   - /volume1/docker/cat-o-fit/data:/var/www/html/data
+# =============================================================================
+services:
+  cat-o-fit:
+    image: ghcr.io/bingerminger/cat-o-fit:latest
+    build: .
+    container_name: cat-o-fit
+    ports:
+      # ACHTUNG: Die PIN schützt die Profile in der App und – seit v3.20.0 – die
+      # privaten Bereiche (Zyklus, Labor, Ergänzungen) auch auf dem Server. Alle
+      # anderen Daten sind für jedes Gerät im Netz erreichbar. Der Container gehört
+      # deshalb ins eigene, vertrauenswürdige Netz. Soll er von außen erreichbar
+      # sein, ist eine Anmeldung davor PFLICHT: Reverse-Proxy mit HTTPS und
+      # Anmeldung oder mindestens die eingebaute Basic-Auth (siehe unten).
+      # Nur lokal erreichbar machen: "127.0.0.1:8080:80"
+      - "8080:80"
+    environment:
+      # Zeitzone für PHP und die Kalender-Dateien (z. B. Europe/Vienna, America/New_York).
+      - TZ=Europe/Berlin
+      # Optional: Anmeldung vor der ganzen App (Basic-Auth). Ohne diese Zeilen wie bisher.
+      # - CATOFIT_BASIC_AUTH=1
+      # - CATOFIT_AUTH_USER=familie
+      # - CATOFIT_AUTH_PASSWORD=bitte-ein-langes-passwort
+      # Optional: nur diese Hostnamen annehmen (Schutz vor DNS-Rebinding), kommagetrennt.
+      # - CATOFIT_ALLOWED_HOSTS=fit.example.org
+    volumes:
+      - cat-o-fit-data:/var/www/html/data
+    restart: unless-stopped
+
+volumes:
+  cat-o-fit-data:

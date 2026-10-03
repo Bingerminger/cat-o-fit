@@ -1,0 +1,162 @@
+# Installation
+
+Cat-O-Fit läuft auf eigener Hardware: per Docker (amd64 und arm64) oder auf jedem Webserver mit PHP.
+Eine Datenbank, ein Build-Schritt oder Node.js sind nicht nötig.
+
+> Teil der [Dokumentation](../README.md) · [Betreiben](../README.md#betreiben) ·
+> English: [Installation guide](../en/installation.md)
+
+**Auf dieser Seite:**
+
+- [Voraussetzungen](#voraussetzungen)
+- [Weg 1: Docker](#weg-1-docker)
+- [Weg 2: Synology Container Manager](#weg-2-synology-container-manager)
+- [Weg 3: Webspace oder Synology Web Station](#weg-3-webspace-oder-synology-web-station)
+- [Umgebungsvariablen](#umgebungsvariablen)
+- [HTTPS und „Zum Home-Bildschirm“](#https-und-zum-home-bildschirm)
+- [Betrieb außerhalb des Heimnetzes](#betrieb-außerhalb-des-heimnetzes)
+- [Funktionstest und erster Start](#funktionstest-und-erster-start)
+
+---
+
+## Voraussetzungen
+
+| Was | Mindestens | Wofür |
+|---|---|---|
+| **Docker** | aktuelle Version, amd64 oder arm64 | Weg 1 und 2 – alles Weitere bringt das Image mit |
+| **oder PHP** | **8.1** (getestet mit 8.4) | Weg 3. Mit PHP 8.0 scheitert jedes Speichern mit „Serverfehler“ (die Speicherung braucht `fsync`, das es erst ab 8.1 gibt). |
+| PHP-Erweiterungen | `json` (Standard); für den Apple-Health-Voll-Import `XMLReader`, für ZIP-Uploads `zip` (ZipArchive); für die Nährwertsuche im Netz `curl` und `mbstring` | Die App startet auch ohne `XMLReader`/`zip` – nur der jeweilige Import meldet dann, was fehlt. |
+| Schreibrechte | auf den Ordner `data/` | Dort liegen alle Daten als JSON-Dateien. |
+| Browser | aktuelles Safari (iPhone/iPad), Chrome, Edge oder Firefox | – |
+| Node.js | 22 oder neuer – **nur** für die Entwickler-Tests | Für den Betrieb nicht nötig. |
+
+---
+
+## Weg 1: Docker
+
+```bash
+docker run -d --name cat-o-fit -p 8080:80 \
+  -v cat-o-fit-data:/var/www/html/data \
+  -e TZ=Europe/Berlin \
+  ghcr.io/bingerminger/cat-o-fit:latest
+```
+
+Dann im Browser **http://localhost:8080** öffnen. Das Image läuft auf Intel/AMD **und** Apple Silicon
+bzw. ARM. Mit Docker Compose: die `docker-compose.yml` aus dem Repo nehmen und `docker compose up -d`
+ausführen – das zieht das fertige Image. **Selbst bauen:** `docker compose build && docker compose up -d`.
+
+Was das Image mitbringt: PHP 8.4 mit allen Erweiterungen, Uploads bis 1 GB (Apple-Health-Voll-Import),
+einen eingebauten Healthcheck (Status z. B. in `docker ps`), einen zusätzlichen Schutz von `data/`
+gegen direkten Webzugriff und einen leeren Erststart mit der Ersteinrichtung.
+
+---
+
+## Weg 2: Synology Container Manager
+
+1. Im **Paket-Zentrum** den **Container Manager** installieren.
+2. Container Manager → **Projekt** → **Erstellen**; Projektname `cat-o-fit`, als Pfad z. B.
+   `/docker/cat-o-fit` anlegen.
+3. Quelle „**docker-compose.yml erstellen**“ und diesen Inhalt einfügen:
+
+   ```yaml
+   services:
+     cat-o-fit:
+       image: ghcr.io/bingerminger/cat-o-fit:latest
+       ports:
+         - "8080:80"
+       environment:
+         - TZ=Europe/Berlin
+       volumes:
+         - /volume1/docker/cat-o-fit/data:/var/www/html/data
+       restart: unless-stopped
+   ```
+
+4. **Weiter → Fertig.** Die App läuft unter `http://<ip-deiner-synology>:8080`. (Ist Port 8080 belegt,
+   die erste Zahl ändern, z. B. `8081:80`.)
+5. Deine Daten liegen als normale Dateien unter `/volume1/docker/cat-o-fit/data` – ideal für die
+   Synology-Datensicherung (siehe [Backup](backup.md)).
+
+---
+
+## Weg 3: Webspace oder Synology Web Station
+
+1. **Web Station und PHP installieren** (Paket-Zentrum → Web Station, dazu PHP 8.1 oder neuer, z. B. 8.4).
+2. Einen Ordner anlegen, z. B. `/web/cat-o-fit`, und **alle Dateien dieses Projekts** hineinkopieren.
+   Der Ordner `data/` enthält im Download nur seinen Zugriffsschutz (`data/.htaccess`) – die App startet
+   deshalb mit der Ersteinrichtung.
+3. Im Webdienst-Portal PHP für diesen Ordner auf die installierte Version setzen und die Erweiterungen
+   aus den [Voraussetzungen](#voraussetzungen) aktivieren.
+4. **Schreibrechte für `data/`:** Der Webserver-Nutzer (Synology meist `http`) muss dort schreiben dürfen –
+   DSM → Systemsteuerung → Gemeinsame Ordner → `web` → Berechtigungen, oder per SSH:
+   ```
+   chown -R http:http /volume1/web/cat-o-fit/data
+   chmod -R 775 /volume1/web/cat-o-fit/data
+   ```
+5. **Zugriffsschutz prüfen:** Die mitgelieferten `.htaccess`-Dateien sperren `data/`, `tools/`, `test/`,
+   `docs/` und Repo-Dateien wie `.git` für den Webzugriff. **Nginx** wertet `.htaccess` nicht aus – dann
+   diese Regeln in die Server-Konfiguration übernehmen, mindestens die für `data/`:
+
+   ```nginx
+   location ~ /(data|tools|test|docs|docker)(/|$)   { deny all; }
+   location ~ /\.                                    { deny all; }   # .git, .htaccess …
+   location ~ \.(md)$                                { deny all; }
+   add_header X-Frame-Options "DENY" always;
+   add_header Referrer-Policy "no-referrer" always;
+   add_header X-Content-Type-Options "nosniff" always;
+   ```
+
+   Außerdem müssen `.js`-Dateien als `text/javascript` ausgeliefert werden (bei Apache erledigt das die
+   `.htaccess`).
+
+---
+
+## Umgebungsvariablen
+
+Alle optional (Docker; bei Weg 3 über die Server-Konfiguration):
+
+| Variable | Wirkung |
+|---|---|
+| `TZ` | Zeitzone, z. B. `Europe/Vienna` oder `America/New_York`. Gilt für PHP und für die Zeiten in den Kalender-Dateien. Ohne Angabe: `Europe/Berlin`. |
+| `CATOFIT_TZ` | wie `TZ`, nur für die Kalender-Dateien – hat Vorrang, falls `TZ` auf dem Host etwas anderes bedeutet. |
+| `CATOFIT_BASIC_AUTH=1` mit `CATOFIT_AUTH_USER` und `CATOFIT_AUTH_PASSWORD` | Anmeldung (Basic Auth) vor der ganzen App. Der Health-Eingang (eigener Schlüssel) und der Healthcheck bleiben erreichbar. |
+| `CATOFIT_ALLOWED_HOSTS` | kommagetrennte Hostnamen, z. B. `fit.example.org` – Anfragen an andere Namen lehnt die API ab (Schutz vor DNS-Rebinding). |
+
+---
+
+## HTTPS und „Zum Home-Bildschirm“
+
+Für die Installation als App (Safari → Teilen → „Zum Home-Bildschirm“) und für den Zugriff von unterwegs
+braucht es **HTTPS** mit gültigem Zertifikat – etwa über einen Reverse-Proxy (Synology:
+Anwendungsportal → Reverse-Proxy mit Let's-Encrypt-Zertifikat). Im Heimnetz läuft die App auch über
+`http://`; die PIN-Anmeldung funktioniert auf beiden Wegen.
+
+---
+
+## Betrieb außerhalb des Heimnetzes
+
+Cat-O-Fit ist für das eigene, vertrauenswürdige Netz gebaut: Die PIN schützt die Profile und die
+privaten Bereiche (Zyklus, Labor, Ergänzungen), aber **nicht** Trainings, Pläne oder Körperwerte. Soll
+die App aus dem Internet erreichbar sein (QuickConnect, Portfreigabe, VPS), ist eine **Anmeldung davor
+Pflicht** – sonst kann jede Person mit der Adresse diese Daten lesen und ändern.
+
+- **Am einfachsten:** VPN ins Heimnetz (WireGuard, Tailscale, Synology VPN Server) – die App bleibt dann
+  gar nicht öffentlich.
+- **Reverse-Proxy mit Anmeldung:** HTTPS plus eine Anmeldung davor (z. B. Authelia, Authentik oder die
+  Basic Auth des Proxys).
+- **Docker:** die eingebaute Basic Auth einschalten (siehe [Umgebungsvariablen](#umgebungsvariablen))
+  und nur per HTTPS freigeben.
+- **Health-Eingang:** Health Auto Export und Kurzbefehle können eine vorgeschaltete Anmeldung meist nicht –
+  `?action=health-ingest` ist durch seinen eigenen Schlüssel geschützt und sollte von der Anmeldung
+  ausgenommen werden (die eingebaute Basic Auth macht das automatisch).
+
+---
+
+## Funktionstest und erster Start
+
+- `https://<adresse>/cat-o-fit/api/api.php?action=ping` muss ein JSON `{"ok":true,…}` liefern.
+- Beim ersten Öffnen startet die **Ersteinrichtung**: Admin-Person mit eigener PIN anlegen, dann
+  **„Mit Demodaten starten“** oder **„Leer starten“**.
+- Zurück zum Anfang: In der App ganz unten in den Einstellungen **„App zurücksetzen“** (nur Admins).
+
+Weiter: [Update](update.md) · [Backup](backup.md) · [Datenschutz](datenschutz.md) ·
+[Fehlersuche](fehlersuche.md)

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Zoomen bleibt erlaubt (WCAG 1.4.4); den Fokus-Zoom von iOS verhindern die 16-px-Felder. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <!-- Sicherheit: Nur eigene Skripte/Stile; einzige Verbindungen nach außen sind die
+       (abschaltbare) Wetterabfrage bei Open-Meteo. Der Server ergänzt per Header
+       u. a. frame-ancestors (siehe .htaccess). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://api.open-meteo.com https://geocoding-api.open-meteo.com; manifest-src 'self'; worker-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'" />
+  <meta name="referrer" content="no-referrer" />
+  <title>Cat-O-Fit · Trainingsplanung für die ganze Familie</title>
+  <meta name="description" content="Trainingsplanung für die ganze Familie – Wettkämpfe und Programme planen, trainieren und auswerten, mit Ernährung, Zyklus und Laborwerten im Blick. Auf deinem eigenen Server." />
+
+  <!-- PWA / iOS -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#18b48a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Cat-O-Fit" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-180.png" />
+  <link rel="icon" type="image/svg+xml" href="assets/icons/icon.svg" />
+
+  <!-- Stylesheets (lokal, keine CDNs) -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/cards.css" />
+  <link rel="stylesheet" href="css/motion.css" />
+  <link rel="stylesheet" href="css/show.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/calendar.css" />
+  <link rel="stylesheet" href="css/session.css" />
+  <link rel="stylesheet" href="css/workout-mode.css" />
+  <link rel="stylesheet" href="css/family.css" />
+  <link rel="stylesheet" href="css/report.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+  <!-- Kernmodule parallel vorladen statt Import für Import (FE-19) -->
+  <link rel="modulepreload" href="js/app.js" />
+  <link rel="modulepreload" href="js/storage.js" />
+  <link rel="modulepreload" href="js/ui.js" />
+  <link rel="modulepreload" href="js/router.js" />
+  <link rel="modulepreload" href="js/dashboard.js" />
+</head>
+<body class="is-anon">
+  <!-- Tastatur: erster Tab-Halt springt direkt in den Inhalt (Knopf statt #-Link, weil
+       der Hash die Route ist) -->
+  <button type="button" id="skip-link" class="skip-link">Zum Inhalt springen</button>
+  <!-- App-Gerüst (startet abgemeldet: Menüs erst nach dem Login, siehe session-gate.js) -->
+  <div id="app">
+    <!-- Kopfzeile: Titel + Kontextaktionen (wird pro View gefüllt). Das Verwalten-Banner
+         sitzt IM klebenden Kopf – so bleibt es auf iPhone, iPad und Mac immer oben sichtbar. -->
+    <header id="app-header" class="app-header">
+      <div class="app-header__inner">
+        <button id="header-back" class="icon-btn header-back" hidden aria-label="Zurück"></button>
+        <div class="app-header__titles">
+          <h1 id="header-title" class="app-header__title" tabindex="-1">Cat-O-Fit</h1>
+          <p id="header-subtitle" class="app-header__subtitle"></p>
+        </div>
+        <div id="header-actions" class="app-header__actions"></div>
+      </div>
+      <!-- Banner: ein Admin verwaltet gerade ein anderes Mitglied -->
+      <div id="manage-banner" class="manage-banner" role="status" hidden></div>
+    </header>
+
+    <!-- Optionale Seitennavigation (iPad / große Screens) -->
+    <nav id="sidebar" class="sidebar" aria-label="Hauptnavigation"></nav>
+
+    <!-- Haupt-Renderbereich -->
+    <main id="view" class="view" tabindex="-1"></main>
+
+    <!-- Daumenfreundliche untere Navigation (Smartphone) -->
+    <nav id="bottom-nav" class="bottom-nav" aria-label="Hauptnavigation"></nav>
+  </div>
+
+  <!-- Overlays -->
+  <div id="modal-root" class="modal-root" aria-hidden="true"></div>
+  <div id="toast-root" class="toast-root" aria-live="polite"></div>
+  <div id="sync-indicator" class="sync-indicator" hidden></div>
+
+  <!-- Diagnose: macht aus einer „weißen Seite“ eine erklärende Meldung, falls die
+       ES-Module nicht ausgeführt werden (siehe js/boot-check.js). -->
+  <script src="js/boot-check.js"></script>
+
+  <!-- Einstiegspunkt (ES-Module, kein Build-Schritt) -->
+  <script type="module" src="js/app.js"></script>
+  <noscript>Diese App benötigt JavaScript.</noscript>
+</body>
+</html>

@@ -1,0 +1,63 @@
+# Cat-O-Fit – Server-Hinweise für die statische App-Shell.
+#
+# WICHTIG: ES-Module (<script type="module">) werden vom Browser nur ausgeführt,
+# wenn der Server die .js-Dateien mit einem JavaScript-MIME-Typ ausliefert.
+# Liefert der Server sie als text/plain oder application/octet-stream, bleibt die
+# Seite weiß. Diese Regeln stellen den korrekten Typ sicher.
+#
+# Synology Web Station mit Apache-Backend wertet diese Datei aus. Beim Nginx-
+# Backend wird sie ignoriert – dort liefert Nginx .js standardmäßig korrekt aus;
+# falls nicht, im Web-Station-Profil den MIME-Typ "js -> text/javascript" setzen.
+
+<IfModule mod_mime.c>
+  AddType text/javascript            .js .mjs
+  AddType application/json           .json
+  AddType application/manifest+json  .webmanifest
+  AddType image/svg+xml              .svg
+</IfModule>
+
+# Kompression: Die Shell (rund 830 KB JavaScript, ohne Build) geht gezippt mit etwa
+# 280 KB über die Leitung – spürbar unterwegs über VPN/LTE zum Heimserver.
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json application/manifest+json image/svg+xml
+</IfModule>
+
+# App-Shell nie hart cachen: Der Browser darf speichern, MUSS aber vor Gebrauch
+# revalidieren (liefert 304, wenn unverändert). So kommen neue Releases sofort an –
+# auch im normalen Tab OHNE Service-Worker (bisher wurden js/css heuristisch
+# gecacht und zeigten nach einem Release weiter die alte Version).
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|js|mjs|css|webmanifest)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+
+  # Sicherheits-Header: keine Einbettung in fremde Seiten (Clickjacking), keine
+  # Referrer an Dritte, keine Geräte-APIs, nur eigene Skripte/Stile. Die einzige
+  # Verbindung nach außen aus dem Browser ist die (abschaltbare) Open-Meteo-Wetterabfrage.
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "no-referrer"
+  # Kamera nur für die eigene Seite: zum Scannen von Strichcodes (Ernährung). Der Browser
+  # fragt trotzdem jedes Mal um Erlaubnis; eingebettete fremde Seiten bekommen sie nie.
+  Header always set Permissions-Policy "camera=(self), microphone=(), geolocation=(), payment=(), usb=()"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://api.open-meteo.com https://geocoding-api.open-meteo.com; manifest-src 'self'; worker-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+</IfModule>
+
+# Nur die App ausliefern: Entwickler-, Doku- und Repo-Dateien sind nicht abrufbar
+# (wichtig bei Web Station/Git-Checkout; tools/, test/ und docs/ tragen zusätzlich
+# eine eigene .htaccess). Nginx wertet diese Datei nicht aus – siehe README,
+# Abschnitt „Betrieb außerhalb des Heimnetzes".
+<FilesMatch "^(\..*|package\.json|package-lock\.json|test-setup\.js|Dockerfile|docker-compose\.yml|[A-Z_]+\.md)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule "(^|/)\.(git|github|claude|understand-anything|playwright-mcp)(/|$)" - [F]
+  RewriteRule "^(docker|scratch|graphify-out|node_modules)(/|$)" - [F]
+</IfModule>

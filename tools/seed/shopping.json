@@ -1,0 +1,44 @@
+[
+  {
+    "id": "demo-sh1",
+    "name": "Bananen",
+    "category": "Obst & Gemüse",
+    "qty": "6 Stück",
+    "checked": false
+  },
+  {
+    "id": "demo-sh2",
+    "name": "Beeren (TK)",
+    "category": "Obst & Gemüse",
+    "qty": "500 g",
+    "checked": false
+  },
+  {
+    "id": "demo-sh3",
+    "name": "Hähnchenbrust",
+    "category": "Fleisch & Fisch",
+    "qty": "600 g",
+    "checked": false
+  },
+  {
+    "id": "demo-sh4",
+    "name": "Lachsfilet",
+    "category": "Fleisch & Fisch",
+    "qty": "300 g",
+    "checked": false
+  },
+  {
+    "id": "demo-sh5",
+    "name": "Kaffee",
+    "category": "Getränke",
+    "qty": "500 g",
+    "checked": true
+  },
+  {
+    "id": "demo-sh6",
+    "name": "Proteinpulver",
+    "category": "Sonstiges",
+    "qty": "1 Dose",
+    "checked": false
+  }
+]

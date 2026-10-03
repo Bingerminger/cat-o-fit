@@ -1,0 +1,38 @@
+[
+  {
+    "id": "demo-cyc6",
+    "startDate": "2026-01-20",
+    "periodLength": 5,
+    "createdAt": "2026-01-20"
+  },
+  {
+    "id": "demo-cyc5",
+    "startDate": "2026-02-17",
+    "periodLength": 5,
+    "createdAt": "2026-02-17"
+  },
+  {
+    "id": "demo-cyc4",
+    "startDate": "2026-03-17",
+    "periodLength": 5,
+    "createdAt": "2026-03-17"
+  },
+  {
+    "id": "demo-cyc3",
+    "startDate": "2026-04-14",
+    "periodLength": 5,
+    "createdAt": "2026-04-14"
+  },
+  {
+    "id": "demo-cyc2",
+    "startDate": "2026-05-12",
+    "periodLength": 5,
+    "createdAt": "2026-05-12"
+  },
+  {
+    "id": "demo-cyc1",
+    "startDate": "2026-06-09",
+    "periodLength": 5,
+    "createdAt": "2026-06-09"
+  }
+]

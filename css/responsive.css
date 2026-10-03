@@ -1,0 +1,166 @@
+/* =========================================================================
+   responsive.css — iPad-/Desktop-Layout (Sidebar), große Screens, Landscape.
+   Mobile-first: alles davor gilt fürs iPhone.
+   ========================================================================= */
+
+/* ---------- Tablet / Desktop: Sidebar statt Bottom-Nav ---------- */
+@media (min-width: 820px) {
+  :root { --maxw: 760px; }
+
+  #app {
+    display: grid;
+    /* minmax(0, …): der Inhaltsbereich darf NICHT auf die intrinsische Breite
+       breiter Kinder (z. B. die Jahres-Heatmap) wachsen – sonst scrollt die
+       ganze Seite seitlich statt nur das jeweilige Scroll-Element. */
+    grid-template-columns: 248px minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "sidebar header"
+      "sidebar view";
+  }
+  .app-header { grid-area: header; min-width: 0; }
+  .view { grid-area: view; min-width: 0; }
+
+  .bottom-nav { display: none; }
+
+  /* Abgemeldet: keine Sidebar, Layout einspaltig (kein leerer Sidebar-Spalt). */
+  body.is-anon .sidebar { display: none; }
+  body.is-anon #app {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "header" "view";
+  }
+
+  .sidebar {
+    grid-area: sidebar;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: calc(env(safe-area-inset-top) + var(--sp-4)) var(--sp-3) 0;
+    background: var(--bg-elev);
+    border-right: 1px solid var(--border);
+    position: sticky; top: 0;
+    height: 100dvh;
+    overflow-y: auto;
+  }
+  .sidebar__brand {
+    display: flex; align-items: center; gap: var(--sp-2);
+    padding: 0 var(--sp-3) var(--sp-3);
+    font-weight: 800; font-size: 1.2rem; letter-spacing: -0.02em;
+  }
+  .sidebar__capture { min-height: 44px; margin-bottom: var(--sp-2); }
+  .sidebar__list { display: flex; flex-direction: column; gap: 1px; }
+  .sidebar__group {
+    margin: var(--sp-3) var(--sp-3) 2px;
+    font-size: 0.7rem; font-weight: 750; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--text-2);
+  }
+  .nav-ico { display: inline-flex; flex: 0 0 auto; }
+  .sidebar__brand img { width: 30px; height: 30px; }
+  .sidebar__version {
+    margin-left: auto;
+    font-size: 0.68rem; font-weight: 650; letter-spacing: 0;
+    color: var(--text-2); opacity: 0.7;
+  }
+  .sidebar__item {
+    display: flex; align-items: center; gap: var(--sp-3);
+    min-height: 36px; padding: 5px var(--sp-3);
+    border-radius: var(--r-sm);
+    color: var(--text-2);
+    font-weight: 650; font-size: 0.92rem;
+  }
+  /* Finger (iPad): größere Ziele – dort ist genug Höhe. */
+  @media (pointer: coarse) { .sidebar__item { min-height: 44px; } }
+  .sidebar__item svg { width: 20px; height: 20px; flex: 0 0 auto; }
+  .sidebar__item:hover { background: var(--surface-2); color: var(--text); }
+  .sidebar__item.is-active { background: var(--accent-soft); color: var(--accent-strong); }
+  /* Fuß klebt unten – wer angemeldet ist und „Abmelden" sind auch am 800 px hohen
+     Laptop ohne Scrollen sichtbar (UI-16); bei kurzer Liste sitzt er am unteren Rand. */
+  .sidebar__foot {
+    position: sticky; bottom: 0; z-index: 1;
+    margin-top: auto;
+    display: flex; flex-direction: column; gap: var(--sp-2);
+    padding: var(--sp-3) var(--sp-1) calc(env(safe-area-inset-bottom) + var(--sp-3));
+    background: var(--bg-elev);
+    border-top: 1px solid var(--border);
+  }
+  .sidebar__foot:empty { display: none; }
+  .sidebar__foot .account__avatar { width: 34px; height: 34px; font-size: 1.05rem; }
+  .sidebar__foot .account__name { font-size: .9rem; }
+  .sidebar__foot .account__role { font-size: .72rem; }
+  .sidebar__foot .account__managing { font-size: .8rem; padding: 6px 8px; }
+  .sidebar__foot .account__back { min-height: 36px; }
+  .sidebar__sys { display: flex; flex-wrap: wrap; gap: 0; }
+  .sidebar__sys-item {
+    display: inline-flex; align-items: center; gap: 5px;
+    min-height: 36px; padding: 4px 6px; border-radius: var(--r-sm);
+    color: var(--text-2); font-size: .8rem; font-weight: 650; white-space: nowrap;
+  }
+  .sidebar__sys-item svg { width: 16px; height: 16px; }
+  .sidebar__sys-item:hover { background: var(--surface-2); color: var(--text); }
+  .sidebar__sys-item.is-active { background: var(--accent-soft); color: var(--accent-strong); }
+
+  .view {
+    padding-bottom: calc(var(--sp-8));
+  }
+
+  /* Hinweis: .target-grid und .week-stats passen sich über ihre eigenen
+     (inhaltsabhängigen) Grids an – kein fixes Spaltenraster auf großen Screens,
+     sonst rutschen wenige Kacheln in die linke Hälfte (unausgewogen). */
+  .ex-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ---------- Breiter iPad / Desktop ---------- */
+@media (min-width: 1180px) {
+  :root { --maxw: 920px; }
+  #app { grid-template-columns: 280px minmax(0, 1fr); }
+}
+
+/* ---------- Kleine Smartphones ---------- */
+@media (max-width: 360px) {
+  :root { --sp-4: 14px; }
+  .app-header__title { font-size: 1.2rem; }
+  .hero__title { font-size: 1.3rem; }
+}
+
+/* ---------- Querformat: Workout-Timer kompakter ---------- */
+@media (orientation: landscape) and (max-height: 480px) {
+  .workout__time { font-size: clamp(2.6rem, 14vh, 4rem); }
+  .workout__counters { padding: var(--sp-2) var(--sp-4); }
+  .workout__controls .btn { min-height: 52px; }
+}
+
+/* ---------- Zeiger vs. Touch ---------- */
+@media (hover: none) {
+  .icon-btn:hover { background: transparent; }
+}
+
+/* ---------- iPad/Mac: Breite nutzen (UI-17) ---------- */
+/* Kurztitel im Monatskalender erst ab 820 px (auf dem iPhone reichen die Punkte). */
+.cal-cell__titles { display: none; }
+@media (min-width: 820px) {
+  .cal-cell { min-height: 76px; }
+  .cal-cell__titles { display: flex; flex-direction: column; gap: 1px; margin-top: 2px; min-width: 0; }
+  .cal-cell__title {
+    font-size: 0.7rem; font-weight: 650; line-height: 1.25; text-align: left;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* Formulare als zentrierter Dialog statt als 920 px breites Bottom-Sheet. */
+  .modal-root { align-items: center; padding: var(--sp-6); }
+  .sheet {
+    max-width: 560px; max-height: 86dvh;
+    border-radius: var(--r-xl); padding-bottom: 0;
+    animation: dialog-in 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .sheet__grip { display: none; }
+  .sheet__foot { border-radius: 0 0 var(--r-xl) var(--r-xl); }
+}
+@keyframes dialog-in { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }
+
+/* „Heute" zweispaltig ab 1180 px: links der Tag, rechts Belastung, Woche, Ziele. */
+.dash-col { min-width: 0; }
+@media (min-width: 1180px) {
+  .view:has(> .dash-cols) { max-width: 1080px; }
+  .dash-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sp-6); align-items: start; }
+  .dash-col > :first-child { margin-top: 0; }
+}

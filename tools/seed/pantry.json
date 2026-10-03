@@ -1,0 +1,44 @@
+[
+  {
+    "id": "demo-p1",
+    "name": "Haferflocken",
+    "unit": "g",
+    "amount": 500,
+    "category": "Trockenwaren"
+  },
+  {
+    "id": "demo-p2",
+    "name": "Reis",
+    "unit": "g",
+    "amount": 1000,
+    "category": "Trockenwaren"
+  },
+  {
+    "id": "demo-p3",
+    "name": "Milch",
+    "unit": "ml",
+    "amount": 1000,
+    "category": "Milchprodukte"
+  },
+  {
+    "id": "demo-p4",
+    "name": "Eier",
+    "unit": "Stück",
+    "amount": 10,
+    "category": "Milchprodukte"
+  },
+  {
+    "id": "demo-p5",
+    "name": "Skyr",
+    "unit": "g",
+    "amount": 500,
+    "category": "Milchprodukte"
+  },
+  {
+    "id": "demo-p6",
+    "name": "Olivenöl",
+    "unit": "ml",
+    "amount": 500,
+    "category": "Sonstiges"
+  }
+]
