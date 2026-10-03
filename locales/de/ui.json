@@ -68,7 +68,9 @@
     "next": "Weiter",
     "errorPrefix": "Fehler: ",
     "back": "Zurück",
-    "all": "Alle"
+    "all": "Alle",
+    "today": "heute",
+    "yesterday": "gestern"
   },
   "dialog": {
     "sure": "Sicher?",
@@ -1168,5 +1170,363 @@
     "zoneThreshold": "Schwelle / Tempo",
     "zoneVo2": "Intervalle (VO2max)",
     "racePace": "Renntempo"
+  },
+  "dashboard": {
+    "periodOverdueText": "Dein letzter Periodenbeginn liegt {days} Tage zurück. Kurz im Zyklus beantworten, was zutrifft.",
+    "badgeUnlocked": "{emoji}  Abzeichen freigeschaltet: {name}",
+    "momentum": "Momentum {score}",
+    "countdownDays": {
+      "one": "Tag",
+      "other": "Tage"
+    },
+    "countdownWeeks": {
+      "one": "Woche",
+      "other": "Wochen"
+    },
+    "overdue": {
+      "one": "{count} Einheit wartet aufs Nachholen",
+      "other": "{count} Einheiten warten aufs Nachholen"
+    },
+    "moreHints": "Weitere Hinweise ({count})",
+    "formRelative": "{label} ({pct} % der Fitness)",
+    "ratio": "Verhältnis {ratio}",
+    "formFootnote": "Form: {form} · Werte in Belastungspunkten (AU = Minuten × Anstrengung)",
+    "stepDone": "{label} – erledigt",
+    "athlete": "Athlet:in",
+    "pinTitle": "Eigene PIN festlegen",
+    "pinText": "Dein Profil nutzt noch die Standard-PIN 0000 (oder keine). Jede Person der Familie kennt sie – lege in den Einstellungen eine eigene fest.",
+    "toCycle": "Zum Zyklus",
+    "periodOverdue": "Periode überfällig?",
+    "nextRace": "Nächster Wettkampf",
+    "targetTime": "Zielzeit",
+    "overdueHint": "Verschieben, nachtragen oder als verpasst markieren.",
+    "restDay": "Ruhetag",
+    "restDayText": "Keine Einheit geplant – genieß die Erholung.",
+    "noPlan": "Noch kein Plan",
+    "noPlanText": "Leg ein Ziel oder Programm an – oder erfasse einfach ein Training.",
+    "logActivity": "Training erfassen",
+    "yourCoach": "Dein Coach",
+    "loadForm": "Belastung & Form",
+    "thisWeek": "Diese Woche",
+    "yourGoals": "Deine Ziele",
+    "fitness": "Fitness",
+    "fatigue": "Ermüdung",
+    "form": "Form",
+    "chartLabel": "Fitness, Ermüdung und Form",
+    "stepProfile": "Profil ausfüllen",
+    "stepProfileHint": "Gewicht, Geburtsjahr, Max-HF – für Zonen und Belastung",
+    "stepGoal": "Ziel oder Programm anlegen",
+    "stepGoalHint": "Wettkampf mit Plan oder ein Trainingsprogramm",
+    "stepMembers": "Mitglieder hinzufügen",
+    "stepMembersHint": "Familie oder Team – jede Person mit eigener PIN",
+    "letsGo": "Los geht’s",
+    "startIntro": "Drei kurze Schritte, dann plant Cat-O-Fit mit dir.",
+    "doneChip": "✓ erledigt",
+    "greetMorning": "Guten Morgen, {name} 👋",
+    "greetAfternoon": "Guten Tag, {name} 👋",
+    "greetEvening": "Guten Abend, {name} 👋",
+    "overviewOf": "{name}s Übersicht",
+    "overviewOfSibilant": "{name}’ Übersicht",
+    "startWorkoutFor": "Training starten: {title}",
+    "startWorkout": "Training starten",
+    "ofPlanned": "von {km} geplant",
+    "runKm": "Lauf-km",
+    "statSessions": "Einheiten",
+    "statDone": "erledigt"
+  },
+  "dashboardCoach": {
+    "makeEasier": "„{title}“ lockerer machen",
+    "raiseTo": "„{title}“ auf {km} km erhöhen",
+    "raised": "Auf {km} km erhöht",
+    "volumeText": "Diese Woche sind {missed} km liegen geblieben ({done}/{planned} km erledigt). Lege einen Teil behutsam auf die nächste lockere Einheit – ohne Doppelbelastung.",
+    "rpeText": "Ø RPE {rpe} von 10 aus {count} bewerteten Einheiten der letzten {weeks} Wochen.",
+    "restWholeText": "{reason} An dem Tag ({date}) liegen {count} Einheiten aus deinen Zielen – der ganze Tag wird ruhig, damit die Erholung wirklich greift.",
+    "restText": "{reason} Vorschlag: „{title}“ am {date} zu einem Erholungstag machen.",
+    "log": {
+      "restReason": "Belastungssteuerung: Tag {date} entlastet.",
+      "destackReason": "„{title}“ auf einen freien Tag verschoben – nicht mehr zwei Einheiten am selben Tag.",
+      "returnReason": "Wiedereinstieg nach Ausfall.",
+      "autoRestTitle": "Erholungstag (automatisch)",
+      "autoRestDescription": "Bewusst ruhig – der ganze Tag ist auf Erholung gestellt (auch eine zweite Einheit aus deinen Zielen). Die ursprüngliche Belastung holst du erholter nach. Rückgängig über „Zuletzt automatisch angepasst“.",
+      "restTitle": "Erholungstag eingefügt",
+      "footballTitle": "Nach Fußball lockerer",
+      "footballReason": "Fußball war fordernd – Folgeeinheit entlastet.",
+      "destackTitle": "Tag entzerrt",
+      "lowReadinessReason": "Niedrige Bereitschaft heute.",
+      "easierTodayTitle": "Heute lockerer gemacht",
+      "easierTitle": "Lockerer gemacht",
+      "deloadTitle": "Entlastung eingeplant",
+      "deloadReason": "Belastung zuletzt dauerhaft hoch.",
+      "boostTitle": "Steigerung eingeplant",
+      "boostReason": "Zuletzt Reserven – etwas mehr Umfang."
+    },
+    "restWholeToast": "Ganzer Tag entlastet – {count} Einheiten ruhig gestellt",
+    "footballTitle": "Fußball {when} war fordernd",
+    "footballText": "Fußball kostet viel Körner. „{title}“ am {date} gehst du besser etwas lockerer an – frischer für die Schlüsseleinheiten.",
+    "destackText": "{date}: „{keep}“ und „{move}“ aus deinen Zielen liegen zusammen. „{move}“ auf {weekday} ({target}) zu verschieben entzerrt den Tag – jede Einheit bekommt ihren Reiz und die Erholung stimmt.",
+    "moveTo": "„{title}“ auf {weekday} verschieben",
+    "readinessLow": "Bereitschaft heute niedrig ({score})",
+    "readinessText": "Heute steht „{title}“ an – fordernd. Bei niedriger Bereitschaft bringt eine lockere Einheit oft mehr als eine erzwungene harte.",
+    "makeupText": "„{title}“ vom {date} ist ausgefallen. {weekday} ({target}) ist frei – dorthin verschieben?",
+    "makeupButton": "Auf {weekday} nachholen",
+    "fitsUnit": "passt zu „{title}“",
+    "matchAll": "Alle {count} zuordnen",
+    "whyThis": "Warum diese Empfehlung?",
+    "returnTitle": "Behutsam wieder einsteigen",
+    "volumeTitle": "Wochenumfang ausgleichen",
+    "rpeTitle": "Anstrengung der letzten Einheiten",
+    "undoneSkipped": "Rückgängig gemacht – bereits erledigte Einheiten bleiben unverändert",
+    "undone": "Anpassung rückgängig gemacht",
+    "restWholeTitle": "Ganzer Erholungstag empfohlen",
+    "restTitle": "Erholungstag empfohlen",
+    "restWholeButton": "Ganzen Tag entlasten",
+    "restButton": "Erholungstag einplanen",
+    "restPlannedToast": "Erholungstag eingeplant – die Einheit holst du erholter nach",
+    "footballToast": "Lockerer angesetzt – die Schlüsseleinheit holst du frischer nach",
+    "destackTitle": "Zwei Einheiten an einem Tag",
+    "destackToast": "Tag entzerrt – die Einheit steht jetzt an einem freien Tag",
+    "logTitle": "Zuletzt automatisch angepasst",
+    "adjustment": "Anpassung",
+    "readiness": "Bereitschaft",
+    "easierToday": "Heute lockerer machen",
+    "toSession": "Zur Einheit",
+    "easierToast": "Lockerer angesetzt – Schlüsseleinheiten kommen, wenn du wieder erholt bist",
+    "makeupTitle": "Schlüsseleinheit nachholen?",
+    "makeupToast": "Schlüsseleinheit nachgeholt – steht jetzt im Plan",
+    "deloadTitle": "Seit Wochen sehr fordernd",
+    "deloadButton": "Kommende Woche entlasten",
+    "deloadToast": "Entlastungswoche aktiv – weniger Umfang, mehr Erholung",
+    "boostTitle": "Noch Reserven",
+    "boostButton": "Kommende Woche steigern",
+    "boostToast": "Kommende Woche etwas fordernder – viel Erfolg!",
+    "rpeSaved": "Anstrengung gespeichert",
+    "dontAsk": "Nicht nachfragen",
+    "rpeGroup": "Wie anstrengend war das Training?",
+    "rpeAskTitle": "Wie hart war’s?",
+    "rpeAskText": "Dein Empfinden macht die Belastung genauer als jede Uhr – ein Tipp genügt.",
+    "match": "Zuordnen",
+    "dontMatch": "Nicht zuordnen",
+    "matchTitle": "Importierte Trainings zuordnen",
+    "matchText": "Diese Trainings kamen aus Apple Health oder einer Datei und passen zu geplanten Einheiten desselben Tages. Zugeordnet gelten die Einheiten als erledigt – ohne doppelte Belastung.",
+    "returnTextInjured": "Am {date} ist eine Einheit verletzungsbedingt ausgefallen. Starte mit lockeren Einheiten und steigere stufenweise – harte Einheiten erst, wenn du dich wieder ganz fit fühlst. Nachholen musst du nichts. Bei anhaltenden Schmerzen lass es ärztlich abklären.",
+    "returnTextIll": "Am {date} ist eine Einheit krankheitsbedingt ausgefallen. Starte mit lockeren Einheiten und steigere stufenweise – harte Einheiten erst, wenn du dich wieder ganz fit fühlst. Nachholen musst du nichts.",
+    "session": "Einheit",
+    "deloadText": "Deine Einheiten der letzten {weeks} Wochen waren im Schnitt sehr anstrengend. Eine Entlastungswoche ({count} Einheiten mit weniger Umfang, Intensität bleibt) hilft, gestärkt zurückzukommen. Feste Termine bleiben unverändert.",
+    "deloadTextRpe": "Deine Einheiten der letzten {weeks} Wochen waren im Schnitt sehr anstrengend (Ø RPE {rpe}). Eine Entlastungswoche ({count} Einheiten mit weniger Umfang, Intensität bleibt) hilft, gestärkt zurückzukommen. Feste Termine bleiben unverändert.",
+    "boostText": "Deine Einheiten der letzten {weeks} Wochen waren eher locker, und deine Belastung liegt im üblichen Rahmen. Wenn du willst, legst du in der kommenden Woche ({count} Einheiten) etwas drauf – rund 12 % mehr Umfang.",
+    "boostTextRpe": "Deine Einheiten der letzten {weeks} Wochen waren eher locker (Ø RPE {rpe}), und deine Belastung liegt im üblichen Rahmen. Wenn du willst, legst du in der kommenden Woche ({count} Einheiten) etwas drauf – rund 12 % mehr Umfang.",
+    "rpeChoiceAria": "{label} ({value} von 10)",
+    "rpeFromHr": "Bis dahin aus der Herzfrequenz geschätzt: {rpe} von 10",
+    "rpeFromType": "Bis dahin zählt der Standardwert der Sportart: {rpe} von 10",
+    "matchedMany": "{count} Trainings zugeordnet",
+    "matchedOne": "Zugeordnet – Einheit erledigt"
+  },
+  "dashboardGoals": {
+    "weightAlmost": "{current} – fast am Ziel {target}, jetzt halten",
+    "weightProgress": "{current} → Ziel {target} (noch {remaining})",
+    "phaseNote": "Phase „{phase}“: {note}",
+    "weekAlmost": "fast am Ziel {target} kg – halten",
+    "weekRemaining": "noch {remaining} kg bis {target} kg",
+    "currentToGoal": "{current} → Ziel {target}",
+    "gainWeight": "Zunehmen",
+    "loseWeight": "Abnehmen",
+    "weight": "Gewicht",
+    "noForecast": "Noch zu wenige Läufe für eine Formprognose.",
+    "halfMarathon": "Halbmarathon",
+    "marathon": "Marathon",
+    "race": "Wettkampf",
+    "weekGoals": "Wochenziele",
+    "adjust": "Anpassen",
+    "activeMinutes": "Aktive Minuten",
+    "trainingDays": "Trainingstage",
+    "goalWeightReached": "Zielgewicht erreicht 🎉",
+    "weekGoalMet": "✅ Wochenziel erreicht – stark!",
+    "healthGoals": "Gesundheitsziele",
+    "manage": "Verwalten",
+    "forecastOnTrack": "Prognose {time} – auf Kurs.",
+    "forecastBehind": "Prognose {time} – da ist noch was zu tun.",
+    "forecastTargetOnTrack": "Prognose {time} · Ziel {target} – auf Kurs.",
+    "forecastTargetBehind": "Prognose {time} · Ziel {target} – da ist noch was zu tun.",
+    "forecastNeedsVolume": "Setzt ausreichenden Umfang voraus.",
+    "forecastFromEasy": "Aus lockeren Läufen geschätzt.",
+    "weightReachedBeyond": "Ziel erreicht ({weight}) – jetzt halten. Passt das Ziel noch?",
+    "weightReached": "Ziel erreicht ({weight})",
+    "cockpitDual": "Ziel-Cockpit · {race} + {weight}",
+    "cockpit": "Ziel-Cockpit",
+    "noDeficit": "Kein Defizit empfohlen – Details in der Ernährung",
+    "gainGoal": "Ziel: zunehmen – Details in der Ernährung",
+    "weightGoalReached": "Zielgewicht erreicht – jetzt halten",
+    "answerScreening": "Tagesziel: erst kurz die Abgrenzung beantworten",
+    "lossGoalActive": "Abnehmziel aktiv – Tagesziel in der Ernährung",
+    "deficitNone": "Empfohlenes Defizit: aktuell keins (Wettkampf-Fokus)",
+    "deficitKcal": "Empfohlenes Defizit: {kcal} kcal/Tag",
+    "phaseFloored": "Phasenabhängig, mit Sicherheitsgrenze · zur Ernährung",
+    "phaseBased": "Phasenabhängig · zur Ernährung",
+    "reached": "erreicht 🎉",
+    "noReading": "noch kein Messwert",
+    "stillToGo": "noch {value}",
+    "daysLeft": "{n} T",
+    "deadlinePassed": "Frist vorbei"
+  },
+  "showProgram": {
+    "unit": "Einheit",
+    "perSide": "je Seite",
+    "parse": {
+      "perSide": "Bein|Seite|Arm",
+      "perSidePhrase": "je Seite|pro Seite",
+      "rounds": "Runden",
+      "rest": "Pause",
+      "and": "und"
+    }
+  },
+  "workoutCatalog": {
+    "ganzkoerper": {
+      "title": "Ganzkörper ohne Geräte",
+      "subtitle": "Kraft für Beine, Po, Oberkörper und Rumpf"
+    },
+    "po-beine": {
+      "title": "Po & Beine",
+      "subtitle": "Kniebeugen, Ausfallschritte, Brücke – ohne Geräte"
+    },
+    "bauch": {
+      "title": "Bauch & Rumpf",
+      "subtitle": "Stabil in der Mitte – ruhig und kontrolliert"
+    },
+    "hiit": {
+      "title": "HIIT – kurz und knackig",
+      "subtitle": "Puls hoch: 30 Sekunden Gas, 15 Sekunden Pause"
+    },
+    "aufwaermen": {
+      "title": "Aufwärmen vor dem Lauf",
+      "subtitle": "Gelenke mobil, Puls langsam hoch"
+    },
+    "laeufer-kraft": {
+      "title": "Kraft für Läufer:innen",
+      "subtitle": "Hüfte, Waden und Rumpf – gegen typische Laufbeschwerden"
+    },
+    "mobility-morgen": {
+      "title": "Mobility am Morgen",
+      "subtitle": "Sanft in den Tag – Rücken, Hüfte, Schultern"
+    },
+    "dehnen-laufen": {
+      "title": "Dehnen nach dem Laufen",
+      "subtitle": "Waden, Oberschenkel, Hüfte – ruhig ausatmen"
+    },
+    "ruecken": {
+      "title": "Rücken entspannt & stark",
+      "subtitle": "Mobilisieren, stabilisieren, lösen"
+    },
+    "oberkoerper": {
+      "title": "Oberkörper ohne Geräte",
+      "subtitle": "Brust, Schultern, Arme – Liegestütz in drei Stufen"
+    },
+    "hanteln": {
+      "title": "Ganzkörper mit Kurzhanteln",
+      "subtitle": "Die Grundübungen mit Gewicht"
+    },
+    "kettlebell": {
+      "title": "Kettlebell-Basics",
+      "subtitle": "Schwingen, Kniebeuge, Heben, Tragen"
+    },
+    "hyrox": {
+      "title": "Hyrox-Kraft",
+      "subtitle": "Wall Balls, Swings, Lunges, Burpees, Tragen"
+    },
+    "beine-power": {
+      "title": "Bein-Power",
+      "subtitle": "Sprungkraft und stabile Knie"
+    },
+    "po-band": {
+      "title": "Po mit Miniband",
+      "subtitle": "Gesäß und Hüfte gezielt kräftigen"
+    },
+    "bauch-7": {
+      "title": "Bauch kurz & knackig",
+      "subtitle": "Sechs Übungen, alles auf der Matte"
+    },
+    "rumpf-sanft": {
+      "title": "Rumpf stabil – sanft",
+      "subtitle": "Kontrolle statt Tempo, rückenfreundlich"
+    },
+    "tabata": {
+      "title": "Tabata-Intervalle",
+      "subtitle": "20 Sekunden Vollgas, 10 Sekunden Pause"
+    },
+    "cardio-leise": {
+      "title": "Cardio ohne Springen",
+      "subtitle": "Puls hoch, Nachbarn bleiben entspannt"
+    },
+    "huefte": {
+      "title": "Hüfte frei",
+      "subtitle": "Für alle, die viel sitzen oder laufen"
+    },
+    "schulter-nacken": {
+      "title": "Schultern & Nacken",
+      "subtitle": "Gegen den Schreibtisch-Rücken"
+    },
+    "abend": {
+      "title": "Abendroutine",
+      "subtitle": "Runterkommen und lang machen"
+    },
+    "lauf-abc": {
+      "title": "Lauf-ABC & Aufwärmen",
+      "subtitle": "Schritte, Fußgelenke, Sprungkraft"
+    },
+    "fuesse-waden": {
+      "title": "Füße & Waden stark",
+      "subtitle": "Achillessehne, Schienbein, Fußgelenk"
+    },
+    "fussball-praevention": {
+      "title": "Fußball-Prävention",
+      "subtitle": "Oberschenkelrückseite, Leiste, Hüfte – wie im FIFA 11+"
+    },
+    "cats": {
+      "kraft": "Kraft",
+      "rumpf": "Rumpf",
+      "beweglichkeit": "Beweglichkeit",
+      "kondition": "Kondition",
+      "laufen": "Laufen & Fußball"
+    }
+  },
+  "motion": {
+    "animationOf": "Animation: {name}",
+    "pause": "Pause",
+    "doneSets": {
+      "one": "Geschafft – {count} Satz",
+      "other": "Geschafft – {count} Sätze"
+    },
+    "time": "Zeit",
+    "sets": "Sätze",
+    "restart": "Von vorn",
+    "beatTone": "Takt-Ton",
+    "sound": "Ton",
+    "normal": "Normal",
+    "slow": "Langsam",
+    "tempo": "Takt",
+    "resume": "Weiter",
+    "again": "Noch einmal",
+    "followAlong": "Mitmachen",
+    "less": "{label} weniger",
+    "more": "{label} mehr",
+    "reps": "Wdh.",
+    "repsEachSide": "Wdh. je Seite",
+    "previewHold": "Vorschau · {s} s halten",
+    "previewReps": "Vorschau · {n} Wdh.",
+    "previewRepsEachSide": "Vorschau · {n} Wdh. je Seite",
+    "done": "Geschafft",
+    "rest": "Pause",
+    "switchSides": "Seitenwechsel",
+    "restStatus": "Pause {time} · gleich Satz {set} von {sets}",
+    "switchStatus": "Seite wechseln · {time}",
+    "setOf": "Satz {set} von {sets}",
+    "getInPosition": "{set} · in Position",
+    "repOf": "{set} · Wdh. {rep} von {reps}",
+    "repOfEachSide": "{set} · Wdh. {rep} von {reps} je Seite",
+    "breath": {
+      "ein": "Einatmen",
+      "aus": "Ausatmen",
+      "steady": "ruhig weiteratmen",
+      "calm": "ruhig atmen"
+    }
   }
 }

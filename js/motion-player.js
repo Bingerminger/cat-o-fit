@@ -16,9 +16,10 @@ import { mountFigure, motionSVG, thumbKeys } from './motion-figure.js';
 import { cycleOf, introOf } from './motion-rig.js';
 import { tone, unlockAudio, keepAwake } from './audio.js';
 
+import { t, tp } from './i18n.js';
+
 const sum = (list) => list.reduce((a, p) => a + p.dur, 0);
 const mmss = (s) => { const v = Math.max(0, Math.ceil(s)); return `${Math.floor(v / 60)}:${String(v % 60).padStart(2, '0')}`; };
-const BREATH = { ein: 'Einatmen', aus: 'Ausatmen' };
 
 /** Voreinstellung für „Mitmachen“ je Übung und Kategorie. */
 export function defaultsFor(m, category = 'strength') {
@@ -50,19 +51,19 @@ export function buildPlan(m, { reps = null, holdS = null, sets = 3, rest = 60, s
     });
     if (s < sets) segs.push({ kind: 'rest', set: s, side: 'a', list: cycleOf(m, 'a'), dur: rest });
   }
-  let t = 0;
-  for (const g of segs) { g.t0 = t; t += g.dur; }
-  return { segs, total: t, sets, reps, holdS };
+  let at = 0;
+  for (const g of segs) { g.t0 = at; at += g.dur; }
+  return { segs, total: at, sets, reps, holdS };
 }
 
 /** Zustand zum Zeitpunkt t (Sekunden) im Plan: Abschnitt, Satz, Wiederholung, Restzeit. */
-export function stateAt(plan, t) {
+export function stateAt(plan, time) {
   const last = plan.segs[plan.segs.length - 1];
-  if (t >= plan.total) return { done: true, seg: last, set: plan.sets, side: last.side, local: last.dur, left: 0 };
+  if (time >= plan.total) return { done: true, seg: last, set: plan.sets, side: last.side, local: last.dur, left: 0 };
   let i = 0;
-  while (i < plan.segs.length - 1 && t >= plan.segs[i].t0 + plan.segs[i].dur) i++;
+  while (i < plan.segs.length - 1 && time >= plan.segs[i].t0 + plan.segs[i].dur) i++;
   const seg = plan.segs[i];
-  const local = Math.max(0, t - seg.t0);
+  const local = Math.max(0, time - seg.t0);
   const out = { done: false, seg, index: i, local, set: seg.set, side: seg.side, left: seg.dur - local };
   if (seg.kind === 'reps') out.rep = Math.min(seg.reps, Math.floor(local / seg.cyc) + 1);
   return out;
@@ -92,7 +93,7 @@ export function mountPlayer(host, ex, m, { color = '', category = ex.category, o
   let mode = 'preview';         // preview | train | paused | done
   let speed = 1;
   let sound = false;
-  let t = 0;                    // Zeit im aktuellen Modus (Sekunden, mit Tempo)
+  let clock = 0;                // time in the current mode (seconds, with tempo)
   let plan = null;
   let lastPhaseKey = '';
   let lastBeepSec = -1;
@@ -101,7 +102,7 @@ export function mountPlayer(host, ex, m, { color = '', category = ex.category, o
 
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   svg.setAttribute('role', 'img');
-  svg.setAttribute('aria-label', `Animation: ${ex.name}`);
+  svg.setAttribute('aria-label', t('motion.animationOf', { name: ex.name }));
   const fig = mountFigure(svg, m, { color });
   const still = el('div', { class: 'mp-still', html: motionSVG(m, { ...thumbKeys(m), color }) });
   const phaseChip = el('span', { class: 'mp-chip mp-chip--phase' });
@@ -121,38 +122,38 @@ export function mountPlayer(host, ex, m, { color = '', category = ex.category, o
     const paint = () => { val.textContent = `${get()}${unit}`; };
     const btn = (d, txt, aria) => el('button', { class: 'icon-btn mp-step__btn', type: 'button', 'aria-label': aria, onclick: () => { set(Math.min(max, Math.max(min, get() + d))); paint(); } }, txt);
     paint();
-    return el('div', { class: 'mp-step' }, [el('span', { class: 'mp-step__label', text: label }), btn(-step, '−', `${label} weniger`), val, btn(step, '+', `${label} mehr`)]);
+    return el('div', { class: 'mp-step' }, [el('span', { class: 'mp-step__label', text: label }), btn(-step, '−', t('motion.less', { label })), val, btn(step, '+', t('motion.more', { label }))]);
   };
   const steppers = el('div', { class: 'mp-steps' }, [
     cfg.holdS != null
-      ? stepper('Zeit', () => cfg.holdS, (v) => { cfg.holdS = v; }, 5, 10, 180, ' s')
-      : stepper(m.sides ? 'Wdh. je Seite' : 'Wdh.', () => cfg.reps, (v) => { cfg.reps = v; }, 1, 1, 50, ''),
-    stepper('Sätze', () => cfg.sets, (v) => { cfg.sets = v; }, 1, 1, 6, ''),
+      ? stepper(t('motion.time'), () => cfg.holdS, (v) => { cfg.holdS = v; }, 5, 10, 180, ' s')
+      : stepper(m.sides ? t('motion.repsEachSide') : t('motion.reps'), () => cfg.reps, (v) => { cfg.reps = v; }, 1, 1, 50, ''),
+    stepper(t('motion.sets'), () => cfg.sets, (v) => { cfg.sets = v; }, 1, 1, 6, ''),
   ]);
 
   const mainBtn = el('button', { class: 'btn btn--primary grow', type: 'button', onclick: () => onMain() });
-  const resetBtn = el('button', { class: 'btn btn--ghost', type: 'button', 'aria-label': 'Von vorn', title: 'Von vorn', onclick: () => reset() }, [icon('refresh')]);
-  const soundBtn = el('button', { class: 'btn btn--ghost', type: 'button', 'aria-pressed': 'false', title: 'Takt-Ton', onclick: () => {
+  const resetBtn = el('button', { class: 'btn btn--ghost', type: 'button', 'aria-label': t('motion.restart'), title: t('motion.restart'), onclick: () => reset() }, [icon('refresh')]);
+  const soundBtn = el('button', { class: 'btn btn--ghost', type: 'button', 'aria-pressed': 'false', title: t('motion.beatTone'), onclick: () => {
     sound = !sound; soundBtn.setAttribute('aria-pressed', String(sound)); soundBtn.classList.toggle('is-on', sound);
     if (sound) { unlockAudio(); beep(660, 120, 0.3); }
-  } }, [icon('bell'), el('span', { text: 'Ton' })]);
-  const tempo = segmented([{ value: '1', label: 'Normal' }, { value: '0.6', label: 'Langsam' }], '1', (v) => { speed = Number(v); }, { label: 'Takt' });
+  } }, [icon('bell'), el('span', { text: t('motion.sound') })]);
+  const tempo = segmented([{ value: '1', label: t('motion.normal') }, { value: '0.6', label: t('motion.slow') }], '1', (v) => { speed = Number(v); }, { label: t('motion.tempo') });
 
   host.appendChild(el('div', { class: 'mp' }, [
     stage, bar, count,
     el('div', { class: 'mp-cue-row' }, [cue, breath]),
     steppers,
     el('div', { class: 'mp-controls' }, [mainBtn, resetBtn, soundBtn]),
-    el('div', { class: 'mp-tempo' }, [el('span', { class: 'mp-tempo__label', text: 'Takt' }), tempo]),
+    el('div', { class: 'mp-tempo' }, [el('span', { class: 'mp-tempo__label', text: t('motion.tempo') }), tempo]),
   ]));
 
   function paintButton() {
     mainBtn.innerHTML = '';
     const set = (ic, txt) => { mainBtn.appendChild(icon(ic)); mainBtn.appendChild(el('span', { text: txt })); };
-    if (mode === 'train') set('pause', 'Pause');
-    else if (mode === 'paused') set('play', 'Weiter');
-    else if (mode === 'done') set('refresh', 'Noch einmal');
-    else set('play', 'Mitmachen');
+    if (mode === 'train') set('pause', t('motion.pause'));
+    else if (mode === 'paused') set('play', t('motion.resume'));
+    else if (mode === 'done') set('refresh', t('motion.again'));
+    else set('play', t('motion.followAlong'));
     steppers.hidden = mode === 'train' || mode === 'paused';
   }
 
@@ -164,30 +165,31 @@ export function mountPlayer(host, ex, m, { color = '', category = ex.category, o
     if (mode === 'preview') {
       const intro = introOf(m, 'a');
       const introDur = sum(intro);
-      fr = t < introDur ? fig.update(t, intro) : fig.update(t - introDur, cycleOf(m, 'a'));
+      fr = clock < introDur ? fig.update(clock, intro) : fig.update(clock - introDur, cycleOf(m, 'a'));
       label = fr.phase.label; pass = fr.phase.pass;
-      status = cfg.holdS != null ? `Vorschau · ${cfg.holdS} s halten` : `Vorschau · ${cfg.reps} Wdh.${m.sides ? ' je Seite' : ''}`;
+      status = cfg.holdS != null ? t('motion.previewHold', { s: cfg.holdS })
+        : m.sides ? t('motion.previewRepsEachSide', { n: cfg.reps }) : t('motion.previewReps', { n: cfg.reps });
       progress = fr.k;
     } else {
-      const st = stateAt(plan, t);
+      const st = stateAt(plan, clock);
       const seg = st.seg;
       if (st.done) {
-        fr = fig.update(0, seg.list); label = 'Geschafft'; status = `Geschafft – ${plan.sets} ${plan.sets === 1 ? 'Satz' : 'Sätze'}`; progress = 1;
+        fr = fig.update(0, seg.list); label = t('motion.done'); status = tp('motion.doneSets', plan.sets); progress = 1;
         if (mode !== 'done') finish();
       } else if (seg.kind === 'rest' || seg.kind === 'switch') {
         fr = fig.update(0, seg.list);
-        label = seg.kind === 'rest' ? 'Pause' : 'Seitenwechsel';
-        status = seg.kind === 'rest' ? `Pause ${mmss(st.left)} · gleich Satz ${seg.set + 1} von ${plan.sets}` : `Seite wechseln · ${mmss(st.left)}`;
+        label = seg.kind === 'rest' ? t('motion.rest') : t('motion.switchSides');
+        status = seg.kind === 'rest' ? t('motion.restStatus', { time: mmss(st.left), set: seg.set + 1, sets: plan.sets }) : t('motion.switchStatus', { time: mmss(st.left) });
         progress = st.local / seg.dur;
         pass = seg.side;
         countdownBeep(st.left);
       } else {
         fr = fig.update(st.local, seg.list);
         label = fr.phase.label; pass = fr.phase.pass === 'b' || seg.side === 'b' ? 'b' : 'a';
-        const setTxt = `Satz ${seg.set} von ${plan.sets}`;
-        if (seg.kind === 'intro') status = `${setTxt} · in Position`;
+        const setTxt = t('motion.setOf', { set: seg.set, sets: plan.sets });
+        if (seg.kind === 'intro') status = t('motion.getInPosition', { set: setTxt });
         else if (seg.kind === 'time') status = `${setTxt} · ${mmss(st.left)}`;
-        else status = `${setTxt} · Wdh. ${st.rep} von ${seg.reps}${m.sides === 'alternate' ? ' je Seite' : ''}`;
+        else status = m.sides === 'alternate' ? t('motion.repOfEachSide', { set: setTxt, rep: st.rep, reps: seg.reps }) : t('motion.repOf', { set: setTxt, rep: st.rep, reps: seg.reps });
         progress = fr.k;
         const key = `${st.index}:${fr.index}:${Math.floor(st.local / (seg.cyc || 1e9))}`;
         if (key !== lastPhaseKey) {
@@ -204,7 +206,7 @@ export function mountPlayer(host, ex, m, { color = '', category = ex.category, o
     // Der letzte Hinweis bleibt stehen, bis eine Phase einen neuen bringt – kein Flackern.
     if (fr && fr.phase.cue) lastCue = fr.phase.cue;
     setText(cue, lastCue);
-    const b = fr && BREATH[fr.phase.breath] ? BREATH[fr.phase.breath] : (fr && fr.phase.breath) || '';
+    const b = fr && fr.phase.breath ? t(`motion.breath.${fr.phase.breath}`) : '';
     setText(breath, b);
     breath.hidden = !b;
     barFill.style.width = `${Math.round(Math.max(0, Math.min(1, progress)) * 100)}%`;
@@ -228,7 +230,7 @@ export function mountPlayer(host, ex, m, { color = '', category = ex.category, o
   function onMain() {
     if (mode === 'preview' || mode === 'done') {
       plan = buildPlan(m, { reps: cfg.reps, holdS: cfg.holdS, sets: cfg.sets, rest: defaultsFor(m, category).rest });
-      t = 0; lastPhaseKey = ''; lastBeepSec = -1; lastCue = '';
+      clock = 0; lastPhaseKey = ''; lastBeepSec = -1; lastCue = '';
       mode = 'train';
       showMotion(true);
       keepAwake(true);
@@ -244,7 +246,7 @@ export function mountPlayer(host, ex, m, { color = '', category = ex.category, o
   }
 
   function reset() {
-    mode = 'preview'; t = 0; plan = null; lastCue = ''; keepAwake(false);
+    mode = 'preview'; clock = 0; plan = null; lastCue = ''; keepAwake(false);
     showMotion(!reduced);
     paintButton();
     render();
@@ -258,8 +260,8 @@ export function mountPlayer(host, ex, m, { color = '', category = ex.category, o
   }
 
   function tick(dt) {
-    if (mode === 'preview' && !(reduced && svg.style.display === 'none')) t += dt * speed;
-    else if (mode === 'train') t += dt * speed;
+    if (mode === 'preview' && !(reduced && svg.style.display === 'none')) clock += dt * speed;
+    else if (mode === 'train') clock += dt * speed;
     render();
   }
 

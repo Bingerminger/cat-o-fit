@@ -15,7 +15,7 @@ import { t } from './i18n.js';
 /** VO₂ (ml/kg/min) bei Laufgeschwindigkeit v (m/min) – Daniels/Gilbert. */
 function vo2AtSpeed(v) { return -4.60 + 0.182258 * v + 0.000104 * v * v; }
 /** Anteil von VO₂max, der über t Minuten gehalten werden kann (Drop-off). */
-function pctMaxForTime(t) { return 0.8 + 0.1894393 * Math.exp(-0.012778 * t) + 0.2989558 * Math.exp(-0.1932605 * t); }
+function pctMaxForTime(min) { return 0.8 + 0.1894393 * Math.exp(-0.012778 * min) + 0.2989558 * Math.exp(-0.1932605 * min); }
 
 /** VDOT aus einer Leistung (Distanz in Metern, Zeit in Sekunden). null bei Unsinn. */
 export function vdotFromPerf(distanceM, timeSec) {

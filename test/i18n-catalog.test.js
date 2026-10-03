@@ -21,15 +21,19 @@ const TRANSLATED_MODULES = [
   'js/calendar.js', 'js/coach.js', 'js/triage.js', 'js/whatif.js', 'js/workout-mode.js', 'js/workout-engine.js',
   'js/events.js', 'js/session.js', 'js/unit-actions.js', 'js/capture.js', 'js/plans.js', 'js/commitments.js',
   'js/rolling.js', 'js/dualgoal.js', 'js/vdot.js', 'js/exercises.js',
+  'js/dashboard.js', 'js/dashboard-coach.js', 'js/dashboard-goals.js',
 ];
 /** Internal values (compared in code, never shown) that happen to be German words. */
 const INTERNAL_VALUES = ["'erhöht'"];
 /** Key prefixes the code builds at run time (e.g. `format.${x}`); listed here so they count as used. */
 const DYNAMIC_PREFIXES = ['format.', 'sessionTypes.', 'feelings.', 'priorities.', 'status.', 'rpe.',
-  'exerciseNames.', 'exerciseAliases.', 'exerciseLib.level.', 'exercises.'];
+  'exerciseNames.', 'exerciseAliases.', 'exerciseLib.level.', 'exercises.', 'workoutCatalog.', 'showProgram.parse.', 'motion.breath.'];
 /** Languages that must have every key. The others fall back to English until their
     translation pass (package P3); before the v4.0.0 release this list holds all languages. */
 const COMPLETE_LANGUAGES = ['en', 'de'];
+/** Content whose English source lives in code (the catalogs hold the other languages):
+    phase labels and cues of the exercise animations (js/exercise-motions.js). */
+const SOURCE_IN_CODE = [{ area: 'exercises', re: /^[^.]+\.(phases|intro)\./ }];
 
 function flatten(obj, prefix = '', out = new Map()) {
   for (const [k, v] of Object.entries(obj)) {
@@ -60,6 +64,7 @@ test('same keys, same placeholders, non-empty texts, lists of equal length', () 
         const base = pluralBase(key);
         if (base && !cat.has(key) && key.endsWith('.one') && !cats.includes('one')) continue;
         if (!cat.has(key) && !COMPLETE_LANGUAGES.includes(lang)) continue;   // pending translation
+        if (!cat.has(key) && SOURCE_IN_CODE.some((s) => s.area === area && s.re.test(key))) continue;
         assert.ok(cat.has(key), `${lang}/${area}: ${key} is missing`);
         const w = cat.get(key);
         if (Array.isArray(v)) {
@@ -79,6 +84,7 @@ test('same keys, same placeholders, non-empty texts, lists of equal length', () 
       }
       for (const key of cat.keys()) {
         if (en.has(key)) continue;
+        if (SOURCE_IN_CODE.some((s) => s.area === area && s.re.test(key))) continue;   // English lives in code
         const base = pluralBase(key);
         const form = key.slice(key.lastIndexOf('.') + 1);
         assert.ok(base && en.has(`${base}.other`) && cats.includes(form), `${lang}/${area}: ${key} does not exist in English`);
@@ -103,7 +109,7 @@ function usedKeys() {
   for (const file of jsFiles()) {
     const src = read(file);
     if (!/from '\.\/i18n\.js'/.test(src) && file !== 'js/i18n.js') continue;
-    for (const m of src.matchAll(/\b(t|tp|tList|has)\(\s*'([A-Za-z0-9_.]+)'/g)) {
+    for (const m of src.matchAll(/\b(t|tr|tp|tList|has)\(\s*'([A-Za-z0-9_.]+)'/g)) {
       used.set(m[1] === 'tp' ? `${m[2]}.other` : m[2], file);
     }
   }
@@ -143,6 +149,22 @@ test('no module calls t() while it is being imported (catalogs load later in the
     cwd: new URL('.', ROOT), env: { ...process.env, CATOFIT_I18N_SKIP: '1' }, encoding: 'utf8',
   });
   assert.deepEqual(JSON.parse(out.trim().split('\n').at(-1)), [], 'keys looked up at import time – move them into a function');
+});
+
+test('modules that import t() declare no other variable or parameter called t', () => {
+  const found = [];
+  for (const file of jsFiles()) {
+    const src = read(file);
+    const imp = src.match(/import \{([^}]*)\} from '\.\/i18n\.js'/);
+    if (!imp || !imp[1].split(',').map((x) => x.trim()).includes('t')) continue;   // imported as t (not "t as …")
+    // Comments and quoted strings out, line numbers kept.
+    const code = src.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, '')).replace(/(^|[^:'"`])\/\/.*$/gm, '$1')
+      .replace(/'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"/g, "''");
+    const hits = code.split('\n').map((line, i) => [i + 1, line])
+      .filter(([, line]) => /\b(?:let|const|var)\s+t\b|\(\s*t\s*[,)]\s*(?:=>|\{)|function\s+\w*\s*\([^)]*\bt\b(?!\s*\()[^)]*\)|\bt\s*=>|,\s*t\s*\)\s*(?:=>|\{)/.test(line));
+    found.push(...hits.map(([n, l]) => `${file}:${n} ${l.trim()}`));
+  }
+  assert.deepEqual(found, [], 'a local t hides the translation function – rename it');
 });
 
 test('translated modules contain no hard-coded German text', () => {

@@ -18,6 +18,7 @@
    Posen-Helfer unten; Koordinaten und Winkel wie in motion-rig.js beschrieben.
    ========================================================================= */
 
+import { t as tr, hasOwnText } from './i18n.js';
 import { BODY, STAND_HIP, ik } from './motion-rig.js';
 
 const B = BODY;
@@ -110,10 +111,10 @@ function torsoForLowShoulder(hip, target) {
 }
 
 /* ---------- Wiederkehrende Bausteine ---------- */
-const DOWN = (s, cue, extra = {}) => ({ to: 'down', s, label: 'Runter', cue, breath: 'ein', ...extra });
-const UP = (s, cue, extra = {}) => ({ to: 'up', s, label: 'Hoch', cue, breath: 'aus', ...extra });
-const HOLD = (s, label = 'Halten', extra = {}) => ({ hold: s, label, ...extra });
-const STILL = (cue, breath = 'ruhig weiteratmen') => [HOLD(4, 'Halten', { cue, breath })];
+const DOWN = (s, cue, extra = {}) => ({ to: 'down', s, label: 'Down', cue, breath: 'ein', ...extra });
+const UP = (s, cue, extra = {}) => ({ to: 'up', s, label: 'Up', cue, breath: 'aus', ...extra });
+const HOLD = (s, label = 'Hold', extra = {}) => ({ hold: s, label, ...extra });
+const STILL = (cue, breath = 'steady') => [HOLD(4, 'Hold', { cue, breath })];
 
 /* Liegestütz/Plank: Füße auf den Zehen bei x = −52 */
 const PL_A = [-52, TY];
@@ -195,7 +196,7 @@ M.squat = {
     up: stand(),
     down: { hip: [-17, STAND_HIP + 33], torso: 42, legs: pair(at(2, FY), at(-2, FY)), arms: pair(ang(84, 88), ang(80, 84)) },
   },
-  seq: [DOWN(2, 'Hüfte nach hinten, Brust bleibt offen'), HOLD(0.4, 'Unten'), UP(1.4, 'Durch die ganze Fußsohle drücken'), HOLD(0.6, 'Oben')],
+  seq: [DOWN(2, 'Hips back, chest stays open'), HOLD(0.4, 'Bottom'), UP(1.4, 'Press through the whole foot'), HOLD(0.6, 'Top')],
 };
 
 M.goblet_squat = (() => {
@@ -207,7 +208,7 @@ M.goblet_squat = (() => {
       up: stand({ arms: hands(upHip, 0) }),
       down: { hip: dnHip, torso: 28, legs: pair(at(2, FY), at(-2, FY)), arms: hands(dnHip, 28) },
     },
-    seq: [DOWN(2, 'Ellbogen zwischen die Knie, Brust hoch'), HOLD(0.4, 'Unten'), UP(1.4, 'Fersen in den Boden drücken'), HOLD(0.5, 'Oben')],
+    seq: [DOWN(2, 'Elbows between the knees, chest up'), HOLD(0.4, 'Bottom'), UP(1.4, 'Press the heels into the floor'), HOLD(0.5, 'Top')],
   };
 })();
 
@@ -217,7 +218,7 @@ M.sumo_squat = {
     up: standFront({ w: 24, drop: 2, arms: clasp(STAND + 2) }),
     down: { hip: [0, -40], torso: 0, legs: pair(at(-24, FY, { bend: 'out' }), at(24, FY, { bend: 'out' })), arms: clasp(-40) },
   },
-  seq: [DOWN(2, 'Knie zeigen nach außen über die Füße'), HOLD(0.4, 'Unten'), UP(1.4, 'Po anspannen und hochdrücken'), HOLD(0.5, 'Oben')],
+  seq: [DOWN(2, 'Knees point outwards over the feet'), HOLD(0.4, 'Bottom'), UP(1.4, 'Squeeze the glutes and push up'), HOLD(0.5, 'Top')],
 };
 
 M.lunge = {
@@ -228,12 +229,12 @@ M.lunge = {
     down: { hip: [-4, -42], torso: 2, legs: pair(at(24, FY), at(-34, -13, { foot: 64 })), arms: pair(ang(4, 10), ang(-4, 0)) },
   },
   seq: [
-    { to: 'step', s: 0.6, label: 'Schritt nach vorn' },
-    { to: 'down', s: 1.4, label: 'Runter', cue: 'Hinteres Knie sinkt Richtung Boden', breath: 'ein' },
-    HOLD(0.3, 'Unten'),
-    { to: 'step', s: 0.9, label: 'Zurückdrücken', cue: 'Über die vordere Ferse abdrücken', breath: 'aus' },
-    { to: 'up', s: 0.5, label: 'Stand' },
-    HOLD(0.4, 'Stand'),
+    { to: 'step', s: 0.6, label: 'Step forward' },
+    { to: 'down', s: 1.4, label: 'Down', cue: 'Back knee sinks towards the floor', breath: 'ein' },
+    HOLD(0.3, 'Bottom'),
+    { to: 'step', s: 0.9, label: 'Push back', cue: 'Push off the front heel', breath: 'aus' },
+    { to: 'up', s: 0.5, label: 'Standing' },
+    HOLD(0.4, 'Standing'),
   ],
 };
 
@@ -245,12 +246,12 @@ M.reverse_lunge = {
     down: { hip: [-8, -42], torso: 6, legs: pair(at(-40, -13, { foot: 64 }), at(-2, FY)), arms: pair(ang(0, 6), ang(4, 10)) },
   },
   seq: [
-    { to: 'back', s: 0.6, label: 'Schritt zurück' },
-    { to: 'down', s: 1.4, label: 'Runter', cue: 'Vorderes Knie bleibt über dem Fuß', breath: 'ein' },
-    HOLD(0.3, 'Unten'),
-    { to: 'back', s: 0.9, label: 'Hochdrücken', cue: 'Kraft aus der vorderen Ferse', breath: 'aus' },
-    { to: 'up', s: 0.5, label: 'Stand' },
-    HOLD(0.4, 'Stand'),
+    { to: 'back', s: 0.6, label: 'Step back' },
+    { to: 'down', s: 1.4, label: 'Down', cue: 'Front knee stays over the foot', breath: 'ein' },
+    HOLD(0.3, 'Bottom'),
+    { to: 'back', s: 0.9, label: 'Push up', cue: 'Power from the front heel', breath: 'aus' },
+    { to: 'up', s: 0.5, label: 'Standing' },
+    HOLD(0.4, 'Standing'),
   ],
 };
 
@@ -261,10 +262,10 @@ M.side_lunge = {
     side: { hip: [-20, -42], torso: 0, legs: pair(at(-34, FY, { bend: 'out' }), at(34, FY)), arms: clasp(-42, -20) },
   },
   seq: [
-    { to: 'side', s: 1.6, label: 'Zur Seite beugen', cue: 'Anderes Bein bleibt gestreckt', breath: 'ein' },
-    HOLD(0.4, 'Unten'),
-    { to: 'mid', s: 1.2, label: 'Zurück zur Mitte', breath: 'aus' },
-    HOLD(0.3, 'Mitte'),
+    { to: 'side', s: 1.6, label: 'Bend sideways', cue: 'Other leg stays straight', breath: 'ein' },
+    HOLD(0.4, 'Bottom'),
+    { to: 'mid', s: 1.2, label: 'Back to centre', breath: 'aus' },
+    HOLD(0.3, 'Centre'),
   ],
 };
 
@@ -274,17 +275,17 @@ M.split_squat = {
     up: { hip: [-6, -60], torso: 4, legs: pair(at(18, FY), at(-50, -32, { foot: -95 })), arms: pair(ang(4, 8), ang(-2, 2)) },
     down: { hip: [-8, -34], torso: 6, legs: pair(at(18, FY), at(-50, -32, { foot: -95 })), arms: pair(ang(6, 12), ang(0, 4)) },
   },
-  seq: [DOWN(2, 'Vorderes Knie bleibt über dem Fuß'), HOLD(0.3, 'Unten'), UP(1.2, 'Über die vordere Ferse hochdrücken'), HOLD(0.4, 'Oben')],
+  seq: [DOWN(2, 'Front knee stays over the foot'), HOLD(0.3, 'Bottom'), UP(1.2, 'Push up through the front heel'), HOLD(0.4, 'Top')],
 };
 
 M.wall_sit = {
   view: 'side', start: 'hold', holdS: 30, focus: ['thigh'], props: { wall: -30 },
-  intro: { from: 'stand', seq: [{ to: 'hold', s: 2, label: 'An der Wand hinunterrutschen' }] },
+  intro: { from: 'stand', seq: [{ to: 'hold', s: 2, label: 'Slide down the wall' }] },
   keys: {
     stand: { hip: [-22, -58], torso: 0, legs: pair(at(11, FY), at(8, FY)), arms: pair(ang(4, 8), ang(-2, 2)) },
     hold: { hip: [-21, -35], torso: 0, legs: pair(at(11, FY), at(8, FY)), arms: pair(ang(10, 70), ang(6, 66)) },
   },
-  seq: STILL('Knie über den Knöcheln, Rücken an der Wand'),
+  seq: STILL('Knees over the ankles, back against the wall'),
 };
 
 M.step_up = {
@@ -296,13 +297,13 @@ M.step_up = {
     back: { hip: [26, -78], torso: 6, legs: pair(at(32, -26), at(8, -32, { foot: 70 })), arms: pair(ang(10, 16), ang(-6, -2)) },
   },
   seq: [
-    { to: 'plant', s: 0.7, label: 'Fuß auf die Stufe' },
-    { to: 'top', s: 1.2, label: 'Hochdrücken', cue: 'Kraft aus der Ferse, Knie stabil', breath: 'aus' },
-    HOLD(0.4, 'Oben stabil'),
-    { to: 'back', s: 0.7, label: 'Absenken', cue: 'Das obere Bein bremst', breath: 'ein' },
-    { to: 'plant', s: 0.6, label: 'Absenken' },
-    { to: 'up', s: 0.6, label: 'Stand' },
-    HOLD(0.3, 'Stand'),
+    { to: 'plant', s: 0.7, label: 'Foot on the step' },
+    { to: 'top', s: 1.2, label: 'Push up', cue: 'Power from the heel, knee steady', breath: 'aus' },
+    HOLD(0.4, 'Steady at the top'),
+    { to: 'back', s: 0.7, label: 'Lower', cue: 'The upper leg brakes', breath: 'ein' },
+    { to: 'plant', s: 0.6, label: 'Lower' },
+    { to: 'up', s: 0.6, label: 'Standing' },
+    HOLD(0.3, 'Standing'),
   ],
 };
 
@@ -313,10 +314,10 @@ M.step_down = {
     down: { hip: [-6, -56], torso: 22, legs: pair(at(2, -30), at(30, FY)), arms: pair(ang(70, 80), ang(64, 74)) },
   },
   seq: [
-    { to: 'down', s: 3, label: 'Langsam absenken', cue: 'Knie bleibt über dem Fuß', breath: 'ein' },
-    HOLD(0.3, 'Ferse tippt'),
-    { to: 'up', s: 1.2, label: 'Hochdrücken', breath: 'aus' },
-    HOLD(0.5, 'Oben'),
+    { to: 'down', s: 3, label: 'Lower slowly', cue: 'Knee stays over the foot', breath: 'ein' },
+    HOLD(0.3, 'Heel taps'),
+    { to: 'up', s: 1.2, label: 'Push up', breath: 'aus' },
+    HOLD(0.5, 'Top'),
   ],
 };
 
@@ -327,10 +328,10 @@ M.deadlift = {
     down: { hip: [-15, STAND_HIP + 7], torso: 72, legs: pair(at(2, FY), at(-2, FY)), arms: pair(ang(0, 0), ang(-2, -2)) },
   },
   seq: [
-    { to: 'down', s: 2, label: 'Hüfte nach hinten', cue: 'Rücken gerade, Gewicht nah am Bein', breath: 'ein' },
-    HOLD(0.3, 'Unten'),
-    { to: 'up', s: 1.4, label: 'Aufrichten', cue: 'Hüfte nach vorn, Po anspannen', breath: 'aus' },
-    HOLD(0.6, 'Oben'),
+    { to: 'down', s: 2, label: 'Hips back', cue: 'Back straight, weight close to the leg', breath: 'ein' },
+    HOLD(0.3, 'Bottom'),
+    { to: 'up', s: 1.4, label: 'Straighten up', cue: 'Hips forward, squeeze the glutes', breath: 'aus' },
+    HOLD(0.6, 'Top'),
   ],
 };
 
@@ -341,10 +342,10 @@ M.single_leg_deadlift = {
     down: { hip: [-4, STAND + 3], torso: 82, legs: pair(ang(-86, -88, { foot: -20 }), at(-2, FY)), arms: pair(ang(-2, -2), ang(2, 2)) },
   },
   seq: [
-    { to: 'down', s: 2, label: 'Nach vorn kippen', cue: 'Hinteres Bein und Rücken bilden eine Linie', breath: 'ein' },
-    HOLD(0.5, 'Unten'),
-    { to: 'up', s: 1.6, label: 'Aufrichten', cue: 'Becken bleibt waagerecht', breath: 'aus' },
-    HOLD(0.5, 'Stand'),
+    { to: 'down', s: 2, label: 'Tip forward', cue: 'Back leg and back form one line', breath: 'ein' },
+    HOLD(0.5, 'Bottom'),
+    { to: 'up', s: 1.6, label: 'Straighten up', cue: 'Pelvis stays level', breath: 'aus' },
+    HOLD(0.5, 'Standing'),
   ],
 };
 
@@ -358,10 +359,10 @@ M.good_morning = (() => {
       down: { hip: dnHip, torso: 74, legs: pair(at(2, FY), at(-2, FY)), arms: hands(dnHip, 74) },
     },
     seq: [
-      { to: 'down', s: 2, label: 'Nach vorn neigen', cue: 'Rücken gerade, Knie leicht gebeugt', breath: 'ein' },
-      HOLD(0.3, 'Unten'),
-      { to: 'up', s: 1.5, label: 'Aufrichten', cue: 'Hüfte nach vorn schieben', breath: 'aus' },
-      HOLD(0.5, 'Oben'),
+      { to: 'down', s: 2, label: 'Lean forward', cue: 'Back straight, knees slightly bent', breath: 'ein' },
+      HOLD(0.3, 'Bottom'),
+      { to: 'up', s: 1.5, label: 'Straighten up', cue: 'Push the hips forward', breath: 'aus' },
+      HOLD(0.5, 'Top'),
     ],
   };
 })();
@@ -376,10 +377,10 @@ M.row = (() => {
       up: { hip, torso: t, legs: pair(at(2, FY), at(-2, FY)), arms: pair(atP(rib, { bend: 'up' }), at(rib[0] - 3, rib[1], { bend: 'up' })) },
     },
     seq: [
-      { to: 'up', s: 1, label: 'Ziehen', cue: 'Ellbogen eng am Körper nach hinten', breath: 'aus' },
-      HOLD(0.5, 'Oben'),
-      { to: 'down', s: 2, label: 'Ablassen', cue: 'Rücken bleibt stabil', breath: 'ein' },
-      HOLD(0.3, 'Unten'),
+      { to: 'up', s: 1, label: 'Pull', cue: 'Elbows back, close to the body', breath: 'aus' },
+      HOLD(0.5, 'Top'),
+      { to: 'down', s: 2, label: 'Lower down', cue: 'Back stays steady', breath: 'ein' },
+      HOLD(0.3, 'Bottom'),
     ],
   };
 })();
@@ -398,10 +399,10 @@ M.single_arm_row = (() => {
       up: { ...base, arms: pair(atP(pull, { bend: 'up' }), at(sh[0] + 1, -33.5)) },
     },
     seq: [
-      { to: 'up', s: 1, label: 'Ziehen', cue: 'Ellbogen zur Hüfte, Rücken gerade', breath: 'aus' },
-      HOLD(0.5, 'Oben'),
-      { to: 'down', s: 2, label: 'Ablassen', breath: 'ein' },
-      HOLD(0.3, 'Unten'),
+      { to: 'up', s: 1, label: 'Pull', cue: 'Elbows to the hips, back straight', breath: 'aus' },
+      HOLD(0.5, 'Top'),
+      { to: 'down', s: 2, label: 'Lower down', breath: 'ein' },
+      HOLD(0.3, 'Bottom'),
     ],
   };
 })();
@@ -413,10 +414,10 @@ M.overhead_press = {
     up: stand({ arms: pair(ang(176, 178), ang(174, 176)) }),
   },
   seq: [
-    { to: 'up', s: 1, label: 'Hochdrücken', cue: 'Bauch fest, kein Hohlkreuz', breath: 'aus' },
-    HOLD(0.4, 'Oben'),
-    { to: 'down', s: 2, label: 'Absenken', cue: 'Kontrolliert auf Schulterhöhe', breath: 'ein' },
-    HOLD(0.3, 'Schulterhöhe'),
+    { to: 'up', s: 1, label: 'Push up', cue: 'Core tight, no arched back', breath: 'aus' },
+    HOLD(0.4, 'Top'),
+    { to: 'down', s: 2, label: 'Lower', cue: 'Controlled up to shoulder height', breath: 'ein' },
+    HOLD(0.3, 'Shoulder height'),
   ],
 };
 
@@ -431,10 +432,10 @@ M.thruster = (() => {
       press: stand({ arms: pair(ang(176, 178), ang(174, 176)) }),
     },
     seq: [
-      { to: 'down', s: 1.2, label: 'Runter', cue: 'Gewichte bleiben auf den Schultern', breath: 'ein' },
-      { to: 'press', s: 1, label: 'Hochdrücken', cue: 'Aus den Beinen in einem Zug nach oben', breath: 'aus' },
-      { to: 'rack', s: 0.8, label: 'Zurück auf die Schultern' },
-      HOLD(0.2, 'Stand'),
+      { to: 'down', s: 1.2, label: 'Down', cue: 'Weights stay on the shoulders', breath: 'ein' },
+      { to: 'press', s: 1, label: 'Push up', cue: 'Drive up from the legs in one movement', breath: 'aus' },
+      { to: 'rack', s: 0.8, label: 'Back to the shoulders' },
+      HOLD(0.2, 'Standing'),
     ],
   };
 })();
@@ -445,7 +446,7 @@ M.calf_raise = {
     down: stand(),
     up: stand({ dx: 3, drop: -7.2, legs: pair(onToes(2), onToes(-2)) }),
   },
-  seq: [UP(1, 'Auf die Zehenspitzen'), HOLD(1, 'Oben halten'), DOWN(2, 'Langsam absenken', { label: 'Absenken' }), HOLD(0.4, 'Unten')],
+  seq: [UP(1, 'Onto the tiptoes'), HOLD(1, 'Hold at the top'), DOWN(2, 'Lower slowly', { label: 'Lower' }), HOLD(0.4, 'Bottom')],
 };
 
 M.soleus_raise = {
@@ -454,7 +455,7 @@ M.soleus_raise = {
     down: { hip: [-6, STAND + 9], torso: 12, legs: pair(at(2, FY), at(-2, FY)), arms: pair(at(38, -92, { bend: 'down' }), at(37, -94, { bend: 'down' })) },
     up: { hip: [-3, STAND + 2], torso: 12, legs: pair(onToes(2), onToes(-2)), arms: pair(at(38, -92, { bend: 'down' }), at(37, -94, { bend: 'down' })) },
   },
-  seq: [UP(1, 'Fersen hoch, Knie bleiben gebeugt'), HOLD(1, 'Oben halten'), DOWN(3, 'Langsam absenken (3 Sekunden)', { label: 'Absenken' }), HOLD(0.3, 'Unten')],
+  seq: [UP(1, 'Heels up, knees stay bent'), HOLD(1, 'Hold at the top'), DOWN(3, 'Lower slowly (3 seconds)', { label: 'Lower' }), HOLD(0.3, 'Bottom')],
 };
 
 M.tibialis_raise = {
@@ -463,7 +464,7 @@ M.tibialis_raise = {
     down: { hip: [-14, STAND + 2], torso: -10, legs: pair(at(8, FY), at(4, FY)), arms: pair(ang(-6, -4), ang(-8, -6)) },
     up: { hip: [-14, STAND + 2], torso: -10, legs: pair(at(8, FY, { foot: 128 }), at(4, FY, { foot: 128 })), arms: pair(ang(-6, -4), ang(-8, -6)) },
   },
-  seq: [UP(1, 'Zehen hoch, Fersen bleiben am Boden', { label: 'Zehen hoch' }), HOLD(1, 'Oben'), DOWN(1.5, 'Langsam absenken', { label: 'Absenken' })],
+  seq: [UP(1, 'Toes up, heels stay on the floor', { label: 'Toes up' }), HOLD(1, 'Top'), DOWN(1.5, 'Lower slowly', { label: 'Lower' })],
 };
 
 M.kettlebell_swing = {
@@ -473,9 +474,9 @@ M.kettlebell_swing = {
     back: { hip: [-18, STAND_HIP + 8], torso: 68, legs: pair(at(2, FY), at(-2, FY)), arms: pair(ang(-24, -28), ang(-26, -30)) },
   },
   seq: [
-    { to: 'back', s: 0.7, label: 'Zurückschwingen', cue: 'Hüfte nach hinten, Rücken gerade', breath: 'ein' },
-    { to: 'top', s: 0.6, label: 'Hüfte nach vorn', cue: 'Schwung aus der Hüfte, nicht aus den Armen', breath: 'aus' },
-    HOLD(0.15, 'Oben'),
+    { to: 'back', s: 0.7, label: 'Swing back', cue: 'Hips back, back straight', breath: 'ein' },
+    { to: 'top', s: 0.6, label: 'Hips forward', cue: 'Swing from the hips, not the arms', breath: 'aus' },
+    HOLD(0.15, 'Top'),
   ],
 };
 
@@ -487,10 +488,10 @@ M.jump_squat = {
     air: { hip: [0, STAND_HIP - 10], torso: 0, legs: pair(at(2, -14, { foot: 40 }), at(-2, -14, { foot: 40 })), arms: pair(ang(170, 175), ang(168, 172)) },
   },
   seq: [
-    DOWN(0.8, 'Halbe Kniebeuge'),
-    { to: 'air', s: 0.35, label: 'Abspringen', cue: 'Explosiv strecken', breath: 'aus' },
-    { to: 'up', s: 0.35, label: 'Landen', cue: 'Weich und leise landen' },
-    HOLD(0.5, 'Stand'),
+    DOWN(0.8, 'Half squat'),
+    { to: 'air', s: 0.35, label: 'Take off', cue: 'Extend explosively', breath: 'aus' },
+    { to: 'up', s: 0.35, label: 'Land', cue: 'Land softly and quietly' },
+    HOLD(0.5, 'Standing'),
   ],
 };
 
@@ -505,10 +506,10 @@ M.wall_ball = (() => {
       throw: { hip: [2, STAND - 3], torso: -4, legs: pair(onToes(2, 50), onToes(-2, 50)), arms: pair(ang(165, 170), ang(163, 168)) },
     },
     seq: [
-      DOWN(1, 'Tief in die Hocke, Ball an der Brust'),
-      { to: 'throw', s: 0.6, label: 'Strecken und werfen', cue: 'Aus den Beinen zum Ziel an der Wand', breath: 'aus' },
-      { to: 'up', s: 0.6, label: 'Ball fangen' },
-      HOLD(0.2, 'Stand'),
+      DOWN(1, 'Squat deep, ball at the chest'),
+      { to: 'throw', s: 0.6, label: 'Extend and throw', cue: 'From the legs to the target on the wall', breath: 'aus' },
+      { to: 'up', s: 0.6, label: 'Catch the ball' },
+      HOLD(0.2, 'Standing'),
     ],
   };
 })();
@@ -519,7 +520,7 @@ M.farmers_carry = {
     base: stand({ arms: pair(ang(0, 0), ang(-1, -1)) }),
     lift: stand({ dx: 1, drop: -1, legs: pair(at(9, -12, { foot: 80 }), at(-2, FY)), arms: pair(ang(0, 0), ang(-1, -1)) }),
   },
-  seq: [{ to: 'lift', s: 0.3, label: 'Gehen', cue: 'Aufrecht, Schultern tief, fester Griff' }, { to: 'base', s: 0.3, label: 'Gehen' }],
+  seq: [{ to: 'lift', s: 0.3, label: 'Walk', cue: 'Upright, shoulders down, firm grip' }, { to: 'base', s: 0.3, label: 'Walk' }],
 };
 
 M.pushup = {
@@ -529,10 +530,10 @@ M.pushup = {
     down: { ...PU_LOW, legs: TOES(), arms: pair(at(PU_HAND, HY), at(PU_HAND - 3, HY)) },
   },
   seq: [
-    { to: 'down', s: 2, label: 'Absenken', cue: 'Körper bleibt eine gerade Linie', breath: 'ein' },
-    HOLD(0.3, 'Unten'),
-    { to: 'up', s: 1, label: 'Hochdrücken', cue: 'Ellbogen schräg nach hinten', breath: 'aus' },
-    HOLD(0.5, 'Oben'),
+    { to: 'down', s: 2, label: 'Lower', cue: 'Body stays in a straight line', breath: 'ein' },
+    HOLD(0.3, 'Bottom'),
+    { to: 'up', s: 1, label: 'Push up', cue: 'Elbows back at an angle', breath: 'aus' },
+    HOLD(0.5, 'Top'),
   ],
 };
 
@@ -554,10 +555,10 @@ M.knee_pushup = (() => {
       down: { ...pose(-16), arms: pair(at(handX, HY), at(handX - 3, HY)) },
     },
     seq: [
-      { to: 'down', s: 2, label: 'Absenken', cue: 'Knie bis Kopf eine Linie', breath: 'ein' },
-      HOLD(0.3, 'Unten'),
-      { to: 'up', s: 1, label: 'Hochdrücken', breath: 'aus' },
-      HOLD(0.4, 'Oben'),
+      { to: 'down', s: 2, label: 'Lower', cue: 'Knees to head in one line', breath: 'ein' },
+      HOLD(0.3, 'Bottom'),
+      { to: 'up', s: 1, label: 'Push up', breath: 'aus' },
+      HOLD(0.4, 'Top'),
     ],
   };
 })();
@@ -574,10 +575,10 @@ M.incline_pushup = (() => {
       down: { ...low, legs: TOES(A[0]), arms: pair(at(hx, hy), at(hx - 3, hy)) },
     },
     seq: [
-      { to: 'down', s: 2, label: 'Absenken', cue: 'Brust zur Kante, Körper gerade', breath: 'ein' },
-      HOLD(0.3, 'Unten'),
-      { to: 'up', s: 1, label: 'Hochdrücken', breath: 'aus' },
-      HOLD(0.4, 'Oben'),
+      { to: 'down', s: 2, label: 'Lower', cue: 'Chest to the edge, body straight', breath: 'ein' },
+      HOLD(0.3, 'Bottom'),
+      { to: 'up', s: 1, label: 'Push up', breath: 'aus' },
+      HOLD(0.4, 'Top'),
     ],
   };
 })();
@@ -591,10 +592,10 @@ M.pike_pushup = (() => {
       down: { hip: [6, -62], torso: 147, legs: pair(atP(A, { foot: 30 }), at(A[0] - 3, TY, { foot: 30 })), arms: pair(atP(H), at(H[0] - 3, HY)) },
     },
     seq: [
-      { to: 'down', s: 2, label: 'Kopf Richtung Boden', cue: 'Hüfte bleibt hoch', breath: 'ein' },
-      HOLD(0.3, 'Unten'),
-      { to: 'up', s: 1.2, label: 'Hochdrücken', breath: 'aus' },
-      HOLD(0.4, 'Oben'),
+      { to: 'down', s: 2, label: 'Head towards the floor', cue: 'Hips stay high', breath: 'ein' },
+      HOLD(0.3, 'Bottom'),
+      { to: 'up', s: 1.2, label: 'Push up', breath: 'aus' },
+      HOLD(0.4, 'Top'),
     ],
   };
 })();
@@ -606,10 +607,10 @@ M.bench_dip = {
     down: { hip: [-16, -15], torso: 4, legs: pair(at(30, FY), at(27, FY)), arms: pair(at(-26, -33.5, { bend: 'back' }), at(-28, -33.5, { bend: 'back' })) },
   },
   seq: [
-    { to: 'down', s: 2, label: 'Absenken', cue: 'Ellbogen zeigen nach hinten', breath: 'ein' },
-    HOLD(0.3, 'Unten'),
-    { to: 'up', s: 1, label: 'Hochdrücken', breath: 'aus' },
-    HOLD(0.4, 'Oben'),
+    { to: 'down', s: 2, label: 'Lower', cue: 'Elbows point back', breath: 'ein' },
+    HOLD(0.3, 'Bottom'),
+    { to: 'up', s: 1, label: 'Push up', breath: 'aus' },
+    HOLD(0.4, 'Top'),
   ],
 };
 
@@ -620,10 +621,10 @@ M.biceps_curl = {
     up: stand({ arms: pair(ang(4, 156), ang(0, 152)) }),
   },
   seq: [
-    { to: 'up', s: 1, label: 'Beugen', cue: 'Ellbogen bleiben am Körper', breath: 'aus' },
-    HOLD(0.4, 'Oben'),
-    { to: 'down', s: 2, label: 'Langsam strecken', breath: 'ein' },
-    HOLD(0.2, 'Unten'),
+    { to: 'up', s: 1, label: 'Bend', cue: 'Elbows stay by the body', breath: 'aus' },
+    HOLD(0.4, 'Top'),
+    { to: 'down', s: 2, label: 'Extend slowly', breath: 'ein' },
+    HOLD(0.2, 'Bottom'),
   ],
 };
 
@@ -634,10 +635,10 @@ M.triceps_extension = {
     down: stand({ arms: pair(ang(170, -14), ang(168, -16)) }),
   },
   seq: [
-    { to: 'down', s: 2, label: 'Hinter den Kopf senken', cue: 'Oberarme bleiben neben dem Kopf', breath: 'ein' },
-    HOLD(0.3, 'Unten'),
-    { to: 'up', s: 1, label: 'Strecken', breath: 'aus' },
-    HOLD(0.4, 'Oben'),
+    { to: 'down', s: 2, label: 'Lower behind the head', cue: 'Upper arms stay beside the head', breath: 'ein' },
+    HOLD(0.3, 'Bottom'),
+    { to: 'up', s: 1, label: 'Extend', breath: 'aus' },
+    HOLD(0.4, 'Top'),
   ],
 };
 
@@ -648,10 +649,10 @@ M.lateral_raise = {
     up: standFront({ arms: pair(ang(-86, -82), ang(86, 82)) }),
   },
   seq: [
-    { to: 'up', s: 1.2, label: 'Seitlich heben', cue: 'Bis Schulterhöhe, Schultern tief', breath: 'aus' },
-    HOLD(0.4, 'Oben'),
-    { to: 'down', s: 2, label: 'Absenken', breath: 'ein' },
-    HOLD(0.2, 'Unten'),
+    { to: 'up', s: 1.2, label: 'Raise sideways', cue: 'Up to shoulder height, shoulders down', breath: 'aus' },
+    HOLD(0.4, 'Top'),
+    { to: 'down', s: 2, label: 'Lower', breath: 'ein' },
+    HOLD(0.2, 'Bottom'),
   ],
 };
 
@@ -662,10 +663,10 @@ M.band_pull_apart = {
     open: standFront({ arms: pair(ang(-90, -90), ang(90, 90)) }),
   },
   seq: [
-    { to: 'open', s: 1.2, label: 'Auseinanderziehen', cue: 'Schulterblätter zusammen, Arme lang', breath: 'aus' },
-    HOLD(0.6, 'Halten'),
-    { to: 'close', s: 1.6, label: 'Zurückführen', breath: 'ein' },
-    HOLD(0.2, 'Vorn'),
+    { to: 'open', s: 1.2, label: 'Pull apart', cue: 'Shoulder blades together, arms long', breath: 'aus' },
+    HOLD(0.6, 'Hold'),
+    { to: 'close', s: 1.6, label: 'Bring back', breath: 'ein' },
+    HOLD(0.2, 'Front'),
   ],
 };
 
@@ -676,10 +677,10 @@ M.pullup = {
     top: { hip: [0, -110], torso: 0, legs: pair(at(-5, -64, { fs: 0.75 }), at(5, -64, { fs: 0.75 })), arms: pair(at(-26, -158, { bend: 'out' }), at(26, -158, { bend: 'out' })) },
   },
   seq: [
-    { to: 'top', s: 1.4, label: 'Hochziehen', cue: 'Brust zur Stange, Schultern tief', breath: 'aus' },
-    HOLD(0.4, 'Oben'),
-    { to: 'hang', s: 2, label: 'Langsam ablassen', breath: 'ein' },
-    HOLD(0.4, 'Hängen'),
+    { to: 'top', s: 1.4, label: 'Pull up', cue: 'Chest to the bar, shoulders down', breath: 'aus' },
+    HOLD(0.4, 'Top'),
+    { to: 'hang', s: 2, label: 'Lower down slowly', breath: 'ein' },
+    HOLD(0.4, 'Hang'),
   ],
 };
 
@@ -695,10 +696,10 @@ M.inverted_row = (() => {
       up: { ...up, legs, arms: pair(atP(bar, { bend: 'down' }), at(bar[0] - 2, bar[1], { bend: 'down' })) },
     },
     seq: [
-      { to: 'up', s: 1.2, label: 'Brust zur Stange', cue: 'Körper bleibt eine Linie', breath: 'aus' },
-      HOLD(0.4, 'Oben'),
-      { to: 'down', s: 2, label: 'Ablassen', breath: 'ein' },
-      HOLD(0.3, 'Unten'),
+      { to: 'up', s: 1.2, label: 'Chest to the bar', cue: 'Body stays in one line', breath: 'aus' },
+      HOLD(0.4, 'Top'),
+      { to: 'down', s: 2, label: 'Lower down', breath: 'ein' },
+      HOLD(0.3, 'Bottom'),
     ],
   };
 })();
@@ -714,10 +715,10 @@ M.hip_thrust = (() => {
     view: 'side', start: 'down', reps: 12, focus: ['hip', 'thigh'], props: { box: [-66, -24, 30] },
     keys: { down: { ...down, legs, arms }, up: { ...up, legs, arms } },
     seq: [
-      { to: 'up', s: 1.2, label: 'Becken hoch', cue: 'Po fest, Knie über den Fersen', breath: 'aus' },
-      HOLD(1, 'Oben halten'),
-      { to: 'down', s: 1.8, label: 'Absenken', breath: 'ein' },
-      HOLD(0.3, 'Unten'),
+      { to: 'up', s: 1.2, label: 'Pelvis up', cue: 'Glutes tight, knees over the heels', breath: 'aus' },
+      HOLD(1, 'Hold at the top'),
+      { to: 'down', s: 1.8, label: 'Lower', breath: 'ein' },
+      HOLD(0.3, 'Bottom'),
     ],
   };
 })();
@@ -729,10 +730,10 @@ M.glute_bridge = {
     up: { ...bridgeTorso(-31), legs: FEET_UP(), arms: pair(ang(90, 90), ang(88, 88)) },
   },
   seq: [
-    { to: 'up', s: 1.4, label: 'Becken heben', cue: 'Po fest, kein Hohlkreuz', breath: 'aus' },
-    HOLD(1, 'Oben halten'),
-    { to: 'down', s: 2, label: 'Absenken', cue: 'Wirbel für Wirbel ablegen', breath: 'ein' },
-    HOLD(0.5, 'Unten'),
+    { to: 'up', s: 1.4, label: 'Lift pelvis', cue: 'Glutes tight, no arched back', breath: 'aus' },
+    HOLD(1, 'Hold at the top'),
+    { to: 'down', s: 2, label: 'Lower', cue: 'Lay down vertebra by vertebra', breath: 'ein' },
+    HOLD(0.5, 'Bottom'),
   ],
 };
 
@@ -743,10 +744,10 @@ M.single_leg_bridge = {
     up: { ...bridgeTorso(-28), legs: pair(ang(112, 112), at(27, FY)), arms: pair(ang(90, 90), ang(88, 88)) },
   },
   seq: [
-    { to: 'up', s: 1.4, label: 'Becken heben', cue: 'Becken bleibt waagerecht', breath: 'aus' },
-    HOLD(1, 'Oben halten'),
-    { to: 'down', s: 2, label: 'Absenken', breath: 'ein' },
-    HOLD(0.4, 'Unten'),
+    { to: 'up', s: 1.4, label: 'Lift pelvis', cue: 'Pelvis stays level', breath: 'aus' },
+    HOLD(1, 'Hold at the top'),
+    { to: 'down', s: 2, label: 'Lower', breath: 'ein' },
+    HOLD(0.4, 'Bottom'),
   ],
 };
 
@@ -757,10 +758,10 @@ M.cossack_squat = {
     side: { hip: [-24, -27], torso: 0, legs: pair(at(-36, FY, { bend: 'out' }), at(36, FY)), arms: clasp(-27, -18) },
   },
   seq: [
-    { to: 'side', s: 2, label: 'Tief zur Seite', cue: 'Ferse bleibt am Boden, anderes Bein lang', breath: 'ein' },
-    HOLD(0.5, 'Unten'),
-    { to: 'mid', s: 1.5, label: 'Zurück zur Mitte', breath: 'aus' },
-    HOLD(0.3, 'Mitte'),
+    { to: 'side', s: 2, label: 'Low to the side', cue: 'Heel stays on the floor, other leg long', breath: 'ein' },
+    HOLD(0.5, 'Bottom'),
+    { to: 'mid', s: 1.5, label: 'Back to centre', breath: 'aus' },
+    HOLD(0.3, 'Centre'),
   ],
 };
 
@@ -773,10 +774,10 @@ M.side_lying_leg_raise = (() => {
       up: { hip, torso: t, legs: pair(at(-52, -58), at(-63, -7)), arms: pair(at(34, HY, { bend: 'up' }), ang(90, 90)) },
     },
     seq: [
-      { to: 'up', s: 1.2, label: 'Bein heben', cue: 'Zehen zeigen nach vorn, nicht kippen', breath: 'aus' },
-      HOLD(0.6, 'Oben'),
-      { to: 'down', s: 1.8, label: 'Absenken', breath: 'ein' },
-      HOLD(0.2, 'Unten'),
+      { to: 'up', s: 1.2, label: 'Lift leg', cue: 'Toes point forward, no tilting', breath: 'aus' },
+      HOLD(0.6, 'Top'),
+      { to: 'down', s: 1.8, label: 'Lower', breath: 'ein' },
+      HOLD(0.2, 'Bottom'),
     ],
   };
 })();
@@ -792,10 +793,10 @@ M.clamshell = (() => {
       open: { ...base, legs: pair(ang(-155, 10, { fs: [0.95, 1] }), low) },
     },
     seq: [
-      { to: 'open', s: 1.2, label: 'Knie öffnen', cue: 'Füße bleiben zusammen, Becken ruhig', breath: 'aus' },
-      HOLD(0.6, 'Oben'),
-      { to: 'closed', s: 1.6, label: 'Schließen', breath: 'ein' },
-      HOLD(0.2, 'Zu'),
+      { to: 'open', s: 1.2, label: 'Open knees', cue: 'Feet stay together, pelvis still', breath: 'aus' },
+      HOLD(0.6, 'Top'),
+      { to: 'closed', s: 1.6, label: 'Close', breath: 'ein' },
+      HOLD(0.2, 'Closed'),
     ],
   };
 })();
@@ -811,10 +812,10 @@ M.monster_walk = (() => {
       wide: { hip: [-8, hipY], torso: 0, legs: pair(at(-30, FY, { bend: 'out' }), at(13, FY, { bend: 'out' })), arms: hands },
     },
     seq: [
-      { to: 'lift', s: 0.4, label: 'Schritt zur Seite', cue: 'Spannung im Band halten' },
-      { to: 'wide', s: 0.4, label: 'Aufsetzen' },
-      { to: 'lift', s: 0.4, label: 'Zurück' },
-      { to: 'base', s: 0.4, label: 'Aufsetzen' },
+      { to: 'lift', s: 0.4, label: 'Step sideways', cue: 'Keep tension in the band' },
+      { to: 'wide', s: 0.4, label: 'Sit up' },
+      { to: 'lift', s: 0.4, label: 'Back' },
+      { to: 'base', s: 0.4, label: 'Sit up' },
     ],
   };
 })();
@@ -826,10 +827,10 @@ M.donkey_kick = {
     kick: quad({ legs: pair(ang(-96, 176, { foot: -90 }), at(-33, -5, { bend: 'down', foot: -90 })) }),
   },
   seq: [
-    { to: 'kick', s: 1, label: 'Ferse zur Decke', cue: 'Kein Hohlkreuz, Becken bleibt gerade', breath: 'aus' },
-    HOLD(0.5, 'Oben'),
-    { to: 'base', s: 1.4, label: 'Zurück', breath: 'ein' },
-    HOLD(0.2, 'Vierfüßler'),
+    { to: 'kick', s: 1, label: 'Heel to the ceiling', cue: 'No arched back, pelvis stays straight', breath: 'aus' },
+    HOLD(0.5, 'Top'),
+    { to: 'base', s: 1.4, label: 'Back', breath: 'ein' },
+    HOLD(0.2, 'All fours'),
   ],
 };
 
@@ -846,11 +847,11 @@ M.nordic_hamstring = (() => {
       catch: { ...catchP, legs, arms: pair(at(csh[0] + 6, HY), at(csh[0] + 3, HY)) },
     },
     seq: [
-      { to: 'lean', s: 2.5, label: 'Langsam nach vorn', cue: 'Hüfte gestreckt, mit der Rückseite bremsen', breath: 'ein' },
-      { to: 'catch', s: 0.7, label: 'Abfangen' },
-      HOLD(0.3, 'Hände am Boden'),
-      { to: 'up', s: 1.4, label: 'Zurückdrücken', cue: 'Mit den Händen abstoßen', breath: 'aus' },
-      HOLD(0.6, 'Kniestand'),
+      { to: 'lean', s: 2.5, label: 'Slowly forward', cue: 'Hips extended, brake with the back of the legs', breath: 'ein' },
+      { to: 'catch', s: 0.7, label: 'Catch' },
+      HOLD(0.3, 'Hands on the floor'),
+      { to: 'up', s: 1.4, label: 'Push back', cue: 'Push off with the hands', breath: 'aus' },
+      HOLD(0.6, 'Kneeling'),
     ],
   };
 })();
@@ -861,7 +862,7 @@ M.pogo_jumps = {
     ground: stand({ drop: -2, legs: pair(onToes(2, 55), onToes(-2, 55)), arms: pair(ang(10, 80), ang(6, 76)) }),
     air: stand({ drop: -9, legs: pair(at(4, -13, { foot: 40 }), at(0, -13, { foot: 40 })), arms: pair(ang(10, 80), ang(6, 76)) }),
   },
-  seq: [{ to: 'air', s: 0.25, label: 'Hoch', cue: 'Nur aus dem Fußgelenk, kurze Kontakte' }, { to: 'ground', s: 0.25, label: 'Landen' }],
+  seq: [{ to: 'air', s: 0.25, label: 'Up', cue: 'Only from the ankle, short contacts' }, { to: 'ground', s: 0.25, label: 'Land' }],
 };
 
 /* ------------------------------ Rumpf ------------------------------ */
@@ -869,7 +870,7 @@ M.pogo_jumps = {
 M.plank = {
   view: 'side', start: 'hold', holdS: 30, focus: ['torso', 'hip'], props: { mat: [-64, 80] },
   keys: { hold: { ...PL_FA, legs: TOES(), arms: pair(ang(0, 90), ang(-2, 88)) } },
-  seq: STILL('Bauch fest, Po nicht hochschieben'),
+  seq: STILL('Core tight, do not push the bum up'),
 };
 
 M.side_plank = (() => {
@@ -880,7 +881,7 @@ M.side_plank = (() => {
     keys: {
       hold: { hip, torso: t, legs: pair(at(-62, FY - 1, { bend: 'down' }), at(-63, FY - 7, { bend: 'down' })), arms: pair(ang(150, 172), ang(0, 70)) },
     },
-    seq: STILL('Becken hoch, Körper bleibt gerade'),
+    seq: STILL('Pelvis up, body stays straight'),
   };
 })();
 
@@ -896,10 +897,10 @@ M.copenhagen = (() => {
       up: { hip: upHip, torso: torsoForLowShoulder(upHip, shL), legs: pair(at(-70, -24, { bend: 'up' }), at(-58, FY, { bend: 'down' })), arms },
     },
     seq: [
-      { to: 'up', s: 1.4, label: 'Hüfte heben', cue: 'Oberes Bein drückt in die Bank', breath: 'aus' },
-      HOLD(2, 'Halten'),
-      { to: 'down', s: 1.6, label: 'Absenken', breath: 'ein' },
-      HOLD(0.4, 'Unten'),
+      { to: 'up', s: 1.4, label: 'Lift hips', cue: 'Upper leg presses into the bench', breath: 'aus' },
+      HOLD(2, 'Hold'),
+      { to: 'down', s: 1.6, label: 'Lower', breath: 'ein' },
+      HOLD(0.4, 'Bottom'),
     ],
   };
 })();
@@ -911,10 +912,10 @@ M.dead_bug = {
     reach: supine({ legs: pair(ang(180, 90), ang(96, 96)), arms: pair(ang(-96, -96), ang(178, 178)) }),
   },
   seq: [
-    { to: 'reach', s: 2, label: 'Strecken', cue: 'Unterer Rücken bleibt am Boden', breath: 'aus' },
-    HOLD(0.5, 'Lang'),
-    { to: 'base', s: 1.5, label: 'Zurück zur Mitte', breath: 'ein' },
-    HOLD(0.3, 'Mitte'),
+    { to: 'reach', s: 2, label: 'Extend', cue: 'Lower back stays on the floor', breath: 'aus' },
+    HOLD(0.5, 'Long'),
+    { to: 'base', s: 1.5, label: 'Back to centre', breath: 'ein' },
+    HOLD(0.3, 'Centre'),
   ],
 };
 
@@ -925,10 +926,10 @@ M.side_crunch = {
     bend: standFront({ w: 9, lean: -24, arms: pair(at(-24, -56, { bend: 'out' }), at(6, -68, { bend: 'out' })) }),
   },
   seq: [
-    { to: 'bend', s: 1.5, label: 'Zur Seite neigen', cue: 'Nicht nach vorn beugen', breath: 'ein' },
-    HOLD(0.3, 'Unten'),
-    { to: 'base', s: 1.2, label: 'Aufrichten', cue: 'Aus der seitlichen Bauchmuskulatur', breath: 'aus' },
-    HOLD(0.3, 'Mitte'),
+    { to: 'bend', s: 1.5, label: 'Lean sideways', cue: 'Do not bend forward', breath: 'ein' },
+    HOLD(0.3, 'Bottom'),
+    { to: 'base', s: 1.2, label: 'Straighten up', cue: 'From the side abdominals', breath: 'aus' },
+    HOLD(0.3, 'Centre'),
   ],
 };
 
@@ -941,10 +942,10 @@ M.crunch = (() => {
       up: lifted(-66, { curl: 5, head: 10, legs: FEET_UP(), arms: temple(-66, 10) }),
     },
     seq: [
-      { to: 'up', s: 1, label: 'Einrollen', cue: 'Kraft aus dem Bauch, Nacken locker', breath: 'aus' },
-      HOLD(0.6, 'Oben'),
-      { to: 'down', s: 1.6, label: 'Ablegen', breath: 'ein' },
-      HOLD(0.3, 'Unten'),
+      { to: 'up', s: 1, label: 'Curl in', cue: 'Power from the abs, neck relaxed', breath: 'aus' },
+      HOLD(0.6, 'Top'),
+      { to: 'down', s: 1.6, label: 'Lay down', breath: 'ein' },
+      HOLD(0.3, 'Bottom'),
     ],
   };
 })();
@@ -959,9 +960,9 @@ M.bicycle_crunch = (() => {
       twist: lifted(t + 4, { curl: 6, legs: pair(ang(-170, 100), ang(97, 97)), arms: hands() }),
     },
     seq: [
-      { to: 'twist', s: 0.7, label: 'Knie zum Gegenellbogen', cue: 'Schultern bleiben oben', breath: 'aus' },
-      HOLD(0.2, 'Drehen'),
-      { to: 'mid', s: 0.6, label: 'Wechseln', breath: 'ein' },
+      { to: 'twist', s: 0.7, label: 'Knee to opposite elbow', cue: 'Shoulders stay up', breath: 'aus' },
+      HOLD(0.2, 'Rotate'),
+      { to: 'mid', s: 0.6, label: 'Change over', breath: 'ein' },
     ],
   };
 })();
@@ -973,10 +974,10 @@ M.reverse_crunch = {
     up: { hip: hipFrom(SUP_SH, -110), torso: -110, head: 20, curl: 4, legs: pair(ang(-150, 140), ang(-152, 138)), arms: pair(ang(90, 90), ang(88, 88)) },
   },
   seq: [
-    { to: 'up', s: 1.2, label: 'Becken einrollen', cue: 'Knie Richtung Brust, ohne Schwung', breath: 'aus' },
-    HOLD(0.3, 'Oben'),
-    { to: 'down', s: 1.8, label: 'Langsam ablegen', breath: 'ein' },
-    HOLD(0.3, 'Unten'),
+    { to: 'up', s: 1.2, label: 'Tuck pelvis', cue: 'Knees towards the chest, no momentum', breath: 'aus' },
+    HOLD(0.3, 'Top'),
+    { to: 'down', s: 1.8, label: 'Lay down slowly', breath: 'ein' },
+    HOLD(0.3, 'Bottom'),
   ],
 };
 
@@ -987,10 +988,10 @@ M.leg_raise = {
     up: supine({ legs: pair(ang(178, 178), ang(176, 176)) }),
   },
   seq: [
-    { to: 'up', s: 1.5, label: 'Beine heben', cue: 'Unterer Rücken bleibt am Boden', breath: 'aus' },
-    HOLD(0.4, 'Oben'),
-    { to: 'down', s: 2.5, label: 'Langsam absenken', cue: 'Fersen nicht ganz ablegen', breath: 'ein' },
-    HOLD(0.3, 'Unten'),
+    { to: 'up', s: 1.5, label: 'Lift legs', cue: 'Lower back stays on the floor', breath: 'aus' },
+    HOLD(0.4, 'Top'),
+    { to: 'down', s: 2.5, label: 'Lower slowly', cue: 'Do not lower the heels fully', breath: 'ein' },
+    HOLD(0.3, 'Bottom'),
   ],
 };
 
@@ -1000,17 +1001,17 @@ M.flutter_kicks = {
     mid: lifted(-84, { legs: pair(ang(100, 100), ang(100, 100)) }),
     kick: lifted(-84, { legs: pair(ang(108, 108), ang(94, 94)) }),
   },
-  seq: [{ to: 'kick', s: 0.34, label: 'Kleine Schläge', cue: 'Unterer Rücken am Boden' }, { to: 'mid', s: 0.34, label: 'Wechsel' }],
+  seq: [{ to: 'kick', s: 0.34, label: 'Small beats', cue: 'Lower back on the floor' }, { to: 'mid', s: 0.34, label: 'Switch' }],
 };
 
 M.hollow_hold = {
   view: 'side', start: 'hold', holdS: 20, focus: ['torso'], props: { mat: [-80, 60] },
-  intro: { from: 'flat', seq: [{ to: 'hold', s: 1.6, label: 'Schultern und Beine heben' }] },
+  intro: { from: 'flat', seq: [{ to: 'hold', s: 1.6, label: 'Lift shoulders and legs' }] },
   keys: {
     flat: supine({ legs: pair(ang(92, 92), ang(91, 91)), arms: pair(ang(-92, -92), ang(-91, -91)) }),
     hold: lifted(-80, { curl: 4, head: 8, legs: pair(ang(103, 103), ang(102, 102)), arms: pair(ang(-108, -108), ang(-107, -107)) }),
   },
-  seq: STILL('Unterer Rücken fest am Boden'),
+  seq: STILL('Lower back firmly on the floor'),
 };
 
 M.v_up = {
@@ -1020,10 +1021,10 @@ M.v_up = {
     up: supine({ torso: -40, curl: 4, legs: pair(ang(136, 136), ang(134, 134)), arms: pair(ang(132, 132), ang(130, 130)) }),
   },
   seq: [
-    { to: 'up', s: 1, label: 'Zusammenklappen', cue: 'Hände Richtung Füße', breath: 'aus' },
-    HOLD(0.3, 'Oben'),
-    { to: 'down', s: 1.6, label: 'Langsam ablegen', breath: 'ein' },
-    HOLD(0.3, 'Unten'),
+    { to: 'up', s: 1, label: 'Fold together', cue: 'Hands towards the feet', breath: 'aus' },
+    HOLD(0.3, 'Top'),
+    { to: 'down', s: 1.6, label: 'Lay down slowly', breath: 'ein' },
+    HOLD(0.3, 'Bottom'),
   ],
 };
 
@@ -1034,10 +1035,10 @@ M.superman = {
     up: prone({ torso: 77, curl: -4, legs: pair(ang(-105, -105, { foot: -105 }), ang(-106, -106, { foot: -105 })), arms: pair(ang(106, 106), ang(105, 105)) }),
   },
   seq: [
-    { to: 'up', s: 1.2, label: 'Abheben', cue: 'Blick zum Boden, Nacken lang', breath: 'aus' },
-    HOLD(1.5, 'Halten'),
-    { to: 'down', s: 1.5, label: 'Ablegen', breath: 'ein' },
-    HOLD(0.5, 'Unten'),
+    { to: 'up', s: 1.2, label: 'Lift off', cue: 'Eyes on the floor, neck long', breath: 'aus' },
+    HOLD(1.5, 'Hold'),
+    { to: 'down', s: 1.5, label: 'Lay down', breath: 'ein' },
+    HOLD(0.5, 'Bottom'),
   ],
 };
 
@@ -1051,10 +1052,10 @@ M.bird_dog = {
     }),
   },
   seq: [
-    { to: 'reach', s: 1.5, label: 'Strecken', cue: 'Arm und Gegenbein lang machen', breath: 'aus' },
-    HOLD(1.5, 'Halten', { cue: 'Becken bleibt waagerecht' }),
-    { to: 'base', s: 1.5, label: 'Zurück', breath: 'ein' },
-    HOLD(0.4, 'Vierfüßler'),
+    { to: 'reach', s: 1.5, label: 'Extend', cue: 'Lengthen arm and opposite leg', breath: 'aus' },
+    HOLD(1.5, 'Hold', { cue: 'Pelvis stays level' }),
+    { to: 'base', s: 1.5, label: 'Back', breath: 'ein' },
+    HOLD(0.4, 'All fours'),
   ],
 };
 
@@ -1067,33 +1068,33 @@ M.shoulder_tap = (() => {
       tap: plankTop({ arms: pair(at(sh[0] - 3, sh[1] + 5, { bend: 'down' }), at(PU_HAND - 3, HY)) }),
     },
     seq: [
-      { to: 'tap', s: 0.6, label: 'Schulter tippen', cue: 'Hüfte bleibt ruhig' },
-      HOLD(0.2, 'Tippen'),
-      { to: 'plank', s: 0.5, label: 'Hand zurück' },
-      HOLD(0.2, 'Stütz'),
+      { to: 'tap', s: 0.6, label: 'Tap shoulder', cue: 'Hips stay still' },
+      HOLD(0.2, 'Tap'),
+      { to: 'plank', s: 0.5, label: 'Hand back' },
+      HOLD(0.2, 'Front support'),
     ],
   };
 })();
 
 M.bear_plank = {
   view: 'side', start: 'hold', holdS: 30, focus: ['torso', 'thigh'],
-  intro: { from: 'quad', seq: [{ to: 'hold', s: 1.5, label: 'Knie anheben' }] },
+  intro: { from: 'quad', seq: [{ to: 'hold', s: 1.5, label: 'Lift your knees' }] },
   keys: { quad: quad({ legs: pair(at(-30, -5, { bend: 'down', foot: 25 }), at(-33, -5, { bend: 'down', foot: 25 })) }), hold: bear() },
-  seq: STILL('Knie schweben, Rücken bleibt flach'),
+  seq: STILL('Knees hover, back stays flat'),
 };
 
 M.glute_bridge_march = {
   view: 'side', start: 'bridge', reps: 8, sides: 'alternate', focus: ['hip', 'torso'], props: { mat: [-62, 46] },
-  intro: { from: 'down', seq: [{ to: 'bridge', s: 1.2, label: 'Becken heben' }] },
+  intro: { from: 'down', seq: [{ to: 'bridge', s: 1.2, label: 'Lift pelvis' }] },
   keys: {
     down: supine(),
     bridge: { ...bridgeTorso(-30), legs: FEET_UP(), arms: pair(ang(90, 90), ang(88, 88)) },
     march: { ...bridgeTorso(-30), legs: pair(ang(172, 94), at(27, FY)), arms: pair(ang(90, 90), ang(88, 88)) },
   },
   seq: [
-    { to: 'march', s: 0.8, label: 'Knie heben', cue: 'Becken bleibt oben und gerade', breath: 'aus' },
-    HOLD(0.4, 'Oben'),
-    { to: 'bridge', s: 0.8, label: 'Fuß absetzen', breath: 'ein' },
+    { to: 'march', s: 0.8, label: 'Raise knee', cue: 'Pelvis stays up and straight', breath: 'aus' },
+    HOLD(0.4, 'Top'),
+    { to: 'bridge', s: 0.8, label: 'Foot down', breath: 'ein' },
   ],
 };
 
@@ -1107,9 +1108,9 @@ M.russian_twist = (() => {
       side: { hip, torso: -8, legs, arms: pair(at(-30, -24, { bend: 'out' }), at(-25, -24, { bend: 'out' })) },
     },
     seq: [
-      { to: 'side', s: 0.7, label: 'Zur Seite drehen', cue: 'Oberkörper dreht, Füße bleiben ruhig', breath: 'aus' },
-      HOLD(0.2, 'Seite'),
-      { to: 'mid', s: 0.6, label: 'Zur Mitte', breath: 'ein' },
+      { to: 'side', s: 0.7, label: 'Turn sideways', cue: 'Upper body rotates, feet stay still', breath: 'aus' },
+      HOLD(0.2, 'Side'),
+      { to: 'mid', s: 0.6, label: 'To the centre', breath: 'ein' },
     ],
   };
 })();
@@ -1118,32 +1119,32 @@ M.russian_twist = (() => {
 
 M.hip_flexor_stretch = {
   view: 'side', start: 'stretch', holdS: 30, sides: 'each', focus: ['hip', 'thigh'], props: { mat: [-56, 40] },
-  intro: { from: 'base', seq: [{ to: 'stretch', s: 2.5, label: 'Hüfte nach vorn schieben', cue: 'Po anspannen, kein Hohlkreuz' }] },
+  intro: { from: 'base', seq: [{ to: 'stretch', s: 2.5, label: 'Push the hips forward', cue: 'Squeeze your glutes, no arched back' }] },
   keys: {
     base: { hip: [-12, -37], torso: 0, legs: pair(at(-44, -5, { bend: 'down', foot: -90 }), at(26, FY)), arms: pair(ang(4, 8), ang(-2, 2)) },
     stretch: { hip: [-2, -34], torso: -4, legs: pair(at(-44, -5, { bend: 'down', foot: -90 }), at(26, FY)), arms: pair(ang(176, 180), ang(10, 20)) },
   },
-  seq: STILL('Vorne in der Hüfte zieht es'),
+  seq: STILL('Pull at the front of the hip'),
 };
 
 M.hamstring_stretch = {
   view: 'side', start: 'stretch', holdS: 30, sides: 'each', focus: ['thigh'],
-  intro: { from: 'base', seq: [{ to: 'stretch', s: 2, label: 'Hüfte nach hinten', cue: 'Mit geradem Rücken nach vorn neigen' }] },
+  intro: { from: 'base', seq: [{ to: 'stretch', s: 2, label: 'Hips back', cue: 'Lean forward with a straight back' }] },
   keys: {
     base: { hip: [0, -63], torso: 0, legs: pair(at(16, FY, { foot: 125 }), at(-8, FY)), arms: pair(ang(4, 8), ang(-2, 2)) },
     stretch: { hip: [-12, -60], torso: 50, legs: pair(at(16, FY, { foot: 125 }), at(-8, FY)), arms: pair(at(16, -44, { bend: 'back' }), at(14, -46, { bend: 'back' })) },
   },
-  seq: STILL('Rücken lang, nicht rund machen'),
+  seq: STILL('Back long, do not round it'),
 };
 
 M.calf_stretch = {
   view: 'side', start: 'stretch', holdS: 30, sides: 'each', focus: ['shin'], props: { wall: 44 },
-  intro: { from: 'base', seq: [{ to: 'stretch', s: 2, label: 'Hüfte nach vorn', cue: 'Hintere Ferse bleibt am Boden' }] },
+  intro: { from: 'base', seq: [{ to: 'stretch', s: 2, label: 'Hips forward', cue: 'Back heel stays on the floor' }] },
   keys: {
     base: { hip: [0, -62], torso: 10, legs: pair(at(-26, FY), at(18, FY)), arms: pair(at(42, -96, { bend: 'down' }), at(41, -98, { bend: 'down' })) },
     stretch: { hip: [6, -59], torso: 20, legs: pair(at(-26, FY), at(18, FY)), arms: pair(at(42, -96, { bend: 'down' }), at(41, -98, { bend: 'down' })) },
   },
-  seq: STILL('Hinteres Bein gestreckt, Ferse unten'),
+  seq: STILL('Back leg straight, heel down'),
 };
 
 M.quad_stretch = (() => {
@@ -1151,12 +1152,12 @@ M.quad_stretch = (() => {
   const leg = fk(hip, -6, -175, B.thigh, B.shin);
   return {
     view: 'side', start: 'hold', holdS: 30, sides: 'each', focus: ['thigh'],
-    intro: { from: 'base', seq: [{ to: 'hold', s: 1.5, label: 'Ferse zum Po' }] },
+    intro: { from: 'base', seq: [{ to: 'hold', s: 1.5, label: 'Heel to bum' }] },
     keys: {
       base: stand(),
       hold: { hip, torso: 0, legs: pair(ang(-6, -175, { foot: -150 }), at(-2, FY)), arms: pair(at(leg.end[0] - 1, leg.end[1] + 1, { bend: 'down' }), ang(80, 86)) },
     },
-    seq: STILL('Knie zeigt nach unten, Hüfte nach vorn'),
+    seq: STILL('Knee points down, hips forward'),
   };
 })();
 
@@ -1164,38 +1165,38 @@ M.cat_cow = {
   view: 'side', start: 'cat', reps: 8, focus: ['torso'], props: { mat: [-48, 56] },
   keys: { cow: quad({ curl: -14, head: -26 }), cat: quad({ curl: 17, head: 34 }) },
   seq: [
-    { to: 'cow', s: 2, label: 'Kuh', cue: 'Rücken sinkt, Blick nach vorn oben', breath: 'ein' },
-    HOLD(0.5, 'Kuh'),
-    { to: 'cat', s: 2, label: 'Katze', cue: 'Rücken rund, Kinn zur Brust', breath: 'aus' },
-    HOLD(0.5, 'Katze'),
+    { to: 'cow', s: 2, label: 'Cow', cue: 'Back sinks, eyes forward and up', breath: 'ein' },
+    HOLD(0.5, 'Cow'),
+    { to: 'cat', s: 2, label: 'Cat', cue: 'Back rounded, chin to chest', breath: 'aus' },
+    HOLD(0.5, 'Cat'),
   ],
 };
 
 M.chest_opener = {
   view: 'side', start: 'open', holdS: 25, crop: -40, focus: ['torso', 'upper'],
-  intro: { from: 'base', seq: [{ to: 'open', s: 1.5, label: 'Hände hinter dem Rücken fassen' }] },
+  intro: { from: 'base', seq: [{ to: 'open', s: 1.5, label: 'Clasp your hands behind your back' }] },
   keys: { base: stand(), open: stand({ head: -8, arms: pair(ang(-38, -34), ang(-40, -36)) }) },
-  seq: STILL('Brustbein hoch, Schultern tief', 'ruhig atmen'),
+  seq: STILL('Breastbone up, shoulders down', 'calm'),
 };
 
 M.child_pose = {
   view: 'side', start: 'rest', holdS: 30, focus: ['torso'], props: { mat: [-30, 80] },
-  intro: { from: 'kneel', seq: [{ to: 'rest', s: 2.5, label: 'Nach vorn ablegen' }] },
+  intro: { from: 'kneel', seq: [{ to: 'rest', s: 2.5, label: 'Fold forward' }] },
   keys: {
     kneel: { hip: [-10, -17], torso: 0, legs: pair(at(-11, -5, { bend: 'down', foot: -90 }), at(-13, -5, { bend: 'down', foot: -90 })), arms: pair(ang(20, 40), ang(16, 36)) },
     rest: { hip: [-10, -17], torso: 106, head: -14, curl: 6, legs: pair(at(-11, -5, { bend: 'down', foot: -90 }), at(-13, -5, { bend: 'down', foot: -90 })), arms: pair(ang(93, 93), ang(92, 92)) },
   },
-  seq: STILL('Stirn ruht, tief in den Rücken atmen'),
+  seq: STILL('Forehead rests, breathe deep into the back'),
 };
 
 M.supine_twist = {
   view: 'front', top: true, floor: false, start: 'twist', holdS: 30, sides: 'each', focus: ['torso'], props: { topMat: [-64, -138, 128, 126] },
-  intro: { from: 'base', seq: [{ to: 'twist', s: 2.5, label: 'Knie zur Seite ablegen' }] },
+  intro: { from: 'base', seq: [{ to: 'twist', s: 2.5, label: 'Lower your knees to the side' }] },
   keys: {
     base: { hip: [0, -66], torso: 0, legs: pair(at(-6, -24, { fs: [0.68, 0.68], bend: 'out' }), at(6, -24, { fs: [0.68, 0.68], bend: 'out' })), arms: pair(ang(-90, -90), ang(90, 90)) },
     twist: { hip: [0, -66], torso: 0, head: -16, legs: pair(ang(55, -10, { fs: 0.9 }), ang(50, -5, { fs: 0.9 })), arms: pair(ang(-90, -90), ang(90, 90)) },
   },
-  seq: STILL('Beide Schultern bleiben am Boden'),
+  seq: STILL('Both shoulders stay on the floor'),
 };
 
 M.figure_four = (() => {
@@ -1205,12 +1206,12 @@ M.figure_four = (() => {
   const mid = (K) => [SUP_HIP[0] + (K[0] - SUP_HIP[0]) * 0.35, SUP_HIP[1] + (K[1] - SUP_HIP[1]) * 0.35];
   return {
     view: 'side', start: 'pull', holdS: 30, sides: 'each', focus: ['hip'], props: { mat: [-70, 50] },
-    intro: { from: 'base', seq: [{ to: 'pull', s: 2.5, label: 'Unteres Bein heranziehen' }] },
+    intro: { from: 'base', seq: [{ to: 'pull', s: 2.5, label: 'Pull the lower leg in' }] },
     keys: {
       base: supine({ legs: pair(at(K1[0] + 2, K1[1] - 5, { bend: 'up', fs: [0.75, 0.9] }), at(24, FY)), arms: pair(atP(mid(K1), { bend: 'up' }), atP(mid(K1), { bend: 'up' })) }),
       pull: supine({ legs: pair(at(K2[0] + 3, K2[1] - 5, { bend: 'up', fs: [0.75, 0.9] }), ang(-150, 90)), arms: pair(atP(mid(K2), { bend: 'up' }), atP(mid(K2), { bend: 'up' })) }),
     },
-    seq: STILL('Es zieht im Gesäß, Kopf bleibt liegen'),
+    seq: STILL('Pull in the glutes, head stays down'),
   };
 })();
 
@@ -1219,17 +1220,17 @@ M.butterfly_stretch = {
   keys: {
     hold: { hip: [0, -10], torso: 0, legs: pair(ang(-78, 84, { fs: 0.8 }), ang(78, -84, { fs: 0.8 })), arms: pair(at(-8, -12, { bend: 'out' }), at(8, -12, { bend: 'out' })) },
   },
-  seq: STILL('Aufrecht sitzen, nicht federn'),
+  seq: STILL('Sit upright, do not bounce'),
 };
 
 M.pigeon_pose = {
   view: 'side', start: 'fold', holdS: 30, sides: 'each', focus: ['hip'], props: { mat: [-76, 80] },
-  intro: { from: 'up', seq: [{ to: 'fold', s: 2.5, label: 'Oberkörper ablegen' }] },
+  intro: { from: 'up', seq: [{ to: 'fold', s: 2.5, label: 'Lower your upper body' }] },
   keys: {
     up: { hip: [0, -14], torso: 4, legs: pair(ang(70, -95, { fs: [0.8, 0.5] }), ang(-80, -88, { foot: -90 })), arms: pair(ang(8, 12), ang(4, 8)) },
     fold: { hip: [0, -14], torso: 80, curl: 4, legs: pair(ang(70, -95, { fs: [0.8, 0.5] }), ang(-80, -88, { foot: -90 })), arms: pair(ang(92, 92), ang(91, 91)) },
   },
-  seq: STILL('Hüfte sinkt Richtung Boden'),
+  seq: STILL('Hips sink towards the floor'),
 };
 
 M.downward_dog = (() => {
@@ -1238,12 +1239,12 @@ M.downward_dog = (() => {
   const t = tFromDir([Hd[0] - hip[0], Hd[1] - hip[1]]);
   return {
     view: 'side', start: 'dog', holdS: 30, focus: ['thigh', 'upper'], props: { mat: [-48, 56] },
-    intro: { from: 'quad', seq: [{ to: 'dog', s: 2, label: 'Hüfte nach oben schieben' }] },
+    intro: { from: 'quad', seq: [{ to: 'dog', s: 2, label: 'Push your hips up' }] },
     keys: {
       quad: { ...quad({ legs: pair(at(-31, -5, { bend: 'down', foot: 25 }), at(-33, -5, { bend: 'down', foot: 25 })) }), arms: pair(at(40, HY), at(38, HY)) },
       dog: { hip, torso: t, legs: pair(atP(A, { foot: 62 }), at(A[0] - 3, A[1], { foot: 62 })), arms: pair(atP(Hd), at(Hd[0] - 2, HY)) },
     },
-    seq: STILL('Fersen Richtung Boden, Rücken lang'),
+    seq: STILL('Heels towards the floor, back long'),
   };
 })();
 
@@ -1254,10 +1255,10 @@ M.cobra = {
     up: prone({ torso: 58, curl: -8, head: -10, arms: pair(at(28, HY, { bend: 'back' }), at(26, HY, { bend: 'back' })) }),
   },
   seq: [
-    { to: 'up', s: 2, label: 'Brust heben', cue: 'Becken bleibt am Boden, Schultern tief', breath: 'ein' },
-    HOLD(3, 'Halten'),
-    { to: 'down', s: 2, label: 'Ablegen', breath: 'aus' },
-    HOLD(0.5, 'Unten'),
+    { to: 'up', s: 2, label: 'Lift chest', cue: 'Pelvis stays on the floor, shoulders down', breath: 'ein' },
+    HOLD(3, 'Hold'),
+    { to: 'down', s: 2, label: 'Lay down', breath: 'aus' },
+    HOLD(0.5, 'Bottom'),
   ],
 };
 
@@ -1272,13 +1273,13 @@ M.worlds_greatest_stretch = (() => {
       open: { hip, torso: t - 8, head: -40, legs, arms: pair(ang(178, 180), at(17, HY)) },
     },
     seq: [
-      { to: 'elbow', s: 1.5, label: 'Ellbogen zum Fuß', cue: 'Hinteres Bein lang', breath: 'aus' },
-      HOLD(1, 'Halten'),
-      { to: 'base', s: 1, label: 'Hand zurück' },
-      { to: 'open', s: 1.6, label: 'Arm zur Decke drehen', cue: 'Blick folgt der Hand', breath: 'ein' },
-      HOLD(1.5, 'Offen'),
-      { to: 'base', s: 1.2, label: 'Zurück' },
-      HOLD(0.4, 'Ausfallschritt'),
+      { to: 'elbow', s: 1.5, label: 'Elbow to foot', cue: 'Back leg long', breath: 'aus' },
+      HOLD(1, 'Hold'),
+      { to: 'base', s: 1, label: 'Hand back' },
+      { to: 'open', s: 1.6, label: 'Turn arm to ceiling', cue: 'Eyes follow the hand', breath: 'ein' },
+      HOLD(1.5, 'Open'),
+      { to: 'base', s: 1.2, label: 'Back' },
+      HOLD(0.4, 'Lunge'),
     ],
   };
 })();
@@ -1289,7 +1290,7 @@ M.leg_swings = {
     front: { hip: [0, STAND], torso: -4, legs: pair(ang(58, 58, { foot: 100 }), at(-2, FY)), arms: pair(ang(-20, -10), at(40, -98, { bend: 'down' })) },
     back: { hip: [0, STAND], torso: 6, legs: pair(ang(-32, -32, { foot: 30 }), at(-2, FY)), arms: pair(ang(25, 35), at(40, -98, { bend: 'down' })) },
   },
-  seq: [{ to: 'back', s: 0.55, label: 'Nach hinten', cue: 'Locker pendeln, Oberkörper ruhig' }, { to: 'front', s: 0.55, label: 'Nach vorn' }],
+  seq: [{ to: 'back', s: 0.55, label: 'Backwards', cue: 'Swing loosely, upper body still' }, { to: 'front', s: 0.55, label: 'Forwards' }],
 };
 
 M.arm_circles = {
@@ -1301,10 +1302,10 @@ M.arm_circles = {
     back: stand({ arms: pair(ang(-90, -88), ang(-92, -90)) }),
   },
   seq: [
-    { to: 'fwd', s: 0.4, label: 'Große Kreise', cue: 'Arme lang, Schultern locker' },
-    { to: 'up', s: 0.4, label: 'Große Kreise' },
-    { to: 'back', s: 0.4, label: 'Große Kreise' },
-    { to: 'down', s: 0.4, label: 'Große Kreise' },
+    { to: 'fwd', s: 0.4, label: 'Big circles', cue: 'Arms long, shoulders relaxed' },
+    { to: 'up', s: 0.4, label: 'Big circles' },
+    { to: 'back', s: 0.4, label: 'Big circles' },
+    { to: 'down', s: 0.4, label: 'Big circles' },
   ],
 };
 
@@ -1315,9 +1316,9 @@ M.ankle_rocks = {
     fwd: { hip: [-1, -36], torso: 10, legs: pair(at(16, FY), at(-40, -5, { bend: 'down', foot: -90 })), arms: pair(at(34, -70, { bend: 'down' }), at(33, -72, { bend: 'down' })) },
   },
   seq: [
-    { to: 'fwd', s: 1.2, label: 'Knie Richtung Wand', cue: 'Ferse bleibt am Boden', breath: 'aus' },
-    HOLD(0.8, 'Vorn'),
-    { to: 'back', s: 1.2, label: 'Zurück', breath: 'ein' },
+    { to: 'fwd', s: 1.2, label: 'Knee towards wall', cue: 'Heel stays on the floor', breath: 'aus' },
+    HOLD(0.8, 'Front'),
+    { to: 'back', s: 1.2, label: 'Back', breath: 'ein' },
   ],
 };
 
@@ -1326,12 +1327,12 @@ M.neck_stretch = (() => {
   const head = mv(mv([0, STAND], tdir(0), B.torso), tdir(h), B.neck + B.head);
   return {
     view: 'front', start: 'tilt', holdS: 20, sides: 'each', crop: -60, focus: [],
-    intro: { from: 'base', seq: [{ to: 'tilt', s: 2, label: 'Ohr zur Schulter' }] },
+    intro: { from: 'base', seq: [{ to: 'tilt', s: 2, label: 'Ear to shoulder' }] },
     keys: {
       base: standFront(),
       tilt: standFront({ head: h, arms: pair(at(head[0] - 3, head[1] - 8, { bend: 'out' }), ang(8, 6)) }),
     },
-    seq: STILL('Gegenschulter bleibt tief, sanft ziehen'),
+    seq: STILL('Opposite shoulder stays down, pull gently'),
   };
 })();
 
@@ -1342,10 +1343,10 @@ M.side_bend_stretch = {
     bend: standFront({ w: 9, lean: 18, arms: pair(ang(176, 140), at(14, -62, { bend: 'out' })) }),
   },
   seq: [
-    { to: 'bend', s: 1.6, label: 'Zur Seite strecken', cue: 'Lang machen, nicht nach vorn kippen', breath: 'aus' },
-    HOLD(2, 'Halten'),
-    { to: 'base', s: 1.4, label: 'Aufrichten', breath: 'ein' },
-    HOLD(0.3, 'Mitte'),
+    { to: 'bend', s: 1.6, label: 'Extend sideways', cue: 'Lengthen, do not tip forward', breath: 'aus' },
+    HOLD(2, 'Hold'),
+    { to: 'base', s: 1.4, label: 'Straighten up', breath: 'ein' },
+    HOLD(0.3, 'Centre'),
   ],
 };
 
@@ -1361,12 +1362,12 @@ M.inchworm = (() => {
       plank: { ...pl, legs: TOES(A[0]), arms: pair(at(hx, HY), at(hx - 3, HY)) },
     },
     seq: [
-      { to: 'fold', s: 1.5, label: 'Nach vorn abrollen', breath: 'aus' },
-      { to: 'plank', s: 2, label: 'Hände nach vorn laufen', cue: 'Beine bleiben möglichst gestreckt' },
-      HOLD(0.5, 'Brett'),
-      { to: 'fold', s: 2, label: 'Hände zurücklaufen' },
-      { to: 'stand', s: 1.5, label: 'Aufrollen', breath: 'ein' },
-      HOLD(0.3, 'Stand'),
+      { to: 'fold', s: 1.5, label: 'Roll down forwards', breath: 'aus' },
+      { to: 'plank', s: 2, label: 'Walk hands forward', cue: 'Keep legs as straight as possible' },
+      HOLD(0.5, 'Plank'),
+      { to: 'fold', s: 2, label: 'Walk hands back' },
+      { to: 'stand', s: 1.5, label: 'Roll up', breath: 'ein' },
+      HOLD(0.3, 'Standing'),
     ],
   };
 })();
@@ -1376,12 +1377,12 @@ M.deep_squat_hold = (() => {
   const c = chestPt(hip, t, 14, 16);
   return {
     view: 'side', start: 'deep', holdS: 30, focus: ['hip', 'thigh'],
-    intro: { from: 'base', seq: [{ to: 'deep', s: 2, label: 'Tief in die Hocke' }] },
+    intro: { from: 'base', seq: [{ to: 'deep', s: 2, label: 'Sink into a deep squat' }] },
     keys: {
       base: stand(),
       deep: { hip, torso: t, legs: pair(at(2, FY), at(-2, FY)), arms: pair(atP(c, { bend: 'down' }), at(c[0] - 2, c[1], { bend: 'down' })) },
     },
-    seq: STILL('Fersen am Boden, Brust offen'),
+    seq: STILL('Heels on the floor, chest open'),
   };
 })();
 
@@ -1391,7 +1392,7 @@ M.running_drills = {
     base: stand({ drop: -2, legs: pair(onToes(2, 55), onToes(-2, 55)), arms: pair(ang(0, 70), ang(0, 70)) }),
     knee: stand({ drop: -3, legs: pair(ang(88, 4, { foot: 60 }), onToes(-2, 55)), arms: pair(ang(-38, 40), ang(40, 118)) }),
   },
-  seq: [{ to: 'knee', s: 0.3, label: 'Knie hoch', cue: 'Aufrecht, schnelle Frequenz' }, { to: 'base', s: 0.3, label: 'Wechsel' }],
+  seq: [{ to: 'knee', s: 0.3, label: 'Knees up', cue: 'Upright, fast cadence' }, { to: 'base', s: 0.3, label: 'Switch' }],
 };
 
 M.fifa11 = {
@@ -1400,7 +1401,7 @@ M.fifa11 = {
     base: stand({ drop: -1, legs: pair(onToes(2, 60), onToes(-2, 60)), arms: pair(ang(0, 70), ang(0, 70)) }),
     knee: stand({ drop: -4, legs: pair(ang(62, 10, { foot: 70 }), onToes(-2, 55)), arms: pair(ang(-30, 40), ang(34, 110)) }),
   },
-  seq: [{ to: 'knee', s: 0.32, label: 'Lockeres Laufen mit Knieheben', cue: 'Knie zeigen nach vorn, nicht nach innen' }, { to: 'base', s: 0.32, label: 'Wechsel' }],
+  seq: [{ to: 'knee', s: 0.32, label: 'Jog with high knees', cue: 'Knees point forward, not inwards' }, { to: 'base', s: 0.32, label: 'Switch' }],
 };
 
 /* ------------------------------ Kondition ------------------------------ */
@@ -1413,11 +1414,11 @@ M.jumping_jack = {
     open: { hip: [0, STAND_HIP + 2], torso: 0, legs: pair(at(-24, FY), at(24, FY)), arms: pair(ang(-160, -168), ang(160, 168)) },
   },
   seq: [
-    { to: 'air', s: 0.29, label: 'Springen' },
-    { to: 'open', s: 0.29, label: 'Auf', cue: 'Leicht auf dem Vorfuß landen', breath: 'ein' },
-    { to: 'air', s: 0.29, label: 'Springen' },
-    { to: 'closed', s: 0.29, label: 'Zu', breath: 'aus' },
-    HOLD(0.1, 'Zu'),
+    { to: 'air', s: 0.29, label: 'Jump' },
+    { to: 'open', s: 0.29, label: 'Open', cue: 'Land lightly on the forefoot', breath: 'ein' },
+    { to: 'air', s: 0.29, label: 'Jump' },
+    { to: 'closed', s: 0.29, label: 'Closed', breath: 'aus' },
+    HOLD(0.1, 'Closed'),
   ],
 };
 
@@ -1427,7 +1428,7 @@ M.high_knees = {
     base: stand({ drop: -2, legs: pair(onToes(2, 55), onToes(-2, 55)), arms: pair(ang(0, 80), ang(0, 80)) }),
     knee: stand({ drop: -5, legs: pair(ang(96, 2, { foot: 55 }), onToes(-2, 55)), arms: pair(ang(-40, 46), ang(46, 128)) }),
   },
-  seq: [{ to: 'knee', s: 0.3, label: 'Knie hoch', cue: 'Knie bis Hüfthöhe, schnelle Schritte' }, { to: 'base', s: 0.3, label: 'Wechsel' }],
+  seq: [{ to: 'knee', s: 0.3, label: 'Knees up', cue: 'Knees to hip height, quick steps' }, { to: 'base', s: 0.3, label: 'Switch' }],
 };
 
 M.butt_kicks = {
@@ -1436,7 +1437,7 @@ M.butt_kicks = {
     base: stand({ drop: -2, legs: pair(onToes(2, 55), onToes(-2, 55)), arms: pair(ang(0, 80), ang(0, 80)) }),
     kick: stand({ drop: -3, legs: pair(ang(-10, -168, { foot: -110 }), onToes(-2, 55)), arms: pair(ang(30, 110), ang(-30, 50)) }),
   },
-  seq: [{ to: 'kick', s: 0.31, label: 'Ferse zum Po', cue: 'Oberkörper aufrecht, schnelle Frequenz' }, { to: 'base', s: 0.31, label: 'Wechsel' }],
+  seq: [{ to: 'kick', s: 0.31, label: 'Heel to bum', cue: 'Upper body upright, fast cadence' }, { to: 'base', s: 0.31, label: 'Switch' }],
 };
 
 M.burpee = (() => {
@@ -1454,13 +1455,13 @@ M.burpee = (() => {
       air: { hip: [0, STAND_HIP - 10], torso: 0, legs: pair(at(2, -15, { foot: 40 }), at(-2, -15, { foot: 40 })), arms: pair(ang(172, 176), ang(170, 174)) },
     },
     seq: [
-      { to: 'squat', s: 0.6, label: 'Hocke, Hände auf den Boden', breath: 'ein' },
-      { to: 'plank', s: 0.45, label: 'Füße zurückspringen' },
-      HOLD(0.3, 'Brett', { cue: 'Körper bleibt gerade' }),
-      { to: 'squat', s: 0.45, label: 'Füße heranspringen' },
-      { to: 'air', s: 0.45, label: 'Strecksprung', breath: 'aus' },
-      { to: 'stand', s: 0.35, label: 'Landen', cue: 'Weich landen' },
-      HOLD(0.3, 'Stand'),
+      { to: 'squat', s: 0.6, label: 'Squat, hands on the floor', breath: 'ein' },
+      { to: 'plank', s: 0.45, label: 'Jump feet back' },
+      HOLD(0.3, 'Plank', { cue: 'Body stays straight' }),
+      { to: 'squat', s: 0.45, label: 'Jump feet in' },
+      { to: 'air', s: 0.45, label: 'Extension jump', breath: 'aus' },
+      { to: 'stand', s: 0.35, label: 'Land', cue: 'Land softly' },
+      HOLD(0.3, 'Standing'),
     ],
   };
 })();
@@ -1473,7 +1474,7 @@ M.mountain_climber = (() => {
       plank: plankTop(),
       drive: plankTop({ legs: pair(at(hip[0] - 10, -13, { bend: 'down', foot: 30 }), at(PL_A[0] + 2, TY, { foot: 20 })) }),
     },
-    seq: [{ to: 'drive', s: 0.31, label: 'Knie zur Brust', cue: 'Hüfte bleibt tief und ruhig' }, { to: 'plank', s: 0.31, label: 'Wechsel' }],
+    seq: [{ to: 'drive', s: 0.31, label: 'Knee to chest', cue: 'Hips stay low and steady' }, { to: 'plank', s: 0.31, label: 'Switch' }],
   };
 })();
 
@@ -1484,9 +1485,9 @@ M.skater_jump = {
     land: { hip: [-30, -54], torso: -10, legs: pair(at(-34, FY, { bend: 'out' }), at(-50, -16, { bend: 'down' })), arms: pair(ang(-62, -72), ang(-22, -40)) },
   },
   seq: [
-    { to: 'land', s: 0.32, label: 'Seitlich springen', cue: 'Auf einem Bein weich landen' },
-    HOLD(0.2, 'Landen'),
-    { to: 'air', s: 0.3, label: 'Abspringen' },
+    { to: 'land', s: 0.32, label: 'Jump sideways', cue: 'Land softly on one leg' },
+    HOLD(0.2, 'Land'),
+    { to: 'air', s: 0.3, label: 'Take off' },
   ],
 };
 
@@ -1496,10 +1497,25 @@ M.bear_crawl = {
     base: bear(),
     step: bear({ arms: pair(at(BEAR_SH_X + 12, -9), at(BEAR_SH_X - 3, HY)), legs: pair(at(-30, -7, { bend: 'down', foot: 25 }), at(-22, -13, { bend: 'down', foot: 25 })) }),
   },
-  seq: [{ to: 'step', s: 0.35, label: 'Hand und Gegenfuß vor', cue: 'Knie knapp über dem Boden' }, { to: 'base', s: 0.35, label: 'Absetzen' }],
+  seq: [{ to: 'step', s: 0.35, label: 'Hand and opposite foot forward', cue: 'Knees just above the floor' }, { to: 'base', s: 0.35, label: 'Set down' }],
 };
 
 export const MOTIONS = M;
 
 /** Ablauf einer Übung (oder null, wenn keiner hinterlegt ist). */
 export function motionFor(id) { return MOTIONS[id] || null; }
+
+/* Phase texts: English above, other languages from the exercises area of the catalogs
+   (exercises.<id>.phases.<i> and .intro.<i> with label / cue, numbered in the order of `seq`). A phase text
+   missing there shows the English one. Breath values ('ein', 'aus', 'steady', 'calm') are
+   translated where they are shown (motion.breath.*). */
+for (const [id, m] of Object.entries(MOTIONS)) {
+  for (const [part, seq] of [['phases', m.seq], ['intro', m.intro && m.intro.seq]]) (seq || []).forEach((p, i) => {
+    for (const prop of ['label', 'cue']) {
+      if (p[prop] == null) continue;
+      const source = p[prop];
+      const key = `exercises.${id}.${part}.${i}.${prop}`;
+      Object.defineProperty(p, prop, { get: () => (hasOwnText(key) ? tr(key) : source), enumerable: true, configurable: true });
+    }
+  });
+}

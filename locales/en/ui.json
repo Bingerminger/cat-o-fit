@@ -68,7 +68,9 @@
     "next": "Next",
     "errorPrefix": "Error: ",
     "back": "Back",
-    "all": "All"
+    "all": "All",
+    "today": "today",
+    "yesterday": "yesterday"
   },
   "dialog": {
     "sure": "Are you sure?",
@@ -1168,5 +1170,363 @@
     "zoneThreshold": "Threshold / tempo",
     "zoneVo2": "Intervals (VO2max)",
     "racePace": "Race pace"
+  },
+  "dashboard": {
+    "periodOverdueText": "Your last period started {days} days ago. Take a moment in Cycle to say what applies.",
+    "badgeUnlocked": "{emoji}  Badge unlocked: {name}",
+    "momentum": "Momentum {score}",
+    "countdownDays": {
+      "one": "day",
+      "other": "days"
+    },
+    "countdownWeeks": {
+      "one": "week",
+      "other": "weeks"
+    },
+    "overdue": {
+      "one": "{count} session is waiting to be made up",
+      "other": "{count} sessions are waiting to be made up"
+    },
+    "moreHints": "More tips ({count})",
+    "formRelative": "{label} ({pct}% of fitness)",
+    "ratio": "Ratio {ratio}",
+    "formFootnote": "Form: {form} · values in load points (AU = minutes × effort)",
+    "stepDone": "{label} – done",
+    "athlete": "athlete",
+    "pinTitle": "Set your own PIN",
+    "pinText": "Your profile still uses the default PIN 0000 (or none). Everyone in the family knows it – set your own in Settings.",
+    "toCycle": "Go to Cycle",
+    "periodOverdue": "Period overdue?",
+    "nextRace": "Next race",
+    "targetTime": "Target time",
+    "overdueHint": "Move it, log it late or mark it as missed.",
+    "restDay": "Rest day",
+    "restDayText": "No session planned – enjoy the rest.",
+    "noPlan": "No plan yet",
+    "noPlanText": "Set up a goal or programme – or just log an activity.",
+    "logActivity": "Log activity",
+    "yourCoach": "Your coach",
+    "loadForm": "Load & form",
+    "thisWeek": "This week",
+    "yourGoals": "Your goals",
+    "fitness": "Fitness",
+    "fatigue": "Fatigue",
+    "form": "Form",
+    "chartLabel": "Fitness, fatigue and form",
+    "stepProfile": "Complete your profile",
+    "stepProfileHint": "Weight, year of birth, max HR – for zones and load",
+    "stepGoal": "Set up a goal or programme",
+    "stepGoalHint": "A race with a plan, or a training programme",
+    "stepMembers": "Add members",
+    "stepMembersHint": "Family or team – everyone with their own PIN",
+    "letsGo": "Let’s go",
+    "startIntro": "Three quick steps, then Cat-O-Fit plans with you.",
+    "doneChip": "✓ done",
+    "greetMorning": "Good morning, {name} 👋",
+    "greetAfternoon": "Good afternoon, {name} 👋",
+    "greetEvening": "Good evening, {name} 👋",
+    "overviewOf": "{name}’s overview",
+    "overviewOfSibilant": "{name}’s overview",
+    "startWorkoutFor": "Start workout: {title}",
+    "startWorkout": "Start workout",
+    "ofPlanned": "of {km} planned",
+    "runKm": "Run km",
+    "statSessions": "sessions",
+    "statDone": "done"
+  },
+  "dashboardCoach": {
+    "makeEasier": "Make “{title}” easier",
+    "raiseTo": "Raise “{title}” to {km} km",
+    "raised": "Raised to {km} km",
+    "volumeText": "This week {missed} km were left undone ({done}/{planned} km done). Add some of it gently to your next easy session – without doubling up the load.",
+    "rpeText": "Average RPE {rpe} out of 10 from {count} rated sessions over the last {weeks} weeks.",
+    "restWholeText": "{reason} That day ({date}) has {count} sessions from your goals – the whole day goes easy so the recovery really works.",
+    "restText": "{reason} Suggestion: turn “{title}” on {date} into a recovery day.",
+    "log": {
+      "restReason": "Load management: {date} eased.",
+      "destackReason": "“{title}” moved to a free day – no more two sessions on the same day.",
+      "returnReason": "Coming back after time off.",
+      "autoRestTitle": "Recovery day (automatic)",
+      "autoRestDescription": "Deliberately easy – the whole day is set to recovery (including a second session from your goals). You’ll make up the original load once you’re rested. Undo it under “Recent automatic adjustments”.",
+      "restTitle": "Recovery day added",
+      "footballTitle": "Easier after football",
+      "footballReason": "Football was demanding – next session eased.",
+      "destackTitle": "Day spread out",
+      "lowReadinessReason": "Low readiness today.",
+      "easierTodayTitle": "Made easier today",
+      "easierTitle": "Made easier",
+      "deloadTitle": "Lighter week planned",
+      "deloadReason": "Load has been high for a while.",
+      "boostTitle": "Step-up planned",
+      "boostReason": "Room to spare lately – a little more volume."
+    },
+    "restWholeToast": "Whole day eased – {count} sessions set to easy",
+    "footballTitle": "Football {when} was demanding",
+    "footballText": "Football takes a lot out of you. Take “{title}” on {date} a bit easier – you’ll be fresher for the key sessions.",
+    "destackText": "{date}: “{keep}” and “{move}” from your goals fall on the same day. Moving “{move}” to {weekday} ({target}) spreads the day out – each session gets its stimulus and recovery works.",
+    "moveTo": "Move “{title}” to {weekday}",
+    "readinessLow": "Low readiness today ({score})",
+    "readinessText": "Today’s plan is “{title}” – a demanding one. With low readiness, an easy session often does more than a forced hard one.",
+    "makeupText": "“{title}” from {date} was missed. {weekday} ({target}) is free – move it there?",
+    "makeupButton": "Make it up on {weekday}",
+    "fitsUnit": "fits “{title}”",
+    "matchAll": "Match all {count}",
+    "whyThis": "Why this recommendation?",
+    "returnTitle": "Ease back in gently",
+    "volumeTitle": "Balance your weekly volume",
+    "rpeTitle": "Effort in your recent sessions",
+    "undoneSkipped": "Undone – sessions already done stay as they are",
+    "undone": "Adjustment undone",
+    "restWholeTitle": "Full recovery day recommended",
+    "restTitle": "Recovery day recommended",
+    "restWholeButton": "Ease the whole day",
+    "restButton": "Plan a recovery day",
+    "restPlannedToast": "Recovery day planned – you’ll make up the session once you’re rested",
+    "footballToast": "Made easier – you’ll do the key session when you’re fresher",
+    "destackTitle": "Two sessions on one day",
+    "destackToast": "Day spread out – the session is now on a free day",
+    "logTitle": "Recent automatic adjustments",
+    "adjustment": "Adjustment",
+    "readiness": "Readiness",
+    "easierToday": "Make today easier",
+    "toSession": "Go to session",
+    "easierToast": "Made easier – key sessions come back once you’ve recovered",
+    "makeupTitle": "Make up the key session?",
+    "makeupToast": "Key session rescheduled – it’s in your plan now",
+    "deloadTitle": "Very demanding for weeks",
+    "deloadButton": "Make next week lighter",
+    "deloadToast": "Lighter week on – less volume, more recovery",
+    "boostTitle": "More in the tank",
+    "boostButton": "Step up next week",
+    "boostToast": "Next week is a bit tougher – good luck!",
+    "rpeSaved": "Effort saved",
+    "dontAsk": "Don’t ask",
+    "rpeGroup": "How hard was this activity?",
+    "rpeAskTitle": "How hard was it?",
+    "rpeAskText": "How it felt makes your load more accurate than any watch – one tap is enough.",
+    "match": "Match",
+    "dontMatch": "Don’t match",
+    "matchTitle": "Match imported activities",
+    "matchText": "These activities came from Apple Health or a file and fit planned sessions on the same day. Once matched, those sessions count as done – without counting the load twice.",
+    "returnTextInjured": "On {date} you missed a session because of an injury. Start with easy sessions and build up step by step – hard sessions only once you feel fully fit again. You don’t need to make anything up. If the pain persists, have a doctor check it.",
+    "returnTextIll": "On {date} you missed a session because you were ill. Start with easy sessions and build up step by step – hard sessions only once you feel fully fit again. You don’t need to make anything up.",
+    "session": "session",
+    "deloadText": "Your sessions over the last {weeks} weeks were very hard on average. A lighter week ({count} sessions with less volume, same intensity) helps you come back stronger. Fixed appointments stay as they are.",
+    "deloadTextRpe": "Your sessions over the last {weeks} weeks were very hard on average (average RPE {rpe}). A lighter week ({count} sessions with less volume, same intensity) helps you come back stronger. Fixed appointments stay as they are.",
+    "boostText": "Your sessions over the last {weeks} weeks were rather easy, and your load is in its usual range. If you like, add a little next week ({count} sessions) – about 12% more volume.",
+    "boostTextRpe": "Your sessions over the last {weeks} weeks were rather easy (average RPE {rpe}), and your load is in its usual range. If you like, add a little next week ({count} sessions) – about 12% more volume.",
+    "rpeChoiceAria": "{label} ({value} out of 10)",
+    "rpeFromHr": "Until then, estimated from heart rate: {rpe} out of 10",
+    "rpeFromType": "Until then, the default for this sport counts: {rpe} out of 10",
+    "matchedMany": "{count} activities matched",
+    "matchedOne": "Matched – session done"
+  },
+  "dashboardGoals": {
+    "weightAlmost": "{current} – almost at your goal of {target}, now hold it",
+    "weightProgress": "{current} → goal {target} ({remaining} to go)",
+    "phaseNote": "Phase “{phase}”: {note}",
+    "weekAlmost": "almost at your goal of {target} kg – hold it",
+    "weekRemaining": "{remaining} kg to go to {target} kg",
+    "currentToGoal": "{current} → goal {target}",
+    "gainWeight": "Gain weight",
+    "loseWeight": "Lose weight",
+    "weight": "Weight",
+    "noForecast": "Not enough runs yet for a forecast.",
+    "halfMarathon": "Half marathon",
+    "marathon": "Marathon",
+    "race": "Race",
+    "weekGoals": "Weekly goals",
+    "adjust": "Adjust",
+    "activeMinutes": "Active minutes",
+    "trainingDays": "Training days",
+    "goalWeightReached": "Goal weight reached 🎉",
+    "weekGoalMet": "✅ Weekly goal reached – great work!",
+    "healthGoals": "Health goals",
+    "manage": "Manage",
+    "forecastOnTrack": "Forecast {time} – on track.",
+    "forecastBehind": "Forecast {time} – there’s still work to do.",
+    "forecastTargetOnTrack": "Forecast {time} · target {target} – on track.",
+    "forecastTargetBehind": "Forecast {time} · target {target} – there’s still work to do.",
+    "forecastNeedsVolume": "Assumes enough volume.",
+    "forecastFromEasy": "Estimated from easy runs.",
+    "weightReachedBeyond": "Goal reached ({weight}) – now hold it. Is the goal still right?",
+    "weightReached": "Goal reached ({weight})",
+    "cockpitDual": "Goal cockpit · {race} + {weight}",
+    "cockpit": "Goal cockpit",
+    "noDeficit": "No deficit recommended – details in Nutrition",
+    "gainGoal": "Goal: gain weight – details in Nutrition",
+    "weightGoalReached": "Goal weight reached – now hold it",
+    "answerScreening": "Daily target: answer the quick screening first",
+    "lossGoalActive": "Weight-loss goal active – daily target in Nutrition",
+    "deficitNone": "Recommended deficit: none right now (race focus)",
+    "deficitKcal": "Recommended deficit: {kcal} kcal/day",
+    "phaseFloored": "Depends on the phase, with a safety limit · to Nutrition",
+    "phaseBased": "Depends on the phase · to Nutrition",
+    "reached": "reached 🎉",
+    "noReading": "no reading yet",
+    "stillToGo": "{value} to go",
+    "daysLeft": "{n} d",
+    "deadlinePassed": "deadline passed"
+  },
+  "showProgram": {
+    "unit": "Session",
+    "perSide": "each side",
+    "parse": {
+      "perSide": "leg|side|arm",
+      "perSidePhrase": "each side|per side",
+      "rounds": "rounds|round",
+      "rest": "rest|break",
+      "and": "and"
+    }
+  },
+  "workoutCatalog": {
+    "ganzkoerper": {
+      "title": "Full body, no equipment",
+      "subtitle": "Strength for legs, glutes, upper body and core"
+    },
+    "po-beine": {
+      "title": "Glutes & legs",
+      "subtitle": "Squats, lunges, bridges – no equipment"
+    },
+    "bauch": {
+      "title": "Abs & core",
+      "subtitle": "A stable middle – calm and controlled"
+    },
+    "hiit": {
+      "title": "HIIT – short and sharp",
+      "subtitle": "Heart rate up: 30 seconds all in, 15 seconds rest"
+    },
+    "aufwaermen": {
+      "title": "Warm-up before a run",
+      "subtitle": "Loosen the joints, raise the pulse slowly"
+    },
+    "laeufer-kraft": {
+      "title": "Strength for runners",
+      "subtitle": "Hips, calves and core – against typical running niggles"
+    },
+    "mobility-morgen": {
+      "title": "Morning mobility",
+      "subtitle": "A gentle start – back, hips, shoulders"
+    },
+    "dehnen-laufen": {
+      "title": "Stretching after a run",
+      "subtitle": "Calves, thighs, hips – breathe out slowly"
+    },
+    "ruecken": {
+      "title": "Relaxed & strong back",
+      "subtitle": "Mobilise, stabilise, release"
+    },
+    "oberkoerper": {
+      "title": "Upper body, no equipment",
+      "subtitle": "Chest, shoulders, arms – push-ups in three levels"
+    },
+    "hanteln": {
+      "title": "Full body with dumbbells",
+      "subtitle": "The basic lifts with weight"
+    },
+    "kettlebell": {
+      "title": "Kettlebell basics",
+      "subtitle": "Swing, squat, lift, carry"
+    },
+    "hyrox": {
+      "title": "Hyrox strength",
+      "subtitle": "Wall balls, swings, lunges, burpees, carries"
+    },
+    "beine-power": {
+      "title": "Leg power",
+      "subtitle": "Jumping power and stable knees"
+    },
+    "po-band": {
+      "title": "Glutes with a mini band",
+      "subtitle": "Targeted strength for glutes and hips"
+    },
+    "bauch-7": {
+      "title": "Quick abs",
+      "subtitle": "Six exercises, all on the mat"
+    },
+    "rumpf-sanft": {
+      "title": "Gentle core stability",
+      "subtitle": "Control over speed, kind to your back"
+    },
+    "tabata": {
+      "title": "Tabata intervals",
+      "subtitle": "20 seconds flat out, 10 seconds rest"
+    },
+    "cardio-leise": {
+      "title": "Cardio without jumping",
+      "subtitle": "Heart rate up, neighbours stay relaxed"
+    },
+    "huefte": {
+      "title": "Free hips",
+      "subtitle": "For everyone who sits or runs a lot"
+    },
+    "schulter-nacken": {
+      "title": "Shoulders & neck",
+      "subtitle": "Against desk back"
+    },
+    "abend": {
+      "title": "Evening routine",
+      "subtitle": "Wind down and lengthen"
+    },
+    "lauf-abc": {
+      "title": "Running drills & warm-up",
+      "subtitle": "Strides, ankles, springiness"
+    },
+    "fuesse-waden": {
+      "title": "Strong feet & calves",
+      "subtitle": "Achilles tendon, shins, ankles"
+    },
+    "fussball-praevention": {
+      "title": "Football injury prevention",
+      "subtitle": "Hamstrings, groin, hips – as in FIFA 11+"
+    },
+    "cats": {
+      "kraft": "Strength",
+      "rumpf": "Core",
+      "beweglichkeit": "Mobility",
+      "kondition": "Cardio",
+      "laufen": "Running & football"
+    }
+  },
+  "motion": {
+    "animationOf": "Animation: {name}",
+    "pause": "Pause",
+    "doneSets": {
+      "one": "Done – {count} set",
+      "other": "Done – {count} sets"
+    },
+    "time": "Time",
+    "sets": "Sets",
+    "restart": "Start over",
+    "beatTone": "Beat tone",
+    "sound": "Sound",
+    "normal": "Normal",
+    "slow": "Slow",
+    "tempo": "Tempo",
+    "resume": "Resume",
+    "again": "Again",
+    "followAlong": "Follow along",
+    "less": "{label} less",
+    "more": "{label} more",
+    "reps": "Reps",
+    "repsEachSide": "Reps each side",
+    "previewHold": "Preview · hold {s} s",
+    "previewReps": "Preview · {n} reps",
+    "previewRepsEachSide": "Preview · {n} reps each side",
+    "done": "Done",
+    "rest": "Rest",
+    "switchSides": "Switch sides",
+    "restStatus": "Rest {time} · set {set} of {sets} next",
+    "switchStatus": "Switch sides · {time}",
+    "setOf": "Set {set} of {sets}",
+    "getInPosition": "{set} · get in position",
+    "repOf": "{set} · rep {rep} of {reps}",
+    "repOfEachSide": "{set} · rep {rep} of {reps} each side",
+    "breath": {
+      "ein": "Breathe in",
+      "aus": "Breathe out",
+      "steady": "keep breathing calmly",
+      "calm": "breathe calmly"
+    }
   }
 }

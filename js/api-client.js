@@ -277,6 +277,6 @@ export async function uploadHealthExport(file, onProgress) {
 /** URL für serverseitige .ics-Erzeugung (Download), mit Kalender-Schlüssel, falls vorhanden. */
 export function icsUrl(scope, id, user, token = null) {
   const u = user ? `&user=${encodeURIComponent(user)}` : '';
-  const t = token ? `&token=${encodeURIComponent(token)}` : '';
-  return `${API}?action=ics&scope=${encodeURIComponent(scope)}&id=${encodeURIComponent(id)}${u}${t}`;
+  const tokenQuery = token ? `&token=${encodeURIComponent(token)}` : '';
+  return `${API}?action=ics&scope=${encodeURIComponent(scope)}&id=${encodeURIComponent(id)}${u}${tokenQuery}`;
 }

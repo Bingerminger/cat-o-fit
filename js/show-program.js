@@ -15,6 +15,19 @@ import { findExercise, exerciseMentions, exercisesForUnit } from './exercises.js
 import { MOTIONS } from './exercise-motions.js';
 import { cycleOf, introOf } from './motion-rig.js';
 import { STYLES, styleFor } from './music.js';
+import { t as tr, tVariants } from './i18n.js';
+
+/* Words that carry meaning in a plan text ("12×/Bein", "3 Runden", "60 s Pause"). Plan texts
+   can be written in the active language, in English, or – before v4.0.0 – in German, so all
+   three are understood. Each catalog value lists alternatives separated by "|". */
+const LEGACY_DE = { perSide: 'Bein|Seite|Arm', perSidePhrase: 'je Seite|pro Seite', rounds: 'Runden', rest: 'Pause', and: 'und' };
+const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function words(kind) {
+  const all = new Set(LEGACY_DE[kind].split('|'));
+  for (const v of tVariants(`showProgram.parse.${kind}`)) v.split('|').forEach((w) => { if (w.trim()) all.add(w.trim()); });
+  return [...all].sort((a, b) => b.length - a.length).map(escapeRe).join('|');
+}
+const L = '(?<![\\p{L}])', R = '(?![\\p{L}])';
 
 const sum = (list) => list.reduce((a, p) => a + p.dur, 0);
 const mid = (a, b) => (b != null ? (Number(a) + Number(b)) / 2 : Number(a));
@@ -25,7 +38,7 @@ const round5 = (s) => Math.max(5, Math.round(s / 5) * 5);
 /** Menge aus dem Textstück einer Übung: { reps, holdS, perSide } (fehlende Werte null). */
 export function doseOf(snippet = '') {
   const s = String(snippet);
-  const perSide = /\/\s*(Bein|Seite|Arm)\b|je Seite|pro Seite/i.test(s);
+  const perSide = new RegExp(`\\/\\s*(?:${words('perSide')})${R}|${L}(?:${words('perSidePhrase')})${R}`, 'iu').test(s);
   // „2×30 m“ ist eine Strecke, keine Wiederholungszahl.
   const reps = /(\d+)\s*(?:[–-]\s*(\d+))?\s*×(?!\s*\d)/.exec(s);
   const min = /(\d+(?:[,.]\d+)?)\s*(?:[–-]\s*(\d+))?\s*min\b/.exec(s);
@@ -43,22 +56,22 @@ export function doseOf(snippet = '') {
  * Satzende.
  */
 export function dosesFromText(text = '') {
-  const t = String(text || '');
-  const mentions = exerciseMentions(t);
+  text = String(text || '');
+  const mentions = exerciseMentions(text);
   const items = mentions.map(({ e, first }, i) => {
-    const next = i + 1 < mentions.length ? mentions[i + 1].first : t.length;
-    let snippet = t.slice(first, next);
+    const next = i + 1 < mentions.length ? mentions[i + 1].first : text.length;
+    let snippet = text.slice(first, next);
     const cut = snippet.search(/·|;|\.\s|\n/);
     if (cut > 0) snippet = snippet.slice(0, cut);
     // „Brustöffner & Wirbelsäulen-Rotation 8×/Seite“: ohne eigene Zahl gilt die der nächsten.
-    return { id: e.id, ...doseOf(snippet), joined: !/\d/.test(snippet) && /(&|\bund|,|\/)\s*$/.test(snippet) };
+    return { id: e.id, ...doseOf(snippet), joined: !/\d/.test(snippet) && new RegExp(`(&|${L}(?:${words('and')})|,|\\/)\\s*$`, 'iu').test(snippet) };
   });
   for (let i = items.length - 2; i >= 0; i--) {
     if (items[i].joined) { const { reps, holdS, perSide } = items[i + 1]; Object.assign(items[i], { reps, holdS, perSide }); }
   }
   items.forEach((it) => { delete it.joined; });
-  const rounds = /(\d+)\s*(?:[–-]\s*\d+)?\s*Runden/.exec(t);
-  const pause = /(\d+)\s*(?:[–-]\s*\d+)?\s*s\s*Pause/.exec(t);
+  const rounds = new RegExp(`(\\d+)\\s*(?:[–-]\\s*\\d+)?\\s*(?:${words('rounds')})${R}`, 'iu').exec(text);
+  const pause = new RegExp(`(\\d+)\\s*(?:[–-]\\s*\\d+)?\\s*s\\s*(?:${words('rest')})${R}`, 'iu').exec(text);
   return { items, rounds: rounds ? Number(rounds[1]) : null, roundRest: pause ? Number(pause[1]) : null };
 }
 
@@ -94,7 +107,7 @@ export function programForUnit(unit = {}) {
   if (!items.length) return null;
   const calm = unit.type === 'mobility' || unit.type === 'recovery';
   return {
-    title: unit.title || 'Einheit',
+    title: unit.title || tr('showProgram.unit'),
     format: 'plan',
     style: styleOf(items, calm ? 'flow' : null),
     rounds: parsed.rounds || (calm ? 1 : 2),
@@ -113,9 +126,10 @@ export function programForWorkout(w) {
 /** Was eine Übung im Programm dauert und vorgibt (für Übersicht und Ansage). */
 export function doseLabel(it, program) {
   const each = it.m.sides === 'each';
-  const side = it.m.sides ? ' je Seite' : '';
-  if (program.format === 'interval') return `${it.work || 40} s${each ? ' je Seite' : ''}`;
-  if (it.m.holdS != null) return `${it.holdS || it.m.holdS} s${each ? ' je Seite' : ''}`;
+  const side = it.m.sides ? ` ${tr('showProgram.perSide')}` : '';
+  const eachSide = each ? ` ${tr('showProgram.perSide')}` : '';
+  if (program.format === 'interval') return `${it.work || 40} s${eachSide}`;
+  if (it.m.holdS != null) return `${it.holdS || it.m.holdS} s${eachSide}`;
   return `${it.reps || it.m.reps || 10}×${side}`;
 }
 

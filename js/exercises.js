@@ -341,7 +341,7 @@ function renderWorkouts(view) {
     grid.innerHTML = '';
     const q = uiState.woQuery.trim().toLowerCase();
     const list = WORKOUTS.filter((w) => (uiState.woCat === 'all' || w.cat === uiState.woCat)
-      && (!q || [w.title, w.subtitle, ...workoutIds(w).map((id) => (findExercise(id) || {}).name || '')].some((t) => t.toLowerCase().includes(q))));
+      && (!q || [w.title, w.subtitle, ...workoutIds(w).map((id) => (findExercise(id) || {}).name || '')].some((s) => s.toLowerCase().includes(q))));
     if (!list.length) { grid.appendChild(el('div', { class: 'empty', text: t('exerciseLib.noWorkoutMatch') })); return; }
     for (const w of list) {
       const first = coverOf(w);

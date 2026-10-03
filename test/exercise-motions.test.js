@@ -35,7 +35,7 @@ test('Abläufe sind stimmig: Schlüssel, Schleife, Takt, Hinweise, Hervorhebung'
       const dur = ph.hold != null ? ph.hold : ph.s;
       assert.ok(dur > 0 && dur <= 30, `${id}: Dauer ${dur}`);
       assert.ok(!ph.cue || ph.cue.length <= 44, `${id}: Hinweis zu lang („${ph.cue}“)`);
-      assert.ok(!ph.breath || ['ein', 'aus', 'ruhig weiteratmen', 'ruhig atmen'].includes(ph.breath), `${id}: Atmung ${ph.breath}`);
+      assert.ok(!ph.breath || ['ein', 'aus', 'steady', 'calm'].includes(ph.breath), `${id}: Atmung ${ph.breath}`);
       cur = ph.to || cur;
     }
     assert.equal(cur, m.start, `${id}: Durchgang endet nicht in der Startpose`);

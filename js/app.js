@@ -188,7 +188,7 @@ function buildSidebar() {
     onclick: () => openCaptureSheet(),
   }, [icon('plus'), t('nav.capture')]));
   const list = el('div', { class: 'sidebar__list' });
-  TAB_ITEMS.filter((t) => t.hash).forEach((t) => list.appendChild(track(navLink(t, { path }), t)));
+  TAB_ITEMS.filter((item) => item.hash).forEach((item) => list.appendChild(track(navLink(item, { path }), item)));
   visibleGroups().filter((g) => g.id !== 'system').forEach((g) => {
     list.appendChild(el('div', { class: 'sidebar__group', text: g.title }));
     g.items.forEach((it) => list.appendChild(track(navLink(it, { path }), it)));

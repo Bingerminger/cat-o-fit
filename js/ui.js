@@ -347,7 +347,7 @@ export function uid(prefix = 'id') {
 export function nowIso() { return new Date().toISOString(); }
 export function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
 export function debounce(fn, ms = 300) {
-  let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+  let timer; return (...a) => { clearTimeout(timer); timer = setTimeout(() => fn(...a), ms); };
 }
 export function navigate(hash) { location.hash = hash; }
 
@@ -386,26 +386,26 @@ export function goOrRefresh(hash) {
 export function toast(message, variant = '', ms = 2400, action = null) {
   const root = document.getElementById('toast-root');
   if (!root) return; // kein Toast-Container (z. B. vor App-Init) -> still überspringen statt crashen
-  const t = el('div', { class: `toast ${variant ? 'toast--' + variant : ''}` });
-  if (variant === 'good') t.appendChild(icon('check'));
-  if (variant === 'bad') t.appendChild(icon('info'));
-  t.appendChild(el('span', { text: message }));
+  const box = el('div', { class: `toast ${variant ? 'toast--' + variant : ''}` });
+  if (variant === 'good') box.appendChild(icon('check'));
+  if (variant === 'bad') box.appendChild(icon('info'));
+  box.appendChild(el('span', { text: message }));
   let gone = false;
   const dismiss = () => {
     if (gone) return;
     gone = true;
-    t.style.transition = 'opacity .25s ease, transform .25s ease';
-    t.style.opacity = '0';
-    t.style.transform = 'translateY(8px)';
-    setTimeout(() => t.remove(), 260);
+    box.style.transition = 'opacity .25s ease, transform .25s ease';
+    box.style.opacity = '0';
+    box.style.transform = 'translateY(8px)';
+    setTimeout(() => box.remove(), 260);
   };
   if (action) {
-    t.appendChild(el('button', {
+    box.appendChild(el('button', {
       class: 'toast__action', type: 'button', text: action.label,
       onclick: () => { dismiss(); action.onClick(); },
     }));
   }
-  root.appendChild(t);
+  root.appendChild(box);
   setTimeout(dismiss, action ? Math.max(ms, 6000) : ms);
 }
 

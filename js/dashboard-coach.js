@@ -17,6 +17,8 @@ import { sessionRpeInfo } from './load.js';
 import { gentleVariant } from './rolling.js';
 import { applyAdapt, undoAdapt as undoAdaptStore, canUndo } from './adapt.js';
 
+import { t } from './i18n.js';
+
 /** Die eine Tagesempfehlung (coach.js) als Karte – mit Begründung, warum genau diese. */
 export function coachCard(view, coach, today) {
   const p = coach.primary;
@@ -36,7 +38,7 @@ export function coachCard(view, coach, today) {
   const why = coachWhy(coach);
   if (why) {
     card.appendChild(el('details', { class: 'coach-why mt-2' }, [
-      el('summary', { text: 'Warum diese Empfehlung?' }),
+      el('summary', { text: t('dashboardCoach.whyThis') }),
       el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '4px' }, text: why }),
     ]));
   }
@@ -47,34 +49,33 @@ export function coachCard(view, coach, today) {
 function returnCard(p) {
   const r = p.ret;
   const u = p.unit;
-  const what = r.reason === 'injured' ? 'verletzungsbedingt' : 'krankheitsbedingt';
   return el('div', { class: 'card', style: { borderLeft: '5px solid #5b8def' } }, [
     el('div', { class: 'row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('heart'), style: { color: '#5b8def', width: '20px', flex: '0 0 auto' } }),
       el('div', { class: 'grow' }, [
-        el('div', { style: { fontWeight: '700' }, text: 'Behutsam wieder einsteigen' }),
-        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: `Am ${fmtDate(r.date)} ist eine Einheit ${what} ausgefallen. Starte mit lockeren Einheiten und steigere stufenweise – harte Einheiten erst, wenn du dich wieder ganz fit fühlst. Nachholen musst du nichts.${r.reason === 'injured' ? ' Bei anhaltenden Schmerzen lass es ärztlich abklären.' : ''}` }),
+        el('div', { style: { fontWeight: '700' }, text: t('dashboardCoach.returnTitle') }),
+        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: r.reason === 'injured' ? t('dashboardCoach.returnTextInjured', { date: fmtDate(r.date) }) : t('dashboardCoach.returnTextIll', { date: fmtDate(r.date) }) }),
       ]),
     ]),
-    u ? el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => makeEasier(u, 'Wiedereinstieg nach Ausfall.') }, [icon('feather'), `„${u.title}“ lockerer machen`]) : null,
+    u ? el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => makeEasier(u, t('dashboardCoach.log.returnReason')) }, [icon('feather'), t('dashboardCoach.makeEasier', { title: u.title })]) : null,
   ]);
 }
 
 /** Coach-Karte: automatischer Wochenumfang-Ausgleich (Vorschlag mit „Übernehmen“). */
 function volumeBalanceCard(bal) {
   const s = bal.suggestion;
-  const apply = el('button', { class: 'btn btn--soft mt-2', style: { fontSize: '.82rem' } }, [icon('check'), `„${s.unit.title}“ auf ${s.newKm} km erhöhen`]);
+  const apply = el('button', { class: 'btn btn--soft mt-2', style: { fontSize: '.82rem' } }, [icon('check'), t('dashboardCoach.raiseTo', { title: s.unit.title, km: fmtDec(s.newKm) })]);
   apply.addEventListener('click', () => {
     saveUnitPatch(s.unit.planId, s.unit.id, { targetDistanceKm: s.newKm });
-    toast(`Auf ${s.newKm} km erhöht`, 'good');
+    toast(t('dashboardCoach.raised', { km: fmtDec(s.newKm) }), 'good');
     refreshView();
   });
   return el('div', { class: 'card', style: { borderLeft: '3px solid #f5a623' } }, [
     el('div', { class: 'row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('route'), style: { color: '#f5a623', width: '20px', flex: '0 0 auto', marginTop: '1px' } }),
       el('div', {}, [
-        el('div', { style: { fontWeight: '700', fontSize: '.92rem' }, text: 'Wochenumfang ausgleichen' }),
-        el('div', { class: 'muted', style: { fontSize: '.84rem', marginTop: '2px' }, text: `Diese Woche sind ${bal.missedKm} km liegen geblieben (${bal.done}/${bal.planned} km erledigt). Lege einen Teil behutsam auf die nächste lockere Einheit – ohne Doppelbelastung.` }),
+        el('div', { style: { fontWeight: '700', fontSize: '.92rem' }, text: t('dashboardCoach.volumeTitle') }),
+        el('div', { class: 'muted', style: { fontSize: '.84rem', marginTop: '2px' }, text: t('dashboardCoach.volumeText', { missed: bal.missedKm, done: bal.done, planned: bal.planned }) }),
         apply,
       ]),
     ]),
@@ -89,8 +90,8 @@ export function rpeInfoCard(prog) {
     el('div', { class: 'row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('gauge'), style: { color: 'var(--accent-text)', width: '20px', flex: '0 0 auto', marginTop: '1px' } }),
       el('div', {}, [
-        el('div', { style: { fontWeight: '700', fontSize: '.92rem' }, text: 'Anstrengung der letzten Einheiten' }),
-        el('div', { class: 'muted', style: { fontSize: '.84rem', marginTop: '2px' }, text: `Ø RPE ${fmtDec(prog.avgRpe)} von 10 aus ${prog.count} bewerteten Einheiten der letzten ${Math.round(prog.days / 7)} Wochen.` }),
+        el('div', { style: { fontWeight: '700', fontSize: '.92rem' }, text: t('dashboardCoach.rpeTitle') }),
+        el('div', { class: 'muted', style: { fontSize: '.84rem', marginTop: '2px' }, text: t('dashboardCoach.rpeText', { rpe: fmtDec(prog.avgRpe), count: prog.count, weeks: Math.round(prog.days / 7) }) }),
       ]),
     ]),
   ]);
@@ -108,7 +109,7 @@ export function rpeInfoCard(prog) {
 function undoAdapt(planId, logId) {
   const res = undoAdaptStore(planId, logId);
   if (res) {
-    toast(res.skipped ? 'Rückgängig gemacht – bereits erledigte Einheiten bleiben unverändert' : 'Anpassung rückgängig gemacht', 'good', 3200);
+    toast(res.skipped ? t('dashboardCoach.undoneSkipped') : t('dashboardCoach.undone'), 'good', 3200);
     refreshView();
   }
 }
@@ -123,13 +124,13 @@ function restDayCard(rd) {
     el('div', { class: 'row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('moon'), style: { color: '#e8a13a', width: '20px', flex: '0 0 auto' } }),
       el('div', { class: 'grow' }, [
-        el('div', { style: { fontWeight: '700' }, text: whole ? 'Ganzer Erholungstag empfohlen' : 'Erholungstag empfohlen' }),
+        el('div', { style: { fontWeight: '700' }, text: whole ? t('dashboardCoach.restWholeTitle') : t('dashboardCoach.restTitle') }),
         el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: whole
-          ? `${rd.reason} An dem Tag (${fmtDate(rd.date)}) liegen ${dayCount} Einheiten aus deinen Zielen – der ganze Tag wird ruhig, damit die Erholung wirklich greift.`
-          : `${rd.reason} Vorschlag: „${u.title}“ am ${fmtDate(u.date)} zu einem Erholungstag machen.` }),
+          ? t('dashboardCoach.restWholeText', { reason: rd.reason, date: fmtDate(rd.date), count: dayCount })
+          : t('dashboardCoach.restText', { reason: rd.reason, title: u.title, date: fmtDate(u.date) }) }),
       ]),
     ]),
-    el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => restDayApply(rd.date) }, [icon('feather'), whole ? 'Ganzen Tag entlasten' : 'Erholungstag einplanen']),
+    el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => restDayApply(rd.date) }, [icon('feather'), whole ? t('dashboardCoach.restWholeButton') : t('dashboardCoach.restButton')]),
   ]);
 }
 /** Stellt ALLE offenen, nicht-fixen Einheiten eines Tages auf Erholung – planübergreifend (#4). */
@@ -139,12 +140,12 @@ function restDayApply(date) {
     const ids = dayLoadUnits(plan.units || [], date).map((u) => u.id);
     if (!ids.length) return;
     applyAdapt(plan.id, ids, (u) => gentleVariant(u, {
-      title: 'Erholungstag (automatisch)',
-      description: 'Bewusst ruhig – der ganze Tag ist auf Erholung gestellt (auch eine zweite Einheit aus deinen Zielen). Die ursprüngliche Belastung holst du erholter nach. Rückgängig über „Zuletzt automatisch angepasst“.',
-    }), { kind: 'rest', title: 'Erholungstag eingefügt', reason: `Belastungssteuerung: Tag ${fmtDate(date)} entlastet.` });
+      title: t('dashboardCoach.log.autoRestTitle'),
+      description: t('dashboardCoach.log.autoRestDescription'),
+    }), { kind: 'rest', title: t('dashboardCoach.log.restTitle'), reason: t('dashboardCoach.log.restReason', { date: fmtDate(date) }) });
     count += ids.length;
   });
-  toast(count > 1 ? `Ganzer Tag entlastet – ${count} Einheiten ruhig gestellt` : 'Erholungstag eingeplant – die Einheit holst du erholter nach', 'good', 3600);
+  toast(count > 1 ? t('dashboardCoach.restWholeToast', { count }) : t('dashboardCoach.restPlannedToast'), 'good', 3600);
   refreshView();
 }
 
@@ -155,11 +156,11 @@ function footballEaseCard(fb) {
     el('div', { class: 'row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('activity'), style: { color: '#5cc97a', width: '20px', flex: '0 0 auto' } }),
       el('div', { class: 'grow' }, [
-        el('div', { style: { fontWeight: '700' }, text: `Fußball ${fb.when} war fordernd` }),
-        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: `Fußball kostet viel Körner. „${u.title}“ am ${fmtDate(u.date)} gehst du besser etwas lockerer an – frischer für die Schlüsseleinheiten.` }),
+        el('div', { style: { fontWeight: '700' }, text: t('dashboardCoach.footballTitle', { when: fb.when === 'heute' ? t('common.today') : t('common.yesterday') }) }),
+        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('dashboardCoach.footballText', { title: u.title, date: fmtDate(u.date) }) }),
       ]),
     ]),
-    el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => footballEaseApply(u) }, [icon('feather'), `„${u.title}“ lockerer machen`]),
+    el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => footballEaseApply(u) }, [icon('feather'), t('dashboardCoach.makeEasier', { title: u.title })]),
   ]);
 }
 function footballEaseApply(unit) {
@@ -167,8 +168,8 @@ function footballEaseApply(unit) {
   if (!plan) return;
   const easyPace = (plan.paces || store.profile().paceZones || {}).easy;
   applyAdapt(plan.id, [unit.id], (u) => easierVariant(u, easyPace),
-    { kind: 'easier', title: 'Nach Fußball lockerer', reason: 'Fußball war fordernd – Folgeeinheit entlastet.' });
-  toast('Lockerer angesetzt – die Schlüsseleinheit holst du frischer nach', 'good', 3600);
+    { kind: 'easier', title: t('dashboardCoach.log.footballTitle'), reason: t('dashboardCoach.log.footballReason') });
+  toast(t('dashboardCoach.footballToast'), 'good', 3600);
   refreshView();
 }
 
@@ -179,19 +180,19 @@ function destackCard(sug) {
     el('div', { class: 'row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('calendar'), style: { color: '#5b8def', width: '20px', flex: '0 0 auto' } }),
       el('div', { class: 'grow' }, [
-        el('div', { style: { fontWeight: '700' }, text: 'Zwei Einheiten an einem Tag' }),
-        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: `${fmtDate(sug.date)}: „${k ? k.title : 'Einheit'}“ und „${m.title}“ aus deinen Zielen liegen zusammen. „${m.title}“ auf ${fmtWeekday(sug.target, true)} (${fmtDate(sug.target)}) zu verschieben entzerrt den Tag – jede Einheit bekommt ihren Reiz und die Erholung stimmt.` }),
+        el('div', { style: { fontWeight: '700' }, text: t('dashboardCoach.destackTitle') }),
+        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('dashboardCoach.destackText', { date: fmtDate(sug.date), keep: k ? k.title : t('dashboardCoach.session'), move: m.title, weekday: fmtWeekday(sug.target, true), target: fmtDate(sug.target) }) }),
       ]),
     ]),
-    el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => destackApply(m, sug.target) }, [icon('calendar'), `„${m.title}“ auf ${fmtWeekday(sug.target)} verschieben`]),
+    el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => destackApply(m, sug.target) }, [icon('calendar'), t('dashboardCoach.moveTo', { title: m.title, weekday: fmtWeekday(sug.target) })]),
   ]);
 }
 function destackApply(unit, target) {
   const plan = store.get('plans').find((p) => (p.units || []).some((x) => x.id === unit.id));
   if (!plan) return;
   applyAdapt(plan.id, [unit.id], () => ({ date: target, dow: isoDow(target) }),
-    { kind: 'destack', title: 'Tag entzerrt', reason: `„${unit.title}“ auf einen freien Tag verschoben – nicht mehr zwei Einheiten am selben Tag.` });
-  toast('Tag entzerrt – die Einheit steht jetzt an einem freien Tag', 'good');
+    { kind: 'destack', title: t('dashboardCoach.log.destackTitle'), reason: t('dashboardCoach.log.destackReason', { title: unit.title }) });
+  toast(t('dashboardCoach.destackToast'), 'good');
   refreshView();
 }
 
@@ -206,7 +207,7 @@ export function adaptLogCard() {
   const wrap = el('div', { class: 'card' }, [
     el('div', { class: 'row gap-2', style: { alignItems: 'center', marginBottom: '4px' } }, [
       el('span', { html: iconSvg('activity'), style: { color: 'var(--accent-text)', width: '18px', flex: '0 0 auto' } }),
-      el('div', { class: 'card__title', style: { fontSize: '.92rem' }, text: 'Zuletzt automatisch angepasst' }),
+      el('div', { class: 'card__title', style: { fontSize: '.92rem' }, text: t('dashboardCoach.logTitle') }),
     ]),
   ]);
   entries.slice(0, 4).forEach((e) => {
@@ -214,11 +215,11 @@ export function adaptLogCard() {
       el('div', { class: 'row gap-2', style: { alignItems: 'flex-start' } }, [
         el('span', { html: iconSvg(KIND_ICON[e.kind] || 'activity'), style: { color: 'var(--text-3)', width: '15px', flex: '0 0 auto', marginTop: '2px' } }),
         el('div', {}, [
-          el('div', { style: { fontWeight: '650', fontSize: '.82rem' }, text: e.title || 'Anpassung' }),
+          el('div', { style: { fontWeight: '650', fontSize: '.82rem' }, text: e.title || t('dashboardCoach.adjustment') }),
           el('div', { class: 'muted', style: { fontSize: '.76rem' }, text: e.reason || '' }),
         ]),
       ]),
-      e.undoable ? el('button', { class: 'btn btn--ghost', style: { fontSize: '.72rem', flex: '0 0 auto' }, onclick: () => undoAdapt(e.planId, e.id) }, 'Rückgängig') : null,
+      e.undoable ? el('button', { class: 'btn btn--ghost', style: { fontSize: '.72rem', flex: '0 0 auto' }, onclick: () => undoAdapt(e.planId, e.id) }, t('common.undo')) : null,
     ]));
   });
   return wrap;
@@ -232,25 +233,25 @@ function readinessAdjustCard(soft) {
       el('span', { html: iconSvg('heart'), style: { color: '#e8a13a', width: '20px', flex: '0 0 auto' } }),
       el('div', { class: 'grow' }, [
         el('div', { class: 'row gap-1', style: { alignItems: 'center' } }, [
-          el('div', { style: { fontWeight: '700' }, text: `Bereitschaft heute niedrig (${soft.score})` }),
-          infoButton('bereitschaft', 'Bereitschaft'),
+          el('div', { style: { fontWeight: '700' }, text: t('dashboardCoach.readinessLow', { score: soft.score }) }),
+          infoButton('bereitschaft', t('dashboardCoach.readiness')),
         ]),
-        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: `Heute steht „${u.title}“ an – fordernd. Bei niedriger Bereitschaft bringt eine lockere Einheit oft mehr als eine erzwungene harte.` }),
+        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('dashboardCoach.readinessText', { title: u.title }) }),
       ]),
     ]),
     el('div', { class: 'row gap-2 mt-2' }, [
-      el('button', { class: 'btn btn--soft grow', onclick: () => makeEasier(u) }, [icon('feather'), 'Heute lockerer machen']),
-      el('a', { class: 'btn btn--ghost grow', href: `#/session/${u.id}`, style: { textAlign: 'center' } }, 'Zur Einheit'),
+      el('button', { class: 'btn btn--soft grow', onclick: () => makeEasier(u) }, [icon('feather'), t('dashboardCoach.easierToday')]),
+      el('a', { class: 'btn btn--ghost grow', href: `#/session/${u.id}`, style: { textAlign: 'center' } }, t('dashboardCoach.toSession')),
     ]),
   ]);
 }
-function makeEasier(unit, reason = 'Niedrige Bereitschaft heute.') {
+function makeEasier(unit, reason = t('dashboardCoach.log.lowReadinessReason')) {
   const plan = store.get('plans').find((p) => (p.units || []).some((x) => x.id === unit.id));
   if (!plan) return;
   const pz = plan.paces || store.profile().paceZones || {};
   applyAdapt(plan.id, [unit.id], (u) => easierVariant(u, pz.easy),
-    { kind: 'easier', title: unit.date === todayStr() ? 'Heute lockerer gemacht' : 'Lockerer gemacht', reason });
-  toast('Lockerer angesetzt – Schlüsseleinheiten kommen, wenn du wieder erholt bist', 'good', 3600);
+    { kind: 'easier', title: unit.date === todayStr() ? t('dashboardCoach.log.easierTodayTitle') : t('dashboardCoach.log.easierTitle'), reason });
+  toast(t('dashboardCoach.easierToast'), 'good', 3600);
   refreshView();
 }
 
@@ -260,18 +261,18 @@ function makeupCard(unit, targetDay) {
     el('div', { class: 'row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('refresh'), style: { color: '#5b8def', width: '20px', flex: '0 0 auto' } }),
       el('div', { class: 'grow' }, [
-        el('div', { style: { fontWeight: '700' }, text: 'Schlüsseleinheit nachholen?' }),
-        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: `„${unit.title}“ vom ${fmtDate(unit.date)} ist ausgefallen. ${fmtWeekday(targetDay, true)} (${fmtDate(targetDay)}) ist frei – dorthin verschieben?` }),
+        el('div', { style: { fontWeight: '700' }, text: t('dashboardCoach.makeupTitle') }),
+        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('dashboardCoach.makeupText', { title: unit.title, date: fmtDate(unit.date), weekday: fmtWeekday(targetDay, true), target: fmtDate(targetDay) }) }),
       ]),
     ]),
-    el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => makeupMove(unit, targetDay) }, [icon('calendar'), `Auf ${fmtWeekday(targetDay)} nachholen`]),
+    el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => makeupMove(unit, targetDay) }, [icon('calendar'), t('dashboardCoach.makeupButton', { weekday: fmtWeekday(targetDay) })]),
   ]);
 }
 function makeupMove(unit, targetDay) {
   const plan = store.get('plans').find((p) => (p.units || []).some((x) => x.id === unit.id));
   if (!plan) return;
   store.patch('plans', plan.id, { units: plan.units.map((x) => (x.id === unit.id ? { ...x, date: targetDay, dow: isoDow(targetDay), status: 'geplant', missedReason: null, updatedAt: nowIso() } : x)) });
-  toast('Schlüsseleinheit nachgeholt – steht jetzt im Plan', 'good');
+  toast(t('dashboardCoach.makeupToast'), 'good');
   refreshView();
 }
 
@@ -282,11 +283,11 @@ function deloadCard(cands, prog) {
     el('div', { class: 'row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('activity'), style: { color: '#e8a13a', width: '20px', flex: '0 0 auto' } }),
       el('div', { class: 'grow' }, [
-        el('div', { style: { fontWeight: '700' }, text: 'Seit Wochen sehr fordernd' }),
-        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: `Deine Einheiten der letzten ${prog ? Math.round(prog.days / 7) : 3} Wochen waren im Schnitt sehr anstrengend${prog ? ` (Ø RPE ${fmtDec(prog.avgRpe)})` : ''}. Eine Entlastungswoche (${cands.length} Einheiten mit weniger Umfang, Intensität bleibt) hilft, gestärkt zurückzukommen. Feste Termine bleiben unverändert.` }),
+        el('div', { style: { fontWeight: '700' }, text: t('dashboardCoach.deloadTitle') }),
+        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: prog ? t('dashboardCoach.deloadTextRpe', { weeks: Math.round(prog.days / 7), rpe: fmtDec(prog.avgRpe), count: cands.length }) : t('dashboardCoach.deloadText', { weeks: 3, count: cands.length }) }),
       ]),
     ]),
-    el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => applyDeload(cands) }, [icon('feather'), 'Kommende Woche entlasten']),
+    el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => applyDeload(cands) }, [icon('feather'), t('dashboardCoach.deloadButton')]),
   ]);
 }
 function applyDeload(cands) {
@@ -295,9 +296,9 @@ function applyDeload(cands) {
     const ids = allIds.filter((id) => (plan.units || []).some((u) => u.id === id));
     if (!ids.length) return;
     applyAdapt(plan.id, ids, (u) => deloadVariant(u),
-      { kind: 'deload', title: 'Entlastung eingeplant', reason: 'Belastung zuletzt dauerhaft hoch.' });
+      { kind: 'deload', title: t('dashboardCoach.log.deloadTitle'), reason: t('dashboardCoach.log.deloadReason') });
   });
-  toast('Entlastungswoche aktiv – weniger Umfang, mehr Erholung', 'good', 3600);
+  toast(t('dashboardCoach.deloadToast'), 'good', 3600);
   refreshView();
 }
 
@@ -308,11 +309,11 @@ function boostCard(cands, prog) {
     el('div', { class: 'row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('zap'), style: { color: '#2bb673', width: '20px', flex: '0 0 auto' } }),
       el('div', { class: 'grow' }, [
-        el('div', { style: { fontWeight: '700' }, text: 'Noch Reserven' }),
-        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: `Deine Einheiten der letzten ${prog ? Math.round(prog.days / 7) : 3} Wochen waren eher locker${prog ? ` (Ø RPE ${fmtDec(prog.avgRpe)})` : ''}, und deine Belastung liegt im üblichen Rahmen. Wenn du willst, legst du in der kommenden Woche (${cands.length} Einheiten) etwas drauf – rund 12 % mehr Umfang.` }),
+        el('div', { style: { fontWeight: '700' }, text: t('dashboardCoach.boostTitle') }),
+        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: prog ? t('dashboardCoach.boostTextRpe', { weeks: Math.round(prog.days / 7), rpe: fmtDec(prog.avgRpe), count: cands.length }) : t('dashboardCoach.boostText', { weeks: 3, count: cands.length }) }),
       ]),
     ]),
-    el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => applyBoost(cands) }, [icon('zap'), 'Kommende Woche steigern']),
+    el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => applyBoost(cands) }, [icon('zap'), t('dashboardCoach.boostButton')]),
   ]);
 }
 function applyBoost(cands) {
@@ -321,9 +322,9 @@ function applyBoost(cands) {
     const ids = allIds.filter((id) => (plan.units || []).some((u) => u.id === id));
     if (!ids.length) return;
     applyAdapt(plan.id, ids, (u) => progressVariant(u),
-      { kind: 'boost', title: 'Steigerung eingeplant', reason: 'Zuletzt Reserven – etwas mehr Umfang.' });
+      { kind: 'boost', title: t('dashboardCoach.log.boostTitle'), reason: t('dashboardCoach.log.boostReason') });
   });
-  toast('Kommende Woche etwas fordernder – viel Erfolg!', 'good', 3600);
+  toast(t('dashboardCoach.boostToast'), 'good', 3600);
   refreshView();
 }
 
@@ -347,30 +348,30 @@ export function freeSessionCard(s) {
 /** Importierte Trainings, die zu offenen geplanten Einheiten passen – mit Rückfrage
     zuordnen. Zugeordnet gilt die Einheit als erledigt; es entsteht keine zweite Session. */
 /** Antworten auf „Wie hart war's?“ – ein Tipp setzt die Anstrengung (RPE 1–10). */
-const RPE_CHOICES = [[3, 'leicht'], [5, 'mittel'], [7, 'hart'], [9, 'sehr hart']];
+const RPE_CHOICES = [[3, 'light'], [5, 'medium'], [7, 'hard'], [9, 'veryHard']];   // rpe.<key> in the catalog
 
 export function rpeAskCard(list) {
   const rows = list.slice(0, 2).map((s) => {
     const est = sessionRpeInfo(s);
-    const set = (rpe) => { store.patch('sessions', s.id, { rpe }); toast('Anstrengung gespeichert', 'good'); refreshView(); };
+    const set = (rpe) => { store.patch('sessions', s.id, { rpe }); toast(t('dashboardCoach.rpeSaved'), 'good'); refreshView(); };
     return el('div', { style: { padding: '8px 0', borderTop: '1px solid var(--border)' } }, [
       el('div', { class: 'row gap-2', style: { alignItems: 'center' } }, [
         typeIcon(s.type, 'type-icon--sm'),
         el('div', { class: 'grow', style: { minWidth: '0' } }, [
           el('div', { style: { fontWeight: '650', fontSize: '.86rem' }, text: `${fmtDate(s.date)} · ${s.title || typeMeta(s.type).label}${s.distanceKm ? ' · ' + fmtKm(s.distanceKm, 1) : ''}` }),
           el('div', { class: 'muted', style: { fontSize: '.78rem' }, text: est.source === 'herzfrequenz'
-            ? `Bis dahin aus der Herzfrequenz geschätzt: ${fmtNum(est.rpe, est.rpe % 1 ? 1 : 0)} von 10`
-            : `Bis dahin zählt der Standardwert der Sportart: ${fmtNum(est.rpe, est.rpe % 1 ? 1 : 0)} von 10` }),
+            ? t('dashboardCoach.rpeFromHr', { rpe: fmtNum(est.rpe, est.rpe % 1 ? 1 : 0) })
+            : t('dashboardCoach.rpeFromType', { rpe: fmtNum(est.rpe, est.rpe % 1 ? 1 : 0) }) }),
         ]),
-        el('button', { class: 'icon-btn', 'aria-label': 'Nicht nachfragen', title: 'Nicht nachfragen', onclick: () => { store.patch('sessions', s.id, { rpeDismissed: true }); refreshView(); } }, icon('x')),
+        el('button', { class: 'icon-btn', 'aria-label': t('dashboardCoach.dontAsk'), title: t('dashboardCoach.dontAsk'), onclick: () => { store.patch('sessions', s.id, { rpeDismissed: true }); refreshView(); } }, icon('x')),
       ]),
-      el('div', { class: 'row gap-1 mt-1', role: 'group', 'aria-label': 'Wie anstrengend war das Training?', style: { flexWrap: 'wrap' } },
-        RPE_CHOICES.map(([v, label]) => el('button', { class: 'chip chip--btn', type: 'button', text: label, 'aria-label': `${label} (${v} von 10)`, onclick: () => set(v) }))),
+      el('div', { class: 'row gap-1 mt-1', role: 'group', 'aria-label': t('dashboardCoach.rpeGroup'), style: { flexWrap: 'wrap' } },
+        RPE_CHOICES.map(([v, key]) => { const label = t(`rpe.${key}`); return el('button', { class: 'chip chip--btn', type: 'button', text: label, 'aria-label': t('dashboardCoach.rpeChoiceAria', { label, value: v }), onclick: () => set(v) }); })),
     ]);
   });
   return el('div', { class: 'card mt-2' }, [
-    el('div', { style: { fontWeight: '700', fontSize: '.92rem' }, text: 'Wie hart war’s?' }),
-    el('div', { class: 'muted', style: { fontSize: '.8rem', margin: '2px 0 4px' }, text: 'Dein Empfinden macht die Belastung genauer als jede Uhr – ein Tipp genügt.' }),
+    el('div', { style: { fontWeight: '700', fontSize: '.92rem' }, text: t('dashboardCoach.rpeAskTitle') }),
+    el('div', { class: 'muted', style: { fontSize: '.8rem', margin: '2px 0 4px' }, text: t('dashboardCoach.rpeAskText') }),
     ...rows,
   ]);
 }
@@ -378,22 +379,22 @@ export function rpeAskCard(list) {
 export function importMatchCard(matches) {
   const link = (list) => {
     list.forEach(({ session, plan, unit }) => linkSession(plan, unit, session));
-    toast(list.length > 1 ? `${list.length} Trainings zugeordnet` : 'Zugeordnet – Einheit erledigt', 'good');
+    toast(list.length > 1 ? t('dashboardCoach.matchedMany', { count: list.length }) : t('dashboardCoach.matchedOne'), 'good');
     refreshView();
   };
   const rows = matches.slice(0, 4).map((m) => el('div', { class: 'row gap-2', style: { alignItems: 'center', padding: '6px 0', borderTop: '1px solid var(--border)' } }, [
     typeIcon(m.session.type, 'type-icon--sm'),
     el('div', { class: 'grow', style: { minWidth: '0' } }, [
       el('div', { style: { fontWeight: '650', fontSize: '.86rem' }, text: `${fmtDate(m.session.date)} · ${m.session.title || typeMeta(m.session.type).label}${m.session.distanceKm ? ' · ' + fmtKm(m.session.distanceKm, 1) : ''}` }),
-      el('div', { class: 'muted', style: { fontSize: '.78rem' }, text: `passt zu „${m.unit.title}“` }),
+      el('div', { class: 'muted', style: { fontSize: '.78rem' }, text: t('dashboardCoach.fitsUnit', { title: m.unit.title }) }),
     ]),
-    el('button', { class: 'btn btn--soft', style: { fontSize: '.8rem', padding: '6px 10px', flex: '0 0 auto' }, onclick: () => link([m]) }, 'Zuordnen'),
-    el('button', { class: 'icon-btn', 'aria-label': 'Nicht zuordnen', title: 'Nicht zuordnen', onclick: () => { store.patch('sessions', m.session.id, { matchDismissed: true }); refreshView(); } }, icon('x')),
+    el('button', { class: 'btn btn--soft', style: { fontSize: '.8rem', padding: '6px 10px', flex: '0 0 auto' }, onclick: () => link([m]) }, t('dashboardCoach.match')),
+    el('button', { class: 'icon-btn', 'aria-label': t('dashboardCoach.dontMatch'), title: t('dashboardCoach.dontMatch'), onclick: () => { store.patch('sessions', m.session.id, { matchDismissed: true }); refreshView(); } }, icon('x')),
   ]));
   return el('div', { class: 'card mt-2', style: { borderLeft: '4px solid var(--accent)' } }, [
-    el('div', { style: { fontWeight: '700', fontSize: '.92rem' }, text: 'Importierte Trainings zuordnen' }),
-    el('div', { class: 'muted', style: { fontSize: '.8rem', margin: '2px 0 4px' }, text: 'Diese Trainings kamen aus Apple Health oder einer Datei und passen zu geplanten Einheiten desselben Tages. Zugeordnet gelten die Einheiten als erledigt – ohne doppelte Belastung.' }),
+    el('div', { style: { fontWeight: '700', fontSize: '.92rem' }, text: t('dashboardCoach.matchTitle') }),
+    el('div', { class: 'muted', style: { fontSize: '.8rem', margin: '2px 0 4px' }, text: t('dashboardCoach.matchText') }),
     ...rows,
-    matches.length > 1 ? el('button', { class: 'btn btn--ghost btn--block mt-2', style: { fontSize: '.84rem' }, onclick: () => link(matches) }, [icon('check'), `Alle ${matches.length} zuordnen`]) : null,
+    matches.length > 1 ? el('button', { class: 'btn btn--ghost btn--block mt-2', style: { fontSize: '.84rem' }, onclick: () => link(matches) }, [icon('check'), t('dashboardCoach.matchAll', { count: matches.length })]) : null,
   ]);
 }

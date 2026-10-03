@@ -145,11 +145,21 @@ function formatCount(n) {
   return f ? f.format(n) : String(n);
 }
 
+/** The text of a key in the active language and in English (both when they differ) –
+    for reading text that may have been written in either. */
+export function tVariants(key) {
+  return [...new Set([lookup(current, key), lookup(SOURCE_LANGUAGE, key)].filter((v) => typeof v === 'string'))];
+}
+
 /** A list from the catalog (e.g. weekday names); null if it is missing. */
 export function tList(key) {
   const v = value(key);
   return Array.isArray(v) ? v : null;
 }
+
+/** True if the active language itself has a text for the key (no English fallback) – for
+    content whose English source lives in code. */
+export function hasOwnText(key) { return typeof lookup(current, key) === 'string'; }
 
 /** True if the key exists in the active language or in English. */
 export function has(key) { return value(key) !== undefined; }

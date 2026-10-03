@@ -6,7 +6,7 @@
 import * as store from './storage.js';
 import {
   el, icon, iconSvg, navigate, typeMeta, typeIcon, fmtKm, fmtPace, fmtDate, todayStr, addDays,
-  diffDays, weekStartMonday, fmtWeekday, sectionHead, isOverdue, toast, genitive, infoButton,
+  diffDays, weekStartMonday, fmtWeekday, sectionHead, isOverdue, toast, infoButton,
 } from './ui.js';
 import { momentum, newlyUnlocked, markSeen, badgeData } from './badges.js';
 import { isProtectedDay } from './cycle.js';
@@ -25,6 +25,8 @@ import { formCard } from './formcards.js';
 import { goalCockpitCard, weekGoalsCard, healthGoalsCard } from './dashboard-goals.js';
 import { coachCard, rpeInfoCard, adaptLogCard, freeSessionCard, rpeAskCard, importMatchCard } from './dashboard-coach.js';
 
+import { t, tp } from './i18n.js';
+
 /** Alle geplanten Einheiten (über alle Pläne) an einem Datum. */
 function unitsOn(dateStr) {
   const out = [];
@@ -33,18 +35,18 @@ function unitsOn(dateStr) {
 }
 
 export function render(view) {
-  setHeader({ title: 'Heute', actions: [{ icon: 'settings', label: 'Einstellungen', onClick: () => navigate('#/settings') }] });
+  setHeader({ title: t('nav.today'), actions: [{ icon: 'settings', label: t('nav.settings'), onClick: () => navigate('#/settings') }] });
   const today = todayStr();
   // Mitglieder tragen ihren Namen im Familienrecord, nicht zwingend im eigenen Profil
   // -> erst Profilname, dann Mitgliedsname, sonst neutral.
-  const name = store.profile().name || store.activeMember()?.name || 'Athlet:in';
+  const name = store.profile().name || store.activeMember()?.name || t('dashboard.athlete');
   const h = new Date().getHours();
-  const greet = h < 11 ? 'Guten Morgen' : h < 18 ? 'Guten Tag' : 'Guten Abend';
+  const greet = h < 11 ? t('dashboard.greetMorning', { name }) : h < 18 ? t('dashboard.greetAfternoon', { name }) : t('dashboard.greetEvening', { name });
 
   // Beim Verwalten eines anderen Profils NICHT „Guten Abend, Lea“ – das las sich, als
   // sei Lea angemeldet (UI-02). Stattdessen klar: Leas Übersicht.
   view.appendChild(el('div', { class: 'greeting' }, [
-    el('div', { class: 'greeting__hi', text: store.isManaging() ? `${genitive(name)} Übersicht` : `${greet}, ${name} 👋` }),
+    el('div', { class: 'greeting__hi', text: store.isManaging() ? (/[sßxz]$/i.test(name.trim()) ? t('dashboard.overviewOfSibilant', { name: name.trim() }) : t('dashboard.overviewOf', { name: name.trim() })) : greet }),
     el('div', { class: 'greeting__sub', text: fmtDate(today) }),
   ]));
 
@@ -54,8 +56,8 @@ export function render(view) {
       el('div', { class: 'row gap-3', style: { alignItems: 'center' } }, [
         el('span', { style: { fontSize: '1.5rem', lineHeight: '1' }, text: '🔒' }),
         el('div', { class: 'grow' }, [
-          el('div', { style: { fontWeight: '700' }, text: 'Eigene PIN festlegen' }),
-          el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: 'Dein Profil nutzt noch die Standard-PIN 0000 (oder keine). Jede Person der Familie kennt sie – lege in den Einstellungen eine eigene fest.' }),
+          el('div', { style: { fontWeight: '700' }, text: t('dashboard.pinTitle') }),
+          el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('dashboard.pinText') }),
         ]),
         el('span', { class: 'list-item__chev', html: iconSvg('chevronRight') }),
       ]),
@@ -67,12 +69,12 @@ export function render(view) {
   const ps = periodState(today);
   if (ps && ps.flag) {
     const card = periodFlagCard(periodFlag(ps));
-    card.appendChild(el('a', { class: 'btn btn--ghost mt-2', href: '#/zyklus', style: { fontSize: '.8rem' } }, 'Zum Zyklus'));
+    card.appendChild(el('a', { class: 'btn btn--ghost mt-2', href: '#/zyklus', style: { fontSize: '.8rem' } }, t('dashboard.toCycle')));
     view.appendChild(card);
   } else if (ps && ps.state === 'ask') {
     view.appendChild(el('a', { class: 'card card--link mb-3', href: '#/zyklus', style: { borderLeft: '3px solid var(--warn)' } }, [
-      el('div', { style: { fontWeight: '700' }, text: 'Periode überfällig?' }),
-      el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: `Dein letzter Periodenbeginn liegt ${ps.days} Tage zurück. Kurz im Zyklus beantworten, was zutrifft.` }),
+      el('div', { style: { fontWeight: '700' }, text: t('dashboard.periodOverdue') }),
+      el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('dashboard.periodOverdueText', { days: ps.days }) }),
     ]));
   }
 
@@ -83,7 +85,7 @@ export function render(view) {
   const fresh = newlyUnlocked(bdata, today);
   if (fresh.length) {
     markSeen(fresh.map((b) => b.id));
-    setTimeout(() => fresh.slice(0, 3).forEach((b, i) => setTimeout(() => toast(`${b.emoji}  Abzeichen freigeschaltet: ${b.name}`, 'good', 3600), i * 800)), 500);
+    setTimeout(() => fresh.slice(0, 3).forEach((b, i) => setTimeout(() => toast(t('dashboard.badgeUnlocked', { emoji: b.emoji, name: b.name }), 'good', 3600), i * 800)), 500);
   }
   const hasPlan = store.get('plans').length > 0;
   const hasTraining = store.get('sessions').length > 0;
@@ -93,7 +95,7 @@ export function render(view) {
       el('div', { style: { fontSize: '1.8rem', lineHeight: '1', whiteSpace: 'nowrap', flex: '0 0 auto' }, 'aria-hidden': 'true', text: mom.flames }),
       el('div', { class: 'grow' }, [
         el('div', { class: 'row gap-2', style: { alignItems: 'baseline' } }, [
-          el('span', { style: { fontWeight: '750' }, text: `Momentum ${mom.score}` }),
+          el('span', { style: { fontWeight: '750' }, text: t('dashboard.momentum', { score: mom.score }) }),
           el('span', { class: 'chip chip--accent', text: mom.level }),
         ]),
         el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: mom.message }),
@@ -109,14 +111,14 @@ export function render(view) {
   if (nextEvent) {
     const days = diffDays(today, nextEvent.date);
     view.appendChild(el('a', { class: 'hero card--link mt-3', href: `#/event/${nextEvent.id}` }, [
-      el('div', { class: 'hero__eyebrow', text: 'Nächster Wettkampf' }),
+      el('div', { class: 'hero__eyebrow', text: t('dashboard.nextRace') }),
       el('div', { class: 'hero__title', text: nextEvent.name }),
       el('div', { class: 'hero__row' }, [
         el('div', { class: 'countdown' }, [
-          el('div', { class: 'countdown__unit' }, [el('div', { class: 'countdown__num num', text: String(days) }), el('div', { class: 'countdown__cap', text: 'Tage' })]),
-          el('div', { class: 'countdown__unit' }, [el('div', { class: 'countdown__num num', text: Math.ceil(days / 7) }), el('div', { class: 'countdown__cap', text: 'Wochen' })]),
+          el('div', { class: 'countdown__unit' }, [el('div', { class: 'countdown__num num', text: String(days) }), el('div', { class: 'countdown__cap', text: tp('dashboard.countdownDays', days) })]),
+          el('div', { class: 'countdown__unit' }, [el('div', { class: 'countdown__num num', text: Math.ceil(days / 7) }), el('div', { class: 'countdown__cap', text: tp('dashboard.countdownWeeks', Math.ceil(days / 7)) })]),
         ]),
-        nextEvent.targetTime ? el('div', { style: { textAlign: 'right' } }, [el('div', { class: 'num', style: { fontWeight: '800', fontSize: '1.2rem' }, text: nextEvent.targetTime }), el('div', { style: { opacity: '.85', fontSize: '.72rem' }, text: 'Zielzeit' })]) : null,
+        nextEvent.targetTime ? el('div', { style: { textAlign: 'right' } }, [el('div', { class: 'num', style: { fontWeight: '800', fontSize: '1.2rem' }, text: nextEvent.targetTime }), el('div', { style: { opacity: '.85', fontSize: '.72rem' }, text: t('dashboard.targetTime') })]) : null,
       ]),
     ]));
   }
@@ -129,8 +131,8 @@ export function render(view) {
       el('div', { class: 'row gap-3' }, [
         el('span', { class: 'type-icon', style: { background: 'color-mix(in srgb, #f5a623 18%, transparent)', color: '#f5a623' }, html: iconSvg('bell') }),
         el('div', { class: 'grow' }, [
-          el('div', { style: { fontWeight: '700' }, text: `${overdue.length} ${overdue.length === 1 ? 'Einheit wartet' : 'Einheiten warten'} aufs Nachholen` }),
-          el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: 'Verschieben, nachtragen oder als verpasst markieren.' }),
+          el('div', { style: { fontWeight: '700' }, text: tp('dashboard.overdue', overdue.length) }),
+          el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: t('dashboard.overdueHint') }),
         ]),
         el('span', { class: 'list-item__chev', html: iconSvg('chevronRight') }),
       ]),
@@ -149,7 +151,7 @@ export function render(view) {
 
   // Heutiges Training
   const todays = unitsOn(today);
-  view.appendChild(sectionHead('Heute'));
+  view.appendChild(sectionHead(t('nav.today')));
   // Freie Trainings von heute (ohne Plan: spontan erfasst oder importiert).
   const freeToday = store.get('sessions').filter((s) => s && s.date === today && !s.plannedId);
   if (todays.length) {
@@ -159,13 +161,13 @@ export function render(view) {
     view.appendChild(el('div', { class: 'card today-card__none' }, [
       el('span', { class: 'type-icon', 'aria-hidden': 'true', style: { background: 'var(--surface-3)', color: 'var(--text-2)' }, html: iconSvg(hasPlan ? 'moon' : 'flag') }),
       hasPlan
-        ? el('div', {}, [el('div', { style: { fontWeight: '700' }, text: 'Ruhetag' }), el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: 'Keine Einheit geplant – genieß die Erholung.' })])
-        : el('div', {}, [el('div', { style: { fontWeight: '700' }, text: 'Noch kein Plan' }), el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: 'Leg ein Ziel oder Programm an – oder erfasse einfach ein Training.' })]),
+        ? el('div', {}, [el('div', { style: { fontWeight: '700' }, text: t('dashboard.restDay') }), el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: t('dashboard.restDayText') })])
+        : el('div', {}, [el('div', { style: { fontWeight: '700' }, text: t('dashboard.noPlan') }), el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: t('dashboard.noPlanText') })]),
     ]));
   }
   freeToday.forEach((s) => view.appendChild(freeSessionCard(s)));
   // Training erfassen – auch ohne Plan (Radtour, Lauf am Ruhetag, Training ohne Ziel).
-  view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => openActivitySheet({ date: today }) }, [icon('plus'), 'Training erfassen']));
+  view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => openActivitySheet({ date: today }) }, [icon('plus'), t('dashboard.logActivity')]));
   // Importierte Trainings (Apple Health, Datei) passenden geplanten Einheiten zuordnen.
   const matches = importedMatches(store.get('plans'), store.get('sessions'), today);
   if (matches.length) view.appendChild(importMatchCard(matches));
@@ -190,7 +192,7 @@ export function render(view) {
   });
   const rpeCard = rpeInfoCard(coach.rpe);           // Anstrengung der letzten Einheiten (ohne Urteil)
   if (insights.length || rpeCard) {
-    view.appendChild(sectionHead('Dein Coach'));
+    view.appendChild(sectionHead(t('dashboard.yourCoach')));
     const wrap = el('div', { class: 'col gap-2' });
     const insightCard = (ins) => {
       const color = ins.tone === 'good' ? 'var(--good)' : ins.tone === 'warn' ? '#f5a623' : 'var(--accent)';
@@ -210,7 +212,7 @@ export function render(view) {
     const more = [...insights.slice(1).map(insightCard), rpeCard].filter(Boolean);
     if (more.length) {
       wrap.appendChild(el('details', { class: 'coach-more' }, [
-        el('summary', { text: `Weitere Hinweise (${more.length})` }),
+        el('summary', { text: t('dashboard.moreHints', { count: more.length }) }),
         el('div', { class: 'col gap-2 mt-2' }, more),
       ]));
     }
@@ -224,12 +226,12 @@ export function render(view) {
   // Belastung & Form – Lastverhältnis + Fitness/Ermüdung/Form (eine Quelle: load.js)
   const lfCard = loadFormCard(lsum);
   if (lfCard) {
-    view.appendChild(sectionHead('Belastung & Form'));
+    view.appendChild(sectionHead(t('dashboard.loadForm')));
     view.appendChild(lfCard);
   }
 
   // Wochenstreifen
-  view.appendChild(sectionHead('Diese Woche', { label: 'Kalender', onClick: () => navigate('#/calendar') }));
+  view.appendChild(sectionHead(t('dashboard.thisWeek'), { label: t('nav.calendar'), onClick: () => navigate('#/calendar') }));
   view.appendChild(weekStrip(today));
 
   // Wochen-Kennzahlen (Soll/Ist)
@@ -237,7 +239,7 @@ export function render(view) {
 
   // Ziel-Cockpit: Status aller Ziele + Phasen-Schwerpunkt + Ernährungskopplung (R4)
   const gc = goalCockpitCard(today);
-  if (gc) { view.appendChild(sectionHead('Deine Ziele')); view.appendChild(gc); }
+  if (gc) { view.appendChild(sectionHead(t('dashboard.yourGoals'))); view.appendChild(gc); }
 
   // Wochen-Gesundheitsziele (Aktivität & Gewicht) – plan-unabhängig
   view.appendChild(weekGoalsCard(today));
@@ -271,10 +273,10 @@ function loadFormCard(sum) {
   const CTL = '#3d8bff', ATL = '#f5a623', FORM = '#43c59e';
   const lbl = (d) => `${d.date.slice(8, 10)}.${d.date.slice(5, 7)}.`;
   const chart = multiLineChart([
-    { name: 'Fitness', color: CTL, points: sum.series.map((d) => ({ label: lbl(d), value: d.ctl })) },
-    { name: 'Ermüdung', color: ATL, points: sum.series.map((d) => ({ label: lbl(d), value: d.atl })) },
-    { name: 'Form', color: FORM, width: 2.8, points: sum.series.map((d) => ({ label: lbl(d), value: d.form })) },
-  ], { height: 156, zeroLine: true, label: 'Fitness, Ermüdung und Form' });
+    { name: t('dashboard.fitness'), color: CTL, points: sum.series.map((d) => ({ label: lbl(d), value: d.ctl })) },
+    { name: t('dashboard.fatigue'), color: ATL, points: sum.series.map((d) => ({ label: lbl(d), value: d.atl })) },
+    { name: t('dashboard.form'), color: FORM, width: 2.8, points: sum.series.map((d) => ({ label: lbl(d), value: d.form })) },
+  ], { height: 156, zeroLine: true, label: t('dashboard.chartLabel') });
 
   const legendItem = (color, label, val) => el('span', { class: 'row gap-1', style: { alignItems: 'center', fontSize: '.74rem' } }, [
     el('span', { style: { width: '9px', height: '9px', borderRadius: '2px', background: color, flex: '0 0 auto' } }),
@@ -284,23 +286,23 @@ function loadFormCard(sum) {
   const formVal = (sum.form.form > 0 ? '+' : '') + Math.round(sum.form.form);
   // Form in Worten (relativ zur Fitness) – „Form −88“ allein sagte niemandem etwas.
   const fs = sum.formState;
-  const formWords = fs.reliable ? `${fs.label} (${fs.rel > 0 ? '+' : ''}${Math.round(fs.rel * 100)} % der Fitness)` : fs.label;
+  const formWords = fs.reliable ? t('dashboard.formRelative', { label: fs.label, pct: `${fs.rel > 0 ? '+' : ''}${Math.round(fs.rel * 100)}` }) : fs.label;
 
   return el('div', { class: 'card', style: { borderLeft: `3px solid ${toneColor}` } }, [
     el('div', { class: 'row row--between', style: { alignItems: 'center', marginBottom: '6px', gap: '8px' } }, [
       el('div', { class: 'card__title', text: sum.headline }),
       el('div', { class: 'row gap-1', style: { alignItems: 'center', flex: '0 0 auto' } }, [
-        el('span', { class: 'chip', style: { background: `color-mix(in srgb, ${toneColor} 16%, transparent)`, color: toneText, fontSize: '.68rem' }, text: `Verhältnis ${fmtRatio(sum.acwr.ratio)}` }),
-        infoButton('belastung-form', 'Belastung & Form'),
+        el('span', { class: 'chip', style: { background: `color-mix(in srgb, ${toneColor} 16%, transparent)`, color: toneText, fontSize: '.68rem' }, text: t('dashboard.ratio', { ratio: fmtRatio(sum.acwr.ratio) }) }),
+        infoButton('belastung-form', t('dashboard.loadForm')),
       ]),
     ]),
     chart,
     el('div', { class: 'row', style: { gap: '14px', flexWrap: 'wrap', margin: '6px 0 2px' } }, [
-      legendItem(CTL, 'Fitness', Math.round(sum.form.ctl)),
-      legendItem(ATL, 'Ermüdung', Math.round(sum.form.atl)),
-      legendItem(FORM, 'Form', formVal),
+      legendItem(CTL, t('dashboard.fitness'), Math.round(sum.form.ctl)),
+      legendItem(ATL, t('dashboard.fatigue'), Math.round(sum.form.atl)),
+      legendItem(FORM, t('dashboard.form'), formVal),
     ]),
-    el('div', { class: 'dim', style: { fontSize: '.74rem' }, text: `Form: ${formWords} · Werte in Belastungspunkten (AU = Minuten × Anstrengung)` }),
+    el('div', { class: 'dim', style: { fontSize: '.74rem' }, text: t('dashboard.formFootnote', { form: formWords }) }),
     el('div', { class: 'muted', style: { fontSize: '.82rem', marginTop: '4px' }, text: sum.advice }),
     sum.formNote ? el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '4px' }, text: sum.formNote }) : null,
   ]);
@@ -311,18 +313,18 @@ function loadFormCard(sum) {
 function startCard() {
   const p = store.profile();
   const steps = [
-    { done: !!(p.weightKg && p.birthYear), label: 'Profil ausfüllen', hint: 'Gewicht, Geburtsjahr, Max-HF – für Zonen und Belastung', href: '#/settings' },
-    { done: store.get('events').length > 0, label: 'Ziel oder Programm anlegen', hint: 'Wettkampf mit Plan oder ein Trainingsprogramm', href: '#/events' },
-    store.isAdmin() ? { done: store.members().length > 1, label: 'Mitglieder hinzufügen', hint: 'Familie oder Team – jede Person mit eigener PIN', href: '#/familie-verwalten' } : null,
+    { done: !!(p.weightKg && p.birthYear), label: t('dashboard.stepProfile'), hint: t('dashboard.stepProfileHint'), href: '#/settings' },
+    { done: store.get('events').length > 0, label: t('dashboard.stepGoal'), hint: t('dashboard.stepGoalHint'), href: '#/events' },
+    store.isAdmin() ? { done: store.members().length > 1, label: t('dashboard.stepMembers'), hint: t('dashboard.stepMembersHint'), href: '#/familie-verwalten' } : null,
   ].filter(Boolean);
   return el('div', { class: 'card start-card' }, [
-    el('div', { class: 'card__title', text: 'Los geht’s' }),
-    el('div', { class: 'muted', style: { fontSize: '.84rem', marginBottom: '8px' }, text: 'Drei kurze Schritte, dann plant Cat-O-Fit mit dir.' }),
+    el('div', { class: 'card__title', text: t('dashboard.letsGo') }),
+    el('div', { class: 'muted', style: { fontSize: '.84rem', marginBottom: '8px' }, text: t('dashboard.startIntro') }),
     el('ol', { class: 'start-steps' }, steps.map((s, i) => el('li', {}, [
       el('a', { class: `start-step ${s.done ? 'is-done' : ''}`, href: s.href }, [
         el('span', { class: 'start-step__num', 'aria-hidden': 'true', text: s.done ? '✓' : String(i + 1) }),
         el('span', { class: 'grow' }, [
-          el('span', { class: 'start-step__label', text: s.label + (s.done ? ' – erledigt' : '') }),
+          el('span', { class: 'start-step__label', text: s.done ? t('dashboard.stepDone', { label: s.label }) : s.label }),
           el('span', { class: 'start-step__hint', text: s.hint }),
         ]),
         el('span', { class: 'list-item__chev', 'aria-hidden': 'true', html: iconSvg('chevronRight') }),
@@ -345,13 +347,13 @@ function todayCard(u) {
     el('div', { class: 'grow' }, [
       el('div', { class: 'row gap-2', style: { alignItems: 'center' } }, [
         el('div', { class: 'card__title', text: u.title }),
-        done ? el('span', { class: 'chip chip--good', text: '✓ erledigt' }) : null,
+        done ? el('span', { class: 'chip chip--good', text: t('dashboard.doneChip') }) : null,
       ]),
       el('div', { class: 'muted', style: { fontSize: '.86rem' }, text: meta.join(' · ') || m.label }),
     ]),
   ]);
   const side = !done && u.type !== 'rest'
-    ? el('a', { class: 'btn btn--primary today-unit__play', href: `#/workout/${u.id}`, 'aria-label': `Training starten: ${u.title}`, title: 'Training starten' }, [icon('play')])
+    ? el('a', { class: 'btn btn--primary today-unit__play', href: `#/workout/${u.id}`, 'aria-label': t('dashboard.startWorkoutFor', { title: u.title }), title: t('dashboard.startWorkout') }, [icon('play')])
     : el('span', { class: 'list-item__chev', 'aria-hidden': 'true', html: iconSvg('chevronRight') });
   return el('div', { class: 'card today-unit' }, [link, side]);
 }
@@ -391,8 +393,8 @@ function weekStats(today) {
   const realKm = runKm(store.get('sessions'), start, end);
 
   return el('div', { class: 'week-stats mt-3' }, [
-    statTile(fmtKm(realKm, 0), `von ${fmtKm(planKm, 0)} geplant`, 'Lauf-km'),
-    statTile(`${doneCount}/${planCount}`, 'Einheiten', 'erledigt'),
+    statTile(fmtKm(realKm, 0), t('dashboard.ofPlanned', { km: fmtKm(planKm, 0) }), t('dashboard.runKm')),
+    statTile(`${doneCount}/${planCount}`, t('dashboard.statSessions'), t('dashboard.statDone')),
   ]);
 }
 

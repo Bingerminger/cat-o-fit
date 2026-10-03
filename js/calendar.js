@@ -120,7 +120,7 @@ function drawMonth(view) {
         weatherCell(date),
       ]),
       titles.length ? el('div', { class: 'cal-cell__titles', 'aria-hidden': 'true' }, [
-        ...titles.slice(0, 2).map((t) => el('span', { class: 'cal-cell__title', text: t })),
+        ...titles.slice(0, 2).map((title) => el('span', { class: 'cal-cell__title', text: title })),
         titles.length > 2 ? el('span', { class: 'cal-cell__title dim', text: `+${titles.length - 2}` }) : null,
       ]) : null,
       el('div', { class: 'cal-cell__dots' }, [
@@ -129,7 +129,7 @@ function drawMonth(view) {
         // Freie Trainings: Punkt mit Rand (erledigt, ohne Plan).
         ...free.slice(0, 2).map((s) => el('span', { class: 'cal-dot cal-dot--free', style: { background: typeMeta(s.type).color }, title: s.title || typeMeta(s.type).label })),
         // Termine als eckige Punkte (zur Unterscheidung von runden Trainings-Punkten).
-        ...termineOn(date).slice(0, 3).map((t) => el('span', { class: 'cal-dot cal-dot--task', style: { background: catMeta(t.category).color }, title: t.text })),
+        ...termineOn(date).slice(0, 3).map((task) => el('span', { class: 'cal-dot cal-dot--task', style: { background: catMeta(task.category).color }, title: task.text })),
       ]),
     ]);
     grid.appendChild(cell);
@@ -140,9 +140,9 @@ function drawMonth(view) {
 
 function legend() {
   const types = ['easy', 'long', 'tempo', 'interval', 'strength', 'cross_football', 'race'];
-  const items = types.map((t) => el('span', { class: 'zones-legend__item' }, [
-    el('span', { class: 'zones-legend__sw', style: { background: typeMeta(t).color } }),
-    typeMeta(t).short,
+  const items = types.map((type) => el('span', { class: 'zones-legend__item' }, [
+    el('span', { class: 'zones-legend__sw', style: { background: typeMeta(type).color } }),
+    typeMeta(type).short,
   ]));
   // Termine (eckiger Punkt) nur erwähnen, wenn das Checklisten-Modul aktiv ist.
   if (store.settings().modules?.checklist !== false) {
@@ -186,7 +186,7 @@ function drawWeek(view) {
       const ul = el('div', { class: 'cal-day__units' });
       runUnits.forEach((u) => ul.appendChild(weekUnit(u)));
       free.forEach((s) => ul.appendChild(freeRow(s)));
-      termine.forEach((t) => ul.appendChild(termineRow(t)));
+      termine.forEach((task) => ul.appendChild(termineRow(task)));
       day.appendChild(ul);
     }
     wrap.appendChild(day);
@@ -237,15 +237,15 @@ function freeRow(s) {
 
 /** Termin-Zeile (datierter Checklisten-Punkt). Verlinkt in die Checkliste zum
  *  Bearbeiten/Abhaken. Kein Drag – das Datum ändert man im Checklisten-Formular. */
-function termineRow(t) {
-  const cm = catMeta(t.category);
-  const meta = [t.time, cm.label].filter(Boolean).join(' · ');
+function termineRow(task) {
+  const cm = catMeta(task.category);
+  const meta = [task.time, cm.label].filter(Boolean).join(' · ');
   return el('a', {
     class: 'cal-unit cal-unit--task', href: '#/checklist', style: { textDecoration: 'none' },
   }, [
-    el('span', { class: 'cal-task__icon', style: { color: t.checked ? 'var(--good)' : cm.color }, html: iconSvg(t.checked ? 'check' : cm.icon) }),
+    el('span', { class: 'cal-task__icon', style: { color: task.checked ? 'var(--good)' : cm.color }, html: iconSvg(task.checked ? 'check' : cm.icon) }),
     el('div', { class: 'cal-unit__body' }, [
-      el('div', { class: 'cal-unit__title', style: t.checked ? { textDecoration: 'line-through', color: 'var(--text-3)' } : {}, text: t.text }),
+      el('div', { class: 'cal-unit__title', style: task.checked ? { textDecoration: 'line-through', color: 'var(--text-3)' } : {}, text: task.text }),
       el('div', { class: 'cal-unit__meta', text: meta }),
     ]),
   ]);

@@ -12,20 +12,22 @@ import { goalsProgress } from './goals.js';
 import { phaseEmphasis, stimulusCheck } from './dualgoal.js';
 import { progressRing } from './charts.js';
 
+import { t } from './i18n.js';
+
 /** Ziel-Cockpit (R4): Status aller Ziele (Lauf + Gewicht), Phasen-Schwerpunkt,
     phasenabhängige Ernährungskopplung und der ehrliche Trainingsreiz-Check. */
 export function goalCockpitCard(today) {
   const sessions = store.get('sessions');
   // Dieselbe Quelle wie die Ernährungskarte: Plan zum nächsten Wettkampf, geglättetes
   // Gewicht, eine Definition von „Ziel erreicht“, dasselbe Defizit.
-  const t = currentEnergyTargets(today);
-  const plan = t.plan, event = t.event;
+  const energy = currentEnergyTargets(today);
+  const plan = energy.plan, event = energy.event;
   // Kinder, Schwangerschaft/Stillzeit, Essstörung: kein Gewichtsziel, kein Abnehm-Cockpit.
-  const gs = t.elig.noWeightGoals ? null : t.goalStatus;
+  const gs = energy.elig.noWeightGoals ? null : energy.goalStatus;
   const hasWeight = !!gs;
   if (!plan && !hasWeight) return null;
   const dual = !!plan && hasWeight;
-  const weightLabel = gs ? (gs.direction === 'up' ? 'Zunehmen' : gs.direction === 'down' ? 'Abnehmen' : 'Gewicht') : '';
+  const weightLabel = gs ? (gs.direction === 'up' ? t('dashboardGoals.gainWeight') : gs.direction === 'down' ? t('dashboardGoals.loseWeight') : t('dashboardGoals.weight')) : '';
 
   const rows = [];
   if (plan && event) {
@@ -35,41 +37,43 @@ export function goalCockpitCard(today) {
     if (pred) {
       const onTrack = !targetSec || pred.seconds <= targetSec * 1.02;
       tone = onTrack ? 'good' : 'warn';
-      detail = `Prognose ${fmtDuration(pred.seconds)}${event.targetTime ? ` · Ziel ${event.targetTime}` : ''} – ${onTrack ? 'auf Kurs' : 'da ist noch was zu tun'}.`;
-      if (pred.caveat) detail += ' Setzt ausreichenden Umfang voraus.';
-      else if (pred.onlyEasy) detail += ' Aus lockeren Läufen geschätzt.';
-    } else detail = 'Noch zu wenige Läufe für eine Formprognose.';
+      const time = fmtDuration(pred.seconds), target = event.targetTime;
+      if (target) detail = onTrack ? t('dashboardGoals.forecastTargetOnTrack', { time, target }) : t('dashboardGoals.forecastTargetBehind', { time, target });
+      else detail = onTrack ? t('dashboardGoals.forecastOnTrack', { time }) : t('dashboardGoals.forecastBehind', { time });
+      if (pred.caveat) detail += ` ${t('dashboardGoals.forecastNeedsVolume')}`;
+      else if (pred.onlyEasy) detail += ` ${t('dashboardGoals.forecastFromEasy')}`;
+    } else detail = t('dashboardGoals.noForecast');
     rows.push(goalRow('flag', event.name, detail, tone));
   }
   if (hasWeight) {
     const kg = (v) => `${fmtNum(v, 1)} kg`;
     const detail = gs.reached
-      ? (gs.beyond ? `Ziel erreicht (${kg(gs.current)}) – jetzt halten. Passt das Ziel noch?` : `Ziel erreicht (${kg(gs.current)})`)
+      ? (gs.beyond ? t('dashboardGoals.weightReachedBeyond', { weight: kg(gs.current) }) : t('dashboardGoals.weightReached', { weight: kg(gs.current) }))
       : gs.status === 'halten'
-        ? `${kg(gs.current)} – fast am Ziel ${kg(gs.target)}, jetzt halten`
-        : `${kg(gs.current)} → Ziel ${kg(gs.target)} (noch ${kg(gs.remaining)})`;
-    rows.push(goalRow('activity', 'Gewicht', detail, gs.reached ? 'good' : 'neutral'));
+        ? t('dashboardGoals.weightAlmost', { current: kg(gs.current), target: kg(gs.target) })
+        : t('dashboardGoals.weightProgress', { current: kg(gs.current), target: kg(gs.target), remaining: kg(gs.remaining) });
+    rows.push(goalRow('activity', t('dashboardGoals.weight'), detail, gs.reached ? 'good' : 'neutral'));
   }
 
   const children = [
-    el('div', { class: 'card__title', style: { marginBottom: '4px' }, text: dual ? `Ziel-Cockpit · ${raceLabel(event)} + ${weightLabel}` : 'Ziel-Cockpit' }),
+    el('div', { class: 'card__title', style: { marginBottom: '4px' }, text: dual ? t('dashboardGoals.cockpitDual', { race: raceLabel(event), weight: weightLabel }) : t('dashboardGoals.cockpit') }),
     ...rows,
   ];
   if (plan) {
     const emph = phaseEmphasis(plan, today);
     // Der Phasentext spricht vom Abnehmen – nur zeigen, wenn es ein Abnehmziel gibt.
-    if (dual && gs.direction === 'down') children.push(el('div', { class: 'muted', style: { fontSize: '.8rem', marginTop: '4px' }, text: `Phase „${emph.phaseName}“: ${emph.note}` }));
+    if (dual && gs.direction === 'down') children.push(el('div', { class: 'muted', style: { fontSize: '.8rem', marginTop: '4px' }, text: t('dashboardGoals.phaseNote', { phase: emph.phaseName, note: emph.note }) }));
     if (dual) {
       let head;
-      if (t.block === 'eligibility' || t.block === 'bmi') head = 'Kein Defizit empfohlen – Details in der Ernährung';
-      else if (gs.status !== 'abnehmen') head = gs.status === 'zunehmen' ? 'Ziel: zunehmen – Details in der Ernährung' : 'Zielgewicht erreicht – jetzt halten';
-      else if (!t.elig.answered) head = 'Tagesziel: erst kurz die Abgrenzung beantworten';
-      else if (t.elig.hideNumbers) head = 'Abnehmziel aktiv – Tagesziel in der Ernährung';
-      else head = `Empfohlenes Defizit: ${t.deficitKcal === 0 ? 'aktuell keins (Wettkampf-Fokus)' : Math.abs(t.deficitKcal) + ' kcal/Tag'}`;
+      if (energy.block === 'eligibility' || energy.block === 'bmi') head = t('dashboardGoals.noDeficit');
+      else if (gs.status !== 'abnehmen') head = gs.status === 'zunehmen' ? t('dashboardGoals.gainGoal') : t('dashboardGoals.weightGoalReached');
+      else if (!energy.elig.answered) head = t('dashboardGoals.answerScreening');
+      else if (energy.elig.hideNumbers) head = t('dashboardGoals.lossGoalActive');
+      else head = energy.deficitKcal === 0 ? t('dashboardGoals.deficitNone') : t('dashboardGoals.deficitKcal', { kcal: Math.abs(energy.deficitKcal) });
       children.push(el('a', { class: 'card card--flat row row--between mt-2', href: '#/nutrition', style: { alignItems: 'center' } }, [
         el('div', {}, [
           el('div', { style: { fontWeight: '650', fontSize: '.82rem' }, text: head }),
-          el('div', { class: 'muted', style: { fontSize: '.76rem' }, text: t.balance && t.balance.floored ? 'Phasenabhängig, mit Sicherheitsgrenze · zur Ernährung' : 'Phasenabhängig · zur Ernährung' }),
+          el('div', { class: 'muted', style: { fontSize: '.76rem' }, text: energy.balance && energy.balance.floored ? t('dashboardGoals.phaseFloored') : t('dashboardGoals.phaseBased') }),
         ]),
         el('span', { class: 'list-item__chev', html: iconSvg('chevronRight') }),
       ]));
@@ -83,14 +87,18 @@ export function goalCockpitCard(today) {
   return el('div', { class: 'card' }, children);
 }
 /** Kurzname des Wettkampfs für das Cockpit („Halbmarathon“, „10 km“ …). */
-const RACE_LABELS = { '5k': '5 km', '10k': '10 km', HM: 'Halbmarathon', M: 'Marathon', hyrox: 'Hyrox' };
+const RACE_LABELS = {
+  '5k': '5 km', '10k': '10 km', hyrox: 'Hyrox',
+  get HM() { return t('dashboardGoals.halfMarathon'); },
+  get M() { return t('dashboardGoals.marathon'); },
+};
 function raceLabel(event) {
-  if (!event) return 'Wettkampf';
+  if (!event) return t('dashboardGoals.race');
   if (RACE_LABELS[event.distanceType]) return RACE_LABELS[event.distanceType];
   const km = Number(event.distanceKm);
-  if (Math.abs(km - 21.0975) < 0.3) return 'Halbmarathon';
-  if (Math.abs(km - 42.195) < 0.5) return 'Marathon';
-  return Number.isFinite(km) && km > 0 ? `${fmtNum(km, km % 1 ? 1 : 0)} km` : 'Wettkampf';
+  if (Math.abs(km - 21.0975) < 0.3) return t('dashboardGoals.halfMarathon');
+  if (Math.abs(km - 42.195) < 0.5) return t('dashboardGoals.marathon');
+  return Number.isFinite(km) && km > 0 ? `${fmtNum(km, km % 1 ? 1 : 0)} km` : t('dashboardGoals.race');
 }
 
 function goalRow(ico, title, detail, tone) {
@@ -120,28 +128,28 @@ export function weekGoalsCard(today) {
 
   const children = [
     el('div', { class: 'row row--between mb-2' }, [
-      el('div', { class: 'card__title', text: 'Wochenziele' }),
-      el('button', { style: { fontSize: '.78rem', color: 'var(--accent-strong)', background: 'none', border: 'none', fontWeight: '650', cursor: 'pointer' }, onclick: () => navigate('#/settings'), text: 'Anpassen' }),
+      el('div', { class: 'card__title', text: t('dashboardGoals.weekGoals') }),
+      el('button', { style: { fontSize: '.78rem', color: 'var(--accent-strong)', background: 'none', border: 'none', fontWeight: '650', cursor: 'pointer' }, onclick: () => navigate('#/settings'), text: t('dashboardGoals.adjust') }),
     ]),
     el('div', { class: 'row', style: { gap: '12px' } }, [
-      ring(prog.minutes, 'Aktive Minuten', 'var(--accent)'),
-      ring(prog.days, 'Trainingstage', '#3d8bff'),
+      ring(prog.minutes, t('dashboardGoals.activeMinutes'), 'var(--accent)'),
+      ring(prog.days, t('dashboardGoals.trainingDays'), '#3d8bff'),
     ]),
   ];
   if (prog.weight && !currentEligibility(today).noWeightGoals) {
     const w = prog.weight;
     const txt = w.reached
-      ? 'Zielgewicht erreicht 🎉'
+      ? t('dashboardGoals.goalWeightReached')
       : w.status === 'halten'
-        ? `fast am Ziel ${fmtNum(w.target, 1)} kg – halten`
-        : `noch ${fmtNum(w.remaining, 1)} kg bis ${fmtNum(w.target, 1)} kg`;
+        ? t('dashboardGoals.weekAlmost', { target: fmtNum(w.target, 1) })
+        : t('dashboardGoals.weekRemaining', { remaining: fmtNum(w.remaining, 1), target: fmtNum(w.target, 1) });
     children.push(el('div', { class: 'row gap-2 mt-3', style: { alignItems: 'center', justifyContent: 'center', fontSize: '.8rem' } }, [
       el('span', { style: { width: '18px', height: '18px', flexShrink: '0', color: 'var(--accent-strong)' }, html: iconSvg('target') }),
       // Werte immer als Text setzen (nie als HTML) – sie stammen aus Nutzerdaten.
       el('span', {}, [el('strong', { text: `${fmtNum(w.current, 1)} kg` }), ` · ${txt}`]),
     ]));
   }
-  if (prog.allMet) children.push(el('div', { class: 'center mt-2', style: { fontSize: '.76rem', color: 'var(--accent-strong)', fontWeight: '650' }, text: '✅ Wochenziel erreicht – stark!' }));
+  if (prog.allMet) children.push(el('div', { class: 'center mt-2', style: { fontSize: '.76rem', color: 'var(--accent-strong)', fontWeight: '650' }, text: t('dashboardGoals.weekGoalMet') }));
 
   return el('div', { class: 'card mt-3' }, children);
 }
@@ -153,9 +161,9 @@ export function healthGoalsCard(today) {
   const fmt = (n, d) => (n == null ? '—' : (d ? fmtNum(n, d) : String(Math.round(n))));
   const rows = items.map((it) => {
     const m = it.metric; const unit = m.unit ? ' ' + m.unit : '';
-    const status = it.reached ? 'erreicht 🎉'
-      : (it.current == null ? 'noch kein Messwert' : `noch ${fmt(it.remaining, m.digits)}${unit}`);
-    const dl = it.daysLeft != null ? (it.daysLeft >= 0 ? ` · ${it.daysLeft} T` : ' · Frist vorbei') : '';
+    const status = it.reached ? t('dashboardGoals.reached')
+      : (it.current == null ? t('dashboardGoals.noReading') : t('dashboardGoals.stillToGo', { value: `${fmt(it.remaining, m.digits)}${unit}` }));
+    const dl = it.daysLeft != null ? ` · ${it.daysLeft >= 0 ? t('dashboardGoals.daysLeft', { n: it.daysLeft }) : t('dashboardGoals.deadlinePassed')}` : '';
     return el('div', { style: { marginBottom: '11px' } }, [
       el('div', { class: 'row row--between', style: { fontSize: '.84rem', marginBottom: '3px' } }, [
         el('span', { style: { fontWeight: '650' }, text: m.label }),
@@ -164,13 +172,13 @@ export function healthGoalsCard(today) {
       el('div', { style: { height: '8px', borderRadius: '999px', background: 'var(--surface-3)', overflow: 'hidden' } }, [
         el('div', { style: { height: '100%', width: Math.round(it.pct * 100) + '%', background: it.reached ? 'var(--good)' : 'var(--accent)', borderRadius: '999px', transition: 'width .3s ease' } }),
       ]),
-      el('div', { class: 'dim', style: { fontSize: '.72rem', marginTop: '2px' }, text: `${fmt(it.current, m.digits)}${it.current == null ? '' : unit} → Ziel ${fmt(it.target, m.digits)}${unit}` }),
+      el('div', { class: 'dim', style: { fontSize: '.72rem', marginTop: '2px' }, text: t('dashboardGoals.currentToGoal', { current: `${fmt(it.current, m.digits)}${it.current == null ? '' : unit}`, target: `${fmt(it.target, m.digits)}${unit}` }) }),
     ]);
   });
   return el('div', { class: 'card mt-3' }, [
     el('div', { class: 'row row--between mb-2' }, [
-      el('div', { class: 'card__title', text: 'Gesundheitsziele' }),
-      el('button', { style: { fontSize: '.78rem', color: 'var(--accent-strong)', background: 'none', border: 'none', fontWeight: '650', cursor: 'pointer' }, onclick: () => navigate('#/settings'), text: 'Verwalten' }),
+      el('div', { class: 'card__title', text: t('dashboardGoals.healthGoals') }),
+      el('button', { style: { fontSize: '.78rem', color: 'var(--accent-strong)', background: 'none', border: 'none', fontWeight: '650', cursor: 'pointer' }, onclick: () => navigate('#/settings'), text: t('dashboardGoals.manage') }),
     ]),
     ...rows,
   ]);
