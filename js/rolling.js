@@ -18,6 +18,8 @@ import { isHard, isOpen } from './planflow.js';
 import { acwr, formToday, formState, fmtRatio } from './load.js';
 import { unitLoad } from './whatif.js';
 
+import { t, tp } from './i18n.js';
+
 /** War dieser Tag „hart“ (erledigte fordernde Einheit oder fordernde Session)? */
 export function dayIsHard(units = [], sessions = [], date) {
   if ((units || []).some((u) => u.date === date && u.status === 'erledigt' && isHard(u))) return true;
@@ -62,12 +64,12 @@ export function recoveryVariant(unit) {
   const km = unit.targetDistanceKm ? Math.min(5, Math.max(3, Math.round(unit.targetDistanceKm * 0.4))) : null;
   return {
     type: 'recovery',
-    title: 'Erholungstag (automatisch)',
+    title: t('rolling.recoveryTitle'),
     targetDistanceKm: km,
     targetDurationMin: km ? null : 30,
     targetPaceSecPerKm: null, targetPaceMaxSecPerKm: null, targetHrZone: 1,
     intervals: null,
-    description: 'Bewusst locker – dein Körper braucht heute Erholung, nicht Reiz. Ganz ruhig in Z1 oder ein Spaziergang. Die fordernde Einheit holst du erholter nach.',
+    description: t('rolling.recoveryDesc'),
     autoRest: true, originalType: unit.originalType || unit.type,
   };
 }
@@ -82,7 +84,7 @@ export function gentleVariant(unit, copy = {}) {
   const common = {
     intervals: null, targetPaceSecPerKm: null, targetPaceMaxSecPerKm: null,
     deloaded: true, originalType: unit.originalType || unit.type,
-    title: copy.title || 'Locker', description: copy.description || 'Bewusst ruhig – Erholung statt Reiz.',
+    title: copy.title || t('rolling.gentleTitle'), description: copy.description || t('rolling.gentleDesc'),
   };
   if (['strength', 'gym', 'functional'].includes(unit.type)) {
     return { ...common, type: 'mobility', targetDistanceKm: null, targetDurationMin: 15, targetHrZone: null };
@@ -133,9 +135,9 @@ export function restDaySuggestion({ plan = {}, sessions = [], today, horizon = 2
   if (!cand) return null;
 
   let reason;
-  if (acwrHigh) reason = `Deine letzten 7 Tage waren deutlich fordernder als geplant und als dein Schnitt der Wochen davor (Verhältnis ${fmtRatio(ac.ratio)}).`;
-  else if (streakHigh) reason = `${streak.days} fordernde Tage in Folge, mehr als geplant – ein ruhiger Tag gibt dem Körper Zeit, sich anzupassen.`;
-  else reason = `Mehr Last als geplant (Verhältnis ${fmtRatio(ac.ratio)}) und deutlich ermüdet – deine Ermüdung liegt klar über deiner Fitness.`;
+  if (acwrHigh) reason = t('rolling.reasonAcwr', { ratio: fmtRatio(ac.ratio) });
+  else if (streakHigh) reason = tp('rolling.reasonStreak', streak.days);
+  else reason = t('rolling.reasonFatigue', { ratio: fmtRatio(ac.ratio) });
   return { unit: cand, date: cand.date, reason, acwr: ac, hardStreak: streak.days };
 }
 

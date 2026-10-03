@@ -17,9 +17,12 @@
 
 import { weekStartMonday, addDays, isoDow } from './ui.js';
 import { loadClass, isHard, findMakeupDay, isOpen } from './planflow.js';
+import { weekdayNames } from './format.js';
 
-const DOW = ['', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
-export function dowShort(dateStr) { return DOW[isoDow(dateStr)] || ''; }
+import { t } from './i18n.js';
+
+/** Short weekday name; isoDow counts Mon = 1 … Sun = 7, weekdayNames() starts on Sunday. */
+export function dowShort(dateStr) { return weekdayNames()[isoDow(dateStr) % 7] || ''; }
 
 /** Lastrelevante, nicht verpasste Einheiten der Mo–So-Woche von dateStr.
     Verschobene Einheiten zählen MIT: sie stehen am neuen Tag im Plan und können
@@ -58,19 +61,20 @@ export function weekCollisions(units = [], dateStr) {
   //    ist die häufigste Kollision mit Vereinsfußball und lag früher „zwischen“ zwei Wochen.
   const ext = (units || []).filter((u) => u && !u.deleted && u.date >= addDays(ws, -1) && u.date <= addDays(we, 1)
     && u.type !== 'rest' && u.status !== 'verpasst').sort((a, b) => a.date.localeCompare(b.date));
-  const dayLabel = (d) => `${dowShort(d)}${d < ws ? ', Vorwoche' : d > we ? ', Folgewoche' : ''}`;
+  const dayLabel = (d) => (d < ws ? t('triage.dayPrevWeek', { day: dowShort(d) })
+    : d > we ? t('triage.dayNextWeek', { day: dowShort(d) }) : dowShort(d));
   for (let i = 0; i < ext.length; i++) {
     for (let j = i + 1; j < ext.length; j++) {
       if (ext[j].date === addDays(ext[i].date, 1) && isHard(ext[i]) && isHard(ext[j]) && (inWeek(ext[i].date) || inWeek(ext[j].date))) {
         const lower = PRIORITY_RANK[unitPriority(ext[i])] <= PRIORITY_RANK[unitPriority(ext[j])] ? ext[i] : ext[j];
         out.push({
           kind: 'hard-b2b', severity: 'warn', date: ext[j].date,
-          text: `Harte Einheiten an aufeinanderfolgenden Tagen: „${ext[i].title}“ (${dayLabel(ext[i].date)}) → „${ext[j].title}“ (${dayLabel(ext[j].date)}).`,
+          text: t('triage.hardB2b', { first: ext[i].title, firstDay: dayLabel(ext[i].date), second: ext[j].title, secondDay: dayLabel(ext[j].date) }),
           suggest: ext[i].fixed && ext[j].fixed
-            ? 'Beide sind feste Termine – plane den Tag danach bewusst ruhig und nimm, wo es geht, beim zweiten Termin die Intensität raus.'
+            ? t('triage.bothFixed')
             : lower.fixed
-              ? `„${lower.title}“ ist ein fester Termin – mach stattdessen die andere Einheit lockerer oder verschiebe sie.`
-              : `Verschiebe „${lower.title}“ oder mach sie lockerer – zwischen zwei harte Reize gehört Erholung.`,
+              ? t('triage.lowerFixed', { title: lower.title })
+              : t('triage.moveLower', { title: lower.title }),
         });
       }
     }
@@ -82,9 +86,9 @@ export function weekCollisions(units = [], dateStr) {
     const softest = hard.filter((u) => !u.fixed).sort((a, b) => PRIORITY_RANK[unitPriority(a)] - PRIORITY_RANK[unitPriority(b)])[0];
     out.push({
       kind: 'too-many-hard', severity: 'warn',
-      text: `${hard.length} fordernde Einheiten in einer Woche – 2–3 reichen meist, um sich zwischen den Reizen zu erholen.`,
-      suggest: softest ? `Wandle die am wenigsten wichtige („${softest.title}“) in einen lockeren Lauf – Qualität vor Quantität.`
-        : 'Die harten Einheiten sind feste Termine – plane die lockeren Tage bewusst sehr ruhig.',
+      text: t('triage.tooManyHard', { count: hard.length }),
+      suggest: softest ? t('triage.softenLeast', { title: softest.title })
+        : t('triage.allHardFixed'),
     });
   }
 
@@ -93,8 +97,8 @@ export function weekCollisions(units = [], dateStr) {
   if (days.size >= 7) {
     out.push({
       kind: 'no-rest', severity: 'warn',
-      text: 'Kein trainingsfreier Tag in dieser Woche.',
-      suggest: 'Plane mindestens einen Ruhetag ein – Erholung ist der Moment, in dem die Anpassung passiert.',
+      text: t('triage.noRest'),
+      suggest: t('triage.noRestSuggest'),
     });
   }
 
@@ -105,8 +109,8 @@ export function weekCollisions(units = [], dateStr) {
     if (us.filter(isHard).length >= 2) {
       out.push({
         kind: 'double-hard', severity: 'warn', date,
-        text: `Zwei fordernde Einheiten am selben Tag (${dowShort(date)}).`,
-        suggest: 'Verteile sie auf zwei Tage – so wirkt jeder Reiz besser und die Erholung stimmt.',
+        text: t('triage.doubleHard', { day: dowShort(date) }),
+        suggest: t('triage.doubleHardSuggest'),
       });
     }
   });

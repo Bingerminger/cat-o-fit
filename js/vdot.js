@@ -10,6 +10,8 @@
 
 import { diffDays } from './ui.js';
 
+import { t } from './i18n.js';
+
 /** VO₂ (ml/kg/min) bei Laufgeschwindigkeit v (m/min) – Daniels/Gilbert. */
 function vo2AtSpeed(v) { return -4.60 + 0.182258 * v + 0.000104 * v * v; }
 /** Anteil von VO₂max, der über t Minuten gehalten werden kann (Drop-off). */
@@ -68,13 +70,13 @@ const ZONE_PCT = {
   vo2:       [1.00, 0.95],
 };
 const ZONE_META = {
-  recovery:  { label: 'Regeneration', hrZone: 1 },
-  easy:      { label: 'Locker / Easy', hrZone: 2 },
-  long:      { label: 'Long Run', hrZone: 2 },
-  marathon:  { label: 'Marathon-Renntempo', hrZone: 3 },
-  race_hm:   { label: 'HM-Renntempo', hrZone: 4 },
-  threshold: { label: 'Schwelle / Tempo', hrZone: 4 },
-  vo2:       { label: 'Intervalle (VO2max)', hrZone: 5 },
+  recovery:  { get label() { return t('vdot.zoneRecovery'); }, hrZone: 1 },
+  easy:      { get label() { return t('vdot.zoneEasy'); }, hrZone: 2 },
+  long:      { get label() { return t('vdot.zoneLong'); }, hrZone: 2 },
+  marathon:  { get label() { return t('vdot.zoneMarathon'); }, hrZone: 3 },
+  race_hm:   { get label() { return t('vdot.zoneHalf'); }, hrZone: 4 },
+  threshold: { get label() { return t('vdot.zoneThreshold'); }, hrZone: 4 },
+  vo2:       { get label() { return t('vdot.zoneVo2'); }, hrZone: 5 },
 };
 
 /** HF-Zone des Renntempos je Distanz (5 km am Limit, Marathon deutlich darunter). */
@@ -86,7 +88,7 @@ function raceHrZone(distanceKm) {
 }
 
 /** Renntempo-Bereich (±2 %) um eine Pace in Sek./km. */
-export function raceZone(paceSec, distanceKm, label = 'Renntempo') {
+export function raceZone(paceSec, distanceKm, label = t('vdot.racePace')) {
   if (!paceSec) return null;
   return { label, min: Math.round(paceSec * 0.98), max: Math.round(paceSec * 1.02), hrZone: raceHrZone(distanceKm) };
 }

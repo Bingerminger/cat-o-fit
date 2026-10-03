@@ -7,7 +7,7 @@ import * as store from './storage.js';
 import {
   el, icon, iconSvg, navigate, typeMeta, typeIcon, fmtKm, fmtPace, fmtWeekday,
   todayStr, addDays, parseDate, toDateStr, monthName, weekStartMonday, isoDow,
-  segmented, toast, effectiveStatus, confirmDialog,
+  segmented, toast, effectiveStatus, confirmDialog, fmtDayMonth,
 } from './ui.js';
 import { setHeader } from './router.js';
 import { openActivitySheet, openReschedule } from './session.js';
@@ -16,6 +16,9 @@ import { rescheduleCheck } from './planflow.js';
 import { weatherBadge } from './weather.js';
 import { cyclePhase, isProtectedDay, PHASE_META } from './cycle.js';
 import { datedItems, catMeta } from './checklist.js';
+import { weekdayNames } from './format.js';
+
+import { t, tp } from './i18n.js';
 
 /** Termine (datierte Checklisten-Punkte) für einen Tag – nur wenn das Modul an ist. */
 function termineOn(dateStr) {
@@ -49,13 +52,13 @@ function draw() {
   const view = viewRef;
   view.innerHTML = '';
   setHeader({
-    title: 'Kalender',
-    actions: [{ icon: 'target', label: 'Heute', onClick: () => { cursor = todayStr(); draw(); } }],
+    title: t('nav.calendar'),
+    actions: [{ icon: 'target', label: t('calendar.goToday'), onClick: () => { cursor = todayStr(); draw(); } }],
   });
 
   // Umschalter
   view.appendChild(el('div', { class: 'row row--between mb-4' }, [
-    segmented([{ value: 'month', label: 'Monat' }, { value: 'week', label: 'Woche' }], viewMode, (v) => { viewMode = v; draw(); }),
+    segmented([{ value: 'month', label: t('calendar.month') }, { value: 'week', label: t('calendar.week') }], viewMode, (v) => { viewMode = v; draw(); }),
   ]));
 
   // Navigationsleiste
@@ -63,9 +66,9 @@ function draw() {
     ? `${monthName(parseDate(cursor).getMonth())} ${parseDate(cursor).getFullYear()}`
     : weekLabel(cursor);
   view.appendChild(el('div', { class: 'cal-toolbar' }, [
-    el('button', { class: 'icon-btn', 'aria-label': 'zurück', onclick: () => step(-1) }, icon('chevronLeft')),
+    el('button', { class: 'icon-btn', 'aria-label': t('calendar.prev'), onclick: () => step(-1) }, icon('chevronLeft')),
     el('div', { class: 'cal-toolbar__label', text: label }),
-    el('button', { class: 'icon-btn', 'aria-label': 'vor', onclick: () => step(1) }, icon('chevronRight')),
+    el('button', { class: 'icon-btn', 'aria-label': t('calendar.next'), onclick: () => step(1) }, icon('chevronRight')),
   ]));
 
   if (viewMode === 'month') drawMonth(view); else drawWeek(view);
@@ -79,13 +82,14 @@ function step(dir) {
 function weekLabel(dateStr) {
   const start = weekStartMonday(dateStr), end = addDays(start, 6);
   const s = parseDate(start), e = parseDate(end);
-  return `${s.getDate()}.–${e.getDate()}. ${monthName(e.getMonth(), false)}`;
+  return t('calendar.weekRange', { from: s.getDate(), to: e.getDate(), month: monthName(e.getMonth(), false) });
 }
 
 /* ------------------------------- Monat ---------------------------------- */
 function drawMonth(view) {
   const grid = el('div', { class: 'cal-grid' });
-  ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'].forEach((d) => grid.appendChild(el('div', { class: 'cal-grid__dow', text: d })));
+  const dows = weekdayNames();   // Sunday first; the grid starts on Monday
+  [1, 2, 3, 4, 5, 6, 0].forEach((i) => grid.appendChild(el('div', { class: 'cal-grid__dow', text: dows[i] })));
 
   const first = firstOfMonth(cursor);
   const gridStart = weekStartMonday(first);
@@ -104,10 +108,11 @@ function drawMonth(view) {
     // für Screenreader nennt die Zelle Datum und Einheiten.
     const titles = [...units.map((u) => `${typeMeta(u.type).short}${u.targetDistanceKm ? ` ${fmtKm(u.targetDistanceKm, u.targetDistanceKm % 1 ? 1 : 0)}` : ''}`),
       ...free.map((s) => `${typeMeta(s.type).short}${s.distanceKm ? ` ${fmtKm(s.distanceKm, 0)}` : ''} ✓`)];
+    const aria = { weekday: fmtWeekday(date, true), date: fmtDayMonth(date), items: titles.length ? titles.join(', ') : t('calendar.nothingPlanned') };
     const cell = el('button', {
       class: `cal-cell ${inMonth ? '' : 'cal-cell--out'} ${date === today ? 'cal-cell--today' : ''} ${isRace ? 'cal-cell--race' : ''}`,
       type: 'button',
-      'aria-label': `${fmtWeekday(date, true)}, ${d.getDate()}. ${monthName(d.getMonth(), false)}${date === today ? ' (heute)' : ''}: ${titles.length ? titles.join(', ') : 'nichts geplant'}`,
+      'aria-label': date === today ? t('calendar.cellAriaToday', aria) : t('calendar.cellAria', aria),
       onclick: () => { viewMode = 'week'; cursor = date; draw(); },
     }, [
       el('div', { class: 'row row--between cal-cell__head', style: { gap: '2px' } }, [
@@ -143,7 +148,7 @@ function legend() {
   if (store.settings().modules?.checklist !== false) {
     items.push(el('span', { class: 'zones-legend__item' }, [
       el('span', { class: 'zones-legend__sw', style: { background: 'var(--text-3)', borderRadius: '2px' } }),
-      'Termin',
+      t('calendar.appointment'),
     ]));
   }
   return el('div', { class: 'row wrap gap-3 mt-4', style: { justifyContent: 'center' } }, items);
@@ -162,21 +167,21 @@ function drawWeek(view) {
     const free = freeSessionsOn(date);
     const termine = termineOn(date);
     const counts = [];
-    if (runUnits.length) counts.push(`${runUnits.length} Einheit${runUnits.length > 1 ? 'en' : ''}`);
-    if (free.length) counts.push(`${free.length} Training${free.length > 1 ? 's' : ''}`);
-    if (termine.length) counts.push(`${termine.length} Termin${termine.length > 1 ? 'e' : ''}`);
+    if (runUnits.length) counts.push(tp('calendar.sessionCount', runUnits.length));
+    if (free.length) counts.push(tp('calendar.activityCount', free.length));
+    if (termine.length) counts.push(tp('calendar.appointmentCount', termine.length));
     const day = el('div', { class: 'cal-day', dataset: { date } });
     day.appendChild(el('div', { class: `cal-day__head ${date === today ? 'is-today' : ''}` }, [
       el('span', { class: 'cal-day__dow', text: fmtWeekday(date, true) }),
-      el('span', { class: 'cal-day__date', text: `${parseDate(date).getDate()}. ${monthName(parseDate(date).getMonth(), false)}` }),
+      el('span', { class: 'cal-day__date', text: fmtDayMonth(date) }),
       cycleDayTag(date),
       weatherDay(date),
       el('span', { class: 'cal-day__count', text: counts.join(' · ') }),
-      date <= today ? el('button', { class: 'icon-btn cal-day__add', 'aria-label': `Training am ${fmtWeekday(date, true)} erfassen`, title: 'Training erfassen', onclick: () => openActivitySheet({ date }) }, icon('plus')) : null,
+      date <= today ? el('button', { class: 'icon-btn cal-day__add', 'aria-label': t('calendar.logOnDay', { weekday: fmtWeekday(date, true) }), title: t('calendar.logActivity'), onclick: () => openActivitySheet({ date }) }, icon('plus')) : null,
     ]));
 
     if (!runUnits.length && !termine.length && !free.length) {
-      day.appendChild(el('div', { class: 'cal-day__rest', text: 'Ruhetag' }));
+      day.appendChild(el('div', { class: 'cal-day__rest', text: t('calendar.restDay') }));
     } else {
       const ul = el('div', { class: 'cal-day__units' });
       runUnits.forEach((u) => ul.appendChild(weekUnit(u)));
@@ -187,7 +192,7 @@ function drawWeek(view) {
     wrap.appendChild(day);
   }
   view.appendChild(wrap);
-  view.appendChild(el('p', { class: 'dim center mt-4', style: { fontSize: '.78rem' }, text: 'Tipp: Einheit am Griff ⠿ auf einen anderen Tag ziehen – oder den Griff antippen und ein Datum wählen.' }));
+  view.appendChild(el('p', { class: 'dim center mt-4', style: { fontSize: '.78rem' }, text: t('calendar.dragTip') }));
 }
 
 function weekUnit(u) {
@@ -197,7 +202,7 @@ function weekUnit(u) {
   if (u.targetDurationMin && !u.targetDistanceKm) meta.push(`${u.targetDurationMin} min`);
 
   // Griff als Knopf: ziehen verschiebt, antippen (oder Enter) öffnet den Verschieben-Dialog.
-  const handle = el('button', { class: 'cal-unit__handle', type: 'button', 'aria-label': `„${u.title}“ verschieben`, title: 'Ziehen oder antippen zum Verschieben', html: iconSvg('grip') });
+  const handle = el('button', { class: 'cal-unit__handle', type: 'button', 'aria-label': t('calendar.moveUnit', { title: u.title }), title: t('calendar.dragOrTap'), html: iconSvg('grip') });
   attachDrag(handle, u);
 
   const eff0 = effectiveStatus(u);
@@ -220,7 +225,7 @@ function freeRow(s) {
   const meta = [];
   if (s.distanceKm) meta.push(fmtKm(s.distanceKm, s.distanceKm % 1 ? 1 : 0));
   if (s.durationSec) meta.push(`${Math.round(s.durationSec / 60)} min`);
-  meta.push(s.source === 'apple-health' || s.source === 'health' ? 'Apple Health' : s.source === 'health-connect' ? 'Health Connect' : s.source === 'gpx' ? 'Datei-Import' : 'ohne Plan');
+  meta.push(s.source === 'apple-health' || s.source === 'health' ? 'Apple Health' : s.source === 'health-connect' ? 'Health Connect' : s.source === 'gpx' ? t('calendar.fileImport') : t('calendar.noPlan'));
   return el('a', { class: 'cal-unit cal-unit--done', href: `#/session/${s.id}`, style: { textDecoration: 'none' } }, [
     typeIcon(s.type, 'type-icon--sm'),
     el('div', { class: 'cal-unit__body' }, [
@@ -316,11 +321,15 @@ export async function reschedule(unit, newDate) {
   const plan = store.get('plans').find((p) => p.id === unit.planId);
   const { sameDay, hardNeighbor } = rescheduleCheck((plan && plan.units) || [], unit.id, newDate);
   const hints = [];
-  if (sameDay) hints.push(`An diesem Tag liegt bereits „${sameDay.title}“.`);
-  if (hardNeighbor) hints.push(`${hardNeighbor.dir === 'prev' ? 'Am Vortag' : 'Am Folgetag'} liegt „${hardNeighbor.unit.title}“ (fordernd).`);
+  if (sameDay) hints.push(t('calendar.sameDay', { title: sameDay.title }));
+  if (hardNeighbor) {
+    hints.push(hardNeighbor.dir === 'prev'
+      ? t('calendar.hardBefore', { title: hardNeighbor.unit.title })
+      : t('calendar.hardAfter', { title: hardNeighbor.unit.title }));
+  }
   if (hints.length && !(await confirmDialog({
-    title: `Auf ${fmtWeekday(newDate, true)} verschieben?`, message: hints.join(' '),
-    confirmLabel: 'Trotzdem verschieben', cancelLabel: 'Abbrechen',
+    title: t('calendar.moveTo', { weekday: fmtWeekday(newDate, true) }), message: hints.join(' '),
+    confirmLabel: t('calendar.moveAnyway'), cancelLabel: t('common.cancel'),
   }))) return;
   const before = { date: unit.date, dow: unit.dow, status: unit.status, movedFrom: unit.movedFrom ?? null };
   // Status bleibt „geplant“ (die Einheit findet statt, nur an einem anderen Tag);
@@ -330,8 +339,8 @@ export async function reschedule(unit, newDate) {
     status: unit.status === 'erledigt' ? 'erledigt' : 'geplant',
     movedFrom: unit.movedFrom || unit.date,
   });
-  toast(`Verschoben auf ${fmtWeekday(newDate, true)}`, 'good', 6000, {
-    label: 'Rückgängig', onClick: () => { saveUnitPatch(unit.planId, unit.id, before); draw(); },
+  toast(t('calendar.movedTo', { weekday: fmtWeekday(newDate, true) }), 'good', 6000, {
+    label: t('common.undo'), onClick: () => { saveUnitPatch(unit.planId, unit.id, before); draw(); },
   });
   draw();
 }
@@ -354,10 +363,10 @@ function cycleDayTag(date) {
   // Unter hormoneller Verhütung nur die Blutungstage markieren (keine Phasen).
   if (!p || p.phase === 'neutral') return null;
   const m = PHASE_META[p.phase];
-  return el('span', { class: 'cycle-tag', style: { background: `color-mix(in srgb, ${m.color} 18%, transparent)`, color: m.color }, title: `${m.label}${p.predicted ? ' (Prognose)' : ''}`, text: `${m.emoji} ${m.label}` });
+  return el('span', { class: 'cycle-tag', style: { background: `color-mix(in srgb, ${m.color} 18%, transparent)`, color: m.color }, title: p.predicted ? t('calendar.predicted', { label: m.label }) : m.label, text: `${m.emoji} ${m.label}` });
 }
 function cycleDot(date) {
   const p = cyclePhase(date);
   if (!p || p.phase !== 'menstruation') return null;
-  return el('span', { class: 'cal-cycle-dot', style: { background: PHASE_META.menstruation.color }, title: 'Menstruation' + (p.predicted ? ' (Prognose)' : '') });
+  return el('span', { class: 'cal-cycle-dot', style: { background: PHASE_META.menstruation.color }, title: p.predicted ? t('calendar.predicted', { label: t('calendar.period') }) : t('calendar.period') });
 }

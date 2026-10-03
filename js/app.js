@@ -25,7 +25,7 @@ import { render as renderStats } from './statistics.js';
 import { render as renderSettings } from './settings.js';
 import { render as renderBadges } from './badges.js';
 import { render as renderCycle } from './cycle.js';
-import { render as renderExercises } from './exercises.js';
+import { render as renderExercises, loadExerciseTexts } from './exercises.js';
 import { render as renderFamily } from './family.js';
 import { render as renderLogin } from './login.js';
 import { ensureGenerated } from './plans.js';
@@ -363,6 +363,7 @@ const refreshSoon = debounce(() => {
 async function boot() {
   await Promise.all([store.init(), loadLanguages()]);
   await applyLanguage();   // catalogs before the first render
+  loadExerciseTexts();     // exercise steps and tips in the background
   // Fehlt einer Einheit die Anstrengung, schätzt die Belastung sie aus der Ø-HF – bezogen
   // auf die Max-HF der gerade angemeldeten Person.
   useHrReference(() => { const p = store.profile(); return p && Number(p.maxHr) > 0 ? { maxHr: Number(p.maxHr) } : null; });

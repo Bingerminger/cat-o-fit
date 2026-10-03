@@ -1,0 +1,1564 @@
+{
+  "squat": {
+    "muscles": [
+      "thighs",
+      "glutes",
+      "core"
+    ],
+    "equipment": "none (optional weight)",
+    "steps": [
+      "Stand with your feet shoulder-width apart, toes turned slightly out.",
+      "Push your hips back and bend as if you were sitting down.",
+      "Knees track over your toes, back stays long, chest up.",
+      "Lower until your thighs are roughly horizontal, then drive powerfully back up."
+    ],
+    "tip": "Keep your weight across the whole sole, heels stay on the floor. 3×10–15 reps.",
+    "caution": "With knee or hip pain, only go as deep as you can without pain.",
+    "progression": "More reps, then weight (dumbbell/kettlebell), later pause squats."
+  },
+  "lunge": {
+    "muscles": [
+      "thighs",
+      "glutes",
+      "balance"
+    ],
+    "equipment": "none",
+    "steps": [
+      "From standing, take a big step forward.",
+      "Bend both knees to ~90°, your back knee sinks towards the floor.",
+      "Front knee stays above the ankle, upper body upright.",
+      "Push back to standing through your front heel, then switch sides."
+    ],
+    "tip": "Ideal for runners to tackle one-sided weaknesses. 3×8–10 each side.",
+    "caution": "With knee problems, take shorter steps and don’t push your front knee past your toes.",
+    "progression": "With weight, backwards or on the move (walking lunges)."
+  },
+  "pushup": {
+    "muscles": [
+      "chest",
+      "shoulders",
+      "triceps",
+      "core"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Hands slightly wider than shoulder-width, your body forms a straight line.",
+      "Brace your core firmly (no sagging hips).",
+      "Bend your elbows backwards and lower your chest towards the floor.",
+      "Push powerfully back up."
+    ],
+    "tip": "Too hard? Drop to your knees or raise your hands (table/wall). 3×6–12.",
+    "caution": "With shoulder or wrist trouble, do them raised against a bench or on your fists.",
+    "progression": "From the wall to the bench, then to knees and full push-ups; later with your feet raised."
+  },
+  "deadlift": {
+    "muscles": [
+      "glutes",
+      "hamstrings",
+      "lower back"
+    ],
+    "equipment": "dumbbell/kettlebell",
+    "steps": [
+      "Stand hip-width apart, weight in front of your shins.",
+      "Push your hips back, bend your knees only slightly, back stays straight.",
+      "Keep the weight close to your body, down to just below your knees.",
+      "Stand up by driving through your hips, squeeze your glutes."
+    ],
+    "tip": "The movement comes from your hips, not your back. Technique first, then weight. 3×8.",
+    "caution": "Keep your back neutral – skip it with acute back pain and get it checked.",
+    "progression": "More weight in small steps, then single-leg.",
+    "gear": "dumbbell/kettlebell"
+  },
+  "row": {
+    "muscles": [
+      "upper back",
+      "biceps",
+      "rear shoulder"
+    ],
+    "equipment": "dumbbell/kettlebell",
+    "steps": [
+      "Hip hinge as in the deadlift, upper body tilted forward ~45°.",
+      "Arms hang long, shoulder blades relaxed.",
+      "Pull the weight to your lower ribs, elbows close to your body.",
+      "Lower with control, your back stays stable."
+    ],
+    "tip": "Balances out the front of the body that running favours. 3×10–12.",
+    "caution": "Keep your back straight, don’t yank the weight.",
+    "progression": "Heavier dumbbell or stronger band, lower slowly (3 s).",
+    "gear": "dumbbell/kettlebell"
+  },
+  "overhead_press": {
+    "muscles": [
+      "shoulders",
+      "triceps",
+      "core"
+    ],
+    "equipment": "dumbbells",
+    "steps": [
+      "Stand tall, weights at shoulder height.",
+      "Brace your core, don’t let your ribs flare.",
+      "Press the weights straight overhead until your arms are almost straight.",
+      "Lower with control back to shoulder height."
+    ],
+    "tip": "No arched lower back – keep your abs tight. 3×8–10.",
+    "caution": "With shoulder pain, don’t press overhead – sit down with a lighter weight instead, or skip it.",
+    "progression": "More weight or one arm at a time (more core).",
+    "gear": "dumbbells"
+  },
+  "calf_raise": {
+    "muscles": [
+      "calves",
+      "Achilles tendon"
+    ],
+    "equipment": "none (optional step)",
+    "steps": [
+      "Stand tall, if you like with the balls of your feet on a step.",
+      "Slowly rise onto your toes, hold briefly.",
+      "Lower with control, all the way down (on a step, below step height)."
+    ],
+    "tip": "Helps prevent Achilles and calf problems. 3×15–20, progress to single-leg if you like.",
+    "caution": "With an irritated Achilles tendon, go slowly and don’t bounce.",
+    "progression": "Single-leg, then on a step lowering below step level, then with weight."
+  },
+  "plank": {
+    "muscles": [
+      "core",
+      "shoulders",
+      "glutes"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Forearms on the floor shoulder-width apart, elbows under your shoulders.",
+      "Your body forms a straight line from head to heels.",
+      "Tighten your abs and glutes, tuck your pelvis slightly.",
+      "Keep breathing calmly, hold the position."
+    ],
+    "tip": "Better short and clean than long and sagging. 3×20–45 s.",
+    "caution": "No arched lower back – with back pain, start on your knees.",
+    "progression": "Hold longer, then lift an arm or a leg."
+  },
+  "side_plank": {
+    "muscles": [
+      "obliques",
+      "hips",
+      "shoulder"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Lie on your side, forearm under your shoulder, legs stacked.",
+      "Lift your hips until your body forms a straight line.",
+      "Reach your top arm to the ceiling or rest it on your hip.",
+      "Hold, then switch sides."
+    ],
+    "tip": "Stabilises your hips when you run. 3×15–30 s each side.",
+    "caution": "With shoulder trouble, support yourself on your knee.",
+    "progression": "Lift your top leg or raise and lower your hips."
+  },
+  "glute_bridge": {
+    "muscles": [
+      "glutes",
+      "hamstrings",
+      "core"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Lie on your back, feet flat and hip-width apart, arms by your sides.",
+      "Squeeze your glutes and push your hips up.",
+      "Thighs and torso form a line, hold briefly.",
+      "Lower with control without touching all the way down."
+    ],
+    "tip": "Wakes up the often “sleepy” glutes. 3×12–15, single-leg if you like.",
+    "caution": "Don’t push into an arched lower back – the power comes from your glutes.",
+    "progression": "Single-leg, then feet raised or with weight on your hips."
+  },
+  "dead_bug": {
+    "muscles": [
+      "deep core muscles",
+      "coordination"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Lie on your back, arms to the ceiling, hips and knees raised to 90°.",
+      "Gently press your lower back into the floor (abs tight).",
+      "Extend your right leg and left arm at the same time, without arching your back.",
+      "Back to the centre, then the other side."
+    ],
+    "tip": "Core stability without loading the spine. 3×8 each side, slowly.",
+    "caution": "Your lower back stays on the floor – otherwise make the movement smaller.",
+    "progression": "Slower, arms/legs straight, later with a light weight."
+  },
+  "side_crunch": {
+    "muscles": [
+      "obliques",
+      "balance"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Stand tall and stable, abs tight.",
+      "Bend your upper body to the side with control, sliding your hand along your thigh.",
+      "Come back up using your side abs."
+    ],
+    "tip": "Small, controlled movement. 3×12 each side.",
+    "caution": "Only bend to the side, don’t lean forward or twist.",
+    "progression": "With a dumbbell in the hand on the opposite side."
+  },
+  "hip_flexor_stretch": {
+    "muscles": [
+      "hip flexors",
+      "front of thigh"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Deep lunge, back knee on the floor (e.g. on a cushion).",
+      "Tuck your pelvis slightly, squeeze your glutes.",
+      "Gently push your hips forward until you feel a stretch at the front of your hip.",
+      "Hold still, don’t bounce."
+    ],
+    "tip": "Important if you sit a lot and run. 2×30 s each side.",
+    "caution": "Pad your knee well; don’t compensate by arching your lower back.",
+    "progression": "Reach the arm on the back-leg side overhead."
+  },
+  "hamstring_stretch": {
+    "muscles": [
+      "hamstrings",
+      "lower back"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Place one leg slightly forward, heel on the floor, toes up.",
+      "Push your hips back and lean forward with a straight back.",
+      "Reach your hands towards your shin until you feel a light stretch at the back.",
+      "Hold, then switch sides."
+    ],
+    "tip": "Keep your back long – don’t round it. 2×30 s each side.",
+    "caution": "Only a light stretch – never jerky and not with a fresh strain.",
+    "progression": "Hold longer, consciously keeping your back long."
+  },
+  "calf_stretch": {
+    "muscles": [
+      "calves",
+      "Achilles tendon"
+    ],
+    "equipment": "wall",
+    "steps": [
+      "Lean against the wall with both hands.",
+      "Extend one leg straight back, heel stays on the floor.",
+      "Push your hips forward until you feel it in your calf.",
+      "For the deep calf, bend your back knee slightly."
+    ],
+    "tip": "Feels good after a run. 2×30 s each side.",
+    "caution": "With an irritated Achilles tendon, stretch gently and not into pain.",
+    "progression": "Also with a bent knee (deep calf muscles).",
+    "gear": "wall"
+  },
+  "cat_cow": {
+    "muscles": [
+      "spine",
+      "core"
+    ],
+    "equipment": "none",
+    "steps": [
+      "On all fours, hands under your shoulders, knees under your hips.",
+      "Inhale: let your back gently sag, look up (“cow”).",
+      "Exhale: round your back, chin to chest (“cat”).",
+      "Flow between the two several times in time with your breath."
+    ],
+    "tip": "Gentle mobilisation for back and neck. 8–10 calm rounds.",
+    "caution": "Stay within a pain-free range.",
+    "progression": "Slower, with conscious breathing."
+  },
+  "chest_opener": {
+    "muscles": [
+      "chest",
+      "front of shoulder"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Stand tall, abs lightly engaged.",
+      "Open your arms backwards, loosely clasp your hands behind your back.",
+      "Lift your breastbone, shoulders back and down.",
+      "Breathe calmly, hold gently."
+    ],
+    "tip": "Counters the hunched “screen posture”. 2×20–30 s.",
+    "caution": "With shoulder instability, don’t pull into the end position.",
+    "progression": "Hold longer, arms a little higher."
+  },
+  "split_squat": {
+    "muscles": [
+      "thighs",
+      "glutes",
+      "balance"
+    ],
+    "equipment": "raised surface (chair/bench)",
+    "steps": [
+      "One foot forward on the floor, the top of your back foot rests on a chair or bench.",
+      "Upper body upright, bend your front knee and lower your body straight down.",
+      "Front knee stays over your foot, back knee sinks towards the floor.",
+      "Push up with control through your front heel."
+    ],
+    "tip": "Very effective for single-leg strength and stability. 3×8–10 each side.",
+    "caution": "With knee problems, don’t go as deep.",
+    "progression": "Bulgarian split squat (back foot raised), then with weight.",
+    "gear": "raised surface"
+  },
+  "wall_sit": {
+    "muscles": [
+      "thighs",
+      "glutes"
+    ],
+    "equipment": "wall",
+    "steps": [
+      "Stand with your back flat against the wall, feet about 40 cm in front of it.",
+      "Slide down the wall until your thighs are horizontal.",
+      "Knees above your ankles, back stays against the wall.",
+      "Hold the position, breathing calmly."
+    ],
+    "tip": "Static strength endurance for your legs – ideal without equipment. 3×30–45 s.",
+    "caution": "With kneecap trouble, sit higher (angle above 90°).",
+    "progression": "Hold longer, then alternate single-leg.",
+    "gear": "wall"
+  },
+  "step_up": {
+    "muscles": [
+      "thighs",
+      "glutes",
+      "balance"
+    ],
+    "equipment": "sturdy step/bench",
+    "steps": [
+      "Stand in front of a sturdy, knee-high step.",
+      "Step all the way up with one foot, driving through the heel.",
+      "Stand steady at the top for a moment, then lower back down with control.",
+      "Don’t push off with your back leg – your top leg does the work."
+    ],
+    "tip": "Runner-friendly (single-leg, close to everyday movement). 3×10 each side.",
+    "caution": "Keep your knee stable – don’t let it cave inwards.",
+    "progression": "Higher step, then with weight.",
+    "gear": "sturdy step/bench"
+  },
+  "crunch": {
+    "muscles": [
+      "rectus abdominis"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Lie on your back, knees bent, feet hip-width apart on the floor.",
+      "Hands loosely at your temples (don’t pull on your head).",
+      "Curl your upper body up using your abs, shoulder blades lift slightly.",
+      "Hold briefly, lower slowly."
+    ],
+    "tip": "The movement comes from your abs, not your neck. 3×12–20.",
+    "caution": "Don’t pull on your neck with your hands.",
+    "progression": "Slower, then with a light weight on your chest."
+  },
+  "leg_raise": {
+    "muscles": [
+      "lower abs",
+      "hip flexors"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Lie on your back, legs straight, hands beside or under your bottom.",
+      "Consciously keep your lower back on the floor.",
+      "Slowly raise your straight legs to ~90°.",
+      "Lower with control without fully resting your heels on the floor."
+    ],
+    "tip": "If your back twinges, bend your knees slightly. 3×10–15.",
+    "caution": "With back pain, keep your knees bent.",
+    "progression": "Straight legs, lower slowly."
+  },
+  "hollow_hold": {
+    "muscles": [
+      "deep abdominals",
+      "core"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Lie on your back, arms overhead, legs straight.",
+      "Press your lower back firmly into the floor (brace your abs).",
+      "Lift your shoulders and legs slightly – your body becomes a shallow bowl.",
+      "Keep breathing calmly and hold."
+    ],
+    "tip": "Your lower back must NOT lift off the floor. 3×15–30 s.",
+    "caution": "Your lower back mustn’t lift – if it does, pull your knees in.",
+    "progression": "Arms overhead, hold longer."
+  },
+  "superman": {
+    "muscles": [
+      "lower back",
+      "glutes",
+      "rear shoulder"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Lie face down, arms stretched out in front.",
+      "Lift your arms, chest and legs slightly off the floor at the same time.",
+      "Look at the floor, neck long – don’t crank your head back.",
+      "Hold briefly, lower gently."
+    ],
+    "tip": "Strengthens the often neglected posterior chain. 3×10 or hold 3×20 s.",
+    "caution": "The face-down extension puts more load on the lumbar spine – with back trouble, do the bird dog instead.",
+    "progression": "Hold longer, alternate arm and leg."
+  },
+  "bird_dog": {
+    "muscles": [
+      "core",
+      "lower back",
+      "glutes",
+      "coordination"
+    ],
+    "equipment": "none",
+    "steps": [
+      "On all fours, hands under your shoulders, knees under your hips.",
+      "Extend your right arm and left leg long at the same time.",
+      "Hips and shoulders stay level (no twisting).",
+      "Bring them back and switch sides."
+    ],
+    "tip": "Stability, not momentum – slow and controlled. 3×8–10 each side.",
+    "caution": "Keep your pelvis level, don’t arch your lower back.",
+    "progression": "Hold briefly, then bring elbow and knee together under your body."
+  },
+  "child_pose": {
+    "muscles": [
+      "lower back",
+      "hips",
+      "shoulders"
+    ],
+    "equipment": "none (mat)",
+    "steps": [
+      "From kneeling, sit your bottom back towards your heels.",
+      "Lower your upper body forward, stretch your arms long in front of you.",
+      "Forehead rests on the floor, shoulders relaxed.",
+      "Breathe deeply into your lower back."
+    ],
+    "tip": "Gentle relief for your whole back. 3×30–45 s.",
+    "caution": "With knee trouble, put a cushion between your bottom and your heels.",
+    "progression": "Walk your hands to the side (side stretch)."
+  },
+  "supine_twist": {
+    "muscles": [
+      "spine",
+      "lower back",
+      "glutes"
+    ],
+    "equipment": "none (mat)",
+    "steps": [
+      "Lie on your back, arms spread out to the sides (T shape).",
+      "Bend both knees and lower them together to one side.",
+      "Optionally turn your head the other way, keep both shoulders on the floor.",
+      "Breathe calmly, then switch sides."
+    ],
+    "tip": "Loosens your lower back after a run. 2×30 s each side.",
+    "caution": "Shoulders stay on the floor, don’t force it.",
+    "progression": "Hold longer, straighten your top leg."
+  },
+  "figure_four": {
+    "muscles": [
+      "glutes",
+      "piriformis",
+      "hips"
+    ],
+    "equipment": "none (mat)",
+    "steps": [
+      "Lie on your back, both knees bent.",
+      "Cross one ankle over the other knee (in the shape of a “4”).",
+      "Pull the lower leg towards your chest until you feel it in your glutes.",
+      "Hold, then switch sides."
+    ],
+    "tip": "A classic for tight glutes or a sciatica-like feeling in runners. 2×30 s each side.",
+    "caution": "With hip or knee pain, don’t pull as far.",
+    "progression": "Sitting on a chair, leaning forward."
+  },
+  "butterfly_stretch": {
+    "muscles": [
+      "inner thighs",
+      "hips"
+    ],
+    "equipment": "none (mat)",
+    "steps": [
+      "Sit tall, bring the soles of your feet together in front of you.",
+      "Draw your heels in loosely, let your knees sink to the sides.",
+      "Stay upright, lean your upper body slightly forward.",
+      "Don’t bounce – hold still."
+    ],
+    "tip": "Opens up your hips and inner thighs. 2×30–45 s.",
+    "caution": "Don’t press on your knees or bounce.",
+    "progression": "Heels closer in, hold longer."
+  },
+  "fifa11": {
+    "muscles": [
+      "whole body",
+      "coordination",
+      "ankle",
+      "knee"
+    ],
+    "equipment": "none (cones or markers)",
+    "steps": [
+      "Part 1 (approx. 8 min): easy running with hip out/in, sideways shuffle, shoulder contact with a partner, short bursts forwards and backwards.",
+      "Part 2 (approx. 10 min): strength and balance – plank, side plank, Nordic hamstrings, single-leg stance with ball, squats, jumps.",
+      "Part 3 (approx. 2 min): running – across the pitch at increasing pace, changes of direction with a clean landing.",
+      "With every landing and squat, your knees point over your toes, not inwards."
+    ],
+    "tip": "Around 20 minutes before training or a match, two to three times a week. In studies, it markedly reduced the injury rate in youth football (Soligard et al. 2008).",
+    "caution": "After an injury, start with the easiest level and stop if it hurts.",
+    "progression": "Three levels per exercise: easy, medium, hard – only step up once you can do the easier one cleanly."
+  },
+  "nordic_hamstring": {
+    "muscles": [
+      "hamstrings",
+      "glutes"
+    ],
+    "equipment": "partner or fixed foot anchor, mat",
+    "steps": [
+      "Kneel on a soft surface, your heels held down or anchored under a sofa.",
+      "Body straight from knees to head, hips extended.",
+      "Slowly lower yourself forward, braking with your hamstrings for as long as you can.",
+      "Catch yourself with your hands and come back up with a small push."
+    ],
+    "tip": "The best-known exercise against hamstring strains: adding it to prevention programmes roughly halved the rate (van Dyk et al. 2019). Start with 2×4–5 and build up slowly.",
+    "caution": "Not with a fresh strain. The first few times bring serious muscle soreness – start with few reps, and not on the day before a match.",
+    "progression": "First lengthen the lowering phase, then add reps (up to 3×8), later go slower.",
+    "gear": "partner"
+  },
+  "copenhagen": {
+    "muscles": [
+      "inner thighs (adductors)",
+      "side of the core"
+    ],
+    "equipment": "bench or partner",
+    "steps": [
+      "Side plank on your forearm with your top leg resting on a bench (knee at first, later your foot).",
+      "Your bottom leg hangs freely beneath the bench.",
+      "Lift your hips until your body forms a straight line – the inside of your top leg carries you.",
+      "Hold briefly, lower with control, switch sides."
+    ],
+    "tip": "Strengthens the adductors – the groin is a common injury site in football. 2×6–8 each side.",
+    "caution": "If you have groin pain, don’t load it – get it checked.",
+    "progression": "From knee on the bench to foot on the bench (longer lever), then bring your bottom leg up to the bench.",
+    "gear": "bench"
+  },
+  "clamshell": {
+    "muscles": [
+      "side of the glutes (hip abductors)"
+    ],
+    "equipment": "none (optional mini band)",
+    "steps": [
+      "Lie on your side, hips and knees bent at about 45°, feet stacked.",
+      "Your pelvis stays upright while your top knee opens like a clamshell.",
+      "Keep your feet together.",
+      "Slowly close again."
+    ],
+    "tip": "Stabilises your pelvis and knees when you run (less “caving in”). 3×15 each side.",
+    "caution": "Don’t roll backwards – the movement comes from your hip.",
+    "progression": "With a mini band above your knees, then hold briefly at the top."
+  },
+  "monster_walk": {
+    "muscles": [
+      "side of the glutes",
+      "thighs"
+    ],
+    "equipment": "mini band",
+    "steps": [
+      "Mini band above your knees or around your ankles, knees slightly bent.",
+      "Keep tension on the band as you walk sideways or diagonally forwards.",
+      "Knees point forwards, your upper body stays still.",
+      "Take the same number of steps in both directions."
+    ],
+    "tip": "A good warm-up before a run or a match. 2–3×10 steps each direction.",
+    "caution": "Don’t let your knees cave inwards.",
+    "progression": "Stronger band, or the band around your ankles.",
+    "gear": "mini band"
+  },
+  "soleus_raise": {
+    "muscles": [
+      "deep calf muscle (soleus)",
+      "Achilles tendon"
+    ],
+    "equipment": "step, optional weight",
+    "steps": [
+      "Stand at a step or a wall, knees bent about 30–45°.",
+      "Keep your knees bent and raise your heels as high as you can.",
+      "Hold briefly at the top.",
+      "Lower slowly (3 seconds)."
+    ],
+    "tip": "When you run, the soleus carries several times your body weight – key for your Achilles tendon and calf. 3×15–20.",
+    "caution": "If your Achilles tendon is irritated, work slowly and keep pain low.",
+    "progression": "Single-leg, then with weight (backpack, dumbbell).",
+    "gear": "step"
+  },
+  "running_drills": {
+    "muscles": [
+      "ankles",
+      "hip flexors",
+      "coordination"
+    ],
+    "equipment": "none (20–30 m of clear space)",
+    "steps": [
+      "Ankle drills: short, quick steps on the balls of your feet, 20 m.",
+      "High knees: quickly alternate your knees up to about hip height, upper body upright, 20 m.",
+      "Heel flicks: heels towards your glutes, quick cadence, 20 m.",
+      "Jog back easily in between; finish with 2–3 strides."
+    ],
+    "tip": "Improves running economy and coordination – ideal after your warm-up jog before speed sessions. 2 rounds.",
+    "caution": "Only when warmed up, on level ground.",
+    "progression": "Higher cadence, then skipping and bounding."
+  },
+  "pogo_jumps": {
+    "muscles": [
+      "calves",
+      "Achilles tendon",
+      "ankles"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Feet hip-width apart, knees almost straight.",
+      "Small, quick jumps from your ankles only – the floor is “hot”.",
+      "Land quietly, keep ground contacts short.",
+      "20–30 seconds, then rest."
+    ],
+    "tip": "Simple plyometrics: makes your tendons more resilient and your stride springier. 3×20 s.",
+    "caution": "Not with Achilles or shin pain; only after a few weeks of calf strength work.",
+    "progression": "Longer, then single-leg or sideways over a line."
+  },
+  "goblet_squat": {
+    "muscles": [
+      "thighs",
+      "glutes",
+      "core"
+    ],
+    "equipment": "kettlebell or dumbbell",
+    "steps": [
+      "Hold the weight in front of your chest with both hands, elbows pointing down.",
+      "Feet shoulder-width apart, toes turned slightly out.",
+      "Sink upright into a deep squat, elbows between your knees.",
+      "Drive back up through your whole foot."
+    ],
+    "tip": "The weight in front of your chest keeps your upper body upright – ideal for learning a clean squat. 3×8–12.",
+    "caution": "Keep your back straight; with knee pain, only go as deep as is pain-free.",
+    "progression": "Heavier weight, then a 2 s pause at the bottom.",
+    "gear": "kettlebell"
+  },
+  "sumo_squat": {
+    "muscles": [
+      "inner thighs",
+      "glutes",
+      "thighs"
+    ],
+    "equipment": "none (optional kettlebell)",
+    "steps": [
+      "Wide stance, toes turned well out.",
+      "Hands in front of your chest, upper body upright.",
+      "Let your hips sink straight down, pushing your knees out over your toes.",
+      "Drive up through your heels and squeeze your glutes at the top."
+    ],
+    "tip": "Targets your inner thighs and glutes. 3×12–15.",
+    "caution": "Your knees follow the direction of your feet – don’t let them cave in.",
+    "progression": "With a kettlebell between your legs, then lower more slowly."
+  },
+  "reverse_lunge": {
+    "muscles": [
+      "thighs",
+      "glutes",
+      "balance"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Stand tall, hands on your hips or relaxed.",
+      "Take a big step backwards with one leg.",
+      "Bend both knees; your back knee sinks towards the floor.",
+      "Push through your front heel back to standing, switch sides."
+    ],
+    "tip": "Easier on the knees than stepping forwards – a good place to start. 3×8–10 each side.",
+    "caution": "Your front knee stays over your foot; if your balance is shaky, hold on to a wall.",
+    "progression": "With dumbbells, then stepping back from a step (deficit)."
+  },
+  "side_lunge": {
+    "muscles": [
+      "inner thighs",
+      "thighs",
+      "glutes"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Wide stance, toes pointing forwards.",
+      "Shift your weight to one side and bend that knee, hips back.",
+      "Your other leg stays straight, both heels on the floor.",
+      "Push back to the centre and switch sides."
+    ],
+    "tip": "Strengthens your legs sideways – important for changes of direction in football. 3×8 each side.",
+    "caution": "Only go as deep as your heels stay down; your knee points over your foot.",
+    "progression": "Deeper, then with a weight in front of your chest."
+  },
+  "single_leg_deadlift": {
+    "muscles": [
+      "glutes",
+      "hamstrings",
+      "balance"
+    ],
+    "equipment": "none (optional dumbbell)",
+    "steps": [
+      "Stand on one leg, knee slightly bent.",
+      "Tip your upper body forwards and lift your free leg behind you.",
+      "Your back and rear leg form a line, your pelvis stays level.",
+      "Slowly come back up, driving through your glutes."
+    ],
+    "tip": "Strengthens your glutes and balance – very close to running. 3×8 each side.",
+    "caution": "Don’t let your pelvis rotate open; with back pain, only go down to horizontal.",
+    "progression": "With a dumbbell in the opposite hand."
+  },
+  "hip_thrust": {
+    "muscles": [
+      "glutes",
+      "hamstrings"
+    ],
+    "equipment": "bench or sofa",
+    "steps": [
+      "Rest your shoulder blades against a bench, feet planted hip-width apart.",
+      "Raise your pelvis until your knees, hips and shoulders form a line.",
+      "Squeeze your glutes hard at the top, chin slightly towards your chest.",
+      "Lower with control without resting all the way down."
+    ],
+    "tip": "The most powerful exercise for your glutes. 3×10–12.",
+    "caution": "Don’t arch your lower back at the top – the power comes from your glutes.",
+    "progression": "Single-leg, then with a weight on your hips.",
+    "gear": "bench"
+  },
+  "single_leg_bridge": {
+    "muscles": [
+      "glutes",
+      "hamstrings",
+      "core"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Lie on your back, one foot planted, the other leg straight in the air.",
+      "Raise your pelvis by pushing through your heel.",
+      "Your pelvis stays level; hold briefly at the top.",
+      "Lower slowly, switch sides."
+    ],
+    "tip": "Quickly shows differences between your sides. 3×10 each side.",
+    "caution": "Don’t let your pelvis drop to one side; if the back of your thigh cramps, move your foot closer to your glutes.",
+    "progression": "Hold longer at the top, then with your foot raised."
+  },
+  "kettlebell_swing": {
+    "muscles": [
+      "glutes",
+      "hamstrings",
+      "core"
+    ],
+    "equipment": "kettlebell",
+    "steps": [
+      "Stand slightly wider than hip-width, kettlebell in both hands.",
+      "Push your hips back and swing the kettlebell back between your legs.",
+      "Drive your hips forwards explosively – your arms are just ropes.",
+      "The kettlebell floats up to chest height and falls back into the next swing."
+    ],
+    "tip": "Strength and conditioning in one – a staple of Hyrox training. 3×15.",
+    "caution": "Keep your back straight, don’t pull with your arms; master the hip hinge first.",
+    "progression": "Heavier kettlebell, then single-arm.",
+    "gear": "kettlebell"
+  },
+  "jump_squat": {
+    "muscles": [
+      "thighs",
+      "glutes",
+      "calves"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Half squat, arms back.",
+      "Jump up explosively, swinging your arms.",
+      "Land softly on the balls of your feet and go straight into the next squat.",
+      "Your knees point over your feet as you land."
+    ],
+    "tip": "Explosive power for accelerating and jumping. 3×8–10.",
+    "caution": "Only with healthy knees, on firm, non-slip ground; land quietly.",
+    "progression": "More reps, then jumps onto a box."
+  },
+  "good_morning": {
+    "muscles": [
+      "hamstrings",
+      "glutes",
+      "lower back"
+    ],
+    "equipment": "none (optional pole)",
+    "steps": [
+      "Feet hip-width apart, hands behind your head.",
+      "Bend your knees slightly, push your hips back and tilt your straight upper body forwards.",
+      "Go to about horizontal, or until you feel a pull at the back.",
+      "Come back up by driving through your hips."
+    ],
+    "tip": "Teaches the hip hinge without weight – good preparation for deadlifts. 3×10–12.",
+    "caution": "Your back stays straight, don’t let it round; skip it if you have back pain.",
+    "progression": "With a pole or a light weight on your shoulders."
+  },
+  "tibialis_raise": {
+    "muscles": [
+      "shin muscle (front of the lower leg)"
+    ],
+    "equipment": "wall",
+    "steps": [
+      "Lean your back against a wall, feet about one foot length in front of it.",
+      "Your heels stay on the floor; pull your toes up hard towards your shins.",
+      "Hold briefly at the top.",
+      "Lower slowly."
+    ],
+    "tip": "Strengthens the front of your lower leg – helps against shin splints. 3×15–20.",
+    "caution": "With acute shin pain, only work pain-free and get it checked.",
+    "progression": "Feet further from the wall, then single-leg.",
+    "gear": "wall"
+  },
+  "step_down": {
+    "muscles": [
+      "thighs",
+      "glutes",
+      "knee stability"
+    ],
+    "equipment": "step or stairs",
+    "steps": [
+      "Stand on one leg on a step, the other leg hanging in front of the edge.",
+      "Slowly bend your knee until the heel of your free leg taps the floor.",
+      "Your knee stays over your foot, your pelvis level.",
+      "Push back up through the heel of your standing leg."
+    ],
+    "tip": "Trains knee stability for downhill running. 3×8 each side, slowly (3 s down).",
+    "caution": "Don’t let your knee cave inwards; with kneecap pain, use a lower step.",
+    "progression": "Higher step, then with a weight in the opposite hand.",
+    "gear": "step"
+  },
+  "cossack_squat": {
+    "muscles": [
+      "inner thighs",
+      "thighs",
+      "hip mobility"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Very wide stance, toes turned slightly out.",
+      "Shift your weight to one side and sink deep into a squat on that side.",
+      "Your other leg stays straight; your toes may point up.",
+      "Move through the centre to the other side."
+    ],
+    "tip": "Hip strength and mobility in one. 3×6 each side.",
+    "caution": "Only go as deep as your heel stays down; no jerky movements.",
+    "progression": "Deeper, then with a light weight in front of your chest."
+  },
+  "farmers_carry": {
+    "muscles": [
+      "grip strength",
+      "shoulders",
+      "core"
+    ],
+    "equipment": "two heavy dumbbells or kettlebells",
+    "steps": [
+      "Grab two heavy weights at your sides and stand up tall.",
+      "Shoulders down and back, abs braced.",
+      "Walk with short, steady steps – your upper body doesn’t sway.",
+      "30 to 40 metres or 30 seconds, then set them down."
+    ],
+    "tip": "Grip strength and core stability – a Hyrox station. 3×30 s.",
+    "caution": "Pick up and set down the weights with a straight back.",
+    "progression": "Heavier, then longer or one-sided (suitcase carry).",
+    "gear": "two heavy dumbbells"
+  },
+  "wall_ball": {
+    "muscles": [
+      "thighs",
+      "glutes",
+      "shoulders"
+    ],
+    "equipment": "medicine ball and wall",
+    "steps": [
+      "Stand about an arm’s length from the wall, ball in front of your chest.",
+      "Drop into a deep squat.",
+      "Extend explosively and throw the ball to a target high on the wall.",
+      "Catch the ball and go straight into the next squat."
+    ],
+    "tip": "Full body and conditioning – a Hyrox station. 3×15.",
+    "caution": "Back straight, knees over your feet; use a light ball while you learn.",
+    "progression": "Heavier ball, higher target, more reps.",
+    "gear": "medicine ball and wall"
+  },
+  "thruster": {
+    "muscles": [
+      "thighs",
+      "glutes",
+      "shoulders"
+    ],
+    "equipment": "two dumbbells",
+    "steps": [
+      "Dumbbells on your shoulders, feet shoulder-width apart.",
+      "Squat down, elbows pointing forwards.",
+      "Drive up from your legs and press the dumbbells overhead in one movement.",
+      "Back to your shoulders and straight into the next squat."
+    ],
+    "tip": "Transfers power from your legs to your arms – and tests your endurance too. 3×10.",
+    "caution": "Don’t arch your lower back overhead; skip it if you have shoulder pain.",
+    "progression": "Heavier dumbbells, then more rounds.",
+    "gear": "two dumbbells"
+  },
+  "incline_pushup": {
+    "muscles": [
+      "chest",
+      "shoulders",
+      "triceps"
+    ],
+    "equipment": "bench, table or windowsill",
+    "steps": [
+      "Hands slightly wider than shoulder-width on a stable edge.",
+      "Your body forms a line from head to toe.",
+      "Lower your chest to the edge, elbows angled back.",
+      "Push up powerfully."
+    ],
+    "tip": "The easy way into push-ups – the higher the edge, the easier. 3×10–15.",
+    "caution": "The edge must be non-slip; don’t let your hips sag.",
+    "progression": "Lower edge, then knee push-ups, then full push-ups.",
+    "gear": "bench"
+  },
+  "knee_pushup": {
+    "muscles": [
+      "chest",
+      "shoulders",
+      "triceps",
+      "core"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Knees on the mat, hands slightly wider than shoulder-width.",
+      "A straight line from knees to head.",
+      "Lower your chest to the floor with control.",
+      "Push up without bending at the hips."
+    ],
+    "tip": "A stepping stone to full push-ups. 3×8–12.",
+    "caution": "Pad your knees; your hips stay in line and aren’t pushed up.",
+    "progression": "More reps, then a few full push-ups."
+  },
+  "pike_pushup": {
+    "muscles": [
+      "shoulders",
+      "triceps"
+    ],
+    "equipment": "none",
+    "steps": [
+      "From a push-up position, push your hips up high – an upside-down V.",
+      "Hands shoulder-width apart, head between your arms.",
+      "Bend your elbows and lower your head towards the floor in front of your hands.",
+      "Push back up powerfully."
+    ],
+    "tip": "Shoulder strength without dumbbells. 3×6–8.",
+    "caution": "Not with shoulder or neck pain; lower slowly.",
+    "progression": "Feet raised, then go deeper."
+  },
+  "bench_dip": {
+    "muscles": [
+      "triceps",
+      "shoulders",
+      "chest"
+    ],
+    "equipment": "bench or sturdy chair",
+    "steps": [
+      "Hands shoulder-width apart on the edge behind you, fingers pointing forwards.",
+      "Legs out in front, your glutes just in front of the edge.",
+      "Bend your elbows backwards and lower your body.",
+      "Push back up through your arms."
+    ],
+    "tip": "Triceps with your own body weight. 3×8–12.",
+    "caution": "Go no lower than your upper arms horizontal; skip it if you have shoulder pain.",
+    "progression": "Straighten your legs further, then feet raised.",
+    "gear": "bench"
+  },
+  "biceps_curl": {
+    "muscles": [
+      "biceps",
+      "forearms"
+    ],
+    "equipment": "dumbbells or resistance band",
+    "steps": [
+      "Stand tall, dumbbells with your palms facing forwards.",
+      "Your elbows stay at your sides.",
+      "Curl the dumbbells up to your shoulders.",
+      "Slowly straighten your arms again."
+    ],
+    "tip": "Simple and easy to scale. 3×10–12.",
+    "caution": "Don’t swing the weight up with your back.",
+    "progression": "Heavier dumbbells, then lower more slowly (3 s).",
+    "gear": "dumbbells"
+  },
+  "triceps_extension": {
+    "muscles": [
+      "triceps"
+    ],
+    "equipment": "one dumbbell",
+    "steps": [
+      "Stand tall, holding one dumbbell overhead with both hands.",
+      "Your upper arms stay next to your head.",
+      "Lower the dumbbell behind your head.",
+      "Straighten your arms again."
+    ],
+    "tip": "Strengthens the back of your upper arms. 3×10–12.",
+    "caution": "Don’t arch your lower back, brace your abs; with shoulder pain, go lighter or skip it.",
+    "progression": "Heavier dumbbell, then single-arm.",
+    "gear": "one dumbbell"
+  },
+  "lateral_raise": {
+    "muscles": [
+      "side of the shoulders"
+    ],
+    "equipment": "light dumbbells",
+    "steps": [
+      "Stand tall, dumbbells at your sides, elbows slightly bent.",
+      "Raise your arms out to the sides up to shoulder height.",
+      "Your shoulders stay down – don’t shrug them up.",
+      "Lower slowly."
+    ],
+    "tip": "A light weight is enough – technique is what counts. 3×12–15.",
+    "caution": "Not above shoulder height and without momentum; skip it if you have shoulder pain.",
+    "progression": "Slightly heavier, then hold for 1 s at the top.",
+    "gear": "light dumbbells"
+  },
+  "band_pull_apart": {
+    "muscles": [
+      "upper back",
+      "back of the shoulders"
+    ],
+    "equipment": "resistance band",
+    "steps": [
+      "Grip the band shoulder-width apart, arms stretched out in front of your chest.",
+      "Pull the band apart until your arms are spread out to the sides.",
+      "Shoulder blades together, shoulders down.",
+      "Slowly return."
+    ],
+    "tip": "Counters a rounded desk posture – works as a quick break too. 3×15.",
+    "caution": "Don’t arch your lower back to compensate, and don’t let the band snap back.",
+    "progression": "Stronger band, then hold for 2 s at the end.",
+    "gear": "resistance band"
+  },
+  "pullup": {
+    "muscles": [
+      "lats",
+      "biceps",
+      "grip strength"
+    ],
+    "equipment": "pull-up bar",
+    "steps": [
+      "Grip the bar slightly wider than shoulder-width and hang.",
+      "Actively pull your shoulders down.",
+      "Pull your chest towards the bar until your chin is over it.",
+      "Lower yourself slowly."
+    ],
+    "tip": "At first, use a band for assistance or just practise the slow lowering. 3×3–8.",
+    "caution": "No swinging; skip it if you have shoulder pain.",
+    "progression": "From slow lowering to your first full pull-up, then more reps.",
+    "gear": "pull-up bar"
+  },
+  "inverted_row": {
+    "muscles": [
+      "upper back",
+      "biceps",
+      "core"
+    ],
+    "equipment": "sturdy table or bar",
+    "steps": [
+      "Lie under a sturdy table or a low bar and grip the edge.",
+      "Your heels stay on the floor; your body forms a straight line.",
+      "Pull your chest to the edge, squeezing your shoulder blades together.",
+      "Lower slowly."
+    ],
+    "tip": "A pulling exercise with no equipment – balances out push-ups. 3×8–12.",
+    "caution": "Check first that the table or bar will safely take your weight.",
+    "progression": "Move your feet further forward or raise them.",
+    "gear": "sturdy table"
+  },
+  "single_arm_row": {
+    "muscles": [
+      "upper back",
+      "biceps",
+      "rear shoulder"
+    ],
+    "equipment": "dumbbell and bench",
+    "steps": [
+      "Place one knee and the hand on the same side on the bench, your back horizontal.",
+      "The dumbbell hangs in your free hand.",
+      "Pull your elbow close to your body towards your hip.",
+      "Lower slowly, then switch sides."
+    ],
+    "tip": "Back strength with your back safely supported. 3×10 each side.",
+    "caution": "Your back stays straight and doesn’t twist open.",
+    "progression": "Heavier dumbbell, then a 1 s hold at the top.",
+    "gear": "dumbbell and bench"
+  },
+  "side_lying_leg_raise": {
+    "muscles": [
+      "outer glutes",
+      "hip abductors"
+    ],
+    "equipment": "mat (mini band optional)",
+    "steps": [
+      "Lie on your side, head resting on your lower arm, legs straight.",
+      "Lift your top leg, keeping it straight, toes pointing forwards.",
+      "Your pelvis doesn’t tip backwards.",
+      "Lower slowly, then switch sides."
+    ],
+    "tip": "Stabilises your pelvis and knees when you run. 3×15 each side.",
+    "caution": "Only go as high as your pelvis stays still.",
+    "progression": "With a mini band, then a 2 s hold at the top."
+  },
+  "donkey_kick": {
+    "muscles": [
+      "glutes"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "On all fours, knees under your hips.",
+      "Keep one leg bent and push the heel towards the ceiling.",
+      "Don’t arch your lower back; your pelvis stays level.",
+      "Return slowly, then switch sides."
+    ],
+    "tip": "Targets your glutes and is easy on your back. 3×12 each side.",
+    "caution": "Only go as high as your back stays straight.",
+    "progression": "With a mini band above your knees or an ankle weight."
+  },
+  "bicycle_crunch": {
+    "muscles": [
+      "obliques and abs"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Lie on your back, hands loosely behind your head, shoulders slightly raised.",
+      "Pull one knee to your chest and straighten the other leg.",
+      "Rotate the opposite elbow towards the bent knee.",
+      "Switch sides smoothly."
+    ],
+    "tip": "Slow works better than fast. 3×10 each side.",
+    "caution": "Don’t pull on your head; if your back hurts, keep the straight leg higher.",
+    "progression": "Slower, with the straight leg lower."
+  },
+  "russian_twist": {
+    "muscles": [
+      "obliques",
+      "core"
+    ],
+    "equipment": "none (weight optional)",
+    "steps": [
+      "Sit tall, knees bent, upper body leaning back slightly.",
+      "Hands together in front of your chest.",
+      "Rotate your upper body to one side, hands towards the floor beside your hip.",
+      "Rotate to the other side, keeping your back long."
+    ],
+    "tip": "Turn from your core, don’t just swing your arms. 3×10 each side.",
+    "caution": "If your back hurts, keep your feet on the floor and rotate less far.",
+    "progression": "Lift your feet, then add a weight."
+  },
+  "reverse_crunch": {
+    "muscles": [
+      "lower abs"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Lie on your back, arms by your sides, knees bent above your hips.",
+      "Curl your pelvis up and pull your knees towards your chest.",
+      "No momentum; your head stays down.",
+      "Lower slowly."
+    ],
+    "tip": "Strengthens your lower abs in a back-friendly way. 3×10–12.",
+    "caution": "No swinging; if your neck bothers you, consciously keep your head down.",
+    "progression": "Slower, with a 1 s hold at the top."
+  },
+  "shoulder_tap": {
+    "muscles": [
+      "core",
+      "shoulders"
+    ],
+    "equipment": "none",
+    "steps": [
+      "High plank, feet slightly wider than hip-width.",
+      "One hand taps the opposite shoulder.",
+      "Your hips stay still and don’t rock.",
+      "Keep alternating."
+    ],
+    "tip": "Resists twisting – for a stable core. 3×10 each side.",
+    "caution": "If your wrists bother you, work on your fists or with your hands raised.",
+    "progression": "Feet closer together, then slower."
+  },
+  "bear_plank": {
+    "muscles": [
+      "core",
+      "thighs",
+      "shoulders"
+    ],
+    "equipment": "none",
+    "steps": [
+      "On all fours, toes tucked under.",
+      "Lift your knees a few centimetres off the floor.",
+      "Your back stays flat like a table.",
+      "Hold, breathing calmly."
+    ],
+    "tip": "Core tension you’ll feel quickly. 3×20–40 s.",
+    "caution": "Lift your knees only slightly; don’t round your back.",
+    "progression": "Hold longer, then move forwards in a bear crawl."
+  },
+  "v_up": {
+    "muscles": [
+      "abs",
+      "hip flexors"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Lie on your back, arms overhead, legs straight.",
+      "Lift your arms and legs at the same time – reach your hands towards your feet.",
+      "Hold the V briefly at the top.",
+      "Lower slowly."
+    ],
+    "tip": "Demanding – master crunches and leg raises first. 3×8–10.",
+    "caution": "Not if you have back pain; no momentum.",
+    "progression": "Slower, with a 1 s hold at the top."
+  },
+  "flutter_kicks": {
+    "muscles": [
+      "lower abs",
+      "hip flexors"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Lie on your back, hands beside or under your glutes.",
+      "Legs straight, just above the floor.",
+      "Small, quick up-and-down kicks, alternating.",
+      "Your lower back stays on the floor."
+    ],
+    "tip": "Short and clean rather than long with an arched back. 3×20–30 s.",
+    "caution": "If your lower back lifts, hold your legs higher.",
+    "progression": "Legs lower, then longer."
+  },
+  "glute_bridge_march": {
+    "muscles": [
+      "glutes",
+      "core"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Lying on your back, lift your hips into a bridge.",
+      "Lift one knee at a time, as if you were marching.",
+      "Your pelvis stays up and level.",
+      "Lower slowly once you’ve done your reps."
+    ],
+    "tip": "Combines glute strength and pelvic stability. 3×8 each side.",
+    "caution": "Don’t let your pelvis drop to one side; keep the movement slow.",
+    "progression": "Hold longer, feet further away."
+  },
+  "worlds_greatest_stretch": {
+    "muscles": [
+      "hips",
+      "thoracic spine",
+      "hamstrings"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Deep lunge, both hands on the floor inside your front foot.",
+      "Lower your inside elbow towards your front foot.",
+      "Then rotate that arm up to the ceiling, your eyes following it.",
+      "Come back and switch sides."
+    ],
+    "tip": "Mobilises your hips and back in one go – ideal for warming up. 4–5 each side.",
+    "caution": "Stay within a pain-free range; lower your back knee if needed.",
+    "progression": "Take longer breaths in each position."
+  },
+  "downward_dog": {
+    "muscles": [
+      "calves",
+      "hamstrings",
+      "shoulders"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "From all fours, tuck your toes under.",
+      "Push your hips up and back – an upside-down V.",
+      "Back long, heels sinking towards the floor; your knees may be bent.",
+      "Hold, breathing calmly."
+    ],
+    "tip": "Stretches the whole back of your body. 3×30 s.",
+    "caution": "If your wrists or shoulders bother you, do it on your forearms.",
+    "progression": "Hold longer, lowering each heel in turn."
+  },
+  "cobra": {
+    "muscles": [
+      "abs",
+      "spine",
+      "hip flexors"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Lie on your front, hands beside your shoulders.",
+      "Slowly lift your chest; your pelvis stays on the floor.",
+      "Shoulders down, eyes forward.",
+      "Hold briefly, then lower."
+    ],
+    "tip": "A gentle extension after long periods of sitting. 6–8 reps.",
+    "caution": "Only go as far as feels comfortable in your lower back.",
+    "progression": "Hold longer, straighten your arms further."
+  },
+  "quad_stretch": {
+    "muscles": [
+      "front of thigh",
+      "hip flexors"
+    ],
+    "equipment": "none (wall optional)",
+    "steps": [
+      "Stand tall on one leg, holding on to a wall if needed.",
+      "Pull the heel of your other leg towards your glutes.",
+      "Your knee points down, your hips slightly forward.",
+      "Hold, then switch sides."
+    ],
+    "tip": "The classic after a run. 2×30 s each side.",
+    "caution": "Don’t arch your lower back; if your knee bothers you, loop a towel around your foot.",
+    "progression": "Hold longer, consciously tucking your pelvis under."
+  },
+  "pigeon_pose": {
+    "muscles": [
+      "glutes",
+      "hips"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "From all fours, bring one knee forwards between your hands, your shin lying across.",
+      "Stretch your back leg out long behind you.",
+      "Your hips sink towards the floor; upper body upright or folded forwards.",
+      "Hold, then switch sides."
+    ],
+    "tip": "A deep glute stretch – feels good after long runs. 2×30–45 s each side.",
+    "caution": "If your knee hurts, angle your shin less across or do the figure-four stretch instead.",
+    "progression": "Fold your upper body further forwards, hold longer."
+  },
+  "leg_swings": {
+    "muscles": [
+      "hips",
+      "hamstrings"
+    ],
+    "equipment": "none (wall to hold on to)",
+    "steps": [
+      "Stand side-on to a wall and hold on.",
+      "Swing your outside leg loosely forwards and back.",
+      "Your upper body stays still and upright.",
+      "Gradually build up the swing, then switch sides."
+    ],
+    "tip": "A dynamic warm-up before running. 10–15 each side.",
+    "caution": "Swing with control, don’t yank.",
+    "progression": "Bigger range of motion, also sideways across your body."
+  },
+  "arm_circles": {
+    "muscles": [
+      "shoulders",
+      "upper back"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Stand tall, arms long.",
+      "Big, slow circles forwards.",
+      "Then change direction.",
+      "Your shoulders stay relaxed."
+    ],
+    "tip": "Loosens your shoulders before training. 10 in each direction.",
+    "caution": "Stay within a pain-free range.",
+    "progression": "Bigger circles, also one arm at a time."
+  },
+  "ankle_rocks": {
+    "muscles": [
+      "ankle",
+      "calf"
+    ],
+    "equipment": "wall",
+    "steps": [
+      "Half-kneel facing a wall, your front foot about a hand’s width away from it.",
+      "Push your knee towards the wall; your heel stays on the floor.",
+      "Hold briefly and come back.",
+      "Gradually increase the distance, then switch sides."
+    ],
+    "tip": "More ankle mobility for deep squats and a smooth running stride. 10 each side.",
+    "caution": "Your heel stays down; if the front of the joint hurts, go less far.",
+    "progression": "Move your foot further away from the wall.",
+    "gear": "wall"
+  },
+  "neck_stretch": {
+    "muscles": [
+      "neck",
+      "upper shoulder"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Stand or sit tall, shoulders relaxed.",
+      "Tilt one ear towards your shoulder.",
+      "Rest the hand on the same side gently on your head – don’t pull.",
+      "Hold, then switch sides."
+    ],
+    "tip": "Relaxing after long periods of sitting. 2×20 s each side.",
+    "caution": "Gently does it; if your arms tingle, release straight away.",
+    "progression": "Actively push the opposite shoulder down."
+  },
+  "side_bend_stretch": {
+    "muscles": [
+      "side of the torso",
+      "lats"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Stand with your feet hip-width apart, one hand on your hip.",
+      "Stretch your other arm overhead.",
+      "Lean to the side without tipping forwards.",
+      "Hold briefly, straighten up, switch sides."
+    ],
+    "tip": "Lengthens your sides – good after sitting. 4 each side.",
+    "caution": "Don’t arch your lower back; your pelvis stays centred.",
+    "progression": "Hold longer, reach your arm further over your head."
+  },
+  "inchworm": {
+    "muscles": [
+      "hamstrings",
+      "shoulders",
+      "core"
+    ],
+    "equipment": "none",
+    "steps": [
+      "From standing, bend forwards and put your hands on the floor.",
+      "Walk your hands forwards into a push-up position.",
+      "Hold briefly, then walk your hands back.",
+      "Roll up slowly."
+    ],
+    "tip": "A full-body warm-up. 5 reps.",
+    "caution": "Your knees may be bent; not with acute back pain.",
+    "progression": "Add a push-up when you’re in the push-up position."
+  },
+  "deep_squat_hold": {
+    "muscles": [
+      "hips",
+      "ankles",
+      "back"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Stand shoulder-width apart, toes turned out slightly.",
+      "Sink into a deep squat, heels staying on the floor.",
+      "Your elbows gently press your knees outwards, chest open.",
+      "Hold, breathing calmly."
+    ],
+    "tip": "Wins back lost mobility. 3×30 s.",
+    "caution": "If your knees hurt, go less deep; put something under your heels if needed.",
+    "progression": "Hold longer, shifting your weight from side to side."
+  },
+  "jumping_jack": {
+    "muscles": [
+      "calves",
+      "shoulders",
+      "cardio"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Stand tall, arms by your sides.",
+      "Jump your legs apart and raise your arms overhead at the same time.",
+      "Jump back to the starting position.",
+      "Light and springy, in a steady rhythm."
+    ],
+    "tip": "Gets your circulation going. 3×20–30.",
+    "caution": "On a soft surface; with knee or pelvic floor problems, skip the jump (step to the side).",
+    "progression": "Faster, then longer."
+  },
+  "high_knees": {
+    "muscles": [
+      "hip flexors",
+      "calves",
+      "cardio"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Run on the spot.",
+      "Drive your knees up to hip height, alternating quickly.",
+      "Land on the balls of your feet, arms swinging along.",
+      "Your upper body stays upright."
+    ],
+    "tip": "Short and intense – ideal for intervals. 3×20 s.",
+    "caution": "Only when you’re warmed up and on a non-slip floor.",
+    "progression": "Longer, then faster."
+  },
+  "butt_kicks": {
+    "muscles": [
+      "hamstrings",
+      "calves",
+      "cardio"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Run on the spot.",
+      "Bring your heels towards your glutes, alternating.",
+      "Short, quick ground contacts.",
+      "Upper body upright, arms swinging loosely."
+    ],
+    "tip": "Running drills on the spot. 3×20 s.",
+    "caution": "Only when you’re warmed up and on a non-slip floor.",
+    "progression": "Higher cadence, then moving forwards."
+  },
+  "burpee": {
+    "muscles": [
+      "full body",
+      "cardio"
+    ],
+    "equipment": "none",
+    "steps": [
+      "From standing, drop into a squat, hands on the floor.",
+      "Jump your feet back into a push-up position.",
+      "Jump your feet back in.",
+      "Jump up with your arms overhead and land softly."
+    ],
+    "tip": "Full-body conditioning – part of Hyrox training. 3×8–10.",
+    "caution": "Learn it without the jump first (step your feet back); keep your back straight in the push-up position.",
+    "progression": "With a push-up on the floor, then a burpee broad jump."
+  },
+  "mountain_climber": {
+    "muscles": [
+      "core",
+      "hip flexors",
+      "cardio"
+    ],
+    "equipment": "none",
+    "steps": [
+      "High plank, hands under your shoulders.",
+      "Pull one knee to your chest.",
+      "Switch legs quickly, alternating.",
+      "Your hips stay low and still."
+    ],
+    "tip": "Core and cardio in one. 3×20–30 s.",
+    "caution": "If your wrists bother you, do it with your hands raised on a bench.",
+    "progression": "Faster, then longer."
+  },
+  "skater_jump": {
+    "muscles": [
+      "glutes",
+      "thighs",
+      "balance"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Stand on one leg, slightly bent.",
+      "Jump sideways onto the other leg.",
+      "Land softly, your free leg swinging behind your standing leg.",
+      "Keep going back and forth in rhythm."
+    ],
+    "tip": "Lateral jumping power and stability – good for football. 3×20–30 s.",
+    "caution": "When you land, your knee points over your foot, not inwards.",
+    "progression": "Jump further, hold briefly on landing."
+  },
+  "bear_crawl": {
+    "muscles": [
+      "core",
+      "shoulders",
+      "thighs"
+    ],
+    "equipment": "none",
+    "steps": [
+      "Bear plank: your knees hover just above the floor.",
+      "Move the opposite hand and foot forwards a short way.",
+      "Your back stays flat, your hips still.",
+      "Crawl forwards and back."
+    ],
+    "tip": "Coordination and core strength – kids enjoy it too. 3×20–30 s.",
+    "caution": "Small steps, knees just above the floor.",
+    "progression": "Longer, then backwards or sideways."
+  }
+}

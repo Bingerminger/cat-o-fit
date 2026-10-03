@@ -13,6 +13,8 @@
 
 import { fmtDec } from './ui.js';
 
+import { t } from './i18n.js';
+
 /** Ein-/Auslauftempo aus der Zielpace (deutlich ruhiger), ohne Pace 6:30 min/km. */
 function easyPaceOf(unit) {
   const mid = paceMid(unit);
@@ -69,23 +71,25 @@ export function buildPhases(unit) {
     return s.workSec || 60;
   };
 
-  let warmSec = 0, coolSec = 0, warmLabel = 'Einlaufen', coolLabel = 'Auslaufen';
+  let warmSec = 0, coolSec = 0, warmLabel = t('workoutEngine.warmup'), coolLabel = t('workoutEngine.cooldown'), warmWalk = false, coolWalk = false;
   if (iv && (iv.warmupSec || iv.warmupKm)) {
     warmSec = iv.warmupSec || Math.round(iv.warmupKm * easy);
-    warmLabel = iv.warmupKm ? `Einlaufen ${kmLabel(iv.warmupKm)}` : 'Aufwärmen (gehen)';
+    warmWalk = !iv.warmupKm;
+    warmLabel = iv.warmupKm ? t('workoutEngine.warmupKm', { distance: kmLabel(iv.warmupKm) }) : t('workoutEngine.warmupWalk');
   }
   if (iv && (iv.cooldownSec || iv.cooldownKm)) {
     coolSec = iv.cooldownSec || Math.round(iv.cooldownKm * easy);
-    coolLabel = iv.cooldownKm ? `Auslaufen ${kmLabel(iv.cooldownKm)}` : 'Ausklang (gehen)';
+    coolWalk = !iv.cooldownKm;
+    coolLabel = iv.cooldownKm ? t('workoutEngine.cooldownKm', { distance: kmLabel(iv.cooldownKm) }) : t('workoutEngine.cooldownWalk');
   }
 
   let work = [];
   if (segs) {
     work = segs.map((s, i) => ({
       sec: workSecOf(s), restSec: s.restSec || 0,
-      label: s.phaseLabel || `Belastung ${s.label || `${i + 1}/${segs.length}`}`,
-      restLabel: s.restLabel || (s.floatRest ? 'Locker weiter' : `Trabpause ${i + 1}`),
-      restHint: s.restLabel === 'Gehen' ? 'gehen' : s.floatRest ? 'locker weiterlaufen' : 'locker traben',
+      label: s.phaseLabel || t('workoutEngine.work', { label: s.label || `${i + 1}/${segs.length}` }),
+      restLabel: s.restLabel || (s.floatRest ? t('workoutEngine.floatRest') : t('workoutEngine.jogRest', { n: i + 1 })),
+      restHint: s.restLabel === 'Gehen' ? t('workoutEngine.hintWalk') : s.floatRest ? t('workoutEngine.hintKeepEasy') : t('workoutEngine.hintEasyJog'),
       distanceM: s.workM || null,
     }));
   } else {
@@ -101,22 +105,22 @@ export function buildPhases(unit) {
         if (st.workM) { distanceM = st.workM; sec = Math.round((st.workM / 1000) * (mid || 300)); }
       }
       // Ohne gespeicherte Struktur: mit einem kurzen Einlaufen und Auslaufen rahmen.
-      if (!warmSec) { warmSec = 600; warmLabel = 'Einlaufen (~10 min)'; }
-      if (!coolSec) { coolSec = 600; coolLabel = 'Auslaufen (~10 min)'; }
+      if (!warmSec) { warmSec = 600; warmLabel = t('workoutEngine.warmupDefault'); }
+      if (!coolSec) { coolSec = 600; coolLabel = t('workoutEngine.cooldownDefault'); }
     }
     const lbl = distanceM ? (distanceM >= 1000 ? kmLabel(distanceM / 1000) : `${distanceM} m`) : null;
     work = Array.from({ length: rounds }, (_, i) => ({
-      sec, restSec: rest, label: `Belastung ${lbl ? `${lbl} · ` : ''}${i + 1}/${rounds}`,
-      restLabel: `Trabpause ${i + 1}`, restHint: 'locker traben', distanceM,
+      sec, restSec: rest, label: t('workoutEngine.work', { label: `${lbl ? `${lbl} · ` : ''}${i + 1}/${rounds}` }),
+      restLabel: t('workoutEngine.jogRest', { n: i + 1 }), restHint: t('workoutEngine.hintEasyJog'), distanceM,
     }));
   }
 
-  if (warmSec > 0) phases.push({ kind: 'warmup', sec: warmSec, label: warmLabel, hint: warmLabel.includes('gehen') ? 'zügig gehen' : 'locker · Z1–Z2' });
+  if (warmSec > 0) phases.push({ kind: 'warmup', sec: warmSec, label: warmLabel, hint: warmWalk ? t('workoutEngine.hintBriskWalk') : t('workoutEngine.hintEasyZones') });
   work.forEach((w, i) => {
     phases.push({ kind: 'work', sec: w.sec, label: w.label, distanceM: w.distanceM, target });
     if (w.restSec && i < work.length - 1) phases.push({ kind: 'rest', sec: w.restSec, label: w.restLabel, hint: w.restHint });
   });
-  if (coolSec > 0) phases.push({ kind: 'cooldown', sec: coolSec, label: coolLabel, hint: coolLabel.includes('gehen') ? 'locker gehen' : 'locker auslaufen' });
+  if (coolSec > 0) phases.push({ kind: 'cooldown', sec: coolSec, label: coolLabel, hint: coolWalk ? t('workoutEngine.hintEasyWalk') : t('workoutEngine.hintEasyCooldown') });
   return phases;
 }
 

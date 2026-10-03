@@ -10,16 +10,19 @@
    ========================================================================= */
 
 import { uid, isoDow, addDays } from './ui.js';
+import { weekdayNames } from './format.js';
+
+import { t } from './i18n.js';
 
 /** Verpflichtungs-Vorlagen: Anzeigename, Einheitentyp und Standarddauer. */
 export const COMMIT_TYPES = {
   cross_football: {
-    label: 'Fußballtraining', unitType: 'cross_football', durationMin: 90,
-    desc: 'Mannschaftstraining – zählt als Cross-Training (Antritte, Schnelligkeit, Spielfreude). Gut aufwärmen – etwa mit dem Fußball-Aufwärmen nach FIFA 11+ aus der Übungs-Bibliothek –, danach 5–10 min locker auslaufen. War es intensiv, die nächste Laufeinheit etwas lockerer angehen.',
+    get label() { return t('commitments.footballTraining'); }, unitType: 'cross_football', durationMin: 90,
+    get desc() { return t('commitments.footballTrainingDesc'); },
   },
   match: {
-    label: 'Fußballspiel', unitType: 'match', durationMin: 120,
-    desc: 'Pflicht-/Punktspiel – hohe, wettkampfnahe Belastung. Am Tag danach bewusst locker oder Ruhe; die Trainingswoche ist darauf abgestimmt.',
+    get label() { return t('commitments.match'); }, unitType: 'match', durationMin: 120,
+    get desc() { return t('commitments.matchDesc'); },
   },
 };
 
@@ -27,9 +30,9 @@ export function commitMeta(type) { return COMMIT_TYPES[type] || COMMIT_TYPES.cro
 
 /** Wählbare Fußball-Intensitäten – steuern Belastung (RPE) und Plan-Entlastung (#5). */
 export const FOOTBALL_INTENSITY = [
-  { key: 'leicht', label: 'leicht' },
-  { key: 'normal', label: 'normal' },
-  { key: 'intensiv', label: 'intensiv' },
+  { key: 'leicht', get label() { return t('commitments.intensityLight'); } },
+  { key: 'normal', get label() { return t('commitments.intensityNormal'); } },
+  { key: 'intensiv', get label() { return t('commitments.intensityIntense'); } },
 ];
 
 /** Baut eine Verpflichtung. `dow` = ISO-Wochentag (1=Mo … 7=So). */
@@ -77,23 +80,30 @@ export function commitmentDates(commitments = [], fromDate, toDate) {
   return out;
 }
 
-const DOW_LABELS = ['', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
-export function dowLabel(dow) { return DOW_LABELS[dow] || ''; }
+/** Short weekday name for an ISO weekday (1 = Monday … 7 = Sunday); weekdayNames() starts on Sunday. */
+export function dowLabel(dow) {
+  const i = Number(dow);
+  return Number.isInteger(i) && i >= 1 && i <= 7 ? weekdayNames()[i % 7] : '';
+}
 
 /** Kurzbeschreibung fürs UI, z. B. „Fußball Mo, Mi · Spiele So ab 19.08.“. */
 export function commitmentsSummary(commitments = []) {
-  if (!commitments.length) return 'Keine festen Termine';
+  if (!commitments.length) return t('commitments.none');
   const footballCs = commitments.filter((c) => c.type === 'cross_football').sort((a, b) => a.dow - b.dow);
   const training = footballCs.map((c) => dowLabel(c.dow));
   const parts = [];
   if (training.length) {
     const intensity = footballCs[0].intensity;
-    const suffix = intensity && intensity !== 'normal' ? ` (${intensity})` : '';
-    parts.push(`Fußball ${training.join(', ')}${suffix}`);
+    const days = training.join(', ');
+    const label = (FOOTBALL_INTENSITY.find((i) => i.key === intensity) || {}).label || intensity;
+    parts.push(intensity && intensity !== 'normal'
+      ? t('commitments.summaryFootballIntensity', { days, intensity: label })
+      : t('commitments.summaryFootball', { days }));
   }
   commitments.filter((c) => c.type === 'match').forEach((m) => {
-    const from = m.fromDate ? ` ab ${m.fromDate.slice(8, 10)}.${m.fromDate.slice(5, 7)}.` : '';
-    parts.push(`Spiele ${dowLabel(m.dow)}${from}`);
+    parts.push(m.fromDate
+      ? t('commitments.summaryMatchesFrom', { day: dowLabel(m.dow), dd: m.fromDate.slice(8, 10), mm: m.fromDate.slice(5, 7) })
+      : t('commitments.summaryMatches', { day: dowLabel(m.dow) }));
   });
   return parts.join(' · ');
 }

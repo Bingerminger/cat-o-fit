@@ -56,6 +56,7 @@ const SHELL_ASSETS = [
   './js/i18n.js',
   './js/format.js',
   './js/language.js',
+  './js/exercise-terms-de.js',
   './locales/languages.json',
   './js/ui.js',
   './js/charts.js',
@@ -150,7 +151,7 @@ self.addEventListener('install', (event) => {
       // the list comes from languages.json, so a new language needs no change here.
       try {
         const langs = Object.keys(await (await fetch('./locales/languages.json', { cache: 'no-cache' })).json());
-        await Promise.allSettled(langs.map((l) => cache.add(`./locales/${l}/ui.json`)));
+        await Promise.allSettled(langs.flatMap((l) => ['ui', 'exercises'].map((a) => cache.add(`./locales/${l}/${a}.json`))));
       } catch { /* offline install: catalogs come with the runtime cache */ }
     }).then(() => self.skipWaiting())
   );

@@ -32,6 +32,8 @@ import {
   phaseForWeek,
 } from './plangen.js';
 
+import { t, tp } from './i18n.js';
+
 // Öffentliche Generator-Schnittstelle weiterhin über plans.js erreichbar.
 export {
   PLAN_GEN, PLAN_LEVELS, DEFAULT_WEEK_TEMPLATE, RUN_TEMPLATES, TRIATHLON_TEMPLATE, HYROX_TEMPLATE,
@@ -92,7 +94,7 @@ export function createPlanForEvent(event, options = {}) {
   const { start, weeks } = planWindow(event.date, today);
   const pp = planPacesFor(event, { sessions, today, profile });
   const plan = {
-    id: uid('plan'), eventId: event.id, name: `Trainingsplan · ${event.name}`,
+    id: uid('plan'), eventId: event.id, name: t('plans.planName', { name: event.name }),
     goalTime: event.targetTime, startDate: start, endDate: event.date, weeks,
     level, daysPerWeek, baseLongKm: hist.longKm, baseWeekKm: hist.weekKm,
     paces: pp ? pp.zones : null, paceInfo: paceInfoOf(pp),
@@ -163,16 +165,16 @@ function noteBox(text, tone = 'info') {
 
 /** Beschreibt die Paces eines Plans in einem Satz. */
 export function paceText(info, zones, targetTime) {
-  if (!zones || !zones.easy) return 'Ohne Zielzeit und ohne harte Läufe gibt es noch keine Pace-Vorgaben – trag eine Zielzeit ein oder lauf einen Test (z. B. 5 km zügig), dann kommen die Zielpaces dazu.';
-  const race = zones.race && zones.race.min ? `, Renntempo ${fmtPaceRange(zones.race.min, zones.race.max)}` : '';
-  const base = `Locker ${fmtPaceRange(zones.easy.min, zones.easy.max)}, Schwelle ${fmtPaceRange(zones.threshold.min, zones.threshold.max)}${race}.`;
+  if (!zones || !zones.easy) return t('plans.paceNone');
+  const race = zones.race && zones.race.min ? t('plans.paceRace', { pace: fmtPaceRange(zones.race.min, zones.race.max) }) : '';
+  const base = t('plans.paceBase', { easy: fmtPaceRange(zones.easy.min, zones.easy.max), threshold: fmtPaceRange(zones.threshold.min, zones.threshold.max), race });
   if (info && info.ambitious) {
-    return `Deine Zielzeit ${targetTime} ist ambitioniert: Sie entspricht VDOT ${fmtNum(info.goalVdot)}, deine aktuelle Form VDOT ${fmtNum(info.formVdot)}. Trainiert wird deshalb nach deiner Form, das Renntempo richtet sich nach der Zielzeit. ${base}`;
+    return t('plans.paceAmbitious', { time: targetTime, goal: fmtNum(info.goalVdot), form: fmtNum(info.formVdot), base });
   }
-  if (info && info.goalVdot && info.formVdot) return `Zielpaces aus deiner Zielzeit und deiner Form (VDOT ${fmtNum(info.trainingVdot)}): ${base}`;
-  if (info && info.goalVdot) return `Zielpaces aus deiner Zielzeit ${targetTime} (VDOT ${fmtNum(info.goalVdot)}): ${base}`;
-  if (info && info.formVdot) return `Zielpaces aus deiner aktuellen Form (VDOT ${fmtNum(info.formVdot)}): ${base}`;
-  return `Zielpaces aus deinen Trainingsbereichen: ${base}`;
+  if (info && info.goalVdot && info.formVdot) return t('plans.paceFromGoalAndForm', { vdot: fmtNum(info.trainingVdot), base });
+  if (info && info.goalVdot) return t('plans.paceFromGoal', { time: targetTime, vdot: fmtNum(info.goalVdot), base });
+  if (info && info.formVdot) return t('plans.paceFromForm', { vdot: fmtNum(info.formVdot), base });
+  return t('plans.paceFromZones', { base });
 }
 
 /**
@@ -189,9 +191,9 @@ export function openPlanSetup(event, { plan = null } = {}) {
   const readiness0 = planReadiness(event, { today, hist });
   if (readiness0.status === 'past' || readiness0.status === 'today') {
     openSheet({
-      title: update ? 'Plan aktualisieren' : 'Trainingsplan',
+      title: update ? t('plans.updatePlan') : t('plans.trainingPlan'),
       body: noteBox(readiness0.text, 'warn'),
-      footer: [el('button', { class: 'btn btn--primary btn--block', text: 'Verstanden', onclick: () => closeSheet() })],
+      footer: [el('button', { class: 'btn btn--primary btn--block', text: t('plans.gotIt'), onclick: () => closeSheet() })],
     });
     return;
   }
@@ -212,47 +214,50 @@ export function openPlanSetup(event, { plan = null } = {}) {
 
   const levelHint = el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '-4px' }, text: PLAN_LEVELS[level].hint });
   const histText = hist.weekKm || hist.longKm
-    ? `Deine letzten vier Wochen: ${hist.weekKm ? `Ø ${fmtNum(hist.weekKm)} km pro Woche` : 'wenige Läufe'}${hist.longKm ? `, längster Lauf ${fmtNum(hist.longKm)} km` : ''}. Der Plan setzt dort an.`
-    : 'Noch keine Läufe aus den letzten Wochen erfasst – der Plan startet deshalb behutsam.';
+    ? t('plans.history', {
+      week: hist.weekKm ? t('plans.historyWeekKm', { km: fmtNum(hist.weekKm) }) : t('plans.historyFewRuns'),
+      longest: hist.longKm ? t('plans.historyLongest', { km: fmtNum(hist.longKm) }) : '',
+    })
+    : t('plans.historyNone');
 
   const pp = planPacesFor(event, { sessions, today });
   const body = el('div', {}, [
     el('p', { class: 'muted mb-2', style: { fontSize: '.86rem' }, text: update
-      ? 'Die Einheiten ab heute werden mit der aktuellen Planlogik neu berechnet: Renneinheit am Wettkampftag, Zielpaces aus deiner Zielzeit, Umfang passend zu Niveau und Lauftagen. Vergangene und erledigte Einheiten bleiben unverändert.'
-      : 'Ein paar Angaben, damit der Plan zu dir passt. Alles lässt sich später ändern.' }),
+      ? t('plans.updateIntro')
+      : t('plans.setupIntro') }),
     readinessBox,
-    field('Niveau', segmented(Object.entries(PLAN_LEVELS).map(([k, v]) => ({ value: k, label: v.label })), level,
+    field(t('plans.level'), segmented(Object.entries(PLAN_LEVELS).map(([k, v]) => ({ value: k, label: v.label })), level,
       (v) => { level = v; levelHint.textContent = PLAN_LEVELS[v].hint; refreshReadiness(); })),
     levelHint,
     el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: histText }),
     sport === 'run'
-      ? field('Lauftage pro Woche', segmented(RUN_DAYS.map((n) => ({ value: String(n), label: `${n}×` })), String(days), (v) => { days = parseInt(v, 10); }))
+      ? field(t('plans.runDaysPerWeek'), segmented(RUN_DAYS.map((n) => ({ value: String(n), label: `${n}×` })), String(days), (v) => { days = parseInt(v, 10); }))
       : noteBox(sport === 'triathlon'
-        ? 'Triathlon (Beta): festes Wochengerüst mit Ruhetag am Montag – zwei Schwimm-, zwei Rad- und drei Laufeinheiten, Tapering und Wettkampfformat.'
-        : 'Hyrox (Beta): festes Wochengerüst mit zwei Ruhetagen – Lauf-Intervalle, Kraft, Stationstraining bis zur Wettkampfsimulation, Tapering.'),
-    sectionHead('Zielpaces'),
+        ? t('plans.triathlonNote')
+        : t('plans.hyroxNote')),
+    sectionHead(t('plans.targetPaces')),
     el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: paceText(paceInfoOf(pp), pp && pp.zones, event.targetTime) }),
   ]);
 
   if (!update) {
-    const opts = [{ value: 'none', label: 'Keine' }];
-    if (others.length) opts.push({ value: 'copy', label: 'Übernehmen' });
-    opts.push({ value: 'edit', label: 'Eintragen' });
+    const opts = [{ value: 'none', label: t('plans.none') }];
+    if (others.length) opts.push({ value: 'copy', label: t('plans.commitCopy') });
+    opts.push({ value: 'edit', label: t('plans.commitEnter') });
     const commitHint = el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '-4px' } });
     const setHint = () => {
       const summary = others.length ? commitmentsSummary(planCommitments(others[0])) : '';
       commitHint.textContent = commitChoice === 'copy'
-        ? `Wie im Plan „${others[0].name}“: ${summary}${summary.endsWith('.') ? '' : '.'} Termine, die dort schon stehen, erscheinen nicht doppelt.`
-        : commitChoice === 'edit' ? 'Nach dem Erstellen öffnet sich die Terminauswahl.' : 'Der Plan nutzt alle Tage frei. Termine lassen sich jederzeit ergänzen.';
+        ? t('plans.commitCopyHint', { name: others[0].name, summary: summary.endsWith('.') ? summary : `${summary}.` })
+        : commitChoice === 'edit' ? t('plans.commitEditHint') : t('plans.commitNoneHint');
     };
     setHint();
-    body.appendChild(sectionHead('Feste Termine'));
-    body.appendChild(el('div', { class: 'muted', style: { fontSize: '.84rem', marginBottom: '6px' }, text: 'Hast du feste Termine, zum Beispiel Vereinstraining oder Spiele? Der Plan legt sich dann darum herum.' }));
+    body.appendChild(sectionHead(t('plans.fixedCommitments')));
+    body.appendChild(el('div', { class: 'muted', style: { fontSize: '.84rem', marginBottom: '6px' }, text: t('plans.commitQuestion') }));
     body.appendChild(segmented(opts, commitChoice, (v) => { commitChoice = v; setHint(); }));
     body.appendChild(commitHint);
   } else {
-    body.appendChild(sectionHead('Feste Termine'));
-    body.appendChild(el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: `${commitmentsSummary(planCommitments(plan))} – ändern lassen sie sich über „Feste Termine“ im Plan.` }));
+    body.appendChild(sectionHead(t('plans.fixedCommitments')));
+    body.appendChild(el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: t('plans.commitChangeHint', { summary: commitmentsSummary(planCommitments(plan)) }) }));
   }
 
   const footer = el('button', {
@@ -261,7 +266,7 @@ export function openPlanSetup(event, { plan = null } = {}) {
       if (update) {
         updatePlanFromToday(plan, event, { level, daysPerWeek: days });
         closeSheet();
-        toast('Plan ab heute aktualisiert', 'good');
+        toast(t('plans.updatedFromToday'), 'good');
         goOrRefresh(`#/plan/${event.id}`);
         return;
       }
@@ -270,14 +275,14 @@ export function openPlanSetup(event, { plan = null } = {}) {
         : [];
       const created = createPlanForEvent(event, { level, daysPerWeek: days, commitments });
       closeSheet();
-      if (!created) { toast('Für dieses Datum lässt sich kein Plan erstellen', 'bad'); return; }
-      toast('Plan erstellt 🎉', 'good');
+      if (!created) { toast(t('plans.cannotCreate'), 'bad'); return; }
+      toast(t('plans.created'), 'good');
       navigate(`#/plan/${event.id}`);
       if (commitChoice === 'edit') setTimeout(() => openCommitmentsEditor(store.find('plans', created.id), event), 350);
     },
-  }, [icon(update ? 'refresh' : 'sparkles'), update ? 'Ab heute neu berechnen' : 'Plan erstellen']);
+  }, [icon(update ? 'refresh' : 'sparkles'), update ? t('plans.recalcFromToday') : t('plans.createPlan')]);
 
-  openSheet({ title: update ? 'Plan ab heute neu berechnen' : 'Trainingsplan einrichten', body, footer });
+  openSheet({ title: update ? t('plans.recalcPlanFromToday') : t('plans.setupTitle'), body, footer });
 }
 
 /* ===================== Plan-Ansicht ===================== */
@@ -288,35 +293,35 @@ export function render(view, eventId) {
   const isProgram = (plan && plan.kind === 'program') || (event && event.kind === 'program');
 
   setHeader({
-    title: isProgram ? 'Wochenplan' : 'Trainingsplan',
+    title: isProgram ? t('plans.weekPlan') : t('plans.trainingPlan'),
     subtitle: event ? event.name : '',
     back: `#/event/${eventId}`,
     // Nur „+“ als Symbol; seltene Aktionen mit Text im „…“-Menü. Vorher vier Symbole:
     // Das Kalender-Symbol führte zu „Feste Termine“, der Pfeilkreis überschrieb den Plan,
     // und auf dem iPhone SE blieb vom Titel nur „Trainin…“ (UI-34).
     actions: plan ? [
-      { icon: 'plus', label: 'Einheit hinzufügen', onClick: () => openUnitCreator(plan, todayStr()) },
-      { icon: 'more', label: 'Weitere Aktionen', onClick: () => actionSheet('Plan', [
-        (!isProgram && event) ? { icon: 'calendar', label: 'Feste Termine', hint: 'Fußball, Kurse – der Plan richtet sich danach', onClick: () => openCommitmentsEditor(plan, event) } : null,
-        { icon: 'download', label: 'In Kalender übernehmen (.ics)', hint: 'Alle Einheiten als Kalenderdatei', onClick: () => openIcsSheet({ scope: 'event', id: eventId, event }) },
-        { icon: 'refresh', label: 'Plan ab heute neu berechnen', hint: 'Vergangenes bleibt, mit Rückfrage', onClick: () => regenerate(plan, event) },
+      { icon: 'plus', label: t('plans.addSession'), onClick: () => openUnitCreator(plan, todayStr()) },
+      { icon: 'more', label: t('plans.moreActions'), onClick: () => actionSheet(t('plans.plan'), [
+        (!isProgram && event) ? { icon: 'calendar', label: t('plans.fixedCommitments'), hint: t('plans.commitActionHint'), onClick: () => openCommitmentsEditor(plan, event) } : null,
+        { icon: 'download', label: t('plans.toCalendar'), hint: t('plans.toCalendarHint'), onClick: () => openIcsSheet({ scope: 'event', id: eventId, event }) },
+        { icon: 'refresh', label: t('plans.recalcPlanFromToday'), hint: t('plans.recalcHint'), onClick: () => regenerate(plan, event) },
       ]) },
     ] : [],
   });
 
   if (!plan) {
-    view.appendChild(emptyState('calendar', 'Noch kein Plan', 'Für dieses Ziel gibt es noch keinen Trainingsplan.'));
+    view.appendChild(emptyState('calendar', t('plans.noPlan'), t('plans.noPlanText')));
     return;
   }
 
   // Robustheit: unvollständige Pläne (z. B. aus einem alten Backup oder Import)
   // haben keine Phasenstruktur. Statt zu crashen ein Neu-Generieren anbieten.
   if (!Array.isArray(plan.phases) || !plan.phases.length || !plan.weeks) {
-    view.appendChild(emptyState('calendar', 'Plan unvollständig',
-      'Diesem Trainingsplan fehlt die Phasenstruktur (etwa aus einem älteren Backup).'));
+    view.appendChild(emptyState('calendar', t('plans.incomplete'),
+      t('plans.incompleteText')));
     if (event) view.appendChild(el('button', {
       class: 'btn btn--primary btn--block mt-3', onclick: () => regenerate(plan, event),
-    }, [icon('refresh'), 'Plan neu berechnen']));
+    }, [icon('refresh'), t('plans.recalcPlan')]));
     return;
   }
 
@@ -328,8 +333,8 @@ export function render(view, eventId) {
   // Phasen-Timeline
   const timeline = el('div', { class: 'card' }, [
     el('div', { class: 'row row--between mb-2' }, [
-      el('div', { class: 'card__title', text: `Woche ${currentWeek} von ${plan.weeks}` }),
-      daysToRace != null ? el('span', { class: 'chip chip--accent', text: daysToRace > 0 ? `noch ${daysToRace} Tage` : 'Wettkampf!' }) : null,
+      el('div', { class: 'card__title', text: t('plans.weekOf', { week: currentWeek, weeks: plan.weeks }) }),
+      daysToRace != null ? el('span', { class: 'chip chip--accent', text: daysToRace > 0 ? tp('plans.daysToGo', daysToRace) : t('plans.raceDay') }) : null,
     ]),
     phaseTimeline(plan, currentWeek),
   ]);
@@ -338,9 +343,9 @@ export function render(view, eventId) {
   // Altplan: neue Planlogik als Angebot – nie still.
   if (!isProgram && event && plan.gen !== PLAN_GEN && (plan.endDate || '') >= today) {
     view.appendChild(el('div', { class: 'card mt-2', style: { borderLeft: '4px solid var(--accent)' } }, [
-      el('div', { style: { fontWeight: '700', fontSize: '.9rem' }, text: 'Neue Planlogik verfügbar' }),
-      el('div', { class: 'muted', style: { fontSize: '.82rem', marginTop: '2px' }, text: 'Renneinheit an jedem Wochentag, Zielpaces aus deiner Zielzeit, Umfang passend zu Niveau und Lauftagen. Auf Wunsch rechnet die App deinen Plan ab heute neu – Vergangenes bleibt unverändert.' }),
-      el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => openPlanSetup(event, { plan }) }, [icon('refresh'), 'Plan ab heute neu berechnen']),
+      el('div', { style: { fontWeight: '700', fontSize: '.9rem' }, text: t('plans.newLogic') }),
+      el('div', { class: 'muted', style: { fontSize: '.82rem', marginTop: '2px' }, text: t('plans.newLogicText') }),
+      el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => openPlanSetup(event, { plan }) }, [icon('refresh'), t('plans.recalcPlanFromToday')]),
     ]));
   }
 
@@ -355,9 +360,9 @@ export function render(view, eventId) {
   const planRun = units.filter((u) => typeMeta(u.type).cat === 'run');
   const totalKm = planRun.reduce((a, u) => a + (u.targetDistanceKm || 0), 0);
   view.appendChild(el('div', { class: 'stat-grid mt-4' }, [
-    stat(fmtKm(totalKm, 0), 'Geplante Lauf-km'),
-    stat(`${units.length}`, 'Einheiten'),
-    stat(`${done}`, 'Erledigt'),
+    stat(fmtKm(totalKm, 0), t('plans.statRunKm')),
+    stat(`${units.length}`, t('plans.statSessions')),
+    stat(`${done}`, t('plans.statDone')),
   ]));
 
   // Eckdaten des Plans: Niveau, Lauftage, Paces
@@ -365,21 +370,25 @@ export function render(view, eventId) {
     const lines = [];
     if (plan.gen === PLAN_GEN) {
       const lv = PLAN_LEVELS[levelOf(plan)].label;
-      lines.push(`Niveau ${lv}${plan.daysPerWeek ? ` · ${plan.daysPerWeek} Lauftage pro Woche` : ''}${plan.baseWeekKm ? ` · Einstieg bei deinem aktuellen Umfang (Ø ${fmtNum(plan.baseWeekKm)} km pro Woche)` : ''}.`);
+      lines.push(t('plans.levelLine', {
+        level: lv,
+        days: plan.daysPerWeek ? t('plans.levelLineDays', { days: plan.daysPerWeek }) : '',
+        base: plan.baseWeekKm ? t('plans.levelLineBase', { km: fmtNum(plan.baseWeekKm) }) : '',
+      }));
       lines.push(paceText(plan.paceInfo, plan.paces, event.targetTime));
     } else if (plan.baseLongKm) {
-      lines.push(`An deine Form angepasst: Der Aufbau startet bei deinem aktuellen Long-Run-Niveau von ${fmtKm(plan.baseLongKm, plan.baseLongKm % 1 ? 1 : 0)}.`);
+      lines.push(t('plans.adaptedToForm', { km: fmtKm(plan.baseLongKm, plan.baseLongKm % 1 ? 1 : 0) }));
     }
     if (lines.length) {
       view.appendChild(el('div', { class: 'card card--flat mt-2 row gap-2', style: { alignItems: 'flex-start' } }, [
         el('span', { html: iconSvg('activity'), style: { color: plan.paceInfo && plan.paceInfo.ambitious ? 'var(--warn)' : 'var(--accent)', width: '18px', flex: '0 0 auto' } }),
-        el('div', { class: 'muted', style: { fontSize: '.82rem' } }, lines.map((t) => el('div', { text: t }))),
+        el('div', { class: 'muted', style: { fontSize: '.82rem' } }, lines.map((line) => el('div', { text: line }))),
       ]));
     }
   }
 
   // Wochen-Akkordeon
-  view.appendChild(sectionHead('Wochenübersicht'));
+  view.appendChild(sectionHead(t('plans.weekOverview')));
   const byWeek = new Map();
   units.forEach((u) => {
     // Woche aus dem (autoritativen) Datum ableiten statt aus u.week: Für generierte
@@ -406,13 +415,13 @@ export function render(view, eventId) {
     if (event && !isProgram && weekEnd >= today) body.appendChild(el('button', {
       class: 'btn btn--ghost btn--block mt-2', style: { fontSize: '.8rem' },
       onclick: () => regenerateWeek(plan, event, w),
-    }, [icon('refresh'), 'Diese Woche neu berechnen']));
+    }, [icon('refresh'), t('plans.recalcWeek')]));
 
     const head = el('button', {
       class: 'cal-day__head', style: { width: '100%' },
       onclick: () => { body.hidden = !body.hidden; },
     }, [
-      el('span', { class: 'phase-pill', style: { background: phase.color, color: onAccent(phase.color) }, text: `W${w}` }),
+      el('span', { class: 'phase-pill', style: { background: phase.color, color: onAccent(phase.color) }, text: t('plans.weekShort', { week: w }) }),
       el('div', { class: 'grow' }, [
         el('div', { class: 'cal-day__dow', text: phase.name }),
         el('div', { class: 'cal-day__date', text: `${fmtDayMonth(addDays(plan.startDate, (w - 1) * 7))} · ${fmtKm(wkm, 0)}` }),
@@ -423,7 +432,7 @@ export function render(view, eventId) {
   });
 
   // Eigene Einheit anlegen – prominent am Ende (zusätzlich zum „+“ in der Kopfzeile).
-  view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-4', onclick: () => openUnitCreator(plan, today) }, [icon('plus'), 'Eigene Einheit hinzufügen']));
+  view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-4', onclick: () => openUnitCreator(plan, today) }, [icon('plus'), t('plans.addOwnSession')]));
 }
 
 /** Editor für feste Termine: Fußball-Trainingstage + optionale Spiele. Beim
@@ -464,24 +473,24 @@ export function openCommitmentsEditor(plan, event) {
   const matchDurI = input({ type: 'number', min: '30', step: '10', value: String(matchDur) });
   matchDurI.addEventListener('input', () => { matchDur = parseInt(matchDurI.value, 10) || 120; });
   const matchBox = el('div', { hidden: !matchOn }, [
-    field('Spiele ab (Datum)', matchFromI),
-    field('Dauer je Spiel (min)', matchDurI),
+    field(t('plans.matchesFrom'), matchFromI),
+    field(t('plans.matchDuration'), matchDurI),
   ]);
   const matchToggle = segmented(
-    [{ value: 'off', label: 'Keine' }, { value: 'on', label: 'Sonntags' }],
+    [{ value: 'off', label: t('plans.none') }, { value: 'on', label: t('plans.sundays') }],
     matchOn ? 'on' : 'off',
     (v) => { matchOn = v === 'on'; matchBox.hidden = !matchOn; },
   );
 
   const body = el('div', {}, [
-    el('div', { class: 'muted mb-3', style: { fontSize: '.84rem' }, text: 'Feste Termine (z. B. Vereinstraining) werden fix eingeplant – der Trainingsplan legt sich darum herum. Beim Speichern wird der Plan ab heute neu berechnet; Vergangenes bleibt unverändert.' }),
-    sectionHead('Fußballtraining'),
-    el('label', { class: 'field__label', text: 'Wochentage' }), dayRow,
-    field('Dauer (min)', durI),
-    field('Intensität', intensitySeg),
-    el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '-4px' }, text: 'Fußball ist besonders fordernd – die Intensität steuert, wie stark der Termin in Belastung & Form zählt und ob der Coach den Folgetag lockerer vorschlägt.' }),
-    sectionHead('Fußballspiele'),
-    field('Spiele einplanen', matchToggle),
+    el('div', { class: 'muted mb-3', style: { fontSize: '.84rem' }, text: t('plans.commitEditorIntro') }),
+    sectionHead(t('commitments.footballTraining')),
+    el('label', { class: 'field__label', text: t('plans.weekdays') }), dayRow,
+    field(t('plans.durationMin'), durI),
+    field(t('plans.intensity'), intensitySeg),
+    el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '-4px' }, text: t('plans.footballIntensityHint') }),
+    sectionHead(t('plans.footballMatches')),
+    field(t('plans.planMatches'), matchToggle),
     matchBox,
   ]);
 
@@ -491,16 +500,16 @@ export function openCommitmentsEditor(plan, event) {
     if (matchOn) commitments.push(mkCommit('match', matchDow, { fromDate: matchFrom || null, durationMin: matchDur }));
     closeSheet();
     await saveCommitments(plan, event, commitments);
-  } }, [icon('check'), 'Übernehmen & Plan berechnen']);
+  } }, [icon('check'), t('plans.applyAndCalc')]);
 
-  openSheet({ title: 'Feste Termine', body, footer });
+  openSheet({ title: t('plans.fixedCommitments'), body, footer });
 }
 
 /** Wochen-Check (R3): Kollisionen der laufenden Woche + transparente Priorisierung. */
 function triageCard(plan) {
-  const t = weekTriage(plan.units || [], todayStr());
-  if (!t.collisions.length) return null;
-  const items = t.collisions.slice(0, 4).map((c) => el('div', { style: { padding: '6px 0 4px', borderTop: '1px solid var(--border)' } }, [
+  const tri = weekTriage(plan.units || [], todayStr());
+  if (!tri.collisions.length) return null;
+  const items = tri.collisions.slice(0, 4).map((c) => el('div', { style: { padding: '6px 0 4px', borderTop: '1px solid var(--border)' } }, [
     el('div', { style: { fontWeight: '650', fontSize: '.82rem' }, text: c.text }),
     el('div', { class: 'muted', style: { fontSize: '.78rem', marginTop: '2px' } }, [
       el('span', { html: iconSvg('arrowRight'), style: { display: 'inline-block', width: '13px', color: 'var(--accent-text)', verticalAlign: '-2px' } }),
@@ -510,9 +519,9 @@ function triageCard(plan) {
   return el('div', { class: 'card mt-2', style: { borderLeft: '4px solid #e8a13a' } }, [
     el('div', { class: 'row gap-2', style: { alignItems: 'center', marginBottom: '2px' } }, [
       el('span', { html: iconSvg('activity'), style: { color: '#e8a13a', width: '18px', flex: '0 0 auto' } }),
-      el('div', { class: 'card__title', style: { fontSize: '.92rem' }, text: `Wochen-Check · ${t.collisions.length} Hinweis${t.collisions.length === 1 ? '' : 'e'}` }),
+      el('div', { class: 'card__title', style: { fontSize: '.92rem' }, text: tp('plans.weekCheck', tri.collisions.length) }),
     ]),
-    el('div', { class: 'muted', style: { fontSize: '.76rem', marginBottom: '2px' }, text: 'Bei Kollisionen priorisiert die App so: feste Termine → Schlüssel-Laufeinheiten (Zeitziel) → Kraft → lockerer Umfang.' }),
+    el('div', { class: 'muted', style: { fontSize: '.76rem', marginBottom: '2px' }, text: t('plans.triagePriority') }),
     ...items,
   ]);
 }
@@ -524,11 +533,11 @@ function commitmentsCard(plan, event) {
     el('div', { class: 'row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('calendar'), style: { color: 'var(--accent-text)', width: '18px', flex: '0 0 auto', marginTop: '2px' } }),
       el('div', {}, [
-        el('div', { style: { fontWeight: '700', fontSize: '.86rem' }, text: 'Feste Termine' }),
+        el('div', { style: { fontWeight: '700', fontSize: '.86rem' }, text: t('plans.fixedCommitments') }),
         el('div', { class: 'muted', style: { fontSize: '.8rem' }, text: commitmentsSummary(commitments) }),
       ]),
     ]),
-    el('button', { class: 'btn btn--ghost', style: { fontSize: '.8rem', flex: '0 0 auto' }, onclick: () => openCommitmentsEditor(plan, event) }, [icon('edit'), commitments.length ? 'Anpassen' : 'Eintragen']),
+    el('button', { class: 'btn btn--ghost', style: { fontSize: '.8rem', flex: '0 0 auto' }, onclick: () => openCommitmentsEditor(plan, event) }, [icon('edit'), commitments.length ? t('plans.adjust') : t('plans.commitEnter')]),
   ]);
 }
 
@@ -536,7 +545,7 @@ function commitmentsCard(plan, event) {
     erledigte Einheiten bleiben erhalten. */
 async function saveCommitments(plan, event, commitments) {
   updatePlanFromToday(store.find('plans', plan.id) || plan, event, { commitments });
-  toast('Feste Termine übernommen', 'good');
+  toast(t('plans.commitsSaved'), 'good');
   goOrRefresh(`#/plan/${event.id}`);
 }
 
@@ -593,9 +602,9 @@ function stat(val, label) {
 async function regenerate(plan, event) {
   if (plan.kind === 'program' || (event && event.kind === 'program')) {
     const ok = await confirmDialog({
-      title: 'Wochenplan ab heute neu berechnen?',
-      message: 'Die Einheiten ab heute werden neu erzeugt. Vergangene, erledigte und verpasste Einheiten bleiben unverändert.',
-      confirmLabel: 'Neu berechnen',
+      title: t('plans.regenProgramTitle'),
+      message: t('plans.regenProgramText'),
+      confirmLabel: t('plans.recalc'),
     });
     if (!ok) return;
     const fresh = buildProgramUnits(
@@ -603,7 +612,7 @@ async function regenerate(plan, event) {
       plan.id, plan.startDate,
     );
     store.patch('plans', plan.id, { units: mergeFromDate(plan.units || [], fresh, todayStr()), generated: true });
-    toast('Wochenplan ab heute neu erstellt', 'good');
+    toast(t('plans.regenProgramDone'), 'good');
     goOrRefresh(`#/plan/${event.id}`);
     return;
   }
@@ -622,15 +631,19 @@ async function regenerateWeek(plan, event, week) {
   const inWeek = all.filter((u) => u.date >= ws && u.date <= we);
   const doneCount = inWeek.filter((u) => u.status === 'erledigt').length;
   const ok = await confirmDialog({
-    title: `Woche ${week} neu berechnen?`,
-    message: `Die geplanten Einheiten dieser Woche${from > ws ? ' ab heute' : ''} werden frisch erzeugt.${doneCount ? ` ${doneCount} bereits erledigte Einheit${doneCount === 1 ? '' : 'en'} b${doneCount === 1 ? 'leibt' : 'leiben'} erhalten.` : ''} Verschiebungen und manuelle Änderungen dieser Woche gehen verloren.`,
-    confirmLabel: 'Neu berechnen', danger: true,
+    title: t('plans.regenWeekTitle', { week }),
+    message: [
+      from > ws ? t('plans.regenWeekFreshFromToday') : t('plans.regenWeekFresh'),
+      doneCount ? tp('plans.regenWeekKept', doneCount) : '',
+      t('plans.regenWeekLost'),
+    ].filter(Boolean).join(' '),
+    confirmLabel: t('plans.recalc'), danger: true,
   });
   if (!ok) return;
   const fresh = buildWeekUnits(plan, event, store.profile(), week, { coveredFixed: coveredFixed(store.get('plans'), plan.id) });
   const others = all.filter((u) => u.date < ws || u.date > we);
   const units = [...others, ...mergeFromDate(inWeek, fresh, from)].sort((a, b) => a.date.localeCompare(b.date));
   store.patch('plans', plan.id, { units });
-  toast(`Woche ${week} neu berechnet`, 'good');
+  toast(t('plans.regenWeekDone', { week }), 'good');
   goOrRefresh(`#/plan/${event.id}`);
 }

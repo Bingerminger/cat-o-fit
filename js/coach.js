@@ -28,6 +28,8 @@ import {
 import { restDaySuggestion, footballFollowupEase, dayIsHard } from './rolling.js';
 import { destackSuggestion } from './triage.js';
 
+import { t, tp } from './i18n.js';
+
 /** So lange nach einem Ausfall wegen Krankheit/Verletzung gibt es keine Steigerung. */
 export const RETURN_DAYS = 14;
 /** So lange steht der Wiedereinstiegs-Hinweis (solange noch kein hartes Training war). */
@@ -35,9 +37,15 @@ export const RETURN_HINT_DAYS = 10;
 
 /** Kurzbezeichnungen – für „zurückgestellt: …“ in der Begründung. */
 export const COACH_LABELS = {
-  return: 'behutsamer Wiedereinstieg', rest: 'Erholungstag', soften: 'heute lockerer',
-  football: 'nach Fußball lockerer', deload: 'Entlastungswoche', destack: 'Tag entzerren',
-  makeup: 'Schlüsseleinheit nachholen', volume: 'Wochenumfang ausgleichen', boost: 'kommende Woche steigern',
+  get return() { return t('coach.labels.return'); },
+  get rest() { return t('coach.labels.rest'); },
+  get soften() { return t('coach.labels.soften'); },
+  get football() { return t('coach.labels.football'); },
+  get deload() { return t('coach.labels.deload'); },
+  get destack() { return t('coach.labels.destack'); },
+  get makeup() { return t('coach.labels.makeup'); },
+  get volume() { return t('coach.labels.volume'); },
+  get boost() { return t('coach.labels.boost'); },
 };
 /** Empfehlungen, die ein Warnsignal sind – solange eine davon gilt, keine Steigerung. */
 export const WARNING_KINDS = new Set(['return', 'rest', 'soften', 'football', 'deload']);
@@ -131,14 +139,14 @@ export function coachDecision({ plans = [], sessions = [], today, isProtectedDay
 export function coachWhy(decision) {
   if (!decision || !decision.primary) return '';
   const p = decision.primary;
-  const rank = WARNING_KINDS.has(p.kind) ? 'Warnsignale haben Vorrang vor Plan-Pflege und Steigerung.'
-    : p.kind === 'boost' ? 'Keine Warnsignale, Last im üblichen Rahmen.'
-      : 'Keine Warnsignale – jetzt geht es um deinen Plan.';
+  const rank = WARNING_KINDS.has(p.kind) ? t('coach.why.warning')
+    : p.kind === 'boost' ? t('coach.why.boost')
+      : t('coach.why.plan');
   const rest = decision.suppressed.length
-    ? ` Zurückgestellt: ${decision.suppressed.map((s) => s.label).join(', ')}.`
+    ? ` ${t('coach.why.suppressed', { labels: decision.suppressed.map((s) => s.label).join(', ') })}`
     : '';
   const lock = decision.ret && p.kind !== 'return' && !WARNING_KINDS.has(p.kind)
-    ? ` Steigerungen pausieren bis ${RETURN_DAYS} Tage nach dem Ausfall.`
+    ? ` ${tp('coach.why.returnLock', RETURN_DAYS)}`
     : '';
   return `${rank}${rest}${lock}`;
 }

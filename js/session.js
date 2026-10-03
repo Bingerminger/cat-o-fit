@@ -31,8 +31,14 @@ import { programForUnit, buildShow } from './show-program.js';
 import { routeMap } from './charts.js';
 import { decodePolyline } from './gpx.js';
 
+import { t, tp } from './i18n.js';
+
 /** Herkunft der Anstrengung in der Belastungszeile (ohne erfasste RPE ist sie geschätzt). */
-const RPE_SOURCE_TEXT = { erfasst: '', herzfrequenz: ' (geschätzt aus der Herzfrequenz)', typ: ' (geschätzt aus der Sportart)' };
+const RPE_SOURCE_TEXT = {
+  erfasst: '',
+  get herzfrequenz() { return ` (${t('session.rpeFromHr')})`; },
+  get typ() { return ` (${t('session.rpeFromType')})`; },
+};
 
 // Weitergereicht für bestehende Importe (Tests, ältere Module).
 export { findUnit, saveUnitPatch, completeUnit, linkSession, nextFreeDay, MISSED_REASON_LABEL } from './unit-actions.js';
@@ -45,8 +51,8 @@ export function render(view, id) {
   const freeSession = !found ? store.find('sessions', id) : null;
 
   if (!found && !freeSession) {
-    setHeader({ title: 'Einheit', back: true });
-    view.appendChild(el('div', { class: 'empty' }, [el('div', { class: 'empty__title', text: 'Einheit nicht gefunden' })]));
+    setHeader({ title: t('session.unit'), back: true });
+    view.appendChild(el('div', { class: 'empty' }, [el('div', { class: 'empty__title', text: t('session.notFound') })]));
     return;
   }
 
@@ -66,8 +72,8 @@ function renderPlanned(view, plan, unit) {
   setHeader({
     title: m.label, subtitle: fmtDate(unit.date), back: true,
     actions: [
-      { icon: 'edit', label: 'Bearbeiten', onClick: () => openUnitEditor(plan, unit) },
-      { icon: 'download', label: 'In Kalender übernehmen (.ics)', onClick: () => openIcsSheet({ unit, event: store.find('events', plan.eventId) }) },
+      { icon: 'edit', label: t('session.edit'), onClick: () => openUnitEditor(plan, unit) },
+      { icon: 'download', label: t('session.addToCalendar'), onClick: () => openIcsSheet({ unit, event: store.find('events', plan.eventId) }) },
     ],
   });
 
@@ -88,28 +94,28 @@ function renderPlanned(view, plan, unit) {
   if (protectedDay) {
     view.appendChild(el('div', { class: 'card card--flat mt-2 row gap-2', style: { alignItems: 'flex-start', borderLeft: `3px solid ${PHASE_META.menstruation.color}` } }, [
       el('span', { style: { fontSize: '1.1rem' }, text: '🩸' }),
-      el('div', { class: 'muted', style: { fontSize: '.86rem' }, text: 'Dein Tag – diese Einheit kannst du ohne Wertung verschieben oder auslassen. Trainierst du trotzdem, gibt es ein Extra-Abzeichen 🥊.' }),
+      el('div', { class: 'muted', style: { fontSize: '.86rem' }, text: t('session.protectedDay') }),
     ]));
   } else if (eff === 'ueberfaellig') {
     view.appendChild(el('div', { class: 'card card--flat mt-2 row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('info'), style: { color: '#f5a623', width: '18px', flex: '0 0 auto' } }),
-      el('div', { class: 'muted', style: { fontSize: '.86rem' }, text: 'Diese Einheit liegt in der Vergangenheit. Du kannst sie noch erfassen, verschieben oder als verpasst markieren.' }),
+      el('div', { class: 'muted', style: { fontSize: '.86rem' }, text: t('session.overdue') }),
     ]));
   }
 
   // Zielwerte
   const targets = [];
-  if (unit.targetDistanceKm) targets.push(['Distanz', fmtKm(unit.targetDistanceKm, unit.targetDistanceKm % 1 ? 1 : 0)]);
-  if (unit.targetDurationMin) targets.push(['Dauer', `${unit.targetDurationMin} min`]);
-  if (unit.targetPaceSecPerKm) targets.push(['Zielpace', fmtPaceRange(unit.targetPaceSecPerKm, unit.targetPaceMaxSecPerKm)]);
-  if (unit.targetHrZone) targets.push(['HF-Zone', `Zone ${unit.targetHrZone}`]);
+  if (unit.targetDistanceKm) targets.push([t('session.distance'), fmtKm(unit.targetDistanceKm, unit.targetDistanceKm % 1 ? 1 : 0)]);
+  if (unit.targetDurationMin) targets.push([t('session.duration'), `${unit.targetDurationMin} min`]);
+  if (unit.targetPaceSecPerKm) targets.push([t('session.targetPace'), fmtPaceRange(unit.targetPaceSecPerKm, unit.targetPaceMaxSecPerKm)]);
+  if (unit.targetHrZone) targets.push([t('session.hrZone'), t('session.zone', { zone: unit.targetHrZone })]);
   if (targets.length) {
     view.appendChild(el('div', { class: 'target-grid mt-4' },
       targets.map(([l, v]) => el('div', { class: 'target' }, [el('div', { class: 'target__label', text: l }), el('div', { class: 'target__val', text: v })]))));
   }
 
   if (unit.description) {
-    view.appendChild(sectionHead('Beschreibung'));
+    view.appendChild(sectionHead(t('session.description')));
     view.appendChild(el('div', { class: 'card card--flat', text: unit.description }));
   }
 
@@ -132,17 +138,17 @@ function renderPlanned(view, plan, unit) {
 
   // Nebenaktionen im Fluss …
   view.appendChild(el('div', { class: 'start-cta row gap-2' }, [
-    el('button', { class: 'btn btn--ghost grow', onclick: () => openReschedule(plan, unit) }, [icon('calendar'), 'Verschieben']),
-    el('button', { class: 'btn btn--ghost grow', onclick: () => markMissed(plan, unit) }, [icon('x'), 'Verpasst']),
+    el('button', { class: 'btn btn--ghost grow', onclick: () => openReschedule(plan, unit) }, [icon('calendar'), t('session.reschedule')]),
+    el('button', { class: 'btn btn--ghost grow', onclick: () => markMissed(plan, unit) }, [icon('x'), t('session.markMissed')]),
   ]));
-  view.appendChild(el('a', { class: 'btn btn--block mt-4', href: `#/plan/${plan.eventId}`, style: { background: 'transparent', color: 'var(--text-2)' } }, [icon('calendar'), 'Zum Trainingsplan']));
+  view.appendChild(el('a', { class: 'btn btn--block mt-4', href: `#/plan/${plan.eventId}`, style: { background: 'transparent', color: 'var(--text-2)' } }, [icon('calendar'), t('session.toPlan')]));
 
   // … die Hauptaktionen in einer klebenden Leiste über der Tab-Leiste: „Training starten“
   // lag vorher 1,8 Bildschirme tief hinter Beschreibung und Übungsvorschlägen (UI-09).
   const isRunnable = typeMeta(unit.type).cat !== 'rest';
   view.appendChild(el('div', { class: 'action-bar' }, [
-    isRunnable ? el('button', { class: 'btn btn--primary grow', onclick: () => navigate(`#/workout/${unit.id}`) }, [icon('play'), 'Starten']) : null,
-    el('button', { class: `btn ${isRunnable ? 'btn--soft' : 'btn--primary'} grow`, onclick: () => openLogSheet(plan, unit) }, [icon('check'), 'Erledigt erfassen']),
+    isRunnable ? el('button', { class: 'btn btn--primary grow', onclick: () => navigate(`#/workout/${unit.id}`) }, [icon('play'), t('session.start')]) : null,
+    el('button', { class: `btn ${isRunnable ? 'btn--soft' : 'btn--primary'} grow`, onclick: () => openLogSheet(plan, unit) }, [icon('check'), t('session.logDone')]),
   ]));
 }
 
@@ -155,7 +161,7 @@ function renderUnitExercises(view, plan, unit) {
   const namedIds = new Set(named.map((e) => e.id));
   const linkedIds = Array.isArray(unit.exerciseIds) ? [...unit.exerciseIds] : [];
   const list = el('div', { class: 'col gap-2' });
-  const intro = el('div', { class: 'muted', style: { fontSize: '.82rem', marginBottom: '6px' }, text: `${named.length ? 'Zuerst die Übungen aus dem Plan, dann Vorschläge nach deiner Nutzung. ' : 'Nach deiner Nutzungshäufigkeit sortiert. '}Antippen zeigt die Animation zum Mitmachen; Abgehaktes zählt beim Erledigen der Einheit mit.` });
+  const intro = el('div', { class: 'muted', style: { fontSize: '.82rem', marginBottom: '6px' }, text: named.length ? t('session.exercisesIntroPlan') : t('session.exercisesIntroUsage') });
   // Alle Übungen der Einheit am Stück, mit Musik und Ansagen (workout-show.js).
   const cta = el('div', { class: 'show-cta-slot' });
   const paintCta = () => {
@@ -167,17 +173,17 @@ function renderUnitExercises(view, plan, unit) {
     cta.appendChild(el('button', { class: 'btn btn--primary btn--block show-cta', type: 'button', onclick: async () => {
       const { openShow } = await import('./workout-show.js');
       openShow(current(), { onFinish: ({ durationSec }) => openLogSheet(plan, unit, null, { durationSec }) });
-    } }, [icon('play'), `Durchgehend mitmachen · ≈ ${min} min`]));
+    } }, [icon('play'), t('session.followAlong', { min })]));
   };
   // Bei Läufen sind die Dehn-/Kraftvorschläge Beiwerk: eingeklappt, damit der Weg zum
   // Start kurz bleibt (UI-09). Bei Kraft/Mobility sind sie der Inhalt – offen.
   if (typeMeta(unit.type).cat === 'run') {
     view.appendChild(el('details', { class: 'unit-exercises mt-4' }, [
-      el('summary', { class: 'section-head__title', text: `Übungen für diese Einheit (${pool.length})` }),
+      el('summary', { class: 'section-head__title', text: t('session.unitExercisesCount', { n: pool.length }) }),
       intro, cta, list,
     ]));
   } else {
-    view.appendChild(sectionHead('Übungen für diese Einheit'));
+    view.appendChild(sectionHead(t('session.unitExercises')));
     view.appendChild(intro);
     view.appendChild(cta);
     view.appendChild(list);
@@ -192,11 +198,11 @@ function renderUnitExercises(view, plan, unit) {
         el('span', { style: { flex: '0 0 auto', width: '48px', height: '32px', display: 'inline-flex' }, html: exerciseArt(e.art) }),
         el('button', { class: 'grow', style: { textAlign: 'left', background: 'none', border: '0', padding: '0', font: 'inherit', color: 'inherit', cursor: 'pointer' }, onclick: () => openExercise(e.id) }, [
           el('div', { style: { fontWeight: '600', fontSize: '.9rem' }, text: e.name }),
-          el('div', { class: 'dim', style: { fontSize: '.74rem' }, text: (namedIds.has(e.id) ? 'im Plan · ' : '') + (usage[e.id] ? `${usage[e.id]}× genutzt` : 'neu') + ' · ' + difficultyLabel(e.difficulty) }),
+          el('div', { class: 'dim', style: { fontSize: '.74rem' }, text: (namedIds.has(e.id) ? `${t('session.inPlan')} · ` : '') + (usage[e.id] ? t('session.usedTimes', { n: usage[e.id] }) : t('session.new')) + ' · ' + difficultyLabel(e.difficulty) }),
         ]),
         el('button', {
           class: 'btn ' + (on ? 'btn--primary' : 'btn--ghost'), style: { padding: '4px 12px', flex: '0 0 auto', minWidth: '46px' },
-          title: on ? 'Ausgewählt – tippen zum Entfernen' : 'Zur Einheit hinzufügen',
+          title: on ? t('session.selectedTapToRemove') : t('session.addToUnit'),
           onclick: () => {
             const i = linkedIds.indexOf(e.id);
             if (i >= 0) linkedIds.splice(i, 1); else linkedIds.push(e.id);
@@ -212,11 +218,11 @@ function renderUnitExercises(view, plan, unit) {
 
 /* ------------------------------ Ruhetag --------------------------------- */
 function renderRest(view, unit) {
-  setHeader({ title: 'Ruhetag', subtitle: fmtDate(unit.date), back: true });
+  setHeader({ title: t('sessionTypes.rest.label'), subtitle: fmtDate(unit.date), back: true });
   view.appendChild(el('div', { class: 'empty', style: { paddingTop: '60px' } }, [
     el('div', { class: 'empty__icon', html: iconSvg('moon') }),
-    el('div', { class: 'empty__title', text: 'Ruhetag' }),
-    el('div', { class: 'muted', text: 'Erholung ist Teil des Trainings. Gönn dir Regeneration.' }),
+    el('div', { class: 'empty__title', text: t('sessionTypes.rest.label') }),
+    el('div', { class: 'muted', text: t('session.restText') }),
   ]));
 }
 
@@ -226,9 +232,9 @@ function renderEvaluation(view, plan, unit, ex) {
   const m = typeMeta(type);
   const date = ex?.date || unit?.date;
   setHeader({
-    title: 'Auswertung', subtitle: fmtDate(date), back: true,
+    title: t('session.review'), subtitle: fmtDate(date), back: true,
     // Freie Trainings (ohne Plan) lassen sich komplett bearbeiten – auch Sportart und Datum – und löschen.
-    actions: ex ? [{ icon: 'edit', label: 'Bearbeiten', onClick: () => (unit ? openLogSheet(plan, unit, ex) : openActivitySheet({ existing: ex })) }] : [],
+    actions: ex ? [{ icon: 'edit', label: t('session.edit'), onClick: () => (unit ? openLogSheet(plan, unit, ex) : openActivitySheet({ existing: ex })) }] : [],
   });
 
   view.appendChild(el('div', { class: 'session-hero' }, [
@@ -239,12 +245,12 @@ function renderEvaluation(view, plan, unit, ex) {
       el('div', { class: 'session-hero__date', text: fmtDateLong(date) }),
     ]),
   ]));
-  view.appendChild(el('span', { class: 'session-status session-status--erledigt', text: '✓ Erledigt' }));
+  view.appendChild(el('span', { class: 'session-status session-status--erledigt', text: t('session.doneBadge') }));
 
   if (!ex) {
     view.appendChild(el('div', { class: 'card mt-4' }, [
-      el('p', { class: 'muted mb-4', text: 'Diese Einheit ist als erledigt markiert, es wurden aber keine Messwerte erfasst.' }),
-      el('button', { class: 'btn btn--primary btn--block', onclick: () => openLogSheet(plan, unit) }, [icon('edit'), 'Werte nachtragen']),
+      el('p', { class: 'muted mb-4', text: t('session.noData') }),
+      el('button', { class: 'btn btn--primary btn--block', onclick: () => openLogSheet(plan, unit) }, [icon('edit'), t('session.addData')]),
     ]));
     return;
   }
@@ -252,9 +258,9 @@ function renderEvaluation(view, plan, unit, ex) {
   // Kernzahlen
   view.appendChild(el('div', { class: 'stat-grid mt-4' }, [
     ex.distanceKm != null ? bigStat(fmtKm(ex.distanceKm, 1).replace(' km', ''), 'km') : null,
-    ex.durationSec != null ? bigStat(fmtDuration(ex.durationSec), 'Zeit') : null,
+    ex.durationSec != null ? bigStat(fmtDuration(ex.durationSec), t('session.time')) : null,
     ex.paceSecPerKm != null ? bigStat(fmtPace(ex.paceSecPerKm), 'min/km') : null,
-    ex.avgHr != null ? bigStat(String(ex.avgHr), 'Ø HF') : null,
+    ex.avgHr != null ? bigStat(String(ex.avgHr), t('session.avgHrShort')) : null,
   ].filter(Boolean)));
 
   // Soll-Ist-Vergleich (zweiseitig für Lockeres, ohne Pace-Urteil für Intervalle)
@@ -266,20 +272,20 @@ function renderEvaluation(view, plan, unit, ex) {
       : r.key === 'pace' ? fmtPace(r.real) : `${r.real}`);
     if (cmpRes.rows.length) {
       const hit = cmpRes.hit;
-      const title = hit ? 'Ziel im Wesentlichen erreicht' : cmpRes.tooFast ? 'Zu schnell für eine lockere Einheit' : 'Abweichung vom Soll';
+      const title = hit ? t('session.targetHit') : cmpRes.tooFast ? t('session.tooFastEasy') : t('session.offTarget');
       view.appendChild(el('div', { class: `result-banner ${hit ? 'result-banner--hit' : 'result-banner--miss'} mt-4` }, [
         el('span', { html: iconSvg(hit ? 'check' : 'info'), style: { color: hit ? 'var(--good)' : 'var(--warn)', width: '28px' } }),
         el('div', {}, [
           el('div', { style: { fontWeight: '750' }, text: title }),
-          el('div', { class: 'muted', style: { fontSize: '0.82rem' }, text: 'Soll-Ist-Vergleich der Einheit' }),
+          el('div', { class: 'muted', style: { fontSize: '0.82rem' }, text: t('session.compareSub') }),
         ]),
       ]));
       view.appendChild(el('div', { class: 'card' }, cmpRes.rows.map((r) => el('div', { class: 'compare' }, [
         el('div', { class: 'compare__label', text: r.label }),
-        el('div', { class: 'compare__plan' }, [el('div', { class: 'dim', style: { fontSize: '0.66rem' }, text: 'Soll' }), el('span', { class: 'compare__val', text: fmtPlan(r) })]),
+        el('div', { class: 'compare__plan' }, [el('div', { class: 'dim', style: { fontSize: '0.66rem' }, text: t('session.planned') }), el('span', { class: 'compare__val', text: fmtPlan(r) })]),
         el('span', { class: 'compare__arrow', html: iconSvg('arrowRight') }),
         el('div', { class: 'compare__real', style: { color: r.ok ? 'var(--good)' : 'var(--text)' } }, [
-          el('div', { class: 'dim', style: { fontSize: '0.66rem' }, text: r.verdict ? `Ist · ${r.verdict}` : 'Ist' }),
+          el('div', { class: 'dim', style: { fontSize: '0.66rem' }, text: r.verdict ? `${t('session.actual')} · ${r.verdict}` : t('session.actual') }),
           el('span', { class: 'compare__val', text: fmtReal(r) }),
         ]),
       ]))));
@@ -298,7 +304,7 @@ function renderEvaluation(view, plan, unit, ex) {
   // Splits
   // Kraft: erfasste Sätze je Übung (aus dem Workout-Modus) mit Volumen.
   if (Array.isArray(ex.strengthSets) && ex.strengthSets.length) {
-    view.appendChild(sectionHead('Sätze'));
+    view.appendChild(sectionHead(t('session.sets')));
     const list = el('div', { class: 'list-card' });
     ex.strengthSets.forEach((x) => {
       const e = findExercise(x.exerciseId);
@@ -306,7 +312,7 @@ function renderEvaluation(view, plan, unit, ex) {
       list.appendChild(el('button', { class: 'list-item', type: 'button', style: { width: '100%', textAlign: 'left' }, onclick: () => e && openExercise(e.id) }, [
         el('div', { class: 'list-item__body' }, [
           el('div', { class: 'list-item__title', text: e ? e.name : x.exerciseId }),
-          el('div', { class: 'list-item__sub', style: { whiteSpace: 'normal' }, text: `${x.sets.map(fmtSet).join(' · ')}${vol ? ` · ${vol.toLocaleString('de-DE')} kg bewegt` : ''}` }),
+          el('div', { class: 'list-item__sub', style: { whiteSpace: 'normal' }, text: `${x.sets.map(fmtSet).join(' · ')}${vol ? ` · ${t('session.volumeMoved', { kg: fmtInt(vol) })}` : ''}` }),
         ]),
       ]));
     });
@@ -314,35 +320,35 @@ function renderEvaluation(view, plan, unit, ex) {
   }
   // Strecke aus der Datei – als Linie ohne Kartendienst, dazu das Höhenprofil.
   if (ex.route && ex.route.poly) {
-    view.appendChild(sectionHead('Strecke'));
+    view.appendChild(sectionHead(t('session.route')));
     view.appendChild(el('div', { class: 'card' }, [
       routeMap(ex.route, { distanceKm: ex.distanceKm, ascentM: ex.ascentM, decode: decodePolyline }),
-      el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: `${ex.ascentM ? `${ex.ascentM} Höhenmeter bergauf · ` : ''}Ohne Karte gezeichnet – die Strecke bleibt auf deinem Server.` }),
+      el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: `${ex.ascentM ? `${t('session.ascent', { m: ex.ascentM })} · ` : ''}${t('session.routeNoMap')}` }),
     ]));
   }
   if (ex.splits && ex.splits.length) view.appendChild(splitsCard(ex.splits));
 
   // Belastung, RPE & Gefühl – die Belastungspunkte immer mit ihrer Herleitung, damit
   // sichtbar ist, wenn die Dauer geschätzt wurde (geplant, aus der Strecke, Pauschale).
-  view.appendChild(sectionHead('Belastung & Gefühl'));
+  view.appendChild(sectionHead(t('session.loadFeeling')));
   const f = FEELINGS.find((x) => x.key === ex.feeling);
   const lm = loadMinutes(ex);
   const rpeInfo = sessionRpeInfo(ex);
-  const loadSrc = { erfasst: '', strecke: ' · Dauer aus der Strecke geschätzt', geplant: ' · Dauer aus der Planung übernommen', pauschal: ' · ohne Dauer mit 30 Minuten angesetzt' }[lm.source];
+  const loadSrc = { erfasst: '', strecke: ` · ${t('session.loadSrcRoute')}`, geplant: ` · ${t('session.loadSrcPlanned')}`, pauschal: ` · ${t('session.loadSrcFlat')}` }[lm.source];
   view.appendChild(el('div', { class: 'card' }, [
     el('div', { class: 'row row--between' }, [
-      el('div', {}, [el('div', { class: 'dim', style: { fontSize: '0.72rem' }, text: 'Belastungspunkte' }), el('div', { class: 'num', style: { fontSize: '1.4rem', fontWeight: '800' }, text: fmtInt(sessionLoad(ex)) })]),
+      el('div', {}, [el('div', { class: 'dim', style: { fontSize: '0.72rem' }, text: t('session.loadPoints') }), el('div', { class: 'num', style: { fontSize: '1.4rem', fontWeight: '800' }, text: fmtInt(sessionLoad(ex)) })]),
       ex.rpe ? el('div', {}, [el('div', { class: 'dim', style: { fontSize: '0.72rem' }, text: 'RPE (1–10)' }), el('div', { class: 'num', style: { fontSize: '1.4rem', fontWeight: '800' }, text: String(ex.rpe) })]) : null,
       f ? el('div', { style: { textAlign: 'right' } }, [el('div', { style: { fontSize: '1.8rem' }, text: f.emoji }), el('div', { class: 'dim', style: { fontSize: '0.72rem' }, text: f.label })]) : null,
     ]),
-    el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: `${Math.round(lm.min)} min × Anstrengung ${fmtDec(Math.round(rpeInfo.rpe * 10) / 10)}${RPE_SOURCE_TEXT[rpeInfo.source]}${loadSrc}` }),
+    el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: `${t('session.loadFormula', { min: Math.round(lm.min), rpe: fmtDec(Math.round(rpeInfo.rpe * 10) / 10) })}${RPE_SOURCE_TEXT[rpeInfo.source]}${loadSrc}` }),
   ]));
 
-  if (ex.notes) { view.appendChild(sectionHead('Notizen')); view.appendChild(el('div', { class: 'card card--flat', text: ex.notes })); }
+  if (ex.notes) { view.appendChild(sectionHead(t('session.notes'))); view.appendChild(el('div', { class: 'card card--flat', text: ex.notes })); }
 
   // Körperwerte schnell erfassen
-  view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-6', onclick: () => openHealthEntry({ date }) }, [icon('heart'), 'Körperwerte erfassen']));
-  if (unit) view.appendChild(el('a', { class: 'btn btn--block mt-2', href: `#/plan/${plan.eventId}`, style: { background: 'transparent', color: 'var(--text-2)' }, text: 'Zum Trainingsplan' }));
+  view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-6', onclick: () => openHealthEntry({ date }) }, [icon('heart'), t('session.logBody')]));
+  if (unit) view.appendChild(el('a', { class: 'btn btn--block mt-2', href: `#/plan/${plan.eventId}`, style: { background: 'transparent', color: 'var(--text-2)' }, text: t('session.toPlan') }));
 }
 
 /* ------------------------------ Erfassen -------------------------------- */
@@ -356,9 +362,9 @@ function openLogSheet(plan, unit, existing = null, prefill = null) {
   const plannedMin = !existing && Number(unit?.targetDurationMin) > 0 ? Number(unit.targetDurationMin) : '';
   const dur = durationFields({ min: ex.durationSec ? Math.floor(ex.durationSec / 60) : pre ? Math.floor(pre / 60) : plannedMin, sec: ex.durationSec ? ex.durationSec % 60 : pre ? pre % 60 : '' });
   const { minI, secI } = dur;
-  const avgI = input({ type: 'number', min: '30', max: '230', inputmode: 'numeric', value: ex.avgHr ?? '', placeholder: 'Ø HF' });
-  const maxI = input({ type: 'number', min: '30', max: '230', inputmode: 'numeric', value: ex.maxHr ?? '', placeholder: 'max HF' });
-  const notesI = textarea({ value: ex.notes ?? '', placeholder: 'Wie lief es?' });
+  const avgI = input({ type: 'number', min: '30', max: '230', inputmode: 'numeric', value: ex.avgHr ?? '', placeholder: t('session.avgHrShort') });
+  const maxI = input({ type: 'number', min: '30', max: '230', inputmode: 'numeric', value: ex.maxHr ?? '', placeholder: t('session.maxHrPlaceholder') });
+  const notesI = textarea({ value: ex.notes ?? '', placeholder: t('session.howDidItGo') });
 
   let rpe = ex.rpe || 0;
   const rpeEl = rpeScale(rpe, (v) => { rpe = v; });
@@ -371,21 +377,21 @@ function openLogSheet(plan, unit, existing = null, prefill = null) {
   const isRun = cat === 'run';
   const showHr = isRun || cat === 'cross';
   const rows = [];
-  if (isRun) rows.push(field('Distanz (km)', distI));
-  rows.push(field('Dauer', dur.node));
-  if (showHr) rows.push(el('div', { class: 'field__row' }, [field('Ø Herzfrequenz', avgI), field('Max HF', maxI)]));
-  rows.push(field('Anstrengung (RPE)', rpeEl));
-  rows.push(field('Gefühl', feelRow));
-  rows.push(field('Notizen', notesI));
+  if (isRun) rows.push(field(t('session.distanceKm'), distI));
+  rows.push(field(t('session.duration'), dur.node));
+  if (showHr) rows.push(el('div', { class: 'field__row' }, [field(t('session.avgHr'), avgI), field(t('session.maxHr'), maxI)]));
+  rows.push(field(t('session.effortRpe'), rpeEl));
+  rows.push(field(t('session.feeling'), feelRow));
+  rows.push(field(t('session.notes'), notesI));
   const body = el('div', {}, rows);
 
   openSheet({
-    title: 'Einheit erfassen',
+    title: t('session.logUnit'),
     body,
     footer: [
-      el('button', { class: 'btn btn--ghost grow', text: 'Abbrechen', onclick: () => closeSheet() }),
+      el('button', { class: 'btn btn--ghost grow', text: t('common.cancel'), onclick: () => closeSheet() }),
       el('button', {
-        class: 'btn btn--primary grow', text: 'Speichern',
+        class: 'btn btn--primary grow', text: t('session.save'),
         onclick: () => {
           // Plausibel halten: keine negativen Werte, Sekunden 0–59, HF 30–230.
           const dist = isRun ? (Math.max(0, parseFloat(String(distI.value).replace(',', '.'))) || null) : null;
@@ -404,7 +410,7 @@ function openLogSheet(plan, unit, existing = null, prefill = null) {
             completeUnit(plan, unit, data);
           }
           closeSheet();
-          toast('Gespeichert', 'good');
+          toast(t('session.saved'), 'good');
           refreshView();
         },
       }),
@@ -435,17 +441,17 @@ export function openActivitySheet({ date = todayStr(), existing = null } = {}) {
   let type = ex.type || 'easy';
   const typeSel = select(ACTIVITY_TYPES, type);
   const dateI = input({ type: 'date', value: ex.date || date });
-  const titleI = input({ value: ex.title || '', placeholder: 'optional, z. B. Feierabendrunde' });
+  const titleI = input({ value: ex.title || '', placeholder: t('session.titlePlaceholder') });
   const distI = input({ type: 'number', step: '0.1', min: '0', inputmode: 'decimal', value: ex.distanceKm ?? '', placeholder: 'km' });
   const dur = durationFields({ min: ex.durationSec ? Math.floor(ex.durationSec / 60) : '', sec: ex.durationSec ? ex.durationSec % 60 : '' });
   const { minI, secI } = dur;
-  const avgI = input({ type: 'number', min: '30', max: '230', inputmode: 'numeric', value: ex.avgHr ?? '', placeholder: 'Ø HF' });
-  const notesI = textarea({ value: ex.notes ?? '', placeholder: 'Wie lief es?' });
+  const avgI = input({ type: 'number', min: '30', max: '230', inputmode: 'numeric', value: ex.avgHr ?? '', placeholder: t('session.avgHrShort') });
+  const notesI = textarea({ value: ex.notes ?? '', placeholder: t('session.howDidItGo') });
 
   let rpe = ex.rpe || 0;
   const rpeEl = rpeScale(rpe, (v) => { rpe = v; });
 
-  const distField = field('Distanz (km)', distI);
+  const distField = field(t('session.distanceKm'), distI);
   const matchBox = el('div', {});
   let linkTo = null;
   let linkOn = true;
@@ -458,7 +464,7 @@ export function openActivitySheet({ date = todayStr(), existing = null } = {}) {
       const cb = el('input', { type: 'checkbox', checked: linkOn, onchange: (e) => { linkOn = e.target.checked; } });
       matchBox.appendChild(el('label', { class: 'card card--flat row gap-2 mt-2', style: { alignItems: 'center', cursor: 'pointer' } }, [
         cb,
-        el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: `Der geplanten Einheit „${linkTo.unit.title}“ zuordnen – sie gilt dann als erledigt.` }),
+        el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: t('session.linkToPlanned', { title: linkTo.unit.title }) }),
       ]));
     }
   };
@@ -467,10 +473,10 @@ export function openActivitySheet({ date = todayStr(), existing = null } = {}) {
   refresh();
 
   const save = () => {
-    if (!dateI.value) { toast('Bitte ein Datum wählen', 'bad'); return; }
+    if (!dateI.value) { toast(t('session.pickDate'), 'bad'); return; }
     const km = distField.hidden ? null : (Math.max(0, parseFloat(String(distI.value).replace(',', '.'))) || null);
     const durationSec = (Math.max(0, parseInt(minI.value || 0, 10) || 0) * 60 + Math.max(0, Math.min(59, parseInt(secI.value || 0, 10) || 0))) || null;
-    if (!durationSec && !km) { toast('Bitte Dauer oder Distanz angeben', 'bad'); return; }
+    if (!durationSec && !km) { toast(t('session.needDurationOrDistance'), 'bad'); return; }
     const hr = parseInt(avgI.value, 10);
     const data = {
       distanceKm: km, durationSec,
@@ -490,33 +496,33 @@ export function openActivitySheet({ date = todayStr(), existing = null } = {}) {
       });
     }
     closeSheet();
-    toast(existing ? 'Gespeichert' : 'Training erfasst', 'good');
+    toast(existing ? t('session.saved') : t('session.trainingLogged'), 'good');
     refreshView();
   };
 
   openSheet({
-    title: existing ? 'Training bearbeiten' : 'Training erfassen',
+    title: existing ? t('session.editTraining') : t('session.logTraining'),
     body: el('div', {}, [
-      el('div', { class: 'field__row' }, [field('Sportart', typeSel), field('Datum', dateI)]),
-      field('Titel', titleI),
+      el('div', { class: 'field__row' }, [field(t('session.sport'), typeSel), field(t('session.date'), dateI)]),
+      field(t('session.titleLabel'), titleI),
       el('div', { class: 'field__row' }, [
-        field('Dauer', dur.node),
+        field(t('session.duration'), dur.node),
         distField,
       ]),
-      field('Ø Herzfrequenz', avgI),
-      field('Anstrengung (RPE)', rpeEl),
-      field('Notizen', notesI),
+      field(t('session.avgHr'), avgI),
+      field(t('session.effortRpe'), rpeEl),
+      field(t('session.notes'), notesI),
       matchBox,
     ]),
     footer: [
-      existing ? el('button', { class: 'btn btn--danger', 'aria-label': 'Löschen', onclick: async () => {
-        if (await confirmDialog({ title: 'Training löschen?', message: existing.title || typeMeta(existing.type).label, confirmLabel: 'Löschen', danger: true })) {
+      existing ? el('button', { class: 'btn btn--danger', 'aria-label': t('session.delete'), onclick: async () => {
+        if (await confirmDialog({ title: t('session.deleteTraining'), message: existing.title || typeMeta(existing.type).label, confirmLabel: t('session.delete'), danger: true })) {
           store.remove('sessions', existing.id);
-          closeSheet(); toast('Gelöscht'); goOrRefresh('#/calendar');
+          closeSheet(); toast(t('session.deleted')); goOrRefresh('#/calendar');
         }
       } }, icon('trash')) : null,
-      el('button', { class: 'btn btn--ghost grow', text: 'Abbrechen', onclick: () => closeSheet() }),
-      el('button', { class: 'btn btn--primary grow', text: 'Speichern', onclick: save }),
+      el('button', { class: 'btn btn--ghost grow', text: t('common.cancel'), onclick: () => closeSheet() }),
+      el('button', { class: 'btn btn--primary grow', text: t('session.save'), onclick: save }),
     ],
   });
 }
@@ -531,18 +537,18 @@ export function openReschedule(plan, unit) {
     const units = (store.find('plans', plan.id) || {}).units || [];
     const { sameDay, hardNeighbor } = rescheduleCheck(units, unit.id, dateI.value);
     const hints = [];
-    if (sameDay) hints.push(`An diesem Tag liegt bereits „${sameDay.title}“ – dann sind es zwei Einheiten am selben Tag.`);
-    if (hardNeighbor) hints.push(`${hardNeighbor.dir === 'prev' ? 'Am Vortag' : 'Am Folgetag'} liegt „${hardNeighbor.unit.title}“ (fordernd) – plane einen lockeren Tag oder Erholung ein.`);
-    hints.forEach((t) => warnBox.appendChild(el('div', { class: 'card card--flat row gap-2 mt-2', style: { alignItems: 'flex-start' } }, [
+    if (sameDay) hints.push(t('session.sameDayHint', { title: sameDay.title }));
+    if (hardNeighbor) hints.push(hardNeighbor.dir === 'prev' ? t('session.hardBefore', { title: hardNeighbor.unit.title }) : t('session.hardAfter', { title: hardNeighbor.unit.title }));
+    hints.forEach((hint) => warnBox.appendChild(el('div', { class: 'card card--flat row gap-2 mt-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('info'), style: { color: 'var(--warn-text)', width: '18px', flex: '0 0 auto' } }),
-      el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t }),
+      el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: hint }),
     ])));
     // What-if (R3): Auswirkung auf die Zielwoche vor dem Verschieben.
     // Auch bei gleicher Wochenlast zeigen, wenn ein neuer harter Folgetag entsteht.
     const mv = simulateMove(units, unit.id, dateI.value);
     if (mv && mv.target && (mv.target.deltaLoad !== 0 || mv.target.level !== 'ok')) warnBox.appendChild(el('div', { class: 'card card--flat row gap-2 mt-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('activity'), style: { color: mv.target.level === 'hoch' ? 'var(--warn)' : 'var(--accent)', width: '18px', flex: '0 0 auto' } }),
-      el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: 'Auswirkung: ' + impactText(mv.target) }),
+      el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('session.impact', { text: impactText(mv.target) }) }),
     ]));
   };
   dateI.addEventListener('change', refresh);
@@ -551,24 +557,24 @@ export function openReschedule(plan, unit) {
   const planUnits = (store.find('plans', plan.id) || {}).units || [];
   const free = nextFreeDay(planUnits, unit.id, addDays(today, 1));
   const quick = [
-    { label: 'Morgen', date: addDays(today, 1) },
-    { label: 'Übermorgen', date: addDays(today, 2) },
-    free ? { label: `Nächster freier Tag (${fmtWeekday(free)})`, date: free } : null,
+    { label: t('session.tomorrow'), date: addDays(today, 1) },
+    { label: t('session.dayAfterTomorrow'), date: addDays(today, 2) },
+    free ? { label: t('session.nextFreeDay', { day: fmtWeekday(free) }), date: free } : null,
   ].filter((q) => q && q.date !== unit.date);
-  const chips = el('div', { class: 'row wrap gap-2 mb-3', role: 'group', 'aria-label': 'Schnellwahl' }, quick.map((q) => el('button', {
+  const chips = el('div', { class: 'row wrap gap-2 mb-3', role: 'group', 'aria-label': t('session.quickPick') }, quick.map((q) => el('button', {
     class: 'chip chip--accent chip--btn', type: 'button', text: q.label,
     onclick: () => { dateI.value = q.date; refresh(); },
   })));
   openSheet({
-    title: 'Einheit verschieben',
-    body: el('div', {}, [chips, field('Neues Datum', dateI), warnBox]),
+    title: t('session.rescheduleTitle'),
+    body: el('div', {}, [chips, field(t('session.newDate'), dateI), warnBox]),
     footer: [
-      el('button', { class: 'btn btn--ghost grow', text: 'Abbrechen', onclick: () => closeSheet() }),
+      el('button', { class: 'btn btn--ghost grow', text: t('common.cancel'), onclick: () => closeSheet() }),
       // WICHTIG: Der Status bleibt „geplant“ – die Einheit findet ja statt, nur an
       // einem anderen Tag. Die Verschiebung merkt sich `movedFrom` (Anzeige-Chip).
       // Ein Status „verschoben“ würde die Einheit aus Wochenlast, Ziel-Triage,
       // What-if und Erholungsvorschlägen herausfallen lassen.
-      el('button', { class: 'btn btn--primary grow', text: 'Verschieben', onclick: () => { saveUnitPatch(plan.id, unit.id, { date: dateI.value, dow: isoDow(dateI.value), status: unit.status === 'erledigt' ? 'erledigt' : 'geplant', movedFrom: unit.movedFrom || unit.date }); closeSheet(); toast('Verschoben', 'good'); refreshView(); } }),
+      el('button', { class: 'btn btn--primary grow', text: t('session.reschedule'), onclick: () => { saveUnitPatch(plan.id, unit.id, { date: dateI.value, dow: isoDow(dateI.value), status: unit.status === 'erledigt' ? 'erledigt' : 'geplant', movedFrom: unit.movedFrom || unit.date }); closeSheet(); toast(t('session.rescheduled'), 'good'); refreshView(); } }),
     ],
   });
 }
@@ -580,14 +586,14 @@ function markMissed(plan, unit) {
     onclick: () => {
       saveUnitPatch(plan.id, unit.id, { status: 'verpasst', missedReason: r.key });
       closeSheet();
-      toast('Als verpasst markiert');
+      toast(t('session.markedMissed'));
       navigate(`#/plan/${plan.eventId}`);
     },
   }, [el('span', { style: { fontSize: '1.2rem' }, text: r.emoji }), r.label])));
   openSheet({
-    title: 'Warum verpasst?',
+    title: t('session.whyMissed'),
     body: el('div', {}, [
-      el('p', { class: 'muted mb-3', style: { fontSize: '.84rem' }, text: `„${unit.title}“ – der Grund hilft später, Überlastung zu erkennen.` }),
+      el('p', { class: 'muted mb-3', style: { fontSize: '.84rem' }, text: t('session.missedHint', { title: unit.title }) }),
       list,
     ]),
   });
@@ -625,19 +631,19 @@ function unitFormSheet(plan, unit, isNew) {
   const dateI = input({ type: 'date', value: unit.date });
   const distI = input({ type: 'number', step: '0.1', inputmode: 'decimal', value: unit.targetDistanceKm ?? '', placeholder: 'km' });
   const durI = input({ type: 'number', inputmode: 'numeric', value: unit.targetDurationMin ?? '', placeholder: 'min' });
-  const paceI = input({ value: unit.targetPaceSecPerKm ? fmtPace(unit.targetPaceSecPerKm) : '', placeholder: 'min:sek, z. B. 5:30' });
-  const hrSel = select([{ value: '', label: '– keine –' }, ...[1, 2, 3, 4, 5].map((z) => ({ value: String(z), label: `Zone ${z}` }))], unit.targetHrZone ? String(unit.targetHrZone) : '');
+  const paceI = input({ value: unit.targetPaceSecPerKm ? fmtPace(unit.targetPaceSecPerKm) : '', placeholder: t('session.pacePlaceholder') });
+  const hrSel = select([{ value: '', label: t('session.noneOption') }, ...[1, 2, 3, 4, 5].map((z) => ({ value: String(z), label: t('session.zone', { zone: z }) }))], unit.targetHrZone ? String(unit.targetHrZone) : '');
   const descI = textarea({ value: unit.description ?? '' });
 
   const iv = unit.intervals || {};
-  const roundsI = input({ type: 'number', inputmode: 'numeric', value: iv.rounds ?? '', placeholder: 'z. B. 6' });
-  const workI = input({ type: 'number', inputmode: 'numeric', value: iv.workSec ? Math.round(iv.workSec) : '', placeholder: 'Sek' });
-  const restI = input({ type: 'number', inputmode: 'numeric', value: iv.restSec ? Math.round(iv.restSec) : '', placeholder: 'Sek' });
+  const roundsI = input({ type: 'number', inputmode: 'numeric', value: iv.rounds ?? '', placeholder: t('session.roundsPlaceholder') });
+  const workI = input({ type: 'number', inputmode: 'numeric', value: iv.workSec ? Math.round(iv.workSec) : '', placeholder: t('session.secShort') });
+  const restI = input({ type: 'number', inputmode: 'numeric', value: iv.restSec ? Math.round(iv.restSec) : '', placeholder: t('session.secShort') });
   const intervalBox = el('div', { class: 'card card--flat', hidden: !['interval', 'tempo'].includes(type) }, [
-    el('div', { class: 'field__label', text: 'Intervallstruktur (steuert den Workout-Modus)' }),
-    el('div', { class: 'field__row' }, [field('Runden', roundsI), field('Belastung (s)', workI), field('Pause (s)', restI)]),
+    el('div', { class: 'field__label', text: t('session.intervalStructure') }),
+    el('div', { class: 'field__row' }, [field(t('session.rounds'), roundsI), field(t('session.workSec'), workI), field(t('session.restSec'), restI)]),
   ]);
-  const drinkI = input({ type: 'number', inputmode: 'numeric', value: unit.drinkIntervalMin ?? '', placeholder: 'min · leer = automatisch, 0 = aus' });
+  const drinkI = input({ type: 'number', inputmode: 'numeric', value: unit.drinkIntervalMin ?? '', placeholder: t('session.drinkPlaceholder') });
 
   // What-if (R3): Live-Vorschau der Wochen-Auswirkung beim Anlegen.
   const whatIfBox = el('div', {});
@@ -649,7 +655,7 @@ function unitFormSheet(plan, unit, isNew) {
     if (!sim) return;
     whatIfBox.appendChild(el('div', { class: 'card card--flat row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('activity'), style: { color: sim.level === 'hoch' ? 'var(--warn)' : 'var(--accent)', width: '18px', flex: '0 0 auto' } }),
-      el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: 'Auswirkung: ' + impactText(sim) }),
+      el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('session.impact', { text: impactText(sim) }) }),
     ]));
   };
   dateI.addEventListener('change', refreshWhatIf);
@@ -693,36 +699,36 @@ function unitFormSheet(plan, unit, isNew) {
       // Wochenbelastung konstant halten: ähnliche Einheit als Ausgleich anbieten (#2)
       const offset = suggestOffsetUnit(units, newUnit);
       if (offset) { offerOffset(plan, newUnit, offset); return; }
-      toast('Einheit hinzugefügt', 'good'); refreshView();
+      toast(t('session.unitAdded'), 'good'); refreshView();
     } else {
       saveUnitPatch(plan.id, unit.id, fields);
-      closeSheet(); toast('Gespeichert', 'good'); refreshView();
+      closeSheet(); toast(t('session.saved'), 'good'); refreshView();
     }
   };
 
   if (isNew) refreshWhatIf();
   openSheet({
-    title: isNew ? 'Einheit hinzufügen' : 'Einheit bearbeiten',
+    title: isNew ? t('session.addUnit') : t('session.editUnit'),
     body: el('div', {}, [
-      el('div', { class: 'field__row' }, [field('Art', typeSel), field('Datum', dateI)]),
-      field('Titel', titleI),
-      el('div', { class: 'field__row' }, [field('Distanz (km)', distI), field('Dauer (min)', durI)]),
-      el('div', { class: 'field__row' }, [field('Zielpace (min/km)', paceI), field('HF-Zone', hrSel)]),
+      el('div', { class: 'field__row' }, [field(t('session.type'), typeSel), field(t('session.date'), dateI)]),
+      field(t('session.titleLabel'), titleI),
+      el('div', { class: 'field__row' }, [field(t('session.distanceKm'), distI), field(t('session.durationMin'), durI)]),
+      el('div', { class: 'field__row' }, [field(t('session.targetPaceMinKm'), paceI), field(t('session.hrZone'), hrSel)]),
       intervalBox,
-      field('Trinkpause alle (min)', drinkI),
-      field('Beschreibung', descI),
+      field(t('session.drinkEvery'), drinkI),
+      field(t('session.description'), descI),
       isNew ? whatIfBox : null,
     ]),
     footer: [
-      !isNew ? el('button', { class: 'btn btn--danger', 'aria-label': 'Löschen', onclick: async () => {
-        if (await confirmDialog({ title: 'Einheit löschen?', message: unit.title, confirmLabel: 'Löschen', danger: true })) {
+      !isNew ? el('button', { class: 'btn btn--danger', 'aria-label': t('session.delete'), onclick: async () => {
+        if (await confirmDialog({ title: t('session.deleteUnit'), message: unit.title, confirmLabel: t('session.delete'), danger: true })) {
           const cur = store.find('plans', plan.id);
           store.patch('plans', plan.id, { units: (cur.units || []).filter((u) => u.id !== unit.id) });
-          closeSheet(); toast('Gelöscht'); goOrRefresh(`#/plan/${plan.eventId}`);
+          closeSheet(); toast(t('session.deleted')); goOrRefresh(`#/plan/${plan.eventId}`);
         }
       } }, icon('trash')) : null,
-      el('button', { class: 'btn btn--ghost grow', text: 'Abbrechen', onclick: () => closeSheet() }),
-      el('button', { class: 'btn btn--primary grow', text: 'Speichern', onclick: save }),
+      el('button', { class: 'btn btn--ghost grow', text: t('common.cancel'), onclick: () => closeSheet() }),
+      el('button', { class: 'btn btn--primary grow', text: t('session.save'), onclick: save }),
     ],
   });
 }
@@ -732,24 +738,24 @@ function offerOffset(plan, newUnit, offset) {
   const load = weekLoad((store.find('plans', plan.id).units) || [], newUnit.date);
   const reload = () => { closeSheet(); refreshView(); };
   openSheet({
-    title: 'Wochenbelastung ausgleichen?',
+    title: t('session.balanceTitle'),
     body: el('div', {}, [
-      el('p', { class: 'muted', style: { fontSize: '.88rem' }, text: `Du hast „${newUnit.title}“ am ${fmtDate(newUnit.date)} eingeplant. Diese Woche umfasst damit ${load.count} Einheiten${load.km ? ` (${load.km} km)` : ''}.` }),
-      el('p', { class: 'mt-2', style: { fontSize: '.88rem' }, text: 'Damit die Belastung ähnlich bleibt, kannst du eine vergleichbare Einheit aus dem Plan nehmen:' }),
+      el('p', { class: 'muted', style: { fontSize: '.88rem' }, text: `${t('session.offsetPlanned', { title: newUnit.title, date: fmtDate(newUnit.date) })} ${load.km ? tp('session.offsetWeekKm', load.count, { km: load.km }) : tp('session.offsetWeek', load.count)}` }),
+      el('p', { class: 'mt-2', style: { fontSize: '.88rem' }, text: t('session.balanceText') }),
       el('div', { class: 'card card--flat mt-2' }, [
         el('div', { class: 'card__title', text: offset.title }),
         el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: `${fmtDate(offset.date)}${offset.targetDistanceKm ? ' · ' + fmtKm(offset.targetDistanceKm) : ''}` }),
       ]),
-      el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: 'Nur ein Vorschlag – du entscheidest. „Beide behalten“ lässt alles wie es ist.' }),
+      el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: t('session.balanceNote') }),
     ]),
     footer: [
-      el('button', { class: 'btn btn--ghost grow', text: 'Beide behalten', onclick: reload }),
+      el('button', { class: 'btn btn--ghost grow', text: t('session.keepBoth'), onclick: reload }),
       el('button', {
-        class: 'btn btn--primary grow', text: 'Aus Plan nehmen',
+        class: 'btn btn--primary grow', text: t('session.removeFromPlan'),
         onclick: () => {
           const cur = store.find('plans', plan.id);
           store.patch('plans', plan.id, { units: (cur.units || []).filter((u) => u.id !== offset.id) });
-          toast('Ausgeglichen – ähnliche Einheit entfernt', 'good'); reload();
+          toast(t('session.balanced'), 'good'); reload();
         },
       }),
     ],
@@ -774,18 +780,18 @@ function zonesCard(tiz) {
     bar.appendChild(el('span', { style: { width: `${(sec / total) * 100}%`, background: color } }));
     legend.appendChild(el('span', { class: 'zones-legend__item' }, [el('span', { class: 'zones-legend__sw', style: { background: color } }), `Z${z} · ${fmtDuration(sec)}`]));
   });
-  const wrap = el('div', {}, [sectionHead('Zeit in Herzfrequenz-Zonen'), el('div', { class: 'card' }, [bar, legend])]);
+  const wrap = el('div', {}, [sectionHead(t('session.timeInZones')), el('div', { class: 'card' }, [bar, legend])]);
   return wrap;
 }
 
 function splitsCard(splits) {
   const tbl = el('table', { class: 'splits' }, [
-    el('thead', {}, el('tr', {}, [el('th', { text: 'km' }), el('th', { text: 'Pace' }), el('th', { text: '', style: 'width:45%' })])),
+    el('thead', {}, el('tr', {}, [el('th', { text: 'km' }), el('th', { text: t('session.pace') }), el('th', { text: '', style: 'width:45%' })])),
     el('tbody', {}, splits.map((s) => el('tr', {}, [
       el('td', { text: String(s.km) }),
       el('td', { text: fmtPace(s.sec) }),
       el('td', {}, el('div', { class: 'splits__bar' }, el('i', { style: { width: `${splitBarPct(s.sec, splits)}%` } }))),
     ]))),
   ]);
-  return el('div', {}, [sectionHead('Splits'), el('div', { class: 'card', title: 'Balken: ±30 s um deinen mittleren Kilometer' }, tbl)]);
+  return el('div', {}, [sectionHead(t('session.splits')), el('div', { class: 'card', title: t('session.splitsBarHint') }, tbl)]);
 }

@@ -18,9 +18,15 @@ const PLURAL = ['zero', 'one', 'two', 'few', 'many', 'other'];
 const TRANSLATED_MODULES = [
   'js/i18n.js', 'js/format.js', 'js/language.js',
   'js/ui.js', 'js/nav.js', 'js/app.js', 'js/login.js', 'js/api-client.js', 'js/session-gate.js', 'js/router.js',
+  'js/calendar.js', 'js/coach.js', 'js/triage.js', 'js/whatif.js', 'js/workout-mode.js', 'js/workout-engine.js',
+  'js/events.js', 'js/session.js', 'js/unit-actions.js', 'js/capture.js', 'js/plans.js', 'js/commitments.js',
+  'js/rolling.js', 'js/dualgoal.js', 'js/vdot.js', 'js/exercises.js',
 ];
+/** Internal values (compared in code, never shown) that happen to be German words. */
+const INTERNAL_VALUES = ["'erhöht'"];
 /** Key prefixes the code builds at run time (e.g. `format.${x}`); listed here so they count as used. */
-const DYNAMIC_PREFIXES = ['format.', 'sessionTypes.', 'feelings.', 'priorities.', 'status.', 'rpe.'];
+const DYNAMIC_PREFIXES = ['format.', 'sessionTypes.', 'feelings.', 'priorities.', 'status.', 'rpe.',
+  'exerciseNames.', 'exerciseAliases.', 'exerciseLib.level.', 'exercises.'];
 /** Languages that must have every key. The others fall back to English until their
     translation pass (package P3); before the v4.0.0 release this list holds all languages. */
 const COMPLETE_LANGUAGES = ['en', 'de'];
@@ -143,7 +149,7 @@ test('translated modules contain no hard-coded German text', () => {
   for (const file of TRANSLATED_MODULES) {
     const code = read(file).replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"`])\/\/.*$/gm, '$1');
     const literals = [...code.matchAll(/'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"|`(?:[^`\\]|\\.)*`/g)].map((m) => m[0]);
-    const german = literals.filter((s) => /[äöüÄÖÜß]/.test(s));
+    const german = literals.filter((s) => /[äöüÄÖÜß]/.test(s) && !INTERNAL_VALUES.includes(s));
     assert.deepEqual(german, [], `${file}: German text belongs in locales/de`);
   }
 });

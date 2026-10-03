@@ -24,6 +24,8 @@ import { cleanSet, fmtSet, lastSetsFor, progressionHint, toStrengthSets } from '
 import { tone, unlockAudio } from './audio.js';
 import { programForUnit, buildShow } from './show-program.js';
 
+import { t } from './i18n.js';
+
 let current = null;
 
 function teardown() { if (current) { current.cleanup(); current = null; } }
@@ -43,12 +45,12 @@ async function requestWake() { try { if ('wakeLock' in navigator) wakeLock = awa
 function releaseWake() { try { wakeLock && wakeLock.release(); } catch { /* egal */ } wakeLock = null; }
 
 /** Zielvorgabe als kurzer Text („Ziel 4:11–4:21 min/km · Zone 5“). */
-function targetText(t) {
-  if (!t) return '';
+function targetText(target) {
+  if (!target) return '';
   const parts = [];
-  if (t.pace) parts.push(fmtPaceRange(t.pace[0], t.pace[1]));
-  if (t.hrZone) parts.push(`Zone ${t.hrZone}`);
-  return parts.length ? `Ziel ${parts.join(' · ')}` : '';
+  if (target.pace) parts.push(fmtPaceRange(target.pace[0], target.pace[1]));
+  if (target.hrZone) parts.push(t('workoutMode.zone', { zone: target.hrZone }));
+  return parts.length ? t('workoutMode.target', { target: parts.join(' · ') }) : '';
 }
 
 /* ================================ Render ================================ */
@@ -87,24 +89,24 @@ export function render(view, id) {
   const controls = el('div', { class: 'workout__controls' });
   const hint = el('div', { class: 'workout__hint' });
   const hints = [];
-  if (st.drinkInterval) hints.push(`💧 Trink-Erinnerung alle ${Math.round(st.drinkInterval / 60)} min`);
+  if (st.drinkInterval) hints.push(t('workoutMode.drinkReminder', { min: Math.round(st.drinkInterval / 60) }));
   if (st.phases || st.drinkInterval) {
     // Ehrlich zu den Grenzen des Browsers (vor allem auf dem iPhone).
-    hints.push('Bildschirm nicht sperren – bei gesperrtem Bildschirm pausieren die Signale; die Zeit läuft trotzdem richtig weiter.');
-    if (!('vibrate' in navigator)) hints.push('Dein Gerät vibriert hier nicht – die Signale kommen als Ton (auf dem iPhone nur mit ausgeschaltetem Stummschalter).');
-    if (!('wakeLock' in navigator)) hints.push('Automatisches Wachhalten wird hier nicht unterstützt – stell die automatische Sperre für das Training aus.');
+    hints.push(t('workoutMode.hintNoLock'));
+    if (!('vibrate' in navigator)) hints.push(t('workoutMode.hintNoVibrate'));
+    if (!('wakeLock' in navigator)) hints.push(t('workoutMode.hintNoWakeLock'));
   }
-  hints.forEach((t) => hint.appendChild(el('div', { text: t })));
+  hints.forEach((line) => hint.appendChild(el('div', { text: line })));
 
   root.appendChild(el('div', { class: 'workout__top' }, [
     el('div', { class: 'workout__title', text: unit.title }),
-    el('button', { class: 'icon-btn workout__close', 'aria-label': 'Schließen', onclick: () => askQuit() }, icon('x')),
+    el('button', { class: 'icon-btn workout__close', 'aria-label': t('common.close'), onclick: () => askQuit() }, icon('x')),
   ]));
   // Trinkpausen-Banner (blendet sich bei Erinnerungen kurz ein).
   const drinkBanner = el('button', {
-    class: 'workout__drink', 'aria-label': 'Trinkpause bestätigen',
+    class: 'workout__drink', 'aria-label': t('workoutMode.drinkConfirm'),
     onclick: () => hideDrink(),
-  }, [el('span', { class: 'workout__drink-emoji', text: '💧' }), el('span', { text: 'Trinkpause – kurz schluckweise trinken' })]);
+  }, [el('span', { class: 'workout__drink-emoji', text: '💧' }), el('span', { text: t('workoutMode.drinkBanner') })]);
   root.appendChild(drinkBanner);
   root.appendChild(middle);
   if (st.phases) root.appendChild(stepsEl);
@@ -187,18 +189,20 @@ export function render(view, id) {
     if (st.phases) {
       const cur = st.phases[st.phase];
       if (st.done || !cur) {
-        phaseLabel.textContent = 'Geschafft';
+        phaseLabel.textContent = t('workoutMode.done');
         timeEl.textContent = fmtClock(st.elapsed / 1000);
         timeEl.classList.remove('workout__time--rest');
         targetEl.textContent = '';
-        subEl.textContent = 'Stark durchgezogen – jetzt erfassen';
+        subEl.textContent = t('workoutMode.doneSub');
       } else {
         phaseLabel.textContent = cur.label;
         timeEl.textContent = fmtClock(phaseRemaining(st, st.phases));
         timeEl.classList.toggle('workout__time--rest', cur.kind !== 'work');
         targetEl.textContent = cur.kind === 'work' ? targetText(cur.target) : (cur.hint || '');
         const next = st.phases[st.phase + 1];
-        subEl.textContent = `Gesamt ${fmtClock(st.elapsed / 1000)}${next ? ` · danach: ${next.label}` : ''}`;
+        subEl.textContent = next
+          ? t('workoutMode.totalThen', { time: fmtClock(st.elapsed / 1000), next: next.label })
+          : t('workoutMode.total', { time: fmtClock(st.elapsed / 1000) });
       }
       // Schritt-Punkte (nur Belastungen)
       stepsEl.innerHTML = '';
@@ -211,7 +215,7 @@ export function render(view, id) {
       phaseLabel.textContent = typeMeta(type).label;
       timeEl.textContent = fmtClock(st.elapsed / 1000);
       targetEl.textContent = targetText(unitTarget(unit));
-      subEl.textContent = st.running ? 'läuft …' : (st.elapsed > 0 ? 'pausiert' : 'bereit');
+      subEl.textContent = st.running ? t('workoutMode.running') : (st.elapsed > 0 ? t('workoutMode.paused') : t('workoutMode.ready'));
     }
   }
 
@@ -221,19 +225,19 @@ export function render(view, id) {
     const mainBtn = el('button', {
       class: 'btn workout__btn-main ' + (st.running ? 'btn--soft' : 'btn--primary'),
       onclick: () => (st.running ? pauseTimer() : startTimer()),
-    }, [icon(st.running ? 'pause' : 'play'), st.running ? 'Pause' : (st.elapsed > 0 ? 'Weiter' : 'Start')]);
+    }, [icon(st.running ? 'pause' : 'play'), st.running ? t('workoutMode.pause') : (st.elapsed > 0 ? t('workoutMode.resume') : t('workoutMode.start'))]);
 
     controls.appendChild(mainBtn);
 
     if (st.phases) {
-      controls.appendChild(el('button', { class: 'btn btn--soft', onclick: () => skipPhase() }, [icon('skip'), 'Phase überspringen']));
+      controls.appendChild(el('button', { class: 'btn btn--soft', onclick: () => skipPhase() }, [icon('skip'), t('workoutMode.skipPhase')]));
     }
     // „Beenden“ bewusst klar tippbar (gefüllt), nicht als ausgegrauter Ghost-Button (#2).
     // Ohne Phasen-Button (z. B. Kraft) spannt es über die ganze Breite.
     controls.appendChild(el('button', {
       class: 'btn workout__btn-finish' + (st.phases ? '' : ' workout__btn-finish--wide'),
       onclick: () => finish(),
-    }, [icon('check'), 'Training beenden']));
+    }, [icon('check'), t('workoutMode.endTraining')]));
     updateCounters();
   }
 
@@ -251,11 +255,11 @@ export function render(view, id) {
     counterWrap.innerHTML = '';
     st.counters.sets = st.counters.sets || 0;
     counterWrap.appendChild(el('div', { class: 'workout__counter' }, [
-      el('div', { class: 'workout__counter-label', text: 'Absolvierte Runden / Übungen' }),
+      el('div', { class: 'workout__counter-label', text: t('workoutMode.roundsDone') }),
       stepper(st.counters.sets, { min: 0, max: 50, onChange: (v) => { st.counters.sets = v; persist(); } }),
     ]));
     counterWrap.appendChild(el('div', { class: 'workout__counter' }, [
-      el('div', { class: 'workout__counter-label', text: 'Satzpause' }),
+      el('div', { class: 'workout__counter-label', text: t('workoutMode.setRest') }),
       el('div', { class: 'row gap-2' }, [
         el('button', { class: 'btn btn--soft', onclick: () => restTimer(60) }, '60s'),
         el('button', { class: 'btn btn--soft', onclick: () => restTimer(90) }, '90s'),
@@ -271,7 +275,7 @@ export function render(view, id) {
       if (performance.now() >= st.restEnd) {
         clearInterval(st.restTick); st.restTick = null; st.restEnd = 0;
         beep(880, 0.3, 2);
-        toast('Pause vorbei – nächster Satz', 'good');
+        toast(t('workoutMode.restOver'), 'good');
       }
       updateDisplay();
     }, 250);
@@ -279,11 +283,11 @@ export function render(view, id) {
   }
   function showRestCountdown() {
     const left = Math.max(0, Math.ceil((st.restEnd - performance.now()) / 1000));
-    phaseLabel.textContent = 'Satzpause';
+    phaseLabel.textContent = t('workoutMode.setRest');
     timeEl.textContent = fmtClock(left);
     timeEl.classList.add('workout__time--rest');
-    targetEl.textContent = 'Durchatmen, nächsten Satz vorbereiten';
-    subEl.textContent = `Gesamt ${fmtClock(st.elapsed / 1000)}`;
+    targetEl.textContent = t('workoutMode.restHint');
+    subEl.textContent = t('workoutMode.total', { time: fmtClock(st.elapsed / 1000) });
   }
 
   /* --------------- Abschluss --------------- */
@@ -300,23 +304,23 @@ export function render(view, id) {
   function askQuit() {
     if (st.elapsed < 3000 && !st.running) { lsRemove('workout'); teardown(); navigate(`#/session/${unit.id}`); return; }
     const confirmRow = el('div', { class: 'card card--flat mt-3', hidden: true, style: { borderLeft: '3px solid var(--bad)' } }, [
-      el('div', { style: { fontWeight: '650', fontSize: '.88rem' }, text: 'Wirklich verwerfen?' }),
-      el('div', { class: 'muted', style: { fontSize: '.82rem', marginTop: '2px' }, text: `Die bisherigen ${fmtClock(st.elapsed / 1000)} Minuten Training werden nicht gespeichert.` }),
+      el('div', { style: { fontWeight: '650', fontSize: '.88rem' }, text: t('workoutMode.discardSure') }),
+      el('div', { class: 'muted', style: { fontSize: '.82rem', marginTop: '2px' }, text: t('workoutMode.discardInfo', { time: fmtClock(st.elapsed / 1000) }) }),
       el('div', { class: 'row gap-2 mt-2' }, [
-        el('button', { class: 'btn btn--ghost grow', text: 'Zurück', onclick: () => { confirmRow.hidden = true; } }),
-        el('button', { class: 'btn btn--danger grow', text: 'Ja, verwerfen', onclick: () => { closeSheet(); lsRemove('workout'); teardown(); navigate(`#/session/${unit.id}`); } }),
+        el('button', { class: 'btn btn--ghost grow', text: t('common.back'), onclick: () => { confirmRow.hidden = true; } }),
+        el('button', { class: 'btn btn--danger grow', text: t('workoutMode.discardYes'), onclick: () => { closeSheet(); lsRemove('workout'); teardown(); navigate(`#/session/${unit.id}`); } }),
       ]),
     ]);
     openSheet({
-      title: 'Workout beenden?',
+      title: t('workoutMode.quitTitle'),
       body: el('div', {}, [
-        el('p', { class: 'muted', text: 'Möchtest du das Training abschließen und erfassen?' }),
-        el('button', { class: 'btn mt-2', type: 'button', style: { background: 'transparent', color: 'var(--text-2)', padding: '4px 0', textDecoration: 'underline' }, text: 'Ohne Speichern verlassen …', onclick: () => { confirmRow.hidden = false; } }),
+        el('p', { class: 'muted', text: t('workoutMode.quitQuestion') }),
+        el('button', { class: 'btn mt-2', type: 'button', style: { background: 'transparent', color: 'var(--text-2)', padding: '4px 0', textDecoration: 'underline' }, text: t('workoutMode.leaveWithoutSaving'), onclick: () => { confirmRow.hidden = false; } }),
         confirmRow,
       ]),
       footer: [
-        el('button', { class: 'btn btn--ghost grow', text: 'Weiter trainieren', onclick: () => closeSheet() }),
-        el('button', { class: 'btn btn--primary grow', text: 'Erfassen', onclick: () => { closeSheet(); finish(); } }),
+        el('button', { class: 'btn btn--ghost grow', text: t('workoutMode.keepTraining'), onclick: () => closeSheet() }),
+        el('button', { class: 'btn btn--primary grow', text: t('workoutMode.log'), onclick: () => { closeSheet(); finish(); } }),
       ],
     });
   }
@@ -347,7 +351,7 @@ function restore(st, id) {
       st.elapsed = raw.elapsed || 0; st.phase = raw.phase || 0;
       st.phaseElapsed = raw.phaseElapsed || 0; st.counters = raw.counters || {}; st.done = raw.done || false;
       st.drinkCount = raw.drinkCount || 0;
-      toast('Workout fortgesetzt');
+      toast(t('workoutMode.resumed'));
     }
   } catch { /* ignore */ }
 }
@@ -373,7 +377,7 @@ function renderWorkoutExercises(host, plan, unit, setLog = null) {
   const chev = el('span', { class: 'workout__ex-chev', html: iconSvg('chevronDown') });
   const head = el('button', { class: 'workout__ex-head', onclick: () => { open = !open; list.hidden = !open; head.classList.toggle('is-open', open); } }, [
     el('span', { html: iconSvg('dumbbell'), style: { width: '18px', flex: '0 0 auto' } }),
-    el('span', { class: 'grow', text: `Übungen für diese Einheit${pool.length ? ` (${pool.length})` : ''}` }),
+    el('span', { class: 'grow', text: pool.length ? t('workoutMode.exercisesCount', { n: pool.length }) : t('workoutMode.exercises') }),
     chev,
   ]);
   head.classList.add('is-open');
@@ -389,14 +393,14 @@ function renderWorkoutExercises(host, plan, unit, setLog = null) {
       list.appendChild(el('button', { class: 'btn btn--primary btn--block show-cta', type: 'button', onclick: async () => {
         const { openShow } = await import('./workout-show.js');
         openShow(programForUnit({ ...unit, exerciseIds: linked }));
-      } }, [icon('play'), `Durchgehend mitmachen · ≈ ${min} min`]));
+      } }, [icon('play'), t('workoutMode.followAlong', { min })]));
     }
     const usage = store.exerciseUsage();
     // Verknüpfte zuerst, dann die Übungen aus dem Plan, darunter die Vorschläge nach Nutzung.
     const ordered = pool
       .slice()
       .sort((a, b) => (linked.includes(b.id) ? 1 : 0) - (linked.includes(a.id) ? 1 : 0));
-    if (!ordered.length) { list.appendChild(el('div', { class: 'workout__ex-empty', text: 'Keine Vorschläge – über „+“ auf dem Übungs-Screen hinzufügen.' })); return; }
+    if (!ordered.length) { list.appendChild(el('div', { class: 'workout__ex-empty', text: t('workoutMode.noSuggestions') })); return; }
     ordered.forEach((e) => {
       const on = linked.includes(e.id);
       const row = el('div', { class: 'workout__ex' + (on ? ' is-on' : '') }, [
@@ -404,12 +408,12 @@ function renderWorkoutExercises(host, plan, unit, setLog = null) {
           el('span', { class: 'workout__ex-art', html: exerciseArt(e.art) }),
           el('span', { class: 'grow' }, [
             el('span', { class: 'workout__ex-name', text: e.name }),
-            el('span', { class: 'workout__ex-diff', text: (namedIds.has(e.id) ? 'im Plan · ' : '') + (usage[e.id] ? `${usage[e.id]}× · ` : '') + difficultyLabel(e.difficulty) }),
+            el('span', { class: 'workout__ex-diff', text: (namedIds.has(e.id) ? `${t('workoutMode.inPlan')} · ` : '') + (usage[e.id] ? `${usage[e.id]}× · ` : '') + difficultyLabel(e.difficulty) }),
           ]),
         ]),
         el('button', {
           class: 'workout__ex-toggle' + (on ? ' is-on' : ''),
-          'aria-label': on ? 'Von der Einheit entfernen' : 'Zur Einheit hinzufügen',
+          'aria-label': on ? t('workoutMode.removeFromSession') : t('workoutMode.addToSession'),
           onclick: () => {
             const i = linked.indexOf(e.id);
             if (i >= 0) linked.splice(i, 1); else linked.push(e.id);
@@ -437,7 +441,7 @@ function setLogger(ex, unit, setLog) {
     const sets = setLog.log[ex.id] || [];
     const last = lastSetsFor(store.get('sessions'), ex.id, unit.date);
     if (last) {
-      box.appendChild(el('div', { class: 'workout__sets-last', text: `Letztes Mal: ${last.sets.map(fmtSet).join(' · ')}` }));
+      box.appendChild(el('div', { class: 'workout__sets-last', text: t('workoutMode.lastTime', { sets: last.sets.map(fmtSet).join(' · ') }) }));
       const hint = progressionHint(last.sets);
       if (hint) box.appendChild(el('div', { class: 'workout__sets-hint', text: hint }));
     }
@@ -445,18 +449,18 @@ function setLogger(ex, unit, setLog) {
       box.appendChild(el('div', { class: 'workout__sets-done' }, sets.map((x, i) => el('span', { class: 'chip', text: `${i + 1}. ${fmtSet(x)}` }))));
     }
     const prev = sets[sets.length - 1] || (last && last.sets[last.sets.length - 1]) || null;
-    const repsI = input({ type: 'number', min: '1', max: '100', inputmode: 'numeric', placeholder: 'Wdh.', 'aria-label': `${ex.name}: Wiederholungen`, value: prev ? String(prev.reps) : '' });
-    const kgI = input({ type: 'number', min: '0', max: '500', step: '0.25', inputmode: 'decimal', placeholder: 'kg', 'aria-label': `${ex.name}: Gewicht (kg)`, value: prev && prev.kg != null ? String(prev.kg) : '' });
+    const repsI = input({ type: 'number', min: '1', max: '100', inputmode: 'numeric', placeholder: t('workoutMode.repsPlaceholder'), 'aria-label': t('workoutMode.repsAria', { name: ex.name }), value: prev ? String(prev.reps) : '' });
+    const kgI = input({ type: 'number', min: '0', max: '500', step: '0.25', inputmode: 'decimal', placeholder: 'kg', 'aria-label': t('workoutMode.weightAria', { name: ex.name }), value: prev && prev.kg != null ? String(prev.kg) : '' });
     box.appendChild(el('div', { class: 'workout__sets-add' }, [
       repsI, kgI,
       el('button', { class: 'btn btn--soft', type: 'button', onclick: () => {
         const clean = cleanSet({ reps: repsI.value, kg: kgI.value });
-        if (!clean) { toast('Bitte die Wiederholungen eintragen', 'bad'); return; }
+        if (!clean) { toast(t('workoutMode.enterReps'), 'bad'); return; }
         setLog.log[ex.id] = [...sets, clean];
         setLog.onChange();
         draw();
-      } }, '+ Satz'),
-      sets.length ? el('button', { class: 'icon-btn', type: 'button', 'aria-label': 'Letzten Satz entfernen', onclick: () => {
+      } }, t('workoutMode.addSet')),
+      sets.length ? el('button', { class: 'icon-btn', type: 'button', 'aria-label': t('workoutMode.removeLastSet'), onclick: () => {
         setLog.log[ex.id] = sets.slice(0, -1);
         setLog.onChange();
         draw();
@@ -474,7 +478,7 @@ function openFinishSheet(plan, unit, pre, onDone) {
   const mins = Math.floor((pre.durationSec || 0) / 60), secs = (pre.durationSec || 0) % 60;
   const dur = durationFields({ min: mins || '', sec: secs || '' });
   const { minI, secI } = dur;
-  const notesI = textarea({ placeholder: 'Notiz …' });
+  const notesI = textarea({ placeholder: t('workoutMode.notePlaceholder') });
 
   let rpe = 0;
   const rpeEl = rpeScale(0, (v) => { rpe = v; });
@@ -482,17 +486,17 @@ function openFinishSheet(plan, unit, pre, onDone) {
   const feelRow = feelingPicker('', (v) => { feeling = v; });
 
   openSheet({
-    title: 'Training abschließen',
+    title: t('workoutMode.finishTitle'),
     body: el('div', {}, [
-      isRun ? field('Distanz (km)', distI) : null,
-      field('Dauer', dur.node),
-      field('Anstrengung (RPE)', rpeEl),
-      field('Gefühl', feelRow),
-      field('Notizen', notesI),
+      isRun ? field(t('workoutMode.distanceKm'), distI) : null,
+      field(t('workoutMode.duration'), dur.node),
+      field(t('workoutMode.effortRpe'), rpeEl),
+      field(t('workoutMode.feeling'), feelRow),
+      field(t('workoutMode.notes'), notesI),
     ]),
     footer: [
       el('button', {
-        class: 'btn btn--primary btn--block', text: 'Speichern & abschließen',
+        class: 'btn btn--primary btn--block', text: t('workoutMode.saveFinish'),
         onclick: () => {
           const dist = parseFloat(distI.value) || null;
           const durationSec = (parseInt(minI.value || 0) * 60 + parseInt(secI.value || 0)) || pre.durationSec || null;
@@ -503,7 +507,7 @@ function openFinishSheet(plan, unit, pre, onDone) {
           });
           closeSheet();
           if (onDone) onDone();
-          toast('Stark gemacht! 💪', 'good');
+          toast(t('workoutMode.wellDone'), 'good');
           navigate(`#/session/${unit.id}`);
         },
       }),

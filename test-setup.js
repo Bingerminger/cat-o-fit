@@ -448,5 +448,12 @@ g.__fakeServer = createFakeServer();
   i18n.setLoader(async (path) => JSON.parse(await readFile(new URL(`./locales/${path}`, import.meta.url), 'utf8')));
   await i18n.loadLanguages();
   // CATOFIT_I18N_SKIP: the import-time guard in test/i18n-catalog.test.js needs empty catalogs.
-  if (!process.env.CATOFIT_I18N_SKIP) await i18n.setLocale('de');
+  if (!process.env.CATOFIT_I18N_SKIP) {
+    await i18n.setLocale('de');
+    // Lazily loaded areas (exercises, help, …) are loaded up front in tests.
+    const { existsSync } = await import('node:fs');
+    for (const area of i18n.LAZY_AREAS) {
+      if (existsSync(new URL(`./locales/de/${area}.json`, import.meta.url))) await i18n.loadArea(area);
+    }
+  }
 }

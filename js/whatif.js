@@ -16,6 +16,8 @@ import { weekStartMonday, addDays } from './ui.js';
 import { sessionRpe, loadMinutes } from './load.js';
 import { isHard } from './planflow.js';
 
+import { t } from './i18n.js';
+
 /** Geschätzte Belastungspunkte einer geplanten Einheit – nach denselben Regeln wie
     die erfasste Belastung (`load.js`): Fußball nach Intensität, Strecke nach Sportart. */
 export function unitLoad(u) {
@@ -99,14 +101,16 @@ export function impactText(sim) {
   if (!sim) return '';
   const b = sim.before, a = sim.after;
   const pct = b.load > 0 ? Math.round(((a.load - b.load) / b.load) * 100) : null;
-  const loadTxt = `Belastung ${b.load} → ${a.load}${pct != null && pct !== 0 ? `, ${pct > 0 ? '+' : ''}${pct} %` : ''}`;
-  const hardTxt = a.hard !== b.hard ? ` Fordernde Einheiten: ${b.hard} → ${a.hard}.` : '';
-  const b2bTxt = (a.b2b || 0) > (b.b2b || 0) ? ' Dadurch folgen zwei harte Tage direkt aufeinander.' : '';
+  const loadTxt = pct != null && pct !== 0
+    ? t('whatif.loadChangePct', { before: b.load, after: a.load, pct: `${pct > 0 ? '+' : ''}${pct}` })
+    : t('whatif.loadChange', { before: b.load, after: a.load });
+  const hardTxt = a.hard !== b.hard ? ` ${t('whatif.hardChange', { before: b.hard, after: a.hard })}` : '';
+  const b2bTxt = (a.b2b || 0) > (b.b2b || 0) ? ` ${t('whatif.b2b')}` : '';
   if (sim.level === 'hoch' && a.load <= b.load) {
     // Gleiche Last, aber ein neuer harter Folgetag (typisch: Verschieben in derselben Woche).
-    return `Die Wochenbelastung bleibt gleich (${b.load}), aber dadurch folgen zwei harte Tage direkt aufeinander. Achte bewusst auf Erholung.`;
+    return t('whatif.sameLoadB2b', { load: b.load });
   }
-  if (sim.level === 'hoch') return `Diese Woche wird deutlich fordernder (${loadTxt}).${hardTxt}${b2bTxt} Achte bewusst auf Erholung.`;
-  if (sim.level === 'erhöht') return `Diese Woche wird etwas fordernder (${loadTxt}).${hardTxt}`;
-  return `Kaum Auswirkung auf die Wochenbelastung (${loadTxt}).`;
+  if (sim.level === 'hoch') return `${t('whatif.muchHarder', { load: loadTxt })}${hardTxt}${b2bTxt} ${t('whatif.mindRecovery')}`;
+  if (sim.level === 'erhöht') return `${t('whatif.bitHarder', { load: loadTxt })}${hardTxt}`;
+  return t('whatif.littleEffect', { load: loadTxt });
 }

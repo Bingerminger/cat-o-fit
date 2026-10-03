@@ -10,6 +10,8 @@
 import * as store from './storage.js';
 import { uid, nowIso, addDays } from './ui.js';
 
+import { t } from './i18n.js';
+
 export function findUnit(id) {
   for (const plan of store.get('plans')) {
     const unit = (plan.units || []).find((u) => u.id === id);
@@ -84,10 +86,10 @@ export function nextFreeDay(units, unitId, from, maxDays = 14) {
 }
 
 export const MISSED_REASONS = [
-  { key: 'time', emoji: '⏰', label: 'Keine Zeit' },
-  { key: 'sick', emoji: '🤒', label: 'Krank' },
-  { key: 'injured', emoji: '🩹', label: 'Verletzt' },
-  { key: 'other', emoji: '🤷', label: 'Sonstiges' },
+  { key: 'time', emoji: '⏰', get label() { return t('unitActions.missedReasons.time'); } },
+  { key: 'sick', emoji: '🤒', get label() { return t('unitActions.missedReasons.sick'); } },
+  { key: 'injured', emoji: '🩹', get label() { return t('unitActions.missedReasons.injured'); } },
+  { key: 'other', emoji: '🤷', get label() { return t('unitActions.missedReasons.other'); } },
 ];
 /** Grund-Label zu einem missedReason-Schlüssel (für die Anzeige). */
-export const MISSED_REASON_LABEL = Object.fromEntries(MISSED_REASONS.map((r) => [r.key, r.label]));
+export const MISSED_REASON_LABEL = Object.defineProperties({}, Object.fromEntries(MISSED_REASONS.map((r) => [r.key, { enumerable: true, get: () => r.label }])));

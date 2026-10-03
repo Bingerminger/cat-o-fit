@@ -1,0 +1,1564 @@
+{
+  "squat": {
+    "muscles": [
+      "Oberschenkel",
+      "Gesäß",
+      "Rumpf"
+    ],
+    "equipment": "ohne (optional Gewicht)",
+    "steps": [
+      "Schulterbreiter Stand, Fußspitzen leicht nach außen.",
+      "Hüfte nach hinten schieben und beugen, als würdest du dich setzen.",
+      "Knie zeigen über die Fußspitzen, Rücken bleibt lang, Brust auf.",
+      "Bis die Oberschenkel etwa waagerecht sind, dann kraftvoll hochdrücken."
+    ],
+    "tip": "Gewicht auf der ganzen Fußsohle, Fersen bleiben am Boden. 3×10–15 Wiederholungen.",
+    "caution": "Bei Knie- oder Hüftschmerzen nur so tief, wie es schmerzfrei geht.",
+    "progression": "Mehr Wiederholungen, dann Gewicht (Kurzhantel/Kettlebell), später Pausen-Kniebeugen."
+  },
+  "lunge": {
+    "muscles": [
+      "Oberschenkel",
+      "Gesäß",
+      "Balance"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Aus dem Stand einen großen Schritt nach vorne.",
+      "Beide Knie ~90° beugen, hinteres Knie sinkt Richtung Boden.",
+      "Vorderes Knie bleibt über dem Fußgelenk, Oberkörper aufrecht.",
+      "Über die vordere Ferse zurück in den Stand drücken, Seite wechseln."
+    ],
+    "tip": "Für Läufer:innen ideal gegen einseitige Schwächen. 3×8–10 je Seite.",
+    "caution": "Bei Knieproblemen kürzere Schritte und das vordere Knie nicht über die Zehen schieben.",
+    "progression": "Mit Gewicht, rückwärts oder im Gehen (Walking Lunges)."
+  },
+  "pushup": {
+    "muscles": [
+      "Brust",
+      "Schultern",
+      "Trizeps",
+      "Rumpf"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Hände etwas weiter als schulterbreit, Körper bildet eine gerade Linie.",
+      "Rumpf fest anspannen (kein Durchhängen der Hüfte).",
+      "Ellbogen nach hinten beugen, Brust Richtung Boden senken.",
+      "Kraftvoll wieder hochdrücken."
+    ],
+    "tip": "Zu schwer? Knie ablegen oder Hände erhöht (Tisch/Wand). 3×6–12.",
+    "caution": "Bei Schulter- oder Handgelenksbeschwerden erhöht an einer Bank oder auf Fäusten.",
+    "progression": "Von der Wand über die Bank zu Knien und vollem Liegestütz; später Füße erhöht."
+  },
+  "deadlift": {
+    "muscles": [
+      "Gesäß",
+      "hintere Oberschenkel",
+      "unterer Rücken"
+    ],
+    "equipment": "Hantel/Kettlebell",
+    "steps": [
+      "Hüftbreiter Stand, Gewicht vor den Schienbeinen.",
+      "Hüfte nach hinten schieben, Knie nur leicht beugen, Rücken bleibt gerade.",
+      "Gewicht nah am Körper führen, bis kurz unter die Knie.",
+      "Über die Hüfte aufrichten, Gesäß fest anspannen."
+    ],
+    "tip": "Bewegung kommt aus der Hüfte, nicht aus dem Rücken. Erst Technik, dann Gewicht. 3×8.",
+    "caution": "Rücken neutral halten – bei akuten Rückenschmerzen weglassen und abklären.",
+    "progression": "Mehr Gewicht in kleinen Schritten, dann einbeinig.",
+    "gear": "Hantel/Kettlebell"
+  },
+  "row": {
+    "muscles": [
+      "oberer Rücken",
+      "Bizeps",
+      "hintere Schulter"
+    ],
+    "equipment": "Hantel/Kettlebell",
+    "steps": [
+      "Hüft-Hinge wie beim Kreuzheben, Oberkörper ~45° vorgebeugt.",
+      "Arme hängen lang, Schulterblätter locker.",
+      "Gewicht zur unteren Rippe ziehen, Ellbogen eng am Körper.",
+      "Kontrolliert ablassen, Rücken bleibt stabil."
+    ],
+    "tip": "Gleicht die laufdominante Vorderseite aus. 3×10–12.",
+    "caution": "Rücken gerade, nicht ruckartig ziehen.",
+    "progression": "Schwerere Hantel oder stärkeres Band, langsam absenken (3 s).",
+    "gear": "Hantel/Kettlebell"
+  },
+  "overhead_press": {
+    "muscles": [
+      "Schultern",
+      "Trizeps",
+      "Rumpf"
+    ],
+    "equipment": "Hanteln",
+    "steps": [
+      "Aufrechter Stand, Gewichte auf Schulterhöhe.",
+      "Rumpf anspannen, Rippen nicht aufklappen.",
+      "Gewichte gerade über den Kopf drücken, bis die Arme fast gestreckt sind.",
+      "Kontrolliert zurück auf Schulterhöhe."
+    ],
+    "tip": "Kein Hohlkreuz – Bauch fest. 3×8–10.",
+    "caution": "Bei Schulterschmerzen nicht über Kopf – dann lieber im Sitzen mit leichterem Gewicht oder weglassen.",
+    "progression": "Mehr Gewicht oder einarmig (mehr Rumpf).",
+    "gear": "Hanteln"
+  },
+  "calf_raise": {
+    "muscles": [
+      "Waden",
+      "Achillessehne"
+    ],
+    "equipment": "ohne (optional Stufe)",
+    "steps": [
+      "Aufrechter Stand, evtl. mit den Fußballen auf einer Stufe.",
+      "Langsam auf die Zehenspitzen heben, kurz halten.",
+      "Kontrolliert tief absenken (auf der Stufe unter Stufenhöhe)."
+    ],
+    "tip": "Beugt Achilles-/Wadenproblemen vor. 3×15–20, gerne einbeinig steigern.",
+    "caution": "Bei gereizter Achillessehne langsam und ohne Nachwippen.",
+    "progression": "Einbeinig, dann an einer Stufe mit Absenken unter Stufenniveau, dann mit Gewicht."
+  },
+  "plank": {
+    "muscles": [
+      "Rumpf",
+      "Schultern",
+      "Gesäß"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Unterarme schulterbreit am Boden, Ellbogen unter den Schultern.",
+      "Körper bildet eine gerade Linie von Kopf bis Ferse.",
+      "Bauch und Gesäß anspannen, Becken leicht einrollen.",
+      "Ruhig weiteratmen, Position halten."
+    ],
+    "tip": "Lieber kurz & sauber als lang & durchhängend. 3×20–45 s.",
+    "caution": "Kein Hohlkreuz – bei Rückenschmerzen auf den Knien beginnen.",
+    "progression": "Länger halten, dann Arm oder Bein abheben."
+  },
+  "side_plank": {
+    "muscles": [
+      "seitlicher Rumpf",
+      "Hüfte",
+      "Schulter"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Seitlage, Unterarm unter der Schulter, Beine gestapelt.",
+      "Hüfte anheben, bis der Körper eine gerade Linie bildet.",
+      "Oberen Arm zur Decke strecken oder in die Hüfte.",
+      "Halten, dann Seite wechseln."
+    ],
+    "tip": "Stabilisiert die Hüfte beim Laufen. 3×15–30 s je Seite.",
+    "caution": "Bei Schulterbeschwerden auf dem Knie abstützen.",
+    "progression": "Oberes Bein abheben oder Hüfte heben und senken."
+  },
+  "glute_bridge": {
+    "muscles": [
+      "Gesäß",
+      "hintere Oberschenkel",
+      "Rumpf"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Rückenlage, Füße hüftbreit aufgestellt, Arme neben dem Körper.",
+      "Gesäß anspannen und Hüfte nach oben drücken.",
+      "Oberschenkel und Rumpf bilden eine Linie, kurz halten.",
+      "Kontrolliert absenken, ohne ganz abzulegen."
+    ],
+    "tip": "Weckt das oft „schlafende“ Gesäß. 3×12–15, gerne einbeinig.",
+    "caution": "Nicht ins Hohlkreuz drücken – die Kraft kommt aus dem Gesäß.",
+    "progression": "Einbeinig, dann Füße erhöht oder mit Gewicht auf der Hüfte."
+  },
+  "dead_bug": {
+    "muscles": [
+      "tiefe Rumpfmuskeln",
+      "Koordination"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Rückenlage, Arme zur Decke, Hüfte und Knie 90° angehoben.",
+      "Unteren Rücken sanft zum Boden drücken (Bauch fest).",
+      "Gegengleich rechtes Bein und linken Arm langziehen, ohne Hohlkreuz.",
+      "Zurück zur Mitte, andere Seite."
+    ],
+    "tip": "Rumpfstabilität ohne Belastung der Wirbelsäule. 3×8 je Seite, langsam.",
+    "caution": "Der untere Rücken bleibt am Boden – sonst kleinere Bewegung.",
+    "progression": "Langsamer, Arme/Beine gestreckt, später mit leichtem Gewicht."
+  },
+  "side_crunch": {
+    "muscles": [
+      "seitlicher Rumpf",
+      "Balance"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Aufrechter, stabiler Stand, Bauch fest.",
+      "Oberkörper kontrolliert zur Seite neigen, Hand am Oberschenkel führen.",
+      "Über die seitliche Bauchmuskulatur wieder aufrichten."
+    ],
+    "tip": "Kleine, kontrollierte Bewegung. 3×12 je Seite.",
+    "caution": "Nur zur Seite neigen, nicht nach vorn beugen oder drehen.",
+    "progression": "Mit Kurzhantel in der Hand der Gegenseite."
+  },
+  "hip_flexor_stretch": {
+    "muscles": [
+      "Hüftbeuger",
+      "vorderer Oberschenkel"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Tiefer Ausfallschritt, hinteres Knie am Boden (z. B. auf einem Kissen).",
+      "Becken leicht einrollen, Po anspannen.",
+      "Hüfte sanft nach vorne schieben, bis es vorne in der Hüfte zieht.",
+      "Ruhig halten, nicht wippen."
+    ],
+    "tip": "Wichtig fürs viele Sitzen + Laufen. 2×30 s je Seite.",
+    "caution": "Knie weich polstern; nicht ins Hohlkreuz ausweichen.",
+    "progression": "Den Arm der hinteren Seite über den Kopf strecken."
+  },
+  "hamstring_stretch": {
+    "muscles": [
+      "hintere Oberschenkel",
+      "unterer Rücken"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Ein Bein leicht vorstellen, Ferse am Boden, Zehen hoch.",
+      "Hüfte nach hinten schieben und mit geradem Rücken nach vorne neigen.",
+      "Hände Richtung Schienbein, bis es hinten leicht zieht.",
+      "Halten, dann Seite wechseln."
+    ],
+    "tip": "Rücken lang lassen – nicht rund einrollen. 2×30 s je Seite.",
+    "caution": "Nur leichter Zug – nie ruckartig und nicht bei frischer Zerrung.",
+    "progression": "Länger halten, Rücken bewusst lang."
+  },
+  "calf_stretch": {
+    "muscles": [
+      "Waden",
+      "Achillessehne"
+    ],
+    "equipment": "Wand",
+    "steps": [
+      "Mit beiden Händen an die Wand lehnen.",
+      "Ein Bein gestreckt nach hinten, Ferse bleibt am Boden.",
+      "Hüfte nach vorne schieben, bis es in der Wade zieht.",
+      "Für die tiefe Wade hinteres Knie leicht beugen."
+    ],
+    "tip": "Nach dem Laufen wohltuend. 2×30 s je Seite.",
+    "caution": "Bei gereizter Achillessehne sanft und nicht auf Schmerz dehnen.",
+    "progression": "Auch mit gebeugtem Knie (tiefe Wadenmuskulatur).",
+    "gear": "Wand"
+  },
+  "cat_cow": {
+    "muscles": [
+      "Wirbelsäule",
+      "Rumpf"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Vierfüßlerstand, Hände unter den Schultern, Knie unter der Hüfte.",
+      "Einatmen: Rücken sanft durchhängen lassen, Blick hoch („Kuh“).",
+      "Ausatmen: Rücken rund machen, Kinn zur Brust („Katze“).",
+      "Mehrmals fließend im Atemrhythmus wechseln."
+    ],
+    "tip": "Sanfte Mobilisation für Rücken & Nacken. 8–10 ruhige Wechsel.",
+    "caution": "Im schmerzfreien Bereich bleiben.",
+    "progression": "Langsamer, mit bewusster Atmung."
+  },
+  "chest_opener": {
+    "muscles": [
+      "Brust",
+      "vordere Schulter"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Aufrechter Stand, Bauch leicht fest.",
+      "Arme nach hinten öffnen, Hände hinter dem Rücken locker fassen.",
+      "Brustbein anheben, Schultern nach hinten/unten.",
+      "Ruhig atmen, sanft halten."
+    ],
+    "tip": "Gegen die nach vorne gezogene „Bildschirm-Haltung“. 2×20–30 s.",
+    "caution": "Nicht bei Schulterinstabilität in die Endposition ziehen.",
+    "progression": "Länger halten, Arme etwas höher."
+  },
+  "split_squat": {
+    "muscles": [
+      "Oberschenkel",
+      "Gesäß",
+      "Balance"
+    ],
+    "equipment": "Erhöhung (Stuhl/Bank)",
+    "steps": [
+      "Ein Fuß vorne am Boden, der hintere Spann liegt erhöht auf Stuhl oder Bank.",
+      "Oberkörper aufrecht, vorderes Knie beugen und den Körper gerade absenken.",
+      "Vorderes Knie bleibt über dem Fuß, hinteres Knie senkt Richtung Boden.",
+      "Über die vordere Ferse kontrolliert hochdrücken."
+    ],
+    "tip": "Sehr wirksam für einbeinige Kraft und Stabilität. 3×8–10 je Seite.",
+    "caution": "Bei Knieproblemen nicht so tief.",
+    "progression": "Bulgarian Split Squat (hinterer Fuß erhöht), dann mit Gewicht.",
+    "gear": "Erhöhung"
+  },
+  "wall_sit": {
+    "muscles": [
+      "Oberschenkel",
+      "Gesäß"
+    ],
+    "equipment": "Wand",
+    "steps": [
+      "Mit dem Rücken flach an der Wand stehen, Füße etwa 40 cm davor.",
+      "An der Wand hinunterrutschen, bis die Oberschenkel waagerecht sind.",
+      "Knie über den Knöcheln, Rücken bleibt an der Wand.",
+      "Position ruhig atmend halten."
+    ],
+    "tip": "Statische Ausdauerkraft für die Beine – ideal ohne Geräte. 3×30–45 s.",
+    "caution": "Bei Kniescheibenbeschwerden höher sitzen (Winkel über 90°).",
+    "progression": "Länger halten, dann einbeinig abwechselnd.",
+    "gear": "Wand"
+  },
+  "step_up": {
+    "muscles": [
+      "Oberschenkel",
+      "Gesäß",
+      "Balance"
+    ],
+    "equipment": "stabile Stufe/Bank",
+    "steps": [
+      "Vor eine kniehohe, stabile Stufe stellen.",
+      "Mit einem Fuß ganz aufsteigen, Kraft aus der Ferse.",
+      "Oben kurz stabil stehen, dann kontrolliert wieder absenken.",
+      "Nicht mit dem hinteren Bein abdrücken – die Arbeit macht das obere Bein."
+    ],
+    "tip": "Läuferfreundlich (einbeinig, alltagsnah). 3×10 je Seite.",
+    "caution": "Kniestabil bleiben – das Knie nicht nach innen kippen lassen.",
+    "progression": "Höhere Stufe, dann mit Gewicht.",
+    "gear": "stabile Stufe/Bank"
+  },
+  "crunch": {
+    "muscles": [
+      "gerade Bauchmuskeln"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Auf den Rücken, Knie angewinkelt, Füße hüftbreit am Boden.",
+      "Hände locker an den Schläfen (nicht am Kopf ziehen).",
+      "Oberkörper mit dem Bauch einrollen, Schulterblätter heben leicht ab.",
+      "Kurz halten, langsam wieder ablegen."
+    ],
+    "tip": "Bewegung kommt aus dem Bauch, nicht aus dem Nacken. 3×12–20.",
+    "caution": "Nacken nicht mit den Händen ziehen.",
+    "progression": "Langsamer, dann mit leichtem Gewicht auf der Brust."
+  },
+  "leg_raise": {
+    "muscles": [
+      "untere Bauchmuskeln",
+      "Hüftbeuger"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Auf den Rücken, Beine gestreckt, Hände neben oder unter dem Gesäß.",
+      "Unteren Rücken bewusst am Boden lassen.",
+      "Gestreckte Beine langsam bis ~90° anheben.",
+      "Kontrolliert absenken, ohne die Fersen ganz abzulegen."
+    ],
+    "tip": "Bei Rückenzwicken die Knie leicht beugen. 3×10–15.",
+    "caution": "Bei Rückenschmerzen Knie gebeugt lassen.",
+    "progression": "Gestreckte Beine, langsam absenken."
+  },
+  "hollow_hold": {
+    "muscles": [
+      "tiefe Bauchmuskeln",
+      "Rumpf"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Auf den Rücken, Arme über den Kopf, Beine gestreckt.",
+      "Unteren Rücken fest an den Boden pressen (Bauch anspannen).",
+      "Schultern und Beine leicht anheben – der Körper wird zur flachen Schale.",
+      "Ruhig weiteratmen und halten."
+    ],
+    "tip": "Der untere Rücken darf sich NICHT vom Boden lösen. 3×15–30 s.",
+    "caution": "Der untere Rücken darf sich nicht lösen – sonst Knie anziehen.",
+    "progression": "Arme über den Kopf, länger halten."
+  },
+  "superman": {
+    "muscles": [
+      "unterer Rücken",
+      "Gesäß",
+      "hintere Schulter"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Bäuchlings hinlegen, Arme nach vorne gestreckt.",
+      "Arme, Brust und Beine gleichzeitig leicht vom Boden abheben.",
+      "Blick zum Boden, Nacken lang – nicht in den Nacken drücken.",
+      "Kurz halten, sanft ablegen."
+    ],
+    "tip": "Kräftigt die oft vernachlässigte Rückenkette. 3×10 oder 3×20 s halten.",
+    "caution": "Die Bauchlage-Streckung belastet die Lendenwirbelsäule stärker – bei Rückenbeschwerden lieber Bird Dog.",
+    "progression": "Länger halten, abwechselnd Arm und Bein."
+  },
+  "bird_dog": {
+    "muscles": [
+      "Rumpf",
+      "unterer Rücken",
+      "Gesäß",
+      "Koordination"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Vierfüßlerstand, Hände unter den Schultern, Knie unter der Hüfte.",
+      "Rechten Arm und linkes Bein gleichzeitig lang ausstrecken.",
+      "Hüfte und Schultern bleiben waagerecht (nicht verdrehen).",
+      "Zurückführen und Seite wechseln."
+    ],
+    "tip": "Stabilität statt Schwung – langsam und kontrolliert. 3×8–10 je Seite.",
+    "caution": "Becken waagerecht halten, nicht ins Hohlkreuz.",
+    "progression": "Kurz halten, dann Ellbogen und Knie unter dem Körper zusammenführen."
+  },
+  "child_pose": {
+    "muscles": [
+      "unterer Rücken",
+      "Hüfte",
+      "Schultern"
+    ],
+    "equipment": "ohne (Matte)",
+    "steps": [
+      "Aus dem Kniestand das Gesäß Richtung Fersen setzen.",
+      "Oberkörper nach vorne ablegen, Arme lang nach vorne strecken.",
+      "Stirn ruht am Boden, Schultern locker.",
+      "Tief in den unteren Rücken atmen."
+    ],
+    "tip": "Sanfte Entlastung für den ganzen Rücken. 3×30–45 s.",
+    "caution": "Bei Kniebeschwerden ein Kissen zwischen Gesäß und Fersen.",
+    "progression": "Hände zur Seite wandern lassen (seitliche Dehnung)."
+  },
+  "supine_twist": {
+    "muscles": [
+      "Wirbelsäule",
+      "unterer Rücken",
+      "Gesäß"
+    ],
+    "equipment": "ohne (Matte)",
+    "steps": [
+      "Auf den Rücken, Arme seitlich ausgebreitet (T-Form).",
+      "Beide Knie anwinkeln und gemeinsam zu einer Seite ablegen.",
+      "Kopf optional zur Gegenseite drehen, beide Schultern am Boden halten.",
+      "Ruhig atmen, dann Seite wechseln."
+    ],
+    "tip": "Löst den unteren Rücken nach dem Laufen. 2×30 s je Seite.",
+    "caution": "Schultern bleiben am Boden, nicht erzwingen.",
+    "progression": "Länger halten, oberes Bein strecken."
+  },
+  "figure_four": {
+    "muscles": [
+      "Gesäß",
+      "Piriformis",
+      "Hüfte"
+    ],
+    "equipment": "ohne (Matte)",
+    "steps": [
+      "Auf den Rücken, beide Knie angewinkelt.",
+      "Einen Knöchel über das andere Knie legen (Form einer „4“).",
+      "Das untere Bein Richtung Brust ziehen, bis es im Gesäß zieht.",
+      "Halten, dann Seite wechseln."
+    ],
+    "tip": "Klassiker gegen festes Gesäß/Ischias-Gefühl bei Läufern. 2×30 s je Seite.",
+    "caution": "Bei Hüft- oder Knieschmerzen weniger weit ziehen.",
+    "progression": "Im Sitzen auf einem Stuhl mit Vorbeuge."
+  },
+  "butterfly_stretch": {
+    "muscles": [
+      "Innenschenkel",
+      "Hüfte"
+    ],
+    "equipment": "ohne (Matte)",
+    "steps": [
+      "Aufrecht sitzen, Fußsohlen vor dem Körper zusammenlegen.",
+      "Fersen locker heranziehen, Knie sinken zur Seite.",
+      "Aufrecht bleiben, Oberkörper leicht nach vorne neigen.",
+      "Nicht federn – ruhig halten."
+    ],
+    "tip": "Öffnet die Hüfte und die Innenschenkel. 2×30–45 s.",
+    "caution": "Nicht auf die Knie drücken oder federn.",
+    "progression": "Fersen näher heran, länger halten."
+  },
+  "fifa11": {
+    "muscles": [
+      "ganzer Körper",
+      "Koordination",
+      "Sprunggelenk",
+      "Knie"
+    ],
+    "equipment": "ohne (Hütchen oder Markierungen)",
+    "steps": [
+      "Teil 1 (ca. 8 min): lockeres Laufen mit Hüfte auf/zu, Seitgalopp, Schulterkontakt mit Partner, kurze Antritte vor und zurück.",
+      "Teil 2 (ca. 10 min): Kraft und Balance – Unterarmstütz, Seitstütz, Nordic Hamstrings, Einbeinstand mit Ball, Kniebeugen, Sprünge.",
+      "Teil 3 (ca. 2 min): Laufen – über das Feld mit zunehmendem Tempo, Richtungswechsel mit sauberer Landung.",
+      "Knie zeigen bei jeder Landung und Kniebeuge über die Fußspitzen, nicht nach innen."
+    ],
+    "tip": "Rund 20 Minuten vor Training oder Spiel, zwei- bis dreimal pro Woche. In Studien sank damit die Verletzungsrate im Jugendfußball deutlich (Soligard et al. 2008).",
+    "caution": "Nach Verletzungen zuerst mit der leichtesten Stufe beginnen und bei Schmerz abbrechen.",
+    "progression": "Drei Stufen je Übung: leicht, mittel, schwer – erst steigern, wenn die leichtere sauber gelingt."
+  },
+  "nordic_hamstring": {
+    "muscles": [
+      "hintere Oberschenkel",
+      "Gesäß"
+    ],
+    "equipment": "Partner oder feste Fußhalterung, Matte",
+    "steps": [
+      "Kniestand auf einer weichen Unterlage, Fersen werden festgehalten oder unter einem Sofa fixiert.",
+      "Körper von Knie bis Kopf gerade, Hüfte gestreckt.",
+      "Langsam nach vorne sinken lassen und mit der Oberschenkelrückseite so lange wie möglich bremsen.",
+      "Mit den Händen abfangen und mit einem kleinen Stoß wieder hochkommen."
+    ],
+    "tip": "Die bekannteste Übung gegen Zerrungen der Oberschenkelrückseite: Einbindung in Präventionsprogramme etwa halbierte die Rate (van Dyk et al. 2019). Anfangs 2×4–5, langsam steigern.",
+    "caution": "Nicht bei frischer Zerrung. Die ersten Male gibt es kräftigen Muskelkater – mit wenigen Wiederholungen beginnen, nicht am Tag vor einem Spiel.",
+    "progression": "Erst den Weg nach unten verlängern, dann Wiederholungen (bis 3×8), später langsamer.",
+    "gear": "Partner"
+  },
+  "copenhagen": {
+    "muscles": [
+      "Innenschenkel (Adduktoren)",
+      "seitlicher Rumpf"
+    ],
+    "equipment": "Bank oder Partner",
+    "steps": [
+      "Seitstütz auf dem Unterarm, das obere Bein liegt auf einer Bank (anfangs mit dem Knie, später mit dem Fuß).",
+      "Das untere Bein hängt frei unter der Bank.",
+      "Hüfte anheben, bis der Körper eine Linie bildet – die Innenseite des oberen Beins trägt.",
+      "Kurz halten, kontrolliert absenken, Seite wechseln."
+    ],
+    "tip": "Kräftigt die Adduktoren – im Fußball eine häufige Verletzungsstelle (Leiste). 2×6–8 je Seite.",
+    "caution": "Bei Leistenschmerzen nicht belasten und abklären lassen.",
+    "progression": "Vom Knie auf der Bank zum Fuß auf der Bank (längerer Hebel), dann das untere Bein zur Bank führen.",
+    "gear": "Bank"
+  },
+  "clamshell": {
+    "muscles": [
+      "seitliches Gesäß (Hüftabduktoren)"
+    ],
+    "equipment": "ohne (optional Miniband)",
+    "steps": [
+      "Seitenlage, Hüfte und Knie etwa 45° gebeugt, Füße aufeinander.",
+      "Becken bleibt senkrecht, das obere Knie öffnet sich wie eine Muschel.",
+      "Die Füße bleiben zusammen.",
+      "Langsam wieder schließen."
+    ],
+    "tip": "Stabilisiert Becken und Knie beim Laufen (weniger „Einknicken“). 3×15 je Seite.",
+    "caution": "Nicht nach hinten aufdrehen – die Bewegung kommt aus der Hüfte.",
+    "progression": "Mit Miniband über den Knien, dann oben kurz halten."
+  },
+  "monster_walk": {
+    "muscles": [
+      "seitliches Gesäß",
+      "Oberschenkel"
+    ],
+    "equipment": "Miniband",
+    "steps": [
+      "Miniband über den Knien oder Fußgelenken, leicht in die Knie gehen.",
+      "Mit Spannung im Band seitlich oder schräg vorwärts gehen.",
+      "Knie zeigen nach vorn, der Oberkörper bleibt ruhig.",
+      "Gleich viele Schritte in beide Richtungen."
+    ],
+    "tip": "Gutes Aufwärmen vor Lauf oder Spiel. 2–3×10 Schritte je Richtung.",
+    "caution": "Knie nicht nach innen fallen lassen.",
+    "progression": "Stärkeres Band oder Band an den Fußgelenken.",
+    "gear": "Miniband"
+  },
+  "soleus_raise": {
+    "muscles": [
+      "tiefe Wadenmuskulatur (Soleus)",
+      "Achillessehne"
+    ],
+    "equipment": "Stufe, optional Gewicht",
+    "steps": [
+      "An einer Stufe oder Wand stehen, Knie etwa 30–45° gebeugt.",
+      "Die Knie bleiben gebeugt, die Fersen heben sich so hoch wie möglich.",
+      "Oben kurz halten.",
+      "Langsam absenken (3 Sekunden)."
+    ],
+    "tip": "Der Soleus trägt beim Laufen ein Vielfaches des Körpergewichts – wichtig für Achillessehne und Wade. 3×15–20.",
+    "caution": "Bei gereizter Achillessehne schmerzarm und langsam arbeiten.",
+    "progression": "Einbeinig, dann mit Gewicht (Rucksack, Kurzhantel).",
+    "gear": "Stufe"
+  },
+  "running_drills": {
+    "muscles": [
+      "Fußgelenk",
+      "Hüftbeuger",
+      "Koordination"
+    ],
+    "equipment": "ohne (20–30 m freie Strecke)",
+    "steps": [
+      "Fußgelenksarbeit: kurze, schnelle Schritte über den Vorfuß, 20 m.",
+      "Skippings: Knie im schnellen Wechsel bis etwa Hüfthöhe, aufrechter Oberkörper, 20 m.",
+      "Anfersen: Fersen Richtung Gesäß, schnelle Frequenz, 20 m.",
+      "Dazwischen locker zurücktraben; zum Schluss 2–3 Steigerungen."
+    ],
+    "tip": "Verbessert Laufökonomie und Koordination – ideal nach dem Einlaufen vor Tempoeinheiten. 2 Durchgänge.",
+    "caution": "Nur aufgewärmt, auf ebenem Untergrund.",
+    "progression": "Höhere Frequenz, dann Hopserlauf und Sprunglauf."
+  },
+  "pogo_jumps": {
+    "muscles": [
+      "Wade",
+      "Achillessehne",
+      "Sprunggelenk"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Hüftbreiter Stand, Knie fast gestreckt.",
+      "Kleine, schnelle Sprünge nur aus dem Fußgelenk – der Boden ist „heiß“.",
+      "Leise landen, kurze Bodenkontakte.",
+      "20–30 Sekunden, dann Pause."
+    ],
+    "tip": "Einfache Plyometrie: macht Sehnen belastbarer und den Schritt federnder. 3×20 s.",
+    "caution": "Nicht bei Achillessehnen- oder Schienbeinschmerzen; erst nach einigen Wochen Kraftarbeit für die Wade.",
+    "progression": "Länger, dann einbeinig oder seitlich über eine Linie."
+  },
+  "goblet_squat": {
+    "muscles": [
+      "Oberschenkel",
+      "Gesäß",
+      "Rumpf"
+    ],
+    "equipment": "Kettlebell oder Kurzhantel",
+    "steps": [
+      "Gewicht mit beiden Händen vor der Brust halten, Ellbogen zeigen nach unten.",
+      "Schulterbreiter Stand, Fußspitzen leicht nach außen.",
+      "Aufrecht tief in die Hocke, Ellbogen zwischen die Knie.",
+      "Durch die ganze Fußsohle wieder hochdrücken."
+    ],
+    "tip": "Das Gewicht vor der Brust hält den Oberkörper aufrecht – ideal, um die Kniebeuge sauber zu lernen. 3×8–12.",
+    "caution": "Rücken bleibt gerade; bei Knieschmerzen nur so tief, wie es schmerzfrei geht.",
+    "progression": "Schwereres Gewicht, dann unten 2 s Pause.",
+    "gear": "Kettlebell"
+  },
+  "sumo_squat": {
+    "muscles": [
+      "Innenschenkel",
+      "Gesäß",
+      "Oberschenkel"
+    ],
+    "equipment": "ohne (optional Kettlebell)",
+    "steps": [
+      "Breiter Stand, Fußspitzen deutlich nach außen.",
+      "Hände vor der Brust, Oberkörper aufrecht.",
+      "Hüfte gerade nach unten sinken lassen, Knie schieben über die Fußspitzen nach außen.",
+      "Über die Fersen hochdrücken, oben den Po anspannen."
+    ],
+    "tip": "Betont Innenschenkel und Gesäß. 3×12–15.",
+    "caution": "Knie folgen der Fußrichtung – nicht nach innen fallen lassen.",
+    "progression": "Mit Kettlebell zwischen den Beinen, dann langsamer absenken."
+  },
+  "reverse_lunge": {
+    "muscles": [
+      "Oberschenkel",
+      "Gesäß",
+      "Balance"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Aufrechter Stand, Hände an der Hüfte oder locker.",
+      "Mit einem Bein einen großen Schritt nach hinten.",
+      "Beide Knie beugen, das hintere Knie sinkt Richtung Boden.",
+      "Über die vordere Ferse zurück in den Stand, Seite wechseln."
+    ],
+    "tip": "Knieschonender als der Schritt nach vorn – guter Einstieg. 3×8–10 je Seite.",
+    "caution": "Vorderes Knie bleibt über dem Fuß; bei Gleichgewichtsproblemen an der Wand festhalten.",
+    "progression": "Mit Kurzhanteln, dann von einer Stufe nach hinten (Defizit)."
+  },
+  "side_lunge": {
+    "muscles": [
+      "Innenschenkel",
+      "Oberschenkel",
+      "Gesäß"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Breiter Stand, Fußspitzen zeigen nach vorn.",
+      "Gewicht zu einer Seite verlagern und das Knie beugen, Hüfte nach hinten.",
+      "Das andere Bein bleibt gestreckt, beide Fersen am Boden.",
+      "Zur Mitte zurückdrücken und die Seite wechseln."
+    ],
+    "tip": "Kräftigt die Beine seitlich – wichtig für Richtungswechsel im Fußball. 3×8 je Seite.",
+    "caution": "Nur so tief, wie die Fersen am Boden bleiben; das Knie zeigt über den Fuß.",
+    "progression": "Tiefer, dann mit Gewicht vor der Brust."
+  },
+  "single_leg_deadlift": {
+    "muscles": [
+      "Gesäß",
+      "hintere Oberschenkel",
+      "Balance"
+    ],
+    "equipment": "ohne (optional Kurzhantel)",
+    "steps": [
+      "Auf einem Bein stehen, Knie leicht gebeugt.",
+      "Oberkörper nach vorn kippen, das freie Bein nach hinten anheben.",
+      "Rücken und hinteres Bein bilden eine Linie, das Becken bleibt waagerecht.",
+      "Über das Gesäß langsam aufrichten."
+    ],
+    "tip": "Kräftigt Gesäß und Gleichgewicht – sehr laufnah. 3×8 je Seite.",
+    "caution": "Becken nicht aufdrehen; bei Rückenschmerzen nur bis zur Waagerechten.",
+    "progression": "Mit Kurzhantel in der Hand der Gegenseite."
+  },
+  "hip_thrust": {
+    "muscles": [
+      "Gesäß",
+      "hintere Oberschenkel"
+    ],
+    "equipment": "Bank oder Sofa",
+    "steps": [
+      "Mit den Schulterblättern an eine Bank lehnen, Füße hüftbreit aufstellen.",
+      "Becken heben, bis Knie, Hüfte und Schultern eine Linie bilden.",
+      "Oben den Po fest anspannen, Kinn leicht zur Brust.",
+      "Kontrolliert absenken, ohne ganz abzulegen."
+    ],
+    "tip": "Die kräftigste Übung fürs Gesäß. 3×10–12.",
+    "caution": "Kein Hohlkreuz oben – die Kraft kommt aus dem Gesäß.",
+    "progression": "Einbeinig, dann mit Gewicht auf der Hüfte.",
+    "gear": "Bank"
+  },
+  "single_leg_bridge": {
+    "muscles": [
+      "Gesäß",
+      "hintere Oberschenkel",
+      "Rumpf"
+    ],
+    "equipment": "Matte",
+    "steps": [
+      "Rückenlage, ein Fuß aufgestellt, das andere Bein gestreckt in der Luft.",
+      "Über die Ferse das Becken heben.",
+      "Das Becken bleibt waagerecht, oben kurz halten.",
+      "Langsam absenken, Seite wechseln."
+    ],
+    "tip": "Zeigt schnell Seitenunterschiede. 3×10 je Seite.",
+    "caution": "Becken nicht seitlich absinken lassen; bei Krampf in der Rückseite den Fuß näher ans Gesäß.",
+    "progression": "Länger oben halten, dann Fuß erhöht."
+  },
+  "kettlebell_swing": {
+    "muscles": [
+      "Gesäß",
+      "hintere Oberschenkel",
+      "Rumpf"
+    ],
+    "equipment": "Kettlebell",
+    "steps": [
+      "Etwas mehr als hüftbreit stehen, Kettlebell mit beiden Händen.",
+      "Hüfte nach hinten schieben, die Kettlebell zwischen den Beinen nach hinten schwingen.",
+      "Hüfte explosiv nach vorn strecken – die Arme sind nur Seile.",
+      "Die Kettlebell schwebt bis Brusthöhe und fällt zurück in den nächsten Schwung."
+    ],
+    "tip": "Kraft und Kondition in einem – fester Bestandteil im Hyrox-Training. 3×15.",
+    "caution": "Rücken bleibt gerade, nicht aus den Armen ziehen; erst die Hüftbeuge sicher können.",
+    "progression": "Schwerere Kettlebell, dann einarmig.",
+    "gear": "Kettlebell"
+  },
+  "jump_squat": {
+    "muscles": [
+      "Oberschenkel",
+      "Gesäß",
+      "Waden"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Halbe Kniebeuge, Arme hinten.",
+      "Explosiv nach oben springen, die Arme schwingen mit.",
+      "Weich auf dem Vorfuß landen und direkt in die nächste Kniebeuge.",
+      "Die Knie zeigen bei der Landung über die Füße."
+    ],
+    "tip": "Schnellkraft für Antritte und Sprünge. 3×8–10.",
+    "caution": "Nur mit gesunden Knien und auf festem, rutschfestem Boden; leise landen.",
+    "progression": "Mehr Wiederholungen, dann Sprünge auf eine Kiste."
+  },
+  "good_morning": {
+    "muscles": [
+      "hintere Oberschenkel",
+      "Gesäß",
+      "unterer Rücken"
+    ],
+    "equipment": "ohne (optional Stab)",
+    "steps": [
+      "Hüftbreiter Stand, Hände hinter dem Kopf.",
+      "Knie leicht beugen, Hüfte nach hinten schieben und den geraden Oberkörper vorneigen.",
+      "Bis etwa zur Waagerechten oder bis es hinten zieht.",
+      "Über die Hüfte wieder aufrichten."
+    ],
+    "tip": "Lernt die Hüftbeuge ohne Gewicht – gute Vorbereitung fürs Kreuzheben. 3×10–12.",
+    "caution": "Der Rücken bleibt gerade, nicht rund werden; bei Rückenschmerzen weglassen.",
+    "progression": "Mit Stab oder leichtem Gewicht auf den Schultern."
+  },
+  "tibialis_raise": {
+    "muscles": [
+      "Schienbeinmuskel (vorderer Unterschenkel)"
+    ],
+    "equipment": "Wand",
+    "steps": [
+      "Mit dem Rücken an die Wand lehnen, die Füße etwa eine Fußlänge davor.",
+      "Die Fersen bleiben am Boden, die Zehen kräftig Richtung Schienbein ziehen.",
+      "Oben kurz halten.",
+      "Langsam wieder absenken."
+    ],
+    "tip": "Stärkt die Vorderseite des Unterschenkels – hilft gegen Schienbeinkantenschmerzen. 3×15–20.",
+    "caution": "Bei akuten Schienbeinschmerzen nur schmerzfrei üben und abklären lassen.",
+    "progression": "Füße weiter vor die Wand, dann einbeinig.",
+    "gear": "Wand"
+  },
+  "step_down": {
+    "muscles": [
+      "Oberschenkel",
+      "Gesäß",
+      "Kniestabilität"
+    ],
+    "equipment": "Stufe oder Treppe",
+    "steps": [
+      "Auf einem Bein auf einer Stufe stehen, das andere Bein hängt vor der Kante.",
+      "Langsam in die Knie gehen, bis die Ferse des freien Beins den Boden antippt.",
+      "Das Knie bleibt über dem Fuß, das Becken waagerecht.",
+      "Über die Ferse des Standbeins wieder hochdrücken."
+    ],
+    "tip": "Schult die Kniestabilität beim Bergablaufen. 3×8 je Seite, langsam (3 s runter).",
+    "caution": "Das Knie darf nicht nach innen kippen; bei Kniescheibenschmerzen eine niedrigere Stufe.",
+    "progression": "Höhere Stufe, dann mit Gewicht in der Gegenhand.",
+    "gear": "Stufe"
+  },
+  "cossack_squat": {
+    "muscles": [
+      "Innenschenkel",
+      "Oberschenkel",
+      "Hüftbeweglichkeit"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Sehr breiter Stand, Fußspitzen leicht nach außen.",
+      "Gewicht auf eine Seite und tief in diese Kniebeuge sinken.",
+      "Das andere Bein bleibt gestreckt, die Zehen dürfen nach oben zeigen.",
+      "Über die Mitte zur anderen Seite wechseln."
+    ],
+    "tip": "Kraft und Beweglichkeit der Hüfte in einem. 3×6 je Seite.",
+    "caution": "Nur so tief, wie die Ferse am Boden bleibt; nicht ruckartig.",
+    "progression": "Tiefer, dann mit leichtem Gewicht vor der Brust."
+  },
+  "farmers_carry": {
+    "muscles": [
+      "Griffkraft",
+      "Schultern",
+      "Rumpf"
+    ],
+    "equipment": "zwei schwere Kurzhanteln oder Kettlebells",
+    "steps": [
+      "Zwei schwere Gewichte seitlich greifen und aufrecht hinstellen.",
+      "Schultern tief und zurück, Bauch fest.",
+      "Mit kurzen, ruhigen Schritten gehen – der Oberkörper schwankt nicht.",
+      "30 bis 40 Meter oder 30 Sekunden, dann ablegen."
+    ],
+    "tip": "Griffkraft und Rumpfstabilität – eine Hyrox-Station. 3×30 s.",
+    "caution": "Gewichte mit geradem Rücken aufheben und ablegen.",
+    "progression": "Schwerer, dann länger oder einseitig (Koffer-Tragen).",
+    "gear": "zwei schwere Kurzhanteln"
+  },
+  "wall_ball": {
+    "muscles": [
+      "Oberschenkel",
+      "Gesäß",
+      "Schultern"
+    ],
+    "equipment": "Medizinball und Wand",
+    "steps": [
+      "Etwa eine Armlänge vor der Wand stehen, Ball vor der Brust.",
+      "Tief in die Kniebeuge.",
+      "Explosiv strecken und den Ball an ein Ziel hoch an der Wand werfen.",
+      "Ball fangen und direkt in die nächste Kniebeuge."
+    ],
+    "tip": "Ganzkörper und Kondition – eine Hyrox-Station. 3×15.",
+    "caution": "Rücken gerade, Knie über den Füßen; zum Lernen ein leichter Ball.",
+    "progression": "Schwerer Ball, höheres Ziel, mehr Wiederholungen.",
+    "gear": "Medizinball und Wand"
+  },
+  "thruster": {
+    "muscles": [
+      "Oberschenkel",
+      "Gesäß",
+      "Schultern"
+    ],
+    "equipment": "zwei Kurzhanteln",
+    "steps": [
+      "Hanteln auf den Schultern, schulterbreiter Stand.",
+      "In die Kniebeuge, die Ellbogen zeigen nach vorn.",
+      "Aus den Beinen hochdrücken und die Hanteln in einem Zug über den Kopf.",
+      "Zurück auf die Schultern und direkt in die nächste Kniebeuge."
+    ],
+    "tip": "Kraft aus den Beinen auf die Arme übertragen – fordert auch die Ausdauer. 3×10.",
+    "caution": "Kein Hohlkreuz über Kopf; bei Schulterschmerzen weglassen.",
+    "progression": "Schwerere Hanteln, dann mehr Runden.",
+    "gear": "zwei Kurzhanteln"
+  },
+  "incline_pushup": {
+    "muscles": [
+      "Brust",
+      "Schultern",
+      "Trizeps"
+    ],
+    "equipment": "Bank, Tisch oder Fensterbank",
+    "steps": [
+      "Hände etwas weiter als schulterbreit auf eine stabile Kante.",
+      "Der Körper bildet von Kopf bis Fuß eine Linie.",
+      "Brust zur Kante senken, Ellbogen schräg nach hinten.",
+      "Kraftvoll hochdrücken."
+    ],
+    "tip": "Der leichte Einstieg in den Liegestütz – je höher die Kante, desto leichter. 3×10–15.",
+    "caution": "Die Kante muss rutschfest sein; die Hüfte nicht durchhängen lassen.",
+    "progression": "Niedrigere Kante, dann Knie-Liegestütz, dann voller Liegestütz.",
+    "gear": "Bank"
+  },
+  "knee_pushup": {
+    "muscles": [
+      "Brust",
+      "Schultern",
+      "Trizeps",
+      "Rumpf"
+    ],
+    "equipment": "Matte",
+    "steps": [
+      "Knie auf der Matte, Hände etwas weiter als schulterbreit.",
+      "Von Knie bis Kopf eine gerade Linie.",
+      "Brust kontrolliert zum Boden senken.",
+      "Hochdrücken, ohne in der Hüfte abzuknicken."
+    ],
+    "tip": "Zwischenstufe zum vollen Liegestütz. 3×8–12.",
+    "caution": "Knie polstern; die Hüfte bleibt in Linie und wird nicht nach oben geschoben.",
+    "progression": "Mehr Wiederholungen, dann einzelne volle Liegestütze."
+  },
+  "pike_pushup": {
+    "muscles": [
+      "Schultern",
+      "Trizeps"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Aus dem Liegestütz die Hüfte hoch schieben – ein umgekehrtes V.",
+      "Hände schulterbreit, der Kopf zwischen den Armen.",
+      "Ellbogen beugen und den Kopf Richtung Boden vor die Hände senken.",
+      "Kraftvoll zurückdrücken."
+    ],
+    "tip": "Schulterkraft ohne Hanteln. 3×6–8.",
+    "caution": "Nicht bei Schulter- oder Nackenschmerzen; langsam absenken.",
+    "progression": "Füße erhöht, dann tiefer."
+  },
+  "bench_dip": {
+    "muscles": [
+      "Trizeps",
+      "Schultern",
+      "Brust"
+    ],
+    "equipment": "Bank oder stabiler Stuhl",
+    "steps": [
+      "Hände schulterbreit auf die Kante hinter dir, die Finger zeigen nach vorn.",
+      "Beine nach vorn, das Gesäß knapp vor der Kante.",
+      "Ellbogen nach hinten beugen und den Körper absenken.",
+      "Über die Arme hochdrücken."
+    ],
+    "tip": "Trizeps mit dem eigenen Körpergewicht. 3×8–12.",
+    "caution": "Nicht tiefer, als die Oberarme waagerecht sind; bei Schulterschmerzen weglassen.",
+    "progression": "Beine weiter strecken, dann Füße erhöht.",
+    "gear": "Bank"
+  },
+  "biceps_curl": {
+    "muscles": [
+      "Bizeps",
+      "Unterarme"
+    ],
+    "equipment": "Kurzhanteln oder Theraband",
+    "steps": [
+      "Aufrecht stehen, Hanteln mit nach vorn zeigenden Handflächen.",
+      "Die Ellbogen bleiben seitlich am Körper.",
+      "Hanteln zur Schulter beugen.",
+      "Langsam wieder strecken."
+    ],
+    "tip": "Einfach und gut dosierbar. 3×10–12.",
+    "caution": "Nicht mit Schwung aus dem Rücken arbeiten.",
+    "progression": "Schwerere Hanteln, dann langsamer absenken (3 s).",
+    "gear": "Kurzhanteln"
+  },
+  "triceps_extension": {
+    "muscles": [
+      "Trizeps"
+    ],
+    "equipment": "eine Kurzhantel",
+    "steps": [
+      "Aufrecht stehen, eine Hantel mit beiden Händen über dem Kopf.",
+      "Die Oberarme bleiben neben dem Kopf.",
+      "Die Hantel hinter den Kopf senken.",
+      "Arme wieder strecken."
+    ],
+    "tip": "Kräftigt die Rückseite der Oberarme. 3×10–12.",
+    "caution": "Kein Hohlkreuz, Bauch fest; bei Schulterschmerzen leichter oder weglassen.",
+    "progression": "Schwerere Hantel, dann einarmig.",
+    "gear": "eine Kurzhantel"
+  },
+  "lateral_raise": {
+    "muscles": [
+      "seitliche Schulter"
+    ],
+    "equipment": "leichte Kurzhanteln",
+    "steps": [
+      "Aufrecht stehen, Hanteln seitlich, Ellbogen leicht gebeugt.",
+      "Die Arme seitlich bis Schulterhöhe heben.",
+      "Die Schultern bleiben tief und werden nicht hochgezogen.",
+      "Langsam absenken."
+    ],
+    "tip": "Leichtes Gewicht reicht – die Technik zählt. 3×12–15.",
+    "caution": "Nicht über Schulterhöhe und ohne Schwung; bei Schulterschmerzen weglassen.",
+    "progression": "Etwas schwerer, dann oben 1 s halten.",
+    "gear": "leichte Kurzhanteln"
+  },
+  "band_pull_apart": {
+    "muscles": [
+      "oberer Rücken",
+      "hintere Schulter"
+    ],
+    "equipment": "Theraband",
+    "steps": [
+      "Band schulterbreit greifen, Arme vor der Brust ausgestreckt.",
+      "Das Band auseinanderziehen, bis die Arme seitlich ausgebreitet sind.",
+      "Schulterblätter zusammen, Schultern tief.",
+      "Langsam zurückführen."
+    ],
+    "tip": "Gegen die runde Schreibtischhaltung – geht auch zwischendurch. 3×15.",
+    "caution": "Nicht ins Hohlkreuz ausweichen, das Band nicht zurückschnellen lassen.",
+    "progression": "Stärkeres Band, dann oben 2 s halten.",
+    "gear": "Theraband"
+  },
+  "pullup": {
+    "muscles": [
+      "breiter Rückenmuskel",
+      "Bizeps",
+      "Griffkraft"
+    ],
+    "equipment": "Klimmzugstange",
+    "steps": [
+      "Die Stange etwas weiter als schulterbreit greifen und hängen.",
+      "Die Schultern aktiv nach unten ziehen.",
+      "Brust zur Stange ziehen, bis das Kinn darüber ist.",
+      "Langsam wieder ablassen."
+    ],
+    "tip": "Anfangs mit einem Band als Hilfe oder nur das langsame Ablassen üben. 3×3–8.",
+    "caution": "Nicht mit Schwung; bei Schulterschmerzen weglassen.",
+    "progression": "Vom langsamen Ablassen zum ersten ganzen Klimmzug, dann mehr Wiederholungen.",
+    "gear": "Klimmzugstange"
+  },
+  "inverted_row": {
+    "muscles": [
+      "oberer Rücken",
+      "Bizeps",
+      "Rumpf"
+    ],
+    "equipment": "stabiler Tisch oder Stange",
+    "steps": [
+      "Unter einen stabilen Tisch oder eine tiefe Stange legen, die Kante greifen.",
+      "Die Fersen bleiben am Boden, der Körper bildet eine Linie.",
+      "Brust zur Kante ziehen, Schulterblätter zusammen.",
+      "Langsam ablassen."
+    ],
+    "tip": "Zug-Übung ohne Geräte – gleicht Liegestütze aus. 3×8–12.",
+    "caution": "Vorher prüfen, dass Tisch oder Stange sicher tragen.",
+    "progression": "Füße weiter vorn bzw. erhöht.",
+    "gear": "stabiler Tisch"
+  },
+  "single_arm_row": {
+    "muscles": [
+      "oberer Rücken",
+      "Bizeps",
+      "hintere Schulter"
+    ],
+    "equipment": "Kurzhantel und Bank",
+    "steps": [
+      "Ein Knie und dieselbe Hand auf die Bank, der Rücken waagerecht.",
+      "Die Hantel hängt in der freien Hand.",
+      "Den Ellbogen nah am Körper Richtung Hüfte ziehen.",
+      "Langsam ablassen, Seite wechseln."
+    ],
+    "tip": "Rückenkraft mit sicher abgestütztem Rücken. 3×10 je Seite.",
+    "caution": "Der Rücken bleibt gerade und dreht nicht auf.",
+    "progression": "Schwerere Hantel, dann oben 1 s halten.",
+    "gear": "Kurzhantel und Bank"
+  },
+  "side_lying_leg_raise": {
+    "muscles": [
+      "seitliches Gesäß",
+      "Hüftabduktoren"
+    ],
+    "equipment": "Matte (optional Miniband)",
+    "steps": [
+      "Seitenlage, der Kopf liegt auf dem unteren Arm, Beine gestreckt.",
+      "Das obere Bein gestreckt anheben, die Zehen zeigen nach vorn.",
+      "Das Becken kippt nicht nach hinten.",
+      "Langsam absenken, Seite wechseln."
+    ],
+    "tip": "Stabilisiert Becken und Knie beim Laufen. 3×15 je Seite.",
+    "caution": "Nur so hoch, wie das Becken ruhig bleibt.",
+    "progression": "Mit Miniband, dann oben 2 s halten."
+  },
+  "donkey_kick": {
+    "muscles": [
+      "Gesäß"
+    ],
+    "equipment": "Matte",
+    "steps": [
+      "Vierfüßlerstand, Knie unter der Hüfte.",
+      "Ein Bein angewinkelt lassen und die Ferse Richtung Decke drücken.",
+      "Kein Hohlkreuz, das Becken bleibt gerade.",
+      "Langsam zurück, Seite wechseln."
+    ],
+    "tip": "Gezielt fürs Gesäß, schont den Rücken. 3×12 je Seite.",
+    "caution": "Nur so hoch, wie der Rücken gerade bleibt.",
+    "progression": "Mit Miniband über den Knien oder Gewichtsmanschette."
+  },
+  "bicycle_crunch": {
+    "muscles": [
+      "seitliche und gerade Bauchmuskeln"
+    ],
+    "equipment": "Matte",
+    "steps": [
+      "Rückenlage, Hände locker hinter dem Kopf, Schultern leicht angehoben.",
+      "Ein Knie zur Brust ziehen, das andere Bein strecken.",
+      "Den Gegenellbogen Richtung angezogenes Knie drehen.",
+      "Fließend die Seite wechseln."
+    ],
+    "tip": "Langsam ist wirksamer als schnell. 3×10 je Seite.",
+    "caution": "Nicht am Kopf ziehen; bei Rückenschmerzen das gestreckte Bein höher halten.",
+    "progression": "Langsamer, das gestreckte Bein tiefer."
+  },
+  "russian_twist": {
+    "muscles": [
+      "seitliche Bauchmuskeln",
+      "Rumpf"
+    ],
+    "equipment": "ohne (optional Gewicht)",
+    "steps": [
+      "Aufrecht sitzen, Knie gebeugt, Oberkörper leicht zurückgelehnt.",
+      "Hände vor der Brust zusammen.",
+      "Den Oberkörper zu einer Seite drehen, Hände Richtung Boden neben der Hüfte.",
+      "Zur anderen Seite drehen, der Rücken bleibt lang."
+    ],
+    "tip": "Aus dem Rumpf drehen, nicht nur die Arme schwingen. 3×10 je Seite.",
+    "caution": "Bei Rückenschmerzen die Füße am Boden lassen und weniger weit drehen.",
+    "progression": "Füße anheben, dann mit Gewicht."
+  },
+  "reverse_crunch": {
+    "muscles": [
+      "untere Bauchmuskeln"
+    ],
+    "equipment": "Matte",
+    "steps": [
+      "Rückenlage, Arme neben dem Körper, Knie über der Hüfte angewinkelt.",
+      "Das Becken einrollen und die Knie Richtung Brust ziehen.",
+      "Ohne Schwung, der Kopf bleibt liegen.",
+      "Langsam ablegen."
+    ],
+    "tip": "Kräftigt den unteren Bauch rückenfreundlich. 3×10–12.",
+    "caution": "Keine Schwungbewegung; bei Nackenbeschwerden den Kopf bewusst liegen lassen.",
+    "progression": "Langsamer, oben 1 s halten."
+  },
+  "shoulder_tap": {
+    "muscles": [
+      "Rumpf",
+      "Schultern"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Hoher Liegestütz, Füße etwas weiter als hüftbreit.",
+      "Eine Hand tippt die gegenüberliegende Schulter an.",
+      "Die Hüfte bleibt ruhig und schaukelt nicht.",
+      "Abwechselnd weiter."
+    ],
+    "tip": "Gegen das Verdrehen – für einen stabilen Rumpf. 3×10 je Seite.",
+    "caution": "Bei Handgelenksbeschwerden auf Fäusten oder erhöht üben.",
+    "progression": "Füße enger, dann langsamer."
+  },
+  "bear_plank": {
+    "muscles": [
+      "Rumpf",
+      "Oberschenkel",
+      "Schultern"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Vierfüßlerstand, Zehen aufgestellt.",
+      "Die Knie wenige Zentimeter vom Boden abheben.",
+      "Der Rücken bleibt flach wie ein Tisch.",
+      "Ruhig atmend halten."
+    ],
+    "tip": "Rumpfspannung, die schnell spürbar wird. 3×20–40 s.",
+    "caution": "Die Knie nur knapp anheben, den Rücken nicht rund machen.",
+    "progression": "Länger halten, dann im Bärengang vorwärts."
+  },
+  "v_up": {
+    "muscles": [
+      "gerade Bauchmuskeln",
+      "Hüftbeuger"
+    ],
+    "equipment": "Matte",
+    "steps": [
+      "Rückenlage, Arme über dem Kopf, Beine gestreckt.",
+      "Arme und Beine gleichzeitig heben – die Hände greifen Richtung Füße.",
+      "Oben kurz das V halten.",
+      "Langsam ablegen."
+    ],
+    "tip": "Anspruchsvoll – erst Crunch und Beinheben sicher können. 3×8–10.",
+    "caution": "Nicht bei Rückenschmerzen; ohne Schwung.",
+    "progression": "Langsamer, oben 1 s halten."
+  },
+  "flutter_kicks": {
+    "muscles": [
+      "untere Bauchmuskeln",
+      "Hüftbeuger"
+    ],
+    "equipment": "Matte",
+    "steps": [
+      "Rückenlage, Hände neben oder unter dem Gesäß.",
+      "Die Beine gestreckt knapp über dem Boden.",
+      "Kleine, schnelle Auf- und Abschläge im Wechsel.",
+      "Der untere Rücken bleibt am Boden."
+    ],
+    "tip": "Kurz und sauber statt lang und im Hohlkreuz. 3×20–30 s.",
+    "caution": "Hebt sich der untere Rücken, die Beine höher halten.",
+    "progression": "Beine tiefer, dann länger."
+  },
+  "glute_bridge_march": {
+    "muscles": [
+      "Gesäß",
+      "Rumpf"
+    ],
+    "equipment": "Matte",
+    "steps": [
+      "Aus der Rückenlage das Becken in die Brücke heben.",
+      "Abwechselnd ein Knie anheben, als würdest du marschieren.",
+      "Das Becken bleibt oben und gerade.",
+      "Nach den Wiederholungen langsam ablegen."
+    ],
+    "tip": "Verbindet Gesäßkraft und Beckenstabilität. 3×8 je Seite.",
+    "caution": "Das Becken nicht seitlich absinken lassen; die Bewegung langsam.",
+    "progression": "Länger halten, Füße weiter weg."
+  },
+  "worlds_greatest_stretch": {
+    "muscles": [
+      "Hüfte",
+      "Brustwirbelsäule",
+      "hintere Oberschenkel"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Tiefer Ausfallschritt, beide Hände innen neben dem vorderen Fuß.",
+      "Den inneren Ellbogen Richtung vorderen Fuß senken.",
+      "Den Arm dann zur Decke drehen, der Blick folgt.",
+      "Zurück und die Seite wechseln."
+    ],
+    "tip": "Mobilisiert Hüfte und Rücken in einem – ideal zum Aufwärmen. 4–5 je Seite.",
+    "caution": "Nur im schmerzfreien Bereich; das hintere Knie bei Bedarf ablegen.",
+    "progression": "In jeder Position länger atmen."
+  },
+  "downward_dog": {
+    "muscles": [
+      "Waden",
+      "hintere Oberschenkel",
+      "Schultern"
+    ],
+    "equipment": "Matte",
+    "steps": [
+      "Aus dem Vierfüßlerstand die Zehen aufstellen.",
+      "Die Hüfte nach oben und hinten schieben – ein umgekehrtes V.",
+      "Rücken lang, die Fersen sinken Richtung Boden, die Knie dürfen gebeugt sein.",
+      "Ruhig atmend halten."
+    ],
+    "tip": "Dehnt die ganze Körperrückseite. 3×30 s.",
+    "caution": "Bei Handgelenks- oder Schulterbeschwerden auf den Unterarmen üben.",
+    "progression": "Länger halten, abwechselnd die Fersen senken."
+  },
+  "cobra": {
+    "muscles": [
+      "Bauch",
+      "Wirbelsäule",
+      "Hüftbeuger"
+    ],
+    "equipment": "Matte",
+    "steps": [
+      "Bauchlage, Hände neben den Schultern.",
+      "Die Brust langsam anheben, das Becken bleibt am Boden.",
+      "Schultern tief, Blick nach vorn.",
+      "Kurz halten und ablegen."
+    ],
+    "tip": "Sanfte Streckung nach langem Sitzen. 6–8 Wiederholungen.",
+    "caution": "Nur so weit, wie es im unteren Rücken angenehm bleibt.",
+    "progression": "Länger halten, die Arme weiter strecken."
+  },
+  "quad_stretch": {
+    "muscles": [
+      "vorderer Oberschenkel",
+      "Hüftbeuger"
+    ],
+    "equipment": "ohne (optional Wand)",
+    "steps": [
+      "Aufrecht auf einem Bein stehen, bei Bedarf an der Wand festhalten.",
+      "Die Ferse des anderen Beins zum Gesäß ziehen.",
+      "Das Knie zeigt nach unten, die Hüfte leicht nach vorn.",
+      "Halten, dann Seite wechseln."
+    ],
+    "tip": "Der Klassiker nach dem Laufen. 2×30 s je Seite.",
+    "caution": "Nicht ins Hohlkreuz ausweichen; bei Kniebeschwerden mit Handtuch um den Fuß.",
+    "progression": "Länger halten, das Becken bewusst einrollen."
+  },
+  "pigeon_pose": {
+    "muscles": [
+      "Gesäß",
+      "Hüfte"
+    ],
+    "equipment": "Matte",
+    "steps": [
+      "Aus dem Vierfüßlerstand ein Knie nach vorn zwischen die Hände bringen, der Unterschenkel liegt quer.",
+      "Das hintere Bein lang nach hinten strecken.",
+      "Die Hüfte sinkt Richtung Boden, der Oberkörper aufrecht oder nach vorn abgelegt.",
+      "Halten, dann Seite wechseln."
+    ],
+    "tip": "Tiefe Gesäßdehnung – angenehm nach langen Läufen. 2×30–45 s je Seite.",
+    "caution": "Bei Knieschmerzen den Unterschenkel weniger quer legen oder die Vierer-Dehnung nehmen.",
+    "progression": "Oberkörper weiter vorn ablegen, länger halten."
+  },
+  "leg_swings": {
+    "muscles": [
+      "Hüfte",
+      "hintere Oberschenkel"
+    ],
+    "equipment": "ohne (Wand zum Festhalten)",
+    "steps": [
+      "Seitlich an eine Wand stellen und festhalten.",
+      "Das äußere Bein locker nach vorn und hinten pendeln.",
+      "Der Oberkörper bleibt ruhig und aufrecht.",
+      "Schwung langsam steigern, dann Seite wechseln."
+    ],
+    "tip": "Dynamisches Aufwärmen vor dem Laufen. 10–15 je Seite.",
+    "caution": "Kontrolliert pendeln, nicht reißen.",
+    "progression": "Größerer Bewegungsradius, auch seitlich vor dem Körper."
+  },
+  "arm_circles": {
+    "muscles": [
+      "Schultern",
+      "oberer Rücken"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Aufrecht stehen, Arme lang.",
+      "Große, langsame Kreise nach vorn.",
+      "Dann die Richtung wechseln.",
+      "Die Schultern bleiben locker."
+    ],
+    "tip": "Lockert die Schultern vor dem Training. 10 je Richtung.",
+    "caution": "Im schmerzfreien Bereich bleiben.",
+    "progression": "Größere Kreise, auch einarmig."
+  },
+  "ankle_rocks": {
+    "muscles": [
+      "Sprunggelenk",
+      "Wade"
+    ],
+    "equipment": "Wand",
+    "steps": [
+      "Halbknien vor einer Wand, der vordere Fuß etwa eine Handbreit davor.",
+      "Das Knie Richtung Wand schieben, die Ferse bleibt am Boden.",
+      "Kurz halten und zurück.",
+      "Den Abstand langsam vergrößern, Seite wechseln."
+    ],
+    "tip": "Mehr Beweglichkeit im Sprunggelenk für tiefe Kniebeugen und einen runden Laufschritt. 10 je Seite.",
+    "caution": "Die Ferse bleibt unten; bei Schmerzen vorn im Gelenk weniger weit.",
+    "progression": "Den Fuß weiter von der Wand weg.",
+    "gear": "Wand"
+  },
+  "neck_stretch": {
+    "muscles": [
+      "Nacken",
+      "obere Schulter"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Aufrecht stehen oder sitzen, Schultern locker.",
+      "Ein Ohr Richtung Schulter neigen.",
+      "Die Hand derselben Seite liegt sanft auf dem Kopf – nicht ziehen.",
+      "Halten, dann Seite wechseln."
+    ],
+    "tip": "Entspannt nach langem Sitzen. 2×20 s je Seite.",
+    "caution": "Nur sanft; bei Kribbeln in den Armen sofort lösen.",
+    "progression": "Die Gegenschulter aktiv nach unten schieben."
+  },
+  "side_bend_stretch": {
+    "muscles": [
+      "seitlicher Rumpf",
+      "breiter Rückenmuskel"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Hüftbreiter Stand, eine Hand an der Hüfte.",
+      "Den anderen Arm über den Kopf strecken.",
+      "Zur Seite neigen, ohne nach vorn zu kippen.",
+      "Kurz halten, aufrichten, Seite wechseln."
+    ],
+    "tip": "Macht die Flanken lang – gut nach dem Sitzen. 4 je Seite.",
+    "caution": "Nicht ins Hohlkreuz, das Becken bleibt mittig.",
+    "progression": "Länger halten, den Arm weiter über den Kopf."
+  },
+  "inchworm": {
+    "muscles": [
+      "hintere Oberschenkel",
+      "Schultern",
+      "Rumpf"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Aus dem Stand nach vorn beugen, Hände auf den Boden.",
+      "Mit den Händen nach vorn laufen bis in den Liegestütz.",
+      "Kurz halten, dann mit den Händen zurücklaufen.",
+      "Langsam aufrollen."
+    ],
+    "tip": "Aufwärmen für den ganzen Körper. 5 Wiederholungen.",
+    "caution": "Die Knie dürfen gebeugt sein; nicht bei akuten Rückenschmerzen.",
+    "progression": "Im Liegestütz einen Liegestütz einbauen."
+  },
+  "deep_squat_hold": {
+    "muscles": [
+      "Hüfte",
+      "Sprunggelenk",
+      "Rücken"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Schulterbreiter Stand, Fußspitzen leicht nach außen.",
+      "Tief in die Hocke sinken, die Fersen bleiben am Boden.",
+      "Die Ellbogen drücken die Knie sanft nach außen, Brust offen.",
+      "Ruhig atmend halten."
+    ],
+    "tip": "Holt verlorene Beweglichkeit zurück. 3×30 s.",
+    "caution": "Bei Knieschmerzen weniger tief, die Fersen bei Bedarf unterlegen.",
+    "progression": "Länger halten, das Gewicht von Seite zu Seite verlagern."
+  },
+  "jumping_jack": {
+    "muscles": [
+      "Waden",
+      "Schultern",
+      "Kondition"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Aufrecht stehen, Arme seitlich.",
+      "Beine grätschen und gleichzeitig die Arme über den Kopf.",
+      "Zurückspringen in die Ausgangsstellung.",
+      "Leicht und federnd im Takt."
+    ],
+    "tip": "Bringt den Kreislauf in Schwung. 3×20–30.",
+    "caution": "Auf weichem Untergrund; bei Knie- oder Beckenbodenbeschwerden ohne Sprung (Schritt zur Seite).",
+    "progression": "Schneller, dann länger."
+  },
+  "high_knees": {
+    "muscles": [
+      "Hüftbeuger",
+      "Waden",
+      "Kondition"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Auf der Stelle laufen.",
+      "Die Knie im schnellen Wechsel bis Hüfthöhe ziehen.",
+      "Auf dem Vorfuß landen, die Arme schwingen mit.",
+      "Der Oberkörper bleibt aufrecht."
+    ],
+    "tip": "Kurz und intensiv – ideal im Intervall. 3×20 s.",
+    "caution": "Nur aufgewärmt und auf rutschfestem Boden.",
+    "progression": "Länger, dann schneller."
+  },
+  "butt_kicks": {
+    "muscles": [
+      "hintere Oberschenkel",
+      "Waden",
+      "Kondition"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Auf der Stelle laufen.",
+      "Die Fersen im Wechsel Richtung Gesäß führen.",
+      "Kurze, schnelle Bodenkontakte.",
+      "Oberkörper aufrecht, die Arme schwingen locker."
+    ],
+    "tip": "Lauf-ABC auf der Stelle. 3×20 s.",
+    "caution": "Nur aufgewärmt und auf rutschfestem Boden.",
+    "progression": "Höhere Frequenz, dann vorwärts."
+  },
+  "burpee": {
+    "muscles": [
+      "Ganzkörper",
+      "Kondition"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Aus dem Stand in die Hocke, Hände auf den Boden.",
+      "Die Füße nach hinten in den Liegestütz springen.",
+      "Die Füße wieder heranspringen.",
+      "Strecksprung mit den Armen nach oben, weich landen."
+    ],
+    "tip": "Ganzkörper-Kondition – Bestandteil im Hyrox-Training. 3×8–10.",
+    "caution": "Erst ohne Sprung lernen (Füße zurücksetzen); der Rücken bleibt im Liegestütz gerade.",
+    "progression": "Mit Liegestütz am Boden, dann Burpee mit Weitsprung."
+  },
+  "mountain_climber": {
+    "muscles": [
+      "Rumpf",
+      "Hüftbeuger",
+      "Kondition"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Hoher Liegestütz, Hände unter den Schultern.",
+      "Ein Knie zur Brust ziehen.",
+      "Im schnellen Wechsel die Beine tauschen.",
+      "Die Hüfte bleibt tief und ruhig."
+    ],
+    "tip": "Rumpf und Kondition in einem. 3×20–30 s.",
+    "caution": "Bei Handgelenksbeschwerden erhöht an einer Bank üben.",
+    "progression": "Schneller, dann länger."
+  },
+  "skater_jump": {
+    "muscles": [
+      "Gesäß",
+      "Oberschenkel",
+      "Balance"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Auf einem Bein stehen, leicht gebeugt.",
+      "Seitlich auf das andere Bein springen.",
+      "Weich landen, das freie Bein schwingt hinter dem Standbein.",
+      "Im Rhythmus hin und her."
+    ],
+    "tip": "Seitliche Sprungkraft und Stabilität – gut für Fußball. 3×20–30 s.",
+    "caution": "Das Knie zeigt bei der Landung über den Fuß, nicht nach innen.",
+    "progression": "Weiter springen, bei der Landung kurz halten."
+  },
+  "bear_crawl": {
+    "muscles": [
+      "Rumpf",
+      "Schultern",
+      "Oberschenkel"
+    ],
+    "equipment": "ohne",
+    "steps": [
+      "Bärenstand: Die Knie schweben knapp über dem Boden.",
+      "Gegengleich Hand und Fuß ein kleines Stück vorsetzen.",
+      "Der Rücken bleibt flach, die Hüfte ruhig.",
+      "Vorwärts und zurück krabbeln."
+    ],
+    "tip": "Koordination und Rumpfkraft – macht auch Kindern Spaß. 3×20–30 s.",
+    "caution": "Kleine Schritte, die Knie knapp über dem Boden.",
+    "progression": "Länger, dann rückwärts oder seitwärts."
+  }
+}

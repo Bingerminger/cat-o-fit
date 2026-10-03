@@ -18,22 +18,24 @@ import { currentEligibility } from './wellness.js';
 import { adherence } from './fitness.js';
 import { isProtectedDay } from './cycle.js';
 
+import { t, tp } from './i18n.js';
+
 const DISTANCES = {
   '5k': { label: '5 km', km: 5 },
   '10k': { label: '10 km', km: 10 },
-  'HM': { label: 'Halbmarathon', km: 21.0975 },
-  'M': { label: 'Marathon', km: 42.195 },
+  'HM': { get label() { return t('events.distances.halfMarathon'); }, km: 21.0975 },
+  'M': { get label() { return t('events.distances.marathon'); }, km: 42.195 },
   // `beta`: Pläne für diese Formate sind noch jung (keine Rad-/Schwimmzonen,
   // Stationen ohne Laststeuerung) – das Auswahlfeld sagt das ehrlich.
-  'tri-sprint': { label: 'Triathlon (Sprint)', km: 5, sport: 'triathlon', beta: true },
-  'tri-olympic': { label: 'Triathlon (Olympisch)', km: 10, sport: 'triathlon', beta: true },
+  'tri-sprint': { get label() { return t('events.distances.triSprint'); }, km: 5, sport: 'triathlon', beta: true },
+  'tri-olympic': { get label() { return t('events.distances.triOlympic'); }, km: 10, sport: 'triathlon', beta: true },
   'hyrox': { label: 'Hyrox', km: 8, sport: 'hyrox', beta: true },
-  'custom': { label: 'Individuell', km: null },
+  'custom': { get label() { return t('events.distances.custom'); }, km: null },
 };
 
 /* ------------------------------- Liste ---------------------------------- */
 export function renderList(view) {
-  setHeader({ title: 'Ziele', actions: [{ icon: 'plus', label: 'Neues Ziel', onClick: () => openAddChooser() }] });
+  setHeader({ title: t('events.title'), actions: [{ icon: 'plus', label: t('events.newGoal'), onClick: () => openAddChooser() }] });
 
   const all = store.get('events').slice();
   const today = todayStr();
@@ -45,26 +47,26 @@ export function renderList(view) {
   const donePrograms = programs.filter((e) => e.status === 'abgeschlossen');
 
   if (!all.length) {
-    view.appendChild(emptyState('flag', 'Noch kein Ziel',
-      'Trainiere auf einen Wettkampf hin – oder starte ein Fitness-/Gesundheits-Programm ganz ohne Wettkampf.'));
-    view.appendChild(el('button', { class: 'btn btn--primary btn--block mt-4', onclick: () => openAddChooser() }, [icon('plus'), 'Ziel anlegen']));
+    view.appendChild(emptyState('flag', t('events.emptyTitle'),
+      t('events.emptyText')));
+    view.appendChild(el('button', { class: 'btn btn--primary btn--block mt-4', onclick: () => openAddChooser() }, [icon('plus'), t('events.addGoal')]));
     return;
   }
 
   if (activePrograms.length) {
-    view.appendChild(sectionHead('Trainingsprogramme'));
+    view.appendChild(sectionHead(t('events.programmes')));
     activePrograms.forEach((e) => view.appendChild(programCard(e)));
   }
   if (upcoming.length) {
-    view.appendChild(sectionHead('Kommende Wettkämpfe'));
+    view.appendChild(sectionHead(t('events.upcomingRaces')));
     upcoming.forEach((e) => view.appendChild(eventCard(e)));
   }
   if (past.length || donePrograms.length) {
-    view.appendChild(sectionHead('Abgeschlossen'));
+    view.appendChild(sectionHead(t('events.completed')));
     past.forEach((e) => view.appendChild(eventCard(e, true)));
     donePrograms.forEach((e) => view.appendChild(programCard(e, true)));
   }
-  view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-6', onclick: () => openAddChooser() }, [icon('plus'), 'Weiteres Ziel']));
+  view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-6', onclick: () => openAddChooser() }, [icon('plus'), t('events.anotherGoal')]));
 }
 
 /** Karte für ein Trainingsprogramm (ohne Wettkampf-Countdown). */
@@ -80,9 +82,9 @@ function programCard(e, dim = false) {
       ]),
     ]),
     el('div', { class: 'row gap-2 mt-2 wrap' }, [
-      el('span', { class: 'chip', text: `${e.daysPerWeek || meta.defaultDays}×/Woche` }),
-      plan ? el('span', { class: 'chip chip--accent', text: `Plan · ${plan.weeks} Wo.` }) : el('span', { class: 'chip', text: 'Kein Plan' }),
-      el('span', { class: 'chip', text: e.status }),
+      el('span', { class: 'chip', text: t('events.timesPerWeek', { n: e.daysPerWeek || meta.defaultDays }) }),
+      plan ? el('span', { class: 'chip chip--accent', text: tp('events.planWeeksShort', plan.weeks) }) : el('span', { class: 'chip', text: t('events.noPlan') }),
+      el('span', { class: 'chip', text: statusChip(e.status) }),
     ]),
   ]);
 }
@@ -99,14 +101,14 @@ function eventCard(e, dim = false) {
         el('div', { class: 'muted', style: { fontSize: '0.84rem' }, text: `${fmtDate(e.date)} · ${dist}${e.location ? ' · ' + e.location : ''}` }),
       ]),
       el('div', { style: { textAlign: 'right' } }, [
-        el('div', { class: 'num', style: { fontWeight: '800', fontSize: '1.1rem', color: days >= 0 ? 'var(--accent)' : 'var(--text-3)' }, text: days > 0 ? `${days}` : (days === 0 ? 'Heute' : '–') }),
-        el('div', { class: 'dim', style: { fontSize: '0.66rem' }, text: days > 0 ? 'Tage' : '' }),
+        el('div', { class: 'num', style: { fontWeight: '800', fontSize: '1.1rem', color: days >= 0 ? 'var(--accent)' : 'var(--text-3)' }, text: days > 0 ? `${days}` : (days === 0 ? t('events.today') : '–') }),
+        el('div', { class: 'dim', style: { fontSize: '0.66rem' }, text: days > 0 ? tp('events.daysUnit', days) : '' }),
       ]),
     ]),
     el('div', { class: 'row gap-2 mt-2 wrap' }, [
-      e.targetTime ? el('span', { class: 'chip', text: `Ziel ${e.targetTime}` }) : null,
-      plan ? el('span', { class: 'chip chip--accent', text: `Plan · ${plan.weeks} Wo.` }) : el('span', { class: 'chip', text: 'Kein Plan' }),
-      el('span', { class: 'chip', text: e.status }),
+      e.targetTime ? el('span', { class: 'chip', text: t('events.targetChip', { time: e.targetTime }) }) : null,
+      plan ? el('span', { class: 'chip chip--accent', text: tp('events.planWeeksShort', plan.weeks) }) : el('span', { class: 'chip', text: t('events.noPlan') }),
+      el('span', { class: 'chip', text: statusChip(e.status) }),
     ]),
   ]);
 }
@@ -120,27 +122,27 @@ export function renderDetail(view, id) {
   setHeader({
     title: e.name, subtitle: fmtDate(e.date), back: '#/events',
     actions: [
-      { icon: 'edit', label: 'Bearbeiten', onClick: () => openEventForm(e) },
-      { icon: 'download', label: 'Export', onClick: () => openIcsSheet({ event: e }) },
+      { icon: 'edit', label: t('events.edit'), onClick: () => openEventForm(e) },
+      { icon: 'download', label: t('events.export'), onClick: () => openIcsSheet({ event: e }) },
     ],
   });
 
   const days = diffDays(todayStr(), e.date);
   const dist = DISTANCES[e.distanceType] || { label: fmtKm(e.distanceKm, 1), km: e.distanceKm };
-  const tp = targetPaceSecPerKm(e.targetTime, e.distanceKm);
+  const paceSec = targetPaceSecPerKm(e.targetTime, e.distanceKm);
 
   // Countdown-Hero
   view.appendChild(el('div', { class: 'hero' }, [
-    el('div', { class: 'hero__eyebrow', text: PRIORITIES[e.priority] || 'Wettkampf' }),
+    el('div', { class: 'hero__eyebrow', text: PRIORITIES[e.priority] || t('events.race') }),
     el('div', { class: 'hero__title', text: e.name }),
     el('div', { class: 'hero__row' }, [
       el('div', {}, [
         el('div', { class: 'num', style: { fontSize: '2.4rem', fontWeight: '800', lineHeight: '1' }, text: days > 0 ? `${days}` : (days === 0 ? '🏁' : '✓') }),
-        el('div', { style: { opacity: '0.85', fontSize: '0.84rem' }, text: days > 0 ? `Tage bis ${fmtDate(e.date)}` : (days === 0 ? 'Heute ist es soweit!' : 'vergangen') }),
+        el('div', { style: { opacity: '0.85', fontSize: '0.84rem' }, text: days > 0 ? tp('events.daysUntil', days, { date: fmtDate(e.date) }) : (days === 0 ? t('events.raceDayHere') : t('events.past')) }),
       ]),
       el('div', { style: { textAlign: 'right' } }, [
         e.targetTime ? el('div', { class: 'num', style: { fontSize: '1.4rem', fontWeight: '800' }, text: e.targetTime }) : null,
-        e.targetTime ? el('div', { style: { opacity: '0.85', fontSize: '0.78rem' }, text: 'Zielzeit' }) : null,
+        e.targetTime ? el('div', { style: { opacity: '0.85', fontSize: '0.78rem' }, text: t('events.targetTime') }) : null,
       ]),
     ]),
   ]));
@@ -149,19 +151,19 @@ export function renderDetail(view, id) {
   // passte auf dem iPhone nicht in die Kachel. Triathlon und Hyrox nennen ihr Format.
   const distKm = e.distanceKm || dist.km;
   const distStat = !dist.sport && distKm
-    ? miniStat(fmtKm(distKm, distKm % 1 ? 1 : 0), dist.label && !/km$/.test(dist.label) && e.distanceType !== 'custom' ? dist.label : 'Distanz')
-    : miniStat(dist.label || '–', dist.sport ? 'Format' : 'Distanz');
+    ? miniStat(fmtKm(distKm, distKm % 1 ? 1 : 0), dist.label && !/km$/.test(dist.label) && e.distanceType !== 'custom' ? dist.label : t('events.distance'))
+    : miniStat(dist.label || '–', dist.sport ? t('events.format') : t('events.distance'));
   view.appendChild(el('div', { class: 'stat-grid mt-4' }, [
     distStat,
-    tp ? miniStat(`${fmtPace(tp)}`, 'Zielpace min/km') : null,
-    miniStat(e.location || '–', 'Ort'),
+    paceSec ? miniStat(`${fmtPace(paceSec)}`, t('events.targetPace')) : null,
+    miniStat(e.location || '–', t('events.location')),
   ].filter(Boolean)));
 
   if (e.notes) view.appendChild(el('div', { class: 'card card--flat mt-4', text: e.notes }));
 
   // Plan-Bereich
   const plan = store.get('plans').find((p) => p.eventId === e.id);
-  view.appendChild(sectionHead('Trainingsplan'));
+  view.appendChild(sectionHead(t('events.trainingPlan')));
   if (plan) {
     const units = plan.units || [];
     const done = units.filter((u) => u.status === 'erledigt').length;
@@ -172,70 +174,70 @@ export function renderDetail(view, id) {
       el('div', { class: 'row row--between' }, [
         el('div', {}, [
           el('div', { class: 'card__title', text: plan.name }),
-          el('div', { class: 'muted', style: { fontSize: '0.84rem' }, text: `${plan.weeks} Wochen · ${units.length} Einheiten` }),
+          el('div', { class: 'muted', style: { fontSize: '0.84rem' }, text: `${tp('events.weeksCount', plan.weeks)} · ${tp('events.sessionsCount', units.length)}` }),
         ]),
         el('span', { class: 'list-item__chev', html: iconSvg('chevronRight') }),
       ]),
       el('div', { class: 'row gap-2 mt-2 wrap' }, [
-        el('span', { class: 'chip chip--good', text: `${done} erledigt` }),
-        adh != null ? el('span', { class: 'chip chip--accent', text: `${adh}% Plan-Einhaltung` }) : null,
+        el('span', { class: 'chip chip--good', text: t('events.doneChip', { n: done }) }),
+        adh != null ? el('span', { class: 'chip chip--accent', text: t('events.adherenceChip', { pct: adh }) }) : null,
       ]),
     ]));
   } else if (e.date <= todayStr()) {
     // Kein leerer Plan für ein Rennen heute oder in der Vergangenheit.
     view.appendChild(el('div', { class: 'card' }, [
       el('p', { class: 'muted', text: e.date === todayStr()
-        ? 'Heute ist Wettkampf – für einen Trainingsplan ist es zu spät. Viel Erfolg!'
-        : 'Der Wettkampf liegt in der Vergangenheit – dafür lässt sich kein Plan mehr erstellen. Stimmt das Datum?' }),
+        ? t('events.raceTodayNoPlan')
+        : t('events.racePastNoPlan') }),
     ]));
   } else {
     view.appendChild(el('div', { class: 'card' }, [
-      el('p', { class: 'muted mb-4', text: 'Für diesen Wettkampf gibt es noch keinen Plan. Erstelle einen periodisierten Trainingsplan bis zum Wettkampftag – passend zu deinem Niveau und deinen Lauftagen.' }),
-      el('button', { class: 'btn btn--primary btn--block', onclick: () => doCreatePlan(e) }, [icon('sparkles'), 'Plan erstellen']),
+      el('p', { class: 'muted mb-4', text: t('events.noPlanYet') }),
+      el('button', { class: 'btn btn--primary btn--block', onclick: () => doCreatePlan(e) }, [icon('sparkles'), t('events.createPlan')]),
     ]));
   }
 
   // Wettkampfprognose (Schätzung)
   const pred = predictRace(store.get('sessions'), e.distanceKm, { hrZones: store.profile().hrZones });
   if (pred) {
-    view.appendChild(sectionHead('Prognose', null, { help: 'vdot' }));
+    view.appendChild(sectionHead(t('events.prediction'), null, { help: 'vdot' }));
     view.appendChild(el('div', { class: 'card' }, [
       el('div', { class: 'row gap-3' }, [
         el('span', { class: 'type-icon', style: { background: 'var(--accent-soft)', color: 'var(--accent-strong)' }, html: iconSvg('target') }),
         el('div', { class: 'grow' }, [
           el('div', { class: 'num', style: { fontSize: '1.5rem', fontWeight: '800' }, text: fmtSecs(pred.seconds) }),
-          el('div', { class: 'muted', style: { fontSize: '0.8rem' }, text: `geschätzt aus ${pred.basis}` }),
+          el('div', { class: 'muted', style: { fontSize: '0.8rem' }, text: t('events.estimatedFrom', { basis: pred.basis }) }),
         ]),
       ]),
       pred.note ? el('div', { class: 'muted mt-2', style: { fontSize: '0.8rem' }, text: pred.note }) : null,
-      el('div', { class: 'dim mt-2', style: { fontSize: '0.76rem' }, text: 'Nur eine grobe Näherung – Tagesform, Strecke und Wetter zählen am Renntag.' }),
+      el('div', { class: 'dim mt-2', style: { fontSize: '0.76rem' }, text: t('events.predictionNote') }),
     ]));
   }
 
   // Status / Löschen
-  view.appendChild(sectionHead('Verwaltung'));
+  view.appendChild(sectionHead(t('events.manage')));
   view.appendChild(el('div', { class: 'card' }, [
     el('div', { class: 'row row--between', style: { padding: '4px 0' } }, [
-      el('span', { text: 'Status' }),
+      el('span', { text: t('events.status') }),
       segmented(
-        [{ value: 'geplant', label: 'Geplant' }, { value: 'abgeschlossen', label: 'Abgeschlossen' }],
+        [{ value: 'geplant', label: t('status.geplant') }, { value: 'abgeschlossen', label: t('events.completed') }],
         e.status === 'abgeschlossen' ? 'abgeschlossen' : 'geplant',
-        (v) => { store.patch('events', e.id, { status: v }); toast('Status aktualisiert'); },
+        (v) => { store.patch('events', e.id, { status: v }); toast(t('events.statusUpdated')); },
       ),
     ]),
   ]));
   view.appendChild(el('button', {
     class: 'btn btn--danger btn--block mt-4',
     onclick: async () => {
-      if (await confirmDialog({ title: 'Wettkampf löschen?', message: 'Wettkampf und zugehöriger Plan werden entfernt.', confirmLabel: 'Löschen', danger: true })) {
+      if (await confirmDialog({ title: t('events.deleteRaceQ'), message: t('events.deleteRaceText'), confirmLabel: t('events.delete'), danger: true })) {
         const p = store.get('plans').find((pl) => pl.eventId === e.id);
         if (p) store.remove('plans', p.id);
         store.remove('events', e.id);
-        toast('Wettkampf gelöscht', 'good');
+        toast(t('events.raceDeleted'), 'good');
         navigate('#/events');
       }
     },
-  }, [icon('trash'), 'Wettkampf löschen']));
+  }, [icon('trash'), t('events.deleteRace')]));
 }
 
 /* --------------------------- Programm-Detail ---------------------------- */
@@ -244,8 +246,8 @@ function renderProgramDetail(view, e) {
   setHeader({
     title: e.name, subtitle: meta.label, back: '#/events',
     actions: [
-      { icon: 'edit', label: 'Bearbeiten', onClick: () => openProgramForm(e) },
-      { icon: 'download', label: 'Export', onClick: () => openIcsSheet({ event: e }) },
+      { icon: 'edit', label: t('events.edit'), onClick: () => openProgramForm(e) },
+      { icon: 'download', label: t('events.export'), onClick: () => openIcsSheet({ event: e }) },
     ],
   });
 
@@ -255,73 +257,73 @@ function renderProgramDetail(view, e) {
   const today = todayStr();
 
   view.appendChild(el('div', { class: 'hero' }, [
-    el('div', { class: 'hero__eyebrow', text: 'Trainingsprogramm' }),
+    el('div', { class: 'hero__eyebrow', text: t('events.programme') }),
     el('div', { class: 'hero__title', text: `${meta.emoji} ${e.name}` }),
     el('div', { style: { opacity: '0.9', fontSize: '0.86rem', marginTop: '0.3rem' }, text: meta.focus }),
   ]));
 
   view.appendChild(el('div', { class: 'stat-grid mt-4' }, [
-    miniStat(`${e.daysPerWeek || meta.defaultDays}×`, 'pro Woche'),
-    miniStat(`${e.weeks || (plan ? plan.weeks : '–')}`, 'Wochen'),
-    miniStat(`${done}`, 'erledigt'),
+    miniStat(`${e.daysPerWeek || meta.defaultDays}×`, t('events.perWeek')),
+    miniStat(`${e.weeks || (plan ? plan.weeks : '–')}`, t('events.weeks')),
+    miniStat(`${done}`, t('events.done')),
   ]));
 
   view.appendChild(el('div', { class: 'card card--flat mt-4', text: meta.desc }));
 
-  view.appendChild(sectionHead('Wochenplan'));
+  view.appendChild(sectionHead(t('events.weeklyPlan')));
   if (plan) {
     const adh = adherence([plan], { today, isProtectedDay }).pct;
     view.appendChild(el('a', { class: 'card card--link', href: `#/plan/${e.id}` }, [
       el('div', { class: 'row row--between' }, [
         el('div', {}, [
           el('div', { class: 'card__title', text: plan.name }),
-          el('div', { class: 'muted', style: { fontSize: '0.84rem' }, text: `${plan.weeks} Wochen · ${units.length} Einheiten` }),
+          el('div', { class: 'muted', style: { fontSize: '0.84rem' }, text: `${tp('events.weeksCount', plan.weeks)} · ${tp('events.sessionsCount', units.length)}` }),
         ]),
         el('span', { class: 'list-item__chev', html: iconSvg('chevronRight') }),
       ]),
       el('div', { class: 'row gap-2 mt-2 wrap' }, [
-        el('span', { class: 'chip chip--good', text: `${done} erledigt` }),
-        adh != null ? el('span', { class: 'chip chip--accent', text: `${adh}% dabei` }) : null,
+        el('span', { class: 'chip chip--good', text: t('events.doneChip', { n: done }) }),
+        adh != null ? el('span', { class: 'chip chip--accent', text: t('events.attendanceChip', { pct: adh }) }) : null,
       ]),
     ]));
     view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-3', onclick: async () => {
       const ok = await confirmDialog({
-        title: 'Plan ab heute neu berechnen?',
-        message: 'Die Einheiten ab heute werden neu erzeugt. Vergangene, erledigte und verpasste Einheiten bleiben erhalten.',
-        confirmLabel: 'Neu berechnen',
+        title: t('events.recalcQ'),
+        message: t('events.recalcText'),
+        confirmLabel: t('events.recalc'),
       });
       if (ok) doCreateProgramPlan(e);
-    } }, [icon('refresh'), 'Plan ab heute neu berechnen']));
+    } }, [icon('refresh'), t('events.recalcFromToday')]));
   } else {
     view.appendChild(el('div', { class: 'card' }, [
-      el('p', { class: 'muted mb-4', text: 'Für dieses Programm gibt es noch keinen Wochenplan.' }),
-      el('button', { class: 'btn btn--primary btn--block', onclick: () => doCreateProgramPlan(e) }, [icon('sparkles'), 'Plan erstellen']),
+      el('p', { class: 'muted mb-4', text: t('events.noWeeklyPlan') }),
+      el('button', { class: 'btn btn--primary btn--block', onclick: () => doCreateProgramPlan(e) }, [icon('sparkles'), t('events.createPlan')]),
     ]));
   }
 
-  view.appendChild(sectionHead('Verwaltung'));
+  view.appendChild(sectionHead(t('events.manage')));
   view.appendChild(el('div', { class: 'card' }, [
     el('div', { class: 'row row--between', style: { padding: '4px 0' } }, [
-      el('span', { text: 'Status' }),
+      el('span', { text: t('events.status') }),
       segmented(
-        [{ value: 'aktiv', label: 'Aktiv' }, { value: 'abgeschlossen', label: 'Abgeschlossen' }],
+        [{ value: 'aktiv', label: t('events.active') }, { value: 'abgeschlossen', label: t('events.completed') }],
         e.status === 'abgeschlossen' ? 'abgeschlossen' : 'aktiv',
-        (v) => { store.patch('events', e.id, { status: v }); toast('Status aktualisiert'); },
+        (v) => { store.patch('events', e.id, { status: v }); toast(t('events.statusUpdated')); },
       ),
     ]),
   ]));
   view.appendChild(el('button', {
     class: 'btn btn--danger btn--block mt-4',
     onclick: async () => {
-      if (await confirmDialog({ title: 'Programm löschen?', message: 'Programm und zugehöriger Plan werden entfernt.', confirmLabel: 'Löschen', danger: true })) {
+      if (await confirmDialog({ title: t('events.deleteProgrammeQ'), message: t('events.deleteProgrammeText'), confirmLabel: t('events.delete'), danger: true })) {
         const p = store.get('plans').find((pl) => pl.eventId === e.id);
         if (p) store.remove('plans', p.id);
         store.remove('events', e.id);
-        toast('Programm gelöscht', 'good');
+        toast(t('events.programmeDeleted'), 'good');
         navigate('#/events');
       }
     },
-  }, [icon('trash'), 'Programm löschen']));
+  }, [icon('trash'), t('events.deleteProgramme')]));
 }
 
 function doCreatePlan(e) {
@@ -331,9 +333,9 @@ function doCreatePlan(e) {
 /* ------------------------------- Formular ------------------------------- */
 /** Bedeutung der Prioritäten – direkt im Formular sichtbar (UI-35). */
 const PRIORITY_HINT = {
-  A: 'A – Saisonhöhepunkt: Der Plan läuft auf diesen Tag zu.',
-  B: 'B – wichtiger Wettkampf: ernsthaft laufen, ohne ganzen Plan davor.',
-  C: 'C – Vorbereitungs- oder Spaßrennen: als Trainingsreiz mitnehmen.',
+  get A() { return t('events.priorityHint.A'); },
+  get B() { return t('events.priorityHint.B'); },
+  get C() { return t('events.priorityHint.C'); },
 };
 
 function openEventForm(existing = null) {
@@ -349,18 +351,18 @@ function openEventForm(existing = null) {
       || 'custom';
   }
 
-  const nameI = input({ value: e.name || '', placeholder: 'z. B. Dresden Halbmarathon', required: '' });
+  const nameI = input({ value: e.name || '', placeholder: t('events.namePlaceholder'), required: '' });
   const dateI = input({ type: 'date', value: e.date || '', required: '', min: existing ? '' : todayStr() });
-  const locI = input({ value: e.location || '', placeholder: 'Ort' });
+  const locI = input({ value: e.location || '', placeholder: t('events.location') });
   // Standard-Tastatur (kein inputmode:'numeric') – sonst fehlt auf iOS der Doppelpunkt
   // und die Zielzeit „hh:mm:ss“ lässt sich nicht eingeben. Punkt und Komma gehen auch.
-  const timeI = input({ value: e.targetTime || '', placeholder: 'h:mm:ss, z. B. 1:55:00', autocomplete: 'off' });
-  const notesI = textarea({ value: e.notes || '', placeholder: 'Notizen …' });
+  const timeI = input({ value: e.targetTime || '', placeholder: t('events.timePlaceholder'), autocomplete: 'off' });
+  const notesI = textarea({ value: e.notes || '', placeholder: t('events.notesPlaceholder') });
   const kmI = input({ type: 'number', step: '0.1', value: e.distanceKm || '', placeholder: 'km' });
-  const kmField = field('Distanz (km)', kmI);
+  const kmField = field(t('events.distanceKm'), kmI);
   kmField.style.display = distType === 'custom' ? 'block' : 'none';
 
-  const distSel = select(Object.entries(DISTANCES).map(([k, v]) => ({ value: k, label: v.beta ? `${v.label} – Beta` : v.label })), distType, {
+  const distSel = select(Object.entries(DISTANCES).map(([k, v]) => ({ value: k, label: v.beta ? t('events.betaLabel', { label: v.label }) : v.label })), distType, {
     onchange: (ev) => { distType = ev.target.value; kmField.style.display = distType === 'custom' ? 'block' : 'none'; },
   });
 
@@ -372,27 +374,27 @@ function openEventForm(existing = null) {
     (v) => { priority = v; prioHint.textContent = PRIORITY_HINT[v] || ''; });
 
   const body = el('div', {}, [
-    field('Name', nameI),
-    el('div', { class: 'field__row' }, [field('Datum', dateI), field('Distanz', distSel)]),
+    field(t('events.name'), nameI),
+    el('div', { class: 'field__row' }, [field(t('events.date'), dateI), field(t('events.distance'), distSel)]),
     kmField,
-    el('div', { class: 'field__row' }, [field('Ort', locI), field('Zielzeit', timeI)]),
-    field('Priorität', prioControl),
+    el('div', { class: 'field__row' }, [field(t('events.location'), locI), field(t('events.targetTime'), timeI)]),
+    field(t('events.priority'), prioControl),
     prioHint,
-    field('Notizen', notesI),
+    field(t('events.notes'), notesI),
   ]);
 
   openSheet({
-    title: existing ? 'Wettkampf bearbeiten' : 'Neuer Wettkampf',
+    title: existing ? t('events.editRace') : t('events.newRace'),
     body,
     footer: [
-      el('button', { class: 'btn btn--ghost grow', text: 'Abbrechen', onclick: () => closeSheet() }),
+      el('button', { class: 'btn btn--ghost grow', text: t('common.cancel'), onclick: () => closeSheet() }),
       el('button', {
-        class: 'btn btn--primary grow', text: 'Speichern',
+        class: 'btn btn--primary grow', text: t('events.save'),
         onclick: () => {
           // Fehler direkt am Feld (UI-35) statt nur als Toast.
-          if (!nameI.value.trim()) { fieldError(nameI, 'Bitte einen Namen eingeben.'); return; }
-          if (!dateI.value) { fieldError(dateI, 'Bitte das Datum des Wettkampfs wählen.'); return; }
-          if (timeI.value.trim() && !parseTargetTime(timeI.value)) { fieldError(timeI, 'Zielzeit bitte als h:mm:ss, z. B. 1:55:00 (oder mm:ss).'); return; }
+          if (!nameI.value.trim()) { fieldError(nameI, t('events.nameMissing')); return; }
+          if (!dateI.value) { fieldError(dateI, t('events.dateMissing')); return; }
+          if (timeI.value.trim() && !parseTargetTime(timeI.value)) { fieldError(timeI, t('events.timeInvalid')); return; }
           const km = distType === 'custom' ? (parseFloat(kmI.value) || null) : (DISTANCES[distType]?.km ?? (e.distanceKm || null));
           const rec = {
             ...e,
@@ -416,8 +418,8 @@ function openEventForm(existing = null) {
           if (plan && rec.targetTime !== e.targetTime) store.patch('plans', plan.id, { goalTime: rec.targetTime });
           closeSheet();
           toast(planAffected
-            ? 'Wettkampf aktualisiert – im Plan übernimmt „Plan ab heute neu berechnen“ die Änderung'
-            : (existing ? 'Wettkampf aktualisiert' : 'Wettkampf angelegt'), 'good', planAffected ? 4200 : undefined);
+            ? t('events.updatedRecalc', { action: t('events.recalcFromToday') })
+            : (existing ? t('events.raceUpdated') : t('events.raceCreated')), 'good', planAffected ? 4200 : undefined);
           navigate(`#/event/${rec.id}`);
         },
       }),
@@ -428,14 +430,14 @@ function openEventForm(existing = null) {
 /* ---------------------- Auswahl: Wettkampf oder Programm ----------------- */
 function openAddChooser() {
   openSheet({
-    title: 'Was möchtest du anlegen?',
+    title: t('events.chooserTitle'),
     body: el('div', { class: 'col gap-3' }, [
       el('button', { class: 'card card--link', style: { textAlign: 'left', width: '100%' }, onclick: () => { closeSheet(); openEventForm(); } }, [
         el('div', { class: 'row gap-3' }, [
           el('span', { style: { fontSize: '1.6rem' }, text: '🏁' }),
           el('div', { class: 'grow' }, [
-            el('div', { class: 'card__title', text: 'Wettkampf' }),
-            el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: 'Lauf, Triathlon oder Hyrox mit Datum und Zielzeit – periodisierter Plan bis zum Wettkampftag.' }),
+            el('div', { class: 'card__title', text: t('events.race') }),
+            el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('events.chooserRace') }),
           ]),
         ]),
       ]),
@@ -443,10 +445,10 @@ function openAddChooser() {
         el('div', { class: 'row gap-3' }, [
           el('span', { style: { fontSize: '1.6rem' }, text: '💪' }),
           el('div', { class: 'grow' }, [
-            el('div', { class: 'card__title', text: 'Trainingsprogramm' }),
+            el('div', { class: 'card__title', text: t('events.programme') }),
             el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: currentEligibility().noWeightGoals
-              ? 'Fitness, Kraft oder Beweglichkeit – wiederkehrender Wochenplan ganz ohne Wettkampf.'
-              : 'Fitness, Kraft, Abnehmen oder Beweglichkeit – wiederkehrender Wochenplan ganz ohne Wettkampf.' }),
+              ? t('events.chooserProgramme')
+              : t('events.chooserProgrammeWeight') }),
           ]),
         ]),
       ]),
@@ -462,7 +464,7 @@ function openProgramForm(existing = null) {
   let weeks = e.weeks || 8;
 
   // Neuer Name aus dem Schwerpunkt vorbelegt (UI-35) – solange niemand ihn selbst ändert.
-  const nameI = input({ value: e.name || (existing ? '' : programMeta(type).label), placeholder: 'z. B. Mein Fitness-Start', required: '' });
+  const nameI = input({ value: e.name || (existing ? '' : programMeta(type).label), placeholder: t('events.programmePlaceholder'), required: '' });
   let nameTouched = !!existing;
   nameI.addEventListener('input', () => { nameTouched = true; });
   const descLine = el('div', { class: 'muted', style: { fontSize: '.82rem', marginTop: '.4rem' } });
@@ -483,25 +485,25 @@ function openProgramForm(existing = null) {
   );
 
   const body = el('div', {}, [
-    field('Name', nameI),
-    field('Schwerpunkt', typeSel),
+    field(t('events.name'), nameI),
+    field(t('events.focus'), typeSel),
     descLine,
-    field('Trainingstage pro Woche', segmented(
+    field(t('events.daysPerWeek'), segmented(
       [3, 4, 5].map((n) => ({ value: String(n), label: `${n}×` })), String(days), (v) => { days = parseInt(v, 10); })),
-    field('Dauer', segmented(
-      [{ value: '4', label: '4 Wochen' }, { value: '8', label: '8 Wochen' }, { value: '12', label: '12 Wochen' }],
+    field(t('events.duration'), segmented(
+      [4, 8, 12].map((n) => ({ value: String(n), label: tp('events.weeksCount', n) })),
       String(weeks), (v) => { weeks = parseInt(v, 10); })),
   ]);
 
   openSheet({
-    title: existing ? 'Programm bearbeiten' : 'Neues Trainingsprogramm',
+    title: existing ? t('events.editProgramme') : t('events.newProgramme'),
     body,
     footer: [
-      el('button', { class: 'btn btn--ghost grow', text: 'Abbrechen', onclick: () => closeSheet() }),
+      el('button', { class: 'btn btn--ghost grow', text: t('common.cancel'), onclick: () => closeSheet() }),
       el('button', {
-        class: 'btn btn--primary grow', text: 'Speichern & Plan erstellen',
+        class: 'btn btn--primary grow', text: t('events.saveAndCreate'),
         onclick: () => {
-          if (!nameI.value.trim()) { fieldError(nameI, 'Bitte einen Namen eingeben.'); return; }
+          if (!nameI.value.trim()) { fieldError(nameI, t('events.nameMissing')); return; }
           const rec = {
             ...e,
             id: e.id || uid('prog'),
@@ -537,18 +539,25 @@ function doCreateProgramPlan(e) {
       name: programPlanName(e),
       units: mergeFromDate(old.units || [], fresh, today), generated: true,
     });
-    toast('Programm ab heute aktualisiert – Vergangenes bleibt erhalten', 'good');
+    toast(t('events.programmeUpdated'), 'good');
     navigate(`#/plan/${e.id}`);
     return;
   }
   if (old) store.remove('plans', old.id);
   const plan = createProgramPlan(e, today);
   store.upsert('plans', plan);
-  toast('Programm-Plan erstellt 🎉', 'good');
+  toast(t('events.programmePlanCreated'), 'good');
   navigate(`#/plan/${e.id}`);
 }
 
 /* ------------------------------- Helfer --------------------------------- */
+/** Status chip: the stored status (geplant/aktiv/abgeschlossen) in the active language. */
+function statusChip(s) {
+  if (s === 'geplant') return t('events.statusChip.planned');
+  if (s === 'aktiv') return t('events.statusChip.active');
+  if (s === 'abgeschlossen') return t('events.statusChip.completed');
+  return s;
+}
 function miniStat(val, label) {
   return el('div', { class: 'stat' }, [el('div', { class: 'stat__val num', style: { fontSize: '1.1rem' }, text: val }), el('div', { class: 'stat__label', text: label })]);
 }

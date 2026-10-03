@@ -78,6 +78,11 @@ async function ensure(lang, area) {
   catch { return false; }   // offline or missing: English steps in
 }
 
+/** True once an area is loaded for the active language or for English. */
+export function hasArea(area) {
+  return !!((catalogs[current] && catalogs[current][area]) || (catalogs[SOURCE_LANGUAGE] && catalogs[SOURCE_LANGUAGE][area]));
+}
+
 /** Loads an area for the active language and for English (the fallback). */
 export async function loadArea(area) {
   await Promise.all([ensure(current, area), ensure(SOURCE_LANGUAGE, area)]);

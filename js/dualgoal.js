@@ -14,12 +14,14 @@
 
 import { diffDays, addDays } from './ui.js';
 
+import { t } from './i18n.js';
+
 /** Phasen-Schwerpunkt: perf/loss ∈ [0,1], empfohlenes Tagesdefizit (kcal, gedeckelt). */
 export const PHASE_EMPHASIS = {
-  base:  { perf: 0.5, loss: 0.9, deficit: 'moderat', kcal: -450, note: 'Grundlagenphase – idealer Zeitraum zum Abnehmen: moderates Defizit bei viel lockerem Umfang.' },
-  build: { perf: 0.7, loss: 0.6, deficit: 'leicht',  kcal: -300, note: 'Aufbauphase – harte Reize brauchen Energie: kleineres Defizit, Eiweiß hoch, um die Qualität zu sichern.' },
-  peak:  { perf: 0.9, loss: 0.3, deficit: 'gering',  kcal: -150, note: 'Spitzenphase – Leistung geht vor: Defizit klein halten, sonst leidet die Qualität der Einheiten.' },
-  taper: { perf: 1.0, loss: 0.0, deficit: 'aus',     kcal: 0,    note: 'Tapering – jetzt auffüllen statt abnehmen: iss dich fit für den Wettkampf.' },
+  base:  { perf: 0.5, loss: 0.9, deficit: 'moderat', kcal: -450, get note() { return t('dualgoal.noteBase'); } },
+  build: { perf: 0.7, loss: 0.6, deficit: 'leicht',  kcal: -300, get note() { return t('dualgoal.noteBuild'); } },
+  peak:  { perf: 0.9, loss: 0.3, deficit: 'gering',  kcal: -150, get note() { return t('dualgoal.notePeak'); } },
+  taper: { perf: 1.0, loss: 0.0, deficit: 'aus',     kcal: 0,    get note() { return t('dualgoal.noteTaper'); } },
 };
 
 /** Aktuelle Plan-Woche (1..weeks) aus dem Datum – bewusst lokal, ohne plans.js-Abhängigkeit. */
@@ -69,7 +71,7 @@ export function stimulusCheck(sessions = [], today, days = 14) {
   return {
     hard, activeDays, enough,
     message: enough
-      ? 'Dein Training setzt genug Reiz für echten Fortschritt.'
-      : 'Zuletzt wenig fordernder Reiz – Ruhetage allein bringen dich dem Ziel nicht näher. Plane wieder Schlüsseleinheiten ein (Reiz + Erholung = Fortschritt).',
+      ? t('dualgoal.stimulusEnough')
+      : t('dualgoal.stimulusLow'),
   };
 }
