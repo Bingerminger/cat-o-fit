@@ -19,6 +19,8 @@
 
 import { uid, addDays, isoDow, nowIso } from './ui.js';
 
+import { t } from './i18n.js';
+
 /* ---- Programm-Vorlagen ---------------------------------------------------
    `cardio`: Ausdauerminuten pro Woche [Start, Ziel]; `strengthDays`: Krafttage
    (Funktion der Trainingstage); `walkDays`: wie viele Ausdauertage zügiges Gehen
@@ -26,34 +28,34 @@ import { uid, addDays, isoDow, nowIso } from './ui.js';
    Zusatz ('extra'). */
 export const PROGRAM_TYPES = {
   fitness: {
-    label: 'Allgemeine Fitness',
+    get label() { return t('program.types.fitness.label'); },
     emoji: '💪',
-    focus: 'Ausgewogen aktiv & gesund bleiben',
-    desc: 'Ausdauer, Kraft und Beweglichkeit nach den Bewegungsempfehlungen der WHO: Die Ausdauer steigt von rund 120 auf 150–180 Minuten pro Woche (zügiges Gehen zählt mit), dazu Kraft an zwei Tagen.',
+    get focus() { return t('program.types.fitness.focus'); },
+    get desc() { return t('program.types.fitness.desc'); },
     cardio: [120, 180], strengthDays: () => 2, walkDays: (d) => (d >= 5 ? 1 : 0), mobility: 'extra',
     defaultDays: 4,
   },
   strength: {
-    label: 'Kraft & Muskelaufbau',
+    get label() { return t('program.types.strength.label'); },
     emoji: '🏋️',
-    focus: 'Kraft und Muskulatur aufbauen',
-    desc: 'Schwerpunkt Krafttraining (Ganzkörper im Wechsel, zwei bis drei Krafttage) mit etwas Ausdauer und Mobilität für die Regeneration. Die Kraft steigert sich über Runden, Wiederholungen und schwerere Varianten.',
+    get focus() { return t('program.types.strength.focus'); },
+    get desc() { return t('program.types.strength.desc'); },
     cardio: [60, 100], strengthDays: (d) => (d >= 4 ? 3 : 2), walkDays: (d) => (d >= 5 ? 1 : 0), mobility: 'extra',
     defaultDays: 4,
   },
   weightloss: {
-    label: 'Abnehmen & Gewicht',
+    get label() { return t('program.types.weightloss.label'); },
     emoji: '⚖️',
-    focus: 'Gewicht reduzieren, Stoffwechsel ankurbeln',
-    desc: 'Viel Bewegung (Ausdauer und zügiges Gehen, von rund 150 auf 225–240 Minuten pro Woche) plus Kraft an zwei Tagen für den Stoffwechsel. Wirkt am besten zusammen mit der Kalorienbilanz in der Ernährung.',
+    get focus() { return t('program.types.weightloss.focus'); },
+    get desc() { return t('program.types.weightloss.desc'); },
     cardio: [150, 240], strengthDays: () => 2, walkDays: (d) => (d >= 5 ? 2 : d >= 4 ? 1 : 0), mobility: null,
     defaultDays: 4,
   },
   mobility: {
-    label: 'Beweglichkeit & Gesundheit',
+    get label() { return t('program.types.mobility.label'); },
     emoji: '🧘',
-    focus: 'Sanft beweglich und gesund bleiben',
-    desc: 'Schonender Einstieg: Beweglichkeit, sanfte Kraft an zwei Tagen und Bewegung, die von rund 90 auf 150 Minuten pro Woche wächst – ideal für Einsteiger:innen oder zum Wiedereinstieg.',
+    get focus() { return t('program.types.mobility.focus'); },
+    get desc() { return t('program.types.mobility.desc'); },
     cardio: [90, 150], strengthDays: () => 2, walkDays: (d) => (d >= 4 ? 2 : 1), mobility: 'primary', gentle: true,
     defaultDays: 3,
   },
@@ -71,30 +73,30 @@ export function programPlanName(program) {
 
 /* ---- Kraft-Rotation (Ganzkörper-Split über die Wochen) ------------------- */
 const STRENGTH_ROTATION = [
-  { title: 'Kraft – Ganzkörper', moves: 'Kniebeugen 12× · Liegestütz 8–12× (ggf. auf Knien) · Ausfallschritte 10×/Bein · Schulterdrücken 12× · Plank 30–45 s', harder: 'Kniebeugen mit Gewicht, Liegestütz mit Füßen erhöht, Plank 60 s' },
-  { title: 'Kraft – Unterkörper', moves: 'Kniebeugen 15× · Rumänisches Kreuzheben (Hantel/Kettlebell oder einbeinig) 10× · Step-ups auf Bank/Stufe 10×/Bein · Wadenheben 20× · Glute Bridge 15×', harder: 'Bulgarian Split Squats statt Step-ups, einbeinige Glute Bridge, mehr Gewicht' },
-  { title: 'Kraft – Oberkörper & Rumpf', moves: 'Liegestütz 8–12× · Rudern (Hantel/Band) 12× · Schulterdrücken 12× · Plank 40 s · Seitstütz 30 s/Seite · Dead Bug 10×/Seite', harder: 'engere Liegestütz, stärkeres Band oder schwerere Hantel, Seitstütz mit Beinheben' },
+  { get title() { return t('program.rotation.fullBody.title'); }, get moves() { return t('program.rotation.fullBody.moves'); }, get harder() { return t('program.rotation.fullBody.harder'); } },
+  { get title() { return t('program.rotation.lowerBody.title'); }, get moves() { return t('program.rotation.lowerBody.moves'); }, get harder() { return t('program.rotation.lowerBody.harder'); } },
+  { get title() { return t('program.rotation.upperBody.title'); }, get moves() { return t('program.rotation.upperBody.moves'); }, get harder() { return t('program.rotation.upperBody.harder'); } },
 ];
-const GENTLE_STRENGTH = { title: 'Sanfte Kraft', moves: 'Sitz-Steh-Wechsel vom Stuhl 10× · Wand-Liegestütz 10× · Brücke (Glute Bridge) 12× · Wadenheben am Stuhl 15× · Vierfüßlerstand, Arm und Bein diagonal 8×/Seite', harder: 'langsamer absenken, kurze Halte-Pausen, erst dann mehr Wiederholungen' };
+const GENTLE_STRENGTH = { get title() { return t('program.gentle.title'); }, get moves() { return t('program.gentle.moves'); }, get harder() { return t('program.gentle.harder'); } };
 
 /* ---- Phasen ---------------------------------------------------------------
    Eingewöhnung (Technik, 2 Runden) → Aufbau (3 Runden, steigern) → ab 8 Wochen
    Festigen (schwerere Varianten). */
 export function programPhases(weeks) {
   const w = Math.max(1, weeks | 0);
-  if (w <= 2) return [{ key: 'build', name: 'Aufbau', color: '#3d8bff', focus: 'Gewohnheit & Grundlage', startWeek: 1, endWeek: w }];
+  if (w <= 2) return [{ key: 'build', name: t('program.phases.build.name'), color: '#3d8bff', focus: t('program.phases.build.focusShort'), startWeek: 1, endWeek: w }];
   const intro = Math.min(2, Math.max(1, Math.round(w * 0.25)));
   if (w < 8) {
     return [
-      { key: 'intro', name: 'Eingewöhnung', color: '#43c59e', focus: 'Reinkommen & Technik', startWeek: 1, endWeek: intro },
-      { key: 'build', name: 'Aufbau', color: '#3d8bff', focus: 'Steigern & dranbleiben', startWeek: intro + 1, endWeek: w },
+      { key: 'intro', name: t('program.phases.intro.name'), color: '#43c59e', focus: t('program.phases.intro.focus'), startWeek: 1, endWeek: intro },
+      { key: 'build', name: t('program.phases.build.name'), color: '#3d8bff', focus: t('program.phases.build.focus'), startWeek: intro + 1, endWeek: w },
     ];
   }
   const consolidate = Math.max(2, Math.round(w * 0.25));
   return [
-    { key: 'intro', name: 'Eingewöhnung', color: '#43c59e', focus: 'Reinkommen & Technik', startWeek: 1, endWeek: intro },
-    { key: 'build', name: 'Aufbau', color: '#3d8bff', focus: 'Steigern & dranbleiben', startWeek: intro + 1, endWeek: w - consolidate },
-    { key: 'consolidate', name: 'Festigen', color: '#b079e6', focus: 'Schwerere Varianten, Gewohnheit sichern', startWeek: w - consolidate + 1, endWeek: w },
+    { key: 'intro', name: t('program.phases.intro.name'), color: '#43c59e', focus: t('program.phases.intro.focus'), startWeek: 1, endWeek: intro },
+    { key: 'build', name: t('program.phases.build.name'), color: '#3d8bff', focus: t('program.phases.build.focus'), startWeek: intro + 1, endWeek: w - consolidate },
+    { key: 'consolidate', name: t('program.phases.consolidate.name'), color: '#b079e6', focus: t('program.phases.consolidate.focus'), startWeek: w - consolidate + 1, endWeek: w },
   ];
 }
 function phaseKeyAt(weeks, week) {
@@ -176,31 +178,31 @@ function strengthUnit(meta, week, weeks) {
   const phase = phaseKeyAt(weeks, week);
   const easy = isEasyWeek(week, weeks);
   let rounds, dur, how;
-  if (easy) { rounds = 2; dur = 25; how = 'Leichtere Woche: 2 Runden mit den gewohnten Übungen, bewusst etwas leichter.'; }
-  else if (phase === 'intro') { rounds = 2; dur = 25; how = 'Eingewöhnung: 2 Runden, Technik vor Tempo – lieber ein paar Wiederholungen weniger, dafür sauber.'; }
-  else if (phase === 'consolidate') { rounds = meta.gentle ? 3 : 4; dur = meta.gentle ? 35 : 45; how = `Festigen: ${meta.gentle ? 3 : 4} Runden, schwerere Varianten: ${s.harder}.`; }
-  else { rounds = 3; dur = meta.gentle ? 30 : 35; how = '3 Runden. Steigere alle ein bis zwei Wochen: 1–2 Wiederholungen mehr oder etwas mehr Gewicht, solange die Technik sauber bleibt.'; }
+  if (easy) { rounds = 2; dur = 25; how = t('program.strength.howEasy'); }
+  else if (phase === 'intro') { rounds = 2; dur = 25; how = t('program.strength.howIntro'); }
+  else if (phase === 'consolidate') { rounds = meta.gentle ? 3 : 4; dur = meta.gentle ? 35 : 45; how = t('program.strength.howConsolidate', { rounds: meta.gentle ? 3 : 4, harder: s.harder }); }
+  else { rounds = 3; dur = meta.gentle ? 30 : 35; how = t('program.strength.howBuild'); }
   return {
     type: 'strength', dur, title: s.title,
-    desc: `${how} Übungen je Runde: ${s.moves}. 60–90 s Pause zwischen den Runden.`,
+    desc: t('program.strength.desc', { how, moves: s.moves }),
     rounds,
   };
 }
 
 function blockUnit(block, ctx) {
   const { meta, week, weeks, cardioMin, weekCardio } = ctx;
-  const total = `Diese Woche insgesamt rund ${weekCardio} min Ausdauer inklusive Gehen – die WHO empfiehlt 150–300 min.`;
+  const total = t('program.block.total', { minutes: weekCardio });
   switch (block) {
     case 'strength':
       return strengthUnit(meta, week, weeks);
     case 'cardio':
-      return { type: 'cross', dur: cardioMin, title: `Ausdauer ${cardioMin} min`, desc: `Gleichmäßiges Ausdauertraining im Plaudertempo (Z2) – Laufen, Rad, Crosstrainer oder Schwimmen, ganz nach Vorliebe. Du solltest dich nebenbei unterhalten können. ${total}` };
+      return { type: 'cross', dur: cardioMin, title: t('program.block.cardioTitle', { min: cardioMin }), desc: t('program.block.cardioDesc', { total }) };
     case 'walk':
-      return { type: 'walk', dur: cardioMin, title: `Zügiges Gehen ${cardioMin} min`, desc: `Flotter Spaziergang, gerne an der frischen Luft – so zügig, dass du etwas schneller atmest, aber noch reden kannst. Niedrigschwellig und gelenkschonend, zählt voll als Ausdauer. ${total}` };
+      return { type: 'walk', dur: cardioMin, title: t('program.block.walkTitle', { min: cardioMin }), desc: t('program.block.walkDesc', { total }) };
     case 'mobility':
-      return { type: 'mobility', dur: meta.mobility === 'primary' ? 25 : 15, title: 'Beweglichkeit & Dehnen', desc: 'Ruhige Mobility-Einheit: Katze-Kuh 10× · Hüftbeuger-Dehnung 45 s/Seite · Beinrückseite sanft 45 s/Seite · Brustöffner & Wirbelsäulen-Rotation 8×/Seite · Kindhaltung 60 s. In jede Position locker hineinatmen, nichts ruckartig.' };
+      return { type: 'mobility', dur: meta.mobility === 'primary' ? 25 : 15, title: t('program.block.mobilityTitle'), desc: t('program.block.mobilityDesc') };
     default:
-      return { type: 'cross', dur: 30, title: 'Training', desc: 'Lockere Bewegungseinheit.' };
+      return { type: 'cross', dur: 30, title: t('program.block.otherTitle'), desc: t('program.block.otherDesc') };
   }
 }
 

@@ -89,7 +89,7 @@ export function buildPhases(unit) {
       sec: workSecOf(s), restSec: s.restSec || 0,
       label: s.phaseLabel || t('workoutEngine.work', { label: s.label || `${i + 1}/${segs.length}` }),
       restLabel: s.restLabel || (s.floatRest ? t('workoutEngine.floatRest') : t('workoutEngine.jogRest', { n: i + 1 })),
-      restHint: s.restLabel === 'Gehen' ? t('workoutEngine.hintWalk') : s.floatRest ? t('workoutEngine.hintKeepEasy') : t('workoutEngine.hintEasyJog'),
+      restHint: s.walk || s.restLabel === 'Gehen' ? t('workoutEngine.hintWalk') : s.floatRest ? t('workoutEngine.hintKeepEasy') : t('workoutEngine.hintEasyJog'),
       distanceM: s.workM || null,
     }));
   } else {

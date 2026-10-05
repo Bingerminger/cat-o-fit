@@ -1528,5 +1528,344 @@
       "steady": "keep breathing calmly",
       "calm": "breathe calmly"
     }
+  },
+  "plangen": {
+    "levels": {
+      "einsteiger": {
+        "label": "Beginner",
+        "hint": "New to running or back after a long break"
+      },
+      "fortgeschritten": {
+        "label": "Intermediate",
+        "hint": "Running regularly for months"
+      },
+      "leistung": {
+        "label": "Advanced",
+        "hint": "Structured training and race experience"
+      }
+    },
+    "strengthFocus": {
+      "fullBody": {
+        "title": "Full body",
+        "desc": "Full body, 3 rounds (bodyweight or with dumbbells/kettlebell): Squats 12× · Push-ups 8–12× (on your knees if needed) · Lunges 10×/leg · Shoulder press 12× · Plank 30–45 s. Clean technique before weight, 60–90 s rest between rounds."
+      },
+      "legs": {
+        "title": "Legs & glutes",
+        "desc": "Leg strength for a stable running form, 3 rounds: Squats 15× · Romanian deadlift (dumbbell/kettlebell or single-leg) 10× · Step-ups onto a bench/step 10×/leg · Calf raises 20× (half of them with bent knees) · Glute bridge 15×. With weights a few reps fewer, 60–90 s rest."
+      },
+      "core": {
+        "title": "Trunk & core",
+        "desc": "Core stability for an upright running posture, 3 rounds: Plank 40 s · Side plank 30 s/side · Dead bug 10×/side · Bird dog 10×/side (on all fours, extend opposite arm and leg without arching your back) · Russian twists 20×. Slow and controlled, keep your body tension on purpose."
+      }
+    },
+    "hyroxStrength": {
+      "legsPush": {
+        "title": "Strength – Legs & pushing",
+        "desc": "3–4 rounds: Squats or leg press 8–10× · Weighted lunges 10×/leg · Sled push or wall sit 45 s · Push-ups 10× · Plank 40 s. Heavy but clean – 90 s rest between rounds."
+      },
+      "pullGrip": {
+        "title": "Strength – Pulling & grip",
+        "desc": "3–4 rounds: Romanian deadlift 8× · Bent-over row 10× · Farmer’s carry 2×30 m heavy · Lat pulldown or negative pull-ups 8× · Dead bug 10×/side. Grip strength pays off in the Farmer’s carry and the sled pull."
+      },
+      "fullBody": {
+        "title": "Strength – Full body & wall balls",
+        "desc": "3 rounds: Front squat or thrusters 10× · Wall balls 15× · Kettlebell swings 15× · Sandbag or dumbbell lunges 20 m · Burpees 8×. Brisk, but with clean technique."
+      }
+    },
+    "phases": {
+      "base": {
+        "name": "Base",
+        "focus": "Volume & aerobic base"
+      },
+      "build": {
+        "name": "Build",
+        "focus": "Threshold & speed endurance"
+      },
+      "peak": {
+        "name": "Peak",
+        "focus": "VO2max & race pace"
+      },
+      "taper": {
+        "name": "Taper",
+        "focus": "Recovery & sharpness"
+      }
+    },
+    "emphasis": {
+      "5k": "VO₂max & sharpness",
+      "10k": "VO₂max & threshold",
+      "hm": "Threshold & speed endurance",
+      "marathon": "Threshold & marathon race pace"
+    },
+    "triFormats": {
+      "sprint": "Sprint distance",
+      "olympic": "Olympic distance"
+    },
+    "raceLabel": {
+      "5k": "a 5 km race",
+      "10k": "a 10 km race",
+      "hm": "a half marathon",
+      "marathon": "a marathon",
+      "tri_sprint": "a sprint triathlon",
+      "tri_olympic": "an Olympic-distance triathlon",
+      "hyrox": "Hyrox"
+    },
+    "readiness": {
+      "past": "This race is in the past – a plan can’t be created for it any more. Check the date.",
+      "today": "It’s race day – too late for a training plan. Good luck!",
+      "short": {
+        "one": "For {race} at the “{level}” level we recommend at least {minWeeks} weeks of preparation – you have {count} week until the race. You could choose a later race, a shorter distance or the goal “finish healthy” without a target time. Either way, the plan only builds volume gently.",
+        "other": "For {race} at the “{level}” level we recommend at least {minWeeks} weeks of preparation – you have {count} weeks until the race. You could choose a later race, a shorter distance or the goal “finish healthy” without a target time. Either way, the plan only builds volume gently."
+      }
+    },
+    "segments": {
+      "fast": "fast"
+    },
+    "hyroxRun": {
+      "title": "Hyrox running {n}×1 km",
+      "desc": "{warm} warm-up, then {n}×1 km brisk (Z4, around threshold pace) with {pause} rest after each – just like between the stations in the race: catch your breath after the kilometre, then find your pace again. {cool} cool-down."
+    },
+    "baseRun": {
+      "title": "Easy run with strides",
+      "desc": "Easy run in Z2 (conversational pace). In the last 1–2 km, add 5–6 strides of ~80–100 m: jog in easily, accelerate over ~20 m to about 90 % (fast, but not a sprint), then let it roll out. Walk or jog easily for 60–90 s in between. Heart rate doesn’t matter here – it’s about speed and clean technique."
+    },
+    "threshold": {
+      "title": "Threshold run {n}×{min} min",
+      "marathonDesc": "Marathon-specific: {warm} easy warm-up. Then {n}×12 min at threshold (Z4, “comfortably hard”) with 3 min easy jogging after each – long, steady efforts instead of short peaks. {cool} cool-down. In a marathon, endurance at the upper end of your pace range is what counts.",
+      "desc6": "{warm} easy warm-up (Z2). Then {n}×6 min at threshold (Z4, “comfortably hard” – you could still speak short sentences) at your target pace, with 2 min very easy jogging in between. Finish with {cool} cool-down. Stay even – don’t overdo the first interval.",
+      "desc8": "{warm} easy, {n}×8 min at threshold (Z4) with 2 min jog recovery, {cool} cool-down. Keeps your speed endurance without draining your legs the way VO₂max intervals do."
+    },
+    "fartlek": {
+      "title": "Fartlek {n}×(1 min fast / 1 min easy)",
+      "desc": "{warm} easy warm-up. Then {n}×1 min brisk (Z4, “comfortably hard”), with 1 min of very easy running in between (don’t stop) – a flowing fartlek. Hold the pace without sprinting. {cool} cool-down."
+    },
+    "marathonPace": {
+      "title": "Marathon race pace {n}×4 km",
+      "desc": "Race-pace specific: {warm} easy, then {n}×4 km at your target marathon pace (controlled but brisk) with 3 min easy jogging after each. {cool} cool-down. Practise eating & drinking as on race day."
+    },
+    "hmPace": {
+      "title": "Half marathon pace {n}×3 km",
+      "desc": "Race-pace specific: {warm} easy warm-up, then {n}×3 km at your target half-marathon pace with 2 min easy jogging after each. {cool} cool-down. The pace should feel controlled – the way you want to hold it for 21 km on race day."
+    },
+    "vo2": {
+      "intervalsTitle": "VO2max intervals {n}×800 m",
+      "desc800": "{warm} warm-up. Then {n}×800 m hard (Z5 – only single words possible) at your target pace, with ~2:30 min very easy jogging in between. {cool} cool-down. Keep all intervals at the same speed – better even than a first one that’s too fast.",
+      "title": "VO2max {n}×{m} m",
+      "desc400": "{warm} warm-up. Then {n}×400 m fast (Z5) around your 5 km race pace, with ~90 s very easy jogging in between. {cool} cool-down. Short, sharp, clean – the speed for your 5 km race.",
+      "desc1000": "{warm} warm-up. {n}×1000 m hard (Z5) at 5–10 km pace, with ~2:30 min easy jogging in between. {cool} cool-down. Stay even all the way."
+    },
+    "pyramid": {
+      "title": "VO2max pyramid {seq} min",
+      "desc": "{warm} warm-up. Then a pyramid: {seq} min hard (Z5) with 90 s very easy jogging after each. The {peak}-minute step in the middle is the high point – hold it evenly, don’t overdo it. {cool} cool-down."
+    },
+    "pace10k": {
+      "title": "10 km race pace {n}×1000 m",
+      "desc": "{warm} warm-up. Then {n}×1000 m at your target 10 km race pace with ~2:30 min jog recovery after each. {cool} cool-down. This is how race pace feels – controlled, not flat out."
+    },
+    "taper": {
+      "raceTitle": "Race pace {n}×2 km",
+      "raceDesc": "{warm} warm-up, {n}×2 km at race pace with 3 min jog recovery, {cool} cool-down. Remind your legs of the pace – the volume is deliberately small, your freshness now comes from recovery.",
+      "tempoTitle": "Short tempo {n}×{min} min",
+      "tempoDesc": "{warm} warm-up, {n}×{min} min at threshold (Z4) with a long 3 min break, {cool} cool-down. Keep the stimulus, cut the volume – your sharpness now comes from recovery."
+    },
+    "runWalk": {
+      "run": "Run {i}/{n}",
+      "walk": "Walk",
+      "title": "Run-walk {n}×{min} min",
+      "titleLonger": "Run-walk (longer) {n}×{min} min",
+      "desc": "Walk briskly for 5 min, then {n}× alternate {min} min of easy running with 1 min of walking, and finish with 5 min of walking. Run at a pace where you can still chat – the walk breaks are part of the plan, not giving up."
+    },
+    "walk": {
+      "title": "Brisk walk",
+      "desc": "30 min brisk walking – active recovery that keeps your circulation going without loading your legs. Counts fully as exercise."
+    },
+    "long": {
+      "easyTitle": "Steady easy run {km}",
+      "easyDesc": "Calm and steady in Z2 – base endurance for the eight running kilometres between the stations. Pace doesn’t matter.",
+      "title": "Long run {km}",
+      "titleShorter": "Longer run {km}",
+      "bikeAlt": "Bike alternative (also easy on your back): ~{from}–{to} km or 1.5–2.5 h easy in Z2 instead of the run.",
+      "bikeAltRaceBlock": "Bike alternative (also easy on your back): ~{from}–{to} km or 1.5–2.5 h easy in Z2 – but then no extra bike ride today.",
+      "leadDeload": "Recovery week – deliberately shorter.",
+      "leadTaper": "Taper – shorter than recently, build up freshness.",
+      "raceBlockDesc": "{km} in total: start easy in Z2, run {block} at race pace{pace} in one go in the middle, then ease back into an easy finish. Practise eating & drinking as on race day.",
+      "finish": "Run the last 2 km briskly at marathon pace – a small stimulus that teaches tired legs to hold the pace.",
+      "desc": "Calm long run, steady in Z2 throughout – fat metabolism & base endurance. Take a few sips every 20 min."
+    },
+    "swim": {
+      "techTitle": "Swim – Technique & intervals",
+      "techDesc": "{m} m warm-up, 6×50 m technique drills (e.g. catch-up, fist swimming), then {reps}×100 m brisk with 20 s rest, {m} m easy cool-down. Calm, long strokes and clean breathing – technique over rush.",
+      "enduranceTitle": "Swim – Endurance",
+      "raceDesc": "Swim the race distance ({m} m) once in one go at your planned race pace – ideally in open water (in a wetsuit if it’s allowed in the race). Warm up easily before, 200 m easy afterwards.",
+      "enduranceDesc": "Steady swimming: 3×{m} m with 30 s rest at a calm base pace. Practise sighting along the way (look ahead every 6–8 strokes)."
+    },
+    "bike": {
+      "baseTitle": "Bike – Base",
+      "baseDesc": "Steady in Z2, cadence ~85–95 – pedal in smooth circles, don’t stomp.",
+      "buildTitle": "Bike – Threshold",
+      "buildDesc": "After 15 min warm-up, 4×5 min at threshold (Z4) with 3 min easy spinning in between. Then cool down.",
+      "peakTitle": "Bike – Race pace",
+      "peakDesc": "After 15 min warm-up, 3×10 min at your planned race pace (Z3–Z4) with 3 min easy spinning in between. Then cool down.",
+      "taperTitle": "Bike – Easy with surges",
+      "taperDesc": "Easy in Z2 with 4×30 s brisk efforts along the way. Stay fresh.",
+      "title": "Bike training",
+      "desc": "Steady in Z2.",
+      "longBrickTitle": "Long ride + brick run",
+      "longTitle": "Long ride",
+      "longDesc": "Long, calm ride in Z2 (~{dur} min), eat & drink well.",
+      "brick": "Straight afterwards, run easy for 10–15 min (brick training) – so your legs get used to switching from bike to run."
+    },
+    "hyrox": {
+      "baseTitle": "Hyrox stations – Technique",
+      "baseDesc": "{rounds} rounds, four stations each at half race volume: SkiErg 500 m · Wall Balls 30× · Sandbag Lunges 40 m · Rowing 500 m. No running in between – technique before speed, 90 s rest per round. No sled? Weighted squats or a wall sit instead.",
+      "buildTitle": "Hyrox stations with running",
+      "buildDesc": "{rounds} rounds: run 1 km briskly, then straight into a station – alternating SkiErg 1000 m, Sled Push 50 m (or squats 20×), Burpee Broad Jumps 40 m, Rowing 1000 m, Farmer’s carry 200 m, Wall Balls 50×. This teaches your legs to find your running pace again after a station.",
+      "simTitle": "Hyrox race simulation",
+      "simDesc": "{rounds}× (1 km at your planned race pace + one station in race order: SkiErg, Sled Push, Sled Pull, Burpee Broad Jumps, Rowing, Farmer’s carry, Sandbag Lunges, Wall Balls). Like on race day: start controlled, move quickly through the Roxzone, test your fuelling. Then two easy days.",
+      "peakTitle": "Hyrox stations at race pace",
+      "peakDesc": "{rounds} rounds: one station at full race volume at your planned pace, then run 500 m briskly. 2 min rest between rounds. Start with your weakest stations.",
+      "taperTitle": "Hyrox – Sharpening",
+      "taperDesc": "4× (500 m brisk + half a station), 2 min rest. Stay fresh and let the routines settle."
+    },
+    "near": {
+      "shakeoutTitle": "Shakeout 3 km",
+      "shakeoutDesc": "Very easy with a few strides. Wake your legs up before the race.",
+      "bikeCheckTitle": "Bike check",
+      "bikeCheckDesc": "Spin easily, check gears and brakes, three short surges.",
+      "activationTitle": "Activation",
+      "activationDesc": "{warm} easy, 3×{min} min at race pace with 2 min jog recovery, 4 strides. Sharp but short.",
+      "easyShortTitle": "Easy run (short)",
+      "easyShortDesc": "Easy – stay fresh for the race.",
+      "lastLongerDesc": "Calm in Z2 – your last slightly longer run before the race, no pace work.",
+      "swimTitle": "Short & easy swim",
+      "swimDesc": "Easy warm-up, 4×50 m at race pace, easy cool-down. Keep your feel for the water.",
+      "rideTitle": "Easy ride with surges",
+      "rideDesc": "Easy in Z2 with 3×1 min at race pace in between.",
+      "brickTitle": "Ride + short brick run",
+      "brickDesc": "35 min easy on the bike, then straight into 10 min of easy running – keeps the transition familiar without tiring you.",
+      "hyroxTitle": "Hyrox – Run-through (short)",
+      "hyroxDesc": "One short technique round per station at half volume, no running at the limit. Go through the transitions and the order once more."
+    },
+    "steadyRun": {
+      "title": "Steady easy run",
+      "walkBreaks": "Walk breaks are explicitly allowed.",
+      "desc": "Steady in the base zone (Z2), conversational pace – you should be able to chat as you go. Rather a bit too slow than too fast; volume counts here, not pace.",
+      "backAlt": "With back pain, do a steady bike ride (Z2) instead."
+    },
+    "football": {
+      "title": "Football",
+      "desc": "Team training – counts as cross-training (accelerations, speed, joy of the game). Warm up well, then jog easily for 5–10 min afterwards. If it was intense, take your next run a bit easier."
+    },
+    "strength": {
+      "title": "Strength – {focus}"
+    },
+    "mobility": {
+      "title": "Mobility & stretching",
+      "desc": "Calm mobility, 10–15 min, especially kind to your back: Cat-cow 10× · Hip flexor stretch 45 s/side · Gentle hamstring stretch 45 s/side · Calf stretch against the wall 45 s/side · Chest opener & supine twist 8×/side · Child’s pose 60 s. Nothing jerky – breathe gently into each position."
+    },
+    "recovery": {
+      "title": "Recovery run",
+      "desc": "Very easy in Z1–Z2, noticeably slower than your steady runs – if it feels “almost too easy”, it’s just right. Your legs should recover; pace doesn’t matter. Alternatively, an easy bike ride that’s gentle on your back."
+    },
+    "extra": {
+      "title": "Easy run",
+      "desc": "Short and easy in Z2 – build volume without getting tired. No pace, no ambition."
+    },
+    "tactic": {
+      "5k": "Start controlled (don’t overdo it!), pick it up from halfway and give everything in the last third.",
+      "10k": "Even at race pace, pick it up bit by bit from km 7.",
+      "hm": "Start evenly, give everything from km {km}.",
+      "marathon": "Start deliberately conservatively and stay even – the race is decided from km {km}. Fuel as in training."
+    },
+    "race": {
+      "targetTime": "Target time {time}.",
+      "triDesc": "Race day! {format}: {swim} m swim · {bike} km bike · {run} km run.{target} Swim: settle calmly into your rhythm, don’t burn out in the pack. Bike: steady, don’t overpace – you’ll still need your legs; drink regularly. Transitions quick but without rushing. Run: take the first 1–2 km deliberately easy, then build.",
+      "hyroxSplits": "Guide values for {time}: about {run} min per running kilometre and about {station} min per station including the Roxzone.",
+      "hyroxDesc": "Race day! 8 × 1 km running, with a station after each kilometre: SkiErg 1000 m · Sled Push 50 m · Sled Pull 50 m · Burpee Broad Jumps 80 m · Rowing 1000 m · Farmer’s carry 200 m · Sandbag Lunges 100 m · Wall Balls 100 reps (weights depending on your division).{target}{splits} Run the first kilometres deliberately controlled – the stations cost more than you think. Move quickly through the Roxzone but breathe calmly; do the wall balls in fixed sets with short breaks.",
+      "runDesc": "Race day!{target} {tactic}"
+    },
+    "strides": {
+      "title": "Easy with strides",
+      "raceWeekDesc": "The activation run would sit right next to a hard fixed appointment – that appointment already wakes your legs up. So just easy in Z2 with 4 strides of ~20 s at the end. Stay fresh for the race.",
+      "desc": "This week your quality session would sit right next to a hard fixed appointment – the appointment provides the intensity. So an easy run in Z2 with 4–6 strides of ~20 s at the end (brisk, no sprinting; jog easily in between). That keeps your speed without two hard days in a row."
+    }
+  },
+  "program": {
+    "phases": {
+      "build": {
+        "name": "Build",
+        "focusShort": "Habit & foundation",
+        "focus": "Progress & keep going"
+      },
+      "intro": {
+        "name": "Getting started",
+        "focus": "Settling in & technique"
+      },
+      "consolidate": {
+        "name": "Consolidate",
+        "focus": "Harder variations, lock in the habit"
+      }
+    },
+    "types": {
+      "fitness": {
+        "label": "General fitness",
+        "focus": "Stay balanced, active & healthy",
+        "desc": "Endurance, strength and mobility following the WHO activity guidelines: endurance rises from about 120 to 150–180 minutes a week (brisk walking counts), plus strength on two days."
+      },
+      "strength": {
+        "label": "Strength & muscle",
+        "focus": "Build strength and muscle",
+        "desc": "Focus on strength training (alternating full-body sessions, two to three strength days) with some endurance and mobility for recovery. Strength progresses through rounds, reps and harder variations."
+      },
+      "weightloss": {
+        "label": "Weight loss",
+        "focus": "Reduce weight, boost your metabolism",
+        "desc": "Lots of movement (endurance and brisk walking, from about 150 to 225–240 minutes a week) plus strength on two days for your metabolism. Works best together with the calorie balance in Nutrition."
+      },
+      "mobility": {
+        "label": "Mobility & health",
+        "focus": "Stay supple and healthy, gently",
+        "desc": "A gentle start: mobility, gentle strength on two days and activity that grows from about 90 to 150 minutes a week – ideal for beginners or for getting back into it."
+      }
+    },
+    "rotation": {
+      "fullBody": {
+        "title": "Strength – Full body",
+        "moves": "Squats 12× · Push-ups 8–12× (on your knees if needed) · Lunges 10×/leg · Shoulder press 12× · Plank 30–45 s",
+        "harder": "weighted squats, push-ups with feet raised, plank 60 s"
+      },
+      "lowerBody": {
+        "title": "Strength – Lower body",
+        "moves": "Squats 15× · Romanian deadlift (dumbbell/kettlebell or single-leg) 10× · Step-ups onto a bench/step 10×/leg · Calf raises 20× · Glute bridge 15×",
+        "harder": "Bulgarian split squats instead of step-ups, glute bridge on one leg, more weight"
+      },
+      "upperBody": {
+        "title": "Strength – Upper body & core",
+        "moves": "Push-ups 8–12× · Rows (dumbbell/band) 12× · Shoulder press 12× · Plank 40 s · Side plank 30 s/side · Dead bug 10×/side",
+        "harder": "close-grip push-ups, a stronger band or heavier dumbbell, side plank with leg raises"
+      }
+    },
+    "gentle": {
+      "title": "Gentle strength",
+      "moves": "Sit-to-stand from a chair 10× · Wall push-ups 10× · Glute bridge 12× · Calf raises holding a chair 15× · On all fours, opposite arm and leg 8×/side",
+      "harder": "lower more slowly, add short holds, only then more reps"
+    },
+    "strength": {
+      "howEasy": "Easier week: 2 rounds of your usual exercises, deliberately a little lighter.",
+      "howIntro": "Getting started: 2 rounds, technique before speed – better a few reps fewer, but clean.",
+      "howConsolidate": "Consolidate: {rounds} rounds, harder variations: {harder}.",
+      "howBuild": "3 rounds. Every one to two weeks, add 1–2 reps or a little more weight, as long as your technique stays clean.",
+      "desc": "{how} Exercises per round: {moves}. 60–90 s rest between rounds."
+    },
+    "block": {
+      "total": "About {minutes} min of endurance this week, walking included – the WHO recommends 150–300 min.",
+      "cardioTitle": "Cardio {min} min",
+      "cardioDesc": "Steady cardio at a conversational pace (Z2) – running, cycling, elliptical or swimming, whatever you like. You should be able to chat as you go. {total}",
+      "walkTitle": "Brisk walk {min} min",
+      "walkDesc": "A brisk walk, ideally in the fresh air – fast enough that you breathe a little harder but can still talk. Easy to start and gentle on your joints, it counts fully as endurance. {total}",
+      "mobilityTitle": "Mobility & stretching",
+      "mobilityDesc": "Calm mobility session: Cat-cow 10× · Hip flexor stretch 45 s/side · Gentle hamstring stretch 45 s/side · Chest opener & supine twist 8×/side · Child’s pose 60 s. Breathe gently into each position, nothing jerky.",
+      "otherTitle": "Training",
+      "otherDesc": "Easy movement session."
+    }
   }
 }

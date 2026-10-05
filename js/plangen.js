@@ -18,14 +18,16 @@ import { uid, nowIso, typeMeta, fmtKm, fmtPaceRange, addDays, isoDow, diffDays, 
 import { commitmentDates, commitMeta, defaultCommitments } from './commitments.js';
 import { isHard } from './planflow.js';
 
+import { t, tp } from './i18n.js';
+
 /** Generator-Stand. Pläne ohne dieses Feld stammen aus früheren Versionen: Sie
     bleiben unverändert, bis jemand „Plan ab heute neu berechnen“ wählt. */
 export const PLAN_GEN = 2;
 
 export const PLAN_LEVELS = {
-  einsteiger: { label: 'Einsteiger', hint: 'Neu im Lauftraining oder nach längerer Pause' },
-  fortgeschritten: { label: 'Fortgeschritten', hint: 'Läuft seit Monaten regelmäßig' },
-  leistung: { label: 'Leistung', hint: 'Trainiert strukturiert, hat Wettkampferfahrung' },
+  einsteiger: { get label() { return t('plangen.levels.einsteiger.label'); }, get hint() { return t('plangen.levels.einsteiger.hint'); } },
+  fortgeschritten: { get label() { return t('plangen.levels.fortgeschritten.label'); }, get hint() { return t('plangen.levels.fortgeschritten.hint'); } },
+  leistung: { get label() { return t('plangen.levels.leistung.label'); }, get hint() { return t('plangen.levels.leistung.hint'); } },
 };
 const LEVELS = Object.keys(PLAN_LEVELS);
 export const RUN_DAYS = [3, 4, 5, 6];
@@ -130,16 +132,16 @@ export function planCommitments(plan) {
 
 /** Rotierende Kraft-Schwerpunkte – Eigengewicht oder mit Geräten, ohne Video-Zwang. */
 export const STRENGTH_FOCUS = [
-  { title: 'Ganzkörper', desc: 'Ganzkörper, 3 Runden (Eigengewicht oder mit Hanteln/Kettlebell): Kniebeugen 12× · Liegestütz 8–12× (ggf. auf Knien) · Ausfallschritte 10×/Bein · Schulterdrücken 12× · Plank 30–45 s. Saubere Technik vor Gewicht, 60–90 s Pause zwischen den Runden.' },
-  { title: 'Beine & Po', desc: 'Beinkraft für eine stabile Lauftechnik, 3 Runden: Kniebeugen 15× · Rumänisches Kreuzheben (Hantel/Kettlebell oder einbeinig) 10× · Step-ups auf Bank/Stufe 10×/Bein · Wadenheben 20× (die Hälfte mit gebeugtem Knie) · Glute Bridge 15×. Mit Gewicht etwas weniger Wiederholungen, 60–90 s Pause.' },
-  { title: 'Rumpf & Core', desc: 'Rumpfstabilität für aufrechte Haltung beim Laufen, 3 Runden: Plank 40 s · Seitstütz 30 s/Seite · Dead Bug 10×/Seite · Bird Dog 10×/Seite (Vierfüßlerstand, Arm und Bein diagonal strecken, ohne Hohlkreuz) · Russian Twist 20×. Langsam und kontrolliert, bewusst Körperspannung halten.' },
+  { get title() { return t('plangen.strengthFocus.fullBody.title'); }, get desc() { return t('plangen.strengthFocus.fullBody.desc'); } },
+  { get title() { return t('plangen.strengthFocus.legs.title'); }, get desc() { return t('plangen.strengthFocus.legs.desc'); } },
+  { get title() { return t('plangen.strengthFocus.core.title'); }, get desc() { return t('plangen.strengthFocus.core.desc'); } },
 ];
 
 /** Kraft für Hyrox: Beine/Schieben, Zug/Griff, Ganzkörper mit Wall Balls. */
 export const HYROX_STRENGTH = [
-  { title: 'Kraft – Beine & Schieben', desc: '3–4 Runden: Kniebeugen oder Beinpresse 8–10× · Ausfallschritte mit Gewicht 10×/Bein · Schlittenschieben oder Wandsitz 45 s · Liegestütz 10× · Plank 40 s. Schwer, aber sauber – 90 s Pause zwischen den Runden.' },
-  { title: 'Kraft – Zug & Griff', desc: '3–4 Runden: Rumänisches Kreuzheben 8× · Rudern vorgebeugt 10× · Farmers Walk 2×30 m schwer · Latzug oder Klimmzug-Negativ 8× · Dead Bug 10×/Seite. Griffkraft zahlt sich bei Farmers Carry und Schlittenzug aus.' },
-  { title: 'Kraft – Ganzkörper & Wall Balls', desc: '3 Runden: Frontkniebeuge oder Thruster 10× · Wall Balls 15× · Kettlebell-Swings 15× · Sandsack- oder Hantel-Ausfallschritte 20 m · Burpees 8×. Zügig, aber mit sauberer Technik.' },
+  { get title() { return t('plangen.hyroxStrength.legsPush.title'); }, get desc() { return t('plangen.hyroxStrength.legsPush.desc'); } },
+  { get title() { return t('plangen.hyroxStrength.pullGrip.title'); }, get desc() { return t('plangen.hyroxStrength.pullGrip.desc'); } },
+  { get title() { return t('plangen.hyroxStrength.fullBody.title'); }, get desc() { return t('plangen.hyroxStrength.fullBody.desc'); } },
 ];
 
 /* ===================== Phasen ===================== */
@@ -147,10 +149,10 @@ export const HYROX_STRENGTH = [
 /** Verteilt die Gesamtwochen auf die vier Trainingsphasen. */
 export function makePhases(weeks) {
   const defs = [
-    { key: 'base', name: 'Grundlage', color: '#43c59e', focus: 'Umfang & aerobe Basis', frac: 0.40 },
-    { key: 'build', name: 'Aufbau', color: '#3d8bff', focus: 'Schwelle & Tempohärte', frac: 0.32 },
-    { key: 'peak', name: 'Spitze', color: '#f5a623', focus: 'VO2max & Wettkampftempo', frac: 0.16 },
-    { key: 'taper', name: 'Tapering', color: '#b079e6', focus: 'Erholung & Schärfe', frac: 0.12 },
+    { key: 'base', name: t('plangen.phases.base.name'), color: '#43c59e', focus: t('plangen.phases.base.focus'), frac: 0.40 },
+    { key: 'build', name: t('plangen.phases.build.name'), color: '#3d8bff', focus: t('plangen.phases.build.focus'), frac: 0.32 },
+    { key: 'peak', name: t('plangen.phases.peak.name'), color: '#f5a623', focus: t('plangen.phases.peak.focus'), frac: 0.16 },
+    { key: 'taper', name: t('plangen.phases.taper.name'), color: '#b079e6', focus: t('plangen.phases.taper.focus'), frac: 0.12 },
   ];
   if (weeks <= 1) return [{ ...defs[3], startWeek: 1, endWeek: weeks }].map(({ frac, ...p }) => p);
   // Kurzpläne (2–3 Wochen): die Rennwoche ist IMMER Tapering – ein voller
@@ -183,16 +185,16 @@ export function phaseForWeek(plan, week) {
 /** Schwerpunkt der Schlüsseleinheiten je Wettkampfdistanz (distanzspezifisch). */
 export function distanceEmphasis(raceKm = 21.1) {
   const km = Number(raceKm) || 21.1;
-  if (km <= 6) return { key: '5k', short: true, marathon: false, focus: 'VO₂max & Schärfe' };
-  if (km <= 12) return { key: '10k', short: true, marathon: false, focus: 'VO₂max & Schwelle' };
-  if (km <= 25) return { key: 'hm', short: false, marathon: false, focus: 'Schwelle & Tempohärte' };
-  return { key: 'marathon', short: false, marathon: true, focus: 'Schwelle & Marathon-Renntempo' };
+  if (km <= 6) return { key: '5k', short: true, marathon: false, focus: t('plangen.emphasis.5k') };
+  if (km <= 12) return { key: '10k', short: true, marathon: false, focus: t('plangen.emphasis.10k') };
+  if (km <= 25) return { key: 'hm', short: false, marathon: false, focus: t('plangen.emphasis.hm') };
+  return { key: 'marathon', short: false, marathon: true, focus: t('plangen.emphasis.marathon') };
 }
 
 /** Wettkampfformate für Triathlon. */
 export const TRI_FORMATS = {
-  tri_sprint: { label: 'Sprintdistanz', swimM: 750, bikeKm: 20, runKm: 5 },
-  tri_olympic: { label: 'Olympische Distanz', swimM: 1500, bikeKm: 40, runKm: 10 },
+  tri_sprint: { get label() { return t('plangen.triFormats.sprint'); }, swimM: 750, bikeKm: 20, runKm: 5 },
+  tri_olympic: { get label() { return t('plangen.triFormats.olympic'); }, swimM: 1500, bikeKm: 40, runKm: 10 },
 };
 
 /** Schlüssel des Wettkampfs für Umfang und Einheitenwahl. */
@@ -208,7 +210,7 @@ export function raceKey(event = {}) {
   return distanceEmphasis(km).key;
 }
 
-const RACE_LABEL = { '5k': '5 km', '10k': '10 km', hm: 'einen Halbmarathon', marathon: 'einen Marathon', tri_sprint: 'einen Sprint-Triathlon', tri_olympic: 'einen Triathlon über die Olympische Distanz', hyrox: 'Hyrox' };
+const raceLabel = (key) => t(`plangen.raceLabel.${key}`);
 
 /** Spitzen-Wochenumfang (Lauf-km) bei vier Lauftagen je Distanz und Niveau. */
 const PEAK_WEEK_KM = {
@@ -319,8 +321,8 @@ export function planWindow(eventDate, today) {
  */
 export function planReadiness(event, { today, level = 'fortgeschritten', hist = {} } = {}) {
   if (!event || !event.date) return { status: 'none' };
-  if (event.date < today) return { status: 'past', text: 'Der Wettkampf liegt in der Vergangenheit – dafür lässt sich kein Plan mehr erstellen. Prüfe das Datum.' };
-  if (event.date === today) return { status: 'today', text: 'Heute ist Wettkampf – für einen Trainingsplan ist es zu spät. Viel Erfolg!' };
+  if (event.date < today) return { status: 'past', text: t('plangen.readiness.past') };
+  if (event.date === today) return { status: 'today', text: t('plangen.readiness.today') };
   const { weeks } = planWindow(event.date, today);
   const key = raceKey(event);
   const lvl = LEVELS.includes(level) ? level : 'fortgeschritten';
@@ -329,7 +331,7 @@ export function planReadiness(event, { today, level = 'fortgeschritten', hist = 
   if (weeks < minWeeks && !histOk) {
     return {
       status: 'short', weeks, minWeeks,
-      text: `Für ${RACE_LABEL[key]} empfehlen wir auf dem Niveau „${PLAN_LEVELS[lvl].label}“ mindestens ${minWeeks} Wochen Vorbereitung – bis zum Rennen sind es ${weeks}. Möglich sind ein späteres Rennen, eine kürzere Distanz oder das Ziel „gesund ankommen“ ohne Zielzeit. Der Plan steigert den Umfang trotzdem nur behutsam.`,
+      text: tp('plangen.readiness.short', weeks, { race: raceLabel(key), level: PLAN_LEVELS[lvl].label, minWeeks }),
     };
   }
   return { status: 'ok', weeks, minWeeks };
@@ -339,7 +341,7 @@ export function planReadiness(event, { today, level = 'fortgeschritten', hist = 
 
 function countRoles(tpl) {
   const c = {};
-  (tpl || []).forEach((t) => (t.units || []).forEach((u) => { c[u.role] = (c[u.role] || 0) + 1; }));
+  (tpl || []).forEach((row) => (row.units || []).forEach((u) => { c[u.role] = (c[u.role] || 0) + 1; }));
   return c;
 }
 
@@ -493,7 +495,7 @@ export function pyramidSegments(peakSec = 240, stepSec = 60, restSec = 90) {
 /** Wechselintervalle (Fahrtspiel): `rounds`× schnell/locker im Wechsel – die „Pause“
     ist hier lockeres Weiterlaufen (Float), kein Stopp. */
 export function alternatingSegments(rounds = 6, fastSec = 60, floatSec = 60) {
-  return Array.from({ length: rounds }, () => ({ workSec: fastSec, restSec: floatSec, label: 'schnell', floatRest: true }));
+  return Array.from({ length: rounds }, () => ({ workSec: fastSec, restSec: floatSec, label: t('plangen.segments.fast'), floatRest: true }));
 }
 
 /** Aufwärm-/Auslaufstrecke nach Niveau. */
@@ -556,15 +558,15 @@ function qualityUnit(ctx) {
     return distanceReps(ctx, {
       base: taper ? 3 : 4 + (phase.key === 'peak' ? 2 : 0), min: 3, workM: 1000, restSec: taper ? 120 : 90,
       paceKey: 'threshold', type: 'tempo',
-      title: (n) => `Hyrox-Laufen ${n}×1 km`,
-      desc: (n, w, c) => `${w} einlaufen, dann ${n}×1 km zügig (Z4, etwa Schwellentempo) mit je ${pause} Pause – so wie im Rennen zwischen den Stationen: nach dem Kilometer kurz durchatmen, dann wieder ins Tempo finden. ${c} auslaufen.`,
+      title: (n) => t('plangen.hyroxRun.title', { n }),
+      desc: (n, w, c) => t('plangen.hyroxRun.desc', { n, warm: w, cool: c, pause }),
     });
   }
 
   if (phase.key === 'base') {
     return mkUnit(ctx, 'easy', {
-      dist: r05(clamp(alloc.quality, 4, 12)), pace: pace(pz, 'easy'), paceKey: 'easy', title: 'Dauerlauf mit Steigerungen',
-      desc: 'Lockerer Dauerlauf in Z2 (Plaudertempo). In den letzten 1–2 km dann 5–6 Steigerungsläufe à ~80–100 m: locker antraben, über ~20 m zügig auf ca. 90 % beschleunigen (schnell, aber nicht sprinten), dann auslaufen lassen. Dazwischen 60–90 s locker gehen/traben. Die Herzfrequenz ist hier nebensächlich – es geht um Spritzigkeit und saubere Technik.',
+      dist: r05(clamp(alloc.quality, 4, 12)), pace: pace(pz, 'easy'), paceKey: 'easy', title: t('plangen.baseRun.title'),
+      desc: t('plangen.baseRun.desc'),
     });
   }
 
@@ -572,8 +574,8 @@ function qualityUnit(ctx) {
     if (emKey === 'marathon') {
       return timeBlocks(ctx, {
         base: 2 + (week % 2), workMin: 12, restMin: 3, paceKey: 'threshold',
-        title: (n) => `Schwellenlauf ${n}×12 min`,
-        desc: (n, w, c) => `Marathon-spezifisch: ${w} locker einlaufen. Dann ${n}×12 min an der Schwelle (Z4, „angenehm hart“) mit je 3 min lockerem Traben – lange, gleichmäßige Reize statt kurzer Spitzen. ${c} auslaufen. Beim Marathon zählt die Ausdauer im oberen Tempobereich.`,
+        title: (n) => t('plangen.threshold.title', { n, min: 12 }),
+        desc: (n, w, c) => t('plangen.threshold.marathonDesc', { n, warm: w, cool: c }),
       });
     }
     if (even) { // Abwechslung: Fahrtspiel mit fließenden Wechseln statt Schwellenlauf
@@ -581,15 +583,15 @@ function qualityUnit(ctx) {
       const n = fitReps(8, 4, (k) => warm + cool + k * (kmForSec(60, midPace(pz.threshold)) + kmForSec(60, midPace(pz.easy) || 380)), alloc.quality, cfg);
       return mkUnit(ctx, 'tempo', {
         dist: r05(warm + cool + n * (kmForSec(60, midPace(pz.threshold)) + kmForSec(60, midPace(pz.easy) || 380))),
-        pace: pace(pz, 'threshold'), paceKey: 'threshold', title: `Fahrtspiel ${n}×(1 min schnell / 1 min locker)`,
+        pace: pace(pz, 'threshold'), paceKey: 'threshold', title: t('plangen.fartlek.title', { n }),
         intervals: { warmupKm: warm, cooldownKm: cool, segments: alternatingSegments(n, 60, 60) },
-        desc: `${kmText(warm)} locker einlaufen. Dann ${n}×1 min zügig (Z4, „angenehm hart“), dazwischen je 1 min ganz locker weiterlaufen (nicht stehen bleiben) – ein fließendes Fahrtspiel. Tempo halten, ohne zu sprinten. ${kmText(cool)} auslaufen.`,
+        desc: t('plangen.fartlek.desc', { warm: kmText(warm), n, cool: kmText(cool) }),
       });
     }
     return timeBlocks(ctx, {
       base: 3 + (week % 2), workMin: 6, restMin: 2, paceKey: 'threshold',
-      title: (n) => `Schwellenlauf ${n}×6 min`,
-      desc: (n, w, c) => `${w} locker einlaufen (Z2). Dann ${n}×6 min an der Schwelle (Z4, „angenehm hart“ – du könntest noch kurze Sätze sprechen) in der Zielpace; dazwischen je 2 min ganz lockeres Traben. Zum Schluss ${c} auslaufen. Gleichmäßig bleiben, nicht das erste Intervall überziehen.`,
+      title: (n) => t('plangen.threshold.title', { n, min: 6 }),
+      desc: (n, w, c) => t('plangen.threshold.desc6', { n, warm: w, cool: c }),
     });
   }
 
@@ -598,26 +600,26 @@ function qualityUnit(ctx) {
       return even
         ? distanceReps(ctx, {
           base: 3, workM: 4000, restSec: 180, paceKey: 'race', type: 'tempo',
-          title: (n) => `Marathon-Renntempo ${n}×4 km`,
-          desc: (n, w, c) => `Renntempo-spezifisch: ${w} locker, dann ${n}×4 km im angestrebten Marathon-Renntempo (kontrolliert zügig) mit je 3 min lockerem Traben. ${c} auslaufen. Verpflegung & Trinken wie im Wettkampf üben.`,
+          title: (n) => t('plangen.marathonPace.title', { n }),
+          desc: (n, w, c) => t('plangen.marathonPace.desc', { n, warm: w, cool: c }),
         })
         : timeBlocks(ctx, {
           base: 4, workMin: 8, restMin: 2, paceKey: 'threshold',
-          title: (n) => `Schwellenlauf ${n}×8 min`,
-          desc: (n, w, c) => `${w} locker, ${n}×8 min an der Schwelle (Z4) mit 2 min Trabpause, ${c} auslaufen. Hält die Tempohärte, ohne die Beine wie bei VO₂max-Intervallen zu leeren.`,
+          title: (n) => t('plangen.threshold.title', { n, min: 8 }),
+          desc: (n, w, c) => t('plangen.threshold.desc8', { n, warm: w, cool: c }),
         });
     }
     if (emKey === 'hm') {
       return even
         ? distanceReps(ctx, {
           base: 3, workM: 3000, restSec: 120, paceKey: 'race', type: 'tempo',
-          title: (n) => `HM-Renntempo ${n}×3 km`,
-          desc: (n, w, c) => `Renntempo-spezifisch: ${w} locker einlaufen, dann ${n}×3 km im angestrebten Halbmarathon-Renntempo mit je 2 min lockerem Traben. ${c} auslaufen. Das Tempo soll sich kontrolliert anfühlen – so, wie du es am Renntag 21 km halten willst.`,
+          title: (n) => t('plangen.hmPace.title', { n }),
+          desc: (n, w, c) => t('plangen.hmPace.desc', { n, warm: w, cool: c }),
         })
         : distanceReps(ctx, {
           base: 6, min: 3, workM: 800, restSec: 150, paceKey: 'vo2',
-          title: (n) => `VO2max-Intervalle ${n}×800 m`,
-          desc: (n, w, c) => `${w} einlaufen. Dann ${n}×800 m hart (Z5 – nur noch einzelne Wörter möglich) in der Zielpace, dazwischen ~2:30 min sehr locker traben. ${c} auslaufen. Alle Intervalle möglichst gleich schnell – lieber gleichmäßig als das erste zu schnell.`,
+          title: (n) => t('plangen.vo2.intervalsTitle', { n }),
+          desc: (n, w, c) => t('plangen.vo2.desc800', { n, warm: w, cool: c }),
         });
     }
     if (emKey === '10k') {
@@ -629,28 +631,28 @@ function qualityUnit(ctx) {
         const seq = segments.map((s) => s.workSec / 60).join('-');
         return mkUnit(ctx, 'interval', {
           dist: r05(warm + cool + kmForSec(workSec, midPace(pz.vo2)) + jogKm(90 * (segments.length - 1))),
-          pace: pace(pz, 'vo2'), paceKey: 'vo2', title: `VO2max-Pyramide ${seq} min`,
+          pace: pace(pz, 'vo2'), paceKey: 'vo2', title: t('plangen.pyramid.title', { seq }),
           intervals: { warmupKm: warm, cooldownKm: cool, segments },
-          desc: `${kmText(warm)} einlaufen. Dann eine Pyramide: ${seq.replace(/-/g, ' – ')} min hart (Z5) mit je 90 s ganz lockerer Trabpause. Die ${peakSec / 60}-Minuten-Stufe in der Mitte ist der Höhepunkt – dort gleichmäßig durchhalten, nicht überziehen. ${kmText(cool)} auslaufen.`,
+          desc: t('plangen.pyramid.desc', { warm: kmText(warm), seq: seq.replace(/-/g, ' – '), peak: peakSec / 60, cool: kmText(cool) }),
         });
       }
       return distanceReps(ctx, {
         base: 5, min: 3, workM: 1000, restSec: 150, paceKey: 'race',
-        title: (n) => `10-km-Renntempo ${n}×1000 m`,
-        desc: (n, w, c) => `${w} einlaufen. Dann ${n}×1000 m im angestrebten 10-km-Renntempo mit je ~2:30 min Trabpause. ${c} auslaufen. So fühlt sich das Renntempo an – kontrolliert, nicht am Anschlag.`,
+        title: (n) => t('plangen.pace10k.title', { n }),
+        desc: (n, w, c) => t('plangen.pace10k.desc', { n, warm: w, cool: c }),
       });
     }
     // 5 km: kurze, schnelle VO₂max-Reize
     return even
       ? distanceReps(ctx, {
         base: 8, min: 4, workM: 400, restSec: 90, paceKey: 'vo2',
-        title: (n) => `VO2max ${n}×400 m`,
-        desc: (n, w, c) => `${w} einlaufen. Dann ${n}×400 m schnell (Z5) in der 5-km-Renntempo-Region, dazwischen ~90 s sehr locker traben. ${c} auslaufen. Kurz, knackig, sauber – die Spritzigkeit fürs 5-km-Rennen.`,
+        title: (n) => t('plangen.vo2.title', { n, m: 400 }),
+        desc: (n, w, c) => t('plangen.vo2.desc400', { n, warm: w, cool: c }),
       })
       : distanceReps(ctx, {
         base: 5, min: 3, workM: 1000, restSec: 150, paceKey: 'vo2',
-        title: (n) => `VO2max ${n}×1000 m`,
-        desc: (n, w, c) => `${w} einlaufen. ${n}×1000 m hart (Z5) im 5–10-km-Tempo, dazwischen ~2:30 min locker traben. ${c} auslaufen. Gleichmäßig durchhalten.`,
+        title: (n) => t('plangen.vo2.title', { n, m: 1000 }),
+        desc: (n, w, c) => t('plangen.vo2.desc1000', { n, warm: w, cool: c }),
       });
   }
 
@@ -658,15 +660,15 @@ function qualityUnit(ctx) {
   if (emKey === 'marathon' || emKey === 'hm') {
     return distanceReps(ctx, {
       base: 2, min: 2, workM: 2000, restSec: 180, paceKey: 'race', type: 'tempo',
-      title: (n) => `Renntempo ${n}×2 km`,
-      desc: (n, w, c) => `${w} einlaufen, ${n}×2 km im Renntempo mit 3 min Trabpause, ${c} auslaufen. Das Tempo in Erinnerung rufen – der Umfang ist bewusst klein, die Frische kommt jetzt aus der Erholung.`,
+      title: (n) => t('plangen.taper.raceTitle', { n }),
+      desc: (n, w, c) => t('plangen.taper.raceDesc', { n, warm: w, cool: c }),
     });
   }
   const tMin = cfg.level === 'einsteiger' ? 4 : 6;
   return timeBlocks(ctx, {
     base: 2, min: 2, workMin: tMin, restMin: 3, paceKey: 'threshold',
-    title: (n) => `Tempo kurz ${n}×${tMin} min`,
-    desc: (n, w, c) => `${w} einlaufen, ${n}×${tMin} min an der Schwelle (Z4) mit langer 3-min-Pause, ${c} auslaufen. Reiz halten, Umfang bewusst runter – die Spritzigkeit kommt jetzt aus der Erholung.`,
+    title: (n) => t('plangen.taper.tempoTitle', { n, min: tMin }),
+    desc: (n, w, c) => t('plangen.taper.tempoDesc', { n, warm: w, cool: c, min: tMin }),
   });
 }
 
@@ -683,21 +685,21 @@ function runWalkUnit(ctx, variant = 'base') {
   if (variant === 'long') n += 1;
   const runMin = (n * runSec) / 60;
   const walkMin = n + 10;
-  const segments = Array.from({ length: n }, (_, i) => ({ workSec: runSec, restSec: 60, label: `Laufen ${i + 1}/${n}`, phaseLabel: `Laufen ${i + 1}/${n}`, restLabel: 'Gehen', floatRest: true }));
+  const segments = Array.from({ length: n }, (_, i) => ({ workSec: runSec, restSec: 60, label: t('plangen.runWalk.run', { i: i + 1, n }), phaseLabel: t('plangen.runWalk.run', { i: i + 1, n }), restLabel: t('plangen.runWalk.walk'), walk: true, floatRest: true }));
   return mkUnit(ctx, 'easy', {
     dist: r05(runMin / 7.5 + walkMin / 12), dur: Math.round(runMin + walkMin),
     pace: pace(ctx.pz, 'easy'), paceKey: 'easy',
-    title: `Lauf-Geh-Wechsel${variant === 'long' ? ' (länger)' : ''} ${n}×${runSec / 60} min`,
+    title: variant === 'long' ? t('plangen.runWalk.titleLonger', { n, min: runSec / 60 }) : t('plangen.runWalk.title', { n, min: runSec / 60 }),
     intervals: { warmupSec: 300, cooldownSec: 300, segments },
-    desc: `5 min zügig gehen, dann ${n}× im Wechsel ${runSec / 60} min locker laufen und 1 min gehen, zum Schluss 5 min gehen. Das Lauftempo so wählen, dass du dich noch unterhalten kannst – die Gehpausen gehören zum Plan, sie sind kein Aufgeben.`,
+    desc: t('plangen.runWalk.desc', { n, min: runSec / 60 }),
   });
 }
 
 /** Zügiges Gehen statt eines sehr kurzen Laufs (kleine Wochenumfänge). */
 function walkUnit(ctx) {
   return mkUnit(ctx, 'walk', {
-    dur: 30, hrZone: 1, title: 'Zügiges Gehen',
-    desc: '30 min zügig gehen – aktive Erholung, die den Kreislauf in Schwung hält, ohne die Beine zu belasten. Zählt voll als Bewegung.',
+    dur: 30, hrZone: 1, title: t('plangen.walk.title'),
+    desc: t('plangen.walk.desc'),
   });
 }
 
@@ -707,13 +709,14 @@ function longUnit(ctx) {
   const km = alloc.long;
   if (sport === 'hyrox') {
     return mkUnit(ctx, 'easy', {
-      dist: km, pace: pace(pz, 'easy'), paceKey: 'easy', title: `Lockerer Dauerlauf ${kmText(km)}`,
-      desc: 'Ruhig und gleichmäßig in Z2 – Grundlagenausdauer für die acht Laufkilometer zwischen den Stationen. Das Tempo ist Nebensache.',
+      dist: km, pace: pace(pz, 'easy'), paceKey: 'easy', title: t('plangen.long.easyTitle', { km: kmText(km) }),
+      desc: t('plangen.long.easyDesc'),
     });
   }
-  const title = `${km >= 10 ? 'Long Run' : 'Längerer Lauf'} ${kmText(km)}`;
-  const bike = sport === 'triathlon' ? '' : ` Rad-Alternative (auch rückenschonend): ~${Math.round(km * 4)}–${Math.round(km * 5)} km bzw. 1,5–2,5 h locker in Z2 statt des Laufs.`;
-  const lead = info.deload ? 'Entlastungswoche – bewusst kürzer. ' : info.taper ? 'Tapering – kürzer als zuletzt, Frische sammeln. ' : '';
+  const title = km >= 10 ? t('plangen.long.title', { km: kmText(km) }) : t('plangen.long.titleShorter', { km: kmText(km) });
+  const bikeKm = { from: Math.round(km * 4), to: Math.round(km * 5) };
+  const bike = sport === 'triathlon' ? '' : ` ${t('plangen.long.bikeAlt', bikeKm)}`;
+  const lead = info.deload ? `${t('plangen.long.leadDeload')} ` : info.taper ? `${t('plangen.long.leadTaper')} ` : '';
   const blockShare = phase.key === 'peak' && !info.deload && !info.taper ? (cfg.key === 'marathon' ? 0.4 : cfg.key === 'hm' ? 0.3 : 0) : 0;
   const blockKm = r05(km * blockShare);
   if (blockKm >= 3) {
@@ -721,14 +724,14 @@ function longUnit(ctx) {
     const paceTxt = rz && rz.min ? ` (${fmtPaceRange(rz.min, rz.max)})` : '';
     return mkUnit(ctx, 'long', {
       dist: km, pace: pace(pz, 'long'), paceKey: 'long', raceBlockKm: blockKm, title,
-      desc: `${kmText(km)} gesamt: locker in Z2 starten, in der Mitte ${kmText(blockKm)} im Renntempo${paceTxt} am Stück, danach wieder locker auslaufen. Verpflegung & Trinken wie im Wettkampf üben.${bike.replace(' statt des Laufs.', ' – dann aber heute keine zusätzliche Radtour.')}`,
+      desc: `${t('plangen.long.raceBlockDesc', { km: kmText(km), block: kmText(blockKm), pace: paceTxt })}${bike && ` ${t('plangen.long.bikeAltRaceBlock', bikeKm)}`}`,
     });
   }
   const finish = phase.key === 'peak' && !info.deload && !info.taper && (cfg.key === '5k' || cfg.key === '10k')
-    ? ' Die letzten 2 km zügig im Marathontempo – ein kleiner Reiz, der müde Beine lehrt, das Tempo zu halten.' : '';
+    ? ` ${t('plangen.long.finish')}` : '';
   return mkUnit(ctx, 'long', {
     dist: km, pace: pace(pz, 'long'), paceKey: 'long', title,
-    desc: `${lead}Ruhiger langer Lauf durchgehend in Z2, gleichmäßig – Fettstoffwechsel & Grundlagenausdauer. Alle 20 min ein paar Schluck trinken.${finish}${bike}`,
+    desc: `${lead}${t('plangen.long.desc')}${finish}${bike}`,
   });
 }
 
@@ -747,16 +750,16 @@ function swimUnit(ctx) {
   if (ctx.dow === 2) { // Dienstag: Technik & Intervalle
     const reps = ({ base: 6, build: 8, peak: 10, taper: 6 })[ctx.phase.key] + (olympic ? 2 : 0);
     return mkUnit(ctx, 'swim', {
-      dur, title: 'Schwimmen – Technik & Intervalle',
-      desc: `${olympic ? 300 : 200} m einschwimmen, 6×50 m Technik (z. B. Abschlagschwimmen, Faustschwimmen), dann ${reps}×100 m zügig mit 20 s Pause, ${olympic ? 300 : 200} m locker ausschwimmen. Ruhiger, langer Zug und sauberes Atmen – lieber technisch als hektisch.`,
+      dur, title: t('plangen.swim.techTitle'),
+      desc: t('plangen.swim.techDesc', { m: olympic ? 300 : 200, reps }),
     });
   }
   const race = ctx.phase.key === 'peak' && !ctx.info.deload;
   return mkUnit(ctx, 'swim', {
-    dur, title: 'Schwimmen – Ausdauer',
+    dur, title: t('plangen.swim.enduranceTitle'),
     desc: race
-      ? `Einmal die Wettkampfstrecke (${fmt.swimM} m) am Stück im geplanten Renntempo – am besten im Freiwasser (mit Neoprenanzug, wenn er im Rennen erlaubt ist). Davor locker einschwimmen, danach 200 m locker.`
-      : `Gleichmäßig schwimmen: 3×${olympic ? 500 : 300} m mit 30 s Pause in ruhigem Grundlagentempo. Zwischendurch das Sighting üben (alle 6–8 Züge nach vorne schauen).`,
+      ? t('plangen.swim.raceDesc', { m: fmt.swimM })
+      : t('plangen.swim.enduranceDesc', { m: olympic ? 500 : 300 }),
   });
 }
 
@@ -764,11 +767,11 @@ function bikeUnit(ctx) {
   const olympic = ctx.cfg.key === 'tri_olympic';
   const dur = r5((olympic ? 60 : 45) * multiFactor(ctx, { base: 1, build: 1.15, peak: 1.25, taper: 0.8 }));
   const text = {
-    base: ['Radtraining – Grundlage', 'Gleichmäßig in Z2, Trittfrequenz ~85–95 – rund treten, nicht stampfen.'],
-    build: ['Radtraining – Schwelle', 'Nach 15 min Einrollen 4×5 min an der Schwelle (Z4), dazwischen 3 min locker rollen. Danach ausrollen.'],
-    peak: ['Radtraining – Wettkampftempo', 'Nach 15 min Einrollen 3×10 min im geplanten Wettkampftempo (Z3–Z4) mit 3 min lockerem Rollen dazwischen. Danach ausrollen.'],
-    taper: ['Radtraining – locker mit Antritten', 'Locker in Z2, zwischendurch 4×30 s zügig. Frisch bleiben.'],
-  }[ctx.phase.key] || ['Radtraining', 'Gleichmäßig in Z2.'];
+    base: [t('plangen.bike.baseTitle'), t('plangen.bike.baseDesc')],
+    build: [t('plangen.bike.buildTitle'), t('plangen.bike.buildDesc')],
+    peak: [t('plangen.bike.peakTitle'), t('plangen.bike.peakDesc')],
+    taper: [t('plangen.bike.taperTitle'), t('plangen.bike.taperDesc')],
+  }[ctx.phase.key] || [t('plangen.bike.title'), t('plangen.bike.desc')];
   return mkUnit(ctx, 'cross_bike', { dur, title: text[0], hrZone: ctx.phase.key === 'base' ? 2 : 4, desc: text[1] });
 }
 
@@ -777,8 +780,8 @@ function longBikeUnit(ctx) {
   const dur = r5((olympic ? 90 : 60) * multiFactor(ctx, { base: 1, build: 1.3, peak: 1.6, taper: 0.8 }));
   const brick = (ctx.phase.key === 'build' || ctx.phase.key === 'peak') && !ctx.info.deload && !ctx.info.taper;
   return mkUnit(ctx, 'cross_bike', {
-    dur, hrZone: 2, title: brick ? 'Lange Radeinheit + Koppellauf' : 'Lange Radeinheit',
-    desc: `Lange, ruhige Radeinheit in Z2 (~${dur} min), gut essen & trinken.${brick ? ' Direkt im Anschluss 10–15 min locker laufen (Koppeltraining) – so gewöhnen sich die Beine an den Wechsel vom Rad aufs Laufen.' : ''}`,
+    dur, hrZone: 2, title: brick ? t('plangen.bike.longBrickTitle') : t('plangen.bike.longTitle'),
+    desc: `${t('plangen.bike.longDesc', { dur })}${brick ? ` ${t('plangen.bike.brick')}` : ''}`,
   });
 }
 
@@ -788,31 +791,31 @@ function functionalUnit(ctx) {
   const f = info.deload ? 0.8 : 1;
   if (phase.key === 'base') {
     return mkUnit(ctx, 'strength', {
-      dur: r5(45 * f), title: 'Hyrox-Stationen – Technik',
-      desc: `${rounds(3)} Runden, je vier Stationen mit halber Wettkampfmenge: SkiErg 500 m · Wall Balls 30× · Sandsack-Ausfallschritte 40 m · Rudern 500 m. Ohne Laufen dazwischen – Technik vor Tempo, 90 s Pause je Runde. Kein Schlitten vorhanden? Kniebeugen mit Gewicht oder Wandsitz als Ersatz.`,
+      dur: r5(45 * f), title: t('plangen.hyrox.baseTitle'),
+      desc: t('plangen.hyrox.baseDesc', { rounds: rounds(3) }),
     });
   }
   if (phase.key === 'build') {
     return mkUnit(ctx, 'strength', {
-      dur: r5(55 * f), title: 'Hyrox-Stationen unter Laufbelastung',
-      desc: `${rounds(4)} Runden: 1 km zügig laufen, direkt danach eine Station – im Wechsel SkiErg 1000 m, Sled Push 50 m (oder Kniebeugen 20×), Burpee Broad Jumps 40 m, Rudern 1000 m, Farmers Carry 200 m, Wall Balls 50×. So lernen die Beine, nach der Station wieder ins Lauftempo zu finden.`,
+      dur: r5(55 * f), title: t('plangen.hyrox.buildTitle'),
+      desc: t('plangen.hyrox.buildDesc', { rounds: rounds(4) }),
     });
   }
   if (phase.key === 'peak') {
     if (week % 2 === 0 && !info.deload) {
       return mkUnit(ctx, 'strength', {
-        dur: r5(70 * f), title: 'Hyrox-Wettkampfsimulation',
-        desc: `${rounds(6)}× (1 km im geplanten Renntempo + eine Station in Wettkampfreihenfolge: SkiErg, Sled Push, Sled Pull, Burpee Broad Jumps, Rudern, Farmers Carry, Sandbag Lunges, Wall Balls). Wie im Rennen: kontrolliert starten, Roxzone zügig, Verpflegung testen. Danach zwei Tage locker.`,
+        dur: r5(70 * f), title: t('plangen.hyrox.simTitle'),
+        desc: t('plangen.hyrox.simDesc', { rounds: rounds(6) }),
       });
     }
     return mkUnit(ctx, 'strength', {
-      dur: r5(50 * f), title: 'Hyrox-Stationen im Renntempo',
-      desc: `${rounds(5)} Runden: je eine Station in voller Wettkampfmenge im geplanten Tempo, danach 500 m zügig laufen. 2 min Pause zwischen den Runden. Stationen mit der größten Schwäche zuerst.`,
+      dur: r5(50 * f), title: t('plangen.hyrox.peakTitle'),
+      desc: t('plangen.hyrox.peakDesc', { rounds: rounds(5) }),
     });
   }
   return mkUnit(ctx, 'strength', {
-    dur: 30, title: 'Hyrox – Schärfe',
-    desc: '4× (500 m zügig + halbe Station), 2 min Pause. Frisch bleiben, die Abläufe sitzen lassen.',
+    dur: 30, title: t('plangen.hyrox.taperTitle'),
+    desc: t('plangen.hyrox.taperDesc'),
   });
 }
 
@@ -830,8 +833,8 @@ function nearRaceUnit(role, ctx) {
   const short = cfg.level === 'einsteiger' ? 3 : cfg.level === 'leistung' ? 5 : 4;
   if (role === 'mobility') return undefined;
   if (dtr === 1) {
-    if (isRun) return mkUnit(ctx, 'recovery', { dist: 3, pace: pace(pz, 'recovery'), paceKey: 'recovery', title: 'Shakeout 3 km', desc: 'Ganz locker mit ein paar Steigerungen. Beine wecken vor dem Wettkampf.' });
-    if (role === 'bike' || role === 'long_bike') return mkUnit(ctx, 'cross_bike', { dur: 20, hrZone: 1, title: 'Rad-Check', desc: 'Locker rollen, Schaltung und Bremsen prüfen, drei kurze Antritte.' });
+    if (isRun) return mkUnit(ctx, 'recovery', { dist: 3, pace: pace(pz, 'recovery'), paceKey: 'recovery', title: t('plangen.near.shakeoutTitle'), desc: t('plangen.near.shakeoutDesc') });
+    if (role === 'bike' || role === 'long_bike') return mkUnit(ctx, 'cross_bike', { dur: 20, hrZone: 1, title: t('plangen.near.bikeCheckTitle'), desc: t('plangen.near.bikeCheckDesc') });
     return null;
   }
   if (dtr === 2) return null;
@@ -840,24 +843,24 @@ function nearRaceUnit(role, ctx) {
       const beginner = cfg.level === 'einsteiger';
       const sec = beginner ? 60 : 120;
       return mkUnit(ctx, 'tempo', {
-        dist: beginner ? 4 : 5, pace: pace(pz, 'race') || pace(pz, 'threshold'), paceKey: pz.race ? 'race' : 'threshold', title: 'Aktivierung',
+        dist: beginner ? 4 : 5, pace: pace(pz, 'race') || pace(pz, 'threshold'), paceKey: pz.race ? 'race' : 'threshold', title: t('plangen.near.activationTitle'),
         intervals: { warmupKm: beginner ? 1.5 : 2, cooldownKm: 1, segments: Array.from({ length: 3 }, (_, i) => ({ workSec: sec, restSec: 120, label: `${i + 1}/3` })) },
-        desc: `${beginner ? '1,5' : '2'} km locker, 3×${sec / 60} min im Renntempo mit 2 min Trabpause, 4 Steigerungen. Scharf, aber kurz.`,
+        desc: t('plangen.near.activationDesc', { warm: kmText(beginner ? 1.5 : 2), min: sec / 60 }),
       });
     }
     case 'long':
-      if (ctx.sport === 'hyrox' || ctx.sport === 'triathlon') return mkUnit(ctx, 'easy', { dist: short + 1, pace: pace(pz, 'easy'), paceKey: 'easy', title: 'Lockerer Lauf (kurz)', desc: 'Locker, frisch bleiben vor dem Wettkampf.' });
-      return mkUnit(ctx, 'easy', { dist: r05(clamp(cfg.peakLongKm * 0.4, short, 10)), pace: pace(pz, 'easy'), paceKey: 'easy', title: 'Lockerer Dauerlauf', desc: 'Ruhig in Z2 – der letzte etwas längere Lauf vor dem Rennen, ohne Tempo.' });
+      if (ctx.sport === 'hyrox' || ctx.sport === 'triathlon') return mkUnit(ctx, 'easy', { dist: short + 1, pace: pace(pz, 'easy'), paceKey: 'easy', title: t('plangen.near.easyShortTitle'), desc: t('plangen.near.easyShortDesc') });
+      return mkUnit(ctx, 'easy', { dist: r05(clamp(cfg.peakLongKm * 0.4, short, 10)), pace: pace(pz, 'easy'), paceKey: 'easy', title: t('plangen.steadyRun.title'), desc: t('plangen.near.lastLongerDesc') });
     case 'endurance': case 'extra': case 'recovery':
-      return mkUnit(ctx, 'easy', { dist: short, pace: pace(pz, 'easy'), paceKey: 'easy', title: 'Lockerer Lauf (kurz)', desc: 'Locker, frisch bleiben vor dem Wettkampf.' });
+      return mkUnit(ctx, 'easy', { dist: short, pace: pace(pz, 'easy'), paceKey: 'easy', title: t('plangen.near.easyShortTitle'), desc: t('plangen.near.easyShortDesc') });
     case 'swim':
-      return mkUnit(ctx, 'swim', { dur: 25, title: 'Schwimmen kurz & locker', desc: 'Locker einschwimmen, 4×50 m im Wettkampftempo, locker ausschwimmen. Gefühl fürs Wasser behalten.' });
+      return mkUnit(ctx, 'swim', { dur: 25, title: t('plangen.near.swimTitle'), desc: t('plangen.near.swimDesc') });
     case 'bike':
-      return mkUnit(ctx, 'cross_bike', { dur: 40, hrZone: 2, title: 'Rad locker mit Antritten', desc: 'Locker in Z2, dazwischen 3×1 min im Wettkampftempo.' });
+      return mkUnit(ctx, 'cross_bike', { dur: 40, hrZone: 2, title: t('plangen.near.rideTitle'), desc: t('plangen.near.rideDesc') });
     case 'long_bike':
-      return mkUnit(ctx, 'cross_bike', { dur: 45, hrZone: 2, title: 'Rad + kurzer Koppellauf', desc: '35 min locker Rad, direkt danach 10 min locker laufen – der Wechsel bleibt vertraut, ohne zu ermüden.' });
+      return mkUnit(ctx, 'cross_bike', { dur: 45, hrZone: 2, title: t('plangen.near.brickTitle'), desc: t('plangen.near.brickDesc') });
     case 'functional':
-      return mkUnit(ctx, 'strength', { dur: 20, title: 'Hyrox – Abläufe (kurz)', desc: 'Je Station eine kurze Technikrunde mit halber Menge, kein Laufen am Limit. Wechsel und Reihenfolge noch einmal durchgehen.' });
+      return mkUnit(ctx, 'strength', { dur: 20, title: t('plangen.near.hyroxTitle'), desc: t('plangen.near.hyroxDesc') });
     default:
       return null;   // Kraft & Co. in der Rennwoche: frei
   }
@@ -881,35 +884,35 @@ function resolveRole(role, ctx) {
 
   switch (role) {
     case 'cross_football': // Altpläne mit Fußball im Gerüst
-      return mkUnit(ctx, 'cross_football', { dur: 90, title: 'Fußball', desc: 'Mannschaftstraining – zählt als Cross-Training (Antritte, Schnelligkeit, Spielfreude). Gut aufwärmen, danach 5–10 min locker auslaufen. War es intensiv, die nächste Laufeinheit etwas lockerer angehen.' });
+      return mkUnit(ctx, 'cross_football', { dur: 90, title: t('plangen.football.title'), desc: t('plangen.football.desc') });
 
     case 'strength': {
       const focus = sport === 'hyrox' ? HYROX_STRENGTH : STRENGTH_FOCUS;
       const f = focus[(week - 1) % focus.length];
-      const title = f.title.startsWith('Kraft') ? f.title : `Kraft – ${f.title}`;
+      const title = sport === 'hyrox' ? f.title : t('plangen.strength.title', { focus: f.title });
       return mkUnit(ctx, 'strength', { dur: phase.key === 'taper' || ctx.info.deload ? 30 : (sport === 'triathlon' ? 30 : 40), title, desc: f.desc });
     }
 
     case 'mobility':
-      return mkUnit(ctx, 'mobility', { dur: 15, title: 'Mobility & Dehnen', desc: 'Ruhige Beweglichkeit, 10–15 min, besonders rückenfreundlich: Katze-Kuh 10× · Hüftbeuger-Dehnung 45 s/Seite · Beinrückseite sanft 45 s/Seite · Waden an der Wand 45 s/Seite · Brustöffner & Wirbelsäulen-Rotation 8×/Seite · Kindhaltung 60 s. Nichts ruckartig – in jede Position locker hineinatmen.' });
+      return mkUnit(ctx, 'mobility', { dur: 15, title: t('plangen.mobility.title'), desc: t('plangen.mobility.desc') });
 
     case 'recovery':
       return mkUnit(ctx, 'recovery', {
-        dist: alloc.recovery, pace: pace(pz, 'recovery'), paceKey: 'recovery', title: 'Regenerationslauf',
-        desc: 'Sehr locker in Z1–Z2, spürbar langsamer als der Dauerlauf – wenn es sich „fast zu leicht“ anfühlt, ist es genau richtig. Die Beine sollen sich erholen, das Tempo ist Nebensache. Alternativ rückenschonend als lockere Radrunde.',
+        dist: alloc.recovery, pace: pace(pz, 'recovery'), paceKey: 'recovery', title: t('plangen.recovery.title'),
+        desc: t('plangen.recovery.desc'),
       });
 
     case 'extra':
       return mkUnit(ctx, 'easy', {
-        dist: alloc.extra, pace: pace(pz, 'easy'), paceKey: 'easy', title: 'Lockerer Lauf',
-        desc: 'Kurz und locker in Z2 – Umfang sammeln, ohne zu ermüden. Kein Tempo, kein Ehrgeiz.',
+        dist: alloc.extra, pace: pace(pz, 'easy'), paceKey: 'easy', title: t('plangen.extra.title'),
+        desc: t('plangen.extra.desc'),
       });
 
     case 'endurance': {
-      const walk = cfg.runWalk && week <= 2 ? ' Gehpausen sind ausdrücklich erlaubt.' : '';
+      const walk = cfg.runWalk && week <= 2 ? ` ${t('plangen.steadyRun.walkBreaks')}` : '';
       return mkUnit(ctx, 'easy', {
-        dist: alloc.endurance, pace: pace(pz, 'easy'), paceKey: 'easy', title: 'Lockerer Dauerlauf',
-        desc: `Gleichmäßig im Grundlagenbereich (Z2), Plaudertempo – du solltest dich nebenbei unterhalten können. Lieber etwas zu langsam als zu schnell; hier zählt der Umfang, nicht das Tempo.${walk}${sport === 'run' ? ' Bei Rückenbeschwerden alternativ als gleichmäßige Radrunde (Z2).' : ''}`,
+        dist: alloc.endurance, pace: pace(pz, 'easy'), paceKey: 'easy', title: t('plangen.steadyRun.title'),
+        desc: `${t('plangen.steadyRun.desc')}${walk}${sport === 'run' ? ` ${t('plangen.steadyRun.backAlt')}` : ''}`,
       });
     }
 
@@ -926,10 +929,10 @@ function resolveRole(role, ctx) {
 /** Taktik je Distanz für die Renneinheit. */
 function raceTactic(raceKm) {
   const km = Number(raceKm) || 21.0975;
-  if (km <= 6) return 'Kontrolliert anlaufen (nicht überziehen!), ab der Hälfte steigern und das letzte Drittel alles geben.';
-  if (km <= 12) return 'Gleichmäßig im Renntempo, ab km 7 Stück für Stück steigern.';
-  if (km <= 25) return `Gleichmäßig anlaufen, ab km ${Math.round(km * 0.7)} alles geben.`;
-  return `Bewusst zurückhaltend anlaufen und gleichmäßig bleiben – das Rennen entscheidet sich ab km ${Math.round(km * 0.72)}. Verpflegung wie im Training.`;
+  if (km <= 6) return t('plangen.tactic.5k');
+  if (km <= 12) return t('plangen.tactic.10k');
+  if (km <= 25) return t('plangen.tactic.hm', { km: Math.round(km * 0.7) });
+  return t('plangen.tactic.marathon', { km: Math.round(km * 0.72) });
 }
 
 /** Renntempo-Zone ohne Plan-Paces (Altbestand): nach Distanz aus dem Profil. */
@@ -940,28 +943,28 @@ function legacyRaceZone(pz, raceKm) {
 }
 
 function mmss(sec) { const s = Math.round(sec); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }
-function hmsToSec(t) { if (!t) return 0; const p = String(t).split(':').map(Number); while (p.length < 3) p.unshift(0); return p[0] * 3600 + p[1] * 60 + p[2]; }
+function hmsToSec(hms) { if (!hms) return 0; const p = String(hms).split(':').map(Number); while (p.length < 3) p.unshift(0); return p[0] * 3600 + p[1] * 60 + p[2]; }
 
 /** Die Renneinheit am Wettkampftag. */
 export function makeRaceUnit(plan, event, date, week, phase, pz = {}) {
   const ctx = { plan, date, week, phase };
   const sport = event.sport || plan.sport || 'run';
   const targetSec = hmsToSec(event.targetTime);
-  const target = event.targetTime ? ` Zielzeit ${event.targetTime}.` : '';
+  const target = event.targetTime ? ` ${t('plangen.race.targetTime', { time: event.targetTime })}` : '';
   if (sport === 'triathlon') {
     const fmt = TRI_FORMATS[raceKey(event)];
     return mkUnit(ctx, 'race', {
       title: event.name, dist: fmt.runKm, dur: targetSec ? Math.round(targetSec / 60) : null, hrZone: 4, time: '10:00',
-      desc: `Wettkampf! ${fmt.label}: ${fmt.swimM} m Schwimmen · ${fmt.bikeKm} km Rad · ${fmt.runKm} km Laufen.${target} Schwimmen: ruhig in den Rhythmus finden, nicht im Pulk verausgaben. Rad: gleichmäßig und nicht überpacen – die Beine brauchst du noch; regelmäßig trinken. Wechsel zügig, aber ohne Hektik. Laufen: die ersten 1–2 km bewusst ruhig, dann steigern.`,
+      desc: t('plangen.race.triDesc', { format: fmt.label, swim: fmt.swimM, bike: fmt.bikeKm, run: fmt.runKm, target }),
     });
   }
   if (sport === 'hyrox') {
     const splits = targetSec
-      ? ` Richtwerte für ${event.targetTime}: je Laufkilometer etwa ${mmss(targetSec * 0.52 / 8)} min, je Station inklusive Roxzone etwa ${mmss(targetSec * 0.48 / 8)} min.`
+      ? ` ${t('plangen.race.hyroxSplits', { time: event.targetTime, run: mmss(targetSec * 0.52 / 8), station: mmss(targetSec * 0.48 / 8) })}`
       : '';
     return mkUnit(ctx, 'race', {
       title: event.name, dist: 8, dur: targetSec ? Math.round(targetSec / 60) : null, hrZone: 4, time: '10:00',
-      desc: `Wettkampf! 8 × 1 km Laufen, nach jedem Kilometer eine Station: SkiErg 1000 m · Sled Push 50 m · Sled Pull 50 m · Burpee Broad Jumps 80 m · Rudern 1000 m · Farmers Carry 200 m · Sandbag Lunges 100 m · Wall Balls 100 Wiederholungen (Gewichte je nach Division).${target}${splits} Die ersten Kilometer bewusst kontrolliert laufen – die Stationen kosten mehr als gedacht. In der Roxzone zügig, aber ruhig atmen; Wall Balls in festen Sätzen mit kurzen Pausen.`,
+      desc: t('plangen.race.hyroxDesc', { target, splits }),
     });
   }
   const z = pz.race && pz.race.min ? pz.race : legacyRaceZone(pz, event.distanceKm);
@@ -970,7 +973,7 @@ export function makeRaceUnit(plan, event, date, week, phase, pz = {}) {
     title: event.name, dist: event.distanceKm,
     pace: z ? { min: z.min, max: z.max, hrZone: z.hrZone, key: 'race' } : null, paceKey: 'race',
     hrZone: km <= 6 ? 5 : km <= 25 ? 4 : 3, time: '10:00',
-    desc: `Wettkampf!${target} ${raceTactic(event.distanceKm)}`,
+    desc: t('plangen.race.runDesc', { target, tactic: raceTactic(event.distanceKm) }),
   });
 }
 
@@ -990,10 +993,10 @@ function stridesUnit(ctx) {
   const short = ctx.cfg.level === 'einsteiger' ? 3 : ctx.cfg.level === 'leistung' ? 5 : 4;
   const unit = mkUnit(ctx, 'easy', {
     dist: raceWeek ? short : r05(clamp(ctx.alloc.quality || ctx.alloc.endurance || 6, 4, 12)), pace: pace(ctx.pz, 'easy'), paceKey: 'easy',
-    title: 'Locker mit Steigerungen',
+    title: t('plangen.strides.title'),
     desc: raceWeek
-      ? 'Die Aktivierung läge direkt neben einem harten festen Termin – der Termin weckt die Beine schon. Deshalb nur locker in Z2 mit 4 Steigerungen à ~20 s am Ende. Frisch bleiben fürs Rennen.'
-      : 'Diese Woche läge die Qualitätseinheit direkt neben einem harten festen Termin – die Intensität liefert der Termin. Deshalb ein lockerer Dauerlauf in Z2 mit 4–6 Steigerungen à ~20 s am Ende (zügig, nicht sprinten; dazwischen locker traben). So bleibt die Spritzigkeit, ohne zwei harte Tage hintereinander.',
+      ? t('plangen.strides.raceWeekDesc')
+      : t('plangen.strides.desc'),
   });
   if (unit) unit.downgradedFrom = 'quality';
   return unit;
@@ -1056,7 +1059,7 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
     const d = addDays(monday, dow - 1);
     return d < weekStart ? addDays(d, 7) : d;   // Planstart mitten in der Woche
   };
-  const usedDates = new Set([...tpl.map((t) => dateOf(t.dow)), ...commitByDate.keys()]);
+  const usedDates = new Set([...tpl.map((row) => dateOf(row.dow)), ...commitByDate.keys()]);
   const dtr = (date) => (raceDate ? diffDays(date, raceDate) : Infinity);
 
   /** Freier Tag dieser Woche für eine verdrängte Einheit – möglichst nah am
@@ -1095,7 +1098,7 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
     if ((type === 'cross_football' || type === 'match') && d >= addDays(weekStart, -1) && d <= addDays(weekEnd, 1)) hardCommit.add(d);
   }
   const nextToHard = (date) => hardCommit.has(addDays(date, -1)) || hardCommit.has(addDays(date, 1));
-  const keyDates = new Set(tpl.filter((t) => t.units.some((x) => KEY_ROLES.has(x.role))).map((t) => dateOf(t.dow)));
+  const keyDates = new Set(tpl.filter((row) => row.units.some((x) => KEY_ROLES.has(x.role))).map((row) => dateOf(row.dow)));
   /** Ruhiger Tag für eine Schlüsseleinheit: frei, nicht neben einem harten Termin und
       nicht neben einer anderen Schlüsseleinheit, nie in den zwei Tagen vor dem Rennen. */
   const findCalmDay = (wishDate) => {
@@ -1113,12 +1116,12 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   };
 
   const out = [];
-  for (const t of tpl) {
-    const date = dateOf(t.dow);
+  for (const row of tpl) {
+    const date = dateOf(row.dow);
     if (date < plan.startDate || date > weekEnd) continue;
     if (raceDate && date >= raceDate) continue;
     const blocked = commitByDate.has(date);
-    for (const u of t.units) {
+    for (const u of row.units) {
       let useDate = date;
       let downgrade = false;
       if (blocked) {
@@ -1128,7 +1131,7 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
         useDate = alt;
         usedDates.add(alt);
       } else if (KEY_ROLES.has(u.role) && nextToHard(date) && dtr(date) > 2
-        && isHard(resolveRole(u.role, { plan, event, date, week, phase, pz, sport, cfg, info, alloc, dow: t.dow, daysToRace: dtr(date) }) || {})) {
+        && isHard(resolveRole(u.role, { plan, event, date, week, phase, pz, sport, cfg, info, alloc, dow: row.dow, daysToRace: dtr(date) }) || {})) {
         const alt = findCalmDay(date);
         if (alt) {
           useDate = alt;
@@ -1142,7 +1145,7 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
           keyDates.delete(date);
         }
       }
-      const ctx = { plan, event, date: useDate, week, phase, pz, sport, cfg, info, alloc, dow: t.dow, daysToRace: dtr(useDate) };
+      const ctx = { plan, event, date: useDate, week, phase, pz, sport, cfg, info, alloc, dow: row.dow, daysToRace: dtr(useDate) };
       const unit = downgrade ? stridesUnit(ctx) : resolveRole(u.role, ctx);
       if (unit) {
         if (useDate !== date) unit.relocatedFrom = date;

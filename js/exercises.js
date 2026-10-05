@@ -244,15 +244,21 @@ export function exercisesInText(text = '') {
 export function exerciseMentions(text = '') {
   const hay = String(text || '');
   if (!hay.trim()) return [];
-  const hits = [];
+  const spans = [];
   for (const e of EXERCISES) {
-    let first = Infinity;
     for (const term of termsOf(e)) {
-      const m = new RegExp(`(?<![\\p{L}])${escapeRe(term)}`, 'iu').exec(hay);
-      if (m && m.index < first) first = m.index;
+      for (const m of hay.matchAll(new RegExp(`(?<![\\p{L}])${escapeRe(term)}`, 'giu'))) {
+        spans.push({ e, start: m.index, end: m.index + m[0].length });
+      }
     }
-    if (first < Infinity) hits.push({ e, first });
   }
+  // A term inside a longer term of another exercise does not count: "squat" in "Front squat",
+  // „Kreuzheben“ in „einbeiniges Kreuzheben“.
+  const kept = spans.filter((s) => !spans.some((o) => o.e !== s.e && o.start <= s.start && o.end >= s.end
+    && o.end - o.start > s.end - s.start));
+  const firstOf = new Map();
+  for (const s of kept) if (!firstOf.has(s.e) || s.start < firstOf.get(s.e)) firstOf.set(s.e, s.start);
+  const hits = EXERCISES.filter((e) => firstOf.has(e)).map((e) => ({ e, first: firstOf.get(e) }));
   // Bei gleicher Fundstelle („Rumänisches Kreuzheben“ vs. „Kreuzheben“) gewinnt die erste im Katalog.
   return hits.sort((x, y) => x.first - y.first);
 }
