@@ -48,7 +48,8 @@
     ],
     "date": "{weekday}, {day} de {month}",
     "dateLong": "{weekday}, {day} de {month} de {year}",
-    "dayMonth": "{day} de {month}"
+    "dayMonth": "{day} de {month}",
+    "dayMonthNumeric": "{day}/{month}"
   },
   "settings": {
     "language": {
@@ -4453,5 +4454,10 @@
     "titleLong": "Longão",
     "titleInterval": "Intervalado",
     "titleRecovery": "Corrida regenerativa"
+  },
+  "demoMode": {
+    "bar": "Demo – nada é salvo; ao recarregar, tudo recomeça.",
+    "pin": "PIN: {pin}",
+    "get": "Obter o Cat-O-Fit"
   }
 }

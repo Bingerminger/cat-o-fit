@@ -48,7 +48,8 @@
     ],
     "date": "{weekday} {day} {month}",
     "dateLong": "{weekday} {day} {month} {year}",
-    "dayMonth": "{day} {month}"
+    "dayMonth": "{day} {month}",
+    "dayMonthNumeric": "{day}-{month}"
   },
   "settings": {
     "language": {
@@ -4453,5 +4454,10 @@
     "titleLong": "Duurloop",
     "titleInterval": "Intervallen",
     "titleRecovery": "Herstelloop"
+  },
+  "demoMode": {
+    "bar": "Demo – er wordt niets opgeslagen; herladen begint opnieuw.",
+    "pin": "Pincode: {pin}",
+    "get": "Cat-O-Fit installeren"
   }
 }

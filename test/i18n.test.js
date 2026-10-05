@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   t, tp, tList, has, locale, setLocale, register, matchLanguage, resolveLanguage, languages, onLocaleChange,
 } from '../js/i18n.js';
-import { fmtDate, fmtDateLong, fmtDayMonth, fmtWeekday, fmtNum, fmtKm, fmtDec, fmtInt, monthName } from '../js/format.js';
+import { fmtDate, fmtDateLong, fmtDayMonth, fmtDayMonthNumeric, fmtWeekday, fmtNum, fmtKm, fmtDec, fmtInt, monthName } from '../js/format.js';
 
 test('languages.json lists the seven languages by their own names', () => {
   assert.deepEqual(Object.keys(languages()), ['en', 'de', 'fr', 'es', 'it', 'pt-BR', 'nl']);
@@ -66,6 +66,7 @@ test('German formats stay exactly as before v4.0.0', () => {
   assert.equal(fmtDate('2026-09-01'), 'Di, 1. Sept.');
   assert.equal(fmtDateLong('2026-07-18'), 'Samstag, 18. Juli 2026');
   assert.equal(fmtDayMonth('2026-03-05'), '5. März');
+  assert.equal(fmtDayMonthNumeric('2026-08-26'), '26.08.');
   assert.equal(fmtWeekday('2026-07-19'), 'So');
   assert.equal(fmtWeekday('2026-07-19', true), 'Sonntag');
   assert.equal(monthName(11), 'Dezember');
@@ -88,6 +89,7 @@ test('other languages: names, patterns and separators from their catalogs', asyn
     assert.equal(fmtDateLong('2026-07-18'), 'Saturday 18 July 2026');
     assert.equal(fmtNum(7.25, 1), '7.3');
     assert.equal(fmtInt(1234567), '1,234,567');
+    assert.equal(fmtDayMonthNumeric('2026-08-26'), '26/08');
     await setLocale('pt-BR');
     assert.equal(fmtDate('2026-07-18'), 'sáb., 18 de jul.');
     assert.equal(fmtDateLong('2026-07-18'), 'sábado, 18 de julho de 2026');

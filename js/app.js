@@ -362,6 +362,10 @@ const refreshSoon = debounce(() => {
 }, 180);
 
 async function boot() {
+  // Public demo build only (index.html carries data-demo, see demo-mode.js): every visit starts
+  // over, with the API answered in the browser. Normal instances never load the module.
+  const demo = document.documentElement.hasAttribute('data-demo') ? await import('./demo-mode.js') : null;
+  if (demo) demo.prepareDemo();
   await Promise.all([store.init(), loadLanguages()]);
   await applyLanguage();   // catalogs before the first render
   loadExerciseTexts();     // exercise steps and tips in the background
@@ -392,6 +396,7 @@ async function boot() {
     }
     return true;
   });
+  if (demo) await demo.startDemo();   // the demo family exists before the first view
   ensureGenerated();
   maybeRefreshWeather();
   router.onAfterRender(highlightNav);
@@ -403,6 +408,9 @@ async function boot() {
   router.onAfterRender((cur, info) => {
     if (firstRender) { firstRender = false; return; }
     if ((info && info.refreshed) || document.getElementById('modal-root').classList.contains('is-open')) return;
+    // Not before the person has interacted at all: a redraw at start-up would otherwise put a
+    // focus ring on the title nobody asked for.
+    if (navigator.userActivation && !navigator.userActivation.hasBeenActive) return;
     const title = document.getElementById('header-title');
     if (title) { try { title.focus({ preventScroll: true }); } catch { title.focus(); } }
   });
@@ -415,7 +423,7 @@ async function boot() {
   store.onSync((area, origin) => {
     if (area === 'profile') { applyTheme(); maybeRefreshWeather(); }
     // Sign-in, switching person or a language picked on another device.
-    if (area === 'profile' || area === 'family') applyLanguage().then((changed) => { if (changed) router.refresh(); });
+    if (area === 'profile' || area === 'family') applyLanguage().then((changed) => { if (changed) { router.refresh(); demo?.showBar(); } });
     if (area === 'events' || area === 'plans') ensureGenerated();
     if (origin === 'sync') refreshSoon();
   });

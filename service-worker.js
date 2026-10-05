@@ -10,7 +10,7 @@
  * On every version increase the old cache is discarded.
  */
 
-const VERSION = 'catofit-v115';
+const VERSION = 'catofit-v116';
 // Cache name unique per deployment path: production (/cat-o-fit/) and acceptance
 // (/cat-o-fit-acc/) live on the SAME origin and would otherwise share the
 // CacheStorage – then the app shell of one environment ends up in the other.
@@ -51,6 +51,8 @@ const SHELL_ASSETS = [
   './js/session-gate.js',
   './js/login.js',
   './js/demo.js',
+  './js/demo-server.js',
+  './js/demo-mode.js',
   './js/teamstats.js',
   './js/env.js',
   './js/i18n.js',

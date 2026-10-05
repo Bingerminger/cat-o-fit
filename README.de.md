@@ -17,6 +17,8 @@ deinem eigenen Server.
 
 [English](README.md) · **Deutsch**
 
+**[Demo ausprobieren](https://bingerminger.github.io/cat-o-fit/?lang=de)** – läuft im Browser, nichts wird gespeichert.
+
 </div>
 
 ## Sprachen

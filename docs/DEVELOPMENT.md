@@ -592,3 +592,13 @@ the app; the entrypoint creates the Apache configuration), `CATOFIT_ALLOWED_HOST
 (time zone for PHP and the calendar files).
 
 There is no build step – the files are served unchanged.
+
+**Public demo** (GitHub Pages, `.github/workflows/pages.yml`): `node tools/build-demo.mjs` copies the
+app shell without `api/` and `data/` into `dist/demo` and marks `index.html` with `data-demo`. That
+attribute alone switches the demo on (`js/demo-mode.js`; a URL parameter could not, so a real
+instance can never be wiped by a link): every visit clears only this deployment's `catofit:<path>:`
+keys, `js/demo-server.js` answers the API in memory – the same emulation the tests use as
+`__fakeServer` – and the demo family with “Alex” (PIN 2468) is set up in the language of `?lang=`
+or the browser. Server-only features (Open Food Facts, health ingest, calendar files, read access)
+answer 501 there. Try it locally: `php -S 127.0.0.1:8090 -t dist/demo`. In the repository settings,
+Pages must use “GitHub Actions” as its source.

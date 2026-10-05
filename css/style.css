@@ -192,6 +192,18 @@ small { font-size: 0.82em; }
   text-overflow: ellipsis;
 }
 .app-header__actions { display: flex; align-items: center; gap: var(--sp-2); }
+/* Public demo only (demo-mode.js): what the demo is, its PIN, the language, the project link. */
+.demo-bar {
+  display: flex; align-items: center; gap: var(--sp-2);
+  flex-wrap: wrap; row-gap: 4px;
+  padding: 6px var(--sp-4);
+  background: var(--accent-soft); color: var(--accent-strong);
+  font-size: 0.8rem; font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+.demo-bar__pin { font-weight: 550; opacity: .85; }
+.demo-bar__lang { font: inherit; padding: 2px 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); }
+.demo-bar a { margin-left: auto; color: inherit; font-weight: 700; }
 .header-back { margin-left: -6px; }
 
 /* ---------- Buttons ---------- */

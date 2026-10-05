@@ -61,6 +61,12 @@ export function fmtDateLong(dateStr) {
 export function fmtDayMonth(dateStr) {
   return pattern('format.dayMonth', parseDate(dateStr), false, { day: 'numeric', month: 'short' });
 }
+/** Compact numeric day and month for chart axes, e.g. "26.08." / "26/08". */
+export function fmtDayMonthNumeric(dateStr) {
+  const d = parseDate(dateStr);
+  const parts = { day: String(d.getDate()).padStart(2, '0'), month: String(d.getMonth() + 1).padStart(2, '0') };
+  return has('format.dayMonthNumeric') ? t('format.dayMonthNumeric', parts) : `${parts.day}/${parts.month}`;
+}
 export function monthName(monthIdx, long = true) { return monthNames(long)[monthIdx]; }
 
 const decimalSeps = new Map();

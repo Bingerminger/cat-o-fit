@@ -8,6 +8,7 @@ import {
   el, icon, iconSvg, navigate, typeMeta, typeIcon, fmtKm, fmtPace, fmtDate, todayStr, addDays,
   diffDays, weekStartMonday, fmtWeekday, sectionHead, isOverdue, toast, infoButton,
 } from './ui.js';
+import { fmtDayMonthNumeric } from './format.js';
 import { momentum, newlyUnlocked, markSeen, badgeData } from './badges.js';
 import { isProtectedDay } from './cycle.js';
 import { setHeader } from './router.js';
@@ -271,7 +272,7 @@ function loadFormCard(sum) {
   // Chip with a tonal surface and readable text colour – white on orange had only 2.0:1 (UI-12).
   const toneText = { good: 'var(--good-text)', warn: 'var(--warn-text)', bad: 'var(--bad-text)', neutral: 'var(--accent-text)' }[sum.tone] || 'var(--accent-text)';
   const CTL = '#3d8bff', ATL = '#f5a623', FORM = '#43c59e';
-  const lbl = (d) => `${d.date.slice(8, 10)}.${d.date.slice(5, 7)}.`;
+  const lbl = (d) => fmtDayMonthNumeric(d.date);
   const chart = multiLineChart([
     { name: t('dashboard.fitness'), color: CTL, points: sum.series.map((d) => ({ label: lbl(d), value: d.ctl })) },
     { name: t('dashboard.fatigue'), color: ATL, points: sum.series.map((d) => ({ label: lbl(d), value: d.atl })) },

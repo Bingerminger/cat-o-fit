@@ -16,6 +16,8 @@ AGPL licensed, on your own hardware.
 
 **English** · [Deutsch](README.de.md)
 
+**[Try the live demo](https://bingerminger.github.io/cat-o-fit/)** – runs in your browser, nothing is saved.
+
 </div>
 
 ## Languages

@@ -24,3 +24,6 @@ graphify-out/
 .understand-anything/
 .claude/
 *.log
+
+# Static demo build (tools/build-demo.mjs)
+dist/
