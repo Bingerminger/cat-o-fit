@@ -1867,5 +1867,319 @@
       "otherTitle": "Training",
       "otherDesc": "Lockere Bewegungseinheit."
     }
+  },
+  "food": {
+    "asNeeded": "nach Bedarf",
+    "unit": {
+      "g": {
+        "one": "g",
+        "other": "g"
+      },
+      "ml": {
+        "one": "ml",
+        "other": "ml"
+      },
+      "tbsp": {
+        "one": "EL",
+        "other": "EL"
+      },
+      "tsp": {
+        "one": "TL",
+        "other": "TL"
+      },
+      "pinch": {
+        "one": "Prise",
+        "other": "Prise"
+      },
+      "bunch": {
+        "one": "Bund",
+        "other": "Bund"
+      },
+      "clove": {
+        "one": "Zehe",
+        "other": "Zehe"
+      },
+      "piece": {
+        "one": "Stück",
+        "other": "Stück"
+      },
+      "slice": {
+        "one": "Scheibe",
+        "other": "Scheibe"
+      },
+      "can": {
+        "one": "Dose",
+        "other": "Dose"
+      },
+      "pack": {
+        "one": "Packung",
+        "other": "Packung"
+      },
+      "pot": {
+        "one": "Becher",
+        "other": "Becher"
+      },
+      "jar": {
+        "one": "Glas",
+        "other": "Glas"
+      }
+    }
+  },
+  "shopping": {
+    "servings": {
+      "one": "{count} Portion",
+      "other": "{count} Portionen"
+    },
+    "inPantry": "Lager: {amount}",
+    "removeNamed": "„{name}“ wird aus dem gemeinsamen Familien-Lager gelöscht.",
+    "pantryEntry": "Lager-Eintrag",
+    "nextShop": "Nächster gemeinsamer Einkauf",
+    "needsMinusPantry": "Bedarf aller Speisepläne minus gemeinsames Lager",
+    "loadingPlans": "Lade gemeinsame Speisepläne …",
+    "plansFailed": "Speisepläne konnten nicht geladen werden.",
+    "weekPlan": "Gemeinsamer Wochenplan",
+    "planMeals": "Gerichte planen",
+    "noMealsPlanned": "Noch keine Gerichte geplant. Jedes Mitglied plant in der Ernährung seine Gerichte mit Portionen – daraus entsteht die gemeinsame Einkaufsliste.",
+    "toNutrition": "Zur Ernährung",
+    "toBuy": "Einzukaufen",
+    "allInPantry": "Alles im Lager – diese Woche ist nichts zu kaufen!",
+    "boughtAll": "Alles eingekauft → ins Lager",
+    "sharedPantry": "Gemeinsames Lager",
+    "pantryEmpty": "Das gemeinsame Lager ist leer. Was ihr einkauft, landet hier – oder trage Vorräte über „+“ ein.",
+    "delete": "Löschen",
+    "boughtToast": "Eingekauft & ins gemeinsame Lager gebucht 🛒",
+    "removeQ": "Aus dem Lager entfernen?",
+    "remove": "Entfernen",
+    "namePlaceholder": "z. B. Haferflocken",
+    "amount": "Menge",
+    "newItem": "Neuer Vorrat",
+    "article": "Artikel",
+    "unit": "Einheit",
+    "save": "Speichern",
+    "nameMissing": "Name fehlt",
+    "removeEntry": "Eintrag wird aus dem gemeinsamen Lager gelöscht.",
+    "catProduce": "Obst & Gemüse",
+    "catDairy": "Milchprodukte",
+    "catMeatFish": "Fleisch & Fisch",
+    "catDry": "Trockenwaren",
+    "catOther": "Sonstiges"
+  },
+  "checklist": {
+    "category": {
+      "routine": "Routine",
+      "training": "Training",
+      "health": "Gesundheit",
+      "errand": "Besorgung",
+      "appointment": "Termin"
+    },
+    "templates": {
+      "racePrep": {
+        "label": "🏁 Wettkampf-Vorbereitung",
+        "items": [
+          "Startunterlagen / Startnummer bereitlegen",
+          "Wettkampfkleidung & Schuhe packen",
+          "Verpflegung & Gels vorbereiten",
+          "Anfahrt & Startzeit prüfen",
+          "Am Vorabend früh schlafen",
+          "Wecker stellen",
+          "Leicht & kohlenhydratreich essen"
+        ]
+      },
+      "raceBag": {
+        "label": "🎒 Wettkampf-Packliste",
+        "items": [
+          "Startnummer + Sicherheitsnadeln",
+          "Laufschuhe & Wettkampfsocken",
+          "Funktionsshirt & Hose",
+          "Gels / Riegel",
+          "Trinkflasche",
+          "Wechselkleidung & Handtuch",
+          "Pflaster / Tape",
+          "Sonnencreme / Mütze"
+        ]
+      },
+      "recovery": {
+        "label": "🧘 Regenerationstag",
+        "items": [
+          "10 min Mobility / Dehnen",
+          "Ausreichend trinken",
+          "Früh schlafen",
+          "Lockere Bewegung / Spaziergang"
+        ]
+      }
+    },
+    "doneToday": "{done} von {total} heute erledigt",
+    "editItem": "„{text}“ bearbeiten",
+    "deleteItem": "„{text}“ löschen",
+    "templateAdded": "„{label}“ hinzugefügt ({n} Punkte)",
+    "icsFile": "erinnerung-{date}.ics",
+    "subtitle": "Routinen & Erinnerungen",
+    "template": "Vorlage",
+    "resetRoutines": "Routinen zurücksetzen",
+    "add": "Hinzufügen",
+    "emptyTitle": "Noch nichts geplant",
+    "emptyText": "Lege tägliche Routinen oder einen Termin mit Erinnerung an – oder starte mit einer Vorlage.",
+    "addItem": "Punkt hinzufügen",
+    "useTemplate": "Vorlage verwenden",
+    "allDone": "Alles erledigt – stark! ✨",
+    "stepByStep": "Schritt für Schritt.",
+    "dueToday": "Heute fällig",
+    "upcoming": "Demnächst",
+    "dailyRoutines": "Tägliche Routinen",
+    "frequent": "Häufig genutzt",
+    "markOpen": "Als offen markieren",
+    "tick": "Abhaken",
+    "addToCalendar": "In Kalender übernehmen (.ics)",
+    "delete": "Löschen",
+    "deleted": "Gelöscht",
+    "taskPlaceholder": "z. B. 10 min Mobility",
+    "date": "Datum",
+    "timeOptional": "Uhrzeit (optional)",
+    "kindRoutine": "Tägliche Routine",
+    "kindDated": "Termin mit Datum",
+    "editTitle": "Punkt bearbeiten",
+    "newTitle": "Neuer Punkt",
+    "task": "Aufgabe",
+    "kind": "Art",
+    "categoryField": "Kategorie",
+    "save": "Speichern",
+    "enterTask": "Bitte eine Aufgabe eingeben",
+    "saved": "Gespeichert",
+    "added": "Hinzugefügt",
+    "icsReady": "Kalenderdatei bereitgestellt – zum Übernehmen öffnen",
+    "routinesReset": "Routinen zurückgesetzt"
+  },
+  "nutrition": {
+    "catBreakfast": "Frühstück",
+    "catLunch": "Mittag",
+    "catDinner": "Abend",
+    "catSnack": "Snack",
+    "loadIdeas": "{n} Rezept-Ideen laden",
+    "addIdeas": {
+      "one": "{count} Rezept-Idee hinzufügen",
+      "other": "{count} Rezept-Ideen hinzufügen"
+    },
+    "ideasAdded": {
+      "one": "{count} Rezept-Idee hinzugefügt",
+      "other": "{count} Rezept-Ideen hinzugefügt"
+    },
+    "balanceDetail": "Grundumsatz {bmr} kcal · Verbrauch inkl. Alltag & Sport {out} · Tagesziel ~{target} kcal",
+    "cookedTag": "gekocht",
+    "kcalPer100": "{kcal} kcal je 100 g",
+    "noKcal": "ohne Kalorienangabe",
+    "gProtein": "{g} g Eiweiß",
+    "estSource": "Schätzung aus der Nährwerttabelle",
+    "inWeekPlan": "{n}× im Wochenplan",
+    "cookedTimes": "{n}× gekocht",
+    "proteinG": "{g} g Protein",
+    "cookedToast": "„{title}“ gekocht – im Ess-Tagebuch erfasst, Zutaten gebucht.",
+    "estimatedPrefix": "Geschätzt:",
+    "moduleOff": "{name} ist deaktiviert",
+    "add": "Hinzufügen",
+    "emptyTitle": "Noch keine Gerichte",
+    "emptyText": "Lade fertige Rezept-Ideen oder lege eigene Gerichte an – daraus entstehen Wochenplan & Einkaufsliste.",
+    "addOwn": "Eigenes Gericht anlegen",
+    "learnHint": "Markiere Lieblingsgerichte mit ♥ und tippe „Gekocht“ – Cat-O-Fit lernt deine Vorlieben und schlägt Passendes vor.",
+    "favourites": "❤ Lieblingsgerichte",
+    "recommended": "Für dich empfohlen",
+    "eatDrinkToday": "Essen & Trinken heute",
+    "logEaten": "Gegessenes erfassen",
+    "needProfile": "Trage Größe, Gewicht und Geburtsjahr im Profil ein, dann zeigt Cat-O-Fit hier deine Kalorienbilanz.",
+    "toProfile": "Zum Profil",
+    "goalOpen": "Ziel: noch offen",
+    "goalLose": "Ziel: abnehmen",
+    "goalGain": "Ziel: zunehmen",
+    "goalMaintain": "Ziel: Gewicht halten",
+    "bmiBlock": "Dein Zielgewicht liegt unter einem gesunden Bereich (BMI unter 18,5). Cat-O-Fit empfiehlt dafür kein Kaloriendefizit – bitte prüfe das Ziel in den Einstellungen.",
+    "belowTarget": "Du liegst unter deinem Zielgewicht – das Tagesziel hält dein Gewicht. Passt das Ziel noch?",
+    "qualOk": "Du liegst im Zielkorridor.",
+    "qualHigh": "Heute etwas mehr als dein Tagesziel.",
+    "qualLow": "Heute etwas weniger als dein Tagesziel – genug essen.",
+    "qualNone": "Noch keine Mahlzeit für heute erfasst.",
+    "balanceToday": "Kalorienbilanz heute",
+    "statIntake": "eingenommen",
+    "statOut": "verbraucht",
+    "statBalance": "Saldo",
+    "gatePrompt": "Bevor Cat-O-Fit ein Tagesziel fürs Abnehmen vorschlägt, einmal kurz: Gibt es etwas, das dagegen spricht (z. B. Schwangerschaft oder eine Essstörung)?",
+    "energyLink": "Energieversorgung über mehrere Tage: Labor & Ergänzung →",
+    "eatenToday": "HEUTE GEGESSEN",
+    "deleteEntry": "Eintrag löschen",
+    "entryDeleted": "Eintrag gelöscht",
+    "markRemoved": "Markierung entfernt",
+    "dayMarked": "Tag als vollständig erfasst markiert",
+    "dayLogged": "Tag vollständig erfasst",
+    "dayMark": "Tag vollständig",
+    "barcodePlaceholder": "8 oder 13 Ziffern",
+    "barcodeAria": "Strichcode (EAN)",
+    "gramsAria": "Menge in Gramm",
+    "badBarcode": "Das ist kein gültiger Strichcode (8 oder 13 Ziffern, die letzte ist eine Prüfziffer).",
+    "lookupOff": "Das Nachschlagen bei Open Food Facts ist ausgeschaltet (Einstellungen → Ernährung).",
+    "turnOnSearch": "Einschalten und suchen",
+    "searching": "Suche …",
+    "notFound": "Nicht gefunden (oder offline). Trag das Produkt unter „Lebensmittel“ ein.",
+    "cameraOff": "Kamera nicht verfügbar – bitte den Code eintippen",
+    "scan": "Scannen",
+    "barcode": "Strichcode",
+    "search": "Suchen",
+    "amountGml": "Menge (g bzw. ml)",
+    "offCredit": "Daten von Open Food Facts (ODbL). Nachgeschlagen wird über deinen Server – nur der Strichcode geht hinaus.",
+    "logged": "Erfasst – in der Tagesbilanz berücksichtigt",
+    "foodPlaceholder": "z. B. 200 g Skyr, 1 Banane",
+    "estHint": "Mit Menge wird es genauer: „200 g“, „250 ml“, „1 Stück“.",
+    "estHide": "Fließt grob in die heutige Übersicht ein.",
+    "whatHowMuch": "Was & wie viel",
+    "recentlyEaten": "Zuletzt gegessen",
+    "logForToday": "Für heute eintragen",
+    "outPlaceholder": "z. B. Kantine, Restaurant, Snack",
+    "portionHintHide": "Auswärts gegessen? Wähle eine Portionsgröße – sie fließt grob in die heutige Übersicht ein.",
+    "portionHint": "Auswärts gegessen? Wähle eine Portionsgröße – die kcal werden grob geschätzt und fließen in die heutige Bilanz.",
+    "what": "Was",
+    "portionSize": "Portionsgröße",
+    "kcalAdjustable": "kcal (anpassbar)",
+    "modeFood": "Lebensmittel",
+    "modeBarcode": "Barcode",
+    "modeOut": "Auswärts",
+    "modeLabel": "Art der Erfassung",
+    "log": "Erfassen",
+    "enterWhat": "Bitte angeben, was du gegessen hast",
+    "findProduct": "Erst ein Produkt suchen und die Menge angeben",
+    "ateOut": "Auswärts gegessen",
+    "unfavourite": "Favorit entfernen",
+    "favourite": "Als Favorit",
+    "edit": "Bearbeiten",
+    "matchesTastes": "passt zu deinen Vorlieben",
+    "servingsForWeek": "Portionen für die Woche",
+    "cooked": "Gekocht",
+    "title": "Titel",
+    "ingredientsPlaceholder": "Eine Zutat pro Zeile",
+    "tagsPlaceholder": "Tags, z. B. proteinreich, vegetarisch",
+    "note": "Notiz",
+    "estimateTitle": "Aus den Zutaten schätzen (Nährwerte via Open Food Facts, falls aktiviert)",
+    "addIngredientsFirst": "Erst Zutaten eintragen",
+    "estimating": "schätze …",
+    "estimate": "schätzen",
+    "editMeal": "Mahlzeit bearbeiten",
+    "newMeal": "Neue Mahlzeit",
+    "category": "Kategorie",
+    "proteinLabel": "Protein (g)",
+    "ingredients": "Zutaten",
+    "tags": "Tags",
+    "delete": "Löschen",
+    "deleteQ": "Löschen?",
+    "deleted": "Gelöscht",
+    "save": "Speichern",
+    "titleMissing": "Titel fehlt",
+    "saved": "Gespeichert",
+    "moduleOffHint": "Du kannst dieses Modul in den Einstellungen aktivieren.",
+    "toSettings": "Zu den Einstellungen",
+    "sizeSmall": "Klein",
+    "sizeMedium": "Mittel",
+    "sizeLarge": "Groß",
+    "sizeRestaurant": "Restaurant",
+    "offCount": "{n}× Open Food Facts"
+  },
+  "stepper": {
+    "less": "weniger",
+    "more": "mehr"
   }
 }

@@ -22,13 +22,13 @@ const TRANSLATED_MODULES = [
   'js/events.js', 'js/session.js', 'js/unit-actions.js', 'js/capture.js', 'js/plans.js', 'js/commitments.js',
   'js/rolling.js', 'js/dualgoal.js', 'js/vdot.js', 'js/exercises.js',
   'js/dashboard.js', 'js/dashboard-coach.js', 'js/dashboard-goals.js', 'js/plangen.js', 'js/program.js',
-  'js/show-program.js', 'js/motion-player.js', 'js/workouts.js', 'js/helpcontent.js',
+  'js/show-program.js', 'js/motion-player.js', 'js/workouts.js', 'js/helpcontent.js', 'js/checklist.js', 'js/shopping.js',
 ];
 /** Internal values (compared in code, never shown) that happen to be German words. */
-const INTERNAL_VALUES = ["'erhöht'"];
+const INTERNAL_VALUES = ["'erhöht'", "'Obst & Gemüse'", "'Stück'"];
 /** Key prefixes the code builds at run time (e.g. `format.${x}`); listed here so they count as used. */
 const DYNAMIC_PREFIXES = ['format.', 'sessionTypes.', 'feelings.', 'priorities.', 'status.', 'rpe.',
-  'exerciseNames.', 'exerciseAliases.', 'exerciseLib.level.', 'exercises.', 'workoutCatalog.', 'showProgram.parse.', 'motion.breath.', 'plangen.raceLabel.', 'help.sections.', 'help.articles.'];
+  'exerciseNames.', 'exerciseAliases.', 'exerciseLib.level.', 'exercises.', 'workoutCatalog.', 'showProgram.parse.', 'motion.breath.', 'plangen.raceLabel.', 'help.sections.', 'help.articles.', 'food.unit.'];
 /** Languages that must have every key. The others fall back to English until their
     translation pass (package P3); before the v4.0.0 release this list holds all languages. */
 const COMPLETE_LANGUAGES = ['en', 'de'];

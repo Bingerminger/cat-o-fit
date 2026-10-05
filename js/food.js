@@ -9,6 +9,9 @@
    und aggregieren (Bedarf) -> Einkaufsliste = Bedarf − Lagerbestand.
    ========================================================================= */
 
+import { has, t, tp } from './i18n.js';
+import { fmtDec } from './format.js';
+
 /** Bekannte Einheiten -> kanonische Form. */
 const UNIT_CANON = {
   g: 'g', gramm: 'g', gr: 'g', kg: 'g',
@@ -150,8 +153,15 @@ export function nextShoppingDay(weekday, fromDateStr) {
 
 /** Menge + Einheit als Text: „500 g“, „3 Stück“, „nach Bedarf“. */
 export function fmtAmount(amount, unit) {
-  if (amount == null) return 'nach Bedarf';
+  if (amount == null) return t('food.asNeeded');
   const a = Math.round(amount * 100) / 100;
-  if (unit === 'Stück') return `${a}×`;
-  return `${a}${unit ? ' ' + unit : ''}`;
+  if (unit === 'Stück') return `${fmtDec(a)}×`;
+  return `${fmtDec(a)}${unit ? ' ' + unitLabel(unit, a) : ''}`;
+}
+
+/** Anzeigename einer Einheit; gespeichert bleibt der kanonische (deutsche) Wert. Unbekannte Einheiten bleiben, wie sie sind. */
+const UNIT_ID = { g: 'g', ml: 'ml', EL: 'tbsp', TL: 'tsp', Prise: 'pinch', Bund: 'bunch', Zehe: 'clove', Stück: 'piece', Scheibe: 'slice', Dose: 'can', Packung: 'pack', Becher: 'pot', Glas: 'jar' };
+export function unitLabel(unit, amount = 1) {
+  const id = Object.hasOwn(UNIT_ID, unit) ? UNIT_ID[unit] : null;
+  return id && has(`food.unit.${id}.other`) ? tp(`food.unit.${id}`, amount) : unit;
 }

@@ -20,12 +20,14 @@ import { setHeader } from './router.js';
 import { moduleOff } from './nutrition.js';
 import { progressRing } from './charts.js';
 
+import { t, tList } from './i18n.js';
+
 const CATEGORIES = {
-  routine:    { label: 'Routine',    icon: 'refresh',  color: '#43c59e' },
-  training:   { label: 'Training',   icon: 'activity', color: '#3d8bff' },
-  health:     { label: 'Gesundheit', icon: 'heart',    color: '#ff5d8f' },
-  errand:     { label: 'Besorgung',  icon: 'cart',     color: '#f5a623' },
-  appointment:{ label: 'Termin',     icon: 'calendar', color: '#7c5cff' },
+  routine:    { get label() { return t('checklist.category.routine'); },    icon: 'refresh',  color: '#43c59e' },
+  training:   { get label() { return t('checklist.category.training'); },   icon: 'activity', color: '#3d8bff' },
+  health:     { get label() { return t('checklist.category.health'); }, icon: 'heart',    color: '#ff5d8f' },
+  errand:     { get label() { return t('checklist.category.errand'); },  icon: 'cart',     color: '#f5a623' },
+  appointment:{ get label() { return t('checklist.category.appointment'); },     icon: 'calendar', color: '#7c5cff' },
 };
 export function catMeta(c) { return CATEGORIES[c] || CATEGORIES.routine; }
 
@@ -40,45 +42,38 @@ export function datedItems(dateStr) {
 /* ---- Vorlagen (mehrere Punkte auf einmal) -------------------------------- */
 const TEMPLATES = {
   race_prep: {
-    label: '🏁 Wettkampf-Vorbereitung',
-    items: [
-      'Startunterlagen / Startnummer bereitlegen', 'Wettkampfkleidung & Schuhe packen',
-      'Verpflegung & Gels vorbereiten', 'Anfahrt & Startzeit prüfen',
-      'Am Vorabend früh schlafen', 'Wecker stellen', 'Leicht & kohlenhydratreich essen',
-    ],
+    get label() { return t('checklist.templates.racePrep.label'); },
+    get items() { return tList('checklist.templates.racePrep.items') || []; },
   },
   race_bag: {
-    label: '🎒 Wettkampf-Packliste',
-    items: [
-      'Startnummer + Sicherheitsnadeln', 'Laufschuhe & Wettkampfsocken', 'Funktionsshirt & Hose',
-      'Gels / Riegel', 'Trinkflasche', 'Wechselkleidung & Handtuch', 'Pflaster / Tape', 'Sonnencreme / Mütze',
-    ],
+    get label() { return t('checklist.templates.raceBag.label'); },
+    get items() { return tList('checklist.templates.raceBag.items') || []; },
   },
   recovery: {
-    label: '🧘 Regenerationstag',
-    items: ['10 min Mobility / Dehnen', 'Ausreichend trinken', 'Früh schlafen', 'Lockere Bewegung / Spaziergang'],
+    get label() { return t('checklist.templates.recovery.label'); },
+    get items() { return tList('checklist.templates.recovery.items') || []; },
   },
 };
 
 export function render(view) {
   setHeader({
-    title: 'Checkliste',
-    subtitle: 'Routinen & Erinnerungen',
+    title: t('nav.checklist'),
+    subtitle: t('checklist.subtitle'),
     actions: [
-      { icon: 'grid', label: 'Vorlage', onClick: () => openTemplates() },
-      { icon: 'refresh', label: 'Routinen zurücksetzen', onClick: () => resetAll() },
-      { icon: 'plus', label: 'Hinzufügen', onClick: () => openForm() },
+      { icon: 'grid', label: t('checklist.template'), onClick: () => openTemplates() },
+      { icon: 'refresh', label: t('checklist.resetRoutines'), onClick: () => resetAll() },
+      { icon: 'plus', label: t('checklist.add'), onClick: () => openForm() },
     ],
   });
 
-  if (store.settings().modules?.checklist === false) { view.appendChild(moduleOff('Checkliste')); return; }
+  if (store.settings().modules?.checklist === false) { view.appendChild(moduleOff(t('nav.checklist'))); return; }
 
   const items = store.get('checklist');
   if (!items.length) {
-    view.appendChild(emptyState('list', 'Noch nichts geplant', 'Lege tägliche Routinen oder einen Termin mit Erinnerung an – oder starte mit einer Vorlage.'));
+    view.appendChild(emptyState('list', t('checklist.emptyTitle'), t('checklist.emptyText')));
     view.appendChild(el('div', { class: 'col gap-2 mt-4' }, [
-      el('button', { class: 'btn btn--primary btn--block', onclick: () => openForm() }, [icon('plus'), 'Punkt hinzufügen']),
-      el('button', { class: 'btn btn--soft btn--block', onclick: () => openTemplates() }, [icon('grid'), 'Vorlage verwenden']),
+      el('button', { class: 'btn btn--primary btn--block', onclick: () => openForm() }, [icon('plus'), t('checklist.addItem')]),
+      el('button', { class: 'btn btn--soft btn--block', onclick: () => openTemplates() }, [icon('grid'), t('checklist.useTemplate')]),
     ]));
     return;
   }
@@ -98,22 +93,22 @@ export function render(view) {
     view.appendChild(el('div', { class: 'card row gap-4', style: { alignItems: 'center' } }, [
       el('div', { class: 'ring-wrap' }, [progressRing(done / todayScope.length, { size: 84 }), el('div', { class: 'ring-wrap__center' }, [el('div', { class: 'ring-wrap__val', text: `${pct}%` })])]),
       el('div', { class: 'grow' }, [
-        el('div', { style: { fontWeight: '750', fontSize: '1.1rem' }, text: `${done} von ${todayScope.length} heute erledigt` }),
-        el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: pct === 100 ? 'Alles erledigt – stark! ✨' : 'Schritt für Schritt.' }),
+        el('div', { style: { fontWeight: '750', fontSize: '1.1rem' }, text: t('checklist.doneToday', { done, total: todayScope.length }) }),
+        el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: pct === 100 ? t('checklist.allDone') : t('checklist.stepByStep') }),
       ]),
     ]));
   }
 
-  if (overdue.length) { view.appendChild(sectionHead('Überfällig')); appendList(view, overdue, true); }
-  if (todays.length) { view.appendChild(sectionHead('Heute fällig')); appendList(view, todays); }
-  if (upcoming.length) { view.appendChild(sectionHead('Demnächst')); appendList(view, upcoming); }
-  if (routines.length) { view.appendChild(sectionHead('Tägliche Routinen')); appendList(view, routines); }
+  if (overdue.length) { view.appendChild(sectionHead(t('status.ueberfaellig'))); appendList(view, overdue, true); }
+  if (todays.length) { view.appendChild(sectionHead(t('checklist.dueToday'))); appendList(view, todays); }
+  if (upcoming.length) { view.appendChild(sectionHead(t('checklist.upcoming'))); appendList(view, upcoming); }
+  if (routines.length) { view.appendChild(sectionHead(t('checklist.dailyRoutines'))); appendList(view, routines); }
 
   // Häufig genutzte Punkte (gelernt) – Schnell-Hinzufügen
   const onList = items.map((i) => i.text.toLowerCase());
   const freq = frequentChecks(onList);
   if (freq.length) {
-    view.appendChild(sectionHead('Häufig genutzt'));
+    view.appendChild(sectionHead(t('checklist.frequent')));
     const chips = el('div', { class: 'row wrap gap-2' });
     freq.forEach((f) => chips.appendChild(el('button', { class: 'chip chip--accent', text: `+ ${f.text}`, onclick: () => { bumpFreq(f.text); store.upsert('checklist', { id: uid('c'), text: f.text, checked: false, recurring: true, category: 'routine' }); rerender(); } })));
     view.appendChild(chips);
@@ -136,20 +131,20 @@ function row(i, danger = false) {
   return el('div', { class: 'list-item' }, [
     el('button', {
       class: 'icon-btn check-toggle', type: 'button', role: 'checkbox', 'aria-checked': i.checked ? 'true' : 'false',
-      'aria-label': i.text, title: i.checked ? 'Als offen markieren' : 'Abhaken',
+      'aria-label': i.text, title: i.checked ? t('checklist.markOpen') : t('checklist.tick'),
       style: { color: i.checked ? 'var(--good-text)' : (danger ? 'var(--bad-text)' : 'var(--text-3)') },
       onclick: () => { store.patch('checklist', i.id, { checked: !i.checked }); rerender(); },
     }, icon(i.checked ? 'checkCircle' : 'circle')),
-    el('button', { class: 'list-item__body list-item__btn', type: 'button', onclick: () => openForm(i), 'aria-label': `„${i.text}“ bearbeiten` }, [
+    el('button', { class: 'list-item__body list-item__btn', type: 'button', onclick: () => openForm(i), 'aria-label': t('checklist.editItem', { text: i.text }) }, [
       el('div', { class: 'list-item__title', style: i.checked ? { textDecoration: 'line-through', color: 'var(--text-2)' } : {}, text: i.text }),
       el('div', { class: 'list-item__sub', style: danger ? { color: 'var(--bad-text)' } : {}, text: sub.join(' · ') }),
     ]),
-    i.dueDate ? el('button', { class: 'icon-btn', 'aria-label': 'In Kalender übernehmen (.ics)', title: 'In Kalender übernehmen (.ics)', onclick: () => exportIcs(i) }, icon('calendar')) : null,
-    el('button', { class: 'icon-btn', 'aria-label': `„${i.text}“ löschen`, title: 'Löschen', onclick: () => {
+    i.dueDate ? el('button', { class: 'icon-btn', 'aria-label': t('checklist.addToCalendar'), title: t('checklist.addToCalendar'), onclick: () => exportIcs(i) }, icon('calendar')) : null,
+    el('button', { class: 'icon-btn', 'aria-label': t('checklist.deleteItem', { text: i.text }), title: t('checklist.delete'), onclick: () => {
       // Löschen mit „Rückgängig“ statt endgültig per Fehltipp (UI-30).
       const prev = { ...i };
       store.remove('checklist', i.id); rerender();
-      toastUndo('Gelöscht', () => { store.upsert('checklist', { ...prev, deleted: undefined }); rerender(); });
+      toastUndo(t('checklist.deleted'), () => { store.upsert('checklist', { ...prev, deleted: undefined }); rerender(); });
     } }, icon('trash')),
   ]);
 }
@@ -160,36 +155,36 @@ export function openForm(existing = null) {
   let kind = e.dueDate ? 'termin' : 'routine';
   let category = e.category || (kind === 'termin' ? 'appointment' : 'routine');
 
-  const textI = input({ value: e.text || '', placeholder: 'z. B. 10 min Mobility' });
+  const textI = input({ value: e.text || '', placeholder: t('checklist.taskPlaceholder') });
   const dateI = input({ type: 'date', value: e.dueDate || todayStr() });
   const timeI = input({ type: 'time', value: e.time || '' });
   const catSel = select(Object.entries(CATEGORIES).map(([k, v]) => ({ value: k, label: v.label })), category, { onchange: (ev) => { category = ev.target.value; } });
 
-  const dateRow = el('div', { class: 'field__row' }, [field('Datum', dateI), field('Uhrzeit (optional)', timeI)]);
+  const dateRow = el('div', { class: 'field__row' }, [field(t('checklist.date'), dateI), field(t('checklist.timeOptional'), timeI)]);
   dateRow.style.display = kind === 'termin' ? 'flex' : 'none';
 
   const kindCtl = segmented(
-    [{ value: 'routine', label: 'Tägliche Routine' }, { value: 'termin', label: 'Termin mit Datum' }],
+    [{ value: 'routine', label: t('checklist.kindRoutine') }, { value: 'termin', label: t('checklist.kindDated') }],
     kind, (v) => { kind = v; dateRow.style.display = v === 'termin' ? 'flex' : 'none'; },
   );
 
   openSheet({
-    title: existing ? 'Punkt bearbeiten' : 'Neuer Punkt',
+    title: existing ? t('checklist.editTitle') : t('checklist.newTitle'),
     body: el('div', {}, [
-      field('Aufgabe', textI),
-      field('Art', kindCtl),
+      field(t('checklist.task'), textI),
+      field(t('checklist.kind'), kindCtl),
       dateRow,
-      field('Kategorie', catSel),
+      field(t('checklist.categoryField'), catSel),
     ]),
     footer: [
-      el('button', { class: 'btn btn--ghost grow', text: 'Abbrechen', onclick: () => closeSheet() }),
+      el('button', { class: 'btn btn--ghost grow', text: t('common.cancel'), onclick: () => closeSheet() }),
       el('button', {
-        class: 'btn btn--primary grow', text: existing ? 'Speichern' : 'Hinzufügen',
+        class: 'btn btn--primary grow', text: existing ? t('checklist.save') : t('checklist.add'),
         onclick: () => {
-          const t = textI.value.trim(); if (!t) { toast('Bitte eine Aufgabe eingeben', 'bad'); return; }
-          bumpFreq(t);
+          const entry = textI.value.trim(); if (!entry) { toast(t('checklist.enterTask'), 'bad'); return; }
+          bumpFreq(entry);
           const rec = {
-            ...e, id: e.id || uid('c'), text: t,
+            ...e, id: e.id || uid('c'), text: entry,
             checked: e.checked || false,
             recurring: kind === 'routine',
             dueDate: kind === 'termin' ? dateI.value : null,
@@ -197,7 +192,7 @@ export function openForm(existing = null) {
             category,
           };
           store.upsert('checklist', rec);
-          closeSheet(); toast(existing ? 'Gespeichert' : 'Hinzugefügt', 'good'); rerender();
+          closeSheet(); toast(existing ? t('checklist.saved') : t('checklist.added'), 'good'); rerender();
         },
       }),
     ],
@@ -206,17 +201,17 @@ export function openForm(existing = null) {
 
 /* ------------------------------ Vorlagen -------------------------------- */
 function openTemplates() {
-  const body = el('div', { class: 'col gap-2' }, Object.entries(TEMPLATES).map(([k, t]) => el('button', {
+  const body = el('div', { class: 'col gap-2' }, Object.entries(TEMPLATES).map(([k, tpl]) => el('button', {
     class: 'card card--link', style: { textAlign: 'left', width: '100%' },
     onclick: () => {
-      t.items.forEach((text) => store.upsert('checklist', { id: uid('c'), text, checked: false, recurring: false, category: 'training', dueDate: null }));
-      closeSheet(); toast(`„${t.label}“ hinzugefügt (${t.items.length} Punkte)`, 'good'); rerender();
+      tpl.items.forEach((text) => store.upsert('checklist', { id: uid('c'), text, checked: false, recurring: false, category: 'training', dueDate: null }));
+      closeSheet(); toast(t('checklist.templateAdded', { label: tpl.label, n: tpl.items.length }), 'good'); rerender();
     },
   }, [
-    el('div', { class: 'card__title', text: t.label }),
-    el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t.items.slice(0, 3).join(' · ') + (t.items.length > 3 ? ' …' : '') }),
+    el('div', { class: 'card__title', text: tpl.label }),
+    el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: tpl.items.slice(0, 3).join(' · ') + (tpl.items.length > 3 ? ' …' : '') }),
   ])));
-  openSheet({ title: 'Vorlage verwenden', body });
+  openSheet({ title: t('checklist.useTemplate'), body });
 }
 
 /* ----------------------- .ics-Export (clientseitig) --------------------- */
@@ -257,15 +252,15 @@ function exportIcs(item) {
     'END:VEVENT', 'END:VCALENDAR',
   ];
   const blob = new Blob([lines.map(foldIcs).join('\r\n') + '\r\n'], { type: 'text/calendar' });
-  saveFile(`erinnerung-${date}.ics`, blob).then((res) => {
-    if (res !== 'cancelled') toast('Kalenderdatei bereitgestellt – zum Übernehmen öffnen', 'good');
+  saveFile(t('checklist.icsFile', { date }), blob).then((res) => {
+    if (res !== 'cancelled') toast(t('checklist.icsReady'), 'good');
   });
 }
 
 function resetAll() {
   // Nur Routinen zurücksetzen; erledigte Termine bleiben erledigt.
   store.get('checklist').forEach((i) => { if (i.checked && !i.dueDate) store.patch('checklist', i.id, { checked: false }); });
-  toast('Routinen zurückgesetzt', 'good'); rerender();
+  toast(t('checklist.routinesReset'), 'good'); rerender();
 }
 
 /* --------------- Häufig genutzte Punkte lernen (clientseitig) ----------- */

@@ -15,29 +15,39 @@ import {
 } from './ui.js';
 import { setHeader } from './router.js';
 import { moduleOff } from './nutrition.js';
-import { aggregateNeeds, computeShoppingList, applyPurchase, nextShoppingDay, fmtAmount, itemKey, guessCategory } from './food.js';
+import { aggregateNeeds, computeShoppingList, applyPurchase, nextShoppingDay, fmtAmount, itemKey, guessCategory, unitLabel } from './food.js';
+
+import { t, tp } from './i18n.js';
 
 const CATS = ['Obst & Gemüse', 'Milchprodukte', 'Fleisch & Fisch', 'Trockenwaren', 'Sonstiges'];
+// Angezeigt wird der übersetzte Name; gespeichert bleibt der deutsche Wert.
+const CAT_LABEL = {
+  'Obst & Gemüse': () => t('shopping.catProduce'),
+  Milchprodukte: () => t('shopping.catDairy'),
+  'Fleisch & Fisch': () => t('shopping.catMeatFish'),
+  Trockenwaren: () => t('shopping.catDry'),
+  Sonstiges: () => t('shopping.catOther'),
+};
 const hexc = (c) => (typeof c === 'string' && c[0] === '#' ? c : 'var(--accent)');
 
 export function render(view) {
-  setHeader({ title: 'Einkaufsliste', actions: [{ icon: 'plus', label: 'Lager-Eintrag', onClick: () => openPantryForm() }] });
-  if (store.settings().modules?.shopping === false) { view.appendChild(moduleOff('Einkaufsliste')); return; }
+  setHeader({ title: t('nav.shopping'), actions: [{ icon: 'plus', label: t('shopping.pantryEntry'), onClick: () => openPantryForm() }] });
+  if (store.settings().modules?.shopping === false) { view.appendChild(moduleOff(t('nav.shopping'))); return; }
 
   const shopDay = store.familySettings().shoppingDay ?? 2;
   const shopDate = nextShoppingDay(shopDay);
 
   view.appendChild(el('div', { class: 'hero', style: { padding: '18px 20px' } }, [
-    el('div', { class: 'hero__eyebrow', text: 'Nächster gemeinsamer Einkauf' }),
+    el('div', { class: 'hero__eyebrow', text: t('shopping.nextShop') }),
     el('div', { style: { fontWeight: '800', fontSize: '1.3rem' }, text: fmtDateLong(shopDate) }),
-    el('div', { style: { opacity: '.9', fontSize: '.84rem', marginTop: '2px' }, text: 'Bedarf aller Speisepläne minus gemeinsames Lager' }),
+    el('div', { style: { opacity: '.9', fontSize: '.84rem', marginTop: '2px' }, text: t('shopping.needsMinusPantry') }),
   ]));
 
   const planSlot = el('div');
   const listSlot = el('div');
   view.appendChild(planSlot);
   view.appendChild(listSlot);
-  planSlot.appendChild(el('div', { class: 'card card--flat', text: 'Lade gemeinsame Speisepläne …' }));
+  planSlot.appendChild(el('div', { class: 'card card--flat', text: t('shopping.loadingPlans') }));
 
   renderPantry(view);
 
@@ -46,7 +56,7 @@ export function render(view) {
     listSlot.innerHTML = '';
     renderPlan(planSlot, entries);
     renderList(listSlot, entries);
-  }).catch(() => { planSlot.innerHTML = ''; planSlot.appendChild(el('div', { class: 'card card--flat', text: 'Speisepläne konnten nicht geladen werden.' })); });
+  }).catch(() => { planSlot.innerHTML = ''; planSlot.appendChild(el('div', { class: 'card card--flat', text: t('shopping.plansFailed') })); });
 }
 
 /** Geplante Gerichte aller Mitglieder einsammeln (aktiver Nutzer lokal, Rest read-only). */
@@ -64,11 +74,11 @@ async function loadFamilyMeals() {
 }
 
 function renderPlan(slot, entries) {
-  slot.appendChild(sectionHead('Gemeinsamer Wochenplan', { label: 'Gerichte planen', onClick: () => navigate('#/nutrition') }));
+  slot.appendChild(sectionHead(t('shopping.weekPlan'), { label: t('shopping.planMeals'), onClick: () => navigate('#/nutrition') }));
   if (!entries.length) {
     slot.appendChild(el('div', { class: 'card card--flat' }, [
-      el('p', { class: 'muted', text: 'Noch keine Gerichte geplant. Jedes Mitglied plant in der Ernährung seine Gerichte mit Portionen – daraus entsteht die gemeinsame Einkaufsliste.' }),
-      el('button', { class: 'btn btn--soft btn--block mt-3', onclick: () => navigate('#/nutrition') }, [icon('utensils'), 'Zur Ernährung']),
+      el('p', { class: 'muted', text: t('shopping.noMealsPlanned') }),
+      el('button', { class: 'btn btn--soft btn--block mt-3', onclick: () => navigate('#/nutrition') }, [icon('utensils'), t('shopping.toNutrition')]),
     ]));
     return;
   }
@@ -77,7 +87,7 @@ function renderPlan(slot, entries) {
     el('span', { class: 'member-card__avatar', style: { width: '30px', height: '30px', fontSize: '1rem', background: hexc(member.color) + '22', color: hexc(member.color) }, text: member.emoji || '🙂' }),
     el('div', { class: 'list-item__body' }, [
       el('div', { class: 'list-item__title', text: meal.title }),
-      el('div', { class: 'list-item__sub', text: `${meal.plannedServings} Portion${meal.plannedServings > 1 ? 'en' : ''} · ${member.name}` }),
+      el('div', { class: 'list-item__sub', text: `${tp('shopping.servings', meal.plannedServings)} · ${member.name}` }),
     ]),
   ])));
   slot.appendChild(card);
@@ -87,37 +97,37 @@ function renderList(slot, entries) {
   if (!entries.length) return;
   const needs = aggregateNeeds(entries.map(({ meal }) => ({ ingredients: meal.ingredients, servings: meal.plannedServings })));
   const list = computeShoppingList(needs, store.familyPantry());
-  slot.appendChild(sectionHead('Einzukaufen'));
+  slot.appendChild(sectionHead(t('shopping.toBuy')));
   if (!list.length) {
     slot.appendChild(el('div', { class: 'card card--flat row gap-2', style: { alignItems: 'center' } }, [
       el('span', { style: { fontSize: '1.4rem' }, text: '✅' }),
-      el('div', { class: 'muted', text: 'Alles im Lager – diese Woche ist nichts zu kaufen!' }),
+      el('div', { class: 'muted', text: t('shopping.allInPantry') }),
     ]));
     return;
   }
   const byCat = {};
   list.forEach((i) => { (byCat[i.category] ||= []).push(i); });
   CATS.filter((c) => byCat[c]).forEach((cat) => {
-    slot.appendChild(el('div', { class: 'section-head', style: { margin: '12px 0 4px' } }, el('h2', { class: 'section-head__title', style: { fontSize: '.86rem', color: 'var(--text-2)' }, text: cat })));
+    slot.appendChild(el('div', { class: 'section-head', style: { margin: '12px 0 4px' } }, el('h2', { class: 'section-head__title', style: { fontSize: '.86rem', color: 'var(--text-2)' }, text: CAT_LABEL[cat]() })));
     const c = el('div', { class: 'list-card' });
     byCat[cat].forEach((i) => c.appendChild(el('div', { class: 'list-item' }, [
       el('span', { class: 'icon-btn', style: { color: 'var(--text-3)' }, html: iconSvg('cart') }),
       el('div', { class: 'list-item__body' }, [
         el('div', { class: 'list-item__title', text: i.name }),
-        i.have > 0 ? el('div', { class: 'list-item__sub', text: `Lager: ${fmtAmount(i.have, i.unit)}` }) : null,
+        i.have > 0 ? el('div', { class: 'list-item__sub', text: t('shopping.inPantry', { amount: fmtAmount(i.have, i.unit) }) }) : null,
       ]),
       el('div', { class: 'list-item__meta num', text: fmtAmount(i.buy, i.unit) }),
     ])));
     slot.appendChild(c);
   });
-  slot.appendChild(el('button', { class: 'btn btn--primary btn--block mt-4', onclick: () => buyAll(list) }, [icon('check'), 'Alles eingekauft → ins Lager']));
+  slot.appendChild(el('button', { class: 'btn btn--primary btn--block mt-4', onclick: () => buyAll(list) }, [icon('check'), t('shopping.boughtAll')]));
 }
 
 function renderPantry(view) {
   const pantry = store.familyPantry();
-  view.appendChild(sectionHead('Gemeinsames Lager'));
+  view.appendChild(sectionHead(t('shopping.sharedPantry')));
   if (!pantry.length) {
-    view.appendChild(el('div', { class: 'card card--flat', text: 'Das gemeinsame Lager ist leer. Was ihr einkauft, landet hier – oder trage Vorräte über „+“ ein.' }));
+    view.appendChild(el('div', { class: 'card card--flat', text: t('shopping.pantryEmpty') }));
     return;
   }
   const c = el('div', { class: 'list-card' });
@@ -127,7 +137,7 @@ function renderPantry(view) {
       el('div', { class: 'list-item__title', text: p.name }),
       el('div', { class: 'list-item__sub num', text: fmtAmount(p.amount, p.unit) }),
     ]),
-    el('button', { class: 'icon-btn', 'aria-label': 'Löschen', onclick: () => removePantry(p.id) }, icon('trash')),
+    el('button', { class: 'icon-btn', 'aria-label': t('shopping.delete'), onclick: () => removePantry(p.id) }, icon('trash')),
   ])));
   view.appendChild(c);
 }
@@ -135,7 +145,7 @@ function renderPantry(view) {
 function buyAll(list) {
   const next = applyPurchase(store.familyPantry(), list).map((p) => ({ ...p, id: p.id || itemKey(p.name, p.unit) }));
   store.setFamilyPantry(next);
-  toast('Eingekauft & ins gemeinsame Lager gebucht 🛒', 'good');
+  toast(t('shopping.boughtToast'), 'good');
   rerender();
 }
 
@@ -148,9 +158,9 @@ function upsertPantry(item) {
 async function removePantry(id) {
   const item = store.familyPantry().find((p) => p.id === id);
   const ok = await confirmDialog({
-    title: 'Aus dem Lager entfernen?',
-    message: item ? `„${item.name}“ wird aus dem gemeinsamen Familien-Lager gelöscht.` : 'Eintrag wird aus dem gemeinsamen Lager gelöscht.',
-    confirmLabel: 'Entfernen', danger: true,
+    title: t('shopping.removeQ'),
+    message: item ? t('shopping.removeNamed', { name: item.name }) : t('shopping.removeEntry'),
+    confirmLabel: t('shopping.remove'), danger: true,
   });
   if (!ok) return;
   store.setFamilyPantry(store.familyPantry().filter((p) => p.id !== id));
@@ -159,19 +169,19 @@ async function removePantry(id) {
 
 function openPantryForm(existing = null) {
   const it = existing || {};
-  const nameI = input({ value: it.name || '', placeholder: 'z. B. Haferflocken' });
-  const amountI = input({ type: 'number', step: '0.1', inputmode: 'decimal', value: it.amount ?? '', placeholder: 'Menge' });
-  const unitI = select([{ value: 'g', label: 'g' }, { value: 'ml', label: 'ml' }, { value: 'Stück', label: 'Stück' }, { value: 'Packung', label: 'Packung' }, { value: 'Dose', label: 'Dose' }], it.unit || 'g');
+  const nameI = input({ value: it.name || '', placeholder: t('shopping.namePlaceholder') });
+  const amountI = input({ type: 'number', step: '0.1', inputmode: 'decimal', value: it.amount ?? '', placeholder: t('shopping.amount') });
+  const unitI = select(['g', 'ml', 'Stück', 'Packung', 'Dose'].map((u) => ({ value: u, label: unitLabel(u) })), it.unit || 'g');
   openSheet({
-    title: existing ? 'Lager-Eintrag' : 'Neuer Vorrat',
-    body: el('div', {}, [field('Artikel', nameI), el('div', { class: 'field__row' }, [field('Menge', amountI), field('Einheit', unitI)])]),
+    title: existing ? t('shopping.pantryEntry') : t('shopping.newItem'),
+    body: el('div', {}, [field(t('shopping.article'), nameI), el('div', { class: 'field__row' }, [field(t('shopping.amount'), amountI), field(t('shopping.unit'), unitI)])]),
     footer: [
-      el('button', { class: 'btn btn--ghost grow', text: 'Abbrechen', onclick: () => closeSheet() }),
+      el('button', { class: 'btn btn--ghost grow', text: t('common.cancel'), onclick: () => closeSheet() }),
       el('button', {
-        class: 'btn btn--primary grow', text: 'Speichern',
+        class: 'btn btn--primary grow', text: t('shopping.save'),
         onclick: () => {
           const name = nameI.value.trim();
-          if (!name) { toast('Name fehlt', 'bad'); return; }
+          if (!name) { toast(t('shopping.nameMissing'), 'bad'); return; }
           const unit = unitI.value;
           upsertPantry({ id: existing?.id || itemKey(name, unit), name, unit, amount: parseFloat(amountI.value) || 0, category: guessCategory(name) });
           closeSheet(); rerender();

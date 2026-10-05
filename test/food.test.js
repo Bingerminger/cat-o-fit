@@ -151,5 +151,5 @@ test('fmtAmount: Einheiten, Stück als ×, null als „nach Bedarf“', () => {
   assert.equal(fmtAmount(500, 'g'), '500 g');
   assert.equal(fmtAmount(3, 'Stück'), '3×');
   assert.equal(fmtAmount(null, 'g'), 'nach Bedarf');
-  assert.equal(fmtAmount(1.5, 'TL'), '1.5 TL');
+  assert.equal(fmtAmount(1.5, 'TL'), '1,5 TL');   // decimal comma in German
 });

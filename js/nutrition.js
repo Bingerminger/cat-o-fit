@@ -20,11 +20,13 @@ import { validGtin, portionFromProduct } from './barcode.js';
 import { currentEnergyTargets, currentEligibility, gatePromptCard } from './wellness.js';
 import { weightGoalBlockReason } from './eligibility.js';
 
+import { t, tp } from './i18n.js';
+
 const CATS = [
-  { key: 'fruehstueck', label: 'Frühstück' },
-  { key: 'mittag', label: 'Mittag' },
-  { key: 'abend', label: 'Abend' },
-  { key: 'snack', label: 'Snack' },
+  { key: 'fruehstueck', get label() { return t('nutrition.catBreakfast'); } },
+  { key: 'mittag', get label() { return t('nutrition.catLunch'); } },
+  { key: 'abend', get label() { return t('nutrition.catDinner'); } },
+  { key: 'snack', get label() { return t('nutrition.catSnack'); } },
 ];
 
 /* Rezept-Ideen für eine abwechslungsreiche 7-Tage-Planung (#25). Werden auf
@@ -94,9 +96,9 @@ function preferredTags(meals) {
   meals.forEach((m) => {
     const w = (m.favorite ? 3 : 0) + (m.cookedCount || 0);
     if (w <= 0) return;
-    (m.tags || []).forEach((t) => { score[t] = (score[t] || 0) + w; });
+    (m.tags || []).forEach((tag) => { score[tag] = (score[tag] || 0) + w; });
   });
-  return Object.entries(score).sort((a, b) => b[1] - a[1]).map(([t]) => t);
+  return Object.entries(score).sort((a, b) => b[1] - a[1]).map(([tag]) => tag);
 }
 
 /** Empfiehlt Nicht-Favoriten mit passenden Lieblings-Tags. */
@@ -105,7 +107,7 @@ function recommendations(meals) {
   if (!tags.length) return [];
   return meals
     .filter((m) => !m.favorite)
-    .map((m) => ({ m, match: (m.tags || []).filter((t) => tags.includes(t)).length }))
+    .map((m) => ({ m, match: (m.tags || []).filter((tag) => tags.includes(tag)).length }))
     .filter((x) => x.match > 0)
     .sort((a, b) => b.match - a.match || (b.m.cookedCount || 0) - (a.m.cookedCount || 0))
     .slice(0, 3)
@@ -119,19 +121,19 @@ function byPreference(a, b) {
 
 /* -------------------------------- Render -------------------------------- */
 export function render(view) {
-  setHeader({ title: 'Ernährung', actions: [{ icon: 'plus', label: 'Hinzufügen', onClick: () => openMealForm() }] });
+  setHeader({ title: t('nav.nutrition'), actions: [{ icon: 'plus', label: t('nutrition.add'), onClick: () => openMealForm() }] });
 
-  if (store.settings().modules?.nutrition === false) { view.appendChild(moduleOff('Ernährung')); return; }
+  if (store.settings().modules?.nutrition === false) { view.appendChild(moduleOff(t('nav.nutrition'))); return; }
 
   const meals = store.get('nutrition');
   if (!meals.length) {
     // Neuer Nutzer: KEIN stiller „leer“-Zustand – Rezept-Katalog laden oder eigenes Gericht anlegen.
-    view.appendChild(emptyState('utensils', 'Noch keine Gerichte', 'Lade fertige Rezept-Ideen oder lege eigene Gerichte an – daraus entstehen Wochenplan & Einkaufsliste.'));
+    view.appendChild(emptyState('utensils', t('nutrition.emptyTitle'), t('nutrition.emptyText')));
     view.appendChild(el('button', { class: 'btn btn--primary btn--block mt-3', onclick: () => addSuggestions(SUGGESTED_MEALS) }, [
-      icon('plus'), `${SUGGESTED_MEALS.length} Rezept-Ideen laden`,
+      icon('plus'), t('nutrition.loadIdeas', { n: SUGGESTED_MEALS.length }),
     ]));
     view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => openMealForm() }, [
-      icon('plus'), 'Eigenes Gericht anlegen',
+      icon('plus'), t('nutrition.addOwn'),
     ]));
     return;
   }
@@ -141,20 +143,20 @@ export function render(view) {
 
   view.appendChild(el('div', { class: 'card card--flat row gap-2', style: { alignItems: 'flex-start' } }, [
     el('span', { html: iconSvg('info'), style: { color: 'var(--accent-text)', width: '18px', flex: '0 0 auto' } }),
-    el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: 'Markiere Lieblingsgerichte mit ♥ und tippe „Gekocht“ – Cat-O-Fit lernt deine Vorlieben und schlägt Passendes vor.' }),
+    el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: t('nutrition.learnHint') }),
   ]));
 
   // Lieblingsgerichte
   const favs = meals.filter((m) => m.favorite).sort(byPreference);
   if (favs.length) {
-    view.appendChild(sectionHead('❤ Lieblingsgerichte'));
+    view.appendChild(sectionHead(t('nutrition.favourites')));
     favs.forEach((m) => view.appendChild(mealCard(m)));
   }
 
   // Für dich (gelernt aus Vorlieben)
   const recs = recommendations(meals);
   if (recs.length) {
-    view.appendChild(sectionHead('Für dich empfohlen'));
+    view.appendChild(sectionHead(t('nutrition.recommended')));
     recs.forEach((m) => view.appendChild(mealCard(m, true)));
   }
 
@@ -170,7 +172,7 @@ export function render(view) {
   const fresh = SUGGESTED_MEALS.filter((s) => !meals.some((m) => m.title.toLowerCase() === s.title.toLowerCase()));
   if (fresh.length) {
     view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-4', onclick: () => addSuggestions(fresh) }, [
-      icon('plus'), `${fresh.length} Rezept-Ideen hinzufügen`,
+      icon('plus'), tp('nutrition.addIdeas', fresh.length),
     ]));
   }
 }
@@ -178,7 +180,7 @@ export function render(view) {
 /** Übernimmt noch nicht vorhandene Vorschlagsrezepte in den eigenen Bestand (#25). */
 function addSuggestions(fresh) {
   fresh.forEach((s) => store.upsert('nutrition', { ...s, id: uid('n') }));
-  toast(`${fresh.length} Rezept-Ideen hinzugefügt`, 'good');
+  toast(tp('nutrition.ideasAdded', fresh.length), 'good');
   rerender();
 }
 
@@ -186,57 +188,57 @@ function addSuggestions(fresh) {
     `currentEnergyTargets` – dieselbe Quelle wie das Ziel-Cockpit auf „Heute“. */
 function balanceCard() {
   const today = todayStr();
-  const t = currentEnergyTargets(today);
-  const elig = t.elig;
+  const tg = currentEnergyTargets(today);
+  const elig = tg.elig;
   const hide = elig.hideNumbers;
 
   // Kinder- und Jugendprofil: keine Kalorien- oder Gewichtsziele, keine Zahlen.
-  if (t.block === 'minor') {
+  if (tg.block === 'minor') {
     return el('div', { class: 'card' }, [
-      el('div', { class: 'card__title', text: 'Essen & Trinken heute' }),
+      el('div', { class: 'card__title', text: t('nutrition.eatDrinkToday') }),
       el('div', { class: 'muted mt-2', style: { fontSize: '.84rem' }, text: weightGoalBlockReason(elig) }),
-      el('button', { class: 'btn btn--soft btn--block mt-3', onclick: () => openQuickEaten() }, [icon('plus'), 'Gegessenes erfassen']),
+      el('button', { class: 'btn btn--soft btn--block mt-3', onclick: () => openQuickEaten() }, [icon('plus'), t('nutrition.logEaten')]),
       diaryList({ hide: true, showComplete: false }),
     ]);
   }
-  const bal = t.balance;
+  const bal = tg.balance;
   if (!bal) {
     return el('div', { class: 'card card--flat row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('info'), style: { color: 'var(--accent-text)', width: '18px', flex: '0 0 auto' } }),
       el('div', { class: 'grow' }, [
-        el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: 'Trage Größe, Gewicht und Geburtsjahr im Profil ein, dann zeigt Cat-O-Fit hier deine Kalorienbilanz.' }),
-        el('button', { class: 'btn btn--soft mt-2', onclick: () => navigate('#/settings') }, 'Zum Profil'),
+        el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: t('nutrition.needProfile') }),
+        el('button', { class: 'btn btn--soft mt-2', onclick: () => navigate('#/settings') }, t('nutrition.toProfile')),
       ]),
     ]);
   }
   // Ohne beantwortete Abgrenzung kein Tagesziel (Schwangerschaft/Essstörung wären sonst unbekannt).
-  const askGate = !elig.answered && t.goalStatus && t.goalStatus.status !== 'halten';
+  const askGate = !elig.answered && tg.goalStatus && tg.goalStatus.status !== 'halten';
   const COL = { passt: '#2bb673', hoch: '#e8a13a', niedrig: '#5b8def', unklar: 'var(--text-3)' };
   const c = askGate ? 'var(--text-3)' : (COL[bal.status] || 'var(--text-3)');
-  const goalTxt = askGate ? 'Ziel: noch offen' : bal.goal === 'abnehmen' ? 'Ziel: abnehmen' : bal.goal === 'zunehmen' ? 'Ziel: zunehmen' : 'Ziel: Gewicht halten';
-  const blockNote = t.block === 'eligibility' ? weightGoalBlockReason(elig)
-    : t.block === 'bmi' ? 'Dein Zielgewicht liegt unter einem gesunden Bereich (BMI unter 18,5). Cat-O-Fit empfiehlt dafür kein Kaloriendefizit – bitte prüfe das Ziel in den Einstellungen.'
-      : t.goalStatus && t.goalStatus.beyond && t.goalStatus.direction === 'down' ? 'Du liegst unter deinem Zielgewicht – das Tagesziel hält dein Gewicht. Passt das Ziel noch?'
+  const goalTxt = askGate ? t('nutrition.goalOpen') : bal.goal === 'abnehmen' ? t('nutrition.goalLose') : bal.goal === 'zunehmen' ? t('nutrition.goalGain') : t('nutrition.goalMaintain');
+  const blockNote = tg.block === 'eligibility' ? weightGoalBlockReason(elig)
+    : tg.block === 'bmi' ? t('nutrition.bmiBlock')
+      : tg.goalStatus && tg.goalStatus.beyond && tg.goalStatus.direction === 'down' ? t('nutrition.belowTarget')
         : null;
-  const qualitative = { passt: 'Du liegst im Zielkorridor.', hoch: 'Heute etwas mehr als dein Tagesziel.', niedrig: 'Heute etwas weniger als dein Tagesziel – genug essen.', unklar: 'Noch keine Mahlzeit für heute erfasst.' }[bal.status];
+  const qualitative = { passt: t('nutrition.qualOk'), hoch: t('nutrition.qualHigh'), niedrig: t('nutrition.qualLow'), unklar: t('nutrition.qualNone') }[bal.status];
   return el('div', { class: 'card', style: { borderLeft: `5px solid ${c}` } }, [
     el('div', { class: 'row row--between', style: { alignItems: 'baseline' } }, [
-      el('div', { class: 'card__title', text: 'Kalorienbilanz heute' }),
+      el('div', { class: 'card__title', text: t('nutrition.balanceToday') }),
       el('span', { class: 'dim', style: { fontSize: '.74rem' }, text: goalTxt }),
     ]),
     hide ? null : el('div', { class: 'stat-grid mt-2' }, [
-      kcalStat(bal.intake, 'eingenommen'),
-      kcalStat(bal.out, 'verbraucht'),
-      kcalStat(`${bal.balance > 0 ? '+' : ''}${fmtInt(bal.balance)}`, 'Saldo'),
+      kcalStat(bal.intake, t('nutrition.statIntake')),
+      kcalStat(bal.out, t('nutrition.statOut')),
+      kcalStat(`${bal.balance > 0 ? '+' : ''}${fmtInt(bal.balance)}`, t('nutrition.statBalance')),
     ]),
     askGate
-      ? gatePromptCard('Bevor Cat-O-Fit ein Tagesziel fürs Abnehmen vorschlägt, einmal kurz: Gibt es etwas, das dagegen spricht (z. B. Schwangerschaft oder eine Essstörung)?', rerender)
+      ? gatePromptCard(t('nutrition.gatePrompt'), rerender)
       : el('div', { class: 'muted mt-2', style: { fontSize: '.82rem' }, text: hide ? qualitative : bal.hint }),
     blockNote ? el('div', { class: 'muted mt-2', style: { fontSize: '.8rem' }, text: blockNote }) : null,
-    hide || askGate ? null : el('div', { class: 'dim mt-1', style: { fontSize: '.72rem' }, text: `Grundumsatz ${fmtInt(bal.bmr)} kcal · Verbrauch inkl. Alltag & Sport ${fmtInt(bal.out)} · Tagesziel ~${fmtInt(bal.targetIntake)} kcal` }),
-    el('button', { class: 'btn btn--soft btn--block mt-3', onclick: () => openQuickEaten() }, [icon('plus'), 'Gegessenes erfassen']),
+    hide || askGate ? null : el('div', { class: 'dim mt-1', style: { fontSize: '.72rem' }, text: t('nutrition.balanceDetail', { bmr: fmtInt(bal.bmr), out: fmtInt(bal.out), target: fmtInt(bal.targetIntake) }) }),
+    el('button', { class: 'btn btn--soft btn--block mt-3', onclick: () => openQuickEaten() }, [icon('plus'), t('nutrition.logEaten')]),
     diaryList({ hide, showComplete: true }),
-    labsEnabledHere() ? el('a', { class: 'dim mt-2', href: '#/labor', style: { display: 'block', fontSize: '.74rem' }, text: 'Energieversorgung über mehrere Tage: Labor & Ergänzung →' }) : null,
+    labsEnabledHere() ? el('a', { class: 'dim mt-2', href: '#/labor', style: { display: 'block', fontSize: '.74rem' }, text: t('nutrition.energyLink') }) : null,
   ]);
 }
 
@@ -253,16 +255,16 @@ function diaryList({ hide = false, showComplete = true } = {}) {
   const marker = all.find((d) => d && !d.deleted && d._kind === 'day' && d.date === today);
   const complete = !!(marker && marker.complete);
   return el('div', { class: 'mt-3' }, [
-    el('div', { class: 'dim mb-1', style: { fontSize: '.72rem', fontWeight: '700', letterSpacing: '.03em' }, text: 'HEUTE GEGESSEN' }),
+    el('div', { class: 'dim mb-1', style: { fontSize: '.72rem', fontWeight: '700', letterSpacing: '.03em' }, text: t('nutrition.eatenToday') }),
     ...todayDiary.map((d) => el('div', { class: 'row row--between', style: { padding: '5px 0', borderTop: '1px solid var(--border)', alignItems: 'center' } }, [
       el('div', { class: 'grow', style: { fontSize: '.84rem' } }, [
         el('span', { text: d.title }),
-        el('span', { class: 'dim', style: { marginLeft: '8px' }, text: `${hide ? '' : `${fmtInt(d.kcal)} kcal`}${d.source === 'cooked' ? `${hide ? '' : ' · '}gekocht` : ''}` }),
+        el('span', { class: 'dim', style: { marginLeft: '8px' }, text: `${hide ? '' : `${fmtInt(d.kcal)} kcal`}${d.source === 'cooked' ? `${hide ? '' : ' · '}${t('nutrition.cookedTag')}` : ''}` }),
       ]),
-      el('button', { class: 'icon-btn', 'aria-label': 'Eintrag löschen', style: { color: 'var(--text-3)' }, onclick: () => {
+      el('button', { class: 'icon-btn', 'aria-label': t('nutrition.deleteEntry'), style: { color: 'var(--text-3)' }, onclick: () => {
         const prev = { ...d };
         store.remove('diary', d.id); rerender();
-        toastUndo('Eintrag gelöscht', () => { store.upsert('diary', { ...prev, deleted: undefined }); rerender(); });
+        toastUndo(t('nutrition.entryDeleted'), () => { store.upsert('diary', { ...prev, deleted: undefined }); rerender(); });
       } }, icon('x')),
     ])),
     showComplete ? el('button', {
@@ -270,10 +272,10 @@ function diaryList({ hide = false, showComplete = true } = {}) {
       'aria-pressed': complete ? 'true' : 'false',
       onclick: () => {
         store.upsert('diary', { id: `day-${today}`, _kind: 'day', date: today, complete: !complete });
-        toast(complete ? 'Markierung entfernt' : 'Tag als vollständig erfasst markiert', 'good');
+        toast(complete ? t('nutrition.markRemoved') : t('nutrition.dayMarked'), 'good');
         rerender();
       },
-    }, [icon(complete ? 'check' : 'circle'), complete ? 'Tag vollständig erfasst' : 'Tag vollständig']) : null,
+    }, [icon(complete ? 'check' : 'circle'), complete ? t('nutrition.dayLogged') : t('nutrition.dayMark')]) : null,
   ]);
 }
 
@@ -302,35 +304,35 @@ export function splitFoods(text) {
 function barcodePane(hide) {
   let product = null;
   let stream = null, timer = null;
-  const codeI = input({ value: '', inputmode: 'numeric', placeholder: '8 oder 13 Ziffern', 'aria-label': 'Strichcode (EAN)' });
-  const gramsI = input({ type: 'number', value: '100', inputmode: 'decimal', min: '1', max: '5000', 'aria-label': 'Menge in Gramm' });
+  const codeI = input({ value: '', inputmode: 'numeric', placeholder: t('nutrition.barcodePlaceholder'), 'aria-label': t('nutrition.barcodeAria') });
+  const gramsI = input({ type: 'number', value: '100', inputmode: 'decimal', min: '1', max: '5000', 'aria-label': t('nutrition.gramsAria') });
   const info = el('div', { class: 'dim mt-1', style: { fontSize: '.8rem' }, 'aria-live': 'polite' });
   const video = el('video', { class: 'barcode__video', playsinline: '', muted: '', hidden: true });
   const stopCamera = () => {
     if (timer) { clearInterval(timer); timer = null; }
-    if (stream) { stream.getTracks().forEach((t) => t.stop()); stream = null; }
+    if (stream) { stream.getTracks().forEach((track) => track.stop()); stream = null; }
     video.hidden = true;
   };
   const showProduct = () => {
     if (!product) return;
     const p = portionFromProduct(product, gramsI.value);
     info.textContent = hide ? product.name
-      : `${product.name}${product.kcal100 ? ` · ${product.kcal100} kcal je 100 g` : ' · ohne Kalorienangabe'}${p ? ` → ${p.kcal} kcal${p.protein != null ? `, ${fmtDec(p.protein)} g Eiweiß` : ''}` : ''}`;
+      : `${product.name}${product.kcal100 ? ` · ${t('nutrition.kcalPer100', { kcal: fmtDec(product.kcal100) })}` : ` · ${t('nutrition.noKcal')}`}${p ? ` → ${p.kcal} kcal${p.protein != null ? `, ${t('nutrition.gProtein', { g: fmtDec(p.protein) })}` : ''}` : ''}`;
   };
   const lookup = async () => {
     const code = codeI.value.replace(/\s/g, '');
     product = null;
-    if (!validGtin(code)) { info.textContent = 'Das ist kein gültiger Strichcode (8 oder 13 Ziffern, die letzte ist eine Prüfziffer).'; return; }
+    if (!validGtin(code)) { info.textContent = t('nutrition.badBarcode'); return; }
     // Derselbe Schalter wie für alle Abfragen bei Open Food Facts – ohne ihn geht nichts hinaus.
     if (!store.foodLookupEnabled()) {
       info.textContent = '';
-      info.appendChild(el('div', { text: 'Das Nachschlagen bei Open Food Facts ist ausgeschaltet (Einstellungen → Ernährung).' }));
-      info.appendChild(el('button', { class: 'btn btn--soft mt-2', type: 'button', onclick: () => { store.setSetting('foodLookup', true); lookup(); } }, 'Einschalten und suchen'));
+      info.appendChild(el('div', { text: t('nutrition.lookupOff') }));
+      info.appendChild(el('button', { class: 'btn btn--soft mt-2', type: 'button', onclick: () => { store.setSetting('foodLookup', true); lookup(); } }, t('nutrition.turnOnSearch')));
       return;
     }
-    info.textContent = 'Suche …';
+    info.textContent = t('nutrition.searching');
     const r = await foodfactsBarcode(code);
-    if (!r) { info.textContent = 'Nicht gefunden (oder offline). Trag das Produkt unter „Lebensmittel“ ein.'; return; }
+    if (!r) { info.textContent = t('nutrition.notFound'); return; }
     product = r;
     showProduct();
   };
@@ -347,15 +349,15 @@ function barcodePane(hide) {
         const hit = found.find((b) => validGtin(b.rawValue));
         if (hit) { stopCamera(); codeI.value = hit.rawValue; lookup(); }
       }, 300);
-    } catch { stopCamera(); toast('Kamera nicht verfügbar – bitte den Code eintippen'); }
-  } }, [icon('camera'), 'Scannen']) : null;
+    } catch { stopCamera(); toast(t('nutrition.cameraOff')); }
+  } }, [icon('camera'), t('nutrition.scan')]) : null;
   const node = el('div', {}, [
-    field('Strichcode', codeI),
-    el('div', { class: 'row gap-2 mb-3' }, [el('button', { class: 'btn btn--soft grow', type: 'button', onclick: lookup }, 'Suchen'), scanBtn]),
+    field(t('nutrition.barcode'), codeI),
+    el('div', { class: 'row gap-2 mb-3' }, [el('button', { class: 'btn btn--soft grow', type: 'button', onclick: lookup }, t('nutrition.search')), scanBtn]),
     video,
-    field('Menge (g bzw. ml)', gramsI),
+    field(t('nutrition.amountGml'), gramsI),
     info,
-    el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: 'Daten von Open Food Facts (ODbL). Nachgeschlagen wird über deinen Server – nur der Strichcode geht hinaus.' }),
+    el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: t('nutrition.offCredit') }),
   ]);
   return {
     node,
@@ -368,24 +370,24 @@ function barcodePane(hide) {
 }
 
 export function openQuickEaten() {
-  const SIZES = [['klein', 'Klein'], ['mittel', 'Mittel'], ['gross', 'Groß'], ['restaurant', 'Restaurant']];
+  const SIZES = [['klein', t('nutrition.sizeSmall')], ['mittel', t('nutrition.sizeMedium')], ['gross', t('nutrition.sizeLarge')], ['restaurant', t('nutrition.sizeRestaurant')]];
   const hide = currentEligibility().hideNumbers;
   const today = todayStr();
   let mode = 'food';
   const save = (rec) => {
     store.upsert('diary', { id: uid('d'), date: today, protein: null, source: 'manual', ...rec });
-    closeSheet(); toast('Erfasst – in der Tagesbilanz berücksichtigt', 'good'); rerender();
+    closeSheet(); toast(t('nutrition.logged'), 'good'); rerender();
   };
 
   // Lebensmittel + Menge
-  const foodI = input({ value: '', placeholder: 'z. B. 200 g Skyr, 1 Banane' });
+  const foodI = input({ value: '', placeholder: t('nutrition.foodPlaceholder') });
   const est = el('div', { class: 'dim mt-1', style: { fontSize: '.8rem' }, 'aria-live': 'polite' });
   const estimate = () => { const parts = splitFoods(foodI.value); return parts.length ? estimateNutrition(parts) : null; };
   const showEst = () => {
     const r = estimate();
-    est.textContent = !r ? 'Mit Menge wird es genauer: „200 g“, „250 ml“, „1 Stück“.'
-      : hide ? 'Fließt grob in die heutige Übersicht ein.'
-        : `≈ ${fmtInt(r.kcal)} kcal${r.protein != null ? ` · ${r.protein} g Eiweiß` : ''} – Schätzung aus der Nährwerttabelle`;
+    est.textContent = !r ? t('nutrition.estHint')
+      : hide ? t('nutrition.estHide')
+        : `≈ ${fmtInt(r.kcal)} kcal${r.protein != null ? ` · ${t('nutrition.gProtein', { g: r.protein })}` : ''} – ${t('nutrition.estSource')}`;
   };
   foodI.addEventListener('input', showEst);
   showEst();
@@ -395,11 +397,11 @@ export function openQuickEaten() {
     .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || String(b.createdAt || '').localeCompare(String(a.createdAt || '')))
     .forEach((d) => { if (d.title && d.kcal && recent.length < 6 && !recent.some((r) => r.title === d.title)) recent.push(d); });
   const foodPane = el('div', {}, [
-    field('Was & wie viel', foodI), est,
+    field(t('nutrition.whatHowMuch'), foodI), est,
     recent.length ? el('div', { class: 'mt-3' }, [
-      el('div', { class: 'field__label', text: 'Zuletzt gegessen' }),
+      el('div', { class: 'field__label', text: t('nutrition.recentlyEaten') }),
       el('div', { class: 'row wrap gap-2' }, recent.map((d) => el('button', {
-        class: 'chip chip--btn', type: 'button', title: 'Für heute eintragen',
+        class: 'chip chip--btn', type: 'button', title: t('nutrition.logForToday'),
         text: hide ? d.title : `${d.title} · ${fmtInt(d.kcal)} kcal`,
         onclick: () => save({ title: d.title, kcal: d.kcal, protein: d.protein ?? null }),
       }))),
@@ -407,7 +409,7 @@ export function openQuickEaten() {
   ]);
 
   // Pauschal nach Portionsgröße – für auswärts
-  const titleI = input({ value: '', placeholder: 'z. B. Kantine, Restaurant, Snack' });
+  const titleI = input({ value: '', placeholder: t('nutrition.outPlaceholder') });
   const kcalI = input({ type: 'number', value: PORTION_KCAL.mittel, inputmode: 'numeric' });
   const sizeRow = el('div', { class: 'row wrap gap-2' }, SIZES.map(([k, lbl]) => {
     const b = el('button', {
@@ -421,40 +423,40 @@ export function openQuickEaten() {
     return b;
   }));
   const portionPane = el('div', {}, [
-    el('div', { class: 'muted', style: { fontSize: '.84rem', marginBottom: '10px' }, text: hide ? 'Auswärts gegessen? Wähle eine Portionsgröße – sie fließt grob in die heutige Übersicht ein.' : 'Auswärts gegessen? Wähle eine Portionsgröße – die kcal werden grob geschätzt und fließen in die heutige Bilanz.' }),
-    field('Was', titleI),
-    field('Portionsgröße', sizeRow),
-    hide ? null : field('kcal (anpassbar)', kcalI),
+    el('div', { class: 'muted', style: { fontSize: '.84rem', marginBottom: '10px' }, text: hide ? t('nutrition.portionHintHide') : t('nutrition.portionHint') }),
+    field(t('nutrition.what'), titleI),
+    field(t('nutrition.portionSize'), sizeRow),
+    hide ? null : field(t('nutrition.kcalAdjustable'), kcalI),
   ]);
 
   // Strichcode: Produkt über Open Food Facts nachschlagen (über den eigenen Server), Menge in Gramm.
   const bc = barcodePane(hide);
   const host = el('div', {}, [foodPane]);
-  const modeCtl = segmented([{ value: 'food', label: 'Lebensmittel' }, { value: 'barcode', label: 'Barcode' }, { value: 'portion', label: 'Auswärts' }], mode,
-    (v) => { mode = v; bc.stopCamera(); host.innerHTML = ''; host.appendChild(v === 'food' ? foodPane : v === 'barcode' ? bc.node : portionPane); }, { label: 'Art der Erfassung' });
+  const modeCtl = segmented([{ value: 'food', label: t('nutrition.modeFood') }, { value: 'barcode', label: t('nutrition.modeBarcode') }, { value: 'portion', label: t('nutrition.modeOut') }], mode,
+    (v) => { mode = v; bc.stopCamera(); host.innerHTML = ''; host.appendChild(v === 'food' ? foodPane : v === 'barcode' ? bc.node : portionPane); }, { label: t('nutrition.modeLabel') });
   openSheet({
-    title: 'Gegessenes erfassen',
+    title: t('nutrition.logEaten'),
     body: el('div', {}, [el('div', { class: 'mb-3' }, [modeCtl]), host]),
     onClose: () => bc.stopCamera(),   // Kamera nie weiterlaufen lassen
     footer: [
-      el('button', { class: 'btn btn--ghost grow', text: 'Abbrechen', onclick: () => closeSheet() }),
+      el('button', { class: 'btn btn--ghost grow', text: t('common.cancel'), onclick: () => closeSheet() }),
       el('button', {
-        class: 'btn btn--primary grow', text: 'Erfassen',
+        class: 'btn btn--primary grow', text: t('nutrition.log'),
         onclick: () => {
           if (mode === 'food') {
             const r = estimate();
-            if (!r) { toast('Bitte angeben, was du gegessen hast', 'bad'); return; }
+            if (!r) { toast(t('nutrition.enterWhat'), 'bad'); return; }
             save({ title: foodI.value.trim(), kcal: r.kcal, protein: r.protein });
             return;
           }
           if (mode === 'barcode') {
             const r = bc.result();
-            if (!r) { toast('Erst ein Produkt suchen und die Menge angeben', 'bad'); return; }
+            if (!r) { toast(t('nutrition.findProduct'), 'bad'); return; }
             bc.stopCamera();
             save(r);
             return;
           }
-          save({ title: titleI.value.trim() || 'Auswärts gegessen', kcal: parseInt(kcalI.value) || PORTION_KCAL.mittel });
+          save({ title: titleI.value.trim() || t('nutrition.ateOut'), kcal: parseInt(kcalI.value) || PORTION_KCAL.mittel });
         },
       }),
     ],
@@ -467,28 +469,28 @@ function mealCard(m, isRec = false) {
     el('div', { class: 'row row--between' }, [
       el('div', { class: 'card__title grow', text: m.title }),
       el('button', {
-        class: 'icon-btn', 'aria-label': m.favorite ? 'Favorit entfernen' : 'Als Favorit',
+        class: 'icon-btn', 'aria-label': m.favorite ? t('nutrition.unfavourite') : t('nutrition.favourite'),
         style: { color: m.favorite ? '#ef5d6c' : 'var(--text-3)' },
         onclick: () => { store.patch('nutrition', m.id, { favorite: !m.favorite }); rerender(); },
       }, icon('heart')),
-      el('button', { class: 'icon-btn', 'aria-label': 'Bearbeiten', onclick: () => openMealForm(m) }, icon('edit')),
+      el('button', { class: 'icon-btn', 'aria-label': t('nutrition.edit'), onclick: () => openMealForm(m) }, icon('edit')),
     ]),
     el('div', { class: 'row wrap gap-2 mt-2' }, [
-      isRec ? el('span', { class: 'chip chip--accent', text: 'passt zu deinen Vorlieben' }) : null,
-      m.plannedServings > 0 ? el('span', { class: 'chip chip--accent', text: `${m.plannedServings}× im Wochenplan` }) : null,
-      cooked > 0 ? el('span', { class: 'chip chip--good', text: `${cooked}× gekocht` }) : null,
+      isRec ? el('span', { class: 'chip chip--accent', text: t('nutrition.matchesTastes') }) : null,
+      m.plannedServings > 0 ? el('span', { class: 'chip chip--accent', text: t('nutrition.inWeekPlan', { n: m.plannedServings }) }) : null,
+      cooked > 0 ? el('span', { class: 'chip chip--good', text: t('nutrition.cookedTimes', { n: cooked }) }) : null,
       m.kcal && !currentEligibility().hideNumbers ? el('span', { class: 'chip', text: `${fmtInt(m.kcal)} kcal` }) : null,
-      m.protein ? el('span', { class: 'chip', text: `${m.protein} g Protein` }) : null,
-      ...(m.tags || []).map((t) => el('span', { class: 'chip', text: t })),
+      m.protein ? el('span', { class: 'chip', text: t('nutrition.proteinG', { g: m.protein }) }) : null,
+      ...(m.tags || []).map((tag) => el('span', { class: 'chip', text: tag })),
     ]),
     m.ingredients?.length ? el('div', { class: 'muted mt-2', style: { fontSize: '.84rem' }, text: m.ingredients.join(' · ') }) : null,
     m.note ? el('div', { class: 'dim mt-2', style: { fontSize: '.8rem' }, text: m.note }) : null,
     el('div', { class: 'row row--between mt-3', style: { alignItems: 'center' } }, [
       el('div', { class: 'row gap-2', style: { alignItems: 'center' } }, [
-        el('span', { class: 'dim', style: { fontSize: '.76rem' }, html: iconSvg('cart'), title: 'Portionen für die Woche' }),
+        el('span', { class: 'dim', style: { fontSize: '.76rem' }, html: iconSvg('cart'), title: t('nutrition.servingsForWeek') }),
         stepper(m.plannedServings || 0, { min: 0, max: 14, onChange: (v) => { store.patch('nutrition', m.id, { plannedServings: v }); } }),
       ]),
-      el('button', { class: 'btn btn--soft', onclick: () => markCooked(m) }, [icon('check'), 'Gekocht']),
+      el('button', { class: 'btn btn--soft', onclick: () => markCooked(m) }, [icon('check'), t('nutrition.cooked')]),
     ]),
   ]);
 }
@@ -504,29 +506,29 @@ function markCooked(m) {
   if (m.kcal) store.upsert('diary', { id: uid('d'), date: todayStr(), title: m.title, kcal: m.kcal, protein: m.protein || null, source: 'cooked', mealId: m.id });
   const nextPantry = applyConsumption(store.familyPantry(), m.ingredients, 1);
   store.setFamilyPantry(nextPantry);
-  toast(`„${m.title}“ gekocht – im Ess-Tagebuch erfasst, Zutaten gebucht.`, 'good');
+  toast(t('nutrition.cookedToast', { title: m.title }), 'good');
   rerender();
 }
 
 function openMealForm(existing = null) {
   const m = existing || { category: 'fruehstueck' };
-  const titleI = input({ value: m.title || '', placeholder: 'Titel' });
+  const titleI = input({ value: m.title || '', placeholder: t('nutrition.title') });
   const catI = select(CATS.map((c) => ({ value: c.key, label: c.label })), m.category || 'fruehstueck');
   const kcalI = input({ type: 'number', value: m.kcal || '', placeholder: 'kcal', inputmode: 'numeric' });
   const protI = input({ type: 'number', value: m.protein || '', placeholder: 'g', inputmode: 'numeric' });
-  const ingI = textarea({ value: (m.ingredients || []).join('\n'), placeholder: 'Eine Zutat pro Zeile' });
-  const tagsI = input({ value: (m.tags || []).join(', '), placeholder: 'Tags, z. B. proteinreich, vegetarisch' });
-  const noteI = input({ value: m.note || '', placeholder: 'Notiz' });
+  const ingI = textarea({ value: (m.ingredients || []).join('\n'), placeholder: t('nutrition.ingredientsPlaceholder') });
+  const tagsI = input({ value: (m.tags || []).join(', '), placeholder: t('nutrition.tagsPlaceholder') });
+  const noteI = input({ value: m.note || '', placeholder: t('nutrition.note') });
 
   // kcal-Feld mit Schätzhilfe aus den Zutaten (#26)
   const kcalField = el('div', { class: 'row gap-2', style: { alignItems: 'center' } }, [
     el('div', { class: 'grow' }, kcalI),
     el('button', {
-      class: 'btn btn--soft', type: 'button', title: 'Aus den Zutaten schätzen (Nährwerte via Open Food Facts, falls aktiviert)',
+      class: 'btn btn--soft', type: 'button', title: t('nutrition.estimateTitle'),
       onclick: async (e) => {
         const list = ingI.value.split('\n').map((x) => x.trim()).filter(Boolean);
-        if (!list.length) { toast('Erst Zutaten eintragen', 'bad'); return; }
-        const btn = e.currentTarget; btn.disabled = true; btn.textContent = 'schätze …';
+        if (!list.length) { toast(t('nutrition.addIngredientsFirst'), 'bad'); return; }
+        const btn = e.currentTarget; btn.disabled = true; btn.textContent = t('nutrition.estimating');
         // Echte Nährwerte je Zutat von Open Food Facts holen (nur wenn aktiviert).
         let map = null;
         if (store.foodLookupEnabled()) {
@@ -536,33 +538,33 @@ function openMealForm(existing = null) {
         }
         const lookup = map ? (name) => map[String(name).toLowerCase()] || null : null;
         const est = estimateNutrition(list, lookup);
-        btn.disabled = false; btn.replaceChildren(icon('zap'), document.createTextNode('schätzen'));
-        if (!est) { toast('Erst Zutaten eintragen', 'bad'); return; }
+        btn.disabled = false; btn.replaceChildren(icon('zap'), document.createTextNode(t('nutrition.estimate')));
+        if (!est) { toast(t('nutrition.addIngredientsFirst'), 'bad'); return; }
         kcalI.value = est.kcal;
         if (est.protein != null && !protI.value) protI.value = est.protein;
         const off = map ? Object.keys(map).length : 0;
-        toast(`Geschätzt: ~${est.kcal} kcal${est.protein != null ? `, ${est.protein} g Protein` : ''}${off ? ` · ${off}× Open Food Facts` : ''}`, 'good');
+        toast(`${t('nutrition.estimatedPrefix')} ~${est.kcal} kcal${est.protein != null ? `, ${t('nutrition.proteinG', { g: est.protein })}` : ''}${off ? ` · ${t('nutrition.offCount', { n: off })}` : ''}`, 'good');
       },
-    }, [icon('zap'), 'schätzen']),
+    }, [icon('zap'), t('nutrition.estimate')]),
   ]);
 
   openSheet({
-    title: existing ? 'Mahlzeit bearbeiten' : 'Neue Mahlzeit',
+    title: existing ? t('nutrition.editMeal') : t('nutrition.newMeal'),
     body: el('div', {}, [
-      field('Titel', titleI),
-      el('div', { class: 'field__row' }, [field('Kategorie', catI), field('Protein (g)', protI)]),
+      field(t('nutrition.title'), titleI),
+      el('div', { class: 'field__row' }, [field(t('nutrition.category'), catI), field(t('nutrition.proteinLabel'), protI)]),
       field('kcal', kcalField),
-      field('Zutaten', ingI),
-      field('Tags', tagsI),
-      field('Notiz', noteI),
+      field(t('nutrition.ingredients'), ingI),
+      field(t('nutrition.tags'), tagsI),
+      field(t('nutrition.note'), noteI),
     ]),
     footer: [
-      existing ? el('button', { class: 'btn btn--danger', 'aria-label': 'Löschen', onclick: async () => { if (await confirmDialog({ title: 'Löschen?', confirmLabel: 'Löschen', danger: true })) { store.remove('nutrition', existing.id); closeSheet(); toast('Gelöscht'); rerender(); } } }, icon('trash')) : null,
-      el('button', { class: 'btn btn--ghost grow', text: 'Abbrechen', onclick: () => closeSheet() }),
+      existing ? el('button', { class: 'btn btn--danger', 'aria-label': t('nutrition.delete'), onclick: async () => { if (await confirmDialog({ title: t('nutrition.deleteQ'), confirmLabel: t('nutrition.delete'), danger: true })) { store.remove('nutrition', existing.id); closeSheet(); toast(t('nutrition.deleted')); rerender(); } } }, icon('trash')) : null,
+      el('button', { class: 'btn btn--ghost grow', text: t('common.cancel'), onclick: () => closeSheet() }),
       el('button', {
-        class: 'btn btn--primary grow', text: 'Speichern',
+        class: 'btn btn--primary grow', text: t('nutrition.save'),
         onclick: () => {
-          if (!titleI.value.trim()) { toast('Titel fehlt', 'bad'); return; }
+          if (!titleI.value.trim()) { toast(t('nutrition.titleMissing'), 'bad'); return; }
           store.upsert('nutrition', {
             ...m, id: m.id || uid('n'), title: titleI.value.trim(), category: catI.value,
             kcal: parseInt(kcalI.value) || null, protein: parseInt(protI.value) || null,
@@ -570,7 +572,7 @@ function openMealForm(existing = null) {
             tags: tagsI.value.split(',').map((x) => x.trim()).filter(Boolean),
             note: noteI.value.trim(),
           });
-          closeSheet(); toast('Gespeichert', 'good'); rerender();
+          closeSheet(); toast(t('nutrition.saved'), 'good'); rerender();
         },
       }),
     ],
@@ -584,8 +586,8 @@ function rerender() { rerenderView(render); }
 export function moduleOff(name) {
   return el('div', { class: 'empty', style: { paddingTop: '60px' } }, [
     el('div', { class: 'empty__icon', html: iconSvg('settings') }),
-    el('div', { class: 'empty__title', text: `${name} ist deaktiviert` }),
-    el('div', { class: 'muted', text: 'Du kannst dieses Modul in den Einstellungen aktivieren.' }),
-    el('button', { class: 'btn btn--soft mt-4', onclick: () => navigate('#/settings'), text: 'Zu den Einstellungen' }),
+    el('div', { class: 'empty__title', text: t('nutrition.moduleOff', { name }) }),
+    el('div', { class: 'muted', text: t('nutrition.moduleOffHint') }),
+    el('button', { class: 'btn btn--soft mt-4', onclick: () => navigate('#/settings'), text: t('nutrition.toSettings') }),
   ]);
 }

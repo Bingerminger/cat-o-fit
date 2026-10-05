@@ -801,9 +801,9 @@ export function stepper(value, { min = 0, max = 999, step = 1, onChange = () => 
   const valEl = el('span', { class: 'stepper__val num', text: String(v) });
   const set = (nv) => { v = clamp(nv, min, max); valEl.textContent = String(v); onChange(v); };
   return el('div', { class: 'stepper' }, [
-    el('button', { class: 'stepper__btn', 'aria-label': 'weniger', onclick: () => set(v - step) }, '−'),
+    el('button', { class: 'stepper__btn', 'aria-label': t('stepper.less'), onclick: () => set(v - step) }, '−'),
     valEl,
-    el('button', { class: 'stepper__btn', 'aria-label': 'mehr', onclick: () => set(v + step) }, '+'),
+    el('button', { class: 'stepper__btn', 'aria-label': t('stepper.more'), onclick: () => set(v + step) }, '+'),
   ]);
 }
 

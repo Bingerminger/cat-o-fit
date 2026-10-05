@@ -1867,5 +1867,319 @@
       "otherTitle": "Training",
       "otherDesc": "Easy movement session."
     }
+  },
+  "food": {
+    "asNeeded": "as needed",
+    "unit": {
+      "g": {
+        "one": "g",
+        "other": "g"
+      },
+      "ml": {
+        "one": "ml",
+        "other": "ml"
+      },
+      "tbsp": {
+        "one": "tbsp",
+        "other": "tbsp"
+      },
+      "tsp": {
+        "one": "tsp",
+        "other": "tsp"
+      },
+      "pinch": {
+        "one": "pinch",
+        "other": "pinches"
+      },
+      "bunch": {
+        "one": "bunch",
+        "other": "bunches"
+      },
+      "clove": {
+        "one": "clove",
+        "other": "cloves"
+      },
+      "piece": {
+        "one": "piece",
+        "other": "pieces"
+      },
+      "slice": {
+        "one": "slice",
+        "other": "slices"
+      },
+      "can": {
+        "one": "can",
+        "other": "cans"
+      },
+      "pack": {
+        "one": "pack",
+        "other": "packs"
+      },
+      "pot": {
+        "one": "pot",
+        "other": "pots"
+      },
+      "jar": {
+        "one": "jar",
+        "other": "jars"
+      }
+    }
+  },
+  "shopping": {
+    "servings": {
+      "one": "{count} serving",
+      "other": "{count} servings"
+    },
+    "inPantry": "In pantry: {amount}",
+    "removeNamed": "“{name}” will be deleted from the shared family pantry.",
+    "pantryEntry": "Pantry item",
+    "nextShop": "Next shared shopping trip",
+    "needsMinusPantry": "What all meal plans need, minus the shared pantry",
+    "loadingPlans": "Loading shared meal plans …",
+    "plansFailed": "Couldn’t load the meal plans.",
+    "weekPlan": "Shared weekly plan",
+    "planMeals": "Plan meals",
+    "noMealsPlanned": "No meals planned yet. Everyone plans their own meals and servings under Nutrition – that’s what builds the shared shopping list.",
+    "toNutrition": "Go to Nutrition",
+    "toBuy": "To buy",
+    "allInPantry": "Everything is in the pantry – nothing to buy this week!",
+    "boughtAll": "Bought everything → add to pantry",
+    "sharedPantry": "Shared pantry",
+    "pantryEmpty": "The shared pantry is empty. Whatever you buy ends up here – or add supplies with “+”.",
+    "delete": "Delete",
+    "boughtToast": "Bought & added to the shared pantry 🛒",
+    "removeQ": "Remove from the pantry?",
+    "remove": "Remove",
+    "namePlaceholder": "e.g. oats",
+    "amount": "Amount",
+    "newItem": "New supply",
+    "article": "Item",
+    "unit": "Unit",
+    "save": "Save",
+    "nameMissing": "Name is missing",
+    "removeEntry": "This item will be deleted from the shared pantry.",
+    "catProduce": "Fruit & veg",
+    "catDairy": "Dairy",
+    "catMeatFish": "Meat & fish",
+    "catDry": "Dry goods",
+    "catOther": "Other"
+  },
+  "checklist": {
+    "category": {
+      "routine": "Routine",
+      "training": "Training",
+      "health": "Health",
+      "errand": "Errand",
+      "appointment": "Appointment"
+    },
+    "templates": {
+      "racePrep": {
+        "label": "🏁 Race preparation",
+        "items": [
+          "Lay out your race pack and bib number",
+          "Pack your race kit and shoes",
+          "Prepare food and gels",
+          "Check the route and start time",
+          "Go to bed early the night before",
+          "Set your alarm",
+          "Eat light and carb-rich"
+        ]
+      },
+      "raceBag": {
+        "label": "🎒 Race packing list",
+        "items": [
+          "Bib number + safety pins",
+          "Running shoes & race socks",
+          "Technical top & shorts",
+          "Gels / bars",
+          "Water bottle",
+          "Change of clothes & towel",
+          "Plasters / tape",
+          "Sunscreen / hat"
+        ]
+      },
+      "recovery": {
+        "label": "🧘 Recovery day",
+        "items": [
+          "10 min mobility / stretching",
+          "Drink enough",
+          "Sleep early",
+          "Easy movement / a walk"
+        ]
+      }
+    },
+    "doneToday": "{done} of {total} done today",
+    "editItem": "Edit “{text}”",
+    "deleteItem": "Delete “{text}”",
+    "templateAdded": "“{label}” added ({n} items)",
+    "icsFile": "reminder-{date}.ics",
+    "subtitle": "Routines & reminders",
+    "template": "Template",
+    "resetRoutines": "Reset routines",
+    "add": "Add",
+    "emptyTitle": "Nothing planned yet",
+    "emptyText": "Add daily routines or an appointment with a reminder – or start with a template.",
+    "addItem": "Add an item",
+    "useTemplate": "Use a template",
+    "allDone": "All done – nice work! ✨",
+    "stepByStep": "One step at a time.",
+    "dueToday": "Due today",
+    "upcoming": "Coming up",
+    "dailyRoutines": "Daily routines",
+    "frequent": "Often used",
+    "markOpen": "Mark as open",
+    "tick": "Tick off",
+    "addToCalendar": "Add to calendar (.ics)",
+    "delete": "Delete",
+    "deleted": "Deleted",
+    "taskPlaceholder": "e.g. 10 min mobility",
+    "date": "Date",
+    "timeOptional": "Time (optional)",
+    "kindRoutine": "Daily routine",
+    "kindDated": "Appointment with a date",
+    "editTitle": "Edit item",
+    "newTitle": "New item",
+    "task": "Task",
+    "kind": "Type",
+    "categoryField": "Category",
+    "save": "Save",
+    "enterTask": "Please enter a task",
+    "saved": "Saved",
+    "added": "Added",
+    "icsReady": "Calendar file ready – open it to add it",
+    "routinesReset": "Routines reset"
+  },
+  "nutrition": {
+    "catBreakfast": "Breakfast",
+    "catLunch": "Lunch",
+    "catDinner": "Dinner",
+    "catSnack": "Snack",
+    "loadIdeas": "Load {n} recipe ideas",
+    "addIdeas": {
+      "one": "Add {count} recipe idea",
+      "other": "Add {count} recipe ideas"
+    },
+    "ideasAdded": {
+      "one": "{count} recipe idea added",
+      "other": "{count} recipe ideas added"
+    },
+    "balanceDetail": "Resting metabolism {bmr} kcal · Burn incl. daily life & exercise {out} · Daily target ~{target} kcal",
+    "cookedTag": "cooked",
+    "kcalPer100": "{kcal} kcal per 100 g",
+    "noKcal": "no calorie info",
+    "gProtein": "{g} g protein",
+    "estSource": "estimated from the nutrition table",
+    "inWeekPlan": "{n}× in the weekly plan",
+    "cookedTimes": "cooked {n}×",
+    "proteinG": "{g} g protein",
+    "cookedToast": "“{title}” cooked – logged in your food diary, ingredients deducted.",
+    "estimatedPrefix": "Estimated:",
+    "moduleOff": "{name} is turned off",
+    "add": "Add",
+    "emptyTitle": "No meals yet",
+    "emptyText": "Load ready-made recipe ideas or add your own meals – they feed your weekly plan and shopping list.",
+    "addOwn": "Add your own meal",
+    "learnHint": "Mark favourite meals with ♥ and tap “Cooked” – Cat-O-Fit learns what you like and suggests meals that fit.",
+    "favourites": "❤ Favourite meals",
+    "recommended": "Recommended for you",
+    "eatDrinkToday": "Food & drink today",
+    "logEaten": "Log what you ate",
+    "needProfile": "Enter your height, weight and year of birth in your profile and Cat-O-Fit will show your calorie balance here.",
+    "toProfile": "Go to profile",
+    "goalOpen": "Goal: not set yet",
+    "goalLose": "Goal: lose weight",
+    "goalGain": "Goal: gain weight",
+    "goalMaintain": "Goal: maintain weight",
+    "bmiBlock": "Your target weight is below a healthy range (BMI under 18.5). Cat-O-Fit doesn’t recommend a calorie deficit for that – please check the goal in Settings.",
+    "belowTarget": "You’re below your target weight – the daily target keeps your weight steady. Does the goal still fit?",
+    "qualOk": "You’re within your target range.",
+    "qualHigh": "A bit more than your daily target today.",
+    "qualLow": "A bit less than your daily target today – make sure you eat enough.",
+    "qualNone": "No meal logged for today yet.",
+    "balanceToday": "Calorie balance today",
+    "statIntake": "eaten",
+    "statOut": "burned",
+    "statBalance": "balance",
+    "gatePrompt": "Before Cat-O-Fit suggests a daily target for losing weight, one quick question: is there anything that speaks against it (e.g. pregnancy or an eating disorder)?",
+    "energyLink": "Energy supply over several days: Labs & supplements →",
+    "eatenToday": "EATEN TODAY",
+    "deleteEntry": "Delete entry",
+    "entryDeleted": "Entry deleted",
+    "markRemoved": "Mark removed",
+    "dayMarked": "Day marked as fully logged",
+    "dayLogged": "Day fully logged",
+    "dayMark": "Mark day complete",
+    "barcodePlaceholder": "8 or 13 digits",
+    "barcodeAria": "Barcode (EAN)",
+    "gramsAria": "Amount in grams",
+    "badBarcode": "That isn’t a valid barcode (8 or 13 digits, the last one is a check digit).",
+    "lookupOff": "Looking things up on Open Food Facts is turned off (Settings → Nutrition).",
+    "turnOnSearch": "Turn on and search",
+    "searching": "Searching …",
+    "notFound": "Not found (or offline). Add the product under “Food” instead.",
+    "cameraOff": "Camera not available – please type in the code",
+    "scan": "Scan",
+    "barcode": "Barcode",
+    "search": "Search",
+    "amountGml": "Amount (g or ml)",
+    "offCredit": "Data from Open Food Facts (ODbL). Lookups go through your server – only the barcode is sent out.",
+    "logged": "Logged – included in today’s balance",
+    "foodPlaceholder": "e.g. 200 g skyr, 1 banana",
+    "estHint": "It gets more accurate with an amount: “200 g”, “250 ml”, “1 apple”.",
+    "estHide": "Counts roughly towards today’s overview.",
+    "whatHowMuch": "What & how much",
+    "recentlyEaten": "Recently eaten",
+    "logForToday": "Log for today",
+    "outPlaceholder": "e.g. canteen, restaurant, snack",
+    "portionHintHide": "Ate out? Pick a portion size – it counts roughly towards today’s overview.",
+    "portionHint": "Ate out? Pick a portion size – the kcal are roughly estimated and count towards today’s balance.",
+    "what": "What",
+    "portionSize": "Portion size",
+    "kcalAdjustable": "kcal (adjustable)",
+    "modeFood": "Food",
+    "modeBarcode": "Barcode",
+    "modeOut": "Eating out",
+    "modeLabel": "How to log",
+    "log": "Log",
+    "enterWhat": "Please say what you ate",
+    "findProduct": "Search for a product first and enter the amount",
+    "ateOut": "Ate out",
+    "unfavourite": "Remove from favourites",
+    "favourite": "Mark as favourite",
+    "edit": "Edit",
+    "matchesTastes": "fits what you like",
+    "servingsForWeek": "Servings for the week",
+    "cooked": "Cooked",
+    "title": "Title",
+    "ingredientsPlaceholder": "One ingredient per line",
+    "tagsPlaceholder": "Tags, e.g. high-protein, vegetarian",
+    "note": "Note",
+    "estimateTitle": "Estimate from the ingredients (nutrition values via Open Food Facts, if enabled)",
+    "addIngredientsFirst": "Add ingredients first",
+    "estimating": "estimating …",
+    "estimate": "estimate",
+    "editMeal": "Edit meal",
+    "newMeal": "New meal",
+    "category": "Category",
+    "proteinLabel": "Protein (g)",
+    "ingredients": "Ingredients",
+    "tags": "Tags",
+    "delete": "Delete",
+    "deleteQ": "Delete?",
+    "deleted": "Deleted",
+    "save": "Save",
+    "titleMissing": "Title is missing",
+    "saved": "Saved",
+    "moduleOffHint": "You can turn this module on in Settings.",
+    "toSettings": "Go to settings",
+    "sizeSmall": "Small",
+    "sizeMedium": "Medium",
+    "sizeLarge": "Large",
+    "sizeRestaurant": "Restaurant",
+    "offCount": "{n}× Open Food Facts"
+  },
+  "stepper": {
+    "less": "less",
+    "more": "more"
   }
 }
