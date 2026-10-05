@@ -1,9 +1,9 @@
 /* =========================================================================
-   weather.js — Wetter im Trainingsplan (Open-Meteo, schlüssellos, CORS-fähig).
-   - Standort wird als Koordinaten in den Profil-Einstellungen gespeichert.
-   - Forecast (bis 16 Tage) wird im LocalStorage zwischengespeichert.
-   - Offline-robust: ohne Netz einfach keine Wetterdaten, App läuft weiter.
-   Bewusste Ausnahme vom „kein externer Dienst“-Prinzip – Wetter geht nicht ohne.
+   weather.js — weather in the training plan (Open-Meteo, keyless, CORS-capable).
+   - Location is stored as coordinates in the profile settings.
+   - Forecast (up to 16 days) is cached in LocalStorage.
+   - Offline-robust: without a network simply no weather data, the app keeps running.
+   Deliberate exception to the "no external service" principle – weather is impossible without it.
    ========================================================================= */
 
 import { typeMeta } from './ui.js';
@@ -12,11 +12,11 @@ import { locale, t } from './i18n.js';
 
 const GEO_URL = 'https://geocoding-api.open-meteo.com/v1/search';
 const FC_URL = 'https://api.open-meteo.com/v1/forecast';
-const CACHE_TTL = 60 * 60 * 1000; // 1 Stunde
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
 /** Stadtname -> Koordinaten (erstes Ergebnis). */
-/** Bis zu fünf Treffer mit Region und Land – bei mehrdeutigen Namen (Neustadt, Frankfurt,
-    Halle) wählt die Person selbst; vorher galt ungefragt der erste Treffer (UI-40). */
+/** Up to five hits with region and country – for ambiguous names (Neustadt, Frankfurt,
+    Halle) the person chooses themselves; before, the first hit was taken without asking (UI-40). */
 export async function geocode(name) {
   const r = await fetch(`${GEO_URL}?name=${encodeURIComponent(name)}&count=5&language=${locale().split('-')[0]}&format=json`);
   const j = await r.json();
@@ -26,7 +26,7 @@ export async function geocode(name) {
   }));
 }
 
-/** „Frankfurt (Oder), Brandenburg, DE“ – Anzeigename eines Treffers. */
+/** "Frankfurt (Oder), Brandenburg, DE" – display name of a hit. */
 export function placeLabel(g) {
   return [g.name, g.region, g.country].filter(Boolean).join(', ');
 }
@@ -59,7 +59,7 @@ export function cachedWeather() {
   return mem;
 }
 
-/** Holt/erneuert den Forecast für den Standort (mit Cache + Offline-Fallback). */
+/** Fetches/renews the forecast for the location (with cache + offline fallback). */
 export async function refreshWeather(location, force = false) {
   if (!location || location.lat == null) return null;
   const cache = cachedWeather();
@@ -73,11 +73,11 @@ export async function refreshWeather(location, force = false) {
     window.dispatchEvent(new Event('catofit:weather'));
     return mem;
   } catch {
-    return cache; // offline -> alter Stand
+    return cache; // offline -> old state
   }
 }
 
-/** Wetter für ein bestimmtes Datum (oder null außerhalb des Forecasts). */
+/** Weather for a given date (or null outside the forecast). */
 export function weatherForDate(dateStr) {
   const c = cachedWeather();
   return c && c.days ? c.days[dateStr] || null : null;
@@ -98,9 +98,9 @@ export function wmo(code) {
 }
 
 /**
- * Wie viel langsamer bei Wärme (Prozent der Pace): ab 20 °C etwa 0,4 % je Grad über 15 °C,
- * höchstens 8 %. Eine Faustregel aus der Laufliteratur (Luftfeuchte bleibt außen vor) –
- * lieber etwas langsamer als am Ende einbrechen.
+ * How much slower in warm weather (percent of pace): from 20 °C roughly 0.4 % per degree above 15 °C,
+ * at most 8 %. A rule of thumb from the running literature (humidity is left out) –
+ * better a bit slower than collapsing at the end.
  */
 export function heatSlowdownPct(tMax) {
   const temp = Number(tMax);
@@ -109,7 +109,7 @@ export function heatSlowdownPct(tMax) {
 }
 
 /**
- * Wetter-Hinweis für eine geplante Einheit (nur für Läufe sinnvoll).
+ * Weather hint for a planned session (only sensible for runs).
  * @returns {{text:string, tone:string}|null}
  */
 export function weatherHint(unit, w) {
@@ -127,7 +127,7 @@ export function weatherHint(unit, w) {
   return null;
 }
 
-/** Kompakte Anzeige-Daten (Emoji + Temperatur) für Kalenderzellen. */
+/** Compact display data (emoji + temperature) for calendar cells. */
 export function weatherBadge(dateStr) {
   const w = weatherForDate(dateStr);
   if (!w) return null;

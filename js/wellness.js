@@ -1,10 +1,10 @@
 /* =========================================================================
-   wellness.js — Eignung & Energieziele für die Ansichten (dünne Schicht über
-   eligibility.js / energy.js / redflags.js, liest den Store).
+   wellness.js — eligibility and energy targets for the views (a thin layer on
+   top of eligibility.js / energy.js / redflags.js; reads the store).
 
-   Ernährung, „Heute“, Einstellungen, Programme und Labor fragen hier denselben
-   Eignungsstatus und dieselben Energieziele ab – eine Quelle statt vier
-   Rechnungen, die sich widersprechen.
+   Nutrition, Today, settings, programmes and labs all ask here for the same
+   eligibility status and the same energy targets – one source instead of four
+   calculations that contradict each other.
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -16,12 +16,12 @@ import { phaseEmphasis } from './dualgoal.js';
 
 import { t, tp } from './i18n.js';
 
-/** Eignungsstatus der gerade betrachteten Person. */
+/** Eligibility status of the person currently being viewed. */
 export function currentEligibility(today = todayStr()) {
   return eligibilityFor({ profile: store.profile(), settings: store.settings(), today });
 }
 
-/** Energieziele (Bilanz, Zielgewicht-Status, Defizit) der gerade betrachteten Person. */
+/** Energy targets (balance, target-weight status, deficit) of the person currently being viewed. */
 export function currentEnergyTargets(today = todayStr()) {
   const profile = store.profile();
   const health = store.get('health');
@@ -36,8 +36,8 @@ export function currentEnergyTargets(today = todayStr()) {
 }
 
 /**
- * Abgrenzungs-Dialog (für die ganze App). Keine Vorbelegung: Gespeichert wird erst,
- * wenn jede Frage bewusst beantwortet ist. Das Alter kommt aus dem Geburtsjahr.
+ * Scope-check dialog (for the whole app). No pre-filled answers: nothing is saved
+ * until every question has been answered deliberately. Age is derived from the birth year.
  */
 export function openGateSheet({ onSaved = null } = {}) {
   const profile = store.profile();
@@ -93,7 +93,7 @@ export function openGateSheet({ onSaved = null } = {}) {
   });
 }
 
-/** Kleine Karte „Einmal kurz beantworten“, solange die Abgrenzung fehlt. */
+/** Small card "Answer once, briefly" while the scope check is missing. */
 export function gatePromptCard(text, onSaved) {
   return el('div', { class: 'card card--flat mt-2' }, [
     el('div', { class: 'muted', style: { fontSize: '.84rem' }, text }),

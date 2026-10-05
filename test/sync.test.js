@@ -1,10 +1,10 @@
-/* Tests für das server-autoritative Sync-Modell (Option B, v3.0.0).
-   Ein In-Memory-„Server“ mockt fetch und wendet Ops an (vergibt rev), sodass
-   die Merge-Invarianten ohne echtes Backend prüfbar sind:
-     - Push vergibt eine server-rev, Pull ist inkrementell.
-     - Zwei Geräte, verschiedene Datensätze -> beide überleben (kein Verlust).
-     - Letzter-Schreiber-pro-Datensatz nach server-rev, Tombstones propagieren.
-     - Offline gepufferte Ops fließen beim nächsten Sync nach. */
+/* Tests for the server-authoritative sync model (option B, v3.0.0).
+   An in-memory "server" mocks fetch and applies ops (assigns rev), so that
+   the merge invariants can be checked without a real backend:
+     - A push assigns a server rev, pull is incremental.
+     - Two devices, different records -> both survive (no loss).
+     - Last writer per record by server rev, tombstones propagate.
+     - Ops buffered offline flow in at the next sync. */
 import { test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import * as store from '../js/storage.js';
@@ -58,7 +58,7 @@ function installMock(reset = true) {
       const applied = applyOps(s, body.ops || []);
       return jsonResp({ ok: true, rev: s.rev, records: applied });
     }
-    // GET ?area= -> logische Sicht
+    // GET ?area= -> logical view
     const data = Object.values(s.records).filter((r) => !r.deleted).map((r) => { const c = { ...r }; delete c.rev; return c; });
     return jsonResp({ ok: true, data });
   };
@@ -73,53 +73,53 @@ beforeEach(async () => {
 });
 afterEach(() => { globalThis.fetch = realFetch; });
 
-test('Push vergibt eine server-rev; lokale rev-Marke zieht nach', async () => {
+test('Push assigns a server rev; the local rev marker catches up', async () => {
   store.upsert('events', { id: 'a', name: 'A' });
   await store.syncNow();
   const s = srv(key('events', 'user', 'u-1'));
-  assert.ok((s.records['a'].rev || 0) > 0, 'Server vergibt rev');
+  assert.ok((s.records['a'].rev || 0) > 0, 'server assigns rev');
   const meta = JSON.parse(localStorage.getItem(scopeKey('u-1:__meta')) || '{}');
-  assert.equal(meta.revs.events, s.rev, 'lokale rev == server-rev');
+  assert.equal(meta.revs.events, s.rev, 'local rev == server rev');
 });
 
-test('Zwei Geräte, verschiedene Datensätze -> beide überleben (kein Verlust)', async () => {
-  store.upsert('events', { id: 'a', name: 'Gerät A' });     // Gerät A
+test('Two devices, different records -> both survive (no loss)', async () => {
+  store.upsert('events', { id: 'a', name: 'Gerät A' });     // device A
   await store.syncNow();
-  // Gerät B schreibt direkt auf den Server
+  // Device B writes directly to the server
   const s = srv(key('events', 'user', 'u-1'));
   s.records['b'] = { id: 'b', name: 'Gerät B', rev: ++s.rev, updatedAt: new Date().toISOString() };
-  await store.syncNow();                                     // Gerät A pullt
+  await store.syncNow();                                     // device A pulls
   assert.deepEqual(store.get('events').map((e) => e.id).sort(), ['a', 'b']);
 });
 
-test('Konkurrierender Edit am selben Datensatz: höhere server-rev gewinnt', async () => {
+test('Concurrent edit on the same record: higher server rev wins', async () => {
   store.upsert('events', { id: 'a', name: 'alt' });
   await store.syncNow();
-  // Gerät B überschreibt a mit höherer rev
+  // Device B overwrites a with a higher rev
   const s = srv(key('events', 'user', 'u-1'));
   s.records['a'] = { id: 'a', name: 'neu von B', rev: ++s.rev, updatedAt: new Date().toISOString() };
   await store.syncNow();
   assert.equal(store.find('events', 'a').name, 'neu von B');
 });
 
-test('Mehrere Profil-Upserts vor dem Push: neueste Felder bleiben (Regression v3.3.1)', async () => {
-  // Wie bei seedDemo / schnellen Profil-Edits: Profil + zwei Settings in Folge,
-  // BEVOR gepusht wird. Seit v3.20.0 verdichtet die Queue Ops desselben Datensatzes:
-  // Es bleibt genau EINE Profil-Op mit allen Feldern (früher drei, und der Server
-  // lieferte mehrere 'profile'-Records, von denen fälschlich der erste gewann).
+test('Several profile upserts before the push: newest fields remain (regression v3.3.1)', async () => {
+  // As with seedDemo / quick profile edits: profile + two settings in a row,
+  // BEFORE pushing. Since v3.20.0 the queue compacts ops of the same record:
+  // exactly ONE profile op with all fields remains (previously three, and the server
+  // returned several 'profile' records, of which the first wrongly won).
   store.setProfile({ name: 'Nora' });
   store.setSetting('location', { name: 'Dresden', lat: 51.05, lon: 13.74 });
   store.setSetting('weather', true);
   const meta = JSON.parse(localStorage.getItem(scopeKey('u-1:__meta')) || '{}');
-  assert.equal((meta.ops.profile || []).length, 1, 'Profil-Ops zu einer verdichtet');
-  assert.equal(meta.ops.profile[0].record.settings.location.name, 'Dresden', 'die verbleibende Op trägt alle Felder');
+  assert.equal((meta.ops.profile || []).length, 1, 'profile ops compacted into one');
+  assert.equal(meta.ops.profile[0].record.settings.location.name, 'Dresden', 'the remaining op carries all fields');
   await store.syncNow();
-  assert.equal(store.settings().location?.name, 'Dresden', 'Standort überlebt den Sync');
-  assert.equal(store.settings().weather, true, 'weather überlebt den Sync');
+  assert.equal(store.settings().location?.name, 'Dresden', 'location survives the sync');
+  assert.equal(store.settings().weather, true, 'weather survives the sync');
   assert.equal(store.profile().name, 'Nora');
 });
 
-test('Tombstone propagiert: Remote-Delete entfernt den Datensatz lokal', async () => {
+test('Tombstone propagates: remote delete removes the record locally', async () => {
   store.upsert('events', { id: 'a' });
   store.upsert('events', { id: 'b' });
   await store.syncNow();
@@ -129,23 +129,23 @@ test('Tombstone propagiert: Remote-Delete entfernt den Datensatz lokal', async (
   assert.deepEqual(store.get('events').map((e) => e.id), ['b']);
 });
 
-test('Gepufferte Ops fließen beim nächsten Sync nach', async () => {
+test('Buffered ops flow in at the next sync', async () => {
   store.upsert('events', { id: 'x', name: 'angelegt' });
-  // Op ist gepuffert (debounced Push noch nicht gefeuert) und noch nicht am Server.
+  // Op is buffered (debounced push not yet fired) and not yet on the server.
   const meta = JSON.parse(localStorage.getItem(scopeKey('u-1:__meta')) || '{}');
-  assert.ok((meta.ops.events || []).length >= 1, 'Op liegt in der Queue');
-  assert.equal(srv(key('events', 'user', 'u-1')).records['x'], undefined, 'noch nicht beim Server');
+  assert.ok((meta.ops.events || []).length >= 1, 'op is in the queue');
+  assert.equal(srv(key('events', 'user', 'u-1')).records['x'], undefined, 'not yet on the server');
   await store.syncNow();
-  assert.ok(srv(key('events', 'user', 'u-1')).records['x'], 'Op ist beim Sync nachgeflossen');
+  assert.ok(srv(key('events', 'user', 'u-1')).records['x'], 'op flowed in during the sync');
 });
 
-test('Familie: zwei Admins legen je ein Mitglied an -> kein stiller Verlust', async () => {
-  await store.addMember({ name: 'Kind A', role: 'user' });   // dieses Gerät
+test('Family: two admins each add a member -> no silent loss', async () => {
+  await store.addMember({ name: 'Kind A', role: 'user' });   // this device
   await store.syncNow();
-  // anderes Gerät legt direkt auf dem Server ein Mitglied an
+  // another device adds a member directly on the server
   const f = srv(key('family', 'family', null));
   f.records['u-other'] = { id: 'u-other', _kind: 'member', name: 'Kind B', role: 'user', createdAt: '2026-06-29T20:00:00Z', rev: ++f.rev };
   await store.refreshFamily();
   const names = store.members().map((m) => m.name).sort();
-  assert.ok(names.includes('Kind A') && names.includes('Kind B') && names.includes('Nora'), `beide Kinder + Nora erwartet, war: ${names}`);
+  assert.ok(names.includes('Kind A') && names.includes('Kind B') && names.includes('Nora'), `both children + Nora expected, was: ${names}`);
 });

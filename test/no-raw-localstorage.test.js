@@ -1,12 +1,12 @@
 /* =========================================================================
-   no-raw-localstorage.test.js — Architektur-Invariante der Umgebungs-Isolation.
+   no-raw-localstorage.test.js — architectural invariant of the environment isolation.
 
-   Nur die Storage-Kapsel (js/env.js, js/storage.js) darf localStorage direkt
-   berühren. Jeder andere Zugriff MUSS über lsGet/lsSet/lsRemove aus env.js
-   laufen, damit der Umgebungs-Namespace (scopeKey) nie vergessen wird und
-   Produktion (/cat-o-fit/) und Abnahme (/cat-o-fit-acc/) auf derselben Origin
-   getrennt bleiben. Dieser Test failt, sobald irgendwo im Produktivcode rohes
-   localStorage auftaucht – die CI (Node 22 & 24) fängt das bei jedem Push.
+   Only the storage capsule (js/env.js, js/storage.js) may touch localStorage
+   directly. Every other access MUST go through lsGet/lsSet/lsRemove from env.js
+   so that the environment namespace (scopeKey) is never forgotten and
+   production (/cat-o-fit/) and acceptance (/cat-o-fit-acc/) stay separate on the same
+   origin. This test fails as soon as raw localStorage shows up anywhere in the
+   production code – CI (Node 22 & 24) catches that on every push.
    ========================================================================= */
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -15,9 +15,9 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 const JS_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'js');
-const ALLOWED = new Set(['env.js', 'storage.js']); // die einzige erlaubte Storage-Kapsel
+const ALLOWED = new Set(['env.js', 'storage.js']); // the only permitted storage capsule
 
-test('kein rohes localStorage außerhalb der Storage-Kapsel (env.js/storage.js)', () => {
+test('no raw localStorage outside the storage capsule (env.js/storage.js)', () => {
   const offenders = [];
   for (const file of readdirSync(JS_DIR)) {
     if (!file.endsWith('.js') || ALLOWED.has(file)) continue;
@@ -27,5 +27,5 @@ test('kein rohes localStorage außerhalb der Storage-Kapsel (env.js/storage.js)'
     });
   }
   assert.deepEqual(offenders, [],
-    `Rohe localStorage-Zugriffe gefunden – nutze lsGet/lsSet/lsRemove aus env.js:\n${offenders.join('\n')}`);
+    `Raw localStorage accesses found – use lsGet/lsSet/lsRemove from env.js:\n${offenders.join('\n')}`);
 });

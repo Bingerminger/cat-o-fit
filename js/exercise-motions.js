@@ -1,31 +1,31 @@
 /* =========================================================================
-   exercise-motions.js — Bewegungsabläufe der Übungs-Bibliothek (reine Daten).
+   exercise-motions.js — movement sequences of the exercise library (plain data).
 
-   Je Übung: Ansicht (`side`/`front`), wenige Schlüsselposen (`keys`), der Ablauf
-   einer Wiederholung (`seq`) im echten Takt mit Beschriftung, Hinweis und Atmung,
-   die beanspruchten Körperteile (`focus`) und Hilfsmittel (`props`, `hold`).
+   Per exercise: view (`side`/`front`), a few key poses (`keys`), the sequence
+   of one repetition (`seq`) at the real tempo with label, cue and breathing,
+   the body parts in use (`focus`) and equipment (`props`, `hold`).
 
-   Regeln für die Nachvollziehbarkeit:
-   - EINE Ansicht je Übung: die, in der die Hauptbewegung in der Bildebene liegt
-     (`top: true` = von oben gesehen, z. B. liegende Rotation).
-   - 2–4 Schlüsselposen; Takt wie im Training (z. B. 2 s runter, 1 s hoch).
-   - Je Phase höchstens ein kurzer Hinweis (≤ 44 Zeichen) und die Atmung.
-   - Jeder Durchgang endet wieder in der Startpose (`start`) – so läuft die Schleife ruckfrei.
-   - `sides: 'alternate'` wechselt je Wiederholung die Seite, `'each'` macht erst alle
-     Wiederholungen einer Seite. Die bewegte Seite ist in den Posen immer die rechte (`r`).
-   - `intro`: einmaliger Weg in die Ausgangsposition (Dehnungen, Halteübungen).
-   - `reps` = Wiederholungen je Satz (bei Seiten je Seite), `holdS` = Sekunden je Satz.
-   Posen-Helfer unten; Koordinaten und Winkel wie in motion-rig.js beschrieben.
+   Rules for comprehensibility:
+   - ONE view per exercise: the one in which the main movement lies in the image plane
+     (`top: true` = seen from above, e.g. lying rotation).
+   - 2–4 key poses; tempo as in training (e.g. 2 s down, 1 s up).
+   - At most one short cue per phase (≤ 44 characters) and the breathing.
+   - Every cycle ends in the start pose (`start`) again – so the loop runs without a jerk.
+   - `sides: 'alternate'` switches the side with each repetition, `'each'` first does all
+     repetitions of one side. The moving side is always the right one (`r`) in the poses.
+   - `intro`: one-off path into the starting position (stretches, hold exercises).
+   - `reps` = repetitions per set (with sides: per side), `holdS` = seconds per set.
+   Pose helpers below; coordinates and angles as described in motion-rig.js.
    ========================================================================= */
 
 import { t as tr, hasOwnText } from './i18n.js';
 import { BODY, STAND_HIP, ik } from './motion-rig.js';
 
 const B = BODY;
-const FY = -B.ankle;          // Fußgelenk, Fuß flach am Boden
-const TY = -7;                // Fußgelenk im Zehenstand (Stütz)
-const HY = -B.wrist;          // Handgelenk, Hand am Boden
-const LIE = -8;               // Becken in Rücken- oder Bauchlage
+const FY = -B.ankle;          // ankle, foot flat on the floor
+const TY = -7;                // ankle on tiptoe (support)
+const HY = -B.wrist;          // wrist, hand on the floor
+const LIE = -8;               // pelvis in supine or prone position
 const STAND = STAND_HIP + 0.6;
 const RAD = Math.PI / 180;
 
@@ -34,10 +34,10 @@ const atP = (p, o = {}) => ({ at: [p[0], p[1]], ...o });
 const ang = (a1, a2 = a1, o = {}) => ({ a: [a1, a2], ...o });
 const pair = (r, l = r) => ({ r, l });
 
-/* ---------- Geometrie (Seitenansicht) ---------- */
-const tdir = (t) => [Math.sin(t * RAD), -Math.cos(t * RAD)];     // Becken → Schulter
-const fdir = (t) => [Math.cos(t * RAD), Math.sin(t * RAD)];      // Körpervorderseite
-const dirA = (a) => [Math.sin(a * RAD), Math.cos(a * RAD)];      // Gliedwinkel
+/* ---------- Geometry (side view) ---------- */
+const tdir = (t) => [Math.sin(t * RAD), -Math.cos(t * RAD)];     // pelvis → shoulder
+const fdir = (t) => [Math.cos(t * RAD), Math.sin(t * RAD)];      // front of the body
+const dirA = (a) => [Math.sin(a * RAD), Math.cos(a * RAD)];      // limb angles
 const mv = (p, d, k) => [p[0] + d[0] * k, p[1] + d[1] * k];
 const shoulderOf = (hip, t) => mv(hip, tdir(t), B.torso);
 const headOf = (hip, t, h = 0) => mv(shoulderOf(hip, t), tdir(t + h), B.neck + B.head);
@@ -45,9 +45,9 @@ const chestPt = (hip, t, fwd = 10, down = 13) => mv(mv(shoulderOf(hip, t), tdir(
 const behindHead = (hip, t) => mv(mv(headOf(hip, t), fdir(t), -9), tdir(t), -2);
 const hipFrom = (sh, t) => mv(sh, tdir(t), -B.torso);
 const tFromDir = (d) => Math.atan2(d[0], -d[1]) / RAD;
-/** Endpunkt eines Glieds aus absoluten Winkeln. */
+/** End point of a limb from absolute angles. */
 const fk = (root, a1, a2, l1, l2) => { const j = mv(root, dirA(a1), l1); return { joint: j, end: mv(j, dirA(a2), l2) }; };
-/** Höchster Punkt im Abstand r1 von A und r2 von C (Dreieck nach oben). */
+/** Highest point at distance r1 from A and r2 from C (triangle pointing up). */
 function apex(A, r1, C, r2) {
   const d = Math.hypot(C[0] - A[0], C[1] - A[1]);
   const a = (r1 * r1 - r2 * r2 + d * d) / (2 * d);
@@ -58,7 +58,7 @@ function apex(A, r1, C, r2) {
   return p1[1] < p2[1] ? p1 : p2;
 }
 
-/** Aufrechter Stand (Seitenansicht), Füße unter dem Becken. */
+/** Upright stance (side view), feet under the pelvis. */
 function stand(o = {}) {
   const x = o.x || 0;
   return {
@@ -68,7 +68,7 @@ function stand(o = {}) {
   };
 }
 
-/** Aufrechter Stand von vorn; `w` = halber Fußabstand. */
+/** Upright stance from the front; `w` = half the distance between the feet. */
 function standFront(o = {}) {
   const x = o.x || 0; const w = o.w != null ? o.w : 7;
   return {
@@ -77,28 +77,28 @@ function standFront(o = {}) {
     arms: o.arms || pair(ang(-6, -4), ang(6, 4)),
   };
 }
-/** Hände vor der Brust gefaltet (Frontansicht). */
+/** Hands clasped in front of the chest (front view). */
 const clasp = (hipY, x = 0) => pair(at(x - 3, hipY - B.torso + 17, { bend: 'down' }), at(x + 3, hipY - B.torso + 17, { bend: 'down' }));
 
 /**
- * Gerader Körper von den Fußgelenken `A` aus, `deg` Grad über der Waagerechten,
- * Kopf in +x (Stütz, Liegestütz). Liefert Becken, Rumpfwinkel und Schulterpunkt.
+ * Straight body from the ankles `A`, `deg` degrees above the horizontal,
+ * head in +x (support, push-up). Returns pelvis, torso angle and shoulder point.
  */
 function bodyLine(A, deg) {
   const v = [Math.cos(deg * RAD), -Math.sin(deg * RAD)];
   const hip = mv(A, v, B.thigh + B.shin);
   return { hip, torso: 90 - deg, sh: mv(hip, v, B.torso) };
 }
-/** Winkel über der Waagerechten, damit die Schulter auf Höhe `shY` liegt. */
+/** Angle above the horizontal so that the shoulder lies at height `shY`. */
 const lineDeg = (A, shY, len = B.thigh + B.shin + B.torso) => Math.asin((A[1] - shY) / len) / RAD;
-/** Gerader Körper von der Schulter zu den Fersen (Rückenlage, Kopf links). */
+/** Straight body from the shoulder to the heels (supine, head on the left). */
 function lineFromShoulder(sh, A) {
   const d = [A[0] - sh[0], A[1] - sh[1]];
   const len = Math.hypot(d[0], d[1]);
   const v = [d[0] / len, d[1] / len];
   return { hip: mv(sh, v, B.torso), torso: tFromDir([-v[0], -v[1]]) };
 }
-/** Frontansicht, Seitlage: Rumpfwinkel, damit die untere (linke) Schulter auf `target` liegt. */
+/** Front view, side-lying: torso angle so that the lower (left) shoulder lies at `target`. */
 function torsoForLowShoulder(hip, target) {
   let best = 0; let err = Infinity;
   for (let t = 20; t <= 120; t += 0.25) {
@@ -110,15 +110,15 @@ function torsoForLowShoulder(hip, target) {
   return best;
 }
 
-/* ---------- Wiederkehrende Bausteine ---------- */
+/* ---------- Recurring building blocks ---------- */
 const DOWN = (s, cue, extra = {}) => ({ to: 'down', s, label: 'Down', cue, breath: 'ein', ...extra });
 const UP = (s, cue, extra = {}) => ({ to: 'up', s, label: 'Up', cue, breath: 'aus', ...extra });
 const HOLD = (s, label = 'Hold', extra = {}) => ({ hold: s, label, ...extra });
 const STILL = (cue, breath = 'steady') => [HOLD(4, 'Hold', { cue, breath })];
 
-/* Liegestütz/Plank: Füße auf den Zehen bei x = −52 */
+/* Push-up/plank: feet on the toes at x = −52 */
 const PL_A = [-52, TY];
-// Der hintere (ferne) Fuß steht minimal weiter vorn – weiter hinten wäre er bei gestrecktem Körper außer Reichweite.
+// The rear (far) foot stands slightly further forward – further back it would be out of reach with the body stretched.
 const TOES = (x = PL_A[0], y = TY) => pair(at(x, y, { foot: 20 }), at(x + 2, y, { foot: 20 }));
 const PL_FA = bodyLine(PL_A, lineDeg(PL_A, -27));
 const PU_TOP = bodyLine(PL_A, lineDeg(PL_A, -47.5));
@@ -126,7 +126,7 @@ const PU_LOW = bodyLine(PL_A, lineDeg(PL_A, -15));
 const PU_HAND = PU_TOP.sh[0] - 2;
 const plankTop = (o = {}) => ({ ...PU_TOP, legs: TOES(), arms: pair(at(PU_HAND, HY), at(PU_HAND - 3, HY)), ...o });
 
-/* Vierfüßlerstand: Knie unter der Hüfte, Hände unter den Schultern */
+/* Quadruped position: knees under the hips, hands under the shoulders */
 const QUAD_HIP = [0, -37];
 const QUAD_T = 90 - Math.asin((47.5 - 37) / B.torso) / RAD;
 const QUAD_SH_X = B.torso * Math.sin(QUAD_T * RAD);
@@ -138,7 +138,7 @@ function quad(o = {}) {
     arms: o.arms || pair(at(QUAD_SH_X, HY), at(QUAD_SH_X - 2, HY)),
   };
 }
-/* Bärenstand: Knie schweben knapp über dem Boden */
+/* Bear position: knees hover just above the floor */
 const BEAR_HIP = [0, -41];
 const BEAR_T = 90 - Math.asin((47.5 - 41) / B.torso) / RAD;
 const BEAR_SH_X = B.torso * Math.sin(BEAR_T * RAD);
@@ -148,7 +148,7 @@ const bear = (o = {}) => ({
   arms: o.arms || pair(at(BEAR_SH_X, HY), at(BEAR_SH_X - 3, HY)),
 });
 
-/* Rückenlage: Kopf links, Schultern bei x = −36 */
+/* Supine: head on the left, shoulders at x = −36 */
 const SUP_SH = [-36, LIE];
 const SUP_HIP = [SUP_SH[0] + B.torso, LIE];
 const FEET_UP = () => pair(at(30, FY), at(27, FY));
@@ -159,17 +159,17 @@ function supine(o = {}) {
     arms: o.arms || pair(ang(90, 90), ang(88, 88)),
   };
 }
-/** Becken angehoben, Schultern bleiben liegen: Rumpfwinkel aus der Höhe. */
+/** Pelvis raised, shoulders stay down: torso angle from the height. */
 function bridgeTorso(hipY) {
   const c = (hipY - SUP_SH[1]) / B.torso;
   const t = -Math.acos(Math.max(-1, Math.min(1, c))) / RAD;
   const hipX = SUP_SH[0] - B.torso * Math.sin(t * RAD);
   return { hip: [hipX, hipY], torso: t, head: -90 - t };
 }
-/** Schultern angehoben (Crunch-Haltung): Becken bleibt liegen. */
+/** Shoulders raised (crunch position): pelvis stays down. */
 const lifted = (t, o = {}) => supine({ torso: t, curl: o.curl, head: o.head, legs: o.legs, arms: o.arms });
 
-/* Bauchlage: Kopf rechts */
+/* Prone: head on the right */
 const PRONE_HIP = [0, LIE];
 const prone = (o = {}) => ({
   hip: [...PRONE_HIP], torso: o.torso != null ? o.torso : 90, head: o.head || 0, curl: o.curl || 0,
@@ -177,18 +177,18 @@ const prone = (o = {}) => ({
   arms: o.arms || pair(ang(92, 92), ang(91, 91)),
 });
 
-/* Kalb-/Zehenstand: Zehen bleiben, Ferse hebt sich */
+/* Calf/tiptoe stand: toes stay, heel lifts */
 function onToes(x, fa = 38) {
   const toe = x + (B.foot - B.heel);
   const d = dirA(fa);
   return at(toe - d[0] * (B.foot - B.heel), FY - d[1] * (B.foot - B.heel), { foot: fa });
 }
 
-/* =============================== Abläufe =============================== */
+/* =============================== Sequences =============================== */
 
 const M = {};
 
-/* ------------------------------ Kraft ------------------------------ */
+/* ------------------------------ Strength ------------------------------ */
 
 M.squat = {
   view: 'side', start: 'up', reps: 12, focus: ['thigh', 'hip'],
@@ -865,7 +865,7 @@ M.pogo_jumps = {
   seq: [{ to: 'air', s: 0.25, label: 'Up', cue: 'Only from the ankle, short contacts' }, { to: 'ground', s: 0.25, label: 'Land' }],
 };
 
-/* ------------------------------ Rumpf ------------------------------ */
+/* ------------------------------ Core ------------------------------ */
 
 M.plank = {
   view: 'side', start: 'hold', holdS: 30, focus: ['torso', 'hip'], props: { mat: [-64, 80] },
@@ -1115,7 +1115,7 @@ M.russian_twist = (() => {
   };
 })();
 
-/* ------------------------------ Beweglichkeit ------------------------------ */
+/* ------------------------------ Mobility ------------------------------ */
 
 M.hip_flexor_stretch = {
   view: 'side', start: 'stretch', holdS: 30, sides: 'each', focus: ['hip', 'thigh'], props: { mat: [-56, 40] },
@@ -1202,7 +1202,7 @@ M.supine_twist = {
 M.figure_four = (() => {
   const K1 = ik(SUP_HIP, [24, FY], B.thigh, B.shin, [0, -1]).joint;
   const K2 = fk(SUP_HIP, -150, 90, B.thigh, B.shin).joint;
-  // Die Hände fassen hinter den Oberschenkel, nah an der Hüfte (dort reichen die Arme hin).
+  // The hands grip behind the thigh, close to the hip (that is where the arms reach).
   const mid = (K) => [SUP_HIP[0] + (K[0] - SUP_HIP[0]) * 0.35, SUP_HIP[1] + (K[1] - SUP_HIP[1]) * 0.35];
   return {
     view: 'side', start: 'pull', holdS: 30, sides: 'each', focus: ['hip'], props: { mat: [-70, 50] },
@@ -1404,7 +1404,7 @@ M.fifa11 = {
   seq: [{ to: 'knee', s: 0.32, label: 'Jog with high knees', cue: 'Knees point forward, not inwards' }, { to: 'base', s: 0.32, label: 'Switch' }],
 };
 
-/* ------------------------------ Kondition ------------------------------ */
+/* ------------------------------ Cardio ------------------------------ */
 
 M.jumping_jack = {
   view: 'front', start: 'closed', thumb: 'open', reps: 20, focus: ['shin', 'thigh'],
@@ -1502,7 +1502,7 @@ M.bear_crawl = {
 
 export const MOTIONS = M;
 
-/** Ablauf einer Übung (oder null, wenn keiner hinterlegt ist). */
+/** Sequence of an exercise (or null if none is stored). */
 export function motionFor(id) { return MOTIONS[id] || null; }
 
 /* Phase texts: English above, other languages from the exercises area of the catalogs

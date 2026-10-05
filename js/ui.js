@@ -1,32 +1,32 @@
 /* =========================================================================
-   ui.js — gemeinsame UI-Bausteine, Icons, Taxonomie und Formatierung.
-   Wird von allen View-Modulen genutzt. Kein externes Framework.
+   ui.js — shared UI building blocks, icons, taxonomy and formatting.
+   Used by all view modules. No external framework.
    ========================================================================= */
 
 /* -------------------------------------------------------------------------
-   Umgebungs-Namespace für den Client-Speicher
+   Environment namespace for client storage
    -------------------------------------------------------------------------
-   Mehrere Deployments (z. B. /cat-o-fit/ = Produktion und /cat-o-fit-acc/ =
-   Abnahme) liegen auf DERSELBEN Origin und teilen sich damit LocalStorage,
-   SessionStorage und den Service-Worker-Cache. Ohne Trennung vermischen sich
-   ihre Familien-/Sitzungsdaten -> „doppelte Nutzer“. Wir leiten deshalb aus dem
-   Auslieferungspfad einen stabilen Namespace ab und präfixen ALLE Storage-Keys
-   damit. So bleibt jede Umgebung strikt isoliert.
+   Several deployments (e.g. /cat-o-fit/ = production and /cat-o-fit-acc/ =
+   acceptance) live on the SAME origin and therefore share LocalStorage,
+   SessionStorage and the service-worker cache. Without separation, their
+   family/session data get mixed up -> "duplicate users". We therefore derive a
+   stable namespace from the delivery path and prefix ALL storage keys with
+   it. That keeps every environment strictly isolated.
    ------------------------------------------------------------------------- */
-/* Umgebungs-Isolation (APP_NS/scopeKey) lebt jetzt in env.js — hier nur
-   re-exportiert, damit bestehende Importe aus ui.js gültig bleiben. */
+/* Environment isolation (APP_NS/scopeKey) now lives in env.js — only
+   re-exported here so that existing imports from ui.js stay valid. */
 export { APP_NS, scopeKey } from './env.js';
 import { t } from './i18n.js';
 
 /* -------------------------------------------------------------------------
-   DOM-Helfer
+   DOM helpers
    ------------------------------------------------------------------------- */
 
-/** Hängt Kinder (Node | String | Array | null) an ein Elternelement an. */
+/** Appends children (Node | String | Array | null) to a parent element. */
 /**
- * Zahl und Einheit nicht trennen (DOC-21): In angezeigten Texten steht zwischen Zahl und
- * Einheit ein geschütztes Leerzeichen („72,4 kg“ bricht nie zwischen 72,4 und kg um). Nur
- * in der Anzeige – gespeicherte Werte, CSV-Tabellen und Kalender bleiben unverändert.
+ * Never separate number and unit (DOC-21): in displayed texts a non-breaking space sits between
+ * number and unit ("72.4 kg" never wraps between 72.4 and kg). Display
+ * only – stored values, CSV tables and calendars stay unchanged.
  */
 const UNIT_GAP = /(\d) (?=(?:kcal|km|kg|kJ|bpm|min|Hm|mmol|µmol|nmol|pmol|mg|µg|ng|pg|mU|ml|ms|Wdh\.|°C|IE|g|l|m|s|h|U|%|W)(?![\p{L}\d]))/gu;
 export function keepUnits(text) {
@@ -41,7 +41,7 @@ export function append(parent, child) {
 }
 
 /**
- * Kompakter Element-Builder.
+ * Compact element builder.
  * el('div', { class: 'card', onclick: fn, dataset: {id:1} }, [child, 'text'])
  */
 export function el(tag, attrs = {}, children = null) {
@@ -55,8 +55,8 @@ export function el(tag, attrs = {}, children = null) {
     else if (k === 'style' && typeof v === 'object') Object.assign(node.style, v);
     else if (k.startsWith('on') && typeof v === 'function') node.addEventListener(k.slice(2).toLowerCase(), v);
     else if (k === 'hidden') node.hidden = !!v;
-    // <textarea> kennt kein value-ATTRIBUT: Ohne die Eigenschaft bliebe das Feld leer, und
-    // Speichern überschriebe vorhandene Zutaten, Ziele oder Notizen mit „nichts“.
+    // <textarea> has no value ATTRIBUTE: without the property the field would stay empty, and
+    // saving would overwrite existing ingredients, goals or notes with "nothing".
     else if (k === 'value' && tag === 'textarea') node.value = String(v);
     else node.setAttribute(k, v === true ? '' : v);
   }
@@ -64,11 +64,11 @@ export function el(tag, attrs = {}, children = null) {
   return node;
 }
 
-/** Leert einen Knoten. */
+/** Empties a node. */
 export function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); return node; }
 
 /* -------------------------------------------------------------------------
-   Lokales SVG-Icon-Set (Feather/Lucide-Stil, 24×24, stroke = currentColor)
+   Local SVG icon set (Feather/Lucide style, 24×24, stroke = currentColor)
    ------------------------------------------------------------------------- */
 export const ICONS = {
   home: '<path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',
@@ -78,7 +78,7 @@ export const ICONS = {
   activity: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
   chart: '<line x1="4" y1="20" x2="4" y2="10"/><line x1="10" y1="20" x2="10" y2="4"/><line x1="16" y1="20" x2="16" y2="13"/><line x1="22" y1="20" x2="2" y2="20"/>',
   heart: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>',
-  // Erlenmeyerkolben – Labor & Ergänzung (bewusst NICHT das Herz, das steht für „Werte“).
+  // Erlenmeyer flask – labs & supplements (deliberately NOT the heart, which stands for the body values).
   flask: '<path d="M9 2v6.2L4.3 17a2 2 0 0 0 1.7 3h12a2 2 0 0 0 1.7-3L15 8.2V2"/><line x1="8" y1="2" x2="16" y2="2"/><line x1="6.6" y1="14" x2="17.4" y2="14"/>',
   settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
   plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
@@ -142,21 +142,21 @@ export const ICONS = {
   rowing: '<line x1="4" y1="19" x2="14" y2="9"/><line x1="20" y1="19" x2="10" y2="9"/><circle cx="3" cy="20" r="1.6"/><circle cx="21" cy="20" r="1.6"/>',
 };
 
-/** Liefert ein <svg>-Element für ein Icon. */
+/** Returns an <svg> element for an icon. */
 export function icon(name, cls = '') {
   const span = el('span', { style: { display: 'contents' } });
   span.innerHTML = iconSvg(name, cls);
   return span.firstElementChild;
 }
 
-/** Liefert das Icon als SVG-String (für innerHTML-Templates). */
+/** Returns the icon as an SVG string (for innerHTML templates). */
 export function iconSvg(name, cls = '') {
   const p = ICONS[name] || ICONS.dot;
   return `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
 }
 
 /* -------------------------------------------------------------------------
-   Trainings-Taxonomie (Best Practice: Easy/Long/Tempo/Intervall/...)
+   Training taxonomy (best practice: Easy/Long/Tempo/Interval/...)
    ------------------------------------------------------------------------- */
 const TYPE_STYLE = {
   recovery:       { color: '#7fb8ff', icon: 'feather',  cat: 'run' },
@@ -196,7 +196,7 @@ export const SESSION_TYPES = Object.fromEntries(Object.entries(TYPE_STYLE).map((
 
 export function typeMeta(type) { return SESSION_TYPES[type] || SESSION_TYPES.other; }
 
-/** Farbiges Trainingstyp-Icon (Kreis/Kachel mit Symbol). */
+/** Coloured session-type icon (circle/tile with a symbol). */
 export function typeIcon(type, size = '') {
   const m = typeMeta(type);
   const wrap = el('span', { class: `type-icon ${size}`, style: { background: m.color } });
@@ -218,7 +218,7 @@ export const PRIORITIES = {
   get C() { return t('priorities.C'); },
 };
 
-/** Trainingstypen als Optionsliste für Auswahlfelder (Läufe zuerst). */
+/** Session types as an option list for select fields (runs first). */
 export const TYPE_OPTIONS = [
   'easy', 'long', 'tempo', 'interval', 'recovery', 'race',
   'strength', 'gym', 'mobility',
@@ -228,7 +228,7 @@ export const TYPE_OPTIONS = [
   'cross', 'match', 'camp', 'rest',
 ].map((k) => ({ value: k, get label() { return SESSION_TYPES[k].label; } }));
 
-/** Status-Metadaten (inkl. abgeleitetem „überfällig“). */
+/** Status metadata (incl. the derived "overdue"). */
 export const STATUS_META = Object.fromEntries(Object.entries({
   geplant:    { color: 'var(--accent-text)', cls: 'geplant' },
   erledigt:   { color: 'var(--good-text)',   cls: 'erledigt' },
@@ -238,8 +238,8 @@ export const STATUS_META = Object.fromEntries(Object.entries({
 }).map(([k, m]) => [k, { ...m, get label() { return t(`status.${k}`); } }]));
 
 /**
- * Effektiver Status einer geplanten Einheit – berücksichtigt „überfällig“
- * (Datum in der Vergangenheit, weder erledigt noch verpasst, kein Ruhetag).
+ * Effective status of a planned session – takes "overdue" into account
+ * (date in the past, neither done nor missed, not a rest day).
  */
 export function effectiveStatus(unit, todayString = todayStr()) {
   if (!unit) return 'geplant';
@@ -247,9 +247,9 @@ export function effectiveStatus(unit, todayString = todayStr()) {
   if (unit.status === 'verpasst') return 'verpasst';
   if (unit.type === 'rest') return 'geplant';
   if (unit.date < todayString) return 'ueberfaellig';
-  // „Verschoben“ ist seit v3.16.0 reine ANZEIGE (Herkunft in `movedFrom`) – der
-  // gespeicherte Status bleibt „geplant“, damit die Einheit in Wochenlast,
-  // Ziel-Triage, What-if und Erholungsvorschlägen weiter mitzählt.
+  // "Moved" has been pure DISPLAY since v3.16.0 (origin in `movedFrom`) – the
+  // stored status stays "geplant" (planned), so that the session keeps counting in the weekly load,
+  // goal triage, what-if and recovery suggestions.
   if (unit.movedFrom) return 'verschoben';
   return unit.status || 'geplant';
 }
@@ -267,7 +267,7 @@ export {
   parseDate, fmtWeekday, fmtDate, fmtDateLong, fmtDayMonth, monthName, fmtKm, fmtNum, fmtDec, fmtInt,
 };
 
-/** Date -> "YYYY-MM-DD" (lokal). */
+/** Date -> "YYYY-MM-DD" (local). */
 export function toDateStr(date) {
   const d = date instanceof Date ? date : parseDate(date);
   const p = (n) => String(n).padStart(2, '0');
@@ -275,17 +275,17 @@ export function toDateStr(date) {
 }
 export function todayStr() { return toDateStr(new Date()); }
 export function addDays(dateStr, n) { const d = parseDate(dateStr); d.setDate(d.getDate() + n); return toDateStr(d); }
-/** Ganze Tage zwischen a und b (b - a). */
+/** Whole days between a and b (b - a). */
 export function diffDays(a, b) {
   const ms = parseDate(b).setHours(12) - parseDate(a).setHours(12);
   return Math.round(ms / 86400000);
 }
-/** Wochentag 1=Mo .. 7=So. */
+/** Weekday 1=Mon .. 7=Sun. */
 export function isoDow(dateStr) { const d = parseDate(dateStr).getDay(); return d === 0 ? 7 : d; }
-/** Montag der Woche eines Datums. */
+/** Monday of the week of a date. */
 export function weekStartMonday(dateStr) { return addDays(dateStr, -(isoDow(dateStr) - 1)); }
 
-/** Sekunden/km -> "m:ss". */
+/** Seconds/km -> "m:ss". */
 export function fmtPace(sec) {
   if (!sec || sec <= 0) return '–';
   const s = Math.round(sec);
@@ -296,14 +296,14 @@ export function fmtPaceRange(min, max) {
   if (!max || max === min) return `${fmtPace(min)} min/km`;
   return `${fmtPace(min)}–${fmtPace(max)} min/km`;
 }
-/** Sekunden -> "M:SS" oder "H:MM:SS". */
+/** Seconds -> "M:SS" or "H:MM:SS". */
 export function fmtDuration(sec) {
   if (sec == null) return '–';
   sec = Math.round(sec);
   const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
   return h > 0 ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}` : `${m}:${String(s).padStart(2, '0')}`;
 }
-/** Sekunden -> "MM:SS" für große Timer-Anzeigen. */
+/** Seconds -> "MM:SS" for large timer displays. */
 export function fmtClock(sec) {
   sec = Math.max(0, Math.round(sec));
   const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
@@ -311,7 +311,7 @@ export function fmtClock(sec) {
     ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
     : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
-/** "HH:MM:SS" -> Sekunden. */
+/** "HH:MM:SS" -> seconds. */
 export function parseHms(str) {
   if (!str) return 0;
   const p = String(str).split(':').map(Number);
@@ -319,22 +319,22 @@ export function parseHms(str) {
   return p[0] * 3600 + p[1] * 60 + p[2];
 }
 /* -------------------------------------------------------------------------
-   Kleinkram
+   Odds and ends
    ------------------------------------------------------------------------- */
-/** Akzentfarbe nur als echte Hex-Farbe übernehmen: Eine CSS-Variable nähme sonst auch
-    url(…) an, die der Browser nachladen würde (Profile können per API/Backup kommen). */
+/** Accept an accent colour only as a real hex colour: a CSS variable would otherwise also accept
+    url(…), which the browser would then fetch (profiles can arrive via the API/backup). */
 export function safeAccent(value, fallback = '#18b48a') {
   return /^#[0-9a-f]{3,8}$/i.test(String(value || '')) ? String(value) : fallback;
 }
 
-/** Getönte Fläche einer Mitgliedsfarbe (Hex + Deckkraft), z. B. hinter dem Avatar. */
+/** Tinted surface of a member colour (hex + opacity), e.g. behind the avatar. */
 export function colorTint(value, alpha = '22') {
   let h = safeAccent(value).slice(1);
   if (h.length === 3 || h.length === 4) h = h.slice(0, 3).split('').map((x) => x + x).join('');
   return `#${h.slice(0, 6)}${alpha}`;
 }
 
-/** Deutscher Genitiv eines Vornamens: „Leas“, aber „Max’“, „Klaus’“, „Moritz’“. */
+/** German genitive of a first name: "Leas", but "Max’", "Klaus’", "Moritz’". */
 export function genitive(name) {
   const n = String(name || '').trim();
   if (!n) return '';
@@ -351,9 +351,9 @@ export function debounce(fn, ms = 300) {
 }
 export function navigate(hash) { location.hash = hash; }
 
-/* Aktuelle Ansicht neu zeichnen statt die App neu zu laden (UI-10): Die Rückmeldung
-   („Gespeichert“) bleibt sichtbar, die Scrollposition auch, und kein Neustart samt Sync.
-   app.js registriert den Router; ohne Router (Tests) greift der lokale Rückfall. */
+/* Redraw the current view instead of reloading the app (UI-10): the feedback
+   ("Saved") stays visible, and so does the scroll position, with no restart and sync.
+   app.js registers the router; without a router (tests) the local fallback applies. */
 let refreshHandler = null;
 export function setRefreshHandler(fn) { refreshHandler = fn; }
 export function refreshView(fallback = null) {
@@ -361,7 +361,7 @@ export function refreshView(fallback = null) {
   else if (typeof fallback === 'function') fallback();
 }
 
-/** Die aktuelle Ansicht neu zeichnen (ohne Neuladen) – gemeinsamer Helfer der Views. */
+/** Redraw the current view (without reloading) – shared helper of the views. */
 export function rerenderView(render, view = null) {
   refreshView(() => {
     const v = view || document.getElementById('view');
@@ -370,7 +370,7 @@ export function rerenderView(render, view = null) {
     render(v);
   });
 }
-/** Zu `hash` wechseln – oder, wenn die Ansicht schon offen ist, sie neu zeichnen. */
+/** Switch to `hash` – or, if that view is already open, redraw it. */
 export function goOrRefresh(hash) {
   if (typeof location !== 'undefined' && location.hash === hash) refreshView();
   else navigate(hash);
@@ -380,12 +380,12 @@ export function goOrRefresh(hash) {
    Toast
    ------------------------------------------------------------------------- */
 /**
- * Kurze Rückmeldung. `action` ({ label, onClick }) hängt einen Knopf an – z. B. „Rückgängig“
- * nach dem Löschen (UI-30); ein Toast mit Aktion bleibt länger stehen.
+ * Short feedback message. `action` ({ label, onClick }) attaches a button – e.g. "Undo"
+ * after deleting (UI-30); a toast with an action stays up longer.
  */
 export function toast(message, variant = '', ms = 2400, action = null) {
   const root = document.getElementById('toast-root');
-  if (!root) return; // kein Toast-Container (z. B. vor App-Init) -> still überspringen statt crashen
+  if (!root) return; // no toast container (e.g. before app init) -> skip silently instead of crashing
   const box = el('div', { class: `toast ${variant ? 'toast--' + variant : ''}` });
   if (variant === 'good') box.appendChild(icon('check'));
   if (variant === 'bad') box.appendChild(icon('info'));
@@ -410,9 +410,9 @@ export function toast(message, variant = '', ms = 2400, action = null) {
 }
 
 /**
- * Datei bereitstellen (Backup, Kalenderdatei). Auf Touch-Geräten über das Teilen-Menü –
- * dort gibt es „In Dateien sichern“; ein Blob-Download landet in einer Home-Bildschirm-App
- * auf iOS nicht verlässlich in „Dateien“ (UI-36). Sonst als Download-Link.
+ * Hand a file to the user (backup, calendar file). On touch devices via the share sheet –
+ * it offers "Save to Files"; a blob download in a home-screen app on iOS
+ * does not reliably end up in "Files" (UI-36). Otherwise as a download link.
  * @returns {Promise<'shared'|'downloaded'|'cancelled'>}
  */
 export async function saveFile(name, blob) {
@@ -424,8 +424,8 @@ export async function saveFile(name, blob) {
       return 'shared';
     }
   } catch (e) {
-    if (e && e.name === 'AbortError') return 'cancelled';   // Teilen-Menü geschlossen
-    // Teilen nicht erlaubt (z. B. keine frische Nutzergeste) -> Download versuchen
+    if (e && e.name === 'AbortError') return 'cancelled';   // share sheet closed
+    // Sharing not allowed (e.g. no fresh user gesture) -> try the download
   }
   const url = URL.createObjectURL(blob);
   const a = el('a', { href: url, download: name });
@@ -434,14 +434,14 @@ export async function saveFile(name, blob) {
   return 'downloaded';
 }
 
-/** Neutrale Rückmeldung zu saveFile – ob die Datei wirklich gespeichert ist, weiß nur das Gerät. */
+/** Neutral feedback for saveFile – only the device knows whether the file was really saved. */
 export function savedFileMessage(result, name) {
   return result === 'shared'
     ? t('files.shared', { name })
     : t('files.provided', { name });
 }
 
-/** Einzel-Löschung mit „Rückgängig“ (UI-30): `restore` holt den Datensatz zurück. */
+/** Single deletion with "Undo" (UI-30): `restore` brings the record back. */
 export function toastUndo(message, restore) {
   toast(message, '', 6000, { label: t('common.undo'), onClick: restore });
 }
@@ -452,7 +452,7 @@ export function toastUndo(message, restore) {
 let activeSheet = null;
 let sheetSeq = 0;
 
-/** Hintergrund (App, Sprunglink) für Tastatur und Screenreader sperren, solange ein Sheet offen ist. */
+/** Lock the background (app, skip link) for keyboard and screen reader while a sheet is open. */
 function setBackgroundInert(on) {
   for (const id of ['app', 'skip-link']) {
     const n = document.getElementById(id);
@@ -463,8 +463,8 @@ function setBackgroundInert(on) {
 
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
-/** Escape schließt, Tab bleibt im Sheet (UI-19, FE-15). Hängt am Sheet selbst: Der Fokus
-    liegt ab dem Öffnen im Dialog, der Hintergrund ist gesperrt. */
+/** Escape closes, Tab stays inside the sheet (UI-19, FE-15). Attached to the sheet itself: focus
+    is in the dialog from the moment it opens, and the background is locked. */
 function onSheetKey(e) {
   if (!activeSheet) return;
   if (e.key === 'Escape') { if (e.preventDefault) e.preventDefault(); closeSheet(); return; }
@@ -479,15 +479,15 @@ function onSheetKey(e) {
 }
 
 /**
- * Öffnet ein Bottom-Sheet – ein echter Dialog: benannt über den Titel, Escape schließt,
- * der Fokus wandert hinein und beim Schließen zurück zum Auslöser, der Hintergrund ist
- * gesperrt (UI-19, FE-15). Früher lief die Tastatur hinter den Abdunkler.
+ * Opens a bottom sheet – a real dialog: named via its title, Escape closes it,
+ * focus moves into it and back to the trigger on closing, the background is
+ * locked (UI-19, FE-15). Previously the keyboard ran behind the dimmer.
  * @returns {{close: Function, body: HTMLElement, foot: HTMLElement}}
  */
 export function openSheet({ title = '', body = null, footer = null, onClose = null } = {}) {
   const root = document.getElementById('modal-root');
-  // Ersetzt ein Sheet ein anderes (z. B. Rückfrage aus einem Formular), bleibt der
-  // ursprüngliche Auslöser das Ziel für die Fokus-Rückgabe.
+  // If a sheet replaces another one (e.g. a confirmation prompt from a form), the
+  // original trigger remains the target for returning focus.
   const trigger = activeSheet ? activeSheet.trigger : (typeof document !== 'undefined' ? document.activeElement : null);
   closeSheetInternal(false);
 
@@ -517,9 +517,9 @@ export function openSheet({ title = '', body = null, footer = null, onClose = nu
   setBackgroundInert(true);
 
   activeSheet = { root, onClose, sheet, trigger };
-  // Fokus auf den Dialog selbst: Screenreader sagen den Titel an, die Tastatur startet im
-  // Sheet – ohne auf dem iPhone sofort die Bildschirmtastatur aufzureißen.
-  try { sheet.focus({ preventScroll: true }); } catch { /* ohne DOM-Fokus (Tests) */ }
+  // Focus on the dialog itself: screen readers announce the title, the keyboard starts in
+  // the sheet – without immediately pulling up the on-screen keyboard on the iPhone.
+  try { sheet.focus({ preventScroll: true }); } catch { /* without DOM focus (tests) */ }
   return { close: closeSheet, body: bodyEl, foot: footEl, sheet };
 }
 
@@ -534,18 +534,18 @@ function closeSheetInternal(restoreFocus) {
   setBackgroundInert(false);
   activeSheet = null;
   if (prev?.onClose) prev.onClose();
-  // Fokus zurück zum Auslöser – wurde die Ansicht inzwischen neu gezeichnet, auf den Seitentitel.
+  // Focus back to the trigger – if the view has been redrawn in the meantime, to the page title.
   if (restoreFocus && !activeSheet && prev) {
     const target = prev.trigger && prev.trigger.isConnected && prev.trigger !== document.body
       ? prev.trigger : document.getElementById('header-title');
-    try { if (target && typeof target.focus === 'function') target.focus({ preventScroll: true }); } catch { /* egal */ }
+    try { if (target && typeof target.focus === 'function') target.focus({ preventScroll: true }); } catch { /* doesn't matter */ }
   }
 }
 
 export function closeSheet() { closeSheetInternal(true); }
 
 /**
- * Aktionsliste („…“-Menü): seltene Aktionen mit Text statt als Symbol im Kopf (UI-34).
+ * Action list ("…" menu): rare actions with text instead of as an icon in the header (UI-34).
  * items: [{ icon, label, hint?, danger?, onClick }]
  */
 export function actionSheet(title, items) {
@@ -562,7 +562,7 @@ export function actionSheet(title, items) {
   return openSheet({ title, body: list });
 }
 
-/** Bestätigungsdialog. Promise<boolean>. */
+/** Confirmation dialog. Promise<boolean>. */
 export function confirmDialog({ title = t('dialog.sure'), message = '', confirmLabel = 'OK', cancelLabel = t('common.cancel'), danger = false } = {}) {
   return new Promise((resolve) => {
     let decided = false;
@@ -581,10 +581,10 @@ export function confirmDialog({ title = t('dialog.sure'), message = '', confirmL
 }
 
 /**
- * Quittungs-Dialog mit einem einzigen „OK“. Für unmissverständliches Erfolgs-/
- * Fehler-Feedback (z. B. nach Backup/Recovery). `tone`: 'good' | 'bad' | ''.
- * Liefert ein Promise, das bei OK/Schließen auflöst – so kann der Aufrufer
- * danach z. B. neu laden.
+ * Acknowledgement dialog with a single "OK". For unmistakable success/
+ * error feedback (e.g. after backup/recovery). `tone`: 'good' | 'bad' | ''.
+ * Returns a Promise that resolves on OK/close – so the caller can
+ * then e.g. reload.
  */
 export function alertDialog({ title = t('dialog.notice'), message = '', okLabel = 'OK', tone = '' } = {}) {
   const prefix = tone === 'good' ? '✅ ' : tone === 'bad' ? '⚠️ ' : '';
@@ -603,14 +603,14 @@ export function alertDialog({ title = t('dialog.notice'), message = '', okLabel 
 }
 
 /* -------------------------------------------------------------------------
-   Formular-Bausteine
+   Form building blocks
    ------------------------------------------------------------------------- */
 /**
- * Formularfeld mit Beschriftung. Eingabefelder stehen in einem <label> (ein Tipp auf die
- * Beschriftung setzt den Cursor ins Feld). Knopfgruppen – Segmente, RPE, Gefühl, Portion,
- * Rolle … – dagegen in einer benannten Gruppe: In einem <label> leitete der Browser jeden
- * Tipp auf Beschriftung oder Leerraum an den ERSTEN Knopf weiter; „Anstrengung“ antippen
- * setzte stillschweigend RPE 1, „Rolle“ stufte zum Mitglied herab (UI-04).
+ * Form field with a label. Input fields sit inside a <label> (tapping the
+ * label puts the cursor in the field). Button groups – segments, RPE, feeling, portion,
+ * role … – on the other hand sit in a named group: inside a <label> the browser forwarded every
+ * tap on the label or empty space to the FIRST button; tapping "Effort"
+ * silently set RPE 1, "Role" demoted to member (UI-04).
  */
 let fieldSeq = 0;
 function containsButton(node) {
@@ -627,7 +627,7 @@ export function field(label, control) {
   }
   const id = `field-label-${++fieldSeq}`;
   const isRadio = control && typeof control.getAttribute === 'function' && control.getAttribute('role') === 'radiogroup';
-  // Eine Radiogruppe trägt den Namen selbst; alles andere bekommt eine benannte Gruppe.
+  // A radio group carries its name itself; everything else gets a named group.
   if (isRadio) control.setAttribute('aria-labelledby', id);
   return el('div', { class: 'field', ...(isRadio ? {} : { role: 'group', 'aria-labelledby': id }) }, [
     el('span', { class: 'field__label', id, text: label }),
@@ -635,9 +635,9 @@ export function field(label, control) {
   ]);
 }
 
-/** Fehler direkt am Feld statt nur als Toast (UI-35): markiert das Feld, nennt den Grund
-    darunter (vom Screenreader vorgelesen) und setzt den Fokus hinein. Die Meldung
-    verschwindet mit der nächsten Eingabe. */
+/** Error right at the field instead of only as a toast (UI-35): marks the field, states the reason
+    below it (read out by the screen reader) and moves focus into it. The message
+    disappears with the next input. */
 let fieldErrorSeq = 0;
 export function fieldError(control, message) {
   if (!control) return;
@@ -661,8 +661,8 @@ export function fieldError(control, message) {
   control.focus();
 }
 
-/** ⓘ neben einer Kennzahl (DOC-19/UI-21): öffnet den passenden Hilfeartikel als Sheet.
-    Die Hilfe wird erst beim Antippen geladen. */
+/** ⓘ next to a metric (DOC-19/UI-21): opens the matching help article as a sheet.
+    The help is only loaded on tap. */
 export function infoButton(articleId, label) {
   return el('button', {
     class: 'icon-btn info-btn', type: 'button', 'data-help': articleId,
@@ -684,8 +684,8 @@ export function select(options, value, attrs = {}) {
 }
 
 /**
- * Segmented Control als Radiogruppe (FE-15): `aria-checked` statt nur Farbe, ein Tab-Halt,
- * Pfeiltasten wechseln die Auswahl. onChange(value). `label`: Name, wenn kein field() drumherum.
+ * Segmented control as a radio group (FE-15): `aria-checked` instead of colour alone, one tab stop,
+ * arrow keys change the selection. onChange(value). `label`: name when there is no field() around it.
  */
 export function segmented(options, value, onChange, { label = null } = {}) {
   const wrap = el('div', { class: 'segmented', role: 'radiogroup', ...(label ? { 'aria-label': label } : {}) });
@@ -723,15 +723,15 @@ export function segmented(options, value, onChange, { label = null } = {}) {
   return wrap;
 }
 
-/** Worte zur RPE-Skala (1–10). RPE ist die Grundlage der Belastung (sRPE) – ohne Anker
-    trugen Familienmitglieder uneinheitlich ein (UI-25). */
+/** Words for the RPE scale (1–10). RPE is the basis of the load (sRPE) – without anchors
+    family members logged inconsistently (UI-25). */
 const RPE_KEYS = ['', 'veryLight', 'light', 'easy', 'moderate', 'medium', 'challenging', 'hard', 'veryHard', 'extremelyHard', 'maximal'];
 /** RPE_WORDS[i] reads the word in the active language (a Proxy, so lookups happen on access). */
 export const RPE_WORDS = new Proxy(RPE_KEYS, {
   get: (arr, p) => (typeof p === 'string' && /^\d+$/.test(p) ? (arr[p] ? t(`rpe.${arr[p]}`) : arr[p]) : Reflect.get(arr, p)),
 });
 
-/** Kleine Radiogruppe aus Knöpfen: `aria-checked`, ein Tab-Halt, Pfeiltasten. */
+/** Small radio group made of buttons: `aria-checked`, one tab stop, arrow keys. */
 function radioButtons(wrap, buttons, values, onPick) {
   const pick = (i, focus = false) => {
     buttons.forEach((b, j) => {
@@ -753,8 +753,8 @@ function radioButtons(wrap, buttons, values, onPick) {
   });
 }
 
-/** RPE 1–10 als Radiogruppe: zwei Reihen à fünf (Ziele ≥ 44 px), darunter die Anker bzw.
-    das Wort zum gewählten Wert. onChange(rpe). */
+/** RPE 1–10 as a radio group: two rows of five (targets ≥ 44 px), below them the anchors or
+    the word for the selected value. onChange(rpe). */
 export function rpeScale(value, onChange) {
   let cur = value || 0;
   const wrap = el('div', { class: 'rpe-scale', role: 'radiogroup' });
@@ -772,7 +772,7 @@ export function rpeScale(value, onChange) {
   return wrap;
 }
 
-/** Gefühl nach der Einheit als Radiogruppe. onChange(key). */
+/** Feeling after the session as a radio group. onChange(key). */
 export function feelingPicker(value, onChange) {
   const wrap = el('div', { class: 'feeling-row', role: 'radiogroup' });
   const buttons = FEELINGS.map((f) => el('button', {
@@ -784,7 +784,7 @@ export function feelingPicker(value, onChange) {
   return wrap;
 }
 
-/** Dauer als „[45] min [30] s“ – beide Felder mit Einheit und Namen (UI-25). */
+/** Duration as "[45] min [30] s" – both fields with unit and name (UI-25). */
 export function durationFields({ min = '', sec = '' } = {}) {
   const minI = input({ type: 'number', min: '0', inputmode: 'numeric', value: min, placeholder: '0', 'aria-label': t('duration.minutes'), class: 'input input--dur' });
   const secI = input({ type: 'number', min: '0', max: '59', inputmode: 'numeric', value: sec, placeholder: '0', 'aria-label': t('duration.seconds'), class: 'input input--dur' });
@@ -813,7 +813,7 @@ export function toggle(checked, onChange, label = null) {
   return el('label', { class: 'switch' }, [inp, el('span', { class: 'switch__track' })]);
 }
 
-/** Leerzustand. */
+/** Empty state. */
 export function emptyState(iconName, title, text) {
   return el('div', { class: 'empty' }, [
     el('div', { class: 'empty__icon', html: iconSvg(iconName) }),
@@ -822,7 +822,7 @@ export function emptyState(iconName, title, text) {
   ]);
 }
 
-/** Abschnitts-Überschrift mit optionaler Aktion. `help` = Artikel-ID für ein ⓘ neben dem Titel. */
+/** Section heading with an optional action. `help` = article ID for an ⓘ next to the title. */
 export function sectionHead(title, action = null, { help = null } = {}) {
   return el('div', { class: 'section-head' }, [
     help

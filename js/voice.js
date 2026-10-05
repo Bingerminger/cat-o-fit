@@ -1,12 +1,13 @@
 /* =========================================================================
-   voice.js — Ansagen aus fertigen Sprachbausteinen (assets/voice/*.m4a).
+   voice.js — announcements from ready-made speech building blocks (assets/voice/*.m4a).
 
-   Auf iPhone und iPad unterbricht die Sprachausgabe des Geräts (speechSynthesis)
-   die Musik oder bleibt neben ihr stumm. Deshalb spielt die Session Ansagen als
-   Aufnahmen über denselben Audio-Weg wie die Musik: Bausteine wie „Pause. Als
-   Nächstes:“ + „Liegestütz“ + „10 Wiederholungen“ werden nacheinander auf die
-   Audio-Uhr gelegt. Erzeugt mit tools/voice-clips.py (Piper, Stimme „Thorsten“,
-   Datensatz CC0); \`voiceTexts()\` ist die Liste aller Bausteine.
+   On iPhone and iPad the device's speech output (speechSynthesis) interrupts
+   the music or stays silent alongside it. That is why the session plays announcements as
+   recordings over the same audio path as the music: building blocks such as
+   "Pause. Als Nächstes:" + "Liegestütz" + "10 Wiederholungen" (German clip texts: "Break. Next up:"
+   + "Push-up" + "10 repetitions") are laid onto the audio clock one after the other. Generated
+   with tools/voice-clips.py (Piper, voice "Thorsten", CC0 dataset);
+   \`voiceTexts()\` is the list of all building blocks.
    ========================================================================= */
 
 import { audioContext } from './audio.js';
@@ -29,7 +30,7 @@ const SAY_DE = {
   worlds_greatest_stretch: 'Wörlds Greitest Stretsch', inchworm: 'Intschwörm', burpee: 'Börpie', mountain_climber: 'Mauntn Klaimer',
 };
 
-/** Name zum Sprechen: ohne Klammerzusatz, englische Namen lautgerecht. */
+/** Name for speaking: without the parenthetical, English names phonetically. */
 export function spokenName(e) {
   return (locale() === 'de' && SAY_DE[e.id]) || e.name.replace(/\s*\(.*\)\s*$/, '');
 }
@@ -37,7 +38,7 @@ export function spokenName(e) {
 export const MAX_REPS = 50;
 export const SECONDS = Array.from({ length: 36 }, (_, i) => (i + 1) * 5);   // 5 … 180 s
 
-/** Alle Bausteine als { Schlüssel: Text } – für das Erzeugen und für Tests. */
+/** All building blocks as { key: text } – for generating and for tests. */
 export function voiceTexts(exercises) {
   const out = {
     intro: t('voice.intro'),
@@ -54,7 +55,7 @@ export function voiceTexts(exercises) {
   return out;
 }
 
-/** Bausteine einer Menge: „12×“ → reps-12, „40 s je Seite“ → sec-40 + per-side. */
+/** Building blocks of a quantity: "12×" → reps-12, "40 s je Seite" (40 s per side) → sec-40 + per-side. */
 export function doseKeys(label) {
   const keys = [];
   const reps = /^(\d+)×/.exec(label);
@@ -65,7 +66,7 @@ export function doseKeys(label) {
   return keys;
 }
 
-/* ------------------------------ Abspielen ------------------------------ */
+/* ------------------------------ Playback ------------------------------ */
 
 const cache = new Map();
 let out = null;
@@ -79,7 +80,7 @@ function decode(c, data) {
   });
 }
 
-/** Lädt einen Baustein (einmal; danach aus dem Speicher). */
+/** Loads a building block (once; afterwards from memory). */
 export function loadClip(key) {
   const lang = clipLanguage();
   if (!lang) return Promise.resolve(null);
@@ -92,12 +93,12 @@ export function loadClip(key) {
   return cache.get(id);
 }
 
-/** Lädt Bausteine im Voraus (beim Start einer Session). */
+/** Loads building blocks in advance (when a session starts). */
 export function preloadClips(keys) { for (const k of new Set(keys)) loadClip(k); }
 
 /**
- * Spielt die Bausteine nacheinander ab Audio-Zeit `at`. Liefert { at, dur } – oder
- * null, wenn ein Baustein fehlt (dann bleibt die Ansage aus).
+ * Plays the building blocks one after another from audio time `at`. Returns { at, dur } – or
+ * null if a building block is missing (then the announcement stays off).
  */
 export async function sayClips(keys, { at = null, gap = 0.1, gain = 1 } = {}) {
   const c = audioContext();

@@ -1,6 +1,6 @@
-/* MKT-11/TRAIN-52: Krafttraining mit Wiederholungen und Gewicht je Satz, „letztes Mal“
-   und doppelter Progression – sowie die Übernahme aller Import-Felder beim Zuordnen
-   zu einer geplanten Einheit (Kalorien, Höhenmeter, Strecke gingen dabei verloren). */
+/* MKT-11/TRAIN-52: strength training with repetitions and weight per set, "last time"
+   and double progression – plus carrying over all import fields when assigning
+   to a planned unit (calories, ascent and route used to get lost). */
 import { test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import * as store from '../js/storage.js';
@@ -16,31 +16,31 @@ beforeEach(async () => {
   await store.login('u-1', '');
 });
 
-test('Sätze: bereinigen, anzeigen, Volumen', () => {
+test('Sets: clean up, display, volume', () => {
   assert.deepEqual(cleanSet({ reps: '12', kg: '22,5' }), { reps: 12, kg: 22.5 });
   assert.deepEqual(cleanSet({ reps: 10, kg: '' }), { reps: 10, kg: null });
-  assert.equal(cleanSet({ reps: 0, kg: 20 }), null, 'ohne Wiederholungen kein Satz');
+  assert.equal(cleanSet({ reps: 0, kg: 20 }), null, 'no set without repetitions');
   assert.equal(fmtSet({ reps: 12, kg: 22.5 }), '12 × 22,5 kg');
   assert.equal(fmtSet({ reps: 15, kg: null }), '15 Wdh.');
   assert.equal(volume([{ reps: 10, kg: 20 }, { reps: 8, kg: 25 }, { reps: 12, kg: null }]), 400);
   assert.deepEqual(toStrengthSets({ squat: [{ reps: 10, kg: 40 }], plank: [] }), [{ exerciseId: 'squat', sets: [{ reps: 10, kg: 40 }] }]);
 });
 
-test('Letztes Mal und doppelte Progression', () => {
+test('Last time and double progression', () => {
   const sessions = [
     { date: '2026-09-10', strengthSets: [{ exerciseId: 'squat', sets: [{ reps: 10, kg: 40 }] }] },
     { date: '2026-09-17', strengthSets: [{ exerciseId: 'squat', sets: [{ reps: 12, kg: 40 }, { reps: 12, kg: 40 }] }] },
     { date: '2026-09-24', strengthSets: [{ exerciseId: 'squat', sets: [{ reps: 8, kg: 45 }] }] },
   ];
-  assert.equal(lastSetsFor(sessions, 'squat', '2026-09-24').date, '2026-09-17', 'vor dem heutigen Tag');
+  assert.equal(lastSetsFor(sessions, 'squat', '2026-09-24').date, '2026-09-17', 'before the current day');
   assert.equal(lastSetsFor(sessions, 'lunge'), null);
   assert.match(progressionHint([{ reps: REP_TOP, kg: 40 }, { reps: REP_TOP, kg: 40 }]), /etwa 42,5 kg/);
-  assert.match(progressionHint([{ reps: 12, kg: 6 }]), /etwa 7 kg/, 'leichte Hanteln: +1 kg');
+  assert.match(progressionHint([{ reps: 12, kg: 6 }]), /etwa 7 kg/, 'light dumbbells: +1 kg');
   assert.match(progressionHint([{ reps: 9, kg: 40 }, { reps: 12, kg: 40 }]), /Wiederholungen steigern/);
   assert.match(progressionHint([{ reps: 15, kg: null }]), /schwerere Variante/);
 });
 
-test('Zuordnen zur geplanten Einheit übernimmt Sätze, Kalorien, Höhenmeter und Strecke', () => {
+test('Assigning to the planned unit carries over sets, calories, ascent and route', () => {
   const unit = { id: 'u1', date: todayStr(), type: 'strength', title: 'Kraft' };
   const plan = { id: 'p1', eventId: 'e1', units: [unit] };
   store.upsert('plans', plan);
@@ -54,7 +54,7 @@ test('Zuordnen zur geplanten Einheit übernimmt Sätze, Kalorien, Höhenmeter un
   assert.deepEqual(s.strengthSets, [{ exerciseId: 'squat', sets: [{ reps: 10, kg: 40 }] }]);
 });
 
-test('Workout-Modus: Sätze je verknüpfter Übung erfassen und beim Abschluss speichern', () => {
+test('Workout mode: record sets per linked exercise and save them on finishing', () => {
   const doc = globalThis.document;
   doc.body.childNodes = [];
   for (const id of ['header-title', 'header-subtitle', 'header-back', 'header-actions', 'modal-root']) {
@@ -69,18 +69,18 @@ test('Workout-Modus: Sätze je verknüpfter Übung erfassen und beim Abschluss s
   assert.match(view.textContent, /etwa 32,5\u00a0kg/);
   const reps = view.querySelectorAll('input').find((i) => /Wiederholungen$/.test(i.getAttribute('aria-label') || ''));
   const kg = view.querySelectorAll('input').find((i) => /Gewicht \(kg\)$/.test(i.getAttribute('aria-label') || ''));
-  assert.ok(reps && kg, 'Eingaben für Wiederholungen und Gewicht');
+  assert.ok(reps && kg, 'inputs for repetitions and weight');
   reps.value = '10'; kg.value = '32,5';
   view.querySelectorAll('button').find((b) => b.textContent === '+ Satz').click();
   assert.match(view.textContent, /1\. 10 × 32,5\u00a0kg/);
   view.querySelectorAll('button').find((b) => b.textContent.includes('Training beenden')).click();
   doc.querySelector('#modal-root').querySelectorAll('button').find((b) => b.textContent.includes('Speichern & abschließen')).click();
   const saved = store.get('sessions').find((x) => x.plannedId === 'k1');
-  assert.ok(saved, 'Einheit erledigt');
+  assert.ok(saved, 'unit done');
   assert.deepEqual(saved.strengthSets, [{ exerciseId: 'squat', sets: [{ reps: 10, kg: 32.5 }] }]);
 });
 
-test('Workout-Modus: Halteübungen (Plank …) bekommen keine Satz-Erfassung nach Wiederholungen', async () => {
+test('Workout mode: hold exercises (plank …) get no set recording by repetitions', async () => {
   const { EXERCISES } = await import('../js/exercises.js');
   const hold = EXERCISES.filter((e) => e.hold).map((e) => e.id);
   for (const id of ['hollow_hold', 'plank', 'pogo_jumps', 'side_plank', 'wall_sit']) assert.ok(hold.includes(id), id);

@@ -1,6 +1,6 @@
-/* Körperwerte-Erfassung (js/health.js openHealthEntry) über das Mini-DOM:
-   Ein Datumswechsel im Dialog darf den Eintrag des Öffnungstags weder verschieben
-   noch überschreiben (vor v3.20.0: stiller Datenverlust + Doppel-Einträge). */
+/* Body-measurement entry (js/health.js openHealthEntry) via the mini DOM:
+   Changing the date in the dialog must neither move nor overwrite the entry of the day
+   the dialog was opened on (before v3.20.0: silent data loss + duplicate entries). */
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import * as store from '../js/storage.js';
@@ -24,28 +24,28 @@ beforeEach(async () => {
 const saveButton = () => root.querySelectorAll('button').find((b) => b.textContent === 'Speichern');
 const dateInput = () => root.querySelector('input[type="date"]');
 
-test('UI-01: Datum im Dialog ändern verschiebt den heutigen Eintrag nicht', () => {
+test('UI-01: changing the date in the dialog does not move the entry for today', () => {
   const today = todayStr();
   const yday = addDays(today, -1);
   store.upsert('health', { id: 'h-today', date: today, weight: 70.1 });
   store.upsert('health', { id: 'h-yday', date: yday, weight: 70.6 });
   openHealthEntry();
   const w = root.querySelectorAll('input[type="number"]').find((i) => String(i.value) === '70.1');
-  assert.ok(w, 'Dialog zeigt den heutigen Wert');
+  assert.ok(w, 'dialog shows the value for today');
   const d = dateInput();
   d.value = yday;
   d.dispatchEvent({ type: 'change', target: d });
-  assert.equal(String(w.value), '70.6', 'nach dem Datumswechsel stehen die Werte von gestern im Feld');
+  assert.equal(String(w.value), '70.6', 'after the date change the field holds the values for yesterday');
   w.value = '70.4';
   saveButton().click();
   const h = store.get('health');
-  assert.equal(h.filter((x) => x.date === today).length, 1, 'heute genau ein Eintrag');
-  assert.equal(h.find((x) => x.date === today).weight, 70.1, 'heutiger Eintrag unverändert');
-  assert.equal(h.filter((x) => x.date === yday).length, 1, 'kein Doppel-Eintrag für gestern');
-  assert.equal(h.find((x) => x.date === yday).weight, 70.4, 'gestern korrigiert');
+  assert.equal(h.filter((x) => x.date === today).length, 1, 'exactly one entry for today');
+  assert.equal(h.find((x) => x.date === today).weight, 70.1, 'entry for today unchanged');
+  assert.equal(h.filter((x) => x.date === yday).length, 1, 'no duplicate entry for yesterday');
+  assert.equal(h.find((x) => x.date === yday).weight, 70.4, 'yesterday corrected');
 });
 
-test('UI-01: neues Datum ohne Eintrag legt einen eigenen Datensatz an', () => {
+test('UI-01: a new date without an entry creates its own record', () => {
   const today = todayStr();
   const earlier = addDays(today, -3);
   store.upsert('health', { id: 'h-today', date: today, weight: 70.1, notes: 'heute' });
@@ -54,26 +54,26 @@ test('UI-01: neues Datum ohne Eintrag legt einen eigenen Datensatz an', () => {
   d.value = earlier;
   d.dispatchEvent({ type: 'change', target: d });
   const nums = root.querySelectorAll('input[type="number"]');
-  assert.ok(nums.every((i) => String(i.value) === ''), 'Felder für den neuen Tag sind leer');
+  assert.ok(nums.every((i) => String(i.value) === ''), 'fields for the new day are empty');
   nums[0].value = '71';
   saveButton().click();
   const h = store.get('health');
-  assert.equal(h.find((x) => x.id === 'h-today').date, today, 'Eintrag des Öffnungstags bleibt auf heute');
+  assert.equal(h.find((x) => x.id === 'h-today').date, today, 'entry of the opening day stays on today');
   assert.equal(h.find((x) => x.id === 'h-today').notes, 'heute');
   const neu = h.find((x) => x.date === earlier);
-  assert.ok(neu && neu.id !== 'h-today', 'eigener Datensatz für den neuen Tag');
+  assert.ok(neu && neu.id !== 'h-today', 'separate record for the new day');
 });
 
-test('Muskelmasse von Hand an einem Tag mit Apple-Werten bleibt Muskelmasse', () => {
+test('Muscle mass entered by hand on a day with Apple values stays muscle mass', () => {
   const today = todayStr();
   store.upsert('health', { id: 'h-apple', date: today, source: 'apple-health', weight: 72.1, bodyFat: 24.7 });
   openHealthEntry();
   const label = root.querySelectorAll('label').find((l) => l.textContent.startsWith('Muskelmasse'));
-  assert.ok(label, 'Feld „Muskelmasse“ im Dialog');
+  assert.ok(label, 'muscle mass field in the dialog');
   label.querySelector('input').value = '28.2';
   saveButton().click();
   const h = store.get('health').find((x) => x.date === today);
-  assert.equal(h.muscleMass, 28.2, 'bleibt Muskelmasse (vorher als fettfreie Masse gelesen)');
-  assert.ok(h.leanMass == null, 'keine fettfreie Masse von 28,2 kg');
-  assert.equal(h.weight, 72.1, 'Apple-Werte des Tages bleiben');
+  assert.equal(h.muscleMass, 28.2, 'stays muscle mass (previously read as lean mass)');
+  assert.ok(h.leanMass == null, 'no lean mass of 28.2 kg');
+  assert.equal(h.weight, 72.1, 'Apple values of the day are kept');
 });

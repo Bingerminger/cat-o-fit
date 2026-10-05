@@ -1,10 +1,10 @@
 /* =========================================================================
-   unit-actions.js — Aktionen an geplanten Einheiten, ohne Oberfläche (DOM-frei).
+   unit-actions.js — actions on planned units, without a UI (DOM-free).
 
-   Einheit finden, ändern, erledigen (aus Workout, Datei-Import oder Formular),
-   ein vorhandenes Training verknüpfen, den nächsten freien Tag suchen und die
-   Gründe für „verpasst“. Genutzt von Heute, Kalender, Plan, Workout-Modus und
-   Import; session.js reicht die Namen für ältere Importe weiter.
+   Find, change and complete a unit (from a workout, file import or form),
+   link an existing training, find the next free day and the reasons
+   for "missed". Used by Today, calendar, plan, workout mode and import;
+   session.js passes the names on for older imports.
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -26,7 +26,7 @@ export function saveUnitPatch(planId, unitId, patch) {
   store.patch('plans', plan.id, { units });
 }
 
-/** Erstellt aus einer geplanten Einheit eine durchgeführte Session. */
+/** Creates a performed session from a planned unit. */
 export function completeUnit(plan, unit, data) {
   const session = {
     id: uid('ses'),
@@ -35,11 +35,11 @@ export function completeUnit(plan, unit, data) {
     date: unit.date,
     type: unit.type,
     title: unit.title,
-    intensity: unit.intensity ?? null,  // Fußball-Intensität für Belastung/harten Tag (#5)
+    intensity: unit.intensity ?? null,  // Football intensity for load/hard day (#5)
     distanceKm: data.distanceKm ?? null,
     durationSec: data.durationSec ?? null,
-    // Soll-Dauer der Einheit: Fehlt die erfasste Dauer, rechnet die Belastung damit
-    // statt mit der 30-min-Pauschale (90 min Fußball zählten sonst wie 30).
+    // Target duration of the unit: if the logged duration is missing, the load uses it
+    // instead of the flat 30 min (90 min of football would otherwise count like 30).
     plannedDurationMin: Number(unit.targetDurationMin) > 0 ? Number(unit.targetDurationMin) : null,
     paceSecPerKm: data.paceSecPerKm ?? (data.distanceKm && data.durationSec ? Math.round(data.durationSec / data.distanceKm) : null),
     avgHr: data.avgHr ?? null,
@@ -48,8 +48,8 @@ export function completeUnit(plan, unit, data) {
     feeling: data.feeling ?? null,
     timeInZones: data.timeInZones ?? null,
     splits: data.splits ?? [],
-    // Aus Datei oder Uhr (sonst gingen sie beim Zuordnen zur geplanten Einheit verloren):
-    // Kalorien, Höhenmeter, Strecke – und die Sätze aus dem Workout-Modus.
+    // From file or watch (otherwise they would get lost when assigning to the planned unit):
+    // calories, elevation gain, route – and the sets from workout mode.
     kcal: data.kcal ?? null,
     ascentM: data.ascentM ?? null,
     route: data.route ?? null,
@@ -60,13 +60,13 @@ export function completeUnit(plan, unit, data) {
   };
   store.upsert('sessions', session);
   saveUnitPatch(plan.id, unit.id, { status: 'erledigt', executedSessionId: session.id });
-  // Für die Einheit ausgewählte Übungen als genutzt zählen (Nutzungszähler).
+  // Count the exercises selected for the unit as used (usage counter).
   if (Array.isArray(unit.exerciseIds) && unit.exerciseIds.length) store.bumpExerciseUsage(unit.exerciseIds);
   return session;
 }
 
-/** Verknüpft ein bereits erfasstes (z. B. importiertes) Training mit einer geplanten
-    Einheit: Einheit erledigt, Session trägt den Planbezug. Keine zweite Session. */
+/** Links an already logged (e.g. imported) training to a planned unit:
+    unit done, the session carries the plan reference. No second session. */
 export function linkSession(plan, unit, session) {
   store.patch('sessions', session.id, {
     plannedId: unit.id, eventId: plan.eventId ?? null, matchDismissed: null,
@@ -75,7 +75,7 @@ export function linkSession(plan, unit, session) {
   saveUnitPatch(plan.id, unit.id, { status: 'erledigt', executedSessionId: session.id });
 }
 
-/** Erster Tag ab `from` (höchstens 14 Tage), an dem im Plan keine andere offene Einheit liegt. */
+/** First day from `from` (at most 14 days) on which the plan has no other open unit. */
 export function nextFreeDay(units, unitId, from, maxDays = 14) {
   for (let i = 0; i < maxDays; i++) {
     const d = addDays(from, i);
@@ -91,5 +91,5 @@ export const MISSED_REASONS = [
   { key: 'injured', emoji: '🩹', get label() { return t('unitActions.missedReasons.injured'); } },
   { key: 'other', emoji: '🤷', get label() { return t('unitActions.missedReasons.other'); } },
 ];
-/** Grund-Label zu einem missedReason-Schlüssel (für die Anzeige). */
+/** Base label for a missedReason key (for display). */
 export const MISSED_REASON_LABEL = Object.defineProperties({}, Object.fromEntries(MISSED_REASONS.map((r) => [r.key, { enumerable: true, get: () => r.label }])));

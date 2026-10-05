@@ -1,12 +1,12 @@
 /* =========================================================================
-   goals.js — dedizierte Gesundheits-/Gewichtsziele mit Fortschritt.
+   goals.js — dedicated health/weight goals with progress.
 
-   Ein Ziel ist ein angestrebter Wert einer Körper-/Gesundheitsmetrik
-   (z. B. „65 kg“, „Ruhepuls 50“, „VO₂max 45“). Der Fortschritt wird gegen den
-   Startwert (bei Anlage erfasst) und den aktuellsten gemessenen Wert berechnet.
-   DOM-frei und damit testbar; gespeichert in `profile.settings.healthGoals`.
-   Ergänzt die Wochen-Aktivitätsziele (healthgoals.js), die sich auf
-   Minuten/Trainingstage pro Woche beziehen.
+   A goal is a target value of a body/health metric
+   (e.g. "65 kg", "resting HR 50", "VO₂max 45"). Progress is calculated against the
+   start value (recorded at creation) and the most recent measured value.
+   DOM-free and thus testable; stored in `profile.settings.healthGoals`.
+   Complements the weekly activity goals (healthgoals.js), which refer to
+   minutes/training days per week.
    ========================================================================= */
 
 import { weightNow, weightGoalStatus } from './energy.js';
@@ -14,7 +14,7 @@ import { withHrvMethod } from './healthdata.js';
 
 import { t } from './i18n.js';
 
-/** Unterstützte Metriken (aus den Körperwerten). */
+/** Supported metrics (from the body values). */
 export const GOAL_METRICS = [
   { key: 'weight', get label() { return t('goals.weight'); }, unit: 'kg', field: 'weight', digits: 1, get hint() { return t('goals.hintDownOrUp'); } },
   { key: 'bodyFat', get label() { return t('goals.bodyFat'); }, unit: '%', field: 'bodyFat', digits: 1, get hint() { return t('goals.hintUsuallyDown'); } },
@@ -24,8 +24,8 @@ export const GOAL_METRICS = [
 ];
 export function metricMeta(key) { return GOAL_METRICS.find((m) => m.key === key) || null; }
 
-/** Aktuellster erfasster Wert einer Metrik (aus health; Gewicht ersatzweise aus dem Profil).
-    HRV: nur Werte der Messart `hrvMethod` (SDNN und RMSSD sind nicht vergleichbar). */
+/** Most recent recorded value of a metric (from health; weight alternatively from the profile).
+    HRV: only values of the measurement method `hrvMethod` (SDNN and RMSSD are not comparable). */
 export function latestMetric(key, { profile = {}, health = [], hrvMethod = null } = {}) {
   const m = metricMeta(key);
   if (!m) return null;
@@ -37,15 +37,15 @@ export function latestMetric(key, { profile = {}, health = [], hrvMethod = null 
   return null;
 }
 
-/** Tage bis zur Frist (oder null). */
+/** Days until the deadline (or null). */
 function daysUntil(deadline, today) {
   if (!deadline || !today) return null;
   const d = (Date.parse(deadline) - Date.parse(today)) / 86400000;
   return Number.isNaN(d) ? null : Math.round(d);
 }
 
-/** Fortschritt eines einzelnen Ziels. Gewicht nutzt den geglätteten Wert (7-Tage-Median)
-    und dieselbe Zieldefinition wie Ernährung, Cockpit und Wochenziele (energy.js). */
+/** Progress of a single goal. Weight uses the smoothed value (7-day median)
+    and the same goal definition as nutrition, cockpit and weekly goals (energy.js). */
 export function goalProgress(goal, ctx = {}) {
   const m = metricMeta(goal.metric);
   const isWeight = goal.metric === 'weight';
@@ -53,7 +53,7 @@ export function goalProgress(goal, ctx = {}) {
   const current = isWeight && measured != null ? (weightNow(ctx.health || [], ctx.profile || {}, ctx.today) ?? measured) : measured;
   const start = goal.start != null ? Number(goal.start) : current;
   const target = Number(goal.target);
-  const down = (start != null ? start : target) > target;   // Zielwert kleiner als Start => „runter“
+  const down = (start != null ? start : target) > target;   // target value smaller than start => "down"
   let pct = 0;
   let reached = false;
   if (current != null && start != null) {
@@ -77,8 +77,8 @@ export function goalProgress(goal, ctx = {}) {
   };
 }
 
-/** Fortschritt aller im Profil hinterlegten Ziele. `noWeightGoals` (Kinder, Schwangerschaft,
-    Essstörung – eligibility.js) blendet Gewichts- und Körperfettziele aus; gespeichert bleiben sie. */
+/** Progress of all goals stored in the profile. `noWeightGoals` (children, pregnancy,
+    eating disorder – eligibility.js) hides weight and body-fat goals; they remain stored. */
 export function goalsProgress({ profile = {}, health = [], today, noWeightGoals = false } = {}) {
   const goals = ((profile.settings && profile.settings.healthGoals) || [])
     .filter((g) => !(noWeightGoals && (g.metric === 'weight' || g.metric === 'bodyFat')));

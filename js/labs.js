@@ -1,47 +1,47 @@
 /* =========================================================================
-   labs.js — Laborwerte für Sportlerinnen und Sportler: Katalog, Einheiten-
-   Umrechnung, Bewertung und Trend. Reine, DOM-freie Logik → per node:test
-   abgedeckt.
+   labs.js — lab values for athletes: catalogue, unit conversion,
+   rating and trend. Pure, DOM-free logic → covered by node:test.
 
-   Leitgedanken:
-   - ZWEI Korridore je Analyt: der LABOR-Referenzbereich („noch normal“) und der
-     sportliche ZIELKORRIDOR („für Training und Regeneration günstig“). Beide
-     unterscheiden sich teils deutlich – Ferritin etwa gilt ab 15 µg/l als normal,
-     für Ausdauersportlerinnen sind aber erst ~30–40 µg/l komfortabel.
-   - KONTEXT schlägt Grenzwert: Ferritin ist ein Akutphaseprotein und bei erhöhtem
-     CRP derselben Blutentnahme nur eingeschränkt beurteilbar; CK, Harnstoff und CRP
-     sind nach harter Belastung erhöht; Östradiol hängt am Zyklustag; Biotin stört
-     manche Tests. Solche Fälle werden gekennzeichnet statt fröhlich bewertet.
-   - TREND vor Momentaufnahme – aber erst oberhalb der natürlichen Schwankung
-     (Referenzänderungswert) und nur in die ungünstige Richtung projiziert.
-   - Jeder Bereich hat eine QUELLE (Feld `source`), die in der Ansicht erscheint.
+   Guiding principles:
+   - TWO ranges per analyte: the LAB reference range ("still normal") and the
+     sport TARGET range ("favourable for training and recovery"). The two
+     sometimes differ considerably – ferritin, for instance, counts as normal from
+     15 µg/l, but for female endurance athletes ~30–40 µg/l is only just comfortable.
+   - CONTEXT beats the limit: ferritin is an acute-phase protein and can only be
+     assessed to a limited extent when CRP from the same blood draw is raised; CK,
+     urea and CRP are raised after hard exertion; oestradiol depends on the cycle
+     day; biotin interferes with some tests. Such cases are flagged instead of
+     being rated cheerfully.
+   - TREND before snapshot – but only above the natural variation
+     (reference change value) and projected only in the unfavourable direction.
+   - Every range has a SOURCE (field `source`), which appears in the view.
 
-   Bewusst KEINE Diagnostik: Cat-O-Fit ordnet Werte ein und dokumentiert sie,
-   stellt aber keine Diagnose und ersetzt keine ärztliche Beurteilung.
+   Deliberately NO diagnostics: Cat-O-Fit classifies and documents values, but
+   makes no diagnosis and does not replace a medical assessment.
    ========================================================================= */
 
 import { diffDays, fmtDec } from './ui.js';
 import { locale, t } from './i18n.js';
 
-/* ----------------------------- Analyt-Katalog ---------------------------- */
+/* ----------------------------- Analyte catalogue ---------------------------- */
 
 /**
- * Sportrelevante Analyte. Je Eintrag:
- *   unit        kanonische Einheit (in der gespeichert wird)
- *   alt         in Deutschland gängige weitere Einheiten mit Faktor -> kanonisch
- *   ref         Labor-Referenzbereich [min, max|null] (grober Standard; `bySex` möglich,
- *               `null` als Obergrenze = keine Obergrenze)
- *   needsSex    ohne Geschlecht (oder eigenen Laborbereich) nicht beurteilbar
- *   sport       sportlicher Zielkorridor [min, max|null] (optional, `sportBySex` möglich)
- *   sportFirst  über dem Laborbereich, aber im Sportkorridor = „für Trainierende häufig“
- *   higherBetter/lowerBetter steuert Trend und Projektion
- *   context     Analyt derselben Blutentnahme, ohne den der Wert nur mit Vorbehalt gilt
- *   exercise    nach harter Belastung (48 h) erhöht – dann nicht beurteilbar
- *   biotin      Immunoassay, den Biotin-Präparate verfälschen können
- *   cycle       zyklusabhängig – bei Frauen nur mit eigenem Laborbereich beurteilbar
- *   rcv         Referenzänderungswert in % (Mindeständerung, ab der ein Trend zählt)
- *   validDays   so lange trägt ein Wert Empfehlungen (danach „neu bestimmen lassen“)
- *   source      Grundlage der Bereiche
+ * Sport-relevant analytes. Per entry:
+ *   unit        canonical unit (the one that is stored)
+ *   alt         other units common in Germany with factor -> canonical
+ *   ref         lab reference range [min, max|null] (rough default; `bySex` possible,
+ *               `null` as upper limit = no upper limit)
+ *   needsSex    cannot be assessed without sex (or own lab range)
+ *   sport       sport target range [min, max|null] (optional, `sportBySex` possible)
+ *   sportFirst  above the lab range but within the sport range = "common in people who train"
+ *   higherBetter/lowerBetter controls trend and projection
+ *   context     analyte from the same blood draw without which the value only holds with reservations
+ *   exercise    raised after hard exertion (48 h) – then cannot be assessed
+ *   biotin      immunoassay that biotin supplements can distort
+ *   cycle       cycle-dependent – for women only assessable with their own lab range
+ *   rcv         reference change value in % (minimum change from which a trend counts)
+ *   validDays   how long a value supports recommendations (afterwards "have it re-measured")
+ *   source      basis of the ranges
  */
 export const ANALYTES = {
   ferritin: {
@@ -163,13 +163,13 @@ export const ANALYTES = {
   },
 };
 
-/** Gruppen in sinnvoller Anzeige-Reihenfolge. */
+/** Groups in a sensible display order. */
 export const ANALYTE_GROUPS = [
   'Eisenstatus', 'Vitamine', 'Mineralstoffe', 'Hormone & Stoffwechsel',
   'Belastung & Regeneration', 'Entzündung',
 ];
 
-/** Anzeigename einer Analyt-Gruppe (die Gruppe selbst bleibt der deutsche interne Wert). */
+/** Display name of an analyte group (the group itself stays the German internal value). */
 export function groupLabel(group) {
   switch (group) {
     case 'Eisenstatus': return t('labs.group.iron');
@@ -182,20 +182,20 @@ export function groupLabel(group) {
   }
 }
 
-/** Datenstand neuer Laborwerte: ab 2 gelten Magnesium-Art und Referenzherkunft als geklärt. */
+/** Data version of new lab values: from 2 on, magnesium type and reference origin count as settled. */
 export const LAB_SCHEMA = 2;
 
-/** Mindeständerung (%), ab der ein Verlauf als Trend zählt, wenn der Analyt keinen eigenen Wert hat. */
+/** Minimum change (%) from which a course counts as a trend, if the analyte has no value of its own. */
 const DEFAULT_RCV = 25;
 
-/** Alle wählbaren Einheiten eines Analyten (kanonisch zuerst). */
+/** All selectable units of an analyte (canonical first). */
 export function unitsFor(key) {
   const a = ANALYTES[key];
   if (!a) return [];
   return [a.unit, ...Object.keys(a.alt || {})];
 }
 
-/** Faktor einer Einheit -> kanonisch (1 für die kanonische Einheit), sonst null. */
+/** Factor of a unit -> canonical (1 for the canonical unit), otherwise null. */
 export function unitFactor(key, unit) {
   const a = ANALYTES[key];
   if (!a) return null;
@@ -204,9 +204,9 @@ export function unitFactor(key, unit) {
 }
 
 /**
- * Rechnet einen Wert in die kanonische Einheit um. Häufigste Fehlerquelle bei
- * Laborwerten: Vitamin D wird mal in ng/ml, mal in nmol/l angegeben (Faktor 2,5),
- * CRP in mg/l oder mg/dl (Faktor 10).
+ * Converts a value into the canonical unit. Most common source of error with
+ * lab values: vitamin D is stated sometimes in ng/ml, sometimes in nmol/l (factor 2.5),
+ * CRP in mg/l or mg/dl (factor 10).
  */
 export function toCanonical(key, value, unit) {
   const v = Number(value);
@@ -215,7 +215,7 @@ export function toCanonical(key, value, unit) {
   return f === 1 ? v : Math.round(v * f * 1000) / 1000;
 }
 
-/** Rechnet einen kanonischen Wert in eine andere Einheit (für Platzhalter und Anzeige). */
+/** Converts a canonical value into another unit (for placeholders and display). */
 export function fromCanonical(key, value, unit) {
   const v = Number(value);
   const f = unitFactor(key, unit);
@@ -223,12 +223,12 @@ export function fromCanonical(key, value, unit) {
   return f === 1 ? v : Math.round((v / f) * 1000) / 1000;
 }
 
-/* ------------------------- Lese-Migration (v3.20.0) ----------------------- */
+/* ------------------------- Read migration (v3.20.0) ----------------------- */
 
-/* Bis v3.19.0 standen im Erfassungsformular die Standardbereiche als WERT (nicht als
-   Platzhalter) und wurden mitgespeichert – bei Einheitenwechsel sogar falsch umgerechnet.
-   Solche Datensätze sind nicht „dein Labor“. Hier die damaligen Standards (kanonisch) und
-   die damaligen Einheitenfaktoren. */
+/* Up to v3.19.0 the entry form showed the default ranges as a VALUE (not as a
+   placeholder) and saved them along – on a unit change even converted wrongly.
+   Such records are not "your lab". Here are the defaults of that time (canonical) and
+   the unit factors of that time. */
 const LEGACY_REFS = {
   ferritin: [[15, 300]], transferrinSat: [[16, 45]], hb: [[12, 17.5], [13.5, 17.5], [12, 16]],
   crp: [[0, 5]], vitaminD: [[50, 125]], b12: [[35, 150]], folate: [[10, 45]], magnesium: [[1.6, 2.4]],
@@ -238,7 +238,7 @@ const LEGACY_REFS = {
 const LEGACY_FACTORS = { hb: [1.6114], vitaminD: [2.496] };
 const close = (a, b) => Math.abs(a - b) <= Math.max(1e-6, Math.abs(b) * 0.002);
 
-/** War der gespeicherte Bereich nur die alte Vorbelegung (ggf. falsch umgerechnet)? */
+/** Was the stored range merely the old prefill (possibly converted wrongly)? */
 function isLegacyDefaultRef(key, lo, hi) {
   const refs = LEGACY_REFS[key];
   if (!refs || !Number.isFinite(lo) || !Number.isFinite(hi)) return false;
@@ -249,12 +249,12 @@ function isLegacyDefaultRef(key, lo, hi) {
 const labMemo = new WeakMap();
 
 /**
- * Deutet einen älteren Laborwert-Datensatz beim Lesen um (gespeichert wird nichts):
- * - Die mitgespeicherte Standard-Vorbelegung gilt nicht als Bereich deines Labors.
- * - „Magnesium (Vollblut)“ unter 1,2 mmol/l ist mit großer Sicherheit ein SERUM-Wert:
- *   Alle veröffentlichten Vollblut-Bereiche beginnen bei 1,2–1,3 mmol/l, der Serum-
- *   bereich liegt bei 0,70–1,10. Bis v3.19.0 gab es nur das Vollblut-Feld, also landete
- *   auch der viel häufiger bestimmte Serumwert dort.
+ * Reinterprets an older lab-value record on reading (nothing is saved):
+ * - The saved default prefill does not count as the range of your lab.
+ * - "Magnesium (whole blood)" below 1.2 mmol/l is almost certainly a SERUM value:
+ *   all published whole-blood ranges start at 1.2–1.3 mmol/l, the serum
+ *   range is 0.70–1.10. Up to v3.19.0 there was only the whole-blood field, so
+ *   the far more frequently measured serum value ended up there as well.
  */
 export function migrateLabRecord(r) {
   if (!r || typeof r !== 'object' || (r.schema || 0) >= LAB_SCHEMA) return r;
@@ -269,14 +269,14 @@ export function migrateLabRecord(r) {
   labMemo.set(r, result);
   return result;
 }
-/** Ganze Liste lesend umdeuten (idempotent). */
+/** Reinterpret the whole list on reading (idempotent). */
 export function migrateLabs(labs = []) {
   return (labs || []).map(migrateLabRecord);
 }
 
-/* ------------------------------ Bereiche --------------------------------- */
+/* ------------------------------ Ranges --------------------------------- */
 
-/** Stammt der Referenzbereich dieses Datensatzes vom eigenen Labor? */
+/** Does the reference range of this record come from the user's own lab? */
 export function hasOwnRef(record) {
   if (!record || record.refSource === 'default') return false;
   const lo = Number(record.refLow);
@@ -285,17 +285,16 @@ export function hasOwnRef(record) {
 }
 
 /**
- * Referenzbereich eines Analyten.
+ * Reference range of an analyte.
  *
- * WICHTIG: In Deutschland gibt es KEINE bundesweit einheitlichen Referenzbereiche –
- * jedes Labor gibt eigene an, abhängig von Messmethode, Gerät und Referenzkollektiv.
- * Deshalb hat der auf dem eigenen Befund abgedruckte Bereich IMMER Vorrang vor dem
- * hinterlegten Standardwert; der Standard ist nur die Rückfallebene.
- * Ohne Geschlecht gibt es für geschlechtsabhängige Werte (Hb, Testosteron, Östradiol)
- * keinen Standard mehr – ein „Vereinigungsbereich“ hätte Männer mit Blutarmut als gut
- * eingestuft.
+ * IMPORTANT: Germany has NO nationwide uniform reference ranges –
+ * every lab states its own, depending on measurement method, device and reference population.
+ * Therefore the range printed on your own report ALWAYS takes precedence over the
+ * stored default; the default is only the fallback.
+ * Without sex there is no default any more for sex-dependent values (Hb, testosterone, oestradiol)
+ * – a "union range" would have rated men with anaemia as good.
  *
- * @param {object|null} record Laborwert-Datensatz mit optionalem refLow/refHigh
+ * @param {object|null} record lab-value record with optional refLow/refHigh
  * @returns {[number, number|null]|null}
  */
 export function refRange(key, sex, record = null, { pregnant = false } = {}) {
@@ -310,15 +309,15 @@ export function refRange(key, sex, record = null, { pregnant = false } = {}) {
   return r;
 }
 
-/** Sportkorridor (je Geschlecht, wo hinterlegt). */
+/** Sport range (per sex, where stored). */
 function sportRange(a, sex) {
   if (a.sportBySex && sex && a.sportBySex[sex]) return a.sportBySex[sex];
   return a.sport || null;
 }
 
-/* ------------------------------ Bewertung -------------------------------- */
+/* ------------------------------ Rating -------------------------------- */
 
-/** Jüngster Wert eines Analyten (bis `today`), oder null. */
+/** Most recent value of an analyte (up to `today`), or null. */
 export function latest(labs = [], key, today = null) {
   return migrateLabs(labs)
     .filter((l) => l && !l.deleted && l.analyte === key && (!today || l.date <= today))
@@ -326,14 +325,14 @@ export function latest(labs = [], key, today = null) {
     .at(-1) || null;
 }
 
-/** Alle Werte eines Analyten, chronologisch. */
+/** All values of an analyte, chronological. */
 export function series(labs = [], key) {
   return migrateLabs(labs)
     .filter((l) => l && !l.deleted && l.analyte === key && Number.isFinite(Number(l.value)))
     .sort((a, b) => a.date.localeCompare(b.date));
 }
 
-/** Ist der Wert zu alt, um noch Empfehlungen zu tragen? (Vitamin D: auch Sommerwert im Winter.) */
+/** Is the value too old to still support recommendations? (Vitamin D: a summer value in winter counts as well.) */
 export function isStale(key, record, today) {
   if (!record || !today) return false;
   const a = ANALYTES[key] || {};
@@ -347,13 +346,13 @@ export function isStale(key, record, today) {
   return false;
 }
 
-/** Jüngster Wert, der noch aktuell genug für Empfehlungen ist (sonst null). */
+/** Most recent value that is still current enough for recommendations (otherwise null). */
 export function freshLatest(labs = [], key, today = null) {
   const l = latest(labs, key, today);
   return l && !isStale(key, l, today) ? l : null;
 }
 
-/** CRP derselben Blutentnahme (± 3 Tage) – ein Wert von einem anderen Termin sagt nichts. */
+/** CRP from the same blood draw (± 3 days) – a value from another appointment says nothing. */
 export function sameDrawCrp(labs = [], record) {
   if (!record || !record.date) return null;
   const near = series(labs, 'crp').filter((c) => Math.abs(diffDays(c.date, record.date)) <= 3);
@@ -364,9 +363,9 @@ export function sameDrawCrp(labs = [], record) {
 const fmt = fmtDec;
 
 /**
- * Bewertet einen einzelnen Laborwert.
- * @param {object} opts `record` = der Datensatz (eigener Bereich, Umstände der Blutentnahme),
- *   `pregnant` = Schwangerschaft laut Abgrenzung (Hb-Grenze nach WHO)
+ * Rates a single lab value.
+ * @param {object} opts `record` = the record (own range, circumstances of the blood draw),
+ *   `pregnant` = pregnancy according to the delimitation (Hb limit per WHO)
  * @returns {{status, side, label, tone, ref, sport, ownRef, blocked?:string, caveats:string[], source}}
  *   status: 'niedrig' | 'grenzwertig' | 'gut' | 'hoch' | 'unbeurteilbar' | 'unbekannt'
  */
@@ -383,18 +382,18 @@ export function assess(key, value, { sex = null, labs = [], today = null, record
   const base = { ref, sport, ownRef, caveats, source: a.source };
   const blockedResult = (text) => ({ ...base, status: 'unbeurteilbar', side: null, label: t('labs.notAssessable'), tone: 'neutral', blocked: text });
 
-  // Ohne Geschlecht (und ohne eigenen Laborbereich) kein Standard.
+  // Without sex (and without own lab range) no default.
   if (!ref) {
     return blockedResult(a.needsSex
       ? t('labs.blockedNeedsSex', { label: a.label })
       : t('labs.blockedNoRange'));
   }
-  // Zyklusabhängig: bei Frauen nur mit dem Bereich des eigenen Labors (für die Zyklusphase).
+  // Cycle-dependent: for women only with the range of their own lab (for the cycle phase).
   if (a.cycle && sex === 'w' && !ownRef) {
     const day = rec && rec.cycleDay ? ` ${t('labs.cycleDayNoted', { day: rec.cycleDay })}` : '';
     return blockedResult(t('labs.blockedCycle', { label: a.label, day }));
   }
-  // Nach harter Belastung erhöht (CK, Harnstoff, CRP): erst in Ruhe aussagekräftig.
+  // Raised after hard exertion (CK, urea, CRP): only meaningful at rest.
   if (a.exercise && rec && rec.exercise48h && ref[1] != null && v > ref[1]) {
     return blockedResult(t('labs.blockedExercise', { label: a.label }));
   }
@@ -402,8 +401,8 @@ export function assess(key, value, { sex = null, labs = [], today = null, record
     caveats.push(t('labs.caveatBiotin'));
   }
 
-  // Ferritin: CRP DERSELBEN Blutentnahme. Bei Entzündung sagt ein hoher Wert nichts,
-  // ein niedriger aber sehr wohl (WHO 2020: unter 70 µg/l spricht dann für Eisenmangel).
+  // Ferritin: CRP from the SAME blood draw. With inflammation a high value says nothing,
+  // a low one very much does (WHO 2020: below 70 µg/l then points to iron deficiency).
   if (a.context === 'crp') {
     const crp = sameDrawCrp(labs, rec || { date: today });
     if (crp && Number(crp.value) > 5) {
@@ -420,7 +419,7 @@ export function assess(key, value, { sex = null, labs = [], today = null, record
     if (!crp && rec && rec.date) caveats.push(t('labs.caveatNoCrp'));
   }
 
-  // Über dem Laborbereich, aber im Sportkorridor (CK): für Trainierende häufig.
+  // Above the lab range but within the sport range (CK): common in people who train.
   if (a.sportFirst && sport && ref[1] != null && v > ref[1] && (sport[1] == null || v <= sport[1])) {
     return { ...base, status: 'grenzwertig', side: 'high', label: t('labs.highForAthletes'), tone: 'warn' };
   }
@@ -435,12 +434,12 @@ export function assess(key, value, { sex = null, labs = [], today = null, record
 }
 
 /**
- * Trend eines Analyten: Richtung, Änderung pro 30 Tage und – nur in die UNGÜNSTIGE
- * Richtung (fallend bei „höher ist besser“, steigend bei „niedriger ist besser“) – eine
- * Projektion, wann die Grenze erreicht wäre.
- * Rauschschutz: mindestens 3 Werte über 60 Tage, und die Änderung muss den
- * Referenzänderungswert (`rcv`) überschreiten – sonst ist es natürliche Schwankung.
- * Projektionen über 12 Monate gibt es nicht (dafür ist eine Gerade zu unsicher).
+ * Trend of an analyte: direction, change per 30 days and – only in the UNFAVOURABLE
+ * direction (falling for "higher is better", rising for "lower is better") – a
+ * projection of when the limit would be reached.
+ * Noise protection: at least 3 values over 60 days, and the change must exceed the
+ * reference change value (`rcv`) – otherwise it is natural variation.
+ * There are no projections beyond 12 months (a straight line is too uncertain for that).
  * @returns {{dir, perMonth, n, daysToLimit:number|null, limit:number|null, limitSide:'low'|'high'|null, seasonal:boolean}|null}
  */
 export function trend(labs = [], key, { days = 540, sex = null } = {}) {
@@ -452,7 +451,7 @@ export function trend(labs = [], key, { days = 540, sex = null } = {}) {
   const span = diffDays(pts[0].date, last.date);
   if (span < 60) return null;
 
-  // Lineare Regression über (Tage seit erstem Punkt, Wert).
+  // Linear regression over (days since the first point, value).
   const x0 = pts[0].date;
   const xs = pts.map((p) => diffDays(x0, p.date));
   const ys = pts.map((p) => Number(p.value));
@@ -461,7 +460,7 @@ export function trend(labs = [], key, { days = 540, sex = null } = {}) {
   const my = ys.reduce((s, y) => s + y, 0) / n;
   const denom = xs.reduce((s, x) => s + (x - mx) ** 2, 0);
   if (!denom) return null;
-  const slope = xs.reduce((s, x, i) => s + (x - mx) * (ys[i] - my), 0) / denom; // pro Tag
+  const slope = xs.reduce((s, x, i) => s + (x - mx) * (ys[i] - my), 0) / denom; // per day
 
   const a = ANALYTES[key] || {};
   const perMonth = Math.round(slope * 30 * 100) / 100;
@@ -470,7 +469,7 @@ export function trend(labs = [], key, { days = 540, sex = null } = {}) {
   const out = { dir, perMonth, n, daysToLimit: null, limit: null, limitSide: null, seasonal: !!a.seasonal };
   if (dir === 'flat') return out;
 
-  // Projektion nur in die ungünstige Richtung; maßgeblich ist der Bereich des JÜNGSTEN Befunds.
+  // Projection only in the unfavourable direction; the range of the NEWEST report is decisive.
   const ref = refRange(key, sex, last);
   const sport = sportRange(a, sex);
   const cur = Number(last.value);
@@ -487,12 +486,12 @@ export function trend(labs = [], key, { days = 540, sex = null } = {}) {
   return out;
 }
 
-/** Einordnung ohne Bewertung – für Kinder und Jugendliche: Die hinterlegten Bereiche
-    gelten für Erwachsene, altersgerechte Bereiche kennt nur das eigene Labor. */
+/** Classification without rating – for children and adolescents: the stored ranges
+    apply to adults, age-appropriate ranges are known only to the user's own lab. */
 const UNRATED = { status: 'unbewertet', side: null, get label() { return t('labs.unrated'); }, tone: 'neutral', ref: null, sport: null, caveats: [] };
 
 /**
- * Gesamtbild: alle erfassten Analyte mit Bewertung und Trend, auffällige zuerst.
+ * Overall picture: all recorded analytes with rating and trend, conspicuous ones first.
  * @returns {Array<{key, label, group, value, unit, date, assessment, trend, hint, record, stale}>}
  */
 export function overview(labs = [], { sex = null, today = null, evaluate = true, pregnant = false } = {}) {
@@ -518,10 +517,10 @@ export function overview(labs = [], { sex = null, today = null, evaluate = true,
 }
 
 /**
- * Plausibilität einer Eingabe: weit außerhalb des Standards (unter 0,2 × Untergrenze,
- * über 5 × Obergrenze) → vermutlich falsche Einheit. Sehr hohe CRP-, CK- oder
- * Harnstoffwerte kommen dagegen wirklich vor (Infekt, Muskelschaden) – dort nur die
- * Untergrenze prüfen.
+ * Plausibility of an input: far outside the default (below 0.2 × lower limit,
+ * above 5 × upper limit) → probably the wrong unit. Very high CRP, CK or
+ * urea values do occur for real, however (infection, muscle damage) – there only
+ * the lower limit is checked.
  */
 export function implausible(key, canonicalValue, sex = null) {
   const a = ANALYTES[key];
@@ -535,11 +534,11 @@ export function implausible(key, canonicalValue, sex = null) {
 }
 
 /**
- * Mehrere Werte EINES Befunds auf einmal (MKT-09) → Datensätze wie bei der Einzelerfassung.
- * `rows`: [{ key, value, unit, refLow, refHigh }] als Text aus den Feldern (Komma oder Punkt);
- * leere Werte zählen nicht. `ctx`: Umstände der Blutentnahme, gelten für alle Werte.
- * Liefert die Datensätze (ohne id/Zeitstempel), Fehler je Wert und die Werte mit
- * unplausibler Größenordnung (Einheit prüfen?).
+ * Several values of ONE report at once (MKT-09) → records as with single entry.
+ * `rows`: [{ key, value, unit, refLow, refHigh }] as text from the fields (comma or point);
+ * empty values do not count. `ctx`: circumstances of the blood draw, apply to all values.
+ * Returns the records (without id/timestamp), errors per value and the values with an
+ * implausible order of magnitude (check the unit?).
  * @returns {{records: object[], errors: string[], implausible: string[]}}
  */
 export function labRecordsFromReport({ date, note = '', ctx = {}, rows = [] } = {}, { sex = null } = {}) {

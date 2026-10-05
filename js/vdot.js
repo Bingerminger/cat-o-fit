@@ -1,23 +1,23 @@
 /* =========================================================================
-   vdot.js — Form-/Leistungsschätzung nach der VDOT-Idee (Jack Daniels) und
-   daraus abgeleitete Trainings-Paces. Reine Funktionen ohne Store/DOM → testbar.
+   vdot.js — form/performance estimate based on the VDOT idea (Jack Daniels) and
+   training paces derived from it. Pure functions without store/DOM → testable.
 
-   Aus einer Lauf-Leistung (Distanz + Zeit) wird ein VDOT (≈ effektives VO₂max)
-   geschätzt; daraus lassen sich die Trainingsbereiche (Recovery … VO₂max) als
-   Sekunden/km ableiten – im selben Format wie `profile.paceZones`.
-   Bewusst als Orientierung gedacht – keine Labordiagnostik.
+   From a running performance (distance + time) a VDOT (≈ effective VO₂max)
+   is estimated; from it the training ranges (Recovery … VO₂max) can be derived as
+   seconds/km – in the same format as `profile.paceZones`.
+   Deliberately meant as guidance – not laboratory diagnostics.
    ========================================================================= */
 
 import { diffDays } from './ui.js';
 
 import { t } from './i18n.js';
 
-/** VO₂ (ml/kg/min) bei Laufgeschwindigkeit v (m/min) – Daniels/Gilbert. */
+/** VO₂ (ml/kg/min) at running speed v (m/min) – Daniels/Gilbert. */
 function vo2AtSpeed(v) { return -4.60 + 0.182258 * v + 0.000104 * v * v; }
-/** Anteil von VO₂max, der über t Minuten gehalten werden kann (Drop-off). */
+/** Fraction of VO₂max that can be sustained for t minutes (drop-off). */
 function pctMaxForTime(min) { return 0.8 + 0.1894393 * Math.exp(-0.012778 * min) + 0.2989558 * Math.exp(-0.1932605 * min); }
 
-/** VDOT aus einer Leistung (Distanz in Metern, Zeit in Sekunden). null bei Unsinn. */
+/** VDOT from a performance (distance in metres, time in seconds). null for nonsense. */
 export function vdotFromPerf(distanceM, timeSec) {
   if (!distanceM || !timeSec || distanceM < 400 || timeSec < 60) return null;
   const tMin = timeSec / 60;
@@ -28,20 +28,20 @@ export function vdotFromPerf(distanceM, timeSec) {
   return (vdot > 20 && vdot < 90) ? Math.round(vdot * 10) / 10 : null;
 }
 
-/** Pace (Sek./km) für eine Zielintensität `pct` (Anteil von VDOT). */
+/** Pace (s/km) for a target intensity `pct` (fraction of VDOT). */
 export function paceForPct(vdot, pct) {
-  const target = vdot * pct;             // gewünschtes VO₂
-  // 0.000104 v² + 0.182258 v - 4.60 = target  ->  quadratische Lösung (v>0)
+  const target = vdot * pct;             // desired VO₂
+  // 0.000104 v² + 0.182258 v - 4.60 = target  ->  quadratic solution (v>0)
   const a = 0.000104, b = 0.182258, c = -4.60 - target;
   const v = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a); // m/min
-  return Math.round(60000 / v);          // 1000 m bei v m/min -> Sekunden/km
+  return Math.round(60000 / v);          // 1000 m at v m/min -> seconds/km
 }
 
 /**
- * Äquivalente Wettkampfzeit (Sekunden) für eine Distanz bei gegebenem VDOT –
- * die Umkehrung von `vdotFromPerf` (Daniels' Äquivalenz-Zeiten). Löst
- * `vo2AtSpeed(v)/pctMaxForTime(t) = vdot` per Bisektion; die Funktion ist in t
- * streng monoton fallend, daher robust ohne Startwert.
+ * Equivalent race time (seconds) for a distance at a given VDOT –
+ * the inverse of `vdotFromPerf` (Daniels' equivalence times). Solves
+ * `vo2AtSpeed(v)/pctMaxForTime(t) = vdot` by bisection; the function is strictly
+ * monotonically decreasing in t, hence robust without a starting value.
  */
 export function raceTimeFromVdot(vdot, distanceM) {
   if (!vdot || !distanceM || distanceM < 400) return null;
@@ -50,7 +50,7 @@ export function raceTimeFromVdot(vdot, distanceM) {
     return vo2AtSpeed(distanceM / tMin) / pctMaxForTime(tMin) - vdot;
   };
   let lo = 60, hi = 8 * 3600;              // 1 min … 8 h
-  if (f(lo) < 0 || f(hi) > 0) return null; // außerhalb des sinnvollen Bereichs
+  if (f(lo) < 0 || f(hi) > 0) return null; // outside the sensible range
   for (let i = 0; i < 60; i++) {
     const mid = (lo + hi) / 2;
     if (f(mid) > 0) lo = mid; else hi = mid;
@@ -58,10 +58,10 @@ export function raceTimeFromVdot(vdot, distanceM) {
   return Math.round((lo + hi) / 2);
 }
 
-/** Intensitätsbereiche je Trainingszone als Anteil von VDOT [schnell, langsam].
-    Easy und Long teilen sich wie bei Daniels („E/L-Pace“) einen Bereich; der Long
-    Run beginnt nur am schnellen Ende etwas ruhiger. Früher lag die Long-Zone über
-    der Easy-Zone – die längste Einheit bekam die schnellste Grundlagenvorgabe. */
+/** Intensity ranges per training zone as a fraction of VDOT [fast, slow].
+    As in Daniels ("E/L pace"), Easy and Long share one range; the Long
+    Run is only slightly calmer at the fast end. Previously the Long zone was above
+    the Easy zone – the longest session got the fastest base-training target. */
 const ZONE_PCT = {
   recovery:  [0.63, 0.56],
   easy:      [0.74, 0.62],
@@ -79,7 +79,7 @@ const ZONE_META = {
   vo2:       { get label() { return t('vdot.zoneVo2'); }, hrZone: 5 },
 };
 
-/** HF-Zone des Renntempos je Distanz (5 km am Limit, Marathon deutlich darunter). */
+/** HR zone of race pace per distance (5 km at the limit, marathon well below). */
 function raceHrZone(distanceKm) {
   const km = Number(distanceKm) || 0;
   if (km <= 6) return 5;
@@ -87,21 +87,21 @@ function raceHrZone(distanceKm) {
   return 3;
 }
 
-/** Renntempo-Bereich (±2 %) um eine Pace in Sek./km. */
+/** Race-pace range (±2 %) around a pace in s/km. */
 export function raceZone(paceSec, distanceKm, label = t('vdot.racePace')) {
   if (!paceSec) return null;
   return { label, min: Math.round(paceSec * 0.98), max: Math.round(paceSec * 1.02), hrZone: raceHrZone(distanceKm) };
 }
 
-/** Renntempo für eine Distanz aus dem VDOT – über die Äquivalenzzeit, nicht als fester
-    VDOT-Anteil. Ein fester Anteil ignoriert die Renndauer: Für langsamere Läufer:innen
-    war die HM-Zone 7–21 s/km zu schnell, die Marathon-Blöcke liefen im HM-Tempo. */
+/** Race pace for a distance from the VDOT – via the equivalent time, not as a fixed
+    fraction of VDOT. A fixed fraction ignores the race duration: for slower runners
+    the HM zone was 7–21 s/km too fast, the marathon blocks ran at HM pace. */
 export function racePaceFromVdot(vdot, distanceKm) {
   const sec = raceTimeFromVdot(vdot, (Number(distanceKm) || 0) * 1000);
   return sec ? Math.round(sec / distanceKm) : null;
 }
 
-/** Vollständige Pace-Bereiche aus einem VDOT – Format wie `profile.paceZones`. */
+/** Full pace ranges from a VDOT – format like `profile.paceZones`. */
 export function pacesFromVdot(vdot) {
   if (!vdot) return null;
   const out = {};
@@ -110,16 +110,16 @@ export function pacesFromVdot(vdot) {
   }
   out.marathon = raceZone(racePaceFromVdot(vdot, 42.195), 42.195, ZONE_META.marathon.label);
   out.race_hm = raceZone(racePaceFromVdot(vdot, 21.0975), 21.0975, ZONE_META.race_hm.label);
-  // Reihenfolge wie früher (für Anzeigen, die über die Einträge laufen).
+  // Order as before (for displays that iterate over the entries).
   const { recovery, easy, long, marathon, race_hm, threshold, vo2 } = out;
   return { recovery, easy, long, marathon, race_hm, threshold, vo2 };
 }
 
 /**
- * Paces eines Wettkampfplans. Trainingsbereiche aus dem SICHEREREN von Zielzeit- und
- * Form-VDOT, das Renntempo aus der Zielzeit (das ist das Ziel) – ohne Zielzeit aus der
- * Form. Liegt die Zielzeit mehr als 3 VDOT-Punkte über der Form, gilt sie als
- * ambitioniert. Liefert null, wenn weder Zielzeit noch Form bekannt sind.
+ * Paces of a race plan. Training ranges from the SAFER of goal-time and
+ * form VDOT, race pace from the goal time (that is the target) – without a goal time from the
+ * form. If the goal time is more than 3 VDOT points above the form, it counts as
+ * ambitious. Returns null if neither goal time nor form is known.
  * @returns {{zones:object, goalVdot:number|null, formVdot:number|null, trainingVdot:number, ambitious:boolean}|null}
  */
 export function planPaces({ distanceKm, targetSec = null, formVdot = null } = {}) {
@@ -138,21 +138,21 @@ export function planPaces({ distanceKm, targetSec = null, formVdot = null } = {}
   };
 }
 
-/** Eindeutig harte Laufarten – nur sie tragen die Formschätzung. */
+/** Unambiguously hard run types – only they carry the form estimate. */
 const HARD_TYPES = ['tempo', 'interval', 'race'];
-/** Alle Laufarten, die überhaupt in die Schätzung eingehen können. */
+/** All run types that can enter the estimate at all. */
 const RUN_TYPES = ['tempo', 'interval', 'race', 'long', 'easy', 'run', 'recovery'];
 
-/** Harter Lauf: Wettkampf/Tempo/Intervall, oder hohe Anstrengung (RPE ≥ 7), oder
-    Ø-Herzfrequenz ab Zone 4. Lockere Läufe setzen keine maximale Anstrengung voraus
-    und unterschätzen die Form deutlich (VDOT-Formeln rechnen mit Wettkampfeinsatz). */
+/** Hard run: race/tempo/interval, or high effort (RPE ≥ 7), or
+    average heart rate from zone 4. Easy runs do not presuppose maximal effort
+    and clearly underestimate the form (VDOT formulas assume race effort). */
 function isHardRun(s, z4min) {
   if (HARD_TYPES.includes(s.type)) return true;
   if (Number(s.rpe) >= 7) return true;
   return !!(z4min && Number(s.avgHr) >= z4min);
 }
 
-/** Median einer Zahlenliste (leere Liste → 0). */
+/** Median of a list of numbers (empty list → 0). */
 function median(xs) {
   if (!xs.length) return 0;
   const a = xs.slice().sort((x, y) => x - y);
@@ -161,29 +161,29 @@ function median(xs) {
 }
 
 /**
- * Schätzt die aktuelle Form (VDOT) aus den HARTEN Läufen der letzten `days`
- * (Wettkampf, Tempo, Intervalle, RPE ≥ 7 oder Ø-HF ab Zone 4) – bewusst GEGLÄTTET,
- * damit ein einzelner Trainingsausreißer die Form nicht springen lässt:
+ * Estimates the current form (VDOT) from the HARD runs of the last `days`
+ * (race, tempo, intervals, RPE ≥ 7 or average HR from zone 4) – deliberately SMOOTHED,
+ * so that a single training outlier does not make the form jump:
  *
- *   1) Wochenbestwert: je Kalenderwoche der beste VDOT; dämpft Ausreißer
- *      innerhalb einer Woche.
- *   2) Robuste Ausreißer-Kappung der Wochenwerte auf Median ± 3·MAD
- *      (Median Absolute Deviation – klassische robuste Statistik). Ein einzelner
- *      Fehl-/Glückswert (z. B. GPS-Fehler) wird so gekappt, echte Steigerungen
- *      bleiben erhalten.
- *   3) Rezenzgewichtetes Mittel der gekappten Wochenwerte, exponentiell mit
- *      Halbwertszeit 2 Wochen (gleiche EWMA-Idee wie Fitness/Form in load.js) –
- *      jüngere Wochen zählen mehr, aber keine einzelne Woche dominiert.
+ *   1) Weekly best: per calendar week the best VDOT; dampens outliers
+ *      within a week.
+ *   2) Robust outlier capping of the weekly values at median ± 3·MAD
+ *      (median absolute deviation – classic robust statistics). A single
+ *      faulty/lucky value (e.g. GPS error) is capped this way, genuine improvements
+ *      are preserved.
+ *   3) Recency-weighted mean of the capped weekly values, exponential with
+ *      a half-life of 2 weeks (same EWMA idea as fitness/form in load.js) –
+ *      more recent weeks count more, but no single week dominates.
  *
- * Lockere Läufe zählen nur als Untergrenze: Die VDOT-Formeln setzen maximale
- * Anstrengung voraus, ein Grundlagenlauf unterschätzt die Form um viele Punkte.
- * Gibt es keinen harten Lauf, schätzt die Funktion aus den lockeren Läufen und
- * kennzeichnet das (`onlyEasy`) – die Anzeige nennt die Schätzung dann „eher zu
- * niedrig" und rät nicht zu langsameren Paces.
+ * Easy runs count only as a lower bound: the VDOT formulas assume maximal
+ * effort, a base run underestimates the form by many points.
+ * If there is no hard run, the function estimates from the easy runs and
+ * flags this (`onlyEasy`) – the display then calls the estimate "rather too
+ * low" and does not advise slower paces.
  *
- * Bei weniger als 3 Wochen mit Daten zählt der beste Einzellauf (mit der jüngsten
- * Einheit als Basis). Liefert { vdot, basis, weeks, onlyEasy, hardCount } oder null.
- * `hrZones` (optional, Profil) macht die Herzfrequenz als Härte-Merkmal nutzbar.
+ * With fewer than 3 weeks of data the best single run counts (with the most recent
+ * session as the basis). Returns { vdot, basis, weeks, onlyEasy, hardCount } or null.
+ * `hrZones` (optional, profile) makes heart rate usable as a hardness feature.
  */
 export function estimateVdot(sessions = [], today, days = 42, { hrZones = null } = {}) {
   const z4 = Array.isArray(hrZones) ? hrZones.find((z) => z.zone === 4) : null;
@@ -193,8 +193,8 @@ export function estimateVdot(sessions = [], today, days = 42, { hrZones = null }
     if (!RUN_TYPES.includes(s.type)) return;
     const d = diffDays(s.date, today);
     if (d < 0 || d > days) return;
-    // Hügelige Läufe unterschätzen die Form: Jeder Höhenmeter bergauf zählt wie 6 m in der
-    // Ebene (vorsichtige Faustregel), sobald es mehr als 5 m je km sind (TRAIN-49).
+    // Hilly runs underestimate form: every metre climbed counts like 6 m on the
+    // flat (cautious rule of thumb) once there are more than 5 m per km (TRAIN-49).
     const climb = Number(s.ascentM) > 0 && Number(s.ascentM) / s.distanceKm > 5 ? Number(s.ascentM) : 0;
     const v = vdotFromPerf(s.distanceKm * 1000 + 6 * climb, s.durationSec);
     if (!v) return;
@@ -211,31 +211,31 @@ export function estimateVdot(sessions = [], today, days = 42, { hrZones = null }
   return { ...est, onlyEasy: false, hardCount: hard.length };
 }
 
-/** Wochenbestwert → Ausreißer-Kappung → rezenzgewichtetes Mittel (siehe oben). */
+/** Weekly best → outlier capping → recency-weighted mean (see above). */
 function smoothVdot(runs) {
-  // (1) Wochenbestwert – bei Gleichstand die jüngere Einheit als Basis behalten.
+  // (1) Weekly best – on a tie keep the more recent session as the basis.
   const byWeek = new Map();
   runs.forEach((r) => {
     const cur = byWeek.get(r.week);
     if (!cur || r.v > cur.v || (r.v === cur.v && r.date > cur.date)) byWeek.set(r.week, r);
   });
-  const weekly = [...byWeek.values()].sort((a, b) => a.week - b.week); // Woche 0 (aktuell) zuerst
+  const weekly = [...byWeek.values()].sort((a, b) => a.week - b.week); // week 0 (current) first
   const b0 = weekly[0];
   const basis = { date: b0.date, distanceKm: b0.distanceKm, durationSec: b0.durationSec, type: b0.type };
 
-  // Zu wenig Historie → bester Einzellauf (bisheriges, robustes Verhalten).
+  // Too little history → best single run (previous, robust behaviour).
   if (weekly.length < 3) {
     const best = Math.max(...weekly.map((w) => w.v));
     return { vdot: Math.round(best * 10) / 10, basis, weeks: weekly.length };
   }
 
-  // (2) Robuste Kappung auf Median ± 3·MAD (MAD-Untergrenze 1,5 VDOT gegen Überkappung enger Wochen).
+  // (2) Robust capping at median ± 3·MAD (MAD lower bound 1.5 VDOT against over-capping of narrow weeks).
   const vals = weekly.map((w) => w.v);
   const med = median(vals);
   const mad = Math.max(median(vals.map((v) => Math.abs(v - med))), 1.5);
   const clamp = (v) => Math.max(med - 3 * mad, Math.min(med + 3 * mad, v));
 
-  // (3) Rezenzgewichtetes Mittel (exponentiell, Halbwertszeit 2 Wochen).
+  // (3) Recency-weighted mean (exponential, half-life 2 weeks).
   const HALF_LIFE = 2;
   let num = 0, den = 0;
   weekly.forEach((w) => {
@@ -247,9 +247,9 @@ function smoothVdot(runs) {
 }
 
 /**
- * Vergleicht die formbasierten Paces mit den aktuellen Plan-Zielpaces (über die
- * Schwellenpace). Liefert die empfohlenen Paces und die Abweichung in Sek./km.
- * `deltaSec` > 0: Form ist schneller als der Plan (Plan zu langsam) → schärfen.
+ * Compares the form-based paces with the current plan target paces (via the
+ * threshold pace). Returns the recommended paces and the deviation in s/km.
+ * `deltaSec` > 0: form is faster than the plan (plan too slow) → sharpen.
  */
 export function paceAdjustment(currentZones = {}, vdot) {
   const fresh = pacesFromVdot(vdot);

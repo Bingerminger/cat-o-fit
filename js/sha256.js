@@ -1,12 +1,12 @@
 /* =========================================================================
-   sha256.js — abhängigkeitsfreier SHA-256 (reines JavaScript).
+   sha256.js — dependency-free SHA-256 (plain JavaScript).
 
-   Warum nicht crypto.subtle? Das ist nur im "secure context" (https oder
-   localhost) verfügbar. Im Heimnetz läuft die App aber oft über http://<nas-ip>
-   (KEIN secure context). Hängte die PIN-Prüfung an crypto.subtle, würde ein über
-   http gesetzter PIN über https nicht mehr passen (und umgekehrt) – die Person
-   wäre je nach Zugriffsart ausgesperrt. Dieser SHA-256 ist überall identisch und
-   liefert bit-genau dasselbe wie crypto.subtle('SHA-256').
+   Why not crypto.subtle? It is only available in a "secure context" (https or
+   localhost). At home the app often runs over http://<nas-ip> (NOT a secure
+   context). If the PIN check relied on crypto.subtle, a PIN set over http would
+   no longer match over https (and vice versa) – the person would be locked out
+   depending on how they open the app. This SHA-256 is identical everywhere and
+   returns bit-for-bit the same result as crypto.subtle('SHA-256').
    ========================================================================= */
 
 const K = new Uint32Array([
@@ -34,7 +34,7 @@ function utf8Bytes(str) {
   return out;
 }
 
-/** SHA-256 eines Strings als Hex (64 Zeichen). */
+/** SHA-256 of a string as hex (64 characters). */
 export function sha256Hex(str) {
   const msg = Array.from(utf8Bytes(str));
   const bitLen = msg.length * 8;

@@ -1,23 +1,23 @@
 /* =========================================================================
-   strength.js — Krafttraining protokollieren: Sätze mit Wiederholungen und
-   (optional) Gewicht je Übung, „letztes Mal“ und ein einfacher Progressions-
-   hinweis. Reine, DOM-freie Logik → per node:test abgedeckt.
+   strength.js — logging strength training: sets with repetitions and
+   (optionally) weight per exercise, "last time" and a simple progression
+   hint. Pure, DOM-free logic → covered by node:test.
 
-   Gespeichert wird an der Einheit (Session) als
+   Stored on the session as
      strengthSets: [{ exerciseId, sets: [{ reps, kg }] }]
-   Doppelte Progression: Wer in allen Sätzen das obere Ende des Wiederholungs-
-   bereichs schafft, darf beim nächsten Mal etwas mehr Gewicht nehmen – sonst
-   erst die Wiederholungen steigern. Bewusst klein: keine 1000er-Übungsdatenbank.
+   Double progression: whoever reaches the top end of the repetition
+   range in all sets may take a little more weight next time – otherwise
+   increase the repetitions first. Deliberately small: no 1000-exercise database.
    ========================================================================= */
 
 import { fmtDec } from './ui.js';
 
 import { t } from './i18n.js';
 
-/** Oberes Ende des Wiederholungsbereichs (8–12) für den Progressionshinweis. */
+/** Top end of the repetition range (8–12) for the progression hint. */
 export const REP_TOP = 12;
 
-/** Gültiger Satz? Wiederholungen 1–100, Gewicht optional 0–500 kg. */
+/** Valid set? Repetitions 1–100, weight optional 0–500 kg. */
 export function cleanSet(s) {
   const reps = Math.round(Number(s && s.reps));
   if (!Number.isFinite(reps) || reps < 1 || reps > 100) return null;
@@ -26,18 +26,18 @@ export function cleanSet(s) {
   return { reps, kg };
 }
 
-/** „12 × 20 kg“ bzw. „12 Wdh.“ ohne Gewicht. */
+/** "12 × 20 kg" or "12 reps" without weight. */
 export function fmtSet(s) {
   if (!s) return '';
   return s.kg != null ? `${s.reps} × ${fmtDec(s.kg)} kg` : t('strength.reps', { n: s.reps });
 }
 
-/** Trainingsvolumen (Σ Wiederholungen × kg) – ohne Gewicht zählt der Satz nicht. */
+/** Training volume (Σ repetitions × kg) – a set without weight does not count. */
 export function volume(sets = []) {
   return Math.round((sets || []).reduce((a, s) => a + (s && s.kg != null ? s.reps * s.kg : 0), 0));
 }
 
-/** Aus dem Workout-Protokoll { übungsId: [sätze] } die Session-Liste machen (leere raus). */
+/** Turn the workout log { exerciseId: [sets] } into the session list (leave out empty ones). */
 export function toStrengthSets(log = {}) {
   return Object.entries(log || {})
     .map(([exerciseId, sets]) => ({ exerciseId, sets: (sets || []).map(cleanSet).filter(Boolean) }))
@@ -45,8 +45,8 @@ export function toStrengthSets(log = {}) {
 }
 
 /**
- * Letzte Sätze einer Übung vor `beforeDate` (ISO): { date, sets } oder null.
- * Durchsucht alle Einheiten mit `strengthSets`, jüngste zuerst.
+ * Last sets of an exercise before `beforeDate` (ISO): { date, sets } or null.
+ * Searches all sessions with `strengthSets`, most recent first.
  */
 export function lastSetsFor(sessions = [], exerciseId, beforeDate = null) {
   let best = null;
@@ -60,9 +60,9 @@ export function lastSetsFor(sessions = [], exerciseId, beforeDate = null) {
 }
 
 /**
- * Progressionshinweis aus den letzten Sätzen (doppelte Progression):
- *   alle Sätze ≥ REP_TOP Wiederholungen → „mehr Gewicht“ (+2,5 kg bzw. +1 kg bei leichten Hanteln),
- *   sonst → „Wiederholungen steigern“. Ohne Gewicht: Wiederholungen oder schwerere Variante.
+ * Progression hint from the last sets (double progression):
+ *   all sets ≥ REP_TOP repetitions → "more weight" (+2.5 kg, or +1 kg with light dumbbells),
+ *   otherwise → "increase repetitions". Without weight: repetitions or a heavier variant.
  * @returns {string|null}
  */
 export function progressionHint(sets = []) {

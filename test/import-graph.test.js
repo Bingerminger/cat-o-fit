@@ -1,8 +1,8 @@
 /* =========================================================================
-   import-graph.test.js — FE-18: keine Import-Zyklen zwischen den Modulen.
-   Ein Zyklus (health → badges → plans → session → health) riskierte bei jeder
-   Umstellung einen TDZ-Fehler beim Modulstart („Cannot access … before
-   initialization") – dann bliebe die App weiß.
+   import-graph.test.js — FE-18: no import cycles between the modules.
+   A cycle (health → badges → plans → session → health) risked a TDZ error at module
+   start-up with every restructuring ("Cannot access … before
+   initialization") – the app would then stay blank.
    ========================================================================= */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -10,7 +10,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 
 const dir = new URL('../js/', import.meta.url);
 const files = readdirSync(dir).filter((f) => f.endsWith('.js'));
-/** Nur STATISCHE Importe zählen (dynamisches import() löst keinen Zyklus beim Laden aus). */
+/** Only STATIC imports count (dynamic import() does not trigger a cycle at load time). */
 const graph = Object.fromEntries(files.map((f) => {
   const src = readFileSync(new URL(f, dir), 'utf8');
   const deps = [...src.matchAll(/^\s*(?:import|export)\s[^;]*?from\s+'\.\/([\w-]+\.js)'/gm)].map((m) => m[1]);
@@ -19,7 +19,7 @@ const graph = Object.fromEntries(files.map((f) => {
 
 function findCycles() {
   const cycles = [];
-  const state = {};   // 1 = in Arbeit, 2 = fertig
+  const state = {};   // 1 = in progress, 2 = done
   const stack = [];
   const visit = (n) => {
     state[n] = 1; stack.push(n);
@@ -33,6 +33,6 @@ function findCycles() {
   return cycles;
 }
 
-test('FE-18: keine Import-Zyklen zwischen den Modulen', () => {
+test('FE-18: no import cycles between the modules', () => {
   assert.deepEqual(findCycles(), []);
 });

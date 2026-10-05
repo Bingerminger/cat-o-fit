@@ -1,19 +1,19 @@
 /* =========================================================================
-   workout-show.js — durchgehend mitmachen: Vollbild-Session wie ein Video.
+   workout-show.js — follow along continuously: full-screen session like a video.
 
-   Übersicht (Übungen, Runden, Pause, Musik, Stimme) → „Los geht's“ → die
-   Vorturnerin macht jede Übung im Takt vor; dazwischen Pause mit Vorschau auf
-   die nächste Übung, Seitenwechsel, Rundenpause – alles ohne Antippen. Groß
-   genug für das iPad am Boden: Name, Zähler, Hinweis und „Danach“.
+   Overview (exercises, rounds, rest, music, voice) → "Let's go" → the
+   demonstrator figure does each exercise in time; in between a rest with a preview of
+   the next exercise, side change, round break – all without tapping. Large
+   enough for the iPad on the floor: name, counter, hint and "Up next".
 
-   Uhr: Das Bild läuft immer an der Bildschirm-Uhr – es bleibt nie stehen, auch
-   wenn iOS den Ton unterbricht. Die Musik (vorab gerechnete Schleifen, music.js)
-   rastet zu jedem Abschnitt auf dessen Taktanfang ein; ein Wächter weckt den Ton
-   nach Unterbrechungen und zieht den Takt nach, wenn er sich verschoben hat.
-   Ansagen gibt es nur in Pausen (auf iOS unterbricht die Sprachausgabe die
-   Musik); in der Übung führen Töne: letzte drei Wiederholungen bzw. Sekunden,
-   „noch 10 Sekunden“ als Doppelton. Töne werden kurz vor ihrem Zeitpunkt auf die
-   Audio-Uhr gelegt – Pausieren und Springen lassen nichts nachklingen.
+   Clock: the picture always runs on the screen clock – it never stops, even
+   if iOS interrupts the audio. The music (pre-computed loops, music.js)
+   locks onto the downbeat of each section; a watchdog wakes the audio
+   after interruptions and re-adjusts the beat if it has drifted.
+   Announcements exist only in rests (on iOS the speech output interrupts the
+   music); during an exercise tones lead: the last three repetitions or seconds,
+   "10 seconds to go" as a double tone. Tones are placed on the audio clock
+   shortly before their time – pausing and jumping leave nothing ringing on.
    ========================================================================= */
 
 import { el, icon, segmented, toast } from './ui.js';
@@ -36,7 +36,7 @@ const summaryLine = (time, exercises, rounds) => (rounds > 1
   ? t('workoutShow.summaryRounds', { time, exercises: tp('workoutShow.exercises', exercises), rounds: tp('workoutShow.rounds', rounds) })
   : t('workoutShow.summary', { time, exercises: tp('workoutShow.exercises', exercises) }));
 
-/** Menge zum Vorlesen: „12 Wiederholungen pro Seite“, „40 Sekunden“. */
+/** Quantity to read aloud: "12 repetitions per side", "40 seconds". */
 export function spokenDose(it, program) {
   const label = doseLabel(it, program);
   return label
@@ -45,8 +45,8 @@ export function spokenDose(it, program) {
 }
 
 /**
- * Ansagen eines Abschnitts – nur in Start, Pause und Seitenwechsel: [{ at, keys, text }].
- * `keys` sind die Sprachbausteine (voice.js), `text` der Wortlaut (Rückfall, Tests).
+ * Announcements of a section – only at start, rest and side change: [{ at, keys, text }].
+ * `keys` are the voice building blocks (voice.js), `text` the wording (fallback, tests).
  */
 export function voiceLines(seg, show) {
   const p = show.program;
@@ -66,10 +66,10 @@ export function voiceLines(seg, show) {
 }
 
 /**
- * Signaltöne eines Abschnitts: [{ at, freq, ms, gain }].
- * Vorschau: drei Zähltöne vor dem Einsatz, Startton genau zum Einsatz.
- * Übung: die letzten drei Wiederholungen bzw. Sekunden ticken, bei Zeitübungen ab 20 s
- * ein Doppelton bei „noch 10 Sekunden“, am Ende ein tiefer Ton („Pause“).
+ * Signal tones of a section: [{ at, freq, ms, gain }].
+ * Preview: three count-in tones before the start, start tone exactly at the start.
+ * Exercise: the last three repetitions or seconds tick, for timed exercises from 20 s
+ * a double tone at "10 seconds to go", at the end a low tone ("Rest").
  */
 export function cueTones(seg) {
   const out = [];
@@ -91,8 +91,8 @@ export function cueTones(seg) {
 }
 
 /**
- * Öffnet die Session über allem. `onFinish({ durationSec, ids })` bietet am Ende
- * „Als erledigt erfassen“ an (bei einer Plan-Einheit).
+ * Opens the session above everything. `onFinish({ durationSec, ids })` offers
+ * "Log as done" at the end (for a plan session).
  */
 export function openShow(program, { onFinish = null } = {}) {
   const prefs = store.settings() || {};
@@ -105,7 +105,7 @@ export function openShow(program, { onFinish = null } = {}) {
   document.body.appendChild(root);
   document.documentElement.classList.add('show-open');
 
-  let run = null;   // laufende Session
+  let run = null;   // running session
   const onKey = (e) => {
     if (e.key === 'Escape') close();
     else if (run && (e.key === ' ' || e.key === 'k')) { e.preventDefault(); run.toggle(); }
@@ -125,7 +125,7 @@ export function openShow(program, { onFinish = null } = {}) {
     root.remove();
   }
 
-  /* ------------------------------ Übersicht ------------------------------ */
+  /* ------------------------------ Overview ------------------------------ */
   function overview() {
     root.innerHTML = '';
     const current = () => ({ ...program, rounds, rest });
@@ -154,8 +154,8 @@ export function openShow(program, { onFinish = null } = {}) {
       voice.classList.toggle('is-on', voiceOn); voice.setAttribute('aria-pressed', String(voiceOn));
     } }, [icon('mic'), el('span', { text: t('workoutShow.voiceDuringRests') })]);
     const go = el('button', { class: 'show-ov__go', type: 'button', onclick: async () => {
-      // In der Nutzergeste: Ton und Sprachausgabe freischalten (iPad/iPhone auch auf „lautlos“).
-      // Kein Vollbild: Safari legt dort ein eigenes Schließen-Kreuz über die Bühne.
+      // In the user gesture: unlock sound and speech output (iPad/iPhone also on "silent").
+      // No full screen: Safari puts its own close cross over the stage there.
       unlockAudio({ mix: musicMode === 'own' });
       await loadExerciseTexts();   // the steps are a lazily loaded catalog area
       if (root.isConnected === false || run) return;   // closed meanwhile, or tapped twice
@@ -186,7 +186,7 @@ export function openShow(program, { onFinish = null } = {}) {
     return t('workoutShow.musicHintOff');
   }
 
-  /* ------------------------------ Ablauf ------------------------------ */
+  /* ------------------------------ Flow ------------------------------ */
   function startRun(prog) {
     const show = buildShow(prog);
     const n = prog.items.length;
@@ -199,19 +199,19 @@ export function openShow(program, { onFinish = null } = {}) {
     let segIndex = -1;
     let fig = null; let figItem = -1; let fitted = false;
     let lastCue = '';
-    let cued = -1;          // Abschnitt, dessen Musik schon eingeplant ist
-    let phase = null;       // { index, audioAt }: Taktanfang des Abschnitts auf der Audio-Uhr
-    let watchAt = 0;        // nächster Wächter-Lauf (Show-Zeit)
-    let pending = [];       // { t (Show-Zeit), audio?, fire() } – kurz vor t ausgelöst
+    let cued = -1;          // section whose music is already scheduled
+    let phase = null;       // { index, audioAt }: downbeat of the section on the audio clock
+    let watchAt = 0;        // next watchdog run (show time)
+    let pending = [];       // { t (show time), audio?, fire() } – triggered shortly before t
     let idleTimer = 0;
-    const stats = { loops: 0, resyncs: 0, said: 0 };   // für Prüfungen: Schleifen, Nachzieh-Vorgänge, Ansagen
-    // Alle Sprachbausteine der Session gleich laden – in den Pausen liegen sie dann bereit.
+    const stats = { loops: 0, resyncs: 0, said: 0 };   // for checks: loops, re-adjustments, announcements
+    // Load all voice building blocks of the session right away – they are then ready in the rests.
     if (voiceOn) preloadClips(['done', ...show.segs.flatMap((s) => voiceLines(s, show).flatMap((l) => l.keys))]);
 
     root.innerHTML = '';
     const svg = document.createElementNS(SVGNS, 'svg');
     svg.setAttribute('preserveAspectRatio', 'xMidYMax meet');
-    svg.setAttribute('class', 'mf mf--coach');   // vor dem ersten Messen: Bühnenmaße statt 300×150
+    svg.setAttribute('class', 'mf mf--coach');   // before the first measurement: stage dimensions instead of 300×150
     const kicker = el('div', { class: 'show__kicker' });
     const side = el('span', { class: 'show__side' });
     const stage = el('div', { class: 'show__stage' }, [svg, el('div', { class: 'show__chips' }, [kicker, side])]);
@@ -254,10 +254,10 @@ export function openShow(program, { onFinish = null } = {}) {
     root.appendChild(runEl);
     root.addEventListener('pointerdown', wake);
     root.addEventListener('pointermove', wake);
-    // Drehen oder Fenstergröße ändern: Bildausschnitt neu an die Bühne anpassen.
+    // Rotating or resizing the window: fit the view section to the stage again.
     const onResize = () => { figItem = -1; segIndex = -1; };
     window.addEventListener('resize', onResize);
-    // App im Hintergrund (Sperrbildschirm, App-Wechsel): anhalten statt weiterlaufen.
+    // App in the background (lock screen, app switch): pause instead of running on.
     const onVisible = () => { if (document.hidden && playing && !finished) toggle(); };
     document.addEventListener('visibilitychange', onVisible);
 
@@ -278,14 +278,14 @@ export function openShow(program, { onFinish = null } = {}) {
       idleTimer = setTimeout(() => { if (playing) runEl.classList.add('is-idle'); }, 3500);
     }
 
-    /* ---- Uhr und Musik ---- */
+    /* ---- Clock and music ---- */
     const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now()) / 1000;
     const latency = () => (music ? music.latency : 0);
-    /** Audio-Zeit eines Show-Zeitpunkts – um die Ausgabeverzögerung früher, damit Ton und Bild zusammenpassen. */
+    /** Audio time of a show time – earlier by the output latency so that sound and picture match. */
     const audioAt = (when) => (ctx ? ctx.currentTime + (when - T) - latency() : null);
     const specOf = (s) => ({ style: s.style, bpm: s.bpm, intensity: s.intensity });
 
-    /** Schleife des Abschnitts k – ihr Taktanfang liegt auf dem Beginn des Abschnitts. */
+    /** Loop of section k – its downbeat lies at the start of the section. */
     function playSeg(k) {
       if (!music || !music.running || !ctx || !playing || k < 0) return;
       const s = show.segs[k];
@@ -295,22 +295,22 @@ export function openShow(program, { onFinish = null } = {}) {
       stats.loops += 1;
     }
 
-    /** Ansage aus Sprachbausteinen; die Musik wird für ihre Dauer leiser. Fehlt ein Baustein,
-        spricht die Sprachausgabe des Geräts (Rückfall). */
+    /** Announcement from voice building blocks; the music gets quieter for its duration. If a
+            building block is missing, the device's speech output speaks (fallback). */
     function announce(line, at) {
       sayClips(line.keys, { at }).then((r) => {
         if (r) { stats.said += 1; if (music) music.duckFor(r.at, r.dur); } else if (voiceOn && !finished) speak(line.text);
       });
     }
 
-    /* ---- Abschnitt beginnt ---- */
+    /* ---- Section begins ---- */
     function enter(st) {
       const seg = st.seg;
       const it = prog.items[seg.i];
       const color = categoryMeta(it.ex.category).color;
       if (figItem !== seg.i) {
-        // Bildausschnitt im Seitenverhältnis der Bühne – die Figur so groß wie möglich.
-        // Hat die Bühne noch keine Größe (gerade erst eingehängt), folgt das beim nächsten Bild.
+        // View section in the aspect ratio of the stage – the figure as large as possible.
+        // If the stage has no size yet (just mounted), this follows with the next frame.
         const r = svg.getBoundingClientRect ? svg.getBoundingClientRect() : { width: 0, height: 0 };
         fitted = r.width > 0 && r.height > 0;
         fig = mountFigure(svg, it.m, { color, side: seg.side, aspect: fitted ? r.width / r.height : null });
@@ -337,11 +337,11 @@ export function openShow(program, { onFinish = null } = {}) {
         nextArt.innerHTML = exerciseArt(ni.id, { color: categoryMeta(ni.ex.category).color });
       } else { nextName.textContent = t('workoutShow.done'); nextArt.innerHTML = ''; }
       lastCue = '';
-      // Musik: kurz vorher eingeplant? Sonst jetzt (Start, Springen, Fortsetzen).
+      // Music: scheduled shortly before? Otherwise now (start, jumping, resuming).
       if (cued !== st.index) playSeg(st.index);
       cued = st.index;
       if (music) for (const k of [st.index + 1, st.index + 2]) if (show.segs[k]) music.prepare(specOf(show.segs[k]));
-      // Ansagen, Töne, Anlauf der Musik.
+      // Announcements, tones, run-up of the music.
       pending = [];
       const t0 = seg.t0;
       if (voiceOn) for (const line of voiceLines(seg, show)) pending.push({ t: t0 + line.at, audio: true, fire: (at) => announce(line, at) });
@@ -350,7 +350,7 @@ export function openShow(program, { onFinish = null } = {}) {
       pending = pending.filter((p) => p.t >= T - 0.05);
     }
 
-    /* ---- Bild ---- */
+    /* ---- Frame ---- */
     function render() {
       const st = showStateAt(show, T);
       if (st.done) { finish(); return; }
@@ -358,21 +358,21 @@ export function openShow(program, { onFinish = null } = {}) {
       if (st.index !== segIndex) { segIndex = st.index; enter(st); }
       const seg = st.seg;
       const fr = fig.update(st.anim.t, st.anim.list);
-      // Zähler
+      // Counter
       let bigTxt = ''; let unitTxt = '';
       if (seg.kind === 'work' && !seg.timed) { bigTxt = `${st.rep}`; unitTxt = t('workoutShow.ofReps', { reps: seg.reps }); }
       else { bigTxt = seg.kind === 'work' ? mmss(st.left) : `${Math.ceil(st.left)}`; unitTxt = seg.kind === 'rest' || seg.kind === 'roundRest' ? t('workoutShow.secondsOfRest') : t('workoutShow.seconds'); }
       if (big.textContent !== bigTxt) big.textContent = bigTxt;
       if (unit.textContent !== unitTxt) unit.textContent = unitTxt;
       ringFill.setAttribute('stroke-dasharray', `${(Math.min(1, st.local / seg.dur) * 326.7).toFixed(1)} 326.7`);
-      // Hinweis und Atmung aus der laufenden Phase; in Pause und Vorschau der erste Schritt der Anleitung.
+      // Hint and breathing from the current phase; in rest and preview the first step of the instructions.
       if (fr.phase.cue) lastCue = fr.phase.cue;
       const c = seg.kind === 'work' ? lastCue : ((prog.items[seg.i].ex.steps || [])[0] || lastCue || '');
       if (cue.textContent !== c) cue.textContent = c;
       const b = seg.kind === 'work' ? (fr.phase.breath === 'ein' ? t('motion.breath.ein') : fr.phase.breath === 'aus' ? t('motion.breath.aus') : '') : '';
       if (breath.textContent !== b) breath.textContent = b;
       breath.hidden = !b;
-      // Fortschritt
+      // Progress
       const lt = t('workoutShow.timeLeft', { time: mmss(show.total - T) });
       if (left.textContent !== lt) left.textContent = lt;
       chapters.childNodes.forEach((ch, k) => {
@@ -381,7 +381,7 @@ export function openShow(program, { onFinish = null } = {}) {
         ch.firstChild.style.width = `${Math.round(f * 1000) / 10}%`;
       });
       if (!playing) return;
-      // Musik des nächsten Abschnitts kurz vorher auf die Audio-Uhr legen.
+      // Schedule the music of the next section on the audio clock shortly before.
       const nx = show.segs[st.index + 1];
       if (music && music.running && ctx && nx && cued !== st.index + 1 && nx.t0 - T < 0.35) {
         const at = audioAt(nx.t0);
@@ -391,13 +391,13 @@ export function openShow(program, { onFinish = null } = {}) {
         if (nx.kind === 'work') music.oneShot('crash', at);
         cued = st.index + 1;
       }
-      // Fällige Töne und Ansagen.
+      // Due tones and announcements.
       for (const p of pending) {
         if (p.done || p.t - T > (p.audio ? 0.15 : 0.02)) continue;
         p.done = true;
         if (p.audio) { if (ctx) p.fire(audioAt(p.t)); } else p.fire();
       }
-      // Wächter: Ton nach Unterbrechung wecken, Musik unter Ansagen leiser, Takt nachziehen.
+      // Watchdog: wake the audio after interruptions, duck the music under announcements, re-adjust the beat.
       if (T >= watchAt || watchAt - T > 1) {
         watchAt = T + 0.5;
         wakeAudio();
@@ -415,9 +415,9 @@ export function openShow(program, { onFinish = null } = {}) {
       const clock = now();
       let dt = lastNow == null ? 0 : clock - lastNow;
       lastNow = clock;
-      if (dt < 0 || dt > 1) dt = 0;            // nach einer Unterbrechung nicht springen
+      if (dt < 0 || dt > 1) dt = 0;            // do not jump after an interruption
       if (playing && !document.hidden) T += dt;
-      // Ein Fehler in einem Bild darf die Session nie anhalten.
+      // An error in one frame must never stop the session.
       try { render(); } catch (e) { if (!errLogged) { errLogged = true; console.warn('Session:', e); } }
       if (!finished) raf = requestAnimationFrame(frame);
     }
@@ -441,7 +441,7 @@ export function openShow(program, { onFinish = null } = {}) {
       if (playing) {
         wakeAudio();
         if (musicMode === 'app') { if (!music) music = createMusic(); music.start(); }
-        // Musik und Töne des laufenden Abschnitts neu einplanen.
+        // Re-schedule music and tones of the current section.
         cued = -1; segIndex = -1; phase = null;
         keepAwake(true);
         wake();
@@ -480,7 +480,7 @@ export function openShow(program, { onFinish = null } = {}) {
       tone(784, { ms: 160, gain: 0.3 }); tone(1047, { ms: 420, gain: 0.32, when: 0.18 });
       if (voiceOn) announce({ keys: ['done'], text: t('workoutShow.sayDone') }, ctx ? ctx.currentTime + 0.5 : null);
       const ids = prog.items.map((it) => it.id);
-      try { store.bumpExerciseUsage(ids); } catch { /* Zähler optional */ }
+      try { store.bumpExerciseUsage(ids); } catch { /* counter optional */ }
       const durationSec = Math.round(show.total);
       root.innerHTML = '';
       root.appendChild(el('div', { class: 'show-done' }, [
@@ -521,7 +521,7 @@ export function openShow(program, { onFinish = null } = {}) {
       toggle,
       skip,
       seek,
-      /** Zeit weiterschalten ohne Bildschirm-Uhr (Tests). */
+      /** Advance time without a screen clock (tests). */
       tick(dt) { if (playing && !finished) T += dt; if (!finished) render(); },
       get time() { return T; },
       get playing() { return playing; },
@@ -534,7 +534,7 @@ export function openShow(program, { onFinish = null } = {}) {
   overview();
   return {
     close,
-    /** Für Tests: startet ohne Nutzergeste und gibt die laufende Session zurück. */
+    /** For tests: starts without a user gesture and returns the running session. */
     start() { run = startRun({ ...program, rounds, rest }); return run; },
     get run() { return run; },
     root,

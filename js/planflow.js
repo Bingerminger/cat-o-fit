@@ -1,17 +1,17 @@
 /* =========================================================================
-   planflow.js — adaptive Plan-Anpassungen rund um manuelle Eingriffe
-   (aus dem Praxis-Feedback). Reine Funktionen ohne Store/DOM → testbar.
+   planflow.js — adaptive plan adjustments around manual interventions
+   (from practical feedback). Pure functions without store/DOM → testable.
 
-   Idee: Fügt man selbst eine Einheit hinzu oder verschiebt sie, soll die
-   Wochenbelastung nicht unbemerkt anwachsen. Die App schlägt dann eine
-   ähnliche, noch offene Einheit derselben Woche als Ausgleich vor.
+   Idea: if you add a session yourself or move one, the weekly load should not
+   grow unnoticed. The app then suggests a similar, still open session of the
+   same week as a compensation.
    ========================================================================= */
 
 import { weekStartMonday, addDays, diffDays } from './ui.js';
 
 import { t } from './i18n.js';
 
-/** Belastungsklasse eines Einheiten-Typs (für „ähnliche Intensität“). */
+/** Load class of a session type (for "similar intensity"). */
 export function loadClass(type) {
   if (['tempo', 'interval', 'race', 'match', 'camp'].includes(type)) return 'quality';
   if (['easy', 'long', 'run', 'cross', 'cross_bike', 'cross_football'].includes(type)) return 'endurance';
@@ -20,41 +20,41 @@ export function loadClass(type) {
   return 'other';
 }
 
-/** Einheit zählt zur Wochenlast (nicht verpasst, kein Ruhetag).
-    Hinweis: Seit v3.16.0 tragen verschobene Einheiten wieder den Status „geplant“
-    (Herkunft in `movedFrom`). Der Alt-Status „verschoben“ aus früheren Versionen
-    zählt hier bewusst MIT – die Einheit steht ja am neuen Tag im Plan. */
+/** Session counts towards the weekly load (not missed, not a rest day).
+    Note: since v3.16.0 moved sessions carry the status 'geplant' again
+    (origin in `movedFrom`). The legacy status 'verschoben' from earlier versions
+    deliberately counts here too – the session does stand in the plan on the new day. */
 function countsToLoad(u) {
   return u.type !== 'rest' && u.status !== 'verpasst';
 }
-/** Noch offene, veränderbare Einheit (weder erledigt noch verpasst).
-    Zentrale Quelle für ALLE Module (rolling, triage, cycle): so bleibt der
-    Alt-Status „verschoben“ an genau einer Stelle behandelt. */
+/** Still open, changeable session (neither done nor missed).
+    Central source for ALL modules (rolling, triage, cycle): this way the
+    legacy status 'verschoben' is handled in exactly one place. */
 export function isOpen(u) {
   return !!u && u.type !== 'rest'
     && (u.status === 'geplant' || u.status === 'verschoben' || u.status == null);
 }
 
-/** Mo–So-Fenster eines Datums. */
+/** Mon–Sun window of a date. */
 export function weekRange(dateStr) {
   const ws = weekStartMonday(dateStr);
   return { ws, we: addDays(ws, 6) };
 }
 
-/** Einheiten derselben Kalenderwoche (Mo–So) wie dateStr, die zur Last zählen. */
+/** Sessions of the same calendar week (Mon–Sun) as dateStr that count towards the load. */
 export function unitsInWeek(units = [], dateStr) {
   const { ws, we } = weekRange(dateStr);
   return units.filter((u) => u.date >= ws && u.date <= we && countsToLoad(u));
 }
 
-/** Offene, lastrelevante, verschiebbare Einheiten EINES Tages (planübergreifend nutzbar):
-    Kandidaten für eine ganztägige Erholung (#4). Feste Termine bleiben außen vor. */
+/** Open, load-relevant, movable sessions of ONE day (usable across plans):
+    candidates for a full-day recovery (#4). Fixed commitments are left out. */
 export function dayLoadUnits(units = [], date) {
   return (units || []).filter((u) => u && u.date === date && !u.fixed
     && isOpen(u) && countsToLoad(u));
 }
 
-/** Belastungsüberblick der Woche: Anzahl Einheiten und geplante/erledigte km. */
+/** Load overview of the week: number of sessions and planned/completed km. */
 export function weekLoad(units = [], dateStr) {
   const list = unitsInWeek(units, dateStr);
   const km = list.reduce((a, u) => a + (u.targetDistanceKm || u.distanceKm || 0), 0);
@@ -62,8 +62,8 @@ export function weekLoad(units = [], dateStr) {
 }
 
 /**
- * Schlägt eine ähnliche, noch offene Einheit derselben Woche als Ausgleich für
- * eine neu hinzugefügte Einheit vor. null, wenn es nichts Vergleichbares gibt.
+ * Suggests a similar, still open session of the same week as compensation for
+ * a newly added session. null if there is nothing comparable.
  */
 export function suggestOffsetUnit(units = [], newUnit) {
   if (!newUnit || !newUnit.date) return null;
@@ -72,16 +72,16 @@ export function suggestOffsetUnit(units = [], newUnit) {
   const candidates = units.filter((u) =>
     u.id !== newUnit.id && u.date >= ws && u.date <= we && isOpen(u) && loadClass(u.type) === cls);
   if (!candidates.length) return null;
-  // Bevorzugt eine andere Tages-Einheit, chronologisch die erste.
+  // Prefers a session of another day, chronologically the first.
   candidates.sort((a, b) => a.date.localeCompare(b.date));
   return candidates.find((u) => u.date !== newUnit.date) || candidates[0];
 }
 
 /**
- * Setzt eine Plan-Woche neu zusammen (#10): bereits **erledigte** Einheiten bleiben
- * an ihren Tagen erhalten, alle anderen (offen/verpasst/verschoben/manuell) werden
- * durch die frisch generierten ersetzt. An Tagen mit erledigter Einheit kommt nichts
- * Neues hinzu (keine Dubletten). Reine Funktion über die Einheiten **einer** Woche.
+ * Reassembles a plan week (#10): sessions that are already **done** stay
+ * on their days, all others (open/missed/moved/manual) are replaced by the
+ * freshly generated ones. Nothing new is added on days with a done session
+ * (no duplicates). Pure function over the sessions of **one** week.
  */
 export function mergeRegeneratedWeek(existing = [], fresh = []) {
   const kept = existing.filter((u) => u.status === 'erledigt');
@@ -91,12 +91,12 @@ export function mergeRegeneratedWeek(existing = [], fresh = []) {
 }
 
 /**
- * Neu-Generieren ab einem Stichtag (in der Regel heute): Alles VOR `fromDate` bleibt
- * genau so, wie es ist – erledigt, verpasst (mit Grund), verschoben, manuell
- * angelegt. Ab dem Stichtag gilt die Wochenregel von `mergeRegeneratedWeek`, wobei
- * auch dort bereits als verpasst markierte Einheiten stehen bleiben. Früher baute
- * „Neu generieren“ auch die Vergangenheit neu: Ausfallgründe gingen verloren und
- * vergangene Tage wurden plötzlich überfällig.
+ * Regenerate from a cut-off date (usually today): everything BEFORE `fromDate` stays
+ * exactly as it is – done, missed (with reason), moved, manually
+ * created. From the cut-off date on, the weekly rule of `mergeRegeneratedWeek` applies,
+ * and sessions already marked as missed stay there too. Previously,
+ * regenerating also rebuilt the past: reasons for absence were lost and
+ * past days suddenly became overdue.
  */
 export function mergeFromDate(existing = [], fresh = [], fromDate) {
   const past = existing.filter((u) => u.date < fromDate);
@@ -107,8 +107,8 @@ export function mergeFromDate(existing = [], fresh = [], fromDate) {
   return [...past, ...kept, ...added].sort((a, b) => a.date.localeCompare(b.date));
 }
 
-/** Kategorie für die Zuordnung Training ↔ geplante Einheit (Laufen, Rad, Schwimmen,
-    Gehen, Kraft, Fußball …). Ein Rad-Import passt nie auf einen geplanten Lauf. */
+/** Category for matching a workout ↔ planned session (running, cycling, swimming,
+    walking, strength, football …). A bike import never matches a planned run. */
 export function matchCategory(type) {
   if (['easy', 'long', 'tempo', 'interval', 'race', 'recovery', 'run'].includes(type)) return 'run';
   if (['cross_bike', 'spinning'].includes(type)) return 'bike';
@@ -118,9 +118,9 @@ export function matchCategory(type) {
   return type || 'other';
 }
 
-/** Offene geplante Einheit am Tag `date` in derselben Kategorie wie `type` – die erste
-    in Plan-Reihenfolge, die noch keine Session trägt. `exclude`: bereits vergebene
-    Einheiten-IDs. */
+/** Open planned session on day `date` in the same category as `type` – the first
+    in plan order that does not yet carry a session. `exclude`: session IDs that are
+    already taken. */
 export function findPlannedMatch(plans = [], { date, type }, exclude = new Set()) {
   const cat = matchCategory(type);
   for (const p of plans || []) {
@@ -132,14 +132,14 @@ export function findPlannedMatch(plans = [], { date, type }, exclude = new Set()
   return null;
 }
 
-/** Verknüpft vergangene, erledigte Plan-Einheiten mit Trainings desselben Tages und
-    derselben Sportart (Demodaten) – auch feste Termine mit dem Fußball-Training des
-    Tages. Liefert neue Listen, verändert nichts. */
+/** Links past, completed plan sessions with workouts of the same day and
+    the same sport (demo data) – fixed commitments too, with the football training of
+    the day. Returns new lists, changes nothing. */
 export function linkDemoSessions(units = [], sessions = [], today, eventId = null) {
   const us = units.map((u) => ({ ...u }));
   const ss = sessions.map((s) => ({ ...s }));
   for (const s of ss) {
-    // `extra`: ausdrücklich zusätzlich zum Plan trainiert – gehört zu keiner Einheit.
+    // `extra`: explicitly trained in addition to the plan – belongs to no session.
     if (s.plannedId || s.extra || s.date >= today) continue;
     const u = us.find((x) => x.date === s.date && x.date < today && !x.executedSessionId
       && matchCategory(x.type) === matchCategory(s.type));
@@ -148,13 +148,13 @@ export function linkDemoSessions(units = [], sessions = [], today, eventId = nul
   return { units: us, sessions: ss };
 }
 
-/** Quellen automatisch/aus Dateien importierter Trainings. */
+/** Sources of automatically imported workouts / workouts imported from files. */
 export const IMPORT_SOURCES = ['apple-health', 'health', 'health-connect', 'gpx'];
 
 /**
- * Importierte Trainings der letzten `days` Tage ohne Planbezug, die zu einer offenen
- * geplanten Einheit desselben Tages passen – Kandidaten für „zuordnen?“. Jede Einheit
- * wird höchstens einmal vorgeschlagen; abgelehnte Vorschläge (`matchDismissed`) nicht erneut.
+ * Imported workouts of the last `days` days without a plan link that match an open
+ * planned session of the same day – candidates for "Assign?". Each session
+ * is suggested at most once; dismissed suggestions (`matchDismissed`) are not shown again.
  * @returns {Array<{session, plan, unit}>}
  */
 export function importedMatches(plans = [], sessions = [], today, days = 7) {
@@ -171,12 +171,12 @@ export function importedMatches(plans = [], sessions = [], today, days = 7) {
   return out;
 }
 
-/** Ohne Nachfrage: Gehen und Mobility sind ohnehin leicht, Fußball hat seine Intensität. */
+/** Without asking: walking and mobility are easy anyway, football has its intensity. */
 const NO_RPE_ASK = new Set(['walk', 'mobility', 'cross_football']);
 /**
- * Importierte Trainings der letzten `days` Tage ohne Anstrengung – für die Nachfrage
- * „Wie hart war's?“ auf „Heute“. Ohne Antwort schätzt die Belastung sie aus der
- * Herzfrequenz; eine Angabe der Person ist trotzdem genauer.
+ * Imported workouts of the last `days` days without a recorded effort – for the prompt
+ * "How hard was it?" on "Today". Without an answer the load estimates it from the
+ * heart rate; an entry by the person is still more accurate.
  */
 export function rpeAskList(sessions = [], today, days = 3) {
   return (sessions || [])
@@ -185,8 +185,8 @@ export function rpeAskList(sessions = [], today, days = 3) {
     .sort((a, b) => b.date.localeCompare(a.date));
 }
 
-/** Zonenschlüssel einer Einheit: gespeichert (`paceKey`) oder – für Einheiten aus
-    älteren Versionen – aus dem Typ abgeleitet. */
+/** Zone key of a session: stored (`paceKey`) or – for sessions from
+    older versions – derived from the type. */
 export function paceKeyOf(unit) {
   if (!unit) return null;
   if (unit.paceKey) return unit.paceKey;
@@ -194,10 +194,10 @@ export function paceKeyOf(unit) {
 }
 
 /**
- * Führt die Zielpaces offener, künftiger Lauf-Einheiten an neue Trainingsbereiche
- * nach – über den Zonenschlüssel, nicht über die HF-Zone. Renn-Einheiten (`race`)
- * bekommen nur dann ein neues Tempo, wenn `race` übergeben wird (ohne Zielzeit folgt
- * das Renntempo der Form, mit Zielzeit bleibt es das Ziel). Reine Funktion.
+ * Carries the target paces of open, future run sessions over to new training zones
+ * – via the zone key, not via the HR zone. Race sessions (`race`)
+ * only get a new pace if `race` is passed (without a target time the race pace
+ * follows the current form, with a target time it stays the target). Pure function.
  * @returns {{units:object[], changed:boolean}}
  */
 export function repaceUnits(units = [], zones = {}, { today, race = null } = {}) {
@@ -214,8 +214,8 @@ export function repaceUnits(units = [], zones = {}, { today, race = null } = {})
   return { units: out, changed };
 }
 
-/** Fordernde Einheit (zehrt an der Erholung): Qualität, Kraft, Long Run – und
-    Fußball (Antritte/Spielintensität), außer der Termin ist ausdrücklich „leicht“ (#5). */
+/** Demanding session (eats into recovery): quality, strength, long run – and
+    football (sprints/match intensity), unless the appointment is explicitly "light" (#5). */
 export function isHard(unit) {
   if (unit.type === 'cross_football') return unit.intensity !== 'leicht';
   const c = loadClass(unit.type);
@@ -223,41 +223,41 @@ export function isHard(unit) {
 }
 
 /**
- * Schlägt vor, heute lockerer zu machen, wenn die Bereitschaft niedrig ist und
- * eine fordernde Einheit ansteht. `readiness` = { score } aus adaptive.js.
+ * Suggests making today easier when readiness is low and
+ * a demanding session is due. `readiness` = { score } from adaptive.js.
  * @returns {{unit:object, score:number}|null}
  */
 export function softenSuggestion(todaysUnits = [], readiness) {
   if (!readiness || typeof readiness.score !== 'number' || readiness.score >= 55) return null;
-  // Feste Termine (Fußball/Spiele) nicht zum „lockerer machen“ vorschlagen – die stehen fest.
+  // Do not suggest fixed commitments (football/matches) for "Make today easier" – they are fixed.
   const hard = todaysUnits.find((u) => isHard(u) && !u.fixed && isOpen(u));
   return hard ? { unit: hard, score: readiness.score } : null;
 }
 
-/** Offene, lastrelevante Einheiten der nächsten `horizon` Tage – Kandidaten für eine
-    Entlastung oder Steigerung. Feste Termine (Vereinstraining, Spiele) sind für alle
-    Automatiken tabu: Früher wurde aus dem Fußball „Locker (Entlastung)“. */
+/** Open, load-relevant sessions of the next `horizon` days – candidates for a
+    deload or an increase. Fixed commitments (club training, matches) are taboo for all
+    automations: previously football became "Easy (deload)". */
 export function weekDeloadCandidates(units = [], today, horizon = 7) {
   const end = addDays(today, horizon);
   return units.filter((u) => isOpen(u) && !u.fixed && countsToLoad(u) && u.date >= today && u.date <= end);
 }
 
-/** Ausfall wegen Krankheit oder Verletzung – nie nachholen, nie ausgleichen. */
+/** Absence due to illness or injury – never make up, never compensate. */
 function healthMiss(u) {
   return !!u && u.status === 'verpasst' && (u.missedReason === 'sick' || u.missedReason === 'injured');
 }
 
-/** Progressions-Variante: Umfang ~12 % rauf (Typ bleibt) – wenn noch Reserven da sind. */
+/** Progression variant: volume up ~12 % (type stays) – if there are still reserves. */
 export function progressVariant(unit) {
   const km = unit.targetDistanceKm ? Math.round(unit.targetDistanceKm * 1.12 * 2) / 2 : null;
   const min = !km && unit.targetDurationMin ? Math.round(unit.targetDurationMin * 1.1) : null;
   return { targetDistanceKm: km, targetDurationMin: min, boosted: true };
 }
 
-/** Entlastungs-Variante einer Einheit: Umfang ~25 % runter, die Intensität bleibt.
-    Qualitätseinheiten verlieren ein Drittel ihrer Wiederholungen statt in einen
-    lockeren Lauf verwandelt zu werden – Entlastung heißt weniger Umfang, nicht
-    „kein Reiz“ (Bosquet et al. 2007). Der Typ der Einheit ändert sich nie. */
+/** Deload variant of a session: volume down ~25 %, intensity stays.
+    Quality sessions lose a third of their repetitions instead of being
+    turned into an easy run – deload means less volume, not
+    "no stimulus" (Bosquet et al. 2007). The type of the session never changes. */
 export function deloadVariant(unit) {
   const km = unit.targetDistanceKm ? Math.max(3, Math.round(unit.targetDistanceKm * 0.75 * 2) / 2) : null;
   const min = unit.targetDurationMin ? Math.round(unit.targetDurationMin * 0.75) : null;
@@ -272,10 +272,10 @@ export function deloadVariant(unit) {
   return patch;
 }
 
-/** Verpasste Schlüsseleinheiten (fordernd) der letzten `days` Tage, jüngste zuerst (#Umplanung).
-    Ausfälle wegen Krankheit oder Verletzung zählen nicht: Danach heißt es behutsam
-    wieder einsteigen, nicht die harte Einheit binnen Tagen nachholen. Feste Termine
-    auch nicht – ein verpasstes Vereinstraining lässt sich nicht verschieben. */
+/** Missed key sessions (demanding) of the last `days` days, most recent first (#replanning).
+    Absences due to illness or injury do not count: afterwards the rule is to ease
+    back in gently, not to make up the hard session within days. Fixed commitments
+    do not count either – a missed club training cannot be moved. */
 export function missedKeyUnits(plans = [], today, days = 10) {
   const out = [];
   plans.forEach((p) => (p.units || []).forEach((u) => {
@@ -287,23 +287,23 @@ export function missedKeyUnits(plans = [], today, days = 10) {
 }
 
 /**
- * Findet einen geeigneten Nachhol-Tag in [today+1, today+horizon]: ein Tag ohne
- * lastrelevante Einheit und ohne fordernde Einheit am Vor-/Folgetag (Erholung).
- * @returns {string|null} Datum oder null.
+ * Finds a suitable make-up day in [today+1, today+horizon]: a day without a
+ * load-relevant session and without a demanding session on the previous/next day (recovery).
+ * @returns {string|null} Date or null.
  */
 export function findMakeupDay(units = [], missedUnit, today, horizon = 7) {
   const others = units.filter((u) => u.id !== (missedUnit && missedUnit.id));
   for (let i = 1; i <= horizon; i++) {
     const date = addDays(today, i);
-    if (others.some((u) => u.date === date && countsToLoad(u))) continue; // Tag belegt
+    if (others.some((u) => u.date === date && countsToLoad(u))) continue; // day taken
     const prev = addDays(date, -1), next = addDays(date, 1);
-    if (others.some((u) => isHard(u) && (u.date === prev || u.date === next))) continue; // harter Nachbar
+    if (others.some((u) => isHard(u) && (u.date === prev || u.date === next))) continue; // if (others.some((u) => isHard(u) && (u.date === prev || u.date === next))) continue; // hard neighbour
     return date;
   }
   return null;
 }
 
-/** Wandelt eine Einheit in eine lockere Variante (Patch-Felder), behält das Original. */
+/** Turns a session into an easy variant (patch fields), keeps the original. */
 export function easierVariant(unit, easyPace) {
   const km = unit.targetDistanceKm ? Math.max(4, Math.round(unit.targetDistanceKm * 0.6)) : null;
   return {
@@ -322,9 +322,9 @@ export function easierVariant(unit, easyPace) {
 }
 
 /**
- * Prüft das Verschieben einer Einheit auf newDate (#3): liegt dort schon eine
- * Einheit, und folgt eine harte Einheit ohne Erholungstag? Reine Fakten – die
- * UI formuliert daraus die Hinweise.
+ * Checks moving a session to newDate (#3): is there already a session
+ * there, and does a hard session follow without a recovery day? Pure facts – the
+ * UI formulates the hints from them.
  * @returns {{sameDay: object|null, hardNeighbor: {unit:object, dir:'prev'|'next'}|null}}
  */
 export function rescheduleCheck(units = [], unitId, newDate) {
@@ -342,10 +342,10 @@ export function rescheduleCheck(units = [], unitId, newDate) {
 }
 
 /**
- * Automatischer Wochenumfang-Ausgleich: vergleicht geplante vs. erledigte Lauf-km
- * der Woche. Ist etwas liegen geblieben, wird vorgeschlagen, EINEN TEIL davon
- * behutsam (gedeckelt) auf die nächste offene LOCKERE Einheit zu legen – nie alles
- * auf einmal, nie auf eine harte Einheit. Liefert null, wenn nichts zu tun ist.
+ * Automatic weekly volume compensation: compares planned vs. completed run km
+ * of the week. If something was left over, it suggests putting A PART of it,
+ * carefully (capped), on the next open EASY session – never everything
+ * at once, never on a hard session. Returns null if there is nothing to do.
  */
 export function weekVolumeBalance(units = [], today) {
   const km = (u) => Number(u.targetDistanceKm) || 0;
@@ -354,7 +354,7 @@ export function weekVolumeBalance(units = [], today) {
   if (run.length < 2) return null;
   const planned = run.reduce((s, u) => s + km(u), 0);
   const done = run.filter((u) => u.status === 'erledigt').reduce((s, u) => s + km(u), 0);
-  // Krankheits-/Verletzungsausfälle werden nie „ausgeglichen“ (kein Mehrumfang danach).
+  // Absences due to illness/injury are never "compensated" (no extra volume afterwards).
   const missedKm = run.filter((u) => u.status !== 'erledigt' && u.date < today && !healthMiss(u)).reduce((s, u) => s + km(u), 0);
   const openEasy = run
     .filter((u) => isOpen(u) && u.date >= today && (u.type === 'easy' || u.type === 'recovery'))
@@ -371,15 +371,15 @@ export function weekVolumeBalance(units = [], today) {
   };
 }
 
-/** Das EINE Fenster für die Anstrengung (RPE) – früher gab es zwei (14 und 21 Tage)
-    mit verschiedenen Schwellen, und „Heute“ zeigte widersprüchliche Karten. */
+/** The ONE window for the effort (RPE) – previously there were two (14 and 21 days)
+    with different thresholds, and "Today" showed contradictory cards. */
 export const RPE_WINDOW_DAYS = 21;
 
 /**
- * Anstrengungs-Trend der letzten Einheiten (erfasstes RPE): durchweg locker →
- * `progress`, durchweg sehr fordernd → `ease`, sonst `hold`. Nur ein Signal für die
- * zentrale Coach-Entscheidung (`coach.js`) – kein Urteil über die Belastung, das
- * kommt allein aus `load.js`. null bei zu wenig Daten (< 4 bewertete Einheiten).
+ * Effort trend of the last sessions (recorded RPE): consistently easy →
+ * `progress`, consistently very demanding → `ease`, otherwise `hold`. Only a signal for the
+ * central coach decision (`coach.js`) – no verdict on the load, which
+ * comes solely from `load.js`. null with too little data (< 4 rated sessions).
  */
 export function rpeProgression(sessions = [], today, days = RPE_WINDOW_DAYS) {
   const since = addDays(today, -days);
@@ -390,19 +390,19 @@ export function rpeProgression(sessions = [], today, days = RPE_WINDOW_DAYS) {
   return { trend, avgRpe: Math.round(avg * 10) / 10, count: rated.length, days };
 }
 
-/* ------------------------ Wochenzuordnung im Plan ------------------------ */
-/* (aus plans.js hierher: badges.js brauchte sie und zog damit plans → session → health
-   → badges in einen Import-Zyklus, FE-18) */
+/* ------------------------ Week assignment in the plan ------------------------ */
+/* (moved here from plans.js: badges.js needed it and thereby pulled plans → session → health
+   → badges into an import cycle, FE-18) */
 export function clampWeek(plan, dateStr) {
   if (dateStr < plan.startDate) return 1;
   if (dateStr > plan.endDate) return plan.weeks;
   return Math.min(plan.weeks, Math.floor(diffDays(plan.startDate, dateStr) / 7) + 1);
 }
 
-/** Robuste, öffentliche Wochenzuordnung eines Datums im Plan (1..plan.weeks).
- *  Zentrale Quelle, damit Ansichten die Woche aus dem AUTORITATIVEN Datum ableiten,
- *  statt sich auf ein gespeichertes `week`-Feld zu verlassen (manuell angelegte oder
- *  importierte Einheiten haben oft keines). Liefert null bei unvollständigem Plan. */
+/** Robust, public week assignment of a date in the plan (1..plan.weeks).
+ *  Central source so that views derive the week from the AUTHORITATIVE date
+ *  instead of relying on a stored `week` field (manually created or
+ *  imported sessions often have none). Returns null for an incomplete plan. */
 export function weekOfDate(plan, dateStr) {
   if (!plan || !plan.startDate || !plan.endDate || !plan.weeks || !dateStr) return null;
   return clampWeek(plan, dateStr);

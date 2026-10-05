@@ -1,32 +1,32 @@
 /* =========================================================================
-   fit.js — FIT-Dateien (Garmin, COROS, Polar, Suunto, Wahoo …) ohne Bibliothek lesen.
-   Reine, DOM-freie Logik → per node:test abgedeckt.
+   fit.js — read FIT files (Garmin, COROS, Polar, Suunto, Wahoo …) without a library.
+   Pure, DOM-free logic → covered by node:test.
 
-   FIT ist ein Binärformat: nach dem Kopf folgen Definitions- und Datennachrichten;
-   eine Definition legt je „lokalem Typ“ fest, welche Felder mit welcher Größe folgen.
-   Gelesen werden nur die Nachrichten, die eine Trainingseinheit braucht:
-     - session (18): Sportart, Start, Stoppuhr-Zeit, Distanz, Ø-/Max-HF, Kalorien, Höhenmeter
-     - record  (20): Zeit, Position, Höhe, Herzfrequenz, Strecke je Messpunkt
-     - activity (34): lokale Uhrzeit → Versatz zu UTC (für den richtigen Kalendertag)
-   Alles Weitere (Runden, Geräteinfos, Entwicklerfelder) wird übersprungen. Die Auswertung
-   selbst (Splits, HF-Zonen, Strecke) teilt sich die Datei mit GPX/TCX (gpx.js).
+   FIT is a binary format: after the header come definition and data messages;
+   a definition specifies for each "local type" which fields follow and at what size.
+   Only the messages a training session needs are read:
+     - session (18): sport, start, timer time, distance, avg/max HR, calories, elevation gain
+     - record  (20): time, position, elevation, heart rate, distance per data point
+     - activity (34): local time → offset to UTC (for the correct calendar day)
+   Everything else (laps, device info, developer fields) is skipped. The evaluation
+   itself (splits, HR zones, route) shares the file with GPX/TCX (gpx.js).
    ========================================================================= */
 
 import { buildActivity } from './gpx.js';
 
-/** FIT zählt Sekunden ab 31.12.1989 00:00 UTC. */
+/** FIT counts seconds from 31 Dec 1989 00:00 UTC. */
 const FIT_EPOCH_MS = Date.UTC(1989, 11, 31);
-/** Grad je „semicircle“ (Positionen sind vorzeichenbehaftete 32-Bit-Werte). */
+/** Degrees per "semicircle" (positions are signed 32-bit values). */
 const SEMI = 180 / 2 ** 31;
 
-/** Sportart (FIT-Profil `sport`) → Session-Typ; Unterart für Laufband, Kraft, Yoga … */
+/** Sport (FIT profile `sport`) → session type; sub-sport for treadmill, strength, yoga … */
 const SPORT = { 1: 'run', 2: 'cross_bike', 5: 'swim', 11: 'walk', 17: 'hike', 15: 'rowing', 7: 'cross_football', 8: 'tennis' };
 const SUB_SPORT = {
   20: 'strength', 26: 'gym', 19: 'mobility', 43: 'mobility', 44: 'mobility',
   15: 'elliptical', 14: 'rowing', 5: 'spinning', 6: 'spinning',
 };
 
-/** Größe je Basistyp (untere 5 Bit) und „ungültig“-Werte. */
+/** Size per base type (lower 5 bits) and "invalid" values. */
 const BASE = {
   0: [1, 0xff], 1: [1, 0x7f], 2: [1, 0xff], 3: [2, 0x7fff], 4: [2, 0xffff], 5: [4, 0x7fffffff], 6: [4, 0xffffffff],
   7: [1, null], 8: [4, null], 9: [8, null], 10: [1, 0], 11: [2, 0], 12: [4, 0], 13: [1, 0xff], 14: [8, null], 15: [8, null], 16: [8, null],
@@ -35,7 +35,7 @@ const BASE = {
 function readValue(view, off, baseType, size, little) {
   const t = baseType & 0x1f;
   const [unit, invalid] = BASE[t] || [1, null];
-  if (size < unit || t === 7 || t === 13 || t >= 14) return null;   // Texte, Bytes, 64 Bit: nicht gebraucht
+  if (size < unit || t === 7 || t === 13 || t >= 14) return null;   // strings, bytes, 64 bit: not needed
   let v;
   switch (t) {
     case 0: case 2: case 10: v = view.getUint8(off); break;
@@ -53,8 +53,8 @@ function readValue(view, off, baseType, size, little) {
 }
 
 /**
- * Liest die Nachrichten einer FIT-Datei. Liefert { sessions, records, activity } mit
- * rohen Feldnummern → Werten; wirft bei kaputtem Kopf.
+ * Reads the messages of a FIT file. Returns { sessions, records, activity } with
+ * raw field numbers → values; throws on a broken header.
  * @param {ArrayBuffer|Uint8Array} input
  */
 export function readFit(input) {
@@ -66,14 +66,14 @@ export function readFit(input) {
   const dataSize = view.getUint32(4, true);
   const end = Math.min(bytes.length, headerSize + dataSize);
 
-  const defs = new Map();          // lokaler Typ → { global, little, fields, devSize }
+  const defs = new Map();          // local type → { global, little, fields, devSize }
   const out = { sessions: [], records: [], activity: null };
   let lastTs = null;
   let off = headerSize;
   while (off < end) {
     const h = bytes[off++];
     if (h & 0x80) {
-      // Komprimierter Zeitstempel: lokaler Typ in Bit 5–6, Versatz in Bit 0–4.
+      // Compressed timestamp: local type in bits 5–6, offset in bits 0–4.
       const def = defs.get((h >> 5) & 0x03);
       if (!def) break;
       const offset = h & 0x1f;
@@ -90,7 +90,7 @@ export function readFit(input) {
     }
     const local = h & 0x0f;
     if (h & 0x40) {
-      // Definition: reserviert, Architektur, globale Nummer, Felder (+ Entwicklerfelder).
+      // Definition: reserved, architecture, global number, fields (+ developer fields).
       const little = bytes[off + 1] === 0;
       const global = view.getUint16(off + 2, little);
       const n = bytes[off + 4];
@@ -110,7 +110,7 @@ export function readFit(input) {
       continue;
     }
     const def = defs.get(local);
-    if (!def) break;   // Daten ohne Definition: Datei kaputt – mit dem Gelesenen weiterarbeiten
+    if (!def) break;   // Data without a definition: file broken – carry on with what has been read
     const msg = readData(view, off, def);
     off += def.size;
     if (msg && msg[253] != null) lastTs = msg[253];
@@ -140,7 +140,7 @@ function collect(out, global, msg) {
 const tsMs = (v) => (v == null ? null : FIT_EPOCH_MS + v * 1000);
 
 /**
- * FIT-Datei → Session (gleiche Form wie `parseActivityFile`), null ohne brauchbare Einheit.
+ * FIT file → session (same shape as `parseActivityFile`), null without a usable session.
  * @param {ArrayBuffer|Uint8Array} input
  * @param {{hrZones?: Array<{zone,min,max}>}} [opts]
  */
@@ -162,7 +162,7 @@ export function parseFit(input, { hrZones = null } = {}) {
     })
     .sort((a, b) => a.t - b.t);
 
-  // Mehrsport-Dateien haben mehrere Sessions: die längste zählt.
+  // Multisport files have several sessions: the longest counts.
   const s = fit.sessions.slice().sort((a, b) => (b[8] || b[7] || 0) - (a[8] || a[7] || 0))[0] || null;
   const totals = {};
   let type = null;
@@ -177,10 +177,10 @@ export function parseFit(input, { hrZones = null } = {}) {
     if (s[22] != null) totals.ascentM = s[22];
     type = SUB_SPORT[s[6]] || SPORT[s[5]] || null;
   }
-  // Ohne Session-Zeitraum: aus den Messpunkten.
+  // Without a session time span: from the data points.
   if (totals.start == null && pts.length) totals.start = pts[0].t;
   if (totals.end == null && pts.length) totals.end = pts[pts.length - 1].t;
-  // Lokale Uhrzeit der Aufzeichnung → Kalendertag dort, wo trainiert wurde.
+  // Local time of the recording → calendar day where the training took place.
   const a = fit.activity;
   const utcOffsetMin = a && a[253] != null && a[5] != null ? Math.round((a[5] - a[253]) / 60) : null;
   const act = buildActivity(pts, { type, totals, hrZones, utcOffsetMin: utcOffsetMin != null && Math.abs(utcOffsetMin) <= 14 * 60 ? utcOffsetMin : null });
@@ -188,7 +188,7 @@ export function parseFit(input, { hrZones = null } = {}) {
   return act;
 }
 
-/** Sieht der Inhalt nach FIT aus (Kopf mit „.FIT“)? */
+/** Does the content look like FIT (header with ".FIT")? */
 export function isFit(bytes) {
   const b = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
   return b.length >= 12 && b[8] === 0x2e && b[9] === 0x46 && b[10] === 0x49 && b[11] === 0x54;

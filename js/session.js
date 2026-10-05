@@ -1,7 +1,7 @@
 /* =========================================================================
-   session.js — Trainingssession-View mit drei Zuständen:
-     geplant (Soll + "Training starten") · Auswertung (Soll-Ist) · Ruhetag.
-   Exportiert zudem die Einheiten-Mutationen, die der Workout-Modus nutzt.
+   session.js — training session view with three states:
+     planned (target + "Start workout") · evaluation (target vs. actual) · rest day.
+   Also exports the session mutations used by the workout mode.
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -33,21 +33,21 @@ import { decodePolyline } from './gpx.js';
 
 import { t, tp } from './i18n.js';
 
-/** Herkunft der Anstrengung in der Belastungszeile (ohne erfasste RPE ist sie geschätzt). */
+/** Origin of the effort in the load row (without a recorded RPE it is estimated). */
 const RPE_SOURCE_TEXT = {
   erfasst: '',
   get herzfrequenz() { return ` (${t('session.rpeFromHr')})`; },
   get typ() { return ` (${t('session.rpeFromType')})`; },
 };
 
-// Weitergereicht für bestehende Importe (Tests, ältere Module).
+// Passed on for existing imports (tests, older modules).
 export { findUnit, saveUnitPatch, completeUnit, linkSession, nextFreeDay, MISSED_REASON_LABEL } from './unit-actions.js';
 
 /* ===================== View ===================== */
 export function render(view, id) {
-  // 1) Geplante Einheit?
+  // 1) Planned session?
   const found = findUnit(id);
-  // 2) Oder eine frei erfasste, durchgeführte Session?
+  // 2) Or a freely logged, completed session?
   const freeSession = !found ? store.find('sessions', id) : null;
 
   if (!found && !freeSession) {
@@ -66,7 +66,7 @@ export function render(view, id) {
   return renderPlanned(view, plan, unit);
 }
 
-/* --------------------------- Geplant (Soll) ----------------------------- */
+/* --------------------------- Planned (target) ----------------------------- */
 function renderPlanned(view, plan, unit) {
   const m = typeMeta(unit.type);
   setHeader({
@@ -103,7 +103,7 @@ function renderPlanned(view, plan, unit) {
     ]));
   }
 
-  // Zielwerte
+  // Target values
   const targets = [];
   if (unit.targetDistanceKm) targets.push([t('session.distance'), fmtKm(unit.targetDistanceKm, unit.targetDistanceKm % 1 ? 1 : 0)]);
   if (unit.targetDurationMin) targets.push([t('session.duration'), `${unit.targetDurationMin} min`]);
@@ -119,7 +119,7 @@ function renderPlanned(view, plan, unit) {
     view.appendChild(el('div', { class: 'card card--flat', text: unit.description }));
   }
 
-  // Wetter-Hinweis für den Trainingstag
+  // Weather hint for the training day
   const w = weatherForDate(unit.date);
   const wh = w && weatherHint(unit, w);
   if (wh) {
@@ -133,18 +133,18 @@ function renderPlanned(view, plan, unit) {
     ]));
   }
 
-  // Passende Übungen aus der Bibliothek (nur bei Kraft/Mobility/Recovery vorhanden).
+  // Matching exercises from the library (only available for strength/mobility/recovery).
   renderUnitExercises(view, plan, unit);
 
-  // Nebenaktionen im Fluss …
+  // Secondary actions in the flow …
   view.appendChild(el('div', { class: 'start-cta row gap-2' }, [
     el('button', { class: 'btn btn--ghost grow', onclick: () => openReschedule(plan, unit) }, [icon('calendar'), t('session.reschedule')]),
     el('button', { class: 'btn btn--ghost grow', onclick: () => markMissed(plan, unit) }, [icon('x'), t('session.markMissed')]),
   ]));
   view.appendChild(el('a', { class: 'btn btn--block mt-4', href: `#/plan/${plan.eventId}`, style: { background: 'transparent', color: 'var(--text-2)' } }, [icon('calendar'), t('session.toPlan')]));
 
-  // … die Hauptaktionen in einer klebenden Leiste über der Tab-Leiste: „Training starten“
-  // lag vorher 1,8 Bildschirme tief hinter Beschreibung und Übungsvorschlägen (UI-09).
+  // … the primary actions in a sticky bar above the tab bar: "Start workout"
+  // used to sit 1.8 screens deep behind the description and exercise suggestions (UI-09).
   const isRunnable = typeMeta(unit.type).cat !== 'rest';
   view.appendChild(el('div', { class: 'action-bar' }, [
     isRunnable ? el('button', { class: 'btn btn--primary grow', onclick: () => navigate(`#/workout/${unit.id}`) }, [icon('play'), t('session.start')]) : null,
@@ -152,17 +152,17 @@ function renderPlanned(view, plan, unit) {
   ]));
 }
 
-/* ---- Übungs-Vorschläge für Kraft-/Mobility-Einheiten (nach Nutzung sortiert) ---- */
+/* ---- Exercise suggestions for strength/mobility sessions (sorted by usage) ---- */
 function renderUnitExercises(view, plan, unit) {
   const usage = store.exerciseUsage();
-  // Zuerst, was die Beschreibung der Einheit nennt („im Plan“), dann die Vorschläge nach Nutzung.
+  // First what the session description names ("in the plan"), then the suggestions by usage.
   const { named, all: pool } = exercisesForUnit(unit, usage);
   if (!pool.length) return;
   const namedIds = new Set(named.map((e) => e.id));
   const linkedIds = Array.isArray(unit.exerciseIds) ? [...unit.exerciseIds] : [];
   const list = el('div', { class: 'col gap-2' });
   const intro = el('div', { class: 'muted', style: { fontSize: '.82rem', marginBottom: '6px' }, text: named.length ? t('session.exercisesIntroPlan') : t('session.exercisesIntroUsage') });
-  // Alle Übungen der Einheit am Stück, mit Musik und Ansagen (workout-show.js).
+  // All exercises of the session in one go, with music and announcements (workout-show.js).
   const cta = el('div', { class: 'show-cta-slot' });
   const paintCta = () => {
     cta.innerHTML = '';
@@ -175,8 +175,8 @@ function renderUnitExercises(view, plan, unit) {
       openShow(current(), { onFinish: ({ durationSec }) => openLogSheet(plan, unit, null, { durationSec }) });
     } }, [icon('play'), t('session.followAlong', { min })]));
   };
-  // Bei Läufen sind die Dehn-/Kraftvorschläge Beiwerk: eingeklappt, damit der Weg zum
-  // Start kurz bleibt (UI-09). Bei Kraft/Mobility sind sie der Inhalt – offen.
+  // For runs the stretching/strength suggestions are accessories: collapsed, so that the path to
+  // the start stays short (UI-09). For strength/mobility they are the content – open.
   if (typeMeta(unit.type).cat === 'run') {
     view.appendChild(el('details', { class: 'unit-exercises mt-4' }, [
       el('summary', { class: 'section-head__title', text: t('session.unitExercisesCount', { n: pool.length }) }),
@@ -216,7 +216,7 @@ function renderUnitExercises(view, plan, unit) {
   paint();
 }
 
-/* ------------------------------ Ruhetag --------------------------------- */
+/* ------------------------------ Rest day --------------------------------- */
 function renderRest(view, unit) {
   setHeader({ title: t('sessionTypes.rest.label'), subtitle: fmtDate(unit.date), back: true });
   view.appendChild(el('div', { class: 'empty', style: { paddingTop: '60px' } }, [
@@ -226,14 +226,14 @@ function renderRest(view, unit) {
   ]));
 }
 
-/* --------------------------- Auswertung (Ist) --------------------------- */
+/* --------------------------- Evaluation (actual) --------------------------- */
 function renderEvaluation(view, plan, unit, ex) {
   const type = ex?.type || unit?.type || 'easy';
   const m = typeMeta(type);
   const date = ex?.date || unit?.date;
   setHeader({
     title: t('session.review'), subtitle: fmtDate(date), back: true,
-    // Freie Trainings (ohne Plan) lassen sich komplett bearbeiten – auch Sportart und Datum – und löschen.
+    // Free sessions (without a plan) can be edited completely – including sport and date – and deleted.
     actions: ex ? [{ icon: 'edit', label: t('session.edit'), onClick: () => (unit ? openLogSheet(plan, unit, ex) : openActivitySheet({ existing: ex })) }] : [],
   });
 
@@ -255,7 +255,7 @@ function renderEvaluation(view, plan, unit, ex) {
     return;
   }
 
-  // Kernzahlen
+  // Key figures
   view.appendChild(el('div', { class: 'stat-grid mt-4' }, [
     ex.distanceKm != null ? bigStat(fmtKm(ex.distanceKm, 1).replace(' km', ''), 'km') : null,
     ex.durationSec != null ? bigStat(fmtDuration(ex.durationSec), t('session.time')) : null,
@@ -263,7 +263,7 @@ function renderEvaluation(view, plan, unit, ex) {
     ex.avgHr != null ? bigStat(String(ex.avgHr), t('session.avgHrShort')) : null,
   ].filter(Boolean)));
 
-  // Soll-Ist-Vergleich (zweiseitig für Lockeres, ohne Pace-Urteil für Intervalle)
+  // Target vs. actual comparison (two-sided for easy sessions, no pace verdict for intervals)
   if (unit) {
     const cmpRes = compareToPlan(unit, ex, { hrZones: store.profile().hrZones || [] });
     const fmtPlan = (r) => (r.key === 'distance' ? fmtKm(r.plan, 1) : r.key === 'duration' ? fmtDuration(r.plan)
@@ -298,11 +298,11 @@ function renderEvaluation(view, plan, unit, ex) {
     }
   }
 
-  // Zeit in Zonen
+  // Time in zones
   if (ex.timeInZones) view.appendChild(zonesCard(ex.timeInZones));
 
   // Splits
-  // Kraft: erfasste Sätze je Übung (aus dem Workout-Modus) mit Volumen.
+  // Strength: logged sets per exercise (from the workout mode) with volume.
   if (Array.isArray(ex.strengthSets) && ex.strengthSets.length) {
     view.appendChild(sectionHead(t('session.sets')));
     const list = el('div', { class: 'list-card' });
@@ -318,7 +318,7 @@ function renderEvaluation(view, plan, unit, ex) {
     });
     view.appendChild(list);
   }
-  // Strecke aus der Datei – als Linie ohne Kartendienst, dazu das Höhenprofil.
+  // Route from the file – as a line without a map service, plus the elevation profile.
   if (ex.route && ex.route.poly) {
     view.appendChild(sectionHead(t('session.route')));
     view.appendChild(el('div', { class: 'card' }, [
@@ -328,8 +328,8 @@ function renderEvaluation(view, plan, unit, ex) {
   }
   if (ex.splits && ex.splits.length) view.appendChild(splitsCard(ex.splits));
 
-  // Belastung, RPE & Gefühl – die Belastungspunkte immer mit ihrer Herleitung, damit
-  // sichtbar ist, wenn die Dauer geschätzt wurde (geplant, aus der Strecke, Pauschale).
+  // Load, RPE & feeling – the load points always with their derivation, so that
+  // it is visible when the duration was estimated (planned, from the route, flat rate).
   view.appendChild(sectionHead(t('session.loadFeeling')));
   const f = FEELINGS.find((x) => x.key === ex.feeling);
   const lm = loadMinutes(ex);
@@ -346,19 +346,19 @@ function renderEvaluation(view, plan, unit, ex) {
 
   if (ex.notes) { view.appendChild(sectionHead(t('session.notes'))); view.appendChild(el('div', { class: 'card card--flat', text: ex.notes })); }
 
-  // Körperwerte schnell erfassen
+  // Quick entry of body values
   view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-6', onclick: () => openHealthEntry({ date }) }, [icon('heart'), t('session.logBody')]));
   if (unit) view.appendChild(el('a', { class: 'btn btn--block mt-2', href: `#/plan/${plan.eventId}`, style: { background: 'transparent', color: 'var(--text-2)' }, text: t('session.toPlan') }));
 }
 
-/* ------------------------------ Erfassen -------------------------------- */
+/* ------------------------------ Logging -------------------------------- */
 function openLogSheet(plan, unit, existing = null, prefill = null) {
   const ex = existing || {};
-  // Nach einer durchgehenden Session (workout-show.js) steht die tatsächliche Dauer schon fest.
+  // After a continuous session (workout-show.js) the actual duration is already known.
   const pre = !existing && prefill && Number(prefill.durationSec) > 0 ? Number(prefill.durationSec) : 0;
   const distI = input({ type: 'number', step: '0.1', min: '0', inputmode: 'decimal', value: ex.distanceKm ?? unit?.targetDistanceKm ?? '', placeholder: 'km' });
-  // Neue Erfassung: Dauer mit der geplanten Dauer vorbelegt – ohne Dauer zählte jede
-  // Einheit mit 30 Minuten in die Belastung (90 min Fußball also nur zu einem Drittel).
+  // New entry: duration prefilled with the planned duration – without a duration every
+  // session counted with 30 minutes towards the load (90 min of football thus only a third).
   const plannedMin = !existing && Number(unit?.targetDurationMin) > 0 ? Number(unit.targetDurationMin) : '';
   const dur = durationFields({ min: ex.durationSec ? Math.floor(ex.durationSec / 60) : pre ? Math.floor(pre / 60) : plannedMin, sec: ex.durationSec ? ex.durationSec % 60 : pre ? pre % 60 : '' });
   const { minI, secI } = dur;
@@ -371,8 +371,8 @@ function openLogSheet(plan, unit, existing = null, prefill = null) {
   let feeling = ex.feeling || '';
   const feelRow = feelingPicker(feeling, (v) => { feeling = v; });
 
-  // Erfassung passt sich dem Einheitstyp an: Distanz nur für Läufe, HF nur für
-  // Lauf/Cross. Dauer, Anstrengung, Gefühl und Notizen gelten für alle.
+  // Logging adapts to the session type: distance only for runs, HR only for
+  // run/cross. Duration, effort, feeling and notes apply to all.
   const cat = typeMeta(unit?.type || ex.type || 'other').cat;
   const isRun = cat === 'run';
   const showHr = isRun || cat === 'cross';
@@ -393,7 +393,7 @@ function openLogSheet(plan, unit, existing = null, prefill = null) {
       el('button', {
         class: 'btn btn--primary grow', text: t('session.save'),
         onclick: () => {
-          // Plausibel halten: keine negativen Werte, Sekunden 0–59, HF 30–230.
+          // Keep it plausible: no negative values, seconds 0–59, HR 30–230.
           const dist = isRun ? (Math.max(0, parseFloat(String(distI.value).replace(',', '.'))) || null) : null;
           const durationSec = (Math.max(0, parseInt(minI.value || 0, 10) || 0) * 60 + Math.max(0, Math.min(59, parseInt(secI.value || 0, 10) || 0))) || null;
           const hr = (v) => { const n = parseInt(v, 10); return n >= 30 && n <= 230 ? n : null; };
@@ -418,9 +418,9 @@ function openLogSheet(plan, unit, existing = null, prefill = null) {
   });
 }
 
-/** Sportarten für freie Trainings (ohne Ruhetag und Wettkampf-Sonderfälle). */
+/** Sports for free sessions (without rest day and competition special cases). */
 const ACTIVITY_TYPES = TYPE_OPTIONS.filter((o) => !['rest', 'camp'].includes(o.value));
-/** Kategorien mit Strecke. */
+/** Categories with a route. */
 const DISTANCE_CATS = new Set(['run', 'bike', 'walk', 'swim']);
 const distanceCat = (type) => {
   if (typeMeta(type).cat === 'run') return 'run';
@@ -431,10 +431,10 @@ const distanceCat = (type) => {
 };
 
 /**
- * „Training erfassen“ – auch ohne Plan (spontane Radtour, Lauf am Ruhetag, Training
- * ohne Ziel). Passt eine offene geplante Einheit desselben Tages, lässt sich das
- * Training ihr zuordnen (Voreinstellung); sonst entsteht ein freies Training, das im
- * Kalender und unter „Freie Trainings“ erscheint. Mit `existing` bearbeiten/löschen.
+ * "Log training" – also without a plan (spontaneous bike ride, run on a rest day, training
+ * without a goal). If an open planned session of the same day fits, the workout can
+ * be assigned to it (default); otherwise a free session is created, which appears in the
+ * calendar and under "Sessions without a plan". Edit/delete with `existing`.
  */
 export function openActivitySheet({ date = todayStr(), existing = null } = {}) {
   const ex = existing || {};
@@ -530,7 +530,7 @@ export function openActivitySheet({ date = todayStr(), existing = null } = {}) {
 export function openReschedule(plan, unit) {
   const dateI = input({ type: 'date', value: unit.date });
   const warnBox = el('div', {});
-  // Nicht-blockierender Hinweis: Doppelbelastung / harte Einheit ohne Erholungstag (#3)
+  // Non-blocking hint: double load / hard session without a recovery day (#3)
   const refresh = () => {
     warnBox.innerHTML = '';
     if (!dateI.value || dateI.value === unit.date) return;
@@ -543,8 +543,8 @@ export function openReschedule(plan, unit) {
       el('span', { html: iconSvg('info'), style: { color: 'var(--warn-text)', width: '18px', flex: '0 0 auto' } }),
       el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: hint }),
     ])));
-    // What-if (R3): Auswirkung auf die Zielwoche vor dem Verschieben.
-    // Auch bei gleicher Wochenlast zeigen, wenn ein neuer harter Folgetag entsteht.
+    // What-if (R3): effect on the target week before moving.
+    // Also show it at equal weekly load when a new hard follow-up day arises.
     const mv = simulateMove(units, unit.id, dateI.value);
     if (mv && mv.target && (mv.target.deltaLoad !== 0 || mv.target.level !== 'ok')) warnBox.appendChild(el('div', { class: 'card card--flat row gap-2 mt-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('activity'), style: { color: mv.target.level === 'hoch' ? 'var(--warn)' : 'var(--accent)', width: '18px', flex: '0 0 auto' } }),
@@ -552,7 +552,7 @@ export function openReschedule(plan, unit) {
     ]));
   };
   dateI.addEventListener('change', refresh);
-  // Schnellwahl für den häufigsten Fall – vorher nur der Datumsdialog (UI-29).
+  // Quick pick for the most common case – previously only the date dialog (UI-29).
   const today = todayStr();
   const planUnits = (store.find('plans', plan.id) || {}).units || [];
   const free = nextFreeDay(planUnits, unit.id, addDays(today, 1));
@@ -570,10 +570,10 @@ export function openReschedule(plan, unit) {
     body: el('div', {}, [chips, field(t('session.newDate'), dateI), warnBox]),
     footer: [
       el('button', { class: 'btn btn--ghost grow', text: t('common.cancel'), onclick: () => closeSheet() }),
-      // WICHTIG: Der Status bleibt „geplant“ – die Einheit findet ja statt, nur an
-      // einem anderen Tag. Die Verschiebung merkt sich `movedFrom` (Anzeige-Chip).
-      // Ein Status „verschoben“ würde die Einheit aus Wochenlast, Ziel-Triage,
-      // What-if und Erholungsvorschlägen herausfallen lassen.
+      // IMPORTANT: The status stays "geplant" – the session still takes place, just on
+      // a different day. The move is remembered by `movedFrom` (display chip).
+      // A status "verschoben" would make the session drop out of weekly load, goal triage,
+      // what-if and recovery suggestions.
       el('button', { class: 'btn btn--primary grow', text: t('session.reschedule'), onclick: () => { saveUnitPatch(plan.id, unit.id, { date: dateI.value, dow: isoDow(dateI.value), status: unit.status === 'erledigt' ? 'erledigt' : 'geplant', movedFrom: unit.movedFrom || unit.date }); closeSheet(); toast(t('session.rescheduled'), 'good'); refreshView(); } }),
     ],
   });
@@ -613,7 +613,7 @@ function parsePaceInput(v) {
 
 function openUnitEditor(plan, unit) { unitFormSheet(plan, unit, false); }
 
-/** Legt eine neue geplante Einheit für ein Datum an (Plan/Kalender). */
+/** Creates a new planned session for a date (plan/calendar). */
 export function openUnitCreator(plan, dateStr) {
   const tpl = {
     id: uid('u'), planId: plan.id, eventId: plan.eventId, date: dateStr || todayStr(),
@@ -624,7 +624,7 @@ export function openUnitCreator(plan, dateStr) {
   unitFormSheet(plan, tpl, true);
 }
 
-/** Gemeinsames Formular zum Anlegen/Bearbeiten einer geplanten Einheit. */
+/** Shared form for creating/editing a planned session. */
 function unitFormSheet(plan, unit, isNew) {
   let type = unit.type || 'easy';
   const titleI = input({ value: unit.title || '' });
@@ -645,7 +645,7 @@ function unitFormSheet(plan, unit, isNew) {
   ]);
   const drinkI = input({ type: 'number', inputmode: 'numeric', value: unit.drinkIntervalMin ?? '', placeholder: t('session.drinkPlaceholder') });
 
-  // What-if (R3): Live-Vorschau der Wochen-Auswirkung beim Anlegen.
+  // What-if (R3): live preview of the weekly effect when creating.
   const whatIfBox = el('div', {});
   const refreshWhatIf = () => {
     if (!isNew) return;
@@ -696,7 +696,7 @@ function unitFormSheet(plan, unit, isNew) {
       const units = [...(cur.units || []), newUnit];
       store.patch('plans', plan.id, { units });
       closeSheet();
-      // Wochenbelastung konstant halten: ähnliche Einheit als Ausgleich anbieten (#2)
+      // Keep the weekly load constant: offer a similar session as compensation (#2)
       const offset = suggestOffsetUnit(units, newUnit);
       if (offset) { offerOffset(plan, newUnit, offset); return; }
       toast(t('session.unitAdded'), 'good'); refreshView();
@@ -733,7 +733,7 @@ function unitFormSheet(plan, unit, isNew) {
   });
 }
 
-/** Bietet nach dem Hinzufügen an, eine ähnliche Einheit derselben Woche zu entfernen (#2). */
+/** After adding, offers to remove a similar session of the same week (#2). */
 function offerOffset(plan, newUnit, offset) {
   const load = weekLoad((store.find('plans', plan.id).units) || [], newUnit.date);
   const reload = () => { closeSheet(); refreshView(); };
@@ -762,7 +762,7 @@ function offerOffset(plan, newUnit, offset) {
   });
 }
 
-/* ------------------------------- Bausteine ------------------------------ */
+/* ------------------------------- Building blocks ------------------------------ */
 function bigStat(val, label) {
   return el('div', { class: 'stat' }, [el('div', { class: 'stat__val num', text: val }), el('div', { class: 'stat__label', text: label })]);
 }

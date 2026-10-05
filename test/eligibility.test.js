@@ -1,5 +1,5 @@
-/* Eignungsstatus für die ganze App (js/eligibility.js): Kinder- und Jugendprofil,
-   Schwangerschaft/Stillzeit, Essstörung, „Zahlen ausblenden“, keine Vorbelegung. */
+/* Eligibility status for the whole app (js/eligibility.js): child and youth profile,
+   pregnancy/breastfeeding, eating disorder, "hide numbers", no pre-filled answers. */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { eligibilityFor, gateQuestionsFor, ageOf, weightGoalBlockReason } from '../js/eligibility.js';
@@ -7,23 +7,23 @@ import { eligibilityFor, gateQuestionsFor, ageOf, weightGoalBlockReason } from '
 const T = '2026-09-29';
 const ALL_NO = { chronicCondition: false, medication: false, pregnancy: false, eatingDisorder: false, minor: false };
 
-test('eligibility: Alter aus dem Geburtsjahr – Minderjährige automatisch im Kinder- und Jugendprofil', () => {
+test('eligibility: age from the birth year – minors automatically in the child and youth profile', () => {
   assert.equal(ageOf({ birthYear: 2012 }, T), 14);
   assert.equal(ageOf({}, T), null);
   const kid = eligibilityFor({ profile: { birthYear: 2012 }, settings: {}, today: T });
   assert.equal(kid.minor, true);
-  assert.equal(kid.answered, true, 'auch ohne Antworten eingeordnet');
+  assert.equal(kid.answered, true, 'classified even without answers');
   assert.equal(kid.noWeightGoals, true);
   assert.equal(kid.noPerformanceSupplements, true);
   assert.equal(kid.labsEvaluate, false);
   assert.equal(kid.hideNumbers, true);
   assert.equal(kid.mode, 'documentation');
   assert.match(weightGoalBlockReason(kid), /Kinder und Jugendliche/);
-  // Die Selbstauskunft „nicht minderjährig“ überstimmt das Geburtsjahr nicht.
+  // The self-declaration "not a minor" does not override the birth year.
   assert.equal(eligibilityFor({ profile: { birthYear: 2012 }, settings: { labsGate: ALL_NO }, today: T }).minor, true);
 });
 
-test('eligibility: Erwachsene, Abgrenzung beantwortet, nichts trifft zu', () => {
+test('eligibility: adults, gate answered, nothing applies', () => {
   const e = eligibilityFor({ profile: { birthYear: 1990 }, settings: { labsGate: ALL_NO }, today: T });
   assert.equal(e.answered, true);
   assert.equal(e.mode, 'full');
@@ -33,9 +33,9 @@ test('eligibility: Erwachsene, Abgrenzung beantwortet, nichts trifft zu', () => 
   assert.equal(weightGoalBlockReason(e), null);
 });
 
-test('eligibility: keine Vorbelegung – ohne Antworten ist nichts beantwortet', () => {
+test('eligibility: no pre-filling – without answers nothing is answered', () => {
   assert.equal(eligibilityFor({ profile: { birthYear: 1990 }, settings: {}, today: T }).answered, false);
-  // Mit Geburtsjahr fragt die App das Alter nicht, ohne Geburtsjahr gehört es zu den Pflichtfragen.
+  // With a birth year the app does not ask for the age; without one it is a mandatory question.
   assert.ok(!gateQuestionsFor({ birthYear: 1990 }, T).some((q) => q.key === 'minor'));
   assert.ok(gateQuestionsFor({}, T).some((q) => q.key === 'minor'));
   const { minor, ...withoutMinor } = ALL_NO;
@@ -44,7 +44,7 @@ test('eligibility: keine Vorbelegung – ohne Antworten ist nichts beantwortet',
   assert.equal(eligibilityFor({ profile: {}, settings: { labsGate: ALL_NO }, today: T }).answered, true);
 });
 
-test('eligibility: Schwangerschaft und Essstörung sperren Abnehmziele; Erkrankung nur das Labor', () => {
+test('eligibility: pregnancy and eating disorder block weight-loss goals; illness only the labs', () => {
   const adult = (gate, extra = {}) => eligibilityFor({ profile: { birthYear: 1990 }, settings: { labsGate: { ...ALL_NO, ...gate }, ...extra }, today: T });
   const preg = adult({ pregnancy: true });
   assert.equal(preg.noWeightGoals, true);
@@ -62,7 +62,7 @@ test('eligibility: Schwangerschaft und Essstörung sperren Abnehmziele; Erkranku
   assert.equal(med.labsEvaluate, true);
 });
 
-test('eligibility: „Kalorienzahlen ausblenden“ wirkt auch ohne weiteren Grund', () => {
+test('eligibility: "hide calorie numbers" also works without a further reason', () => {
   const e = eligibilityFor({ profile: { birthYear: 1990 }, settings: { labsGate: ALL_NO, hideCalorieNumbers: true }, today: T });
   assert.equal(e.hideNumbers, true);
   assert.equal(e.noWeightGoals, false);

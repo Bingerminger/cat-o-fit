@@ -1,20 +1,20 @@
 import { t } from './i18n.js';
 /* =========================================================================
-   sollist.js — Soll-Ist-Vergleich einer erledigten Einheit. Rein und testbar.
+   sollist.js — target/actual comparison of a completed session. Pure and testable.
 
-   - Lockere Einheiten (Easy, Regeneration, Long Run ohne Tempoblock) werden
-     zweiseitig geprüft: Zu schnell ist KEIN „Ziel erreicht“ – gerade lockere Läufe
-     wirken nur, wenn sie locker bleiben (80/20, Seiler 2010).
-   - Strukturierte Einheiten (Intervalle, Tempo, Long Run mit Renntempo-Block)
-     bekommen kein Pace- und kein HF-Urteil über den Gesamtschnitt: Der mittelt
-     Ein-/Auslaufen und Trabpausen mit hinein und würde sauber gelaufene
-     Intervalle als „Abweichung“ werten.
-   - Wettkampf: einseitig – schneller ist gut.
+   - Easy sessions (easy, recovery, long run without a pace block) are checked
+     on both sides: too fast is NOT "target reached" – easy runs in particular
+     only work if they stay easy (80/20, Seiler 2010).
+   - Structured sessions (intervals, tempo, long run with a race-pace block)
+     get no pace and no HR verdict on the overall average: it averages in
+     warm-up/cool-down and jog recoveries and would rate cleanly run
+     intervals as a "deviation".
+   - Race: one-sided – faster is good.
    ========================================================================= */
 
 const EASY_TYPES = ['easy', 'recovery', 'long', 'run'];
 
-/** Hat die Einheit Belastungsabschnitte (Intervalle, Tempoblöcke, Renntempo-Block)? */
+/** Does the session have load segments (intervals, tempo blocks, race-pace block)? */
 export function isStructured(unit) {
   if (!unit) return false;
   if (['tempo', 'interval'].includes(unit.type)) return true;
@@ -24,7 +24,7 @@ export function isStructured(unit) {
 }
 
 /**
- * Vergleicht Soll und Ist.
+ * Compares target and actual.
  * @returns {{rows:Array<{key,label,plan,real,ok,verdict?}>, hit:boolean|null, tooFast:boolean, structured:boolean, note:string|null}}
  */
 export function compareToPlan(unit, ex, { hrZones = [] } = {}) {
@@ -65,7 +65,7 @@ export function compareToPlan(unit, ex, { hrZones = [] } = {}) {
     }
   }
 
-  // Beim Wettkampf entscheidet das Tempo (die Distanz ist immer erfüllt).
+  // In a race the pace decides (the distance is always fulfilled).
   const paceRow = rows.find((r) => r.key === 'pace');
   const hit = !rows.length ? null
     : unit.type === 'race' && paceRow ? paceRow.ok
@@ -73,9 +73,9 @@ export function compareToPlan(unit, ex, { hrZones = [] } = {}) {
   return { rows, hit, tooFast, structured, note };
 }
 
-/** Balkenbreite (%) eines Kilometer-Splits auf fester Skala: ±30 s um den Median
-    (schneller = länger). Früher wurde Min–Max auf 30–100 % gestreckt – 5:00 und
-    5:01 min/km sahen dann aus wie ein riesiger Unterschied. */
+/** Bar width (%) of a kilometre split on a fixed scale: ±30 s around the median
+    (faster = longer). Previously min–max was stretched to 30–100 % – 5:00 and
+    5:01 min/km then looked like a huge difference. */
 export function splitBarPct(sec, splits = []) {
   const xs = splits.map((s) => s.sec).filter((v) => v > 0).sort((a, b) => a - b);
   if (!xs.length || !(sec > 0)) return 50;

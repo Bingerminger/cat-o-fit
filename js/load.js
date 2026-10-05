@@ -1,19 +1,19 @@
 /* =========================================================================
-   load.js — Belastungssteuerung. Reine, DOM-freie Logik -> per node:test
-   abgedeckt. EINZIGE Quelle für Belastungsurteile in der App: sRPE-Last
-   (Dauer × Anstrengung, Foster) und die daraus abgeleiteten Kennzahlen:
+   load.js — load management. Pure, DOM-free logic -> covered by
+   node:test. The ONLY source for load judgements in the app: sRPE load
+   (duration × effort, Foster) and the metrics derived from it:
 
-     - Lastverhältnis (ACWR): letzte 7 Tage gegen die 21 Tage davor – entkoppelt,
-       weil die akuten Tage sonst im eigenen Nenner stecken (Scheinkorrelation,
-       Lolli et al. 2019). Die Grenzen 0,8 / 1,3 / 1,5 sind eine Orientierung aus
-       Beobachtungsdaten, kein Verletzungsbarometer (Impellizzeri et al. 2020).
-     - Fitness / Ermüdung / Form (CTL / ATL / TSB) als Impuls-Antwort-Glättung
-       nach Banister – in Belastungspunkten (AU), Form relativ zur Fitness.
-     - Monotonie & Strain (Foster) – Hinweis nur bei gleichförmiger UND über dem
-       eigenen Schnitt liegender Last.
+     - Load ratio (ACWR): last 7 days against the 21 days before – decoupled,
+       because otherwise the acute days sit in their own denominator (spurious correlation,
+       Lolli et al. 2019). The limits 0.8 / 1.3 / 1.5 are guidance drawn from
+       observational data, not an injury barometer (Impellizzeri et al. 2020).
+     - Fitness / fatigue / form (CTL / ATL / TSB) as impulse-response smoothing
+       after Banister – in load points (AU), form relative to fitness.
+     - Monotony & strain (Foster) – flag only for uniform load that is ALSO above
+       one's own average.
 
-   Alles als Orientierung gedacht – Näherungen, keine Labordiagnostik. `today`
-   wird immer übergeben (keine Abhängigkeit von der Geräteuhr).
+   All of it is meant as guidance – approximations, not laboratory diagnostics. `today`
+   is always passed in (no dependence on the device clock).
    ========================================================================= */
 
 import { addDays, diffDays, fmtDec } from './ui.js';
@@ -21,38 +21,38 @@ import { addDays, diffDays, fmtDec } from './ui.js';
 import { t, tp } from './i18n.js';
 
 const r1 = (v) => Math.round(v * 10) / 10;
-/** Zahl mit deutschem Dezimalkomma (z. B. 1,24). */
+/** Number with a German decimal comma (e.g. 1,24). */
 export function fmtRatio(v) {
   return fmtDec(v == null ? null : Math.round(v * 100) / 100);
 }
 
-/* --------------------------- Belastung je Einheit --------------------------- */
+/* --------------------------- Load per session --------------------------- */
 
-/** Geschätztes Belastungsempfinden je Einheitentyp, falls kein RPE erfasst wurde. */
+/** Estimated perceived exertion per session type, if no RPE was recorded. */
 export const RPE_BY_TYPE = {
   recovery: 3, easy: 4, long: 6, tempo: 7, interval: 8, race: 9, run: 5,
-  // Fußball ist HIIT-artig (Antritte, Spielintensität) und wird höher gewichtet als
-  // ein lockerer Lauf; der Default 7 entspricht „normal“ (siehe FOOTBALL_RPE).
+  // Football is HIIT-like (sprints, match intensity) and is weighted higher than
+  // an easy run; the default 7 corresponds to "normal" (see FOOTBALL_RPE).
   strength: 5, mobility: 2, cross: 5, cross_bike: 5, cross_football: 7, match: 8, camp: 7, walk: 2, other: 4,
-  // Übrige Sportarten der Erfassung – ohne Eintrag zählte Indoor-Cycling wie ein lockerer Lauf.
+  // Remaining sports of the logging form – without an entry, indoor cycling counted like an easy run.
   swim: 5, hike: 4, rowing: 6, tennis: 6, badminton: 6, squash: 7, tabletennis: 5, spinning: 6, elliptical: 5, gym: 5,
 };
-/** Fußball-Intensität → RPE. Pro Termin einstellbar (leicht/normal/intensiv), damit
-    die Belastung realistisch in ACWR/Form und die Plan-Entlastung einfließt (#5). */
+/** Football intensity → RPE. Adjustable per appointment (light/normal/intense) so that
+    the load feeds realistically into ACWR/form and the plan relief (#5). */
 export const FOOTBALL_RPE = { leicht: 5, normal: 7, intensiv: 8.5 };
 export function footballRpe(intensity) { return FOOTBALL_RPE[intensity] || FOOTBALL_RPE.normal; }
 
-/* Uhrendaten: Fehlt die Anstrengung, schätzt die Ø-Herzfrequenz sie – relativ zur
-   Max-HF der Person. Die Belastung bleibt sRPE (Dauer × Anstrengung); die HF liefert nur
-   den Eingangswert. Ohne diese Schätzung zählte jede importierte Einheit als „locker“
-   (ein Intervalltraining von der Uhr mit Anstrengung 4 statt ~7). */
+/* Watch data: if the effort is missing, the average heart rate estimates it – relative to
+   the person's max HR. The load stays sRPE (duration × effort); the HR only supplies
+   the input value. Without this estimate every imported session counted as "easy"
+   (an interval session from the watch with effort 4 instead of ~7). */
 let hrReference = () => null;
-/** Liefert die Max-HF der aktiven Person (`{ maxHr }`); die App registriert das einmal. */
+/** Supplies the max HR of the active person (`{ maxHr }`); the app registers it once. */
 export function useHrReference(fn) { hrReference = typeof fn === 'function' ? fn : () => null; }
 
-/** Stützstellen Ø-HF in % der Max-HF → Anstrengung (passend zu den HF-Zonen 50/60/70/80/90 %). */
+/** Anchor points avg HR in % of max HR → effort (matching the HR zones 50/60/70/80/90 %). */
 const HR_RPE = [[0.5, 1.5], [0.6, 2.5], [0.7, 4], [0.8, 6], [0.9, 8], [1, 10]];
-/** Anstrengung (1–10, eine Nachkommastelle) aus Ø-HF und Max-HF; null ohne verwertbare Werte. */
+/** Effort (1–10, one decimal place) from avg HR and max HR; null without usable values. */
 export function rpeFromHr(avgHr, maxHr) {
   const a = Number(avgHr), m = Number(maxHr);
   if (!(a >= 60) || !(m >= 120 && m <= 230) || a > m * 1.05) return null;
@@ -65,14 +65,14 @@ export function rpeFromHr(avgHr, maxHr) {
   return 10;
 }
 
-/** Harte Einheiten: Die Ø-HF unterschätzt Intervalle (die Pausen zählen mit) – dort bleibt
-    der Wert des Typs die Untergrenze. */
+/** Hard sessions: avg HR underestimates intervals (the rests count towards it) – there
+    the value of the type remains the lower bound. */
 const HARD_TYPES = new Set(['tempo', 'interval', 'race', 'match']);
 
 /**
- * Anstrengung einer Einheit (1–10) samt Herkunft: erfasst (geklemmt) → Fußball-Intensität →
- * aus der Herzfrequenz geschätzt → Standardwert des Typs. RPE 0, negative oder ungültige
- * Werte gelten als „nicht erfasst“.
+ * Effort of a session (1–10) including its origin: recorded (clamped) → football intensity →
+ * estimated from heart rate → default of the type. RPE 0, negative or invalid
+ * values count as "not recorded".
  * @returns {{rpe:number, source:'erfasst'|'herzfrequenz'|'typ'}}
  */
 export function sessionRpeInfo(s, ref = hrReference()) {
@@ -85,20 +85,20 @@ export function sessionRpeInfo(s, ref = hrReference()) {
   return { rpe: typeRpe, source: 'typ' };
 }
 
-/** Anstrengung einer Einheit auf der Skala 1–10 (siehe `sessionRpeInfo`). */
+/** Effort of a session on the 1–10 scale (see `sessionRpeInfo`). */
 export function sessionRpe(s, ref) {
   return sessionRpeInfo(s, ref === undefined ? hrReference() : ref).rpe;
 }
 
-/** Minuten je km, wenn nur die Strecke bekannt ist (Laufen 6, Rad deutlich schneller …). */
+/** Minutes per km when only the distance is known (running 6, cycling much faster …). */
 const MIN_PER_KM = { cross_bike: 2.5, spinning: 2.5, walk: 12, hike: 15, swim: 25, rowing: 5 };
-/** Obergrenze einer einzelnen Einheit – ein Tippfehler (3000 statt 30 min) darf die
-    Belastung nicht für Wochen verzerren. */
+/** Upper limit for a single session – a typo (3000 instead of 30 min) must not distort the
+    load for weeks. */
 const MAX_MIN = 24 * 60;
 
 /**
- * Dauer (min), mit der eine Einheit in die Belastung eingeht – samt Herkunft:
- * erfasst → aus der Strecke → geplante Dauer der Einheit → 30-min-Pauschale.
+ * Duration (min) with which a session enters the load – including its origin:
+ * recorded → from the distance → planned duration of the session → 30-min flat rate.
  * @returns {{min:number, source:'erfasst'|'strecke'|'geplant'|'pauschal'}}
  */
 export function loadMinutes(s) {
@@ -111,16 +111,16 @@ export function loadMinutes(s) {
   return { min: 30, source: 'pauschal' };
 }
 
-/** Belastungspunkte (AU) einer Einheit = Dauer (min) × Anstrengung (RPE 1–10) –
-    Session-RPE-Methode. Nie negativ, nie über 24 h × 10. `ref` ({ maxHr } oder null) gilt für
-    die HF-Schätzung; ohne Angabe die angemeldete Person. */
+/** Load points (AU) of a session = duration (min) × effort (RPE 1–10) –
+    session-RPE method. Never negative, never above 24 h × 10. `ref` ({ maxHr } or null) applies to
+    the HR estimate; if omitted, the signed-in person. */
 export function sessionLoad(s, ref) {
   return Math.round(loadMinutes(s).min * sessionRpe(s, ref));
 }
 
 /**
- * Gesamtbelastung (alle Sportarten) der letzten `days` Tage – Summe der Belastungspunkte.
- * Erfasst – anders als die km-Last – auch Kraft, Fußball, Schwimmen, Rad, Testspiele.
+ * Total load (all sports) of the last `days` days – sum of the load points.
+ * Unlike the km load, it also covers strength, football, swimming, cycling, friendly matches.
  */
 export function trainingLoad(sessions = [], today, days = 7, ref) {
   return (sessions || []).reduce((a, s) => {
@@ -130,12 +130,12 @@ export function trainingLoad(sessions = [], today, days = 7, ref) {
   }, 0);
 }
 
-/* ------------------------------ Zeitreihen --------------------------------- */
+/* ------------------------------ Time series --------------------------------- */
 
 /**
- * Tägliche Belastungssumme (sRPE) über [today-days+1 .. today], chronologisch.
- * Rückgabe: [{date, load}] der Länge `days` – auch trainingsfreie Tage (load 0),
- * damit die Reihe lückenlos für ACWR/Glättung/Monotonie genutzt werden kann.
+ * Daily load total (sRPE) over [today-days+1 .. today], chronological.
+ * Returns: [{date, load}] of length `days` – including training-free days (load 0),
+ * so the series can be used gap-free for ACWR/smoothing/monotony.
  */
 export function dailyLoadSeries(sessions = [], today, days = 42, ref) {
   const start = addDays(today, -(days - 1));
@@ -153,7 +153,7 @@ export function dailyLoadSeries(sessions = [], today, days = 42, ref) {
   return out;
 }
 
-/** Tage seit der ersten erfassten Einheit (inklusive heute); 0 ohne Daten. */
+/** Days since the first recorded session (including today); 0 without data. */
 export function historyDays(sessions = [], today) {
   const first = (sessions || [])
     .filter((s) => s && !s.deleted && s.date && s.date <= today)
@@ -161,16 +161,16 @@ export function historyDays(sessions = [], today) {
   return first ? diffDays(first, today) + 1 : 0;
 }
 
-/** Ab so viel Historie ist die Form (CTL − ATL) aussagekräftig: Die Fitnesskurve
-    (τ 42 Tage) startet beim ersten Eintrag bei 0 und braucht rund drei Monate, bis
-    sie eingeschwungen ist – vorher wäre die Form künstlich negativ. */
+/** From this much history on, the form (CTL − ATL) is meaningful: the fitness curve
+    (τ 42 days) starts at 0 with the first entry and needs about three months until
+    it has settled – before that the form would be artificially negative. */
 export const FORM_MIN_DAYS = 90;
 
 /**
- * Lastverhältnis (Acute:Chronic Workload Ratio), entkoppelt: akut = mittlere
- * Tageslast der letzten `acute` Tage, chronisch = mittlere Tageslast der Tage
- * DAVOR bis Tag `chronic` (Standard: Tag 8–28). Werte lesen sich direkt: 1,3 =
- * die letzte Woche war 30 % fordernder als dein Schnitt der drei Wochen davor.
+ * Load ratio (Acute:Chronic Workload Ratio), decoupled: acute = mean
+ * daily load of the last `acute` days, chronic = mean daily load of the days
+ * BEFORE that up to day `chronic` (default: day 8–28). Values read directly: 1.3 =
+ * the last week was 30 % more demanding than your average of the three weeks before.
  * @returns {{acute:number, chronic:number, acuteWeek:number, chronicWeek:number,
  *   ratio:number|null, zone:string, tone:string, sparse:boolean, historyDays:number}}
  */
@@ -181,15 +181,15 @@ export function acwr(sessions = [], today, { acute = 7, chronic = 28, ref } = {}
   const c = sum(series.slice(0, chronic - acute)) / (chronic - acute);
   const ratio = c > 0 ? a / c : null;
 
-  // Reicht die HISTORIE für einen belastbaren chronischen Schnitt? Wer gerade
-  // erst anfängt (oder Altdaten nicht nachgetragen hat), hat lauter Null-Tage im
-  // Nenner – das Verhältnis schießt dann rechnerisch hoch, ohne dass jemand zu
-  // schnell gesteigert hätte. Solche Fälle werden als „aufbau“ markiert.
+  // Does the HISTORY suffice for a reliable chronic average? Someone who has only
+  // just started (or has not entered old data) has nothing but zero days in the
+  // denominator – the ratio then shoots up arithmetically without anyone having
+  // increased too fast. Such cases are flagged as "aufbau".
   const hist = historyDays(sessions, today);
   const sparse = hist < chronic;
 
   let zone = 'unklar', tone = 'neutral';
-  // Junge Historie: Stufe „aufbau“ – auch wenn in Tag 8–28 noch gar nichts liegt.
+  // Young history: stage "aufbau" – even if days 8–28 still hold nothing at all.
   if (hist > 0 && sparse) zone = 'aufbau';
   else if (ratio != null) {
     if (ratio < 0.8) { zone = 'niedrig'; tone = 'neutral'; }
@@ -204,10 +204,10 @@ export function acwr(sessions = [], today, { acute = 7, chronic = 28, ref } = {}
   };
 }
 
-const CTL_TAU = 42;   // Fitness: langsame Glättung (~6 Wochen)
-const ATL_TAU = 7;    // Ermüdung: schnelle Glättung (~1 Woche)
+const CTL_TAU = 42;   // Fitness: slow smoothing (~6 weeks)
+const ATL_TAU = 7;    // Fatigue: fast smoothing (~1 week)
 
-/** Impuls-Antwort-Glättung (Banister): x_t = x_{t-1} + (load_t − x_{t-1})·(1 − e^(−1/τ)). */
+/** Impulse-response smoothing (Banister): x_t = x_{t-1} + (load_t − x_{t-1})·(1 − e^(−1/τ)). */
 function ewma(daily, tau) {
   const k = 1 - Math.exp(-1 / tau);
   let x = 0;
@@ -215,15 +215,15 @@ function ewma(daily, tau) {
 }
 
 /**
- * Fitness (CTL), Ermüdung (ATL) und Form (TSB = CTL − ATL) als Zeitreihe der
- * letzten `days` Tage. `warmup` zusätzliche Tage vor dem sichtbaren Fenster
- * dienen dem Einschwingen der Glättung (sonst startet die Kurve künstlich bei 0).
+ * Fitness (CTL), fatigue (ATL) and form (TSB = CTL − ATL) as a time series of the
+ * last `days` days. `warmup` additional days before the visible window
+ * let the smoothing settle (otherwise the curve starts artificially at 0).
  *
- * Der Warmup muss ein Vielfaches von CTL_TAU sein: Nach nur 42 Tagen stünde die
- * Fitness erst bei ~63 % ihres Gleichgewichts, die Ermüdung (τ 7) aber längst bei
- * 100 % – die angezeigte Form (CTL − ATL) wäre dauerhaft künstlich negativ.
- * 180 Tage ≈ 4·τ bringen die Fitnesskurve praktisch vollständig zum Einschwingen.
- * Das hilft nur, wenn im Vorlauf Daten liegen – deshalb `FORM_MIN_DAYS`.
+ * The warmup must be a multiple of CTL_TAU: after only 42 days the
+ * fitness would stand at only ~63 % of its equilibrium, while the fatigue (τ 7) is long since at
+ * 100 % – the displayed form (CTL − ATL) would be permanently, artificially negative.
+ * 180 days ≈ 4·τ let the fitness curve settle practically completely.
+ * That only helps if there is data in the lead-in – hence `FORM_MIN_DAYS`.
  * @returns {Array<{date, ctl, atl, form}>}
  */
 export function formSeries(sessions = [], today, { days = 42, warmup = 180 } = {}) {
@@ -238,16 +238,16 @@ export function formSeries(sessions = [], today, { days = 42, warmup = 180 } = {
   return out;
 }
 
-/** Aktueller Stand von Fitness/Ermüdung/Form (letzter Punkt der Reihe). */
+/** Current state of fitness/fatigue/form (last point of the series). */
 export function formToday(sessions = [], today, opts = {}) {
   const series = formSeries(sessions, today, opts);
   return series.at(-1) || { date: today, ctl: 0, atl: 0, form: 0 };
 }
 
 /**
- * Form relativ zur Fitness (TSB in % der CTL) mit verbaler Einordnung. Die Kurven
- * laufen in Belastungspunkten (Minuten × RPE) – eine absolute Schwelle wie „Form > 5“
- * wäre dort praktisch „Form > 0“. Vor `FORM_MIN_DAYS` Historie: keine Bewertung.
+ * Form relative to fitness (TSB as % of CTL) with a verbal classification. The curves
+ * run in load points (minutes × RPE) – an absolute threshold such as "form > 5"
+ * would be practically "form > 0" there. Before `FORM_MIN_DAYS` of history: no rating.
  * @returns {{key:'einschwingen'|'frisch'|'ausgeglichen'|'training'|'ermuedet', label:string, rel:number|null, reliable:boolean}}
  */
 export function formState(form = {}, hist = 0) {
@@ -260,12 +260,12 @@ export function formState(form = {}, hist = 0) {
 }
 
 /**
- * Monotonie & Strain nach Foster über die letzten `win` Tage.
- * Monotonie = Mittel / Standardabweichung der Tageslast (hoch = jeden Tag gleich);
- * Strain = Wochenlast × Monotonie. Foster beschreibt das Risiko für anhaltend
- * SCHWERES, gleichförmiges Training: Sehr leichte Aktivität (RPE ≤ 3 – Spazieren,
- * Mobility, Regeneration) zählt deshalb nicht mit, und ein Hinweis kommt nur, wenn
- * die Woche zugleich deutlich über der eigenen Wochenlast der drei Wochen davor liegt.
+ * Monotony & strain after Foster over the last `win` days.
+ * Monotony = mean / standard deviation of the daily load (high = same every day);
+ * Strain = weekly load × monotony. Foster describes the risk of sustained
+ * HEAVY, uniform training: very light activity (RPE ≤ 3 – walking,
+ * mobility, recovery) therefore does not count, and a flag appears only if
+ * the week is at the same time clearly above one's own weekly load of the three weeks before.
  */
 export function monotonyStrain(sessions = [], today, { win = 7, chronic = 28 } = {}) {
   const relevant = (sessions || []).filter((s) => s && sessionRpe(s) > 3);
@@ -274,11 +274,11 @@ export function monotonyStrain(sessions = [], today, { win = 7, chronic = 28 } =
   const n = daily.length || 1;
   const weekLoad = daily.reduce((a, b) => a + b, 0);
   const mean = weekLoad / n;
-  // Stichproben-Varianz (n−1), wie in Fosters Originalarbeit – mit n wären die
-  // Monotonie-Werte systematisch ~8 % zu hoch und die Warnschwelle 2 zu scharf.
+  // Sample variance (n−1), as in Foster's original work – with n the
+  // monotony values would be systematically ~8 % too high and the warning threshold 2 too strict.
   const variance = daily.reduce((a, b) => a + (b - mean) ** 2, 0) / Math.max(1, n - 1);
   const sd = Math.sqrt(variance);
-  // sd = 0 (jeden Tag exakt gleich) -> maximal monoton; ohne Last -> 0.
+  // sd = 0 (exactly the same every day) -> maximally monotonous; without load -> 0.
   const monotony = sd > 0 ? mean / sd : (mean > 0 ? n : 0);
   const strain = Math.round(weekLoad * monotony);
   const before = series.slice(0, chronic - win).reduce((a, d) => a + d.load, 0);
@@ -288,11 +288,11 @@ export function monotonyStrain(sessions = [], today, { win = 7, chronic = 28 } =
 }
 
 /**
- * Verdichtet Lastverhältnis, Form und Monotonie zu einer verständlichen Aussage
- * fürs Dashboard – inkl. Zeitreihe für die Kurve. `hasData` erst true, wenn eine
- * belastbare 28-Tage-Basis existiert; die Form wird erst ab `FORM_MIN_DAYS`
- * bewertet. Die Texte versprechen keinen Verletzungsschutz – die Kennzahl zeigt,
- * wie stark die Last gegenüber deinem eigenen Schnitt gestiegen ist, mehr nicht.
+ * Condenses load ratio, form and monotony into one understandable statement
+ * for the dashboard – including the time series for the curve. `hasData` only becomes true once a
+ * reliable 28-day basis exists; the form is rated only from `FORM_MIN_DAYS`
+ * on. The texts promise no injury protection – the metric shows
+ * how much the load has risen compared with your own average, nothing more.
  */
 export function loadSummary(sessions = [], today) {
   const ac = acwr(sessions, today);
@@ -300,9 +300,9 @@ export function loadSummary(sessions = [], today) {
   const form = series.at(-1) || { ctl: 0, atl: 0, form: 0 };
   const fstate = formState(form, ac.historyDays);
   const mono = monotonyStrain(sessions, today);
-  // Belastbar erst mit voller 28-Tage-Historie: sonst stünden lauter Null-Tage im
-  // chronischen Nenner und die Karte meldete „zu schnell gesteigert“, obwohl nur
-  // die Datenbasis fehlt (typisch in den ersten Wochen nach der Einrichtung).
+  // Reliable only with the full 28-day history: otherwise nothing but zero days would sit in the
+  // chronic denominator and the card would report "increased too fast" although only
+  // the data basis is missing (typical in the first weeks after setup).
   const hasData = ac.chronic > 0 && !ac.sparse;
   const r = fmtRatio(ac.ratio);
 

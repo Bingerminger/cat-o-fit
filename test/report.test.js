@@ -1,16 +1,16 @@
-/* Unit-Tests für js/report.js (Report-/Urkunden-Snapshots). */
+/* Unit tests for js/report.js (report/certificate snapshots). */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { monthRange, aggregateSessions, buildMonthReport, buildEventReport, buildGoalReport } from '../js/report.js';
 
 const profile = { name: 'Nora', targetWeightKg: 65 };
 
-test('monthRange: Monatsgrenzen und Label', () => {
+test('monthRange: month boundaries and label', () => {
   assert.deepEqual(monthRange('2026-06'), { from: '2026-06-01', to: '2026-06-30', label: 'Juni 2026' });
   assert.deepEqual(monthRange('2026-02'), { from: '2026-02-01', to: '2026-02-28', label: 'Februar 2026' });
 });
 
-test('aggregateSessions: km, Dauer, aktive Tage, Verteilung', () => {
+test('aggregateSessions: km, duration, active days, distribution', () => {
   const a = aggregateSessions([
     { date: '2026-06-01', type: 'easy', distanceKm: 8, durationSec: 2880 },
     { date: '2026-06-01', type: 'strength', durationSec: 2400 },
@@ -23,11 +23,11 @@ test('aggregateSessions: km, Dauer, aktive Tage, Verteilung', () => {
   assert.equal(a.byType['Kraft'], 1);
 });
 
-test('buildMonthReport: Struktur, Stammdaten, Werte-Sektion', () => {
+test('buildMonthReport: structure, master data, values section', () => {
   const sessions = [
     { date: '2026-06-02', type: 'easy', distanceKm: 8, durationSec: 2880 },
     { date: '2026-06-05', type: 'tempo', distanceKm: 9, durationSec: 2700 },
-    { date: '2026-05-30', type: 'long', distanceKm: 18, durationSec: 6500 }, // außerhalb -> ignoriert
+    { date: '2026-05-30', type: 'long', distanceKm: 18, durationSec: 6500 }, // outside -> ignored
   ];
   const health = [
     { date: '2026-06-01', weight: 70 },
@@ -44,7 +44,7 @@ test('buildMonthReport: Struktur, Stammdaten, Werte-Sektion', () => {
   assert.equal(typeof r.verdict, 'string');
 });
 
-test('buildEventReport: mit Ergebnis und erreichter Zielzeit', () => {
+test('buildEventReport: with result and target time met', () => {
   const event = { id: 'e1', name: 'Stadtlauf', date: '2026-06-20', distanceKm: 10, targetTime: '00:45:00' };
   const plan = {
     id: 'p1', eventId: 'e1', startDate: '2026-05-01', weeks: 7,
@@ -56,19 +56,19 @@ test('buildEventReport: mit Ergebnis und erreichter Zielzeit', () => {
   };
   const sessions = [
     { id: 'sa', date: '2026-05-05', type: 'easy', distanceKm: 8, durationSec: 2880 },
-    { id: 'sres', date: '2026-06-20', type: 'race', distanceKm: 10, durationSec: 2640, avgHr: 172 }, // 44:00 -> unter 45:00
+    { id: 'sres', date: '2026-06-20', type: 'race', distanceKm: 10, durationSec: 2640, avgHr: 172 }, // 44:00 -> under 45:00
   ];
   const r = buildEventReport({ profile, event, plan, sessions, health: [], today: '2026-06-21' });
   assert.equal(r.type, 'event');
   assert.equal(r.subtitle, 'Stadtlauf');
   const res = r.sections.find((s) => s.heading === 'Wettkampf-Ergebnis');
-  assert.ok(res, 'Ergebnis-Sektion fehlt');
+  assert.ok(res, 'result section is missing');
   assert.ok(res.items.some((i) => i.value === 'erreicht ✓'));
   assert.equal(r.result.hit, true);
   assert.match(r.verdict, /Ziel erreicht/);
 });
 
-test('buildEventReport: ohne Ergebnis (vor dem Wettkampf)', () => {
+test('buildEventReport: without result (before the race)', () => {
   const event = { id: 'e2', name: 'HM', date: '2026-10-25', distanceKm: 21.1, targetTime: '01:55:00' };
   const plan = { id: 'p2', eventId: 'e2', startDate: '2026-08-01', units: [{ id: 'u', type: 'long', date: '2026-08-09', status: 'erledigt' }] };
   const sessions = [{ id: 's', date: '2026-08-09', type: 'long', distanceKm: 16, durationSec: 6000 }];
@@ -78,7 +78,7 @@ test('buildEventReport: ohne Ergebnis (vor dem Wettkampf)', () => {
   assert.match(r.verdict, /Ergebnis kann nach dem Wettkampf/);
 });
 
-test('buildGoalReport: Urkunde mit Stammdaten', () => {
+test('buildGoalReport: certificate with master data', () => {
   const r = buildGoalReport({ profile, goalTitle: 'Zielgewicht 65 kg erreicht', goalDetail: 'von 72 auf 65 kg', date: '2026-06-29' });
   assert.equal(r.type, 'goal');
   assert.equal(r.certificate, true);
@@ -87,7 +87,7 @@ test('buildGoalReport: Urkunde mit Stammdaten', () => {
   assert.match(r.verdict, /Zielgewicht/);
 });
 
-test('UI-39: Bericht des laufenden Monats trägt den Stand, abgeschlossene Monate nicht', () => {
+test('UI-39: the report of the running month carries the as-of date, completed months do not', () => {
   const running = buildMonthReport({ monthStr: '2026-09', today: '2026-09-28' });
   assert.equal(running.period.asOf, '2026-09-28');
   const done = buildMonthReport({ monthStr: '2026-08', today: '2026-09-28' });

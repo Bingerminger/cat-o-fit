@@ -1,8 +1,8 @@
 /* =========================================================================
-   login.js — Abgemeldet-Ansicht (Route /login).
-     • Leere Installation -> Ersteinrichtung (Admin anlegen -> Demo/leer).
-     • Sonst -> Profilauswahl (Kacheln + optional PIN).
-   Nur sichtbar, solange niemand angemeldet ist (siehe session-gate.js).
+   login.js — signed-out view (route /login).
+     • Empty installation -> initial setup (create admin -> demo/empty).
+     • Otherwise -> profile selection (tiles + optional PIN).
+   Only visible as long as nobody is signed in (see session-gate.js).
    ========================================================================= */
 import * as store from './storage.js';
 import { el, icon, iconSvg, navigate, openSheet, closeSheet, todayStr, fmtDate, toast, field, scopeKey, safeAccent, colorTint } from './ui.js';
@@ -12,13 +12,13 @@ import { needsSetup, safeReturnTo } from './session-gate.js';
 
 import { t, tp } from './i18n.js';
 
-/** Nach erfolgreicher Anmeldung: zum gemerkten Ziel (Deep-Link), sonst „Heute“ (FE-25). */
+/** After a successful sign-in: to the remembered target (deep link), otherwise "Today" (FE-25). */
 function afterLogin() {
   let target = null;
   try {
     target = safeReturnTo(sessionStorage.getItem(scopeKey('returnTo')));
     sessionStorage.removeItem(scopeKey('returnTo'));
-  } catch { /* kein sessionStorage */ }
+  } catch { /* no sessionStorage */ }
   navigate(target || '#/');
 }
 
@@ -36,32 +36,32 @@ function hero(title, sub) {
 }
 
 export function render(view) {
-  if (store.activeUserId()) { navigate('#/'); return; }   // angemeldet -> Dashboard
+  if (store.activeUserId()) { navigate('#/'); return; }   // if (store.activeUserId()) { navigate('#/'); return; }   // signed in -> dashboard
   setHeader({ title: t('login.signIn'), subtitle: '' });
 
   const members = store.members();
   if (members.length) { renderPicker(view, members); return; }
 
-  // Familie evtl. nur noch nicht synchronisiert -> erst laden, dann entscheiden,
-  // damit nicht fälschlich die Ersteinrichtung erscheint.
+  // The family may just not be synced yet -> load first, then decide,
+  // so that the initial setup does not appear by mistake.
   view.appendChild(hero('Cat-O-Fit', t('login.oneMoment')));
   view.appendChild(el('div', { class: 'empty' }, [el('div', { class: 'muted', text: t('login.loadingData') })]));
   store.refreshFamily().then((m) => {
-    if (!location.hash.startsWith('#/login')) return;     // weggewechselt
+    if (!location.hash.startsWith('#/login')) return;     // if (!location.hash.startsWith('#/login')) return;     // navigated away
     if (store.activeUserId()) { navigate('#/'); return; }
     view.innerHTML = '';
     if (m.length) renderPicker(view, m);
-    else renderSetup(view);                               // wirklich leer -> Ersteinrichtung
+    else renderSetup(view);                               // else renderSetup(view);                               // really empty -> initial setup
   }).catch(() => { view.innerHTML = ''; renderSetup(view); });
 }
 
-/* ----------------------------- Ersteinrichtung -------------------------- */
+/* ----------------------------- Initial setup ---------------------------- */
 function renderSetup(view) {
   const st = { name: '', pin: '', pin2: '' };
   const frame = (children) => {
     view.innerHTML = '';
     view.appendChild(hero(t('setup.welcome'), t('setup.intro')));
-    // Gerät kannte eine Familie, der Server ist aber leer (neu aufgesetzt oder zurückgesetzt).
+    // The device knew a family, but the server is empty (set up anew or reset).
     if (store.serverWasReset()) {
       view.appendChild(el('div', { class: 'card card--flat mb-3', role: 'status' }, [
         el('div', { style: { fontWeight: '650', fontSize: '.88rem' }, text: t('setup.serverEmptyTitle') }),
@@ -81,7 +81,7 @@ function renderSetup(view) {
     const next = () => {
       st.name = nameInp.value.trim(); st.pin = pinInp.value.trim(); st.pin2 = pin2Inp.value.trim();
       if (!st.name) { showErr(t('setup.nameMissing'), nameInp); return; }
-      // Die Admin-PIN schützt die Verwaltung aller Profile – daher Pflicht und nicht 0000.
+      // The admin PIN protects the management of all profiles – hence mandatory and not 0000.
       const problem = store.pinProblem(st.pin);
       if (problem) { showErr(problem, pinInp); return; }
       if (st.pin !== st.pin2) { showErr(t('setup.pinsDiffer'), pin2Inp); return; }
@@ -94,7 +94,7 @@ function renderSetup(view) {
       stepLabel(1),
       el('h3', { style: { margin: '4px 0 6px' }, text: t('setup.createAdmin') }),
       el('div', { class: 'muted mb-3', style: { fontSize: '.86rem' }, text: t('setup.adminIntro') }),
-      // Beschriftungen per field() mit den Feldern verknüpft – vorher las VoiceOver nur den Platzhalter (UI-18).
+      // Labels linked to the fields via field() – previously VoiceOver read only the placeholder (UI-18).
       field(t('setup.name'), nameInp),
       field('PIN', pinInp),
       field(t('setup.repeatPin'), pin2Inp),
@@ -114,8 +114,8 @@ function renderSetup(view) {
       try {
         const id = await store.createFirstAdmin({ name: st.name, pin: st.pin });
         if (!id) {
-          // Server hat bereits eine Familie (anderes Gerät / später Pull) -> keine
-          // Doppelanlage, sondern zum vorhandenen Login/Familien-Dashboard.
+          // The server already has a family (another device / later pull) -> no
+          // duplicate creation, instead go to the existing login/family dashboard.
           if ((store.members() || []).length) { busy = false; navigate('#/'); return; }
           const why = store.lastLoginError();
           toast(why && why.message ? why.message : t('setup.failed'), 'bad', 4000); busy = false; step1(); return;
@@ -147,7 +147,7 @@ function renderSetup(view) {
   step1();
 }
 
-/* ----------------------------- Profilauswahl ---------------------------- */
+/* ----------------------------- Profile selection ------------------------ */
 function renderPicker(view, members) {
   view.appendChild(hero(members.length > 1 ? t('login.whoTrains') : t('login.signIn'), fmtDate(todayStr())));
   const grid = el('div', { class: 'member-grid' });
@@ -175,7 +175,7 @@ function pickMember(m) {
   openPinDialog(m);
 }
 
-/** Verständlicher Text zum Grund einer gescheiterten Anmeldung. */
+/** Understandable text for the reason a sign-in failed. */
 export function loginErrorText(e) {
   if (!e) return t('login.failed');
   if (e.code === 'pin') return e.left ? tp('login.wrongPinLeft', e.left) : t('login.wrongPinRetry');

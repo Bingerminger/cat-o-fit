@@ -1,13 +1,13 @@
 /* =========================================================================
-   workout-mode.js — Vollbild-Modus während des Trainings.
-   - Große, einhändig erreichbare Bedienelemente.
-   - Stoppuhr für Dauerläufe; Intervall-Engine (Einlaufen, Belastung/Pause,
-     Auslaufen) nach echter Zeit mit Ton (+ Vibration, wo das Gerät sie kann);
-     Zielpace und HF-Zone je Phase sichtbar.
-   - Satz-Zähler + sichtbarer Pausen-Countdown für Kraft.
-   - Bildschirm wach halten (Wake Lock, nach dem Zurückkehren erneut),
-     Zwischenstand lokal sichern.
-   Die Phasenlogik steckt rein und testbar in workout-engine.js.
+   workout-mode.js — full-screen mode during training.
+   - Large controls that can be reached with one hand.
+   - Stopwatch for continuous runs; interval engine (warm-up, work/rest,
+     cool-down) on real time with sound (+ vibration where the device can do it);
+     target pace and HR zone visible for each phase.
+   - Set counter + visible rest countdown for strength.
+   - Keep the screen awake (Wake Lock, requested again after returning),
+     save the interim state locally.
+   The phase logic lives in workout-engine.js, pure and testable.
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -31,9 +31,9 @@ let current = null;
 function teardown() { if (current) { current.cleanup(); current = null; } }
 window.addEventListener('hashchange', () => { if (!location.hash.startsWith('#/workout/')) teardown(); });
 
-/* ------------------------------- Ton/Haptik ----------------------------- */
-/* Freischalten im Start-Knopf (Nutzergeste) über audio.js – dort wird die Audio-Sitzung
-   als Wiedergabe angemeldet, sonst bleibt der Ton auf iPhone/iPad im Lautlos-Modus stumm. */
+/* ------------------------------- Sound/haptics ----------------------------- */
+/* Unlocking happens in the start button (user gesture) via audio.js – that is where the audio
+   session is registered as playback, otherwise the sound stays muted on iPhone/iPad in silent mode. */
 function beep(freq = 880, dur = 0.18, times = 1) {
   for (let i = 0; i < times; i++) tone(freq, { ms: dur * 1000, gain: 0.35, when: i * 0.22 });
   if (navigator.vibrate) navigator.vibrate(times > 1 ? [120, 80, 120] : 140);
@@ -41,10 +41,10 @@ function beep(freq = 880, dur = 0.18, times = 1) {
 
 /* ------------------------------- Wake Lock ------------------------------ */
 let wakeLock = null;
-async function requestWake() { try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch { /* egal */ } }
-function releaseWake() { try { wakeLock && wakeLock.release(); } catch { /* egal */ } wakeLock = null; }
+async function requestWake() { try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch { /* ignore */ } }
+function releaseWake() { try { wakeLock && wakeLock.release(); } catch { /* ignore */ } wakeLock = null; }
 
-/** Zielvorgabe als kurzer Text („Ziel 4:11–4:21 min/km · Zone 5“). */
+/** Target as short text (e.g. "Target 4:11–4:21 min/km · Zone 5"). */
 function targetText(target) {
   if (!target) return '';
   const parts = [];
@@ -61,15 +61,15 @@ export function render(view, id) {
   const { plan, unit } = found;
   const type = unit.type;
 
-  // Trinkpausen-Erinnerung: bei langen Einheiten regelmäßig ans Trinken erinnern
-  // (Sekunden-Intervall je Trainingstyp; 0 = keine Erinnerung). Pro Einheit
-  // über `drinkIntervalMin` überschreibbar (auch ausschaltbar mit 0).
+  // Drink-break reminder: remind people regularly to drink during long sessions
+  // (interval in seconds per training type; 0 = no reminder). Can be overridden per
+  // session via `drinkIntervalMin` (can also be switched off with 0).
   const DRINK_INTERVALS = { long: 20 * 60, race: 25 * 60, cross_bike: 25 * 60, hike: 30 * 60, spinning: 25 * 60, rowing: 20 * 60, elliptical: 25 * 60 };
   const drinkInterval = unit.drinkIntervalMin != null ? Math.max(0, Math.round(unit.drinkIntervalMin) * 60) : (DRINK_INTERVALS[type] || 0);
-  // Satz-Zähler & Pausentimer gibt es bei Kraft und Gerätetraining (Gym).
+  // Set counter and rest timer exist for strength and gym (machine) training.
   const isSetBased = type === 'strength' || type === 'gym';
 
-  // Controller-State
+  // Controller state
   const st = {
     elapsed: 0, running: false, lastTs: 0, tick: null, counters: {},
     phase: 0, phaseElapsed: 0, phases: buildPhases(unit), done: false,
@@ -78,7 +78,7 @@ export function render(view, id) {
   };
   restore(st, id);
 
-  // ---- DOM-Aufbau ----
+  // ---- DOM construction ----
   const root = el('div', { class: 'workout' });
   const phaseLabel = el('div', { class: 'workout__phase' });
   const timeEl = el('div', { class: 'workout__time num' });
@@ -91,7 +91,7 @@ export function render(view, id) {
   const hints = [];
   if (st.drinkInterval) hints.push(t('workoutMode.drinkReminder', { min: Math.round(st.drinkInterval / 60) }));
   if (st.phases || st.drinkInterval) {
-    // Ehrlich zu den Grenzen des Browsers (vor allem auf dem iPhone).
+    // Be honest about the browser's limits (especially on the iPhone).
     hints.push(t('workoutMode.hintNoLock'));
     if (!('vibrate' in navigator)) hints.push(t('workoutMode.hintNoVibrate'));
     if (!('wakeLock' in navigator)) hints.push(t('workoutMode.hintNoWakeLock'));
@@ -102,7 +102,7 @@ export function render(view, id) {
     el('div', { class: 'workout__title', text: unit.title }),
     el('button', { class: 'icon-btn workout__close', 'aria-label': t('common.close'), onclick: () => askQuit() }, icon('x')),
   ]));
-  // Trinkpausen-Banner (blendet sich bei Erinnerungen kurz ein).
+  // Drink-break banner (fades in briefly for reminders).
   const drinkBanner = el('button', {
     class: 'workout__drink', 'aria-label': t('workoutMode.drinkConfirm'),
     onclick: () => hideDrink(),
@@ -113,11 +113,11 @@ export function render(view, id) {
   const counterWrap = el('div', { class: 'workout__counters' });
   if (isSetBased) root.appendChild(counterWrap);
   root.appendChild(controls);
-  // Übungen zur Einheit – auch WÄHREND des Trainings erreichbar (#1). Für Kraft/
-  // Gerätetraining/Mobility oder jede Einheit mit manuell verknüpften Übungen.
+  // Exercises for the session – also reachable DURING training (#1). For strength/
+  // gym training/mobility, or any session with manually linked exercises.
   const exPanel = el('div', { class: 'workout__ex-panel' });
   root.appendChild(exPanel);
-  // Kraft: je verknüpfter Übung Sätze mit Wiederholungen und Gewicht (bleibt beim Neuladen erhalten).
+  // Strength: per linked exercise, sets with repetitions and weight (kept across a reload).
   st.counters.log = st.counters.log || {};
   renderWorkoutExercises(exPanel, plan, unit, isSetBased ? { log: st.counters.log, onChange: () => persist() } : null);
   root.appendChild(hint);
@@ -126,7 +126,7 @@ export function render(view, id) {
   /* ---------------- Timer ---------------- */
   function startTimer() {
     if (st.running) return;
-    unlockAudio();   // in der Nutzergeste – sonst bleibt der Ton auf dem iPhone aus
+    unlockAudio();   // in the user gesture – otherwise the sound stays off on the iPhone
     st.running = true; st.lastTs = performance.now();
     st.tick = setInterval(onTick, 200);
     requestWake();
@@ -145,12 +145,12 @@ export function render(view, id) {
     checkDrink();
     updateDisplay(); persist();
   }
-  // Nach dem Zurückkehren (Bildschirm entsperrt, App gewechselt) Wachhaltung neu
-  // anfordern und die Anzeige sofort auf den echten Stand bringen.
+  // After returning (screen unlocked, switched app) request the wake lock again
+  // and bring the display to the real state immediately.
   const onVisible = () => { if (document.visibilityState === 'visible' && st.running) { requestWake(); onTick(); } };
   document.addEventListener('visibilitychange', onVisible);
 
-  /* --------------- Trinkpausen-Erinnerung --------------- */
+  /* --------------- Drink-break reminder --------------- */
   let drinkTimer = null;
   function checkDrink() {
     if (!st.drinkInterval) return;
@@ -158,14 +158,14 @@ export function render(view, id) {
     if (due > st.drinkCount) { st.drinkCount = due; showDrink(); }
   }
   function showDrink() {
-    beep(700, 0.16, 2);            // freundlicher Doppelton + Vibration
+    beep(700, 0.16, 2);            // friendly double beep + vibration
     drinkBanner.classList.add('is-visible');
     clearTimeout(drinkTimer);
     drinkTimer = setTimeout(hideDrink, 8000);
   }
   function hideDrink() { drinkBanner.classList.remove('is-visible'); clearTimeout(drinkTimer); }
 
-  /* --------------- Intervall-Phasen (nach echter Zeit) --------------- */
+  /* --------------- Interval phases (on real time) --------------- */
   function advancePhases(dtSec) {
     const r = advance(st, st.phases, dtSec);
     st.phase = r.phase; st.phaseElapsed = r.phaseElapsed;
@@ -175,7 +175,7 @@ export function render(view, id) {
       if (ev.type === 'phase') lastPhase = ev.index;
     });
     if (r.done) { beep(990, 0.4, 2); st.done = true; pauseTimer(); return; }
-    // Beim Aufholen mehrerer Phasen nur einmal signalisieren – für die aktuelle.
+    // When catching up over several phases, signal only once – for the current one.
     if (lastPhase != null) {
       const p = st.phases[lastPhase];
       beep(p.kind === 'work' ? 990 : 520, 0.3, p.kind === 'work' ? 2 : 1);
@@ -183,7 +183,7 @@ export function render(view, id) {
     }
   }
 
-  /* --------------- Anzeige --------------- */
+  /* --------------- Display --------------- */
   function updateDisplay() {
     if (st.restEnd) { showRestCountdown(); return; }
     if (st.phases) {
@@ -204,7 +204,7 @@ export function render(view, id) {
           ? t('workoutMode.totalThen', { time: fmtClock(st.elapsed / 1000), next: next.label })
           : t('workoutMode.total', { time: fmtClock(st.elapsed / 1000) });
       }
-      // Schritt-Punkte (nur Belastungen)
+      // Step dots (work phases only)
       stepsEl.innerHTML = '';
       st.phases.forEach((p, i) => {
         if (p.kind !== 'work') return;
@@ -219,7 +219,7 @@ export function render(view, id) {
     }
   }
 
-  /* --------------- Steuerung --------------- */
+  /* --------------- Controls --------------- */
   function renderControls() {
     controls.innerHTML = '';
     const mainBtn = el('button', {
@@ -232,8 +232,8 @@ export function render(view, id) {
     if (st.phases) {
       controls.appendChild(el('button', { class: 'btn btn--soft', onclick: () => skipPhase() }, [icon('skip'), t('workoutMode.skipPhase')]));
     }
-    // „Beenden“ bewusst klar tippbar (gefüllt), nicht als ausgegrauter Ghost-Button (#2).
-    // Ohne Phasen-Button (z. B. Kraft) spannt es über die ganze Breite.
+    // "End workout" deliberately clearly tappable (filled), not a greyed-out ghost button (#2).
+    // Without a phase button (e.g. strength) it spans the full width.
     controls.appendChild(el('button', {
       class: 'btn workout__btn-finish' + (st.phases ? '' : ' workout__btn-finish--wide'),
       onclick: () => finish(),
@@ -249,7 +249,7 @@ export function render(view, id) {
     updateDisplay(); persist();
   }
 
-  // Kraft: Satz-Zähler + Pausentimer
+  // Strength: set counter + rest timer
   function updateCounters() {
     if (!isSetBased) return;
     counterWrap.innerHTML = '';
@@ -266,7 +266,7 @@ export function render(view, id) {
       ]),
     ]));
   }
-  /** Satzpause als großer Countdown im Zeitfeld. Ein Timer – erneutes Tippen startet neu. */
+  /** Rest between sets as a large countdown in the time field. One timer – tapping again restarts it. */
   function restTimer(sec) {
     unlockAudio();
     clearInterval(st.restTick);
@@ -290,7 +290,7 @@ export function render(view, id) {
     subEl.textContent = t('workoutMode.total', { time: fmtClock(st.elapsed / 1000) });
   }
 
-  /* --------------- Abschluss --------------- */
+  /* --------------- Finish --------------- */
   function finish() {
     pauseTimer();
     const elapsedSec = Math.round(st.elapsed / 1000);
@@ -300,7 +300,7 @@ export function render(view, id) {
     });
   }
 
-  /** Beenden-Dialog: Erfassen ist der Hauptweg; Verwerfen braucht eine zweite Bestätigung. */
+  /** End dialog: logging the workout is the main route; discarding needs a second confirmation. */
   function askQuit() {
     if (st.elapsed < 3000 && !st.running) { lsRemove('workout'); teardown(); navigate(`#/session/${unit.id}`); return; }
     const confirmRow = el('div', { class: 'card card--flat mt-3', hidden: true, style: { borderLeft: '3px solid var(--bad)' } }, [
@@ -325,7 +325,7 @@ export function render(view, id) {
     });
   }
 
-  /* --------------- Persistenz --------------- */
+  /* --------------- Persistence --------------- */
   function persist() {
     lsSet('workout', JSON.stringify({ id, elapsed: st.elapsed, phase: st.phase, phaseElapsed: st.phaseElapsed, counters: st.counters, done: st.done, drinkCount: st.drinkCount, ts: Date.now() }));
   }
@@ -356,20 +356,20 @@ function restore(st, id) {
   } catch { /* ignore */ }
 }
 
-/* --------------------- Übungen im Workout-Modus (#1) -------------------- */
+/* --------------------- Exercises in workout mode (#1) -------------------- */
 /**
- * Zeigt die Übungen zur Einheit auch im Vollbild-Workout – bislang waren sie nur
- * auf dem Vor-Start-Screen sichtbar. Verknüpfte Übungen zuerst, dann Vorschläge
- * (nach Nutzung sortiert). Antippen öffnet die Anleitung; „+/✓“ hängt eine Übung
- * an die Einheit (zählt beim Erledigen mit). Ein-/ausklappbar, um den Timer frei
- * zu halten – standardmäßig offen, damit die Übungen sofort sichtbar sind.
+ * Shows the exercises for the session in the full-screen workout too – until now they were
+ * only visible on the pre-start screen. Linked exercises first, then suggestions
+ * (sorted by usage). Tapping opens the instructions; "+/✓" attaches an exercise
+ * to the session (counts when completing it). Collapsible, to keep the timer free –
+ * open by default so that the exercises are visible straight away.
  */
 function renderWorkoutExercises(host, plan, unit, setLog = null) {
-  // Was die Beschreibung nennt, steht vorn – so lässt sich die geplante Einheit Schritt für Schritt mitmachen.
+  // What the description names comes first – so the planned session can be followed step by step.
   const { named, all: pool } = exercisesForUnit(unit, store.exerciseUsage());
   const namedIds = new Set(named.map((e) => e.id));
   const linked = Array.isArray(unit.exerciseIds) ? [...unit.exerciseIds] : [];
-  // Nur zeigen, wo Übungen sinnvoll sind (Kraft/Gym/Mobility) oder manuell verknüpft.
+  // Show only where exercises make sense (strength/gym/mobility) or are manually linked.
   if (!pool.length && !linked.length) return;
 
   let open = true;
@@ -386,7 +386,7 @@ function renderWorkoutExercises(host, plan, unit, setLog = null) {
 
   const paint = () => {
     list.innerHTML = '';
-    // Alle Übungen am Stück mitmachen – die Uhr des Workouts läuft dabei weiter.
+    // Do all exercises in one go – the workout's clock keeps running meanwhile.
     const prog = programForUnit({ ...unit, exerciseIds: linked });
     if (prog) {
       const min = Math.max(1, Math.round(buildShow(prog).total / 60));
@@ -396,7 +396,7 @@ function renderWorkoutExercises(host, plan, unit, setLog = null) {
       } }, [icon('play'), t('workoutMode.followAlong', { min })]));
     }
     const usage = store.exerciseUsage();
-    // Verknüpfte zuerst, dann die Übungen aus dem Plan, darunter die Vorschläge nach Nutzung.
+    // Linked ones first, then the exercises from the plan, below them the suggestions by usage.
     const ordered = pool
       .slice()
       .sort((a, b) => (linked.includes(b.id) ? 1 : 0) - (linked.includes(a.id) ? 1 : 0));
@@ -423,7 +423,7 @@ function renderWorkoutExercises(host, plan, unit, setLog = null) {
         }, on ? '✓' : '+'),
       ]);
       list.appendChild(row);
-      // Sätze (Wiederholungen × kg) nur bei Wiederholungsübungen – Halteübungen (`hold`) zählen nach Zeit.
+      // Sets (repetitions × kg) only for repetition exercises – hold exercises (`hold`) count by time.
       if (on && setLog && !e.hold) list.appendChild(setLogger(e, unit, setLog));
     });
   };
@@ -431,8 +431,8 @@ function renderWorkoutExercises(host, plan, unit, setLog = null) {
 }
 
 /**
- * Sätze einer Übung erfassen: Wiederholungen und (optional) Gewicht, darunter die schon
- * erfassten Sätze und – aus früheren Einheiten – „letztes Mal“ mit Progressionshinweis.
+ * Log the sets of an exercise: repetitions and (optionally) weight, below them the sets
+ * already logged and – from earlier sessions – "last time" with a progression hint.
  */
 function setLogger(ex, unit, setLog) {
   const box = el('div', { class: 'workout__sets' });
@@ -471,7 +471,7 @@ function setLogger(ex, unit, setLog) {
   return box;
 }
 
-/* --------------------------- Abschluss-Sheet ---------------------------- */
+/* --------------------------- Finish sheet ---------------------------- */
 function openFinishSheet(plan, unit, pre, onDone) {
   const isRun = ['easy', 'long', 'recovery', 'tempo', 'interval', 'race', 'cross_bike'].includes(unit.type);
   const distI = input({ type: 'number', step: '0.1', inputmode: 'decimal', value: unit.targetDistanceKm ?? '', placeholder: 'km' });
@@ -512,6 +512,6 @@ function openFinishSheet(plan, unit, pre, onDone) {
         },
       }),
     ],
-    onClose: () => { /* Sheet kann erneut über Beenden geöffnet werden */ },
+    onClose: () => { /* the sheet can be opened again via "End workout" */ },
   });
 }

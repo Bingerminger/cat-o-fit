@@ -1,5 +1,5 @@
-/* UI-39: Ein Bericht wird erst nach der Vorschau versiegelt – „Ändern“ führt zurück ins
-   Formular (Eingaben bleiben), „Bericht speichern“ legt ihn unveränderlich ab. */
+/* UI-39: A report is sealed only after the preview – "Edit" leads back into the
+   form (inputs are kept), "Save report" stores it unchangeably. */
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import * as store from '../js/storage.js';
@@ -23,23 +23,23 @@ beforeEach(async () => {
   await store.login('u-1', '');
 });
 
-test('Monatsbericht: erst Vorschau, dann versiegeln; „Ändern“ speichert nichts', () => {
+test('Monthly report: preview first, then seal; "Edit" saves nothing', () => {
   const view = setupShell();
   render(view);
   btn(view, 'Bericht erstellen').click();
   const root = doc.querySelector('#modal-root');
   btn(root, 'Monatsbericht erstellen').click();
-  assert.equal(store.get('reports').length, 0, 'noch nicht gespeichert');
+  assert.equal(store.get('reports').length, 0, 'not saved yet');
   assert.match(root.textContent, /Vorschau – nach dem Speichern bleibt der Bericht unverändert/);
-  assert.ok(root.querySelectorAll('div').some((d) => String(d.className).includes('report-sheet')), 'Bericht als Vorschau');
+  assert.ok(root.querySelectorAll('div').some((d) => String(d.className).includes('report-sheet')), 'report as preview');
   btn(root, 'Ändern').click();
   assert.equal(store.get('reports').length, 0);
   btn(root, 'Monatsbericht erstellen').click();
   btn(root, 'Bericht speichern').click();
-  assert.equal(store.get('reports').length, 1, 'erst jetzt versiegelt');
+  assert.equal(store.get('reports').length, 1, 'sealed only now');
 });
 
-test('Urkunde: Titel bleibt nach „Ändern“ erhalten, gespeichert wird mit Titel', () => {
+test('Certificate: the title is kept after "Edit", saving includes the title', () => {
   const view = setupShell();
   render(view);
   btn(view, 'Bericht erstellen').click();
@@ -50,7 +50,7 @@ test('Urkunde: Titel bleibt nach „Ändern“ erhalten, gespeichert wird mit Ti
   btn(root, 'Urkunde erstellen').click();
   assert.equal(store.get('reports').length, 0);
   btn(root, 'Ändern').click();
-  assert.equal(title.value, '14 Wochen am Stück', 'Eingabe bleibt');
+  assert.equal(title.value, '14 Wochen am Stück', 'input is kept');
   btn(root, 'Urkunde erstellen').click();
   btn(root, 'Urkunde speichern').click();
   const r = store.get('reports');

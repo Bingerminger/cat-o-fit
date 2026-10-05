@@ -1,14 +1,14 @@
 /* =========================================================================
-   cycle.js — Zykluskalender (zyklusbewusste, rücksichtsvolle Trainingsplanung).
-   - Nutzerin markiert Periodenstarts; daraus werden Zykluslänge, aktuelle
-     Phase und die Prognose der nächsten Periode berechnet.
-   - Menstruationstage sind „geschützt“: Einheiten lassen sich dort schadfrei
-     verschieben/auslassen (kein Adherence-/Momentum-Malus).
-   - Phasentipps sind bewusst neutral: Die Studienlage zu Leistungsunterschieden
-     im Zyklus ist schwach (McNulty et al. 2020) – maßgeblich ist das Befinden.
-   - Hormonelle Verhütung (Einstellung): keine natürlichen Phasen, nur Blutungstage.
-   - Ohne neuen Eintrag seit ~3 Monaten gibt es keine Phasen und keine Prognose mehr.
-   - Sensible Daten bleiben lokal; das Modul ist in den Einstellungen abschaltbar.
+   cycle.js — cycle calendar (cycle-aware, considerate training planning).
+   - The user marks period starts; from these the cycle length, current
+     phase and the forecast of the next period are calculated.
+   - Menstruation days are "protected": sessions can be moved/skipped there
+     without harm (no adherence/momentum penalty).
+   - Phase tips are deliberately neutral: the evidence on performance differences
+     across the cycle is weak (McNulty et al. 2020) – how you feel is what counts.
+   - Hormonal contraception (setting): no natural phases, only bleeding days.
+   - Without a new entry for ~3 months there are no phases and no forecast any more.
+   - Sensitive data stays local; the module can be switched off in the settings.
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -34,15 +34,15 @@ export const PHASE_META = {
   follikel:     { get label() { return t('cycle.phaseFollicular'); }, color: '#43c59e', emoji: '🌱' },
   ovulation:    { get label() { return t('cycle.phaseOvulation'); }, color: '#f5a623', emoji: '⭐' },
   luteal:       { get label() { return t('cycle.phaseLuteal'); }, color: '#7c5cff', emoji: '🌙' },
-  // Unter hormoneller Verhütung: keine natürlichen Phasen, nur „zwischen den Blutungen“.
+  // Under hormonal contraception: no natural phases, only "between the bleeds".
   neutral:      { get label() { return t('cycle.phaseNeutral'); }, color: '#9aa7b4', emoji: '○' },
 };
 
-/** Ist das Zyklus-Modul aktiv? (Standard an; in den Einstellungen abschaltbar) */
-// Zyklus ist beim Verwalten eines Mitglieds (Admin) inaktiv – die Daten bleiben
-// privat (kein Phasen-Einfluss auf Dashboard/Badges). In der eigenen Sicht normal.
-// Konsistent mit allen Modulen: aktiv, solange nicht ausdrücklich abgewählt.
-/** Herkunft importierter Perioden (sonst von Hand erfasst). */
+/** Is the cycle module active? (default on; can be switched off in the settings) */
+// The cycle is inactive while an admin manages a member – the data stays
+// private (no phase influence on dashboard/badges). Normal in one's own view.
+// Consistent with all modules: active unless explicitly deselected.
+/** Origin of imported periods (otherwise entered by hand). */
 const PERIOD_SOURCE = {
   get 'apple-health'() { return t('cycle.fromAppleHealth'); },
   get health() { return t('cycle.fromAppleHealth'); },
@@ -51,34 +51,34 @@ const PERIOD_SOURCE = {
 
 export function cycleEnabled() { return !store.isManaging() && store.settings().modules?.cycle !== false; }
 
-/** Hormonelle Verhütung (Pille, Hormonspirale, Implantat …): Zyklusphasen sind dann
-    nicht aussagekräftig (IOC 2023) – die App zeigt nur die Blutungstage. */
+/** Hormonal contraception (pill, hormonal coil, implant …): cycle phases are then
+    not meaningful (IOC 2023) – the app shows only the bleeding days. */
 export function hormonalContraception() { return store.settings().cycleHormonal === true; }
 
-// Periodenstarts; Hilfsdatensätze im selben Bereich (z. B. die Antwort auf
-// „Periode ausgeblieben?“, `_kind: 'check'`) zählen nicht mit.
+// Period starts; helper records in the same area (e.g. the answer to
+// "Period overdue?", `_kind: 'check'`) do not count.
 function entries() {
   return store.get('cycle').filter((c) => c && !c._kind && c.startDate).slice().sort((a, b) => a.startDate.localeCompare(b.startDate));
 }
 
-/** Durchschnittliche Zykluslänge aus den Abständen der Periodenstarts. Lange Zyklen
-    (bis 90 Tage) zählen mit – sie wurden früher verworfen und die App rechnete dann
-    still mit 28 Tagen. Nur vermutlich vergessene Einträge bleiben außen vor. */
+/** Average cycle length from the intervals between period starts. Long cycles
+    (up to 90 days) count – they used to be discarded and the app then silently
+    calculated with 28 days. Only probably forgotten entries are left out. */
 export function avgCycleLength() {
   return typicalCycleLength(periodStarts(store.get('cycle')), store.settings().cycleLength || 28);
 }
 
-/** Gespeicherte Antwort auf „Periode ausgeblieben?“ (oder null). */
+/** Stored answer to "Period overdue?" (or null). */
 export function cycleCheck() {
   return store.get('cycle').find((c) => c && c._kind === 'check') || null;
 }
 
-/** Zustand rund um eine überfällige Periode (siehe cyclecalc.periodSignal) – oder null. */
+/** State around an overdue period (see cyclecalc.periodSignal) – or null. */
 export function periodState(today = todayStr()) {
   if (!cycleEnabled()) return null;
   const starts = periodStarts(store.get('cycle'));
-  // Unter hormoneller Verhütung ist eine ausbleibende Blutung kein Warnzeichen für
-  // Energiemangel (IOC 2023) – wie die Antwort „Hormonelle Verhütung“ auf die Frage.
+  // Under hormonal contraception a missed bleed is not a warning sign of
+  // energy deficiency (IOC 2023) – like the answer "Hormonal contraception" to the question.
   const check = hormonalContraception() && starts.length
     ? { for: starts.at(-1), answer: 'verhuetung' } : cycleCheck();
   return periodSignal({
@@ -86,13 +86,13 @@ export function periodState(today = todayStr()) {
   });
 }
 
-/** Antwort auf „Periode ausgeblieben?“ speichern (privat, im Zyklus-Bereich). */
+/** Save the answer to "Period overdue?" (private, in the cycle area). */
 export function answerPeriodCheck(answer, today = todayStr()) {
   const s = periodState(today);
   if (!s) return;
   store.upsert('cycle', { id: 'cycle-check', _kind: 'check', for: s.lastStart, answer, at: nowIso() });
   if (answer === 'schwanger') {
-    // Schwangerschaft/Stillzeit gilt dann auch für Ernährung und Ziele (keine Abnehmziele).
+    // Pregnancy/breastfeeding then also applies to nutrition and goals (no weight-loss goals).
     store.setSetting('labsGate', { ...(store.settings().labsGate || {}), pregnancy: true });
   }
 }
@@ -102,9 +102,9 @@ export function avgPeriodLength() {
 }
 function lastStart() { const e = entries(); return e.length ? e.at(-1).startDate : null; }
 
-/** Nächster prognostizierter Periodenstart nach `today` (für Tests injizierbar).
-    null, wenn er mehr als PREDICTION_MAX_AGE_DAYS nach dem letzten echten Eintrag
-    läge – „Nächste Periode in X Tagen“ wäre dann eine Behauptung ohne Grundlage. */
+/** Next forecast period start after `today` (injectable for tests).
+    null if it would lie more than PREDICTION_MAX_AGE_DAYS after the last real entry –
+    "Next period in X days" would then be a claim without basis. */
 export function nextPredictedStart(today = todayStr()) {
   const last = lastStart();
   if (!last) return null;
@@ -114,7 +114,7 @@ export function nextPredictedStart(today = todayStr()) {
   return diffDays(last, s) > PREDICTION_MAX_AGE_DAYS ? null : s;
 }
 
-/** Relevanter Zyklusstart (echt oder prognostiziert) <= Datum. */
+/** Relevant cycle start (real or forecast) <= date. */
 function cycleStartFor(dateStr) {
   const e = entries();
   if (!e.length) return null;
@@ -122,20 +122,20 @@ function cycleStartFor(dateStr) {
   let best = null;
   for (const x of e) if (x.startDate <= dateStr) best = x.startDate;
   if (best) { while (addDays(best, cl) <= dateStr) best = addDays(best, cl); return best; }
-  // Datum vor allen Einträgen -> rückwärts prognostizieren.
+  // Date before all entries -> forecast backwards.
   let s = e[0].startDate;
   while (s > dateStr) s = addDays(s, -cl);
   return s;
 }
 
-/** Wie lange eine Prognose ohne neuen echten Eintrag noch als belastbar gilt (Tage). */
-export const PREDICTION_MAX_AGE_DAYS = 92; // ~3 Monate
+/** How long a forecast without a new real entry is still considered reliable (days). */
+export const PREDICTION_MAX_AGE_DAYS = 92; // ~3 months
 
 /**
- * Phase eines Datums. Prognostizierte Tage gibt es nur bis PREDICTION_MAX_AGE_DAYS
- * nach dem letzten echten Eintrag – danach weder Phase noch Schutz (vorher zeigte
- * die Zyklusseite Monate später noch Phasen, schützte aber nicht mehr). Unter
- * hormoneller Verhütung heißen alle Tage außer den Blutungstagen `neutral`.
+ * Phase of a date. Forecast days exist only up to PREDICTION_MAX_AGE_DAYS
+ * after the last real entry – after that neither phase nor protection (before, the
+ * cycle page still showed phases months later but no longer protected). Under
+ * hormonal contraception all days except the bleeding days are `neutral`.
  * @returns {{phase,cycleDay,cycleLength,periodLength,predicted}|null}
  */
 export function cyclePhase(dateStr) {
@@ -158,39 +158,39 @@ export function cyclePhase(dateStr) {
 }
 
 /**
- * Geschützter Tag = Menstruationstag.
+ * Protected day = menstruation day.
  *
- * Echte (selbst eingetragene) Perioden schützen immer. Eine reine PROGNOSE zählt
- * nur, solange der letzte echte Eintrag höchstens ~3 Monate zurückliegt: Danach
- * ist sie nicht mehr belastbar (Zykluslänge ändert sich, Einträge fehlen), und
- * geschützte Tage würden die Plan-Einhaltung stillschweigend schönen.
+ * Real (self-entered) periods always protect. A pure FORECAST counts
+ * only as long as the last real entry is at most ~3 months back: after that
+ * it is no longer reliable (cycle length changes, entries are missing), and
+ * protected days would silently flatter plan adherence.
  */
 export function isProtectedDay(dateStr) {
   const p = cyclePhase(dateStr);
   if (!p || p.phase !== 'menstruation') return false;
-  if (!p.predicted) return true;              // echter Eintrag -> immer geschützt
+  if (!p.predicted) return true;              // real entry -> always protected
   const last = lastStart();
   if (!last) return false;
   return diffDays(last, dateStr) <= PREDICTION_MAX_AGE_DAYS;
 }
 
-/* ------------------------------ Eingabe --------------------------------- */
+/* ------------------------------ Input --------------------------------- */
 function addPeriodStart(dateStr, periodLength) {
   store.upsert('cycle', { id: uid('cyc'), startDate: dateStr, periodLength: periodLength || avgPeriodLength(), createdAt: nowIso() });
 }
 
-/* ---------------- Entschärfung am 1. Periodentag – nur auf Wunsch (#3) --------------- */
-// Früher wurde jede offene Einheit am 1. Tag AUTOMATISCH entschärft – auch bei
-// beschwerdefreien Sportlerinnen. Jetzt fragt die App nach dem Befinden und passt nur
-// an, wenn die Nutzerin „heute lockerer“ wählt (TRAIN-30).
-// Diese Typen bleiben unangetastet: schon locker/Ruhe – oder ein Wettkampf. Feste
-// Termine (Fußball/Spiele) werden separat über `!u.fixed` ausgeschlossen.
+/* ---------------- Easing on period day 1 – on request only (#3) --------------- */
+// Previously every open session on day 1 was eased AUTOMATICALLY – even for
+// athletes without symptoms. Now the app asks how they feel and only adjusts
+// if the user chooses "take it easier today" (TRAIN-30).
+// These types stay untouched: already easy/rest – or a race. Fixed
+// appointments (football/games) are excluded separately via `!u.fixed`.
 const CYCLE_SKIP_TYPES = ['rest', 'recovery', 'mobility', 'walk', 'race'];
 
 /**
- * Einheiten am 1. Periodentag, die für die automatische Entschärfung infrage kommen:
- * offen (geplant), kein fester Termin, nicht ohnehin locker/Ruhe/Wettkampf. Reine
- * Funktion (testbar) über die Einheiten EINES Plans.
+ * Sessions on period day 1 that qualify for the automatic easing:
+ * open (planned), not a fixed appointment, not already easy/rest/race. Pure
+ * function (testable) over the sessions of ONE plan.
  */
 export function cycleSoftenTargets(units = [], startDate) {
   return (units || []).filter((u) => u && u.date === startDate && !u.fixed
@@ -198,7 +198,7 @@ export function cycleSoftenTargets(units = [], startDate) {
     && !CYCLE_SKIP_TYPES.includes(u.type));
 }
 
-/** Zyklus-Entschärfung einer Einheit (Patch-Felder) – lockerer Tag mit Markierung. */
+/** Cycle easing of a session (patch fields) – easier day with a marker. */
 export function cycleEaseVariant(unit) {
   return {
     ...gentleVariant(unit, {
@@ -209,15 +209,15 @@ export function cycleEaseVariant(unit) {
   };
 }
 
-/** Offene, entschärfbare Einheiten am Tag `startDate` über alle Pläne. */
+/** Open, easeable sessions on day `startDate` across all plans. */
 function easeTargets(startDate) {
   return store.get('plans').flatMap((plan) => cycleSoftenTargets(plan.units || [], startDate));
 }
 
 /**
- * Entschärft das Training am 1. Tag – nur nach ausdrücklicher Wahl („Heute lockerer“),
- * planübergreifend, protokolliert je Plan und über den Snapshot rückgängig (#3).
- * @returns {number} Anzahl entschärfter Einheiten.
+ * Eases the training on day 1 – only after an explicit choice ("Take it easier"),
+ * across plans, logged per plan and undoable via the snapshot (#3).
+ * @returns {number} Number of sessions eased.
  */
 function applyCycleEasing(startDate) {
   if (!cycleEnabled()) return 0;
@@ -234,11 +234,11 @@ function applyCycleEasing(startDate) {
   return n;
 }
 
-/* ------------------------------- Ansicht -------------------------------- */
+/* ------------------------------- View -------------------------------- */
 export function render(view) {
   setHeader({ title: t('nav.cycle') });
 
-  // Datenschutz: Zyklusdaten sind ausschließlich für die Person selbst sichtbar.
+  // Privacy: cycle data is visible exclusively to the person themselves.
   if (store.isManaging()) {
     const who = store.activeMember();
     view.appendChild(el('div', { class: 'empty', style: { paddingTop: '48px' } }, [
@@ -249,7 +249,7 @@ export function render(view) {
     return;
   }
 
-  // Modul abgewählt (Einstellungen → Module): wie alle Module deaktiviert anzeigen.
+  // Module deselected (Settings → Modules): shown as deactivated, like all modules.
   if (!cycleEnabled()) {
     view.appendChild(moduleOff(t('cycle.moduleName')));
     return;
@@ -260,13 +260,13 @@ export function render(view) {
   const phase = cyclePhase(today);
   const last = lastStart();
   const hormonal = hormonalContraception();
-  // Ohne neuen Eintrag seit ~3 Monaten gibt es keine Prognose mehr (Phasen, nächste
-  // Periode, Schutz) – nur noch die Frage, was zutrifft.
+  // Without a new entry for ~3 months there is no forecast any more (phases, next
+  // period, protection) – only the question of what applies.
   const stale = !!(last && diffDays(last, today) > PREDICTION_MAX_AGE_DAYS);
 
-  // Überfällige Periode: erst fragen, dann (bei „ausgeblieben“ bzw. mehr als 90 Tagen
-  // ohne Antwort) auf ärztliche Abklärung hinweisen – kein Fehlalarm bei Schwangerschaft,
-  // hormoneller Verhütung oder nur fehlenden Einträgen.
+  // Overdue period: ask first, then (on "missed" or more than 90 days
+  // without an answer) point to medical clarification – no false alarm for pregnancy,
+  // hormonal contraception or merely missing entries.
   const ps = periodState(today);
   if (ps && ps.flag) view.appendChild(periodFlagCard(periodFlag(ps)));
   if (ps && ps.state === 'ask') view.appendChild(periodQuestionCard(ps));
@@ -276,10 +276,10 @@ export function render(view) {
     view.appendChild(noteCard(t('cycle.noteLongCycles')));
   }
 
-  // Aktuelle Phase
+  // Current phase
   if (phase) {
     const pm = PHASE_META[phase.phase];
-    // Schrift passend zur PHASENfarbe (nicht zum Akzent) und der Verlauf weg von ihr (UI-12).
+    // Text colour matching the PHASE colour (not the accent) and the gradient away from it (UI-12).
     const ink = onAccent(pm.color);
     const end = luminance(ink) < 0.5 ? mix(pm.color, '#ffffff', 0.22) : mix(pm.color, '#000000', 0.22);
     view.appendChild(el('div', { class: 'hero', style: { background: `linear-gradient(140deg, ${pm.color}, ${end})`, color: ink } }, [
@@ -309,14 +309,14 @@ export function render(view) {
     ]));
   }
 
-  // Eingabe
+  // Input
   view.appendChild(el('button', { class: 'btn btn--primary btn--block mt-4', onclick: () => openPeriodSheet(), }, [icon('plus'), t('cycle.logPeriodStart')]));
 
-  // Phasen-Vorschau der nächsten 28 Tage
+  // Phase preview of the next 28 days
   if (hasData) {
     view.appendChild(sectionHead(t('cycle.next4Weeks')));
-    // Mit Tageszahl, Wochentagszeile und Beschreibung je Tag – vorher 28 Farbfelder, die
-    // Phase nur über die Farbe kodiert (UI-37, WCAG 1.4.1). Prognose-Tage gestrichelt.
+    // With day number, weekday row and description per day – previously 28 colour boxes that
+    // encoded the phase only by colour (UI-37, WCAG 1.4.1). Forecast days dashed.
     const head = el('div', { class: 'cycle-strip cycle-strip__head', 'aria-hidden': 'true' });
     for (let i = 0; i < 7; i++) head.appendChild(el('span', { text: fmtWeekday(addDays(today, i)) }));
     view.appendChild(head);
@@ -337,7 +337,7 @@ export function render(view) {
     view.appendChild(legend());
   }
 
-  // Einträge
+  // Entries
   if (hasData) {
     view.appendChild(sectionHead(t('cycle.loggedPeriods')));
     const list = el('div', { class: 'list-card' });
@@ -352,7 +352,7 @@ export function render(view) {
     view.appendChild(list);
   }
 
-  // Hormonelle Verhütung: blendet die Phasen aus, behält die Blutungstage (HEALTH-32).
+  // Hormonal contraception: hides the phases, keeps the bleeding days (HEALTH-32).
   view.appendChild(sectionHead(t('cycle.contraceptionHeading')));
   view.appendChild(el('div', { class: 'card' }, [
     el('div', { class: 'row row--between', style: { alignItems: 'center', gap: '12px' } }, [
@@ -371,7 +371,7 @@ export function render(view) {
   ]));
 }
 
-/** Arzthinweis bei ausgebliebener Periode (gleicher Text in Zyklus, Labor und „Heute“). */
+/** Doctor's note for a missed period (same text in Cycle, Labs and "Today"). */
 export function periodFlagCard(f) {
   return el('div', { class: 'card mt-2', style: { borderLeft: '4px solid var(--bad)' } }, [
     el('div', { class: 'row gap-2', style: { alignItems: 'flex-start' } }, [
@@ -391,7 +391,7 @@ function noteCard(text) {
   ]);
 }
 
-/** „Periode ausgeblieben?“ – fragt nach, statt einen Energiemangel zu unterstellen. */
+/** "Period overdue?" – asks instead of presuming an energy deficiency. */
 function periodQuestionCard(ps) {
   const pick = (key) => {
     answerPeriodCheck(key);
@@ -408,10 +408,10 @@ function periodQuestionCard(ps) {
   ]);
 }
 
-/** Neutrale, befindensorientierte Tipps je Phase – keine Leistungsversprechen: Die
-    Meta-Analyse von McNulty et al. (2020) findet über den Zyklus allenfalls eine
-    triviale Leistungsminderung früh in der Follikelphase und hält allgemeine
-    phasenbasierte Empfehlungen für nicht ableitbar. */
+/** Neutral, feeling-oriented tips per phase – no performance promises: the
+    meta-analysis by McNulty et al. (2020) finds at most a trivial performance
+    reduction early in the follicular phase over the cycle and considers general
+    phase-based recommendations not derivable. */
 export function phaseTip(phase) {
   return {
     menstruation: t('cycle.tipMenstruation'),
@@ -433,9 +433,9 @@ function legend() {
 }
 
 /**
- * Nach dem Eintragen eines Periodenbeginns: kurze Befindlichkeitsfrage, statt das
- * Training automatisch zu entschärfen. Nur für heute oder morgen und nur, wenn dort
- * eine entschärfbare Einheit steht.
+ * After logging a period start: short how-are-you-feeling question instead of
+ * easing the training automatically. Only for today or tomorrow and only if there is
+ * an easeable session.
  */
 async function askAboutFirstDay(startDate) {
   const today = todayStr();
@@ -468,7 +468,7 @@ export function openPeriodSheet() {
         addPeriodStart(start, parseInt(lenI.value) || 5);
         closeSheet();
         rerender();
-        // Training am 1. Tag nur auf Wunsch lockerer (#3/TRAIN-30) – protokolliert & rückgängig.
+        // Training on day 1 easier only on request (#3/TRAIN-30) – logged & undoable.
         const eased = await askAboutFirstDay(start);
         toast(eased ? t('cycle.savedEased', { n: eased }) : t('cycle.saved'), 'good', eased ? 3600 : undefined);
         if (eased) rerender();
@@ -477,6 +477,6 @@ export function openPeriodSheet() {
   });
 }
 
-// Neu zeichnen über den Router (Scrollposition bleibt, auch wenn das Formular von
-// einer anderen Ansicht aus geöffnet wurde); ohne App-Shell (Tests) direkt.
+// Redraw via the router (scroll position stays, even if the form was opened from
+// another view); without the app shell (tests) directly.
 function rerender() { rerenderView(render); }

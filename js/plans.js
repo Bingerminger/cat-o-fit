@@ -1,11 +1,11 @@
 /* =========================================================================
-   plans.js — Trainingsplan pro Event: Einrichten, Aktualisieren und Ansicht.
+   plans.js — training plan per event: setting up, updating and view.
 
-   Der Generator selbst (Periodisierung, Wochenumfang, Einheiten) liegt rein und
-   testbar in plangen.js. Hier kommen Store, Trainingshistorie und Paces dazu:
-   Zielpaces aus der Zielzeit (bzw. der Form), Niveau und Lauftage aus der
-   Einrichtung, feste Termine nur auf ausdrücklichen Wunsch. Neu berechnet wird
-   immer nur ab heute – die Vergangenheit bleibt, wie sie ist.
+   The generator itself (periodisation, weekly volume, sessions) lives purely and
+   testably in plangen.js. Here the store, training history and paces are added:
+   target paces from the target time (or from the current form), level and run days from the
+   setup, fixed appointments only on explicit request. Recalculation always happens
+   only from today – the past stays as it is.
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -34,7 +34,7 @@ import {
 
 import { t, tp } from './i18n.js';
 
-// Öffentliche Generator-Schnittstelle weiterhin über plans.js erreichbar.
+// Public generator interface remains reachable via plans.js.
 export {
   PLAN_GEN, PLAN_LEVELS, DEFAULT_WEEK_TEMPLATE, RUN_TEMPLATES, TRIATHLON_TEMPLATE, HYROX_TEMPLATE,
   STRENGTH_FOCUS, makePhases, longRunPeak, supportRunKm, pyramidSegments, alternatingSegments,
@@ -42,7 +42,7 @@ export {
   weekVolumes, volumeConfig, trainingHistory, suggestLevel,
 } from './plangen.js';
 
-/* ===================== Anlegen & Aktualisieren ===================== */
+/* ===================== Creating & updating ===================== */
 
 export function ensureGenerated() {
   const plans = store.get('plans');
@@ -55,8 +55,8 @@ export function ensureGenerated() {
   });
 }
 
-/** Paces für einen Wettkampfplan: Zielzeit und Form (nur harte Läufe). Bei Triathlon
-    und Hyrox ist die Zielzeit keine reine Laufleistung – dort zählt nur die Form. */
+/** Paces for a race plan: target time and form (hard runs only). For triathlon
+    and Hyrox the target time is not a pure running performance – there only the form counts. */
 export function planPacesFor(event, { sessions = store.get('sessions'), today = todayStr(), profile = store.profile() } = {}) {
   const est = estimateVdot(sessions, today, 42, { hrZones: profile.hrZones });
   const formVdot = est && !est.onlyEasy ? est.vdot : null;
@@ -68,7 +68,7 @@ function paceInfoOf(pp) {
   return pp ? { goalVdot: pp.goalVdot, formVdot: pp.formVdot, trainingVdot: pp.trainingVdot, ambitious: pp.ambitious } : null;
 }
 
-/** Geplante Lauf-km der Vorwoche (für die Aktualisierung, wenn keine Läufe erfasst sind). */
+/** Planned running km of the previous week (for the update when no runs are logged). */
 function plannedLastWeekKm(units = [], today) {
   const ws = addDays(today, -7);
   let km = 0;
@@ -79,8 +79,8 @@ function plannedLastWeekKm(units = [], today) {
   return km ? Math.round(km * 2) / 2 : null;
 }
 
-/** Legt für ein Event einen Plan an und generiert die Einheiten. Für ein Rennen heute
-    oder in der Vergangenheit entsteht kein (leerer) Plan – Rückgabe null.
+/** Creates a plan for an event and generates the sessions. For a race today
+    or in the past no (empty) plan is created – returns null.
     `options`: { level, daysPerWeek, commitments, today } */
 export function createPlanForEvent(event, options = {}) {
   const today = options.today || todayStr();
@@ -99,7 +99,7 @@ export function createPlanForEvent(event, options = {}) {
     level, daysPerWeek, baseLongKm: hist.longKm, baseWeekKm: hist.weekKm,
     paces: pp ? pp.zones : null, paceInfo: paceInfoOf(pp),
     phases: makePhases(weeks), weekTemplate: weekTemplateFor(sport, daysPerWeek),
-    // Keine Standardtermine: feste Termine nur, wenn sie beim Anlegen gewählt werden.
+    // No default appointments: fixed appointments only if they are chosen on creation.
     commitments: Array.isArray(options.commitments) ? options.commitments : [],
     sport, gen: PLAN_GEN,
     units: [], generated: false, createdAt: nowIso(), updatedAt: nowIso(),
@@ -111,10 +111,10 @@ export function createPlanForEvent(event, options = {}) {
 }
 
 /**
- * Berechnet einen bestehenden Plan ab heute mit der aktuellen Planlogik neu
- * (Renneinheit, Paces, Umfang nach Niveau und Lauftagen). Alles vor heute bleibt
- * unverändert. Der Umfang setzt am aktuellen Stand an (Historie der letzten vier
- * Wochen, sonst der zuletzt geplante Wochenumfang).
+ * Recalculates an existing plan from today with the current plan logic
+ * (race session, paces, volume by level and run days). Everything before today stays
+ * unchanged. The volume starts from the current state (history of the last four
+ * weeks, otherwise the most recently planned weekly volume).
  * `options`: { level, daysPerWeek, commitments, today }
  */
 export function updatePlanFromToday(plan, event, options = {}) {
@@ -153,7 +153,7 @@ export function updatePlanFromToday(plan, event, options = {}) {
   return store.find('plans', plan.id);
 }
 
-/* ===================== Einrichten (Sheet) ===================== */
+/* ===================== Setup (sheet) ===================== */
 
 function noteBox(text, tone = 'info') {
   const color = tone === 'warn' ? 'var(--warn)' : tone === 'bad' ? 'var(--bad)' : 'var(--accent)';
@@ -163,7 +163,7 @@ function noteBox(text, tone = 'info') {
   ]);
 }
 
-/** Beschreibt die Paces eines Plans in einem Satz. */
+/** Describes the paces of a plan in one sentence. */
 export function paceText(info, zones, targetTime) {
   if (!zones || !zones.easy) return t('plans.paceNone');
   const race = zones.race && zones.race.min ? t('plans.paceRace', { pace: fmtPaceRange(zones.race.min, zones.race.max) }) : '';
@@ -178,9 +178,9 @@ export function paceText(info, zones, targetTime) {
 }
 
 /**
- * Einrichtung eines Wettkampfplans (neu) oder „Plan ab heute neu berechnen“ (mit
- * `plan`): Niveau, Lauftage, feste Termine, Paces und ein ehrlicher Blick auf die
- * Vorbereitungszeit. Nichts wird still geändert – erst der Knopf erzeugt den Plan.
+ * Setup of a race plan (new) or "Recalculate plan from today" (with
+ * `plan`): level, run days, fixed appointments, paces and an honest look at the
+ * preparation time. Nothing is changed silently – only the button creates the plan.
  */
 export function openPlanSetup(event, { plan = null } = {}) {
   const today = todayStr();
@@ -285,7 +285,7 @@ export function openPlanSetup(event, { plan = null } = {}) {
   openSheet({ title: update ? t('plans.recalcPlanFromToday') : t('plans.setupTitle'), body, footer });
 }
 
-/* ===================== Plan-Ansicht ===================== */
+/* ===================== Plan view ===================== */
 
 export function render(view, eventId) {
   const event = store.find('events', eventId);
@@ -296,9 +296,9 @@ export function render(view, eventId) {
     title: isProgram ? t('plans.weekPlan') : t('plans.trainingPlan'),
     subtitle: event ? event.name : '',
     back: `#/event/${eventId}`,
-    // Nur „+“ als Symbol; seltene Aktionen mit Text im „…“-Menü. Vorher vier Symbole:
-    // Das Kalender-Symbol führte zu „Feste Termine“, der Pfeilkreis überschrieb den Plan,
-    // und auf dem iPhone SE blieb vom Titel nur „Trainin…“ (UI-34).
+    // Only "+" as an icon; rare actions with text in the "…" menu. Previously four icons:
+    // the calendar icon led to "Fixed commitments", the circular arrow overwrote the plan,
+    // and on the iPhone SE only "Trainin…" was left of the title (UI-34).
     actions: plan ? [
       { icon: 'plus', label: t('plans.addSession'), onClick: () => openUnitCreator(plan, todayStr()) },
       { icon: 'more', label: t('plans.moreActions'), onClick: () => actionSheet(t('plans.plan'), [
@@ -314,8 +314,8 @@ export function render(view, eventId) {
     return;
   }
 
-  // Robustheit: unvollständige Pläne (z. B. aus einem alten Backup oder Import)
-  // haben keine Phasenstruktur. Statt zu crashen ein Neu-Generieren anbieten.
+  // Robustness: incomplete plans (e.g. from an old backup or import)
+  // have no phase structure. Offer regenerating instead of crashing.
   if (!Array.isArray(plan.phases) || !plan.phases.length || !plan.weeks) {
     view.appendChild(emptyState('calendar', t('plans.incomplete'),
       t('plans.incompleteText')));
@@ -330,7 +330,7 @@ export function render(view, eventId) {
   const daysToRace = (event && !isProgram) ? diffDays(today, event.date) : null;
   const currentWeek = clampWeek(plan, today);
 
-  // Phasen-Timeline
+  // Phase timeline
   const timeline = el('div', { class: 'card' }, [
     el('div', { class: 'row row--between mb-2' }, [
       el('div', { class: 'card__title', text: t('plans.weekOf', { week: currentWeek, weeks: plan.weeks }) }),
@@ -340,7 +340,7 @@ export function render(view, eventId) {
   ]);
   view.appendChild(timeline);
 
-  // Altplan: neue Planlogik als Angebot – nie still.
+  // Legacy plan: new plan logic as an offer – never silently.
   if (!isProgram && event && plan.gen !== PLAN_GEN && (plan.endDate || '') >= today) {
     view.appendChild(el('div', { class: 'card mt-2', style: { borderLeft: '4px solid var(--accent)' } }, [
       el('div', { style: { fontWeight: '700', fontSize: '.9rem' }, text: t('plans.newLogic') }),
@@ -349,13 +349,13 @@ export function render(view, eventId) {
     ]));
   }
 
-  // Feste Termine (Fußball/Spiele) – konfigurierbar, der Plan liegt sich drumherum.
+  // Fixed appointments (football/games) – configurable, the plan fits around them.
   if (!isProgram && event) view.appendChild(commitmentsCard(plan, event));
 
-  // Wochen-Check: Kollisionen der laufenden Woche transparent priorisiert (R3-Triage)
+  // Week check: collisions of the current week transparently prioritised (R3 triage)
   if (!isProgram) { const tc = triageCard(plan); if (tc) view.appendChild(tc); }
 
-  // Kennzahlen
+  // Key figures
   const done = units.filter((u) => u.status === 'erledigt').length;
   const planRun = units.filter((u) => typeMeta(u.type).cat === 'run');
   const totalKm = planRun.reduce((a, u) => a + (u.targetDistanceKm || 0), 0);
@@ -365,7 +365,7 @@ export function render(view, eventId) {
     stat(`${done}`, t('plans.statDone')),
   ]));
 
-  // Eckdaten des Plans: Niveau, Lauftage, Paces
+  // Key facts of the plan: level, run days, paces
   if (!isProgram && event) {
     const lines = [];
     if (plan.gen === PLAN_GEN) {
@@ -387,16 +387,16 @@ export function render(view, eventId) {
     }
   }
 
-  // Wochen-Akkordeon
+  // Week accordion
   view.appendChild(sectionHead(t('plans.weekOverview')));
   const byWeek = new Map();
   units.forEach((u) => {
-    // Woche aus dem (autoritativen) Datum ableiten statt aus u.week: Für generierte
-    // Einheiten liefert clampWeek denselben Wert, aber manuell angelegte oder
-    // importierte Einheiten haben oft kein `week`-Feld. Ohne diese Ableitung
-    // entstünde sonst eine „Wundefined“-Sektion mit „NaN“-Datum (z. B. bei einer
-    // manuellen Einheit vor dem Planstart). Nebeneffekt: verschobene Einheiten
-    // werden korrekt der Woche ihres neuen Datums zugeordnet.
+    // Derive the week from the (authoritative) date instead of from u.week: for generated
+    // sessions clampWeek returns the same value, but manually created or
+    // imported sessions often have no `week` field. Without this derivation
+    // a "Wundefined" section (week prefix + "undefined") with a "NaN" date would otherwise appear (e.g. for a
+    // manual session before the plan start). Side effect: rescheduled sessions
+    // are correctly assigned to the week of their new date.
     const wk = weekOfDate(plan, u.date) ?? u.week ?? 1;
     if (!byWeek.has(wk)) byWeek.set(wk, []);
     byWeek.get(wk).push(u);
@@ -411,7 +411,7 @@ export function render(view, eventId) {
 
     const body = el('div', { class: 'cal-day__units', hidden: !open });
     wUnits.forEach((u) => body.appendChild(planUnitRow(u)));
-    // Vergangene Wochen bleiben, wie sie sind – neu berechnen nur für laufende/kommende.
+    // Past weeks stay as they are – recalculating only for current/upcoming ones.
     if (event && !isProgram && weekEnd >= today) body.appendChild(el('button', {
       class: 'btn btn--ghost btn--block mt-2', style: { fontSize: '.8rem' },
       onclick: () => regenerateWeek(plan, event, w),
@@ -431,12 +431,12 @@ export function render(view, eventId) {
     view.appendChild(el('div', { class: 'cal-day', style: { marginBottom: '8px' } }, [head, body]));
   });
 
-  // Eigene Einheit anlegen – prominent am Ende (zusätzlich zum „+“ in der Kopfzeile).
+  // Create your own session – prominently at the end (in addition to the "+" in the header row).
   view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-4', onclick: () => openUnitCreator(plan, today) }, [icon('plus'), t('plans.addOwnSession')]));
 }
 
-/** Editor für feste Termine: Fußball-Trainingstage + optionale Spiele. Beim
-    Speichern wird der Plan ab heute neu berechnet (er legt sich um die festen Termine). */
+/** Editor for fixed appointments: football training days + optional games. On
+    saving, the plan is recalculated from today (it fits around the fixed appointments). */
 export function openCommitmentsEditor(plan, event) {
   const current = planCommitments(plan).map((c) => ({ ...c }));
   const footballDays = new Set(current.filter((c) => c.type === 'cross_football').map((c) => c.dow));
@@ -505,7 +505,7 @@ export function openCommitmentsEditor(plan, event) {
   openSheet({ title: t('plans.fixedCommitments'), body, footer });
 }
 
-/** Wochen-Check (R3): Kollisionen der laufenden Woche + transparente Priorisierung. */
+/** Week check (R3): collisions of the current week + transparent prioritisation. */
 function triageCard(plan) {
   const tri = weekTriage(plan.units || [], todayStr());
   if (!tri.collisions.length) return null;
@@ -526,7 +526,7 @@ function triageCard(plan) {
   ]);
 }
 
-/** Übersichtskarte der festen Termine mit „Anpassen“. */
+/** Overview card of the fixed appointments with "Adjust". */
 function commitmentsCard(plan, event) {
   const commitments = planCommitments(plan);
   return el('div', { class: 'card card--flat mt-2 row row--between', style: { alignItems: 'center', gap: '10px' } }, [
@@ -541,8 +541,8 @@ function commitmentsCard(plan, event) {
   ]);
 }
 
-/** Feste Termine speichern und den Plan ab heute neu berechnen. Vergangene und
-    erledigte Einheiten bleiben erhalten. */
+/** Save fixed appointments and recalculate the plan from today. Past and
+    completed sessions are retained. */
 async function saveCommitments(plan, event, commitments) {
   updatePlanFromToday(store.find('plans', plan.id) || plan, event, { commitments });
   toast(t('plans.commitsSaved'), 'good');
@@ -551,7 +551,7 @@ async function saveCommitments(plan, event, commitments) {
 
 function planUnitRow(u) {
   const meta = [];
-  const dur = u.targetDurationMin ?? u.dur ?? null;   // Programme aus älteren Versionen: `dur`
+  const dur = u.targetDurationMin ?? u.dur ?? null;   // Programmes from older versions: `dur`
   if (u.targetDistanceKm) meta.push(fmtKm(u.targetDistanceKm, u.targetDistanceKm % 1 ? 1 : 0));
   if (dur && !u.targetDistanceKm) meta.push(`${dur} min`);
   if (u.targetPaceSecPerKm) meta.push(fmtPace(u.targetPaceSecPerKm));
@@ -597,8 +597,8 @@ function stat(val, label) {
   ]);
 }
 
-/** „Plan ab heute neu berechnen“: Wettkampfpläne über die Einrichtung (mit Niveau und
-    Lauftagen), Programme direkt. In beiden Fällen bleibt alles vor heute unverändert. */
+/** "Recalculate plan from today": race plans via the setup (with level and
+    run days), programmes directly. In both cases everything before today stays unchanged. */
 async function regenerate(plan, event) {
   if (plan.kind === 'program' || (event && event.kind === 'program')) {
     const ok = await confirmDialog({
@@ -620,8 +620,8 @@ async function regenerate(plan, event) {
   openPlanSetup(event, { plan });
 }
 
-/** Nur eine einzelne Woche neu berechnen (#10) – z. B. nach Saisonstart mitten im Plan.
-    In der laufenden Woche bleibt alles vor heute unverändert. */
+/** Recalculate only a single week (#10) – e.g. after the season start in the middle of the plan.
+    In the current week everything before today stays unchanged. */
 async function regenerateWeek(plan, event, week) {
   const ws = addDays(plan.startDate, (week - 1) * 7);
   const we = addDays(ws, 6);

@@ -1,10 +1,10 @@
 /* =========================================================================
-   shopping.js — gemeinsame Einkaufsliste der Familie.
+   shopping.js — the family's shared shopping list.
 
-   Aggregiert die geplanten Gerichte ALLER Mitglieder (aus deren Ernährung) zu
-   einer Summenliste und reduziert sie um das gemeinsame Familien-Lager.
-   „Alles eingekauft“ bucht ins Lager; „Gekocht“ (Ernährung) bucht wieder ab.
-   Fällig zum zentralen Einkaufstag der Familie (Standard: Dienstag).
+   Aggregates the planned dishes of ALL members (from their nutrition) into
+   a total list and reduces it by the shared family pantry.
+   "Bought everything" books into the pantry; "Cooked" (nutrition) books out again.
+   Due on the family's central shopping day (default: Tuesday).
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -20,7 +20,7 @@ import { aggregateNeeds, computeShoppingList, applyPurchase, nextShoppingDay, fm
 import { t, tp } from './i18n.js';
 
 const CATS = ['Obst & Gemüse', 'Milchprodukte', 'Fleisch & Fisch', 'Trockenwaren', 'Sonstiges'];
-// Angezeigt wird der übersetzte Name; gespeichert bleibt der deutsche Wert.
+// The translated name is displayed; the German value stays stored.
 const CAT_LABEL = {
   'Obst & Gemüse': () => t('shopping.catProduce'),
   Milchprodukte: () => t('shopping.catDairy'),
@@ -59,7 +59,7 @@ export function render(view) {
   }).catch(() => { planSlot.innerHTML = ''; planSlot.appendChild(el('div', { class: 'card card--flat', text: t('shopping.plansFailed') })); });
 }
 
-/** Geplante Gerichte aller Mitglieder einsammeln (aktiver Nutzer lokal, Rest read-only). */
+/** Collect planned dishes of all members (active user locally, rest read-only). */
 async function loadFamilyMeals() {
   const out = [];
   for (const m of store.members()) {
@@ -191,6 +191,6 @@ function openPantryForm(existing = null) {
   });
 }
 
-// Neu zeichnen über den Router (Scrollposition bleibt, auch wenn das Formular von
-// einer anderen Ansicht aus geöffnet wurde); ohne App-Shell (Tests) direkt.
+// Redraw via the router (scroll position stays, even if the form was opened from
+// another view); without the app shell (tests) directly.
 function rerender() { rerenderView(render); }

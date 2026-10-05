@@ -1,14 +1,14 @@
 /* =========================================================================
-   motion-player.js — Mitmach-Player einer Übung.
+   motion-player.js — follow-along player of an exercise.
 
-   Zwei Modi: Die Vorschau zeigt den Ablauf in Schleife (bei reduzierter Bewegung
-   erst auf Knopfdruck). „Mitmachen“ führt durch einen Block aus Sätzen mit
-   Wiederholungen bzw. Sekunden, Seitenwechsel und Pause – im echten Takt, mit Phase,
-   kurzem Hinweis, Atmung und optional einem Takt-Ton.
+   Two modes: the preview shows the sequence in a loop (with reduced motion
+   only on button press). "Follow along" leads through a block of sets with
+   repetitions or seconds, side change and rest – in real time with the beat, with phase,
+   short hint, breathing and optionally a beat tone.
 
-   Die Zeitplanung (`buildPlan`, `stateAt`) ist reine Logik und getestet; die Anzeige
-   läuft per requestAnimationFrame nur, solange das Bild im Dokument hängt und die
-   Seite sichtbar ist.
+   The scheduling (`buildPlan`, `stateAt`) is pure logic and tested; the display
+   runs via requestAnimationFrame only while the image is attached to the document and the
+   page is visible.
    ========================================================================= */
 
 import { el, icon, segmented } from './ui.js';
@@ -21,7 +21,7 @@ import { t, tp } from './i18n.js';
 const sum = (list) => list.reduce((a, p) => a + p.dur, 0);
 const mmss = (s) => { const v = Math.max(0, Math.ceil(s)); return `${Math.floor(v / 60)}:${String(v % 60).padStart(2, '0')}`; };
 
-/** Voreinstellung für „Mitmachen“ je Übung und Kategorie. */
+/** Default for "Follow along" per exercise and category. */
 export function defaultsFor(m, category = 'strength') {
   const time = m.holdS != null;
   return {
@@ -33,8 +33,8 @@ export function defaultsFor(m, category = 'strength') {
 }
 
 /**
- * Ablaufplan eines Trainingsblocks: Abschnitte { kind, set, side, list, dur, t0 }.
- * kind: intro (Weg in die Position) · reps · time · switch (Seitenwechsel) · rest.
+ * Schedule of a training block: sections { kind, set, side, list, dur, t0 }.
+ * kind: intro (way into the position) · reps · time · switch (side change) · rest.
  */
 export function buildPlan(m, { reps = null, holdS = null, sets = 3, rest = 60, switchS = 4 } = {}) {
   const segs = [];
@@ -56,7 +56,7 @@ export function buildPlan(m, { reps = null, holdS = null, sets = 3, rest = 60, s
   return { segs, total: at, sets, reps, holdS };
 }
 
-/** Zustand zum Zeitpunkt t (Sekunden) im Plan: Abschnitt, Satz, Wiederholung, Restzeit. */
+/** State at time t (seconds) in the plan: section, set, repetition, remaining time. */
 export function stateAt(plan, time) {
   const last = plan.segs[plan.segs.length - 1];
   if (time >= plan.total) return { done: true, seg: last, set: plan.sets, side: last.side, local: last.dur, left: 0 };
@@ -69,23 +69,23 @@ export function stateAt(plan, time) {
   return out;
 }
 
-/** Bezeichnung der Seite (Durchgang a/b): die bewegte Seite ist in den Posen rechts. */
+/** Label of the side (pass a/b): the moved side is the right one in the poses. */
 export function sideLabel(m, pass) {
   if (!m.sides) return '';
   const labels = m.sideLabels || ['rechts', 'links'];
   return pass === 'b' ? labels[1] : labels[0];
 }
 
-/* ------------------------------ Takt-Ton ------------------------------ */
+/* ------------------------------ Beat tone ------------------------------ */
 
-/** Signalton über audio.js (dort freigeschaltet, damit iPhone/iPad auch auf „lautlos“ tönen). */
+/** Signal tone via audio.js (unlocked there so that iPhone/iPad also sound on "silent"). */
 const beep = (freq = 880, ms = 110, gain = 0.28) => tone(freq, { ms, gain });
 
-/* ------------------------------ Anzeige ------------------------------ */
+/* ------------------------------ Display ------------------------------ */
 
 /**
- * Baut den Player in `host` auf. `ex` = Katalogeintrag, `m` = Bewegungsablauf.
- * Liefert { stop, tick } – `tick(dt)` schaltet ohne Animation weiter (Tests).
+ * Builds the player in `host`. `ex` = catalogue entry, `m` = movement sequence.
+ * Returns { stop, tick } – `tick(dt)` advances without animation (tests).
  */
 export function mountPlayer(host, ex, m, { color = '', category = ex.category, onDone = null } = {}) {
   const reduced = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -108,7 +108,7 @@ export function mountPlayer(host, ex, m, { color = '', category = ex.category, o
   const phaseChip = el('span', { class: 'mp-chip mp-chip--phase' });
   const sideChip = el('span', { class: 'mp-chip mp-chip--side' });
   const stage = el('div', { class: 'mp-stage' }, [svg, still, el('div', { class: 'mp-chips' }, [phaseChip, sideChip])]);
-  // Reduzierte Bewegung: Standbild, Antippen spielt den Ablauf ab.
+  // Reduced motion: still image, tapping plays the sequence.
   still.addEventListener('click', () => { if (mode === 'preview') { showMotion(true); loop(); } });
   const barFill = el('span', { class: 'mp-bar__fill' });
   const bar = el('div', { class: 'mp-bar', 'aria-hidden': 'true' }, [barFill]);
@@ -116,7 +116,7 @@ export function mountPlayer(host, ex, m, { color = '', category = ex.category, o
   const cue = el('div', { class: 'mp-cue' });
   const breath = el('span', { class: 'mp-breath' });
 
-  // Einstellungen für „Mitmachen“: Wiederholungen bzw. Sekunden und Sätze.
+  // Settings for "Follow along": repetitions or seconds and sets.
   const stepper = (label, get, set, step, min, max, unit) => {
     const val = el('span', { class: 'mp-step__val' });
     const paint = () => { val.textContent = `${get()}${unit}`; };
@@ -159,7 +159,7 @@ export function mountPlayer(host, ex, m, { color = '', category = ex.category, o
 
   const setText = (node, txt) => { if (node.textContent !== txt) node.textContent = txt; };
 
-  /** Ein Bild zeichnen und die Beschriftung setzen. */
+  /** Draw a frame and set the caption. */
   function render() {
     let fr = null; let label = ''; let status = ''; let progress = 0; let pass = 'a';
     if (mode === 'preview') {
@@ -203,7 +203,7 @@ export function mountPlayer(host, ex, m, { color = '', category = ex.category, o
     setText(sideChip, sl);
     sideChip.hidden = !sl;
     setText(count, status);
-    // Der letzte Hinweis bleibt stehen, bis eine Phase einen neuen bringt – kein Flackern.
+    // The last hint stays until a phase brings a new one – no flicker.
     if (fr && fr.phase.cue) lastCue = fr.phase.cue;
     setText(cue, lastCue);
     const b = fr && fr.phase.breath ? t(`motion.breath.${fr.phase.breath}`) : '';
@@ -253,7 +253,7 @@ export function mountPlayer(host, ex, m, { color = '', category = ex.category, o
     loop();
   }
 
-  /** Bewegtes Bild oder Standbild (reduzierte Bewegung, solange nichts läuft). */
+  /** Moving image or still image (reduced motion, as long as nothing is running). */
   function showMotion(on) {
     svg.style.display = on ? '' : 'none';
     still.hidden = on;

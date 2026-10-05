@@ -1,10 +1,10 @@
 /* =========================================================================
-   zip.js — ZIP- und GZ-Archive im Browser lesen, ohne Bibliothek: Das Zentral-
-   verzeichnis sagt, wo jede Datei liegt; entpackt wird mit dem eingebauten
-   DecompressionStream ('deflate-raw' bzw. 'gzip'). Gedacht für Massenexporte
-   (Garmin-Datenexport, Strava-Archiv) – alles bleibt auf dem Gerät.
-   Grenzen gegen Riesen- und Bombenarchive: je Datei 64 MB, zusammen 512 MB,
-   höchstens 5 000 Einträge. ZIP64 und verschlüsselte Einträge werden übersprungen.
+   zip.js — reading ZIP and GZ archives in the browser, without a library: the central
+   directory says where each file is; unpacking uses the built-in
+   DecompressionStream ('deflate-raw' or 'gzip'). Intended for bulk exports
+   (Garmin data export, Strava archive) – everything stays on the device.
+   Limits against huge and bomb archives: 64 MB per file, 512 MB together,
+   at most 5,000 entries. ZIP64 and encrypted entries are skipped.
    ========================================================================= */
 
 import { t } from './i18n.js';
@@ -35,17 +35,17 @@ async function inflate(bytes, format, limit = MAX_ENTRY) {
   return out;
 }
 
-/** GZ-Datei (z. B. „12345.fit.gz“ aus dem Strava-Archiv) entpacken. */
+/** Unpack a GZ file (e.g. "12345.fit.gz" from the Strava archive). */
 export function gunzip(bytes) { return inflate(u8(bytes), 'gzip'); }
 
 /**
- * Einträge eines ZIP-Archivs als [{ name, data: Uint8Array }] – ohne Ordner und nur die,
- * für die `filter(name)` true liefert. Wirft, wenn kein ZIP-Verzeichnis zu finden ist.
+ * Entries of a ZIP archive as [{ name, data: Uint8Array }] – without folders and only those
+ * for which `filter(name)` returns true. Throws if no ZIP directory can be found.
  */
 export async function unzip(bytes, filter = () => true) {
   const b = u8(bytes);
   const view = new DataView(b.buffer, b.byteOffset, b.byteLength);
-  // Ende des Zentralverzeichnisses rückwärts suchen (dahinter höchstens 64 KB Kommentar).
+  // Search backwards for the end of the central directory (at most 64 KB of comment behind it).
   let eocd = -1;
   for (let i = b.length - 22; i >= Math.max(0, b.length - 22 - 0xffff); i--) {
     if (view.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
@@ -75,7 +75,7 @@ export async function unzip(bytes, filter = () => true) {
     try {
       if (method === 0) data = comp.slice();
       else if (method === 8) data = await inflate(comp, 'deflate-raw', Math.min(MAX_ENTRY, MAX_TOTAL - total));
-      else continue;   // andere Packverfahren kommen in Trainingsexporten nicht vor
+      else continue;   // other compression methods do not occur in training exports
     } catch { continue; }
     total += data.length;
     out.push({ name, data });

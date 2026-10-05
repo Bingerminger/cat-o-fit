@@ -1,10 +1,10 @@
 /* =========================================================================
-   exercises.js — Übungs-Bibliothek: Katalog (Kraft/Rumpf/Beweglichkeit/Kondition)
-   mit animierten Figuren zum Mitmachen (exercise-motions.js, motion-player.js),
-   Schritt-für-Schritt-Anleitung und Filter/Suche.
+   exercises.js — exercise library: catalogue (strength/core/mobility/conditioning)
+   with animated figures to follow along (exercise-motions.js, motion-player.js),
+   step-by-step instructions and filter/search.
 
-   Der Katalog + die Filterlogik sind DOM-frei und damit testbar; darunter die
-   View (#/uebungen). Keine externen Daten, keine Bilder von Dritten.
+   The catalogue + the filter logic are DOM-free and therefore testable; below
+   them the view (#/uebungen). No external data, no third-party images.
    ========================================================================= */
 
 import { el, icon, iconSvg, segmented, input, sectionHead, openSheet, toast } from './ui.js';
@@ -18,7 +18,7 @@ import { WORKOUTS, WORKOUT_CATS, workoutIds } from './workouts.js';
 import { t, tp, tList, has, hasArea, loadArea } from './i18n.js';
 import { DE_TERMS } from './exercise-terms-de.js';
 
-/** Kategorien (Reihenfolge = Anzeigereihenfolge). */
+/** Categories (order = display order). */
 export const EX_CATEGORIES = [
   { key: 'strength', get label() { return t('exerciseLib.cat.strength'); }, color: '#7c5cff' },
   { key: 'core', get label() { return t('exerciseLib.cat.core'); }, color: '#19b9c9' },
@@ -29,7 +29,7 @@ export function categoryMeta(key) { return EX_CATEGORIES.find((c) => c.key === k
 const DIFF = { 1: 'beginner', 2: 'intermediate', 3: 'advanced' };
 export function difficultyLabel(n) { return t(`exerciseLib.level.${DIFF[n] || DIFF[1]}`); }
 
-/** Körperregionen für den zusätzlichen Filter (eine Übung kann mehrere treffen). */
+/** Body regions for the additional filter (an exercise can hit several). */
 export const EX_REGIONS = [
   { key: 'ruecken', get label() { return t('exerciseLib.region.back'); } },
   { key: 'huefte', get label() { return t('exerciseLib.region.hips'); } },
@@ -37,7 +37,7 @@ export const EX_REGIONS = [
   { key: 'beine', get label() { return t('exerciseLib.region.legs'); } },
   { key: 'oberkoerper', get label() { return t('exerciseLib.region.upperBody'); } },
 ];
-// Zuordnung Übung → Regionen (Einzelquelle, abgeleitet aus den beanspruchten Muskeln).
+// Assignment exercise → regions (single source, derived from the muscles worked).
 const REGION_BY_ID = {
   squat: ['beine'], lunge: ['beine'], pushup: ['oberkoerper'], deadlift: ['beine', 'ruecken'],
   row: ['ruecken'], overhead_press: ['oberkoerper'], calf_raise: ['beine'],
@@ -53,7 +53,7 @@ const REGION_BY_ID = {
   nordic_hamstring: ['beine'], copenhagen: ['huefte', 'beine'], clamshell: ['huefte'],
   monster_walk: ['huefte', 'beine'], soleus_raise: ['beine'], running_drills: ['beine', 'huefte'],
   pogo_jumps: ['beine'], fifa11: ['beine', 'huefte'],
-  // seit 3.22.0
+  // since 3.22.0
   goblet_squat: ['beine'], sumo_squat: ['beine', 'huefte'], reverse_lunge: ['beine'], side_lunge: ['beine', 'huefte'],
   single_leg_deadlift: ['beine', 'ruecken'], hip_thrust: ['huefte', 'beine'], single_leg_bridge: ['huefte', 'beine'],
   kettlebell_swing: ['huefte', 'beine', 'ruecken'], jump_squat: ['beine'], good_morning: ['ruecken', 'huefte'],
@@ -208,10 +208,10 @@ export const EXERCISES = ROWS.map(exerciseOf);
 let textsLoading = null;
 export function loadExerciseTexts() { return (textsLoading ||= loadArea('exercises')); }
 
-/** Übung per id finden. */
+/** Find an exercise by id. */
 export function findExercise(id) { return EXERCISES.find((e) => e.id === id) || null; }
 
-/** Filtert nach Kategorie, Körperregion ('all' = alle) und Freitext (Name/Muskeln). */
+/** Filters by category, body region ('all' = all) and free text (name/muscles). */
 export function filterExercises(list = EXERCISES, { category = 'all', region = 'all', query = '' } = {}) {
   const q = query.trim().toLowerCase();
   return list.filter((e) => {
@@ -225,22 +225,22 @@ export function filterExercises(list = EXERCISES, { category = 'all', region = '
   });
 }
 
-/** Begriffe, unter denen eine Übung in Text vorkommen kann (Name ohne Klammerzusatz + Aliasse). */
+/** Terms under which an exercise can occur in a text (name without the parenthetical + aliases). */
 function termsOf(e) {
   return [...new Set([e.name.replace(/\s*\(.*\)\s*$/, ''), ...(e.aliases || []), ...(DE_TERMS[e.id] || [])])].filter((s) => s.length >= 4);
 }
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /**
- * Übungen, die ein Text nennt (z. B. die Beschreibung einer Krafteinheit), in der
- * Reihenfolge ihres Auftretens. Ein Begriff zählt nur am Wortanfang – „Sprungkniebeuge“
- * ist keine „Kniebeuge“.
+ * Exercises that a text mentions (e.g. the description of a strength session), in the
+ * order of their appearance. A term only counts at the start of a word – "Sprungkniebeuge"
+ * (jump squat) is not a "Kniebeuge" (squat).
  */
 export function exercisesInText(text = '') {
   return exerciseMentions(text).map((h) => h.e);
 }
 
-/** Wie exercisesInText, mit Fundstelle: [{ e, first }] – first = Index der ersten Nennung. */
+/** Like exercisesInText, with the position of the match: [{ e, first }] – first = index of the first mention. */
 export function exerciseMentions(text = '') {
   const hay = String(text || '');
   if (!hay.trim()) return [];
@@ -253,18 +253,19 @@ export function exerciseMentions(text = '') {
     }
   }
   // A term inside a longer term of another exercise does not count: "squat" in "Front squat",
-  // „Kreuzheben“ in „einbeiniges Kreuzheben“.
+  // "Kreuzheben" (deadlift) in "einbeiniges Kreuzheben" (single-leg deadlift).
   const kept = spans.filter((s) => !spans.some((o) => o.e !== s.e && o.start <= s.start && o.end >= s.end
     && o.end - o.start > s.end - s.start));
   const firstOf = new Map();
   for (const s of kept) if (!firstOf.has(s.e) || s.start < firstOf.get(s.e)) firstOf.set(s.e, s.start);
   const hits = EXERCISES.filter((e) => firstOf.has(e)).map((e) => ({ e, first: firstOf.get(e) }));
-  // Bei gleicher Fundstelle („Rumänisches Kreuzheben“ vs. „Kreuzheben“) gewinnt die erste im Katalog.
+  // With the same match position ("Rumänisches Kreuzheben" vs. "Kreuzheben", i.e. Romanian deadlift
+  // vs. deadlift) the first one in the catalogue wins.
   return hits.sort((x, y) => x.first - y.first);
 }
 
-/** Übungen, die zu einem Einheitstyp passen (für Vorschläge innerhalb der Einheit).
-    Fußballtermine bekommen das Aufwärmen nach FIFA 11+ und die Präventionsübungen. */
+/** Exercises that fit a session type (for suggestions within the session).
+    Football appointments get the FIFA 11+ warm-up and the prevention exercises. */
 export function suggestedExercisesFor(type) {
   if (type === 'cross_football' || type === 'match') return PREVENTION_IDS.map(findExercise).filter(Boolean);
   if (type === 'mobility' || type === 'recovery') return MOBILITY_CORE.map(findExercise).filter(Boolean);
@@ -272,16 +273,16 @@ export function suggestedExercisesFor(type) {
   return [];
 }
 
-/* Seit dem großen Katalog (3.22.0) schlägt eine Einheit nicht mehr alles vor, sondern eine
-   Auswahl der Grundübungen – dazu kommt, was ihre Beschreibung nennt (exercisesInText). */
+/* Since the large catalogue (3.22.0) a session no longer suggests everything but a selection of
+   the basic exercises – plus whatever its description mentions (exercisesInText). */
 const STRENGTH_CORE = ['squat', 'lunge', 'pushup', 'deadlift', 'row', 'overhead_press', 'calf_raise', 'glute_bridge',
   'step_up', 'split_squat', 'single_leg_deadlift', 'plank', 'side_plank', 'dead_bug', 'bird_dog', 'russian_twist'];
 const MOBILITY_CORE = ['cat_cow', 'hip_flexor_stretch', 'hamstring_stretch', 'calf_stretch', 'chest_opener', 'child_pose',
   'supine_twist', 'figure_four', 'quad_stretch', 'worlds_greatest_stretch', 'downward_dog', 'pigeon_pose'];
 
 /**
- * Übungen für eine Einheit: zuerst, was ihre Beschreibung nennt, dann die Vorschläge
- * zum Einheitstyp (nach Nutzung sortiert). Ohne Doppelte.
+ * Exercises for a session: first what its description mentions, then the suggestions
+ * for the session type (sorted by usage). Without duplicates.
  */
 export function exercisesForUnit(unit = {}, usage = {}) {
   const named = exercisesInText(`${unit.title || ''} · ${unit.description || ''}`);
@@ -290,14 +291,14 @@ export function exercisesForUnit(unit = {}, usage = {}) {
   return { named, suggested: rest, all: [...named, ...rest] };
 }
 
-/** Sortiert eine Übungsliste absteigend nach Nutzungshäufigkeit (usage: { id: count }). */
+/** Sorts an exercise list in descending order of usage frequency (usage: { id: count }). */
 export function sortByUsage(list, usage = {}) {
   return list.slice().sort((a, b) => (usage[b.id] || 0) - (usage[a.id] || 0) || a.name.localeCompare(b.name));
 }
 
 /* --------------------------------- View --------------------------------- */
 
-/** Geräte eines Workouts aus seinen Übungen („ohne Geräte“, wenn keine nötig sind). */
+/** Equipment of a workout from its exercises ("no equipment" if none is needed). */
 function workoutGear(w) {
   const gear = new Set();
   for (const id of workoutIds(w)) {
@@ -308,7 +309,7 @@ function workoutGear(w) {
   return list.length ? list.slice(0, 2).join(' · ') + (list.length > 2 ? ' …' : '') : t('exerciseLib.noGear');
 }
 
-/** Titelbild je Workout: die erste Übung, die noch kein anderes Workout zeigt. */
+/** Cover image per workout: the first exercise that no other workout shows yet. */
 let covers = null;
 function coverOf(w) {
   if (!covers) {
@@ -323,7 +324,7 @@ function coverOf(w) {
   return covers.get(w.id) || workoutIds(w)[0];
 }
 
-/** Workouts als Katalog: Suche, Filter, Kacheln; Antippen öffnet die Session (workout-show.js). */
+/** Workouts as a catalogue: search, filters, tiles; tapping opens the session (workout-show.js). */
 function renderWorkouts(view) {
   const search = input({ type: 'search', placeholder: t('exerciseLib.searchWorkouts'), 'aria-label': t('exerciseLib.searchWorkoutsAria'), value: uiState.woQuery });
   search.addEventListener('input', () => { uiState.woQuery = search.value; draw(); });
@@ -363,7 +364,7 @@ function renderWorkouts(view) {
     }
   }
   draw();
-  // Dauer aus der echten Zeitleiste – nachgeladen, show-program.js braucht diesen Katalog.
+  // Duration from the real timeline – loaded afterwards, show-program.js needs this catalogue.
   import('./show-program.js').then(({ programForWorkout, buildShow }) => {
     for (const w of WORKOUTS) minutes.set(w.id, `≈ ${Math.max(1, Math.round(buildShow(programForWorkout(w)).total / 60))} min`);
     draw();
@@ -384,7 +385,7 @@ export function render(view) {
   if (!hasArea('exercises')) {
     loadExerciseTexts().then(() => { if (hasArea('exercises') && view.isConnected !== false && /^#\/uebungen/.test(location.hash)) render(view); });
   }
-  // Zwei Kataloge: einzelne Übungen und fertige Workouts (am Stück, mit Musik).
+  // Two catalogues: single exercises and ready-made workouts (in one go, with music).
   view.appendChild(el('div', { class: 'mt-2' }, [segmented([{ value: 'exercises', label: t('exerciseLib.tabExercises', { n: EXERCISES.length }) }, { value: 'workouts', label: t('exerciseLib.tabWorkouts', { n: WORKOUTS.length }) }],
     uiState.tab, (v) => { uiState.tab = v; render(view); }, { label: t('exerciseLib.catalog') })]));
   if (uiState.tab === 'workouts') { renderWorkouts(view); return; }
@@ -394,12 +395,12 @@ export function render(view) {
   view.appendChild(el('div', { class: 'field mt-2' }, [search]));
 
   const cats = [{ value: 'all', label: t('common.all') }, ...EX_CATEGORIES.map((c) => ({ value: c.key, label: c.label }))];
-  // Fünf Kategorien passen auf schmalen Handys nicht nebeneinander – die Leiste scrollt dann seitlich.
+  // Five categories do not fit side by side on narrow phones – the bar then scrolls sideways.
   view.appendChild(el('div', { class: 'mt-2', style: { overflowX: 'auto', paddingBottom: '2px' } }, [
     segmented(cats, uiState.category, (v) => { uiState.category = v; drawGrid(); }, { label: t('exerciseLib.category') }),
   ]));
 
-  // Zusätzlicher Körperregion-Filter (Chips, horizontal scrollbar).
+  // Additional body-region filter (chips, horizontally scrollable).
   const regionRow = el('div', { class: 'mt-2', style: { display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '2px' } });
   const regionChips = [{ key: 'all', label: t('exerciseLib.allRegions') }, ...EX_REGIONS];
   const paintRegions = () => {
@@ -452,7 +453,7 @@ function openDetail(e) {
     class: 'btn btn--soft btn--block mt-3',
     onclick: () => { count(); toast(t('exerciseLib.countedDone'), 'good'); },
   }, [icon('check'), t('exerciseLib.done')]);
-  // Mitmach-Player: Vorschau in Schleife, „Mitmachen“ führt durch Sätze, Wiederholungen und Pausen.
+  // Follow-along player: preview in a loop, "Follow along" leads through sets, repetitions and breaks.
   const playerHost = el('div', { class: 'ex-detail__player' });
   const body = el('div', {}, [
     m ? playerHost : el('div', { class: 'ex-detail__art', html: exerciseArt(e.art, { color: cm.color }) }),
@@ -483,5 +484,5 @@ function openDetail(e) {
   openSheet({ title: e.name, body, onClose: () => { if (player) player.stop(); } });
 }
 
-/** Öffnet das Detail-Sheet einer Übung per id (z. B. aus einer Trainingseinheit). */
+/** Opens the detail sheet of an exercise by id (e.g. from a training session). */
 export function openExercise(id) { const e = findExercise(id); if (e) loadExerciseTexts().then(() => openDetail(e)); }

@@ -1,8 +1,8 @@
 /* =========================================================================
-   nav.test.js — Menüstruktur (UI-02, UI-14, UI-16, Navigation „groß“):
-   Route → Menüeintrag, aktive Markierung von „Mehr“ und „Fortschritt“, Sichtbarkeit
-   (Module, Admin, Verwalten fremder Profile), Konto-Kopf mit der ANGEMELDETEN Person,
-   das Erfassen-Sheet und die Begrüßung beim Verwalten.
+   nav.test.js — menu structure (UI-02, UI-14, UI-16, "large" navigation):
+   route → menu entry, active marker of "More" and "Progress", visibility
+   (modules, admin, managing other profiles), account header with the SIGNED-IN person,
+   the capture sheet and the greeting while managing.
    ========================================================================= */
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
@@ -40,37 +40,37 @@ async function family({ manage = false } = {}) {
 
 beforeEach(async () => { await family(); });
 
-test('navMatches: Startseite exakt, Unterseiten per Präfix, keine Teilwort-Treffer', () => {
+test('navMatches: home page exact, sub-pages by prefix, no partial-word matches', () => {
   assert.equal(navMatches(tab('heute'), '#/'), true);
   assert.equal(navMatches(tab('heute'), '#/calendar'), false);
   assert.equal(navMatches(item('Ziele & Pläne'), '#/plan/e1'), true);
   assert.equal(navMatches(item('Ziele & Pläne'), '#/event/e1'), true);
-  assert.equal(navMatches(item('Team/Familie'), '#/familie-verwalten'), false, 'kein Präfix-Treffer über Wortgrenzen');
+  assert.equal(navMatches(item('Team/Familie'), '#/familie-verwalten'), false, 'no prefix match across word boundaries');
   for (const p of ['#/stats', '#/health', '#/badges', '#/reports', '#/report/r1', '#/import']) {
-    assert.equal(navMatches(tab('fortschritt'), p), true, `${p} gehört zu Fortschritt`);
+    assert.equal(navMatches(tab('fortschritt'), p), true, `${p} belongs to Progress`);
   }
   assert.equal(navMatches(tab('fortschritt'), '#/settings'), false);
 });
 
-test('Mehr-Tab ist auf seinen Seiten aktiv, nicht auf Tab-Seiten (UI-14)', () => {
+test('The More tab is active on its own pages, not on tab pages (UI-14)', () => {
   assert.equal(inMore('#/settings'), true);
-  assert.equal(inMore('#/plan/e1'), true, 'Plan-Seiten gehören zu „Ziele & Pläne“');
+  assert.equal(inMore('#/plan/e1'), true, 'plan pages belong to "Goals & plans"');
   assert.equal(inMore('#/nutrition'), true);
-  assert.equal(inMore('#/stats'), false, 'Statistik liegt jetzt unter „Fortschritt“');
+  assert.equal(inMore('#/stats'), false, 'statistics now lives under "Progress"');
   assert.equal(inMore('#/'), false);
 });
 
-test('Sichtbarkeit: abgeschaltete Module und „Team verwalten“ nur für Admins', async () => {
+test('Visibility: switched-off modules and "Manage team" only for admins', async () => {
   store.setSetting('modules', { nutrition: false });
   const labels = visibleGroups().flatMap((g) => g.items.map((i) => i.label));
   assert.ok(!labels.includes('Ernährung'));
-  assert.ok(labels.includes('Team verwalten'), 'Nora ist Admin');
+  assert.ok(labels.includes('Team verwalten'), 'Nora is an admin');
   store.clearActiveUser();
   await store.login('u-2', '');
   assert.ok(!visibleGroups().flatMap((g) => g.items.map((i) => i.label)).includes('Team verwalten'));
 });
 
-test('Verwalten: Zyklus und Labor verschwinden aus Mehr und Erfassen', async () => {
+test('Managing: cycle and labs disappear from More and Capture', async () => {
   const own = captureItems().map((c) => c.key);
   assert.deepEqual(own, ['training', 'koerper', 'mahlzeit', 'labor', 'periode', 'checkliste']);
   await family({ manage: true });
@@ -79,7 +79,7 @@ test('Verwalten: Zyklus und Labor verschwinden aus Mehr und Erfassen', async () 
   assert.deepEqual(captureItems().map((c) => c.key), ['training', 'koerper', 'mahlzeit', 'checkliste']);
 });
 
-test('Konto-Kopf zeigt die ANGEMELDETE Person und beim Verwalten den Rückweg (UI-02)', async () => {
+test('The account header shows the SIGNED-IN person and, while managing, the way back (UI-02)', async () => {
   let block = accountBlock({ onBack: () => {} });
   assert.match(block.textContent, /Nora/);
   assert.match(block.textContent, /Administrator:in · angemeldet/);
@@ -87,22 +87,22 @@ test('Konto-Kopf zeigt die ANGEMELDETE Person und beim Verwalten den Rückweg (U
   await family({ manage: true });
   let back = 0;
   block = accountBlock({ onBack: () => { back++; } });
-  assert.match(block.textContent, /Nora/, 'nicht Lea als „angemeldet“');
+  assert.match(block.textContent, /Nora/, 'not Lea as "signed in"');
   assert.doesNotMatch(block.textContent, /Lea.*angemeldet/);
   assert.match(block.textContent, /verwaltet gerade: Lea/);
   const btn = block.querySelectorAll('button').find((b) => b.textContent === 'Zurück zu mir');
-  assert.ok(btn, 'Knopf „Zurück zu mir“');
+  assert.ok(btn, '"Back to me" button');
   btn.click();
   assert.equal(back, 1);
 });
 
-test('Fortschritt-Reiter markieren die aktuelle Seite (aria-current)', () => {
+test('Progress tabs mark the current page (aria-current)', () => {
   const nav = progressTabs('#/report/r1');
   const current = nav.querySelectorAll('a').filter((a) => a.getAttribute('aria-current') === 'page');
   assert.deepEqual(current.map((a) => a.textContent), ['Berichte']);
 });
 
-test('Heute: Titel „Heute“, beim Verwalten „Leas Übersicht“ statt Begrüßung', async () => {
+test('Today: title "Today", while managing the overview of the managed person instead of the greeting', async () => {
   let view = setupShell();
   dashboard.render(view);
   assert.equal(doc.getElementById('header-title').textContent, 'Heute');
@@ -114,7 +114,7 @@ test('Heute: Titel „Heute“, beim Verwalten „Leas Übersicht“ statt Begr�
   assert.doesNotMatch(view.textContent, /Guten (Morgen|Tag|Abend), Lea/);
 });
 
-test('Einstellungen: Konto-Karte nennt beim Verwalten die angemeldete Person', async () => {
+test('Settings: the account card names the signed-in person while managing', async () => {
   await family({ manage: true });
   const view = setupShell();
   settings.render(view);
@@ -125,14 +125,14 @@ test('Einstellungen: Konto-Karte nennt beim Verwalten die angemeldete Person', a
   assert.match(text, /PIN für Lea setzen/);
 });
 
-test('genitive: deutscher Genitiv für Vornamen', () => {
+test('genitive: German genitive for first names', () => {
   assert.equal(genitive('Lea'), 'Leas');
   assert.equal(genitive('Max'), 'Max’');
   assert.equal(genitive('Klaus'), 'Klaus’');
   assert.equal(genitive('Moritz'), 'Moritz’');
 });
 
-test('UI-13: leere App – Einstieg statt Ruhetag, Momentum erst nach dem ersten Training', async () => {
+test('UI-13: empty app – onboarding instead of rest day, momentum only after the first workout', async () => {
   ['sessions', 'plans', 'events'].forEach((a) => store.replaceArea(a, []));
   let view = setupShell();
   dashboard.render(view);
@@ -140,9 +140,9 @@ test('UI-13: leere App – Einstieg statt Ruhetag, Momentum erst nach dem ersten
   assert.match(text, /Los geht’s/);
   assert.match(text, /Profil ausfüllen/);
   assert.match(text, /Ziel oder Programm anlegen/);
-  assert.match(text, /Mitglieder hinzufügen/, 'Admin sieht den Team-Schritt');
-  assert.doesNotMatch(text, /Momentum/, 'kein Momentum ohne Aktivität');
-  assert.doesNotMatch(text, /Ruhetag/, 'ohne Plan kein „Ruhetag“');
+  assert.match(text, /Mitglieder hinzufügen/, 'admin sees the team step');
+  assert.doesNotMatch(text, /Momentum/, 'no momentum without activity');
+  assert.doesNotMatch(text, /Ruhetag/, 'no "Rest day" without a plan');
   store.replaceArea('sessions', [{ id: 's1', date: '2026-09-01', type: 'easy', durationSec: 1800 }]);
   view = setupShell();
   dashboard.render(view);
@@ -150,12 +150,12 @@ test('UI-13: leere App – Einstieg statt Ruhetag, Momentum erst nach dem ersten
   assert.doesNotMatch(view.textContent, /Los geht’s/);
 });
 
-test('UI-15/UI-17: „Heute“ ohne Schnellzugriff, in zwei Spalten gegliedert', async () => {
+test('UI-15/UI-17: "Today" without quick access, organised in two columns', async () => {
   store.replaceArea('sessions', [{ id: 's1', date: '2026-09-01', type: 'easy', durationSec: 1800 }]);
   const view = setupShell();
   dashboard.render(view);
   const cols = view.querySelectorAll('.dash-col');
-  assert.equal(cols.length, 2, 'zwei Spalten (ab 1180 px nebeneinander)');
+  assert.equal(cols.length, 2, 'two columns (side by side from 1180 px)');
   assert.match(cols[0].textContent, /Heute/);
   assert.doesNotMatch(view.textContent, /Schnellzugriff/);
 });

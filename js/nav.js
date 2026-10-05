@@ -1,12 +1,12 @@
 /* =========================================================================
-   nav.js — Menüstruktur der App (Tab-Leiste, gegliedertes „Mehr“, Seitenleiste)
-   und die Zuordnung Route → Menüeintrag für die aktive Markierung.
+   nav.js — menu structure of the app (tab bar, structured "More", sidebar)
+   and the mapping route → menu entry for the active marker.
 
-   Das Tägliche nach vorn: Heute · Kalender · ＋ Erfassen · Fortschritt · Mehr.
-   „Fortschritt“ bündelt Statistik, Körperwerte, Erfolge und Berichte als Reiter;
-   „Ziele & Pläne“ liegt eine Ebene tiefer (erreichbar auch über die Wettkampf-Karte
-   auf „Heute“ und den Plan-Link jeder Einheit). Die alten Routen bleiben gültig –
-   Deep-Links aus Kalender-Abos, Handbuch und Lesezeichen funktionieren weiter.
+   The daily things up front: Today · Calendar · ＋ Log · Progress · More.
+   "Progress" bundles statistics, body values, achievements and reports as tabs;
+   "Goals & plans" sits one level deeper (also reachable via the race card
+   on "Today" and the plan link of each session). The old routes remain valid –
+   deep links from calendar subscriptions, manual and bookmarks keep working.
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -14,7 +14,7 @@ import { el, icon, iconSvg, safeAccent } from './ui.js';
 
 import { t } from './i18n.js';
 
-/** Tab-Leiste (iPhone). `action`: kein Link, sondern ein Knopf (Erfassen, Mehr). */
+/** Tab bar (iPhone). `action`: not a link but a button (Log, More). */
 export const TAB_ITEMS = [
   { key: 'heute', icon: 'home', get label() { return t('nav.today'); }, hash: '#/' },
   { key: 'kalender', icon: 'calendar', get label() { return t('nav.calendar'); }, hash: '#/calendar' },
@@ -23,7 +23,7 @@ export const TAB_ITEMS = [
   { key: 'mehr', icon: 'more', get label() { return t('nav.more'); }, action: 'more' },
 ];
 
-/** Reiter innerhalb von „Fortschritt“ – jeder ist eine eigene (bestehende) Route. */
+/** Tabs within "Progress" – each is its own (existing) route. */
 export const PROGRESS_TABS = [
   { get label() { return t('nav.tabs.training'); }, hash: '#/stats' },
   { get label() { return t('nav.tabs.body'); }, hash: '#/health', match: ['#/health', '#/import'] },
@@ -31,8 +31,8 @@ export const PROGRESS_TABS = [
   { get label() { return t('nav.tabs.reports'); }, hash: '#/reports', match: ['#/reports', '#/report/'] },
 ];
 
-/** Zweite Ebene, nach Denkweise gegliedert. `module`: nur bei aktivem Modul,
-    `admin`: nur für Administrator:innen, `self`: nicht beim Verwalten fremder Profile. */
+/** Second level, structured by way of thinking. `module`: only with the module active,
+    `admin`: only for administrators, `self`: not when managing other profiles. */
 export const MORE_GROUPS = [
   { id: 'training', get title() { return t('nav.groups.training'); }, items: [
     { icon: 'flag', get label() { return t('nav.goalsPlans'); }, hash: '#/events', match: ['#/events', '#/event/', '#/plan/'] },
@@ -57,8 +57,8 @@ export const MORE_GROUPS = [
   ] },
 ];
 
-/** Gehört die Route (`#/plan/e1`) zu diesem Eintrag? Präfixe mit „/“ am Ende passen auf
-    Unterseiten, alle anderen exakt oder mit weiterem Pfadsegment. */
+/** Does the route (`#/plan/e1`) belong to this entry? Prefixes with a trailing "/" match
+    sub-pages, all others exactly or with a further path segment. */
 export function navMatches(item, path) {
   const list = item.match || (item.hash ? [item.hash] : []);
   return list.some((h) => {
@@ -68,27 +68,27 @@ export function navMatches(item, path) {
   });
 }
 
-/** Ist ein Eintrag für die aktuelle Sicht sichtbar? Module sind Standard an und in den
-    Einstellungen abschaltbar; private Module (Zyklus, Labor) sind beim Verwalten fremder
-    Profile tabu (areaAllowed); „Team verwalten“ nur für Administrator:innen. */
+/** Is an entry visible for the current view? Modules are on by default and can be switched off in
+    the settings; private modules (cycle, lab) are taboo when managing other
+    profiles (areaAllowed); "Manage team" only for administrators. */
 export function navVisible(item) {
   if (item.admin && !store.isAdmin()) return false;
   return !item.module || (store.settings().modules?.[item.module] !== false && store.areaAllowed(item.module));
 }
 
-/** Sichtbare Gruppen/Einträge – `isVisible(item)` entscheidet über Modul, Rolle usw. */
+/** Visible groups/entries – `isVisible(item)` decides on module, role etc. */
 export function visibleGroups(isVisible = navVisible) {
   return MORE_GROUPS
     .map((g) => ({ ...g, items: g.items.filter((it) => isVisible(it)) }))
     .filter((g) => g.items.length);
 }
 
-/** Liegt die Route in „Mehr“ (damit der Mehr-Tab aktiv markiert werden kann)? */
+/** Is the route in "More" (so that the More tab can be marked active)? */
 export function inMore(path, isVisible = navVisible) {
   return visibleGroups(isVisible).some((g) => g.items.some((it) => navMatches(it, path)));
 }
 
-/** Reiter „Training · Körper · Erfolge · Berichte“ oben in den Fortschritt-Ansichten. */
+/** Tabs "Training · Body · Badges · Reports" at the top of the progress views. */
 export function progressTabs(activeHash) {
   const path = activeHash || (typeof location !== 'undefined' ? location.hash : '');
   return el('nav', { class: 'progress-tabs segmented', 'aria-label': t('nav.progressAria') },
@@ -101,8 +101,8 @@ export function progressTabs(activeHash) {
     }));
 }
 
-/** Kleiner Hilfsbaustein: Menüeintrag als Link mit Symbol (Seitenleiste/Mehr-Sheet).
-    `short`: Kurzbeschriftung (Seitenleisten-Fuß), der volle Name bleibt als Tooltip. */
+/** Small helper block: menu entry as a link with an icon (sidebar/More sheet).
+    `short`: short label (sidebar footer), the full name remains as a tooltip. */
 export function navLink(item, { cls = 'sidebar__item', path = '', onClick = null, short = false } = {}) {
   const active = navMatches(item, path);
   const text = short && item.short ? item.short : item.label;
@@ -114,10 +114,10 @@ export function navLink(item, { cls = 'sidebar__item', path = '', onClick = null
 }
 
 /**
- * Konto-Kopf für Seitenleiste und „Mehr“: immer die ANGEMELDETE Person (UI-02) – beim
- * Verwalten eines anderen Profils zusätzlich „verwaltet gerade: Lea“ mit dem Weg zurück.
- * Früher stand hier das verwaltete Mitglied als „angemeldet“; am geteilten iPad hielt
- * man sich dann für Lea angemeldet und trug Werte ins falsche Profil ein.
+ * Account header for sidebar and "More": always the SIGNED-IN person (UI-02) – when
+ * managing another profile additionally "now managing: Lea" with the way back.
+ * Formerly the managed member was shown here as "signed in"; on the shared iPad
+ * people then thought they were signed in as Lea and entered values into the wrong profile.
  */
 export function accountBlock({ onBack = null, onLogout = null } = {}) {
   const me = store.identityMember();

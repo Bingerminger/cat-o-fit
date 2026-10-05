@@ -1,8 +1,8 @@
 /* =========================================================================
-   layout-fixes.test.js — Darstellungsfehler, die beim Neurendern der Doku-Bilder
-   (tools/render-screenshots.mjs, 390 × 844) sichtbar wurden: Wörter, die über
-   Kacheln laufen oder mitten im Wort umbrechen, ein Banner auf halber Breite,
-   Wetter über dem Zellrand. Geprüft wird die Regel im CSS und die Klasse im DOM.
+   layout-fixes.test.js — rendering defects that became visible when the docs images
+   were re-rendered (tools/render-screenshots.mjs, 390 × 844): words that run over
+   tiles or break in the middle of a word, a banner at half width,
+   weather above the cell edge. What is checked is the rule in the CSS and the class in the DOM.
    ========================================================================= */
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
@@ -14,10 +14,10 @@ import * as calendar from '../js/calendar.js';
 import { todayStr, addDays } from '../js/ui.js';
 
 const read = (f) => readFileSync(new URL(`../css/${f}`, import.meta.url), 'utf8');
-/** Deklarationsblock eines Selektors (erster Treffer). */
+/** Declaration block of a selector (first match). */
 function rule(css, selector) {
   const i = css.indexOf(`${selector} {`);
-  assert.ok(i >= 0, `Regel ${selector} fehlt`);
+  assert.ok(i >= 0, `Rule ${selector} is missing`);
   return css.slice(i, css.indexOf('}', i));
 }
 
@@ -36,32 +36,32 @@ beforeEach(() => {
   store.setProfile({ name: 'Test', heightCm: 170, weightKg: 70, birthYear: 1990, sex: 'w' });
 });
 
-test('Abzeichen trennen an den weichen Trennstrichen („Tausend-sassa“) – nicht mitten im Wort', () => {
+test('Badges break at the soft hyphens ("Tausend-sassa") – not in the middle of a word', () => {
   const css = read('cards.css');
   for (const sel of ['.badge-card__name', '.badge-card__desc']) {
     const r = rule(css, sel);
-    assert.doesNotMatch(r, /hyphens:\s*none/, `${sel}: „hyphens: none“ schaltet auch weiche Trennstriche ab`);
+    assert.doesNotMatch(r, /hyphens:\s*none/, `${sel}: "hyphens: none" also switches off soft hyphens`);
     assert.match(r, /hyphens:\s*manual/);
   }
 });
 
-test('Kennzahl-Kacheln: lange Wörter umbrechen statt über den Rand zu laufen', () => {
+test('Metric tiles: long words wrap instead of running over the edge', () => {
   const css = read('cards.css');
   assert.match(rule(css, '.stat'), /min-width:\s*0/);
   assert.match(rule(css, '.stat__label'), /hyphens:\s*auto/);
   assert.match(rule(css, '.stat-grid--pairs'), /minmax\(140px,\s*1fr\)/);
 });
 
-test('Wettkampf-Detail: Distanz als Zahl, Streckenname darunter', () => {
+test('Race detail: distance as a number, distance name below', () => {
   store.replaceArea('events', [{ id: 'e1', name: 'Stadtlauf', kind: 'race', date: addDays(todayStr(), 40), distanceType: 'HM', distanceKm: 21.0975, targetTime: '01:55:00' }]);
   const view = setupShell();
   events.renderDetail(view, 'e1');
   const stat = view.querySelectorAll('.stat')[0];
-  assert.equal(stat.querySelector('.stat__val').textContent, '21,1\u00a0km', 'vorher „Halbmarathon“ – passte nicht in die Kachel');
+  assert.equal(stat.querySelector('.stat__val').textContent, '21,1\u00a0km', 'previously the label "Halbmarathon" – did not fit in the tile');
   assert.equal(stat.querySelector('.stat__label').textContent, 'Halbmarathon');
 });
 
-test('Körperwerte: Kacheln paarweise (iPhone) statt vier zu schmale nebeneinander', () => {
+test('Body measurements: tiles in pairs (iPhone) instead of four that are too narrow side by side', () => {
   const t = todayStr();
   store.replaceArea('health', [
     { id: 'h1', date: addDays(t, -9), weight: 72.6, bodyFat: 25, muscleMass: 28, restingHr: 52 },
@@ -70,18 +70,18 @@ test('Körperwerte: Kacheln paarweise (iPhone) statt vier zu schmale nebeneinand
   const view = setupShell();
   health.render(view);
   const grid = view.querySelectorAll('.stat-grid').find((g) => g.querySelector('.metric-tile'));
-  assert.ok(grid, 'Kachel-Übersicht vorhanden');
+  assert.ok(grid, 'tile overview present');
   assert.ok(grid.className.includes('stat-grid--pairs'));
 });
 
-test('Workout: Trinkpausen-Banner nimmt seine Textbreite, nicht die halbe Bildschirmbreite', () => {
+test('Workout: the drink-break banner takes its text width, not half the screen width', () => {
   assert.match(rule(read('workout-mode.css'), '.workout__drink'), /width:\s*max-content/);
 });
 
-test('Kalender: Wetter rutscht in schmalen Zellen unter das Datum', () => {
+test('Calendar: weather slips below the date in narrow cells', () => {
   assert.match(rule(read('calendar.css'), '.cal-cell__head'), /flex-wrap:\s*wrap/);
   const view = setupShell();
   calendar.render(view);
   const cell = view.querySelectorAll('.cal-cell')[0];
-  assert.ok(cell.querySelector('.cal-cell__head'), 'Kopfzeile der Zelle trägt die Klasse');
+  assert.ok(cell.querySelector('.cal-cell__head'), 'header row of the cell carries the class');
 });

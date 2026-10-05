@@ -1,9 +1,9 @@
 /* =========================================================================
-   family.js — Team-/Familien-Dashboard (Menüpunkt „Team/Familie“).
-   NUR im angemeldeten Zustand sichtbar (Login/Profilauswahl liegt in login.js,
-   Verwaltung in den Einstellungen). Reine Übersicht: Mitglieder-Kacheln plus
-   Team-Badges (Monats-km & Meilenstein, Wochen-Aktivität, anstehende Wettkämpfe,
-   Team-Erfolge). Zyklusdaten kommen hier nie vor.
+   family.js — team/family dashboard (menu item "Team/family").
+   Visible ONLY when signed in (login/profile selection lives in login.js,
+   management in the settings). Pure overview: member tiles plus
+   team badges (monthly km & milestone, weekly activity, upcoming competitions,
+   team achievements). Cycle data never appears here.
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -25,9 +25,9 @@ const METRIC_DEFS = {
   get streak() { return t('family.metricStreak'); },
 };
 const DEFAULT_METRICS = ['momentum', 'weekKm'];
-let teamFilter = null; // null = alle Mitglieder, teamId = ein Team, '__none__' = ohne Team
+let teamFilter = null; // null = all members, teamId = one team, '__none__' = without a team
 
-/** Gefilterte Mitgliederliste nach aktueller Team-Auswahl. */
+/** Member list filtered by the current team selection. */
 function filterMembersByTeam(members, teamList, filter) {
   if (!filter) return members;
   if (filter === '__none__') return teamlessMembers(members, teamList);
@@ -35,7 +35,7 @@ function filterMembersByTeam(members, teamList, filter) {
   return found ? filterTeamMembers(members, found) : members;
 }
 
-/** Auswahlleiste: Alle · je Team · Ohne Team. Wechsel rendert die Ansicht neu. */
+/** Selection bar: All · per team · No team. Changing it re-renders the view. */
 function teamFilterBar(view, teamList, allMembers) {
   const bar = el('div', { class: 'row', style: { gap: '6px', flexWrap: 'wrap', margin: '2px 0 10px' } });
   const chip = (id, label) => el('button', {
@@ -48,7 +48,7 @@ function teamFilterBar(view, teamList, allMembers) {
   return bar;
 }
 
-/** Nächstes Hauptziel (Event) aus der Event-Liste eines Mitglieds. */
+/** Next main goal (event) from a member's event list. */
 function nextGoal(events) {
   const today = todayStr();
   return (events || [])
@@ -94,7 +94,7 @@ export function render(view) {
   });
   view.appendChild(grid);
 
-  // Daten aller Mitglieder laden -> Kacheln, Wochenzusammenfassung und Team-Badges füllen.
+  // Load the data of all members -> fill tiles, weekly summary and team badges.
   loadAll(members).then(({ byId, buckets }) => {
     let totalKm = 0, totalSessions = 0;
     members.forEach((m) => {
@@ -110,13 +110,13 @@ export function render(view) {
     badgesSlot.appendChild(weekActivityCard(ts.weekActivity));
     if (ts.upcomingRaces.length) badgesSlot.appendChild(upcomingRacesCard(ts.upcomingRaces));
     badgesSlot.appendChild(achievementsCard(ts.achievements));
-    // Trainer-Sicht: nur für Admins und nur mit Freigabe der jeweiligen Person (TRAIN-53).
+    // Coach view: only for admins and only with the respective person's consent (TRAIN-53).
     const tl = store.isAdmin() ? teamLoad(buckets, todayStr()) : [];
     if (tl.length) badgesSlot.appendChild(teamLoadCard(tl));
-  }).catch(() => { /* offline: Kacheln/Badges bleiben leer */ });
+  }).catch(() => { /* offline: tiles/badges stay empty */ });
 }
 
-/** Daten aller Mitglieder einsammeln (aktiver Nutzer lokal, Rest read-only). */
+/** Collect the data of all members (active user locally, the rest read-only). */
 async function loadAll(members) {
   const today = todayStr();
   const weekStart = weekStartMonday(today), weekEnd = addDays(weekStart, 6);
@@ -129,11 +129,11 @@ async function loadAll(members) {
     const prefs = (profile && profile.settings) || {};
     const shareGoal = prefs.shareGoal !== false;
     const shareMetrics = prefs.shareMetrics !== false;
-    const shareLoad = prefs.shareLoad === true;   // Trainer-Sicht nur mit ausdrücklicher Freigabe
+    const shareLoad = prefs.shareLoad === true;   // Coach view only with explicit consent
     const health = shareLoad ? await grab('health') : [];
 
-    // Zyklusdaten anderer Mitglieder gibt es hier nicht (und darf es nicht geben) –
-    // deren Plan-Einhaltung/Momentum rechnet ohne geschützte Tage.
+    // Cycle data of other members does not exist here (and must not) –
+    // their plan adherence/momentum is calculated without protected days.
     const data = { sessions, plans, health: [], events, profile: {}, ...(isSelf ? {} : { isProtectedDay: () => false }) };
     const mom = momentum(data, today);
     const stats = computeStats(data, today);
@@ -167,7 +167,7 @@ function fillMetrics(slot, s, metrics) {
   });
 }
 
-/* ------------------------------- Team-Badges ---------------------------- */
+/* ------------------------------- Team badges ---------------------------- */
 function familySummary(totalKm, totalSessions, count) {
   return el('div', { class: 'family-summary' }, [
     el('div', { class: 'family-summary__title', text: t('family.summaryTitle') }),
@@ -195,7 +195,7 @@ function badgeCard(title, emoji, children) {
   ]);
 }
 
-/** Monats-km zusammen + Fortschritt zum nächsten Meilenstein. */
+/** Combined monthly km + progress towards the next milestone. */
 function monthKmCard(mk) {
   const remaining = Math.max(0, Math.round((mk.milestone - mk.km) * 10) / 10);
   return badgeCard(t('family.monthTitle'), '🛣️', [
@@ -208,7 +208,7 @@ function monthKmCard(mk) {
   ]);
 }
 
-/** Wer hat diese Woche schon trainiert + aktivste Person. */
+/** Who has already trained this week + most active person. */
 function weekActivityCard(wa) {
   const chips = el('div', { class: 'row wrap gap-2', style: { marginTop: '8px' } });
   wa.rows.forEach((r) => {
@@ -226,8 +226,8 @@ function weekActivityCard(wa) {
   ]);
 }
 
-/** Anstehende Wettkämpfe aller Mitglieder. */
-/** Belastung im Team (Trainer-Sicht): Wochenlast, Lastverhältnis und das jüngste Befinden. */
+/** Upcoming competitions of all members. */
+/** Load in the team (coach view): weekly load, load ratio and the most recent well-being. */
 const LOAD_ZONE_TEXT = {
   get optimal() { return t('family.zoneOptimal'); },
   get niedrig() { return t('family.zoneLow'); },
@@ -272,7 +272,7 @@ function upcomingRacesCard(races) {
   return badgeCard(t('family.upcomingRaces'), '🏁', [list]);
 }
 
-/** Gesammelte Trainings-Abzeichen des Teams + längste aktuelle Wochen-Serie. */
+/** Collected training badges of the team + longest current weekly streak. */
 function achievementsCard(a) {
   return badgeCard(t('family.achievements'), '🏆', [
     el('div', { class: 'row gap-4', style: { marginTop: '6px' } }, [

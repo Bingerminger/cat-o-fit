@@ -1,12 +1,12 @@
 /* =========================================================================
-   capture.js — „＋ Erfassen“: ein fester Platz für alles, was man schnell
-   einträgt. Vorher lagen die Wege in fünf Modulen verstreut (ungeplantes Training
-   nur über Ziel → Plan, Mahlzeit über Mehr → Ernährung …).
+   capture.js — "＋ Log": one fixed place for everything you enter quickly.
+   Before, the routes were scattered across five modules (unplanned training
+   only via Goals & plans, meal via More → Nutrition …).
 
-   Die Formulare selbst gehören weiter ihren Modulen; nach dem Speichern zeichnen sie
-   über den Router die GERADE offene Ansicht neu (refreshView) – ein Eintrag aus „Heute“
-   lässt also „Heute“ stehen. Modulgebundene Einträge erscheinen nur bei aktivem Modul,
-   private (Zyklus, Labor) nicht beim Verwalten fremder Profile (navVisible).
+   The forms themselves still belong to their modules; after saving they redraw the
+   CURRENTLY open view via the router (refreshView) – an entry made from "Today"
+   therefore leaves "Today" in place. Module-bound entries appear only when the module is active,
+   private ones (cycle, labs) not when managing other profiles (navVisible).
    ========================================================================= */
 
 import { el, iconSvg, openSheet, closeSheet } from './ui.js';
@@ -28,12 +28,12 @@ export const CAPTURE_ITEMS = [
   { key: 'checkliste', icon: 'list', get label() { return t('capture.checklist'); }, get hint() { return t('capture.checklistHint'); }, module: 'checklist', open: () => openChecklistForm() },
 ];
 
-/** Die Einträge, die für die aktuelle Sicht gelten. */
+/** The entries that apply to the current view. */
 export function captureItems(isVisible = navVisible) {
   return CAPTURE_ITEMS.filter((it) => isVisible(it));
 }
 
-/** Auswahl-Sheet „Erfassen“: ein Tipp öffnet direkt das passende Formular. */
+/** Picker sheet "Log": one tap opens the matching form directly. */
 export function openCaptureSheet(isVisible = navVisible) {
   const grid = el('div', { class: 'capture-grid' }, captureItems(isVisible).map((it) => el('button', {
     class: 'capture-tile', type: 'button', dataset: { capture: it.key },

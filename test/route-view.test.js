@@ -1,5 +1,5 @@
-/* Strecke ohne Kartendienst: vereinfachte Linie + Höhenprofil (MKT-17) – als SVG
-   gezeichnet und in der Auswertung einer importierten Einheit sichtbar. */
+/* Route without a map service: simplified line + elevation profile (MKT-17) – drawn as SVG
+   and visible in the evaluation of an imported unit. */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import * as store from '../js/storage.js';
@@ -12,21 +12,21 @@ const route = {
   ele: Array.from({ length: 60 }, (_, i) => 110 + Math.round(20 * Math.sin(i / 9))),
 };
 
-test('routeMap: Linie mit Start und Ziel, Höhenprofil mit Min/Max – ohne Kartenkacheln', () => {
+test('routeMap: line with start and finish, elevation profile with min/max – without map tiles', () => {
   const box = routeMap(route, { distanceKm: 8.4, ascentM: 64, decode: decodePolyline });
   const svgs = box.querySelectorAll('svg');
   assert.equal(svgs.length, 2);
   assert.match(svgs[0].getAttribute('aria-label'), /Strecke über 8,4 km – ohne Karte/);
   const path = svgs[0].querySelector('path');
   assert.match(path.getAttribute('d'), /^M[\d. ]+L/);
-  assert.equal(svgs[0].querySelectorAll('circle').length, 2, 'Start und Ziel');
-  assert.ok(!box.querySelector('image') && !box.querySelector('img'), 'keine Kartenbilder');
+  assert.equal(svgs[0].querySelectorAll('circle').length, 2, 'start and finish');
+  assert.ok(!box.querySelector('image') && !box.querySelector('img'), 'no map images');
   assert.match(svgs[1].getAttribute('aria-label'), /Höhenprofil: 90 bis 130 m, 64 Höhenmeter/);
   const labels = svgs[1].querySelectorAll('text').map((t) => t.textContent);
   assert.ok(labels.includes('130 m') && labels.includes('90 m') && labels.includes('8,4 km'));
 });
 
-test('Auswertung einer importierten Einheit zeigt die Strecke', () => {
+test('The evaluation of an imported unit shows the route', () => {
   const doc = globalThis.document;
   doc.body.childNodes = [];
   for (const id of ['header-title', 'header-subtitle', 'header-back', 'header-actions']) {
@@ -37,5 +37,5 @@ test('Auswertung einer importierten Einheit zeigt die Strecke', () => {
   renderSession(view, 'f1');
   assert.match(view.textContent, /Strecke/);
   assert.match(view.textContent, /64 Höhenmeter bergauf/);
-  assert.ok(view.querySelector('.route-map'), 'Karte ohne Kacheln eingebaut');
+  assert.ok(view.querySelector('.route-map'), 'map without tiles included');
 });

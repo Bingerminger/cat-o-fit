@@ -1,18 +1,18 @@
 /* =========================================================================
-   hrzones.js — Herzfrequenz-Zonen. Reine, DOM-freie Logik (node:test).
+   hrzones.js — heart-rate zones. Pure, DOM-free logic (node:test).
 
-   - Klassisch in % der maximalen Herzfrequenz (5 Zonen à 10 %).
-   - Optional über die Herzfrequenzreserve (Karvonen): Ruhepuls + % × (HFmax − Ruhepuls).
-     Bei hohem Ruhepuls oder gut trainierten Läufer:innen setzen reine %-HFmax-Zonen
-     die Grundlage oft zu niedrig an.
-   - HFmax aus dem Alter (Tanaka et al. 2001: 208 − 0,7 × Alter) – nur als klar
-     markierter Startwert, wenn keine gemessene HFmax vorliegt. Früher gab es ohne
-     Eingabe gar keine Zonen, obwohl das Alter bekannt war.
+   - Classic in % of maximum heart rate (5 zones of 10 % each).
+   - Optionally via heart-rate reserve (Karvonen): resting HR + % × (HRmax − resting HR).
+     With a high resting HR or well-trained runners, pure %-HRmax zones
+     often set the base too low.
+   - HRmax from age (Tanaka et al. 2001: 208 − 0.7 × age) – only as a clearly
+     marked starting value if no measured HRmax is available. Formerly there were no
+     zones at all without input, although the age was known.
    ========================================================================= */
 
 import { t } from './i18n.js';
 
-/** Zonen-Grenzen in % (HFmax bzw. HF-Reserve), Name (als Funktion – der Text hängt von der Sprache ab) und Farbe. */
+/** Zone limits in % (HRmax or HR reserve), name (as a function – the text depends on the language) and colour. */
 export const ZONE_DEFS = [
   [50, 60, () => t('hrZones.recovery'), '#7fb8ff'],
   [60, 70, () => t('hrZones.base'), '#43c59e'],
@@ -21,25 +21,25 @@ export const ZONE_DEFS = [
   [90, 100, () => t('hrZones.vo2max'), '#ef5d6c'],
 ];
 
-/** Name der Zone 1–5 in der aktiven Sprache (gespeicherte Zonen tragen den Namen ihrer Entstehung). */
+/** Name of zone 1–5 in the active language (stored zones carry the name of their origin). */
 export function zoneName(zone) {
   const def = ZONE_DEFS[Number(zone) - 1];
   return def ? def[2]() : '';
 }
 
-/** Geschätzte maximale Herzfrequenz aus dem Alter (Tanaka) – null ohne Alter. */
+/** Estimated maximum heart rate from age (Tanaka) – null without age. */
 export function estimateMaxHr(age) {
   const a = Number(age);
   return Number.isFinite(a) && a > 0 && a < 110 ? Math.round(208 - 0.7 * a) : null;
 }
 
-/** Zonen in % der Schwellen-HF (Friel): aus Leistungsdiagnostik oder 30-Minuten-Feldtest. */
+/** Zones in % of the threshold HR (Friel): from performance diagnostics or a 30-minute field test. */
 export const LTHR_DEFS = [[65, 85], [85, 90], [90, 95], [95, 100], [100, 106]];
 
 /**
- * Fünf HF-Zonen. `method`: 'hfmax' (Standard), 'karvonen' (braucht einen plausiblen Ruhepuls
- * unter der HFmax, sonst Rückfall auf %-HFmax) oder 'lthr' (aus der Schwellen-HF eines Tests –
- * genauer als jede Formel; die HFmax deckelt Zone 5, falls bekannt).
+ * Five HR zones. `method`: 'hfmax' (default), 'karvonen' (needs a plausible resting HR
+ * below the HRmax, otherwise falls back to %-HRmax) or 'lthr' (from the threshold HR of a test –
+ * more accurate than any formula; the HRmax caps zone 5, if known).
  * @returns {Array<{zone, name, minPct, maxPct, min, max, color, basis:'hfmax'|'hfr'|'lthr'}>}
  */
 export function hrZonesFrom({ maxHr, restHr = null, method = 'hfmax', lthr = null } = {}) {

@@ -1,15 +1,15 @@
 /* =========================================================================
-   teamstats.js — Team-/Familien-Kennzahlen fürs Team-Dashboard (DOM-frei, testbar).
+   teamstats.js — team/family metrics for the team dashboard (DOM-free, testable).
 
-   Rechnet aus den Daten-Buckets aller Mitglieder die Badge-Gruppen:
-     • teamMonthKm        – anonyme Monats-km + Fortschritt zum nächsten Meilenstein
-     • teamWeekActivity   – wer hat diese Woche trainiert + aktivste Person
-     • teamUpcomingRaces  – anstehende Wettkämpfe aller Mitglieder
-     • teamAchievements   – gesammelte Abzeichen + längste aktuelle Aktiv-Serie
+   From the data buckets of all members it computes the badge groups:
+     • teamMonthKm        – anonymous monthly km + progress to the next milestone
+     • teamWeekActivity   – who trained this week + most active person
+     • teamUpcomingRaces  – upcoming races of all members
+     • teamAchievements   – collected badges + longest current activity streak
 
-   Datenschutz: `shareMetrics`/`shareGoal` werden für PERSONENBEZOGENE Badges
-   respektiert (verborgene Mitglieder erscheinen nicht namentlich). Anonyme Summen
-   (Monats-km) zählen alle. Zyklusdaten kommen hier nie vor.
+   Privacy: `shareMetrics`/`shareGoal` are respected for PERSONAL badges
+   (hidden members do not appear by name). Anonymous sums
+   (monthly km) count everyone. Cycle data never appear here.
    ========================================================================= */
 import { computeStats, evaluateBadges, TRAINING_BADGE_CATS } from './badges.js';
 import { todayStr, addDays, weekStartMonday } from './ui.js';
@@ -19,19 +19,19 @@ const MILESTONES = [50, 100, 250, 500, 750, 1000, 1500, 2000, 3000, 5000];
 
 const monthStartOf = (today) => today.slice(0, 8) + '01';
 
-/** Mitglieder-Buckets, die zu `team` gehören (aus einer geladenen Mitgliederliste mit .id). */
+/** Member buckets that belong to `team` (from a loaded member list with .id). */
 export function filterTeamMembers(members = [], team) {
   const ids = new Set((team && team.memberIds) || []);
   return members.filter((m) => ids.has(m.id));
 }
-/** Mitglieder, die in KEINEM Team sind. */
+/** Members who are in NO team. */
 export function teamlessMembers(members = [], teams = []) {
   const inTeam = new Set((teams || []).flatMap((t) => t.memberIds || []));
   return members.filter((m) => !inTeam.has(m.id));
 }
 
-/** Anonyme Team-Summe der Kilometer im laufenden Monat + nächster Meilenstein – alle
-    Sportarten mit Strecke („km in Bewegung“, so auch beschriftet), nicht nur Laufen. */
+/** Anonymous team sum of the kilometres in the current month + next milestone – all
+    sports with a distance ("km in motion", as labelled too), not only running. */
 export function teamMonthKm(members, today = todayStr()) {
   const ms = monthStartOf(today);
   let km = 0;
@@ -44,8 +44,8 @@ export function teamMonthKm(members, today = todayStr()) {
 }
 
 /**
- * Pro Mitglied: hat es diese Woche trainiert? + aktivste Person.
- * Respektiert `shareMetrics` (verborgene Mitglieder werden nicht gezeigt).
+ * Per member: has it trained this week? + most active person.
+ * Respects `shareMetrics` (hidden members are not shown).
  */
 export function teamWeekActivity(members, today = todayStr()) {
   const ws = weekStartMonday(today), we = addDays(ws, 6);
@@ -62,7 +62,7 @@ export function teamWeekActivity(members, today = todayStr()) {
   return { rows, mostActiveId: best && best.sessions > 0 ? best.id : null };
 }
 
-/** Anstehende Wettkämpfe aller Mitglieder (shareGoal respektiert), nach Datum. */
+/** Upcoming races of all members (shareGoal respected), by date. */
 export function teamUpcomingRaces(members, today = todayStr(), limit = 6) {
   const out = [];
   members.forEach((m) => {
@@ -78,10 +78,10 @@ export function teamUpcomingRaces(members, today = todayStr(), limit = 6) {
 }
 
 /**
- * Gesammelte TRAININGS-Abzeichen des Teams + längste aktuelle Wochen-Serie (Halter nur
- * wenn geteilt). Gesundheits- und Zyklus-Abzeichen zählen bewusst nicht: Diese Daten
- * anderer Mitglieder liegen dem Team-Dashboard nicht vor – früher wurden sie still als
- * „nicht erreicht“ gezählt, und die Team-Summe war kleiner als die persönlichen Erfolge.
+ * Collected TRAINING badges of the team + longest current weekly streak (holder only
+ * if shared). Health and cycle badges deliberately do not count: this data of
+ * other members is not available to the team dashboard – formerly they were silently counted as
+ * "not achieved", and the team total was smaller than the personal achievements.
  */
 export function teamAchievements(members, today = todayStr()) {
   let badges = 0, longestStreak = 0, streakHolder = null;
@@ -94,7 +94,7 @@ export function teamAchievements(members, today = todayStr()) {
   return { badges, longestStreak, streakHolder };
 }
 
-/** Alles auf einmal (bequem für die View). */
+/** Everything at once (convenient for the view). */
 export function teamStats(members, today = todayStr()) {
   return {
     monthKm: teamMonthKm(members, today),
@@ -105,11 +105,11 @@ export function teamStats(members, today = todayStr()) {
 }
 
 /**
- * Trainer-Sicht (TRAIN-53): Belastung derer, die sie ausdrücklich freigeben (`shareLoad`,
- * standardmäßig aus) – Wochenlast in Belastungspunkten, Lastverhältnis und das jüngste
- * Befinden (Energie/Stimmung der letzten drei Tage). Die HF-Schätzung rechnet mit der
- * Max-HF der jeweiligen Person, nie mit der des Betrachters. Zyklus, Labor und Ergänzungen
- * kommen hier nicht vor.
+ * Coach view (TRAIN-53): load of those who explicitly release it (`shareLoad`,
+ * off by default) – weekly load in load points, load ratio and the latest
+ * wellbeing (energy/mood of the last three days). The HR estimate uses the
+ * max HR of the respective person, never that of the viewer. Cycle, lab and supplements
+ * do not appear here.
  * @returns {Array<{id, name, emoji, color, load7, ratio, zone, tone, sparse, energy, mood}>}
  */
 export function teamLoad(members = [], today = todayStr()) {

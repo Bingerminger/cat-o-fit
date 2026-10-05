@@ -1,19 +1,19 @@
 /* =========================================================================
-   activity-import.js — Trainingsdateien einlesen: einzelne GPX/TCX/FIT, gepackte
-   Dateien (.gz) und ganze Exporte als ZIP (auch ZIP im ZIP, wie im Garmin-
-   Datenexport). DOM-frei; health-import.js zeigt Vorschau und speichert.
+   activity-import.js — reading training files: single GPX/TCX/FIT, compressed
+   files (.gz) and whole exports as ZIP (also ZIP in ZIP, as in the Garmin
+   data export). DOM-free; health-import.js shows the preview and saves.
    ========================================================================= */
 
 import { parseActivityFile } from './gpx.js';
 import { parseFit, isFit } from './fit.js';
 import { unzip, gunzip, isZip, isGzip } from './zip.js';
 
-/** Dateien, die in einem Archiv als Aktivität gelten (auch gepackt). */
+/** Files that count as an activity in an archive (also compressed). */
 const ACTIVITY_RE = /\.(gpx|tcx|fit)(\.gz)?$/i;
-/** Strecken speichert der Massenimport nur für jüngere Einheiten – das spart Gerätespeicher. */
+/** The bulk import stores routes only for more recent sessions – that saves device storage. */
 export const ROUTE_DAYS = 90;
 
-/** Eine Datei (Name + Bytes) → Aktivität oder null. */
+/** One file (name + bytes) → activity or null. */
 export function parseActivityBytes(name, bytes, { hrZones = null } = {}) {
   const b = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
   if (isFit(b)) return parseFit(b, { hrZones });
@@ -21,8 +21,8 @@ export function parseActivityBytes(name, bytes, { hrZones = null } = {}) {
 }
 
 /**
- * Liest Dateien (je `{ name, data: Uint8Array }`) samt Archiven und liefert die erkannten
- * Aktivitäten, älteste zuerst. `skipped` zählt Dateien ohne brauchbare Aufzeichnung.
+ * Reads files (each `{ name, data: Uint8Array }`) including archives and returns the
+ * recognised activities, oldest first. `skipped` counts files without a usable recording.
  * @returns {Promise<{activities: Array<{name:string, act:object}>, skipped:number}>}
  */
 export async function activitiesFrom(inputs = [], { hrZones = null, onProgress = null } = {}) {
@@ -31,7 +31,7 @@ export async function activitiesFrom(inputs = [], { hrZones = null, onProgress =
   const tick = () => { if (onProgress) onProgress(activities.length + skipped); };
   async function handle(name, bytes, level) {
     if (isZip(bytes)) {
-      if (level > 1) { skipped++; return; }   // ZIP im ZIP im ZIP: nicht weiter
+      if (level > 1) { skipped++; return; }   // ZIP in ZIP in ZIP: no further
       let entries;
       try { entries = await unzip(bytes, (n) => ACTIVITY_RE.test(n) || /\.zip$/i.test(n)); } catch { skipped++; return; }
       for (const e of entries) await handle(e.name, e.data, level + 1);
@@ -52,14 +52,14 @@ export async function activitiesFrom(inputs = [], { hrZones = null, onProgress =
   return { activities, skipped };
 }
 
-/** Gleiche Einheit? Selber Tag, Strecke ± 400 m, Dauer ± 90 s (wie beim Einzelimport). */
+/** Same session? Same day, distance ± 400 m, duration ± 90 s (as with the single import). */
 export function sameActivity(a, b) {
   return !!a && !!b && a.date === b.date
     && Math.abs((a.distanceKm || 0) - (b.distanceKm || 0)) < 0.4
     && Math.abs((a.durationSec || 0) - (b.durationSec || 0)) < 90;
 }
 
-/** Sportart ohne Angabe in der Datei: ab 18 km/h eher Rad, sonst Lauf. */
+/** Sport without an entry in the file: from 18 km/h more likely cycling, otherwise running. */
 export function guessType(act) {
   if (act.sportKnown) return act.type;
   const kmh = act.distanceKm && act.durationSec ? act.distanceKm / (act.durationSec / 3600) : 0;

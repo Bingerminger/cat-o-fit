@@ -1,6 +1,6 @@
-/* Ansichten nach Paket C: Eignung in den Einstellungen, Labor im Kinder- und
-   Jugendprofil, ausgeblendete Kalorienzahlen, Perioden-Hinweis auf „Heute“,
-   geglättete Körperwerte-Kacheln. */
+/* Views after package C: suitability in the settings, labs in the child and
+   adolescent profile, hidden calorie numbers, period notice on "Today",
+   smoothed body-value tiles. */
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import * as store from '../js/storage.js';
@@ -32,7 +32,7 @@ beforeEach(() => {
   store.setProfile({ name: 'Test', heightCm: 170, weightKg: 70, targetWeightKg: 65, birthYear: 1990, sex: 'w' });
 });
 
-test('Einstellungen: Bereich „Gesundheit & Eignung“ mit Abgrenzung, Zahlen-Schalter und Zweckbestimmung', () => {
+test('Settings: section "Health & suitability" with delimitation, numbers switch and intended purpose', () => {
   const view = setupShell();
   settings.render(view);
   const t = view.textContent;
@@ -43,7 +43,7 @@ test('Einstellungen: Bereich „Gesundheit & Eignung“ mit Abgrenzung, Zahlen-S
   assert.match(t, /Ziel 65\u00a0kg/);
 });
 
-test('Einstellungen: Kinder- und Jugendprofil ohne Zielgewicht, Zahlen immer aus', () => {
+test('Settings: child and adolescent profile without target weight, numbers always off', () => {
   store.setProfile({ birthYear: thisYear - 13 });
   const view = setupShell();
   settings.render(view);
@@ -53,7 +53,7 @@ test('Einstellungen: Kinder- und Jugendprofil ohne Zielgewicht, Zahlen immer aus
   assert.doesNotMatch(t, /Ziel 65 kg/);
 });
 
-test('Labor: ohne Abgrenzung erst die Einrichtung; Kinderprofil nur dokumentierend', () => {
+test('Labs: without delimitation the set-up comes first; child profile only documents', () => {
   store.replaceArea('labs', [{ id: 'l1', analyte: 'ferritin', value: 12, unit: 'µg/l', date: addDays(todayStr(), -5) }]);
   let view = setupShell();
   labsView.render(view);
@@ -70,7 +70,7 @@ test('Labor: ohne Abgrenzung erst die Einrichtung; Kinderprofil nur dokumentiere
   assert.doesNotMatch(t, /Energieversorgung/);
 });
 
-test('Labor: Energieversorgung ohne Zahlen, wenn Kalorienzahlen ausgeblendet sind', () => {
+test('Labs: energy supply without numbers when calorie numbers are hidden', () => {
   store.setSetting('labsGate', ADULT_GATE);
   const today = todayStr();
   const diary = [], sessions = [];
@@ -95,7 +95,7 @@ test('Labor: Energieversorgung ohne Zahlen, wenn Kalorienzahlen ausgeblendet sin
   assert.doesNotMatch(view.textContent, /kcal je kg/);
 });
 
-test('Labor: fehlender Körperfettwert wird benannt (HEALTH-35)', () => {
+test('Labs: a missing body fat value is named (HEALTH-35)', () => {
   store.setSetting('labsGate', ADULT_GATE);
   const today = todayStr();
   store.replaceArea('diary', [{ id: 'd1', date: today, kcal: 1800 }]);
@@ -105,7 +105,7 @@ test('Labor: fehlender Körperfettwert wird benannt (HEALTH-35)', () => {
   assert.match(view.textContent, /fehlt die fettfreie Masse/);
 });
 
-test('„Heute“: überfällige Periode fragt nach, bestätigt ausgeblieben zeigt den Arzthinweis (HEALTH-09)', () => {
+test('"Today": an overdue period prompts, confirmed missed shows the doctor notice (HEALTH-09)', () => {
   const today = todayStr();
   const last = addDays(today, -50);
   store.replaceArea('cycle', [
@@ -123,7 +123,7 @@ test('„Heute“: überfällige Periode fragt nach, bestätigt ausgeblieben zei
   assert.match(view.textContent, /ärztlich abgeklärt/);
 });
 
-test('„Heute“: bei Essstörung kein Abnehm-Cockpit, nur das Leistungsziel (HEALTH-07)', () => {
+test('"Today": with an eating disorder no weight-loss cockpit, only the performance goal (HEALTH-07)', () => {
   const today = todayStr();
   store.replaceArea('health', [{ id: 'h1', date: addDays(today, -2), weight: 70 }]);
   store.replaceArea('events', [{ id: 'e1', name: 'Herbstlauf', date: addDays(today, 60), distanceKm: 10, kind: 'race', targetTime: '00:52:00' }]);
@@ -135,7 +135,7 @@ test('„Heute“: bei Essstörung kein Abnehm-Cockpit, nur das Leistungsziel (H
   store.setSetting('labsGate', ADULT_GATE);
   let view = setupShell();
   dashboard.render(view);
-  assert.match(view.textContent, /Ziel-Cockpit · 10\u00a0km \+ Abnehmen/, 'Titel nennt die echte Distanz');
+  assert.match(view.textContent, /Ziel-Cockpit · 10\u00a0km \+ Abnehmen/, 'title names the real distance');
   store.setSetting('labsGate', { ...ADULT_GATE, eatingDisorder: true });
   view = setupShell();
   dashboard.render(view);
@@ -148,7 +148,7 @@ test('„Heute“: bei Essstörung kein Abnehm-Cockpit, nur das Leistungsziel (H
   assert.doesNotMatch(t, /bis 65,0 kg|Ziel 65,0 kg/);
 });
 
-test('Körperwerte: Veränderung über den Wochenmedian, Hinweis auf die Glättung (HEALTH-28)', () => {
+test('Body values: change over the weekly median, note on the smoothing (HEALTH-28)', () => {
   const today = todayStr();
   store.replaceArea('health', [
     { id: 'h1', date: addDays(today, -14), weight: 70.0 }, { id: 'h2', date: addDays(today, -13), weight: 70.4 },
@@ -162,7 +162,7 @@ test('Körperwerte: Veränderung über den Wochenmedian, Hinweis auf die Glättu
   assert.match(t, /Wochenmittels \(Median\)/);
 });
 
-test('Ernährung: „Kalorienzahlen ausblenden“ verbirgt kcal-Angaben', () => {
+test('Nutrition: "Hide calorie numbers" hides kcal figures', () => {
   store.setSetting('labsGate', ADULT_GATE);
   store.replaceArea('nutrition', [{ id: 'n1', title: 'Skyr-Bowl', category: 'fruehstueck', kcal: 380, protein: 32, ingredients: ['250 g Skyr'], tags: [] }]);
   store.replaceArea('diary', [{ id: 'd1', date: todayStr(), title: 'Skyr-Bowl', kcal: 380 }]);
@@ -175,7 +175,7 @@ test('Ernährung: „Kalorienzahlen ausblenden“ verbirgt kcal-Angaben', () => 
   assert.doesNotMatch(view.textContent, /\d\s?kcal/);
 });
 
-test('UI-26: Gegessenes – Lebensmittel mit Menge und „zuletzt gegessen“', () => {
+test('UI-26: Eaten – food with amount and "last eaten"', () => {
   const view = setupShell();
   for (const id of ['modal-root', 'toast-root']) { const e = doc.createElement('div'); e.setAttribute('id', id); doc.body.appendChild(e); }
   store.replaceArea('diary', [{ id: 'd0', date: addDays(todayStr(), -1), title: 'Skyr mit Beeren', kcal: 190, protein: 20, source: 'manual' }]);
@@ -185,9 +185,9 @@ test('UI-26: Gegessenes – Lebensmittel mit Menge und „zuletzt gegessen“', 
   const input = sheet.querySelectorAll('input')[0];
   input.value = '200 g Skyr';
   input.dispatchEvent({ type: 'input' });
-  assert.match(sheet.textContent, /≈ \d+ kcal/, 'Schätzung live');
+  assert.match(sheet.textContent, /≈ \d+ kcal/, 'live estimate');
   const recent = sheet.querySelectorAll('button').find((b) => /Skyr mit Beeren/.test(b.textContent));
-  assert.ok(recent, '„zuletzt gegessen“ als Ein-Tipp-Eintrag');
+  assert.ok(recent, '"last eaten" as a one-tap entry');
   recent.click();
   const todays = store.get('diary').filter((d) => d.date === todayStr());
   assert.equal(todays.length, 1);
@@ -195,7 +195,7 @@ test('UI-26: Gegessenes – Lebensmittel mit Menge und „zuletzt gegessen“', 
   void view;
 });
 
-test('FE-09: Körperwerte – Zeitraum-Umschalter und Wochenmittel bei langen Reihen', () => {
+test('FE-09: Body values – period switch and weekly mean for long series', () => {
   const T = todayStr();
   store.replaceArea('health', Array.from({ length: 800 }, (_, i) => ({ id: `w${i}`, date: addDays(T, -i), weight: 70 + (i % 7) * 0.1 })));
   const view = setupShell();
@@ -203,7 +203,7 @@ test('FE-09: Körperwerte – Zeitraum-Umschalter und Wochenmittel bei langen Re
   const tabs = view.querySelectorAll('button').filter((b) => b.getAttribute('role') === 'radio').map((b) => b.textContent);
   assert.deepEqual(tabs, ['3 Monate', '1 Jahr', 'Alles']);
   const pts = view.querySelectorAll('polyline')[0].getAttribute('points').split(' ').length;
-  assert.ok(pts <= 54 && pts >= 50, `1 Jahr als Wochenmittel: ${pts} Punkte`);
+  assert.ok(pts <= 54 && pts >= 50, `1 year as weekly mean: ${pts} points`);
   assert.deepEqual(health.weeklyMedian([
     { date: '2026-09-28', value: 70 }, { date: '2026-09-29', value: 72 }, { date: '2026-09-30', value: 71 },
   ]).map((p) => [p.date, p.value]), [['2026-09-28', 71]]);

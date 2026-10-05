@@ -1,16 +1,15 @@
 /* =========================================================================
-   rolling.js — rollierende Planung: erkennt aus der tatsächlichen Belastung,
-   wann ein Erholungstag ratsam ist, und führt ein Transparenz-Protokoll der
-   automatischen Anpassungen (mit Rückgängig). Reine, DOM-freie Logik → per
-   node:test abgedeckt.
+   rolling.js — rolling planning: recognises from the actual load when a
+   recovery day is advisable, and keeps a transparency log of the automatic
+   adjustments (with undo). Pure, DOM-free logic → covered by node:test.
 
-   Grundgedanke: Nach zu vielen harten Tagen in Folge, bei stark gestiegener Last
-   oder deutlicher Ermüdung tut ein ruhiger Tag gut. Die Signale reagieren nur auf
-   ABWEICHUNGEN vom Plan (mehr Last als geplant, zusätzliche oder härter gelaufene
-   Einheiten) – nicht auf die geplante Struktur selbst: Wer den Plan befolgt, soll
-   nicht jede Woche hören, er möge die Schlüsseleinheit streichen. Feste Termine
-   (Fußball/Spiele) bleiben unangetastet; angepasst wird nur die nächste offene,
-   fordernde LAUF-/Krafteinheit.
+   Basic idea: after too many hard days in a row, with a sharply increased load
+   or clear fatigue, a quiet day does good. The signals react only to
+   DEVIATIONS from the plan (more load than planned, additional or harder-run
+   sessions) – not to the planned structure itself: anyone who follows the plan should
+   not hear every week that they ought to drop the key session. Fixed appointments
+   (football/games) are left untouched; only the next open, demanding
+   RUN/strength session is adjusted.
    ========================================================================= */
 
 import { addDays, diffDays } from './ui.js';
@@ -20,24 +19,24 @@ import { unitLoad } from './whatif.js';
 
 import { t, tp } from './i18n.js';
 
-/** War dieser Tag „hart“ (erledigte fordernde Einheit oder fordernde Session)? */
+/** Was this day "hard" (a completed demanding session or a demanding logged training)? */
 export function dayIsHard(units = [], sessions = [], date) {
   if ((units || []).some((u) => u.date === date && u.status === 'erledigt' && isHard(u))) return true;
   return (sessions || []).some((s) => s && !s.deleted && s.date === date
     && (Number(s.rpe) >= 7 || ['tempo', 'interval', 'long', 'race', 'match'].includes(s.type)
-      || (s.type === 'cross_football' && s.intensity !== 'leicht')));  // Fußball ist fordernd (#5)
+      || (s.type === 'cross_football' && s.intensity !== 'leicht')));  // Football is demanding (#5)
 }
 
-/** War der Tag laut Plan fordernd (geplante, nicht ausgefallene harte Einheit)? */
+/** Was the day demanding according to the plan (a planned, not cancelled hard session)? */
 function plannedHard(units = [], date) {
   return (units || []).some((u) => u && u.date === date && u.status !== 'verpasst' && isHard(u));
 }
 
 /**
- * Harte Tage in Folge, die auf heute ODER gestern enden (ein noch untrainierter
- * „heute“ bricht die Serie nicht ab), gezählt aus dem IST (erledigte Einheiten,
- * erfasste Trainings). `unplanned` = Tage darunter, die der Plan nicht als hart
- * vorsah (zusätzliche harte Session, locker geplante Einheit hart gelaufen).
+ * Hard days in a row ending today OR yesterday (a still untrained
+ * "today" does not break the streak), counted from the ACTUAL (completed sessions,
+ * logged trainings). `unplanned` = days among them that the plan did not
+ * foresee as hard (additional hard session, easy-planned session run hard).
  * @returns {{days:number, unplanned:number}}
  */
 export function hardStreakInfo(units = [], sessions = [], today, max = 14) {
@@ -54,12 +53,12 @@ export function hardStreakInfo(units = [], sessions = [], today, max = 14) {
   return { days, unplanned };
 }
 
-/** Anzahl harter Tage in Folge (siehe `hardStreakInfo`). */
+/** Number of hard days in a row (see `hardStreakInfo`). */
 export function consecutiveHardDays(units = [], sessions = [], today, max = 14) {
   return hardStreakInfo(units, sessions, today, max).days;
 }
 
-/** Wandelt eine fordernde Einheit in einen aktiven Erholungstag (Patch-Felder). */
+/** Turns a demanding session into an active recovery day (patch fields). */
 export function recoveryVariant(unit) {
   const km = unit.targetDistanceKm ? Math.min(5, Math.max(3, Math.round(unit.targetDistanceKm * 0.4))) : null;
   return {
@@ -75,10 +74,10 @@ export function recoveryVariant(unit) {
 }
 
 /**
- * Type-bewusste sanfte Variante (Patch-Felder), wiederverwendbar für zyklusbewusste
- * Entschärfung (#3) und ganztägige Erholung (#4): Läufe/Ausdauer → lockerer
- * Regenerationslauf, Kraft/Funktionell → ruhige Mobility. `copy` liefert Titel/
- * Beschreibung. Behält originalType, damit „Rückgängig“ das Original wiederherstellt.
+ * Type-aware gentle variant (patch fields), reusable for cycle-aware
+ * easing (#3) and full-day recovery (#4): runs/endurance → easy
+ * recovery run, strength/functional → quiet mobility. `copy` supplies title/
+ * description. Keeps originalType, so that "Undo" restores the original.
  */
 export function gentleVariant(unit, copy = {}) {
   const common = {
@@ -93,19 +92,19 @@ export function gentleVariant(unit, copy = {}) {
   return { ...common, type: 'recovery', targetDistanceKm: km, targetDurationMin: km ? null : 25, targetHrZone: 1 };
 }
 
-/** Geplante Last (Belastungspunkte) aller Einheiten der letzten 7 Tage – das Soll. */
+/** Planned load (load points) of all sessions of the last 7 days – the target. */
 export function plannedWeekLoad(units = [], today) {
   return (units || []).filter((u) => u && u.date <= today && diffDays(u.date, today) < 7)
     .reduce((s, u) => s + unitLoad(u), 0);
 }
 
 /**
- * Schlägt einen Erholungstag vor, wenn die TATSÄCHLICHE Belastung es nahelegt. Zielt
- * auf die nächste OFFENE, fordernde, verschiebbare Einheit in [today, today+horizon]
- * (feste Termine bleiben außen vor). Standard 2 Tage: Liegen bis zur nächsten harten
- * Einheit ohnehin lockere Tage, erholt sich der Körper dort – dann wird kein Long Run
- * vier Tage im Voraus gestrichen. `units` = alle Plan-Einheiten (planübergreifend)
- * für Soll-Last und geplante harte Tage; Standard: die des Plans.
+ * Suggests a recovery day when the ACTUAL load suggests it. Targets
+ * the next OPEN, demanding, movable session in [today, today+horizon]
+ * (fixed appointments are left out). Default 2 days: if there are easy days anyway before the
+ * next hard session, the body recovers there – then no long run is cancelled
+ * four days in advance. `units` = all plan sessions (across plans)
+ * for target load and planned hard days; default: those of the plan.
  * @returns {{unit, date, reason, acwr, hardStreak}|null}
  */
 export function restDaySuggestion({ plan = {}, sessions = [], today, horizon = 2, units: allUnits = null } = {}) {
@@ -115,14 +114,14 @@ export function restDaySuggestion({ plan = {}, sessions = [], today, horizon = 2
   const fs = formState(formToday(sessions, today), ac.historyDays);
   const streak = hardStreakInfo(all, sessions, today);
 
-  // Nur Abweichungen vom Plan: Die Ist-Last der letzten 7 Tage liegt deutlich über
-  // dem Soll (oder es gibt keinen Plan, an dem man sich messen könnte). Wer den
-  // Plan befolgt, bekommt die geplante Steigerung nicht als Warnsignal vorgehalten.
+  // Only deviations from the plan: the actual load of the last 7 days is well above
+  // the target (or there is no plan to measure against). Anyone who follows the
+  // plan is not confronted with the planned increase as a warning sign.
   const planned = plannedWeekLoad(all, today);
   const overPlan = planned <= 0 || ac.acuteWeek > planned * 1.15;
-  // `sparse` = noch keine 28 Tage Historie: Das Verhältnis ist dann rechnerisch hoch,
-  // ohne dass jemand zu schnell gesteigert hätte. Die Form erst mit eingeschwungener
-  // Fitnesskurve (`formState.reliable`) – sonst wäre sie monatelang künstlich negativ.
+  // `sparse` = fewer than 28 days of history so far: the ratio is then arithmetically high
+  // without anyone having increased too fast. The form only once the fitness curve
+  // has settled (`formState.reliable`) – otherwise it would be artificially negative for months.
   const acwrHigh = ac.ratio != null && !ac.sparse && ac.ratio > 1.5 && overPlan;
   const elevatedAndTired = ac.ratio != null && !ac.sparse && ac.ratio > 1.3 && fs.reliable && fs.rel < -0.3 && overPlan;
   const streakHigh = streak.days >= 3 && streak.unplanned >= 1;
@@ -142,11 +141,11 @@ export function restDaySuggestion({ plan = {}, sessions = [], today, horizon = 2
 }
 
 /**
- * Nach einem TATSÄCHLICH fordernden Fußballtag (heute oder gestern gespielt/trainiert,
- * nicht „leicht“) die nächste offene, fordernde LAUF-/Krafteinheit in [today, today+2]
- * als Entlastungs-Kandidat (#5). Geplante, noch nicht absolvierte Termine zählen nicht –
- * die Wochenstruktur berücksichtigt der Plan-Generator schon. Reine Funktion.
- * @returns {{date, unit, when:'heute'|'gestern'}|null}
+ * After an ACTUALLY demanding football day (played/trained today or yesterday,
+ * not "light") the next open, demanding RUN/strength session in [today, today+2]
+ * as a relief candidate (#5). Planned appointments not yet completed do not count –
+ * the plan generator already takes the weekly structure into account. Pure function.
+ * @returns {{date, unit, when:'heute'|'gestern'}|null}  (when: today | yesterday)
  */
 export function footballFollowupEase({ units = [], sessions = [], today } = {}) {
   const hardFb = (x) => x.type === 'match' || (x.type === 'cross_football' && x.intensity !== 'leicht');
@@ -163,8 +162,8 @@ export function footballFollowupEase({ units = [], sessions = [], today } = {}) 
 }
 
 /**
- * Fügt einen Protokolleintrag vorne an und deckelt die Länge. Reiner Wert
- * (kein Store). `entry` bekommt id + ts, falls nicht gesetzt.
+ * Prepends a log entry and caps the length. Pure value
+ * (no store). `entry` gets id + ts if not set.
  */
 export function pushAdaptLog(log = [], entry = {}, max = 25) {
   const e = {

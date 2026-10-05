@@ -1,7 +1,7 @@
 /* =========================================================================
-   nutrition.js — Ernährungsvorschläge mit Vorlieben-Lernen (abschaltbar).
-   Die App lernt aus Favoriten und „Gekocht“-Häufigkeit, welche Tags du
-   bevorzugst, und empfiehlt passende Gerichte („Für dich“).
+   nutrition.js — nutrition suggestions with preference learning (can be switched off).
+   The app learns from favourites and "cooked" frequency which tags you
+   prefer, and recommends matching dishes ("For you").
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -94,8 +94,8 @@ let recipesLoading = null;
 /** Loads recipe titles and ingredients (lazy catalog area). */
 export function loadRecipeTexts() { return (recipesLoading ||= loadArea('recipes')); }
 
-/* --------------------------- Vorlieben-Lernen --------------------------- */
-/** Gewichtet Tags nach Favorit-Status und Koch-Häufigkeit. */
+/* --------------------------- Preference learning --------------------------- */
+/** Weights tags by favourite status and cooking frequency. */
 function preferredTags(meals) {
   const score = {};
   meals.forEach((m) => {
@@ -106,7 +106,7 @@ function preferredTags(meals) {
   return Object.entries(score).sort((a, b) => b[1] - a[1]).map(([tag]) => tag);
 }
 
-/** Empfiehlt Nicht-Favoriten mit passenden Lieblings-Tags. */
+/** Recommends non-favourites with matching favourite tags. */
 function recommendations(meals) {
   const tags = preferredTags(meals).slice(0, 3);
   if (!tags.length) return [];
@@ -119,7 +119,7 @@ function recommendations(meals) {
     .map((x) => x.m);
 }
 
-/** Sortierung innerhalb einer Kategorie: Favoriten zuerst, dann häufig gekocht. */
+/** Sort order within a category: favourites first, then frequently cooked. */
 function byPreference(a, b) {
   return (b.favorite ? 1 : 0) - (a.favorite ? 1 : 0) || (b.cookedCount || 0) - (a.cookedCount || 0) || a.title.localeCompare(b.title);
 }
@@ -136,7 +136,7 @@ export function render(view) {
 
   const meals = store.get('nutrition');
   if (!meals.length) {
-    // Neuer Nutzer: KEIN stiller „leer“-Zustand – Rezept-Katalog laden oder eigenes Gericht anlegen.
+    // New user: NO silent "empty" state – load the recipe catalogue or create your own dish.
     view.appendChild(emptyState('utensils', t('nutrition.emptyTitle'), t('nutrition.emptyText')));
     view.appendChild(el('button', { class: 'btn btn--primary btn--block mt-3', onclick: () => addSuggestions(SUGGESTED_MEALS) }, [
       icon('plus'), t('nutrition.loadIdeas', { n: SUGGESTED_MEALS.length }),
@@ -147,7 +147,7 @@ export function render(view) {
     return;
   }
 
-  // Kalorienbilanz heute (#23)
+  // Calorie balance today (#23)
   view.appendChild(balanceCard());
 
   view.appendChild(el('div', { class: 'card card--flat row gap-2', style: { alignItems: 'flex-start' } }, [
@@ -155,21 +155,21 @@ export function render(view) {
     el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: t('nutrition.learnHint') }),
   ]));
 
-  // Lieblingsgerichte
+  // Favourite dishes
   const favs = meals.filter((m) => m.favorite).sort(byPreference);
   if (favs.length) {
     view.appendChild(sectionHead(t('nutrition.favourites')));
     favs.forEach((m) => view.appendChild(mealCard(m)));
   }
 
-  // Für dich (gelernt aus Vorlieben)
+  // For you (learned from preferences)
   const recs = recommendations(meals);
   if (recs.length) {
     view.appendChild(sectionHead(t('nutrition.recommended')));
     recs.forEach((m) => view.appendChild(mealCard(m, true)));
   }
 
-  // Nach Kategorie
+  // By category
   CATS.forEach((c) => {
     const list = meals.filter((m) => m.category === c.key && !m.favorite).sort(byPreference);
     if (!list.length) return;
@@ -177,7 +177,7 @@ export function render(view) {
     list.forEach((m) => view.appendChild(mealCard(m)));
   });
 
-  // Mehr Rezeptvielfalt für die 7-Tage-Planung (#25)
+  // More recipe variety for the 7-day plan (#25)
   const fresh = SUGGESTED_MEALS.filter((s) => !meals.some((m) => m.suggestionId === s.suggestionId || m.title.toLowerCase() === s.title.toLowerCase()));
   if (fresh.length) {
     view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-4', onclick: () => addSuggestions(fresh) }, [
@@ -186,22 +186,22 @@ export function render(view) {
   }
 }
 
-/** Übernimmt noch nicht vorhandene Vorschlagsrezepte in den eigenen Bestand (#25). */
+/** Adopts recipe suggestions not yet present into your own collection (#25). */
 function addSuggestions(fresh) {
   fresh.forEach((s) => store.upsert('nutrition', { ...s, id: uid('n') }));
   toast(tp('nutrition.ideasAdded', fresh.length), 'good');
   rerender();
 }
 
-/** Kalorienbilanz-Karte: verbraucht vs. eingenommen + Empfehlung (#23). Rechnet über
-    `currentEnergyTargets` – dieselbe Quelle wie das Ziel-Cockpit auf „Heute“. */
+/** Calorie balance card: burned vs. consumed + recommendation (#23). Calculates via
+    `currentEnergyTargets` – the same source as the goal cockpit on "Today". */
 function balanceCard() {
   const today = todayStr();
   const tg = currentEnergyTargets(today);
   const elig = tg.elig;
   const hide = elig.hideNumbers;
 
-  // Kinder- und Jugendprofil: keine Kalorien- oder Gewichtsziele, keine Zahlen.
+  // Child and youth profile: no calorie or weight targets, no numbers.
   if (tg.block === 'minor') {
     return el('div', { class: 'card' }, [
       el('div', { class: 'card__title', text: t('nutrition.eatDrinkToday') }),
@@ -220,7 +220,7 @@ function balanceCard() {
       ]),
     ]);
   }
-  // Ohne beantwortete Abgrenzung kein Tagesziel (Schwangerschaft/Essstörung wären sonst unbekannt).
+  // Without an answered delimitation no daily target (pregnancy/eating disorder would otherwise be unknown).
   const askGate = !elig.answered && tg.goalStatus && tg.goalStatus.status !== 'halten';
   const COL = { passt: '#2bb673', hoch: '#e8a13a', niedrig: '#5b8def', unklar: 'var(--text-3)' };
   const c = askGate ? 'var(--text-3)' : (COL[bal.status] || 'var(--text-3)');
@@ -251,11 +251,11 @@ function balanceCard() {
   ]);
 }
 
-/** Labor-Modul für die eigene Sicht aktiv? (Link zur Energieversorgung) */
+/** Labs module active for one's own view? (link to energy availability) */
 function labsEnabledHere() { return !store.isManaging() && store.settings().modules?.labs !== false; }
 
-/** „Heute gegessen“: die Ess-Tagebuch-Einträge des Tages, einzeln löschbar – plus der
-    Tagesmarker „vollständig erfasst“, über den die Energieversorgung bewertet wird. */
+/** "Eaten today": the food-diary entries of the day, individually deletable – plus the
+    day marker "completely logged", by which energy availability is assessed. */
 function diaryList({ hide = false, showComplete = true } = {}) {
   const today = todayStr();
   const all = store.get('diary');
@@ -295,20 +295,20 @@ function kcalStat(val, label) {
   ]);
 }
 
-/** Freitext „200 g Skyr, 1 Banane“ → Zutatenliste für die Nährwertschätzung. */
+/** Free text "200 g Skyr, 1 banana" → ingredient list for the nutrient estimate. */
 export function splitFoods(text) {
   return String(text || '').split(/[,;+\n]|\s+und\s+/).map((s) => s.trim()).filter(Boolean);
 }
 
 /**
- * Gegessenes schnell erfassen (UI-26): Lebensmittel mit Menge – geschätzt aus der
- * Nährwerttabelle –, „zuletzt gegessen“ mit einem Tipp oder pauschal nach Portionsgröße
- * (auswärts, #26). Vorher gab es nur die Pauschalportionen (± 200 kcal je Snack).
+ * Log eaten food quickly (UI-26): foods with quantity – estimated from the
+ * nutrient table –, "recently eaten" with one tap or flat by portion size
+ * (eating out, #26). Previously there were only the flat portions (± 200 kcal per snack).
  */
 /**
- * Bereich „Barcode“: Strichcode eintippen (oder, wo der Browser es kann, mit der Kamera
- * lesen), Produkt nachschlagen, Menge in Gramm – daraus kcal und Eiweiß.
- * Liefert { node, result(), stopCamera() }.
+ * "Barcode" section: type in the barcode (or, where the browser can, read it with the camera),
+ * look up the product, quantity in grams – from that kcal and protein.
+ * Returns { node, result(), stopCamera() }.
  */
 function barcodePane(hide) {
   let product = null;
@@ -332,7 +332,7 @@ function barcodePane(hide) {
     const code = codeI.value.replace(/\s/g, '');
     product = null;
     if (!validGtin(code)) { info.textContent = t('nutrition.badBarcode'); return; }
-    // Derselbe Schalter wie für alle Abfragen bei Open Food Facts – ohne ihn geht nichts hinaus.
+    // The same switch as for all lookups at Open Food Facts – without it nothing goes out.
     if (!store.foodLookupEnabled()) {
       info.textContent = '';
       info.appendChild(el('div', { text: t('nutrition.lookupOff') }));
@@ -346,7 +346,7 @@ function barcodePane(hide) {
     showProduct();
   };
   gramsI.addEventListener('input', showProduct);
-  // Kamera nur, wenn der Browser Strichcodes selbst erkennt – ohne Zusatzbibliothek.
+  // Camera only if the browser recognises barcodes itself – without an extra library.
   const canScan = typeof window !== 'undefined' && 'BarcodeDetector' in window && navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
   const scanBtn = canScan ? el('button', { class: 'btn btn--soft', type: 'button', onclick: async () => {
     try {
@@ -388,7 +388,7 @@ export function openQuickEaten() {
     closeSheet(); toast(t('nutrition.logged'), 'good'); rerender();
   };
 
-  // Lebensmittel + Menge
+  // Food + quantity
   const foodI = input({ value: '', placeholder: t('nutrition.foodPlaceholder') });
   const est = el('div', { class: 'dim mt-1', style: { fontSize: '.8rem' }, 'aria-live': 'polite' });
   const estimate = () => { const parts = splitFoods(foodI.value); return parts.length ? estimateNutrition(parts) : null; };
@@ -400,7 +400,7 @@ export function openQuickEaten() {
   };
   foodI.addEventListener('input', showEst);
   showEst();
-  // Zuletzt gegessen: die letzten sechs verschiedenen Einträge, ein Tipp trägt sie für heute ein.
+  // Recently eaten: the last six distinct entries; one tap logs them for today.
   const recent = [];
   store.get('diary').slice()
     .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || String(b.createdAt || '').localeCompare(String(a.createdAt || '')))
@@ -417,7 +417,7 @@ export function openQuickEaten() {
     ]) : null,
   ]);
 
-  // Pauschal nach Portionsgröße – für auswärts
+  // Flat estimate by portion size – for eating out
   const titleI = input({ value: '', placeholder: t('nutrition.outPlaceholder') });
   const kcalI = input({ type: 'number', value: PORTION_KCAL.mittel, inputmode: 'numeric' });
   const sizeRow = el('div', { class: 'row wrap gap-2' }, SIZES.map(([k, lbl]) => {
@@ -438,7 +438,7 @@ export function openQuickEaten() {
     hide ? null : field(t('nutrition.kcalAdjustable'), kcalI),
   ]);
 
-  // Strichcode: Produkt über Open Food Facts nachschlagen (über den eigenen Server), Menge in Gramm.
+  // Barcode: look the product up on Open Food Facts (via our own server), amount in grams.
   const bc = barcodePane(hide);
   const host = el('div', {}, [foodPane]);
   const modeCtl = segmented([{ value: 'food', label: t('nutrition.modeFood') }, { value: 'barcode', label: t('nutrition.modeBarcode') }, { value: 'portion', label: t('nutrition.modeOut') }], mode,
@@ -446,7 +446,7 @@ export function openQuickEaten() {
   openSheet({
     title: t('nutrition.logEaten'),
     body: el('div', {}, [el('div', { class: 'mb-3' }, [modeCtl]), host]),
-    onClose: () => bc.stopCamera(),   // Kamera nie weiterlaufen lassen
+    onClose: () => bc.stopCamera(),   // never leave the camera running
     footer: [
       el('button', { class: 'btn btn--ghost grow', text: t('common.cancel'), onclick: () => closeSheet() }),
       el('button', {
@@ -505,13 +505,13 @@ function mealCard(m, isRec = false) {
 }
 
 function markCooked(m) {
-  // Eine Portion gekocht: Zähler hoch, Wochenplan runter, Zutaten aus dem Lager buchen.
+  // One serving cooked: count up, weekly plan down, ingredients taken out of the pantry.
   store.patch('nutrition', m.id, {
     cookedCount: (m.cookedCount || 0) + 1,
     lastCooked: todayStr(),
     plannedServings: Math.max(0, (m.plannedServings || 0) - 1),
   });
-  // Gekochte Portion ins Ess-Tagebuch (für die Kalorienbilanz), wenn kcal bekannt.
+  // Cooked serving goes into the food diary (for the calorie balance) when kcal is known.
   if (m.kcal) store.upsert('diary', { id: uid('d'), date: todayStr(), title: m.title, kcal: m.kcal, protein: m.protein || null, source: 'cooked', mealId: m.id });
   const nextPantry = applyConsumption(store.familyPantry(), m.ingredients, 1);
   store.setFamilyPantry(nextPantry);
@@ -529,7 +529,7 @@ function openMealForm(existing = null) {
   const tagsI = input({ value: (m.tags || []).join(', '), placeholder: t('nutrition.tagsPlaceholder') });
   const noteI = input({ value: m.note || '', placeholder: t('nutrition.note') });
 
-  // kcal-Feld mit Schätzhilfe aus den Zutaten (#26)
+  // kcal field with an estimate from the ingredients (#26)
   const kcalField = el('div', { class: 'row gap-2', style: { alignItems: 'center' } }, [
     el('div', { class: 'grow' }, kcalI),
     el('button', {
@@ -538,7 +538,7 @@ function openMealForm(existing = null) {
         const list = ingI.value.split('\n').map((x) => x.trim()).filter(Boolean);
         if (!list.length) { toast(t('nutrition.addIngredientsFirst'), 'bad'); return; }
         const btn = e.currentTarget; btn.disabled = true; btn.textContent = t('nutrition.estimating');
-        // Echte Nährwerte je Zutat von Open Food Facts holen (nur wenn aktiviert).
+        // Fetch real nutrition values per ingredient from Open Food Facts (only when enabled).
         let map = null;
         if (store.foodLookupEnabled()) {
           const names = [...new Set(list.map((x) => parseIngredient(x).name).filter(Boolean))];
@@ -588,8 +588,8 @@ function openMealForm(existing = null) {
   });
 }
 
-// Neu zeichnen über den Router (Scrollposition bleibt, auch wenn das Formular von
-// einer anderen Ansicht aus geöffnet wurde); ohne App-Shell (Tests) direkt.
+// Redraw via the router (scroll position stays, even when the form was opened from
+// another view); without the app shell (tests) directly.
 function rerender() { rerenderView(render); }
 
 export function moduleOff(name) {

@@ -1,31 +1,31 @@
 /* =========================================================================
-   program.js — Fitness-/Health-Programme OHNE Wettkampf.
+   program.js — fitness/health programmes WITHOUT a race.
 
-   Während js/plans.js periodisierte Pläne auf ein Wettkampfdatum hin erzeugt,
-   baut dieses Modul Trainingswochen für allgemeine Ziele (Fitness, Kraft,
-   Abnehmen, Beweglichkeit). Das Ergebnis ist *plan-kompatibel* (gleiche
-   Unit-Felder wie Wettkampfpläne: `targetDurationMin`, `description`, planId),
-   damit Kalender-, Session-, Workout- und Statistik-Ansicht es ohne Sonderfall
-   anzeigen.
+   While js/plans.js generates periodised plans towards a race date,
+   this module builds training weeks for general goals (fitness, strength,
+   weight loss, mobility). The result is *plan-compatible* (same
+   unit fields as race plans: `targetDurationMin`, `description`, planId),
+   so that the calendar, session, workout and statistics views show it without a
+   special case.
 
-   Orientierung: WHO 2020 – 150–300 min moderate Ausdauer pro Woche (zügiges
-   Gehen zählt) plus Kraft an mindestens zwei Tagen (Bull et al. 2020); zum
-   Abnehmen eher 225–250 min (ACSM, Donnelly et al. 2009). Die Ausdauerminuten
-   steigen je Woche um ~8 %, jede 4. Woche ist leichter; die Kraft steigert sich
-   über Runden, Wiederholungen und Varianten.
+   Orientation: WHO 2020 – 150–300 min of moderate endurance per week (brisk
+   walking counts) plus strength on at least two days (Bull et al. 2020); for
+   weight loss rather 225–250 min (ACSM, Donnelly et al. 2009). The endurance
+   minutes rise by ~8 % per week, every 4th week is lighter; strength progresses
+   through rounds, repetitions and variants.
 
-   Reine, DOM-freie Logik -> per node:test abgedeckt.
+   Pure, DOM-free logic -> covered by node:test.
    ========================================================================= */
 
 import { uid, addDays, isoDow, nowIso } from './ui.js';
 
 import { t } from './i18n.js';
 
-/* ---- Programm-Vorlagen ---------------------------------------------------
-   `cardio`: Ausdauerminuten pro Woche [Start, Ziel]; `strengthDays`: Krafttage
-   (Funktion der Trainingstage); `walkDays`: wie viele Ausdauertage zügiges Gehen
-   sind; `mobility`: Beweglichkeit als eigener Tag ('primary') oder als kurzer
-   Zusatz ('extra'). */
+/* ---- Programme templates ------------------------------------------------
+   `cardio`: endurance minutes per week [start, goal]; `strengthDays`: strength days
+   (function of the training days); `walkDays`: how many endurance days are brisk
+   walking; `mobility`: mobility as its own day ('primary') or as a short
+   addition ('extra'). */
 export const PROGRAM_TYPES = {
   fitness: {
     get label() { return t('program.types.fitness.label'); },
@@ -63,15 +63,15 @@ export const PROGRAM_TYPES = {
 
 export function programMeta(type) { return PROGRAM_TYPES[type] || PROGRAM_TYPES.fitness; }
 
-/** Planname eines Programms – ohne Dopplung, wenn der Name der Schwerpunkt selbst ist
-    (das Formular belegt ihn so vor): „Allgemeine Fitness“ statt „… · Allgemeine Fitness“. */
+/** Plan name of a programme – without duplication when the name is the focus itself
+    (the form prefills it that way): "General fitness" instead of "… · General fitness". */
 export function programPlanName(program) {
   const label = programMeta(program.programType).label;
   const name = String(program.name || '').trim();
   return !name || name === label ? label : `${label} · ${name}`;
 }
 
-/* ---- Kraft-Rotation (Ganzkörper-Split über die Wochen) ------------------- */
+/* ---- Strength rotation (full-body split over the weeks) ----------------- */
 const STRENGTH_ROTATION = [
   { get title() { return t('program.rotation.fullBody.title'); }, get moves() { return t('program.rotation.fullBody.moves'); }, get harder() { return t('program.rotation.fullBody.harder'); } },
   { get title() { return t('program.rotation.lowerBody.title'); }, get moves() { return t('program.rotation.lowerBody.moves'); }, get harder() { return t('program.rotation.lowerBody.harder'); } },
@@ -79,9 +79,9 @@ const STRENGTH_ROTATION = [
 ];
 const GENTLE_STRENGTH = { get title() { return t('program.gentle.title'); }, get moves() { return t('program.gentle.moves'); }, get harder() { return t('program.gentle.harder'); } };
 
-/* ---- Phasen ---------------------------------------------------------------
-   Eingewöhnung (Technik, 2 Runden) → Aufbau (3 Runden, steigern) → ab 8 Wochen
-   Festigen (schwerere Varianten). */
+/* ---- Phases ---------------------------------------------------------------
+   Familiarisation (technique, 2 rounds) → build-up (3 rounds, progress) → from 8 weeks
+   consolidation (heavier variants). */
 export function programPhases(weeks) {
   const w = Math.max(1, weeks | 0);
   if (w <= 2) return [{ key: 'build', name: t('program.phases.build.name'), color: '#3d8bff', focus: t('program.phases.build.focusShort'), startWeek: 1, endWeek: w }];
@@ -104,11 +104,11 @@ function phaseKeyAt(weeks, week) {
   return p ? p.key : 'build';
 }
 
-/** Leichtere Woche? Jede 4. Woche, nicht in der letzten Woche. */
+/** Lighter week? Every 4th week, not in the last week. */
 export function isEasyWeek(week, weeks) { return week % 4 === 0 && week < weeks; }
 
-/** Ausdauerminuten pro Woche (inkl. zügigem Gehen): +8 % je Woche bis zum Ziel,
-    jede 4. Woche −20 %, danach zurück auf den Stand davor. Index 1..weeks. */
+/** Endurance minutes per week (incl. brisk walking): +8 % per week up to the goal,
+    every 4th week −20 %, afterwards back to the level before it. Index 1..weeks. */
 export function weeklyCardioMinutes(type, weeks) {
   const [start, target] = programMeta(type).cardio;
   const out = [0];
@@ -122,7 +122,7 @@ export function weeklyCardioMinutes(type, weeks) {
   return out;
 }
 
-/* ---- Wochentags-Verteilung (gleichmäßig, mit Ruhetagen) ------------------ */
+/* ---- Weekday distribution (even, with rest days) ------------------------ */
 const DAY_SPREAD = {
   2: [2, 5],
   3: [1, 3, 5],
@@ -131,16 +131,16 @@ const DAY_SPREAD = {
   6: [1, 2, 3, 4, 5, 6],
 };
 
-/** Wochentage (ISO 1=Mo..7=So) für eine gewünschte Anzahl Trainingstage. */
+/** Weekdays (ISO 1=Mon..7=Sun) for a desired number of training days. */
 export function spreadDays(daysPerWeek) {
   const n = Math.max(2, Math.min(6, daysPerWeek | 0));
   return DAY_SPREAD[n];
 }
 
 /**
- * Die Bausteine einer Trainingswoche (ohne Datum): je Tag ein Hauptbaustein
- * (`block`) und ggf. Zusätze am selben Tag (`extra`, z. B. Kraft nach der Ausdauer).
- * Krafttage liegen möglichst weit auseinander.
+ * The building blocks of a training week (without dates): one main block per day
+ * (`block`) and, where applicable, additions on the same day (`extra`, e.g. strength after endurance).
+ * Strength days are placed as far apart as possible.
  */
 export function programWeekBlocks(type, daysPerWeek) {
   const meta = programMeta(type);
@@ -154,12 +154,12 @@ export function programWeekBlocks(type, daysPerWeek) {
     if (strength && strengthOnly) return { dow, block: 'strength', extra: [] };
     return { dow, block: 'cardio', extra: strength ? ['strength'] : [] };
   });
-  // Zügiges Gehen statt Ausdauer an den letzten reinen Ausdauertagen.
+  // Brisk walking instead of endurance on the last pure endurance days.
   let walks = meta.walkDays(n);
   for (let i = plan.length - 1; i >= 0 && walks > 0; i--) {
     if (plan[i].block === 'cardio' && !plan[i].extra.length) { plan[i].block = 'walk'; walks--; }
   }
-  // Beweglichkeit: eigener Tag (sanftes Programm) oder kurzer Zusatz am letzten Tag.
+  // Mobility: its own day (gentle programme) or a short addition on the last day.
   if (meta.mobility === 'primary') {
     const i = plan.findIndex((d) => !d.extra.length && d.block !== 'strength');
     if (i >= 0) { plan[i].extra.push(plan[i].block); plan[i].block = 'mobility'; }
@@ -170,7 +170,7 @@ export function programWeekBlocks(type, daysPerWeek) {
   return plan;
 }
 
-/* ---- Baustein -> konkrete Einheit ---------------------------------------- */
+/* ---- Building block -> concrete session --------------------------------- */
 function r5(v) { return Math.max(5, Math.round(v / 5) * 5); }
 
 function strengthUnit(meta, week, weeks) {
@@ -206,7 +206,7 @@ function blockUnit(block, ctx) {
   }
 }
 
-/* ---- Datierte Einheiten über die gesamte Programmdauer ------------------- */
+/* ---- Dated sessions over the whole programme duration ------------------- */
 export function buildProgramUnits(program, planId, startDate) {
   const weeks = Math.max(1, program.weeks | 0);
   const dpw = program.daysPerWeek || programMeta(program.programType).defaultDays;
@@ -241,11 +241,11 @@ export function buildProgramUnits(program, planId, startDate) {
   return out;
 }
 
-/* ---- Lese-Migration ------------------------------------------------------
-   Programmeinheiten aus früheren Versionen trugen `dur`/`desc` statt der
-   Plan-Felder `targetDurationMin`/`description` – Session-Ansicht, Kalender,
-   Heute und .ics zeigten deshalb weder Dauer noch Anleitung. Beim Lesen werden
-   die Felder ergänzt; gespeichert wird dabei nichts. */
+/* ---- Read migration ------------------------------------------------------
+   Programme sessions from earlier versions carried `dur`/`desc` instead of the
+   plan fields `targetDurationMin`/`description` – session view, calendar,
+   Today and .ics therefore showed neither duration nor instructions. When reading, the
+   fields are added; nothing is saved in the process. */
 const planMemo = new WeakMap();
 const needsUnitFields = (u) => !!u && ((u.targetDurationMin == null && u.dur != null) || (u.description == null && u.desc != null));
 
@@ -265,14 +265,14 @@ export function migratePlan(plan) {
 
 export function migratePlans(list = []) { return (list || []).map(migratePlan); }
 
-/** Nächsten Montag ab `today` (oder heute, falls Montag). */
+/** Next Monday from `today` (or today, if it is a Monday). */
 function nextMonday(today) {
   const dow = isoDow(today);
   return dow === 1 ? today : addDays(today, 8 - dow);
 }
 
 /**
- * Erzeugt einen plan-kompatiblen Programm-Datensatz inkl. Einheiten.
+ * Creates a plan-compatible programme record including sessions.
  * `program`: { id, name, programType, weeks, daysPerWeek }
  */
 export function createProgramPlan(program, today) {
@@ -282,7 +282,7 @@ export function createProgramPlan(program, today) {
   const units = buildProgramUnits(program, planId, start);
   return {
     id: planId,
-    eventId: program.id,        // verweist auf das Ziel/Programm (kein Wettkampf)
+    eventId: program.id,        // refers to the goal/programme (not a race)
     kind: 'program',
     programType: program.programType,
     name: programPlanName(program),

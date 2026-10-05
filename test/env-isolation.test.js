@@ -1,10 +1,10 @@
-/* Tests für die Umgebungs-Isolation des Client-Speichers (Fix „doppelte Nutzer“).
-   Mehrere Deployments auf derselben Origin (Prod /cat-o-fit/ + Abnahme
-   /cat-o-fit-acc/) dürfen sich LocalStorage/Session NICHT teilen:
-     - Alle Storage-Keys tragen den Umgebungs-Namespace (scopeKey).
-     - resetApp löscht NUR die Keys der eigenen Umgebung.
-     - createFirstAdmin legt keinen zweiten Admin an, wenn der Server schon eine
-       Familie hat (Pull war beim Boot evtl. noch nicht durch). */
+/* Tests for the environment isolation of the client storage (fix "duplicate users").
+   Several deployments on the same origin (prod /cat-o-fit/ + acceptance
+   /cat-o-fit-acc/) must NOT share LocalStorage/Session:
+     - All storage keys carry the environment namespace (scopeKey).
+     - resetApp deletes ONLY the keys of its own environment.
+     - createFirstAdmin does not create a second admin if the server already has
+       a family (the pull may not have finished at boot). */
 import { test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import * as store from '../js/storage.js';
@@ -56,42 +56,42 @@ function installMock() {
 beforeEach(() => { localStorage.clear(); installMock(); store.clearActiveUser(); });
 afterEach(() => { globalThis.fetch = realFetch; });
 
-test('Storage-Keys tragen den Umgebungs-Namespace (kein flaches catofit:<user>:<area>)', async () => {
+test('Storage keys carry the environment namespace (no flat catofit:<user>:<area>)', async () => {
   store.saveFamily({ members: [{ id: 'u-1', name: 'Nora', role: 'admin' }], settings: {}, pantry: [] });
   await store.login('u-1', '');
   store.upsert('events', { id: 'e1', name: 'Stadtlauf' });
 
   const nsKey = scopeKey('u-1:events');
-  assert.ok(nsKey.startsWith('catofit:') && nsKey.includes(APP_NS), 'Key enthält Namespace');
-  assert.ok(localStorage.getItem(nsKey), 'namespaced Key existiert');
-  assert.equal(localStorage.getItem('catofit:u-1:events'), null, 'kein flacher Legacy-Key');
+  assert.ok(nsKey.startsWith('catofit:') && nsKey.includes(APP_NS), 'key contains the namespace');
+  assert.ok(localStorage.getItem(nsKey), 'namespaced key exists');
+  assert.equal(localStorage.getItem('catofit:u-1:events'), null, 'no flat legacy key');
 });
 
-test('resetApp löscht NUR die eigene Umgebung – fremde Namespaces bleiben', async () => {
+test('resetApp deletes ONLY its own environment – foreign namespaces remain', async () => {
   store.saveFamily({ members: [{ id: 'u-1', name: 'Nora', role: 'admin' }], settings: {}, pantry: [] });
   await store.login('u-1', '');
   store.upsert('events', { id: 'e1', name: 'X' });
 
-  // „Andere Umgebung“ (z. B. /cat-o-fit-acc/) + ein Fremd-App-Key auf gleicher Origin.
+  // "Other environment" (e.g. /cat-o-fit-acc/) + a foreign app key on the same origin.
   localStorage.setItem('catofit:/cat-o-fit-acc/:u-9:events', JSON.stringify([{ id: 'z' }]));
   localStorage.setItem('anderes-tool:state', 'behalten');
 
   await store.resetApp();
 
-  assert.equal(localStorage.getItem(scopeKey('u-1:events')), null, 'eigener Key gelöscht');
-  assert.ok(localStorage.getItem('catofit:/cat-o-fit-acc/:u-9:events'), 'fremde Umgebung bleibt');
-  assert.equal(localStorage.getItem('anderes-tool:state'), 'behalten', 'fremde App bleibt');
+  assert.equal(localStorage.getItem(scopeKey('u-1:events')), null, 'own key deleted');
+  assert.ok(localStorage.getItem('catofit:/cat-o-fit-acc/:u-9:events'), 'foreign environment remains');
+  assert.equal(localStorage.getItem('anderes-tool:state'), 'behalten', 'foreign app remains');
 });
 
-test('createFirstAdmin legt KEINEN zweiten Admin an, wenn der Server schon eine Familie hat', async () => {
-  // Server hat bereits einen Admin (z. B. auf einem anderen Gerät angelegt).
+test('createFirstAdmin creates NO second admin if the server already has a family', async () => {
+  // The server already has an admin (e.g. created on another device).
   const fam = srv(key('family', 'family', null));
   fam.records['u-existing'] = { id: 'u-existing', _kind: 'member', name: 'Nora', role: 'admin', createdAt: '2026-06-01T10:00:00Z', rev: ++fam.rev };
 
-  // Lokal ist die Familie noch leer (Pull war beim Boot nicht durch).
+  // Locally the family is still empty (the pull had not finished at boot).
   const id = await store.createFirstAdmin({ name: 'Nora-Doppel', pin: '1234' });
 
-  assert.equal(id, null, 'kein neuer Admin angelegt');
+  assert.equal(id, null, 'no new admin created');
   const names = store.members().map((m) => m.name);
-  assert.deepEqual(names, ['Nora'], 'nur der vorhandene Server-Admin, kein Duplikat');
+  assert.deepEqual(names, ['Nora'], 'only the existing server admin, no duplicate');
 });

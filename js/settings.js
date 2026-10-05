@@ -1,6 +1,6 @@
 /* =========================================================================
-   settings.js — Profil & Einstellungen: Werte, HF-Zonen, Darstellung,
-   Module, Metriken, Backup (Export/Import), Sync.
+   settings.js — profile & settings: values, HR zones, appearance,
+   modules, metrics, backup (export/import), sync.
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -33,12 +33,12 @@ function languageOptions() {
   return Object.entries(languages()).map(([value, label]) => ({ value, label }));
 }
 
-/** Gewicht und Körperfett sind „Gewichtsziele“ (gesperrt für Kinder, Schwangerschaft, Essstörung). */
+/** Weight and body fat are "weight goals" (locked for children, pregnancy, eating disorder). */
 const WEIGHT_METRICS = ['weight', 'bodyFat'];
-/** Untergrenzen für Körperfett-Ziele (essenzielles Fett, grob): darunter wird es gesundheitlich riskant. */
+/** Lower limits for body-fat goals (essential fat, roughly): below them it becomes risky for health. */
 const BODY_FAT_FLOOR = { w: 12, m: 5 };
 
-/** Einstellungen neu zeichnen, ohne die Seite neu zu laden. */
+/** Redraw the settings without reloading the page. */
 function rerender(view) { rerenderView(render, view); }
 
 const ACCENTS = ['#18b48a', '#2bb673', '#19b9c9', '#3d8bff', '#7c5cff', '#ff5d8f', '#ff8a3d', '#f5b300'];
@@ -48,14 +48,14 @@ export function render(view) {
   const p = store.profile();
   const s = store.settings();
 
-  /* ----- Konto & Familie ----- */
-  // Immer die ANGEMELDETE Person (UI-02). Verwaltet sie gerade ein anderes Profil, steht das
-  // hier ausdrücklich samt Rückweg – die Einstellungen darunter gelten dem verwalteten Profil.
+/* ----- Account & family ----- */
+  // Always the SIGNED-IN person (UI-02). If they are currently managing another profile, that is
+  // stated explicitly here together with the way back – the settings below apply to the managed profile.
   const ident = store.identityMember();
   const acct = store.activeMember();
   if (ident && acct) {
     const managing = store.isManaging();
-    const identColor = safeAccent(ident.color, '');   // nur echte Hex-Farben in Stile übernehmen
+    const identColor = safeAccent(ident.color, '');   // only take real hex colours into styles
     view.appendChild(sectionHead(t('settings.sections.account')));
     view.appendChild(el('div', { class: 'card' }, [
       el('div', { class: 'row gap-3', style: { alignItems: 'center' } }, [
@@ -87,7 +87,7 @@ export function render(view) {
       ]),
     ]));
 
-    // Feinere Sichtbarkeit im Team/Familie-Dashboard (Zyklus bleibt unabhängig davon immer privat).
+    // Finer visibility in the team/family dashboard (the cycle always stays private regardless).
     view.appendChild(sectionHead(t('settings.sections.visibility')));
     view.appendChild(el('div', { class: 'card' }, [
       el('div', { class: 'muted mb-2', style: { fontSize: '.8rem' }, text: t('settings.visibility.intro') }),
@@ -106,7 +106,7 @@ export function render(view) {
     ]));
   }
 
-  /* ----- Profil ----- */
+/* ----- Profile ----- */
   const elig = currentEligibility();
   const profileLine = [`${p.heightCm || '–'} cm`, `${p.weightKg ? fmtDec(p.weightKg) : '–'} kg`];
   if (!elig.noWeightGoals) profileLine.push(t('settings.profile.target', { kg: p.targetWeightKg ? fmtDec(p.targetWeightKg) : '–' }));
@@ -128,11 +128,11 @@ export function render(view) {
     ]));
   }
 
-  /* ----- Gesundheit & Eignung (gilt für die ganze App) ----- */
+  /* ----- Health & eligibility (applies to the whole app) ----- */
   view.appendChild(sectionHead(t('settings.sections.health')));
   view.appendChild(eligibilityCard(elig, s, () => rerender(view)));
 
-  /* ----- Wochenziele (Aktivität) ----- */
+  /* ----- Weekly goals (activity) ----- */
   view.appendChild(sectionHead(t('settings.sections.weeklyGoals')));
   const wg = weeklyGoals(p);
   const minI = input({ type: 'number', min: '0', step: '10', value: String(wg.activeMinutes), inputmode: 'numeric' });
@@ -158,7 +158,7 @@ export function render(view) {
       : t('settings.weeklyGoals.hint') }),
   ]));
 
-  /* ----- Gesundheitsziele (Zielwerte mit Fortschritt) ----- */
+  /* ----- Health goals (target values with progress) ----- */
   view.appendChild(sectionHead(t('settings.sections.healthGoals'), { label: t('settings.goals.add'), onClick: () => openGoalSheet(view, elig) }));
   const goals = (p.settings && p.settings.healthGoals) || [];
   const goalsCard = el('div', { class: 'card' });
@@ -189,9 +189,9 @@ export function render(view) {
   }
   view.appendChild(goalsCard);
 
-  /* ----- Herzfrequenz-Zonen ----- */
-  // HFmax gemessen oder – als Startwert – aus dem Alter geschätzt (Tanaka); Zonen
-  // wahlweise in % HFmax oder über die Herzfrequenzreserve (Karvonen, mit Ruhepuls).
+/* ----- Heart-rate zones ----- */
+  // HRmax measured or – as a starting value – estimated from age (Tanaka); zones
+  // either in % HRmax or via the heart-rate reserve (Karvonen, with resting pulse).
   view.appendChild(sectionHead(t('settings.sections.hrZones'), null, { help: 'hf-zonen' }));
   const card = el('div', { class: 'card' });
   const age = ageOf(p, todayStr());
@@ -219,12 +219,12 @@ export function render(view) {
       el('span', { class: 'muted', style: { fontSize: '.82rem' }, text: t('settings.hrZones.method') }),
       segmented([{ value: 'hfmax', label: t('settings.hrZones.pctMax') }, { value: 'karvonen', label: t('settings.hrZones.reserve') }, { value: 'lthr', label: t('settings.hrZones.threshold') }], method, (v) => {
         if (v === 'karvonen' && !p.restHr) { toast(t('settings.hrZones.needRestHr'), 'bad'); return; }
-        if (v === 'lthr' && !p.lthr) { store.setProfile({ hrZoneMethod: 'lthr' }); refreshView(); return; }   // erst die Schwellen-HF eintragen
+        if (v === 'lthr' && !p.lthr) { store.setProfile({ hrZoneMethod: 'lthr' }); refreshView(); return; }   // enter the threshold HR first
         saveZones({ hrZoneMethod: v });
       }),
     ]));
   }
-  // Zonen aus der Schwellen-HF (TRAIN-51): aus einer Leistungsdiagnostik oder dem 30-Minuten-Feldtest.
+  // Zones from the threshold HR (TRAIN-51): from a performance diagnostic or the 30-minute field test.
   if (method === 'lthr') {
     card.appendChild(field(t('settings.hrZones.lthrLabel'), input({
       type: 'number', min: '100', max: '220', value: p.lthr || '', inputmode: 'numeric', placeholder: t('settings.hrZones.lthrPlaceholder'), 'aria-label': t('settings.hrZones.lthrLabel'),
@@ -248,7 +248,7 @@ export function render(view) {
   ])));
   view.appendChild(card);
 
-  /* ----- Pace-Bereiche ----- */
+/* ----- Pace ranges ----- */
   if (p.paceZones) {
     view.appendChild(sectionHead(t('settings.sections.paceZones')));
     const pc = el('div', { class: 'card' });
@@ -258,7 +258,7 @@ export function render(view) {
     view.appendChild(pc);
   }
 
-  /* ----- Darstellung ----- */
+/* ----- Appearance ----- */
   view.appendChild(sectionHead(t('settings.sections.appearance')));
   const disp = el('div', { class: 'card' });
   disp.appendChild(el('div', { class: 'row row--between wrap mb-4' }, [
@@ -288,17 +288,17 @@ export function render(view) {
   })));
   view.appendChild(disp);
 
-  /* ----- Module ----- */
+/* ----- Modules ----- */
   view.appendChild(sectionHead(t('settings.sections.modules'), null, { help: 'module' }));
   const mods = s.modules || {};
   const modList = el('div', { class: 'card' });
-  // „Krafttraining“ gab es hier bis v3.20.0 als Schalter ohne jede Wirkung (DOC-15) – entfernt;
-  // ein gespeicherter Wert stört nicht.
+  // A strength-training switch existed here until v3.20.0 without any effect (DOC-15) – removed;
+  // a stored value does no harm.
   [['nutrition', t('nav.nutrition')], ['shopping', t('nav.shopping')], ['checklist', t('settings.modules.checklist')], ['cycle', t('settings.modules.cycle')], ['labs', t('nav.labs')]].forEach(([k, label], i) => {
     modList.appendChild(el('div', { class: 'row row--between', style: { padding: '10px 0', borderTop: i ? '1px solid var(--border)' : 'none' } }, [
       el('span', { text: label }),
-      // Frische Module lesen (nicht den Render-Snapshot) -> mehrere Toggles überschreiben sich nicht.
-      // catofit:nav blendet den Menüpunkt sofort ein/aus.
+      // Read fresh modules (not the render snapshot) -> several toggles do not overwrite each other.
+      // catofit:nav shows/hides the menu item immediately.
       toggle(mods[k] !== false, (v) => {
         store.setSetting('modules', { ...(store.settings().modules || {}), [k]: v });
         window.dispatchEvent(new Event('catofit:nav'));
@@ -307,7 +307,7 @@ export function render(view) {
   });
   view.appendChild(modList);
 
-  /* ----- Metriken ----- */
+/* ----- Metrics ----- */
   view.appendChild(sectionHead(t('settings.sections.bodyMetrics')));
   const me = s.metricsEnabled || {};
   const metList = el('div', { class: 'card' });
@@ -319,7 +319,7 @@ export function render(view) {
   });
   view.appendChild(metList);
 
-  /* ----- Standort & Wetter ----- */
+/* ----- Location & weather ----- */
   view.appendChild(sectionHead(t('settings.sections.location')));
   const wcard = el('div', { class: 'card' });
   wcard.appendChild(el('div', { class: 'row row--between mb-4' }, [
@@ -328,10 +328,10 @@ export function render(view) {
   ]));
   const cityI = input({ value: s.location?.name || '', placeholder: t('settings.location.cityPlaceholder'), 'aria-label': t('settings.location.searchAria') });
   const hits = el('div', { class: 'col gap-2 mt-2', 'aria-live': 'polite' });
-  // Treffer mit Region und Land zur Auswahl; erst der Tipp übernimmt den Ort (UI-40).
+  // Matches with region and country to choose from; only the tap adopts the place (UI-40).
   const choose = async (g) => {
     store.setSetting('location', { name: g.name, region: g.region, country: g.country, lat: g.lat, lon: g.lon });
-    try { await refreshWeather(g, true); } catch { /* Vorhersage kommt beim nächsten Start */ }
+    try { await refreshWeather(g, true); } catch { /* the forecast arrives at the next start */ }
     toast(t('settings.location.chosen', { place: placeLabel(g) }), 'good');
     refreshView();
   };
@@ -358,7 +358,7 @@ export function render(view) {
   wcard.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: t('settings.location.credit') }));
   view.appendChild(wcard);
 
-  /* ----- Einkauf ----- */
+/* ----- Shopping ----- */
   view.appendChild(sectionHead(t('settings.sections.shopping')));
   view.appendChild(el('div', { class: 'card row row--between', style: { alignItems: 'center' } }, [
     el('div', {}, [
@@ -370,7 +370,7 @@ export function render(view) {
       : el('span', { class: 'chip', text: t('settings.shopping.adminOnly') }),
   ]));
 
-  /* ----- Ernährung ----- */
+  /* ----- Nutrition ----- */
   view.appendChild(sectionHead(t('nav.nutrition')));
   view.appendChild(el('div', { class: 'card' }, [
     el('div', { class: 'row row--between', style: { alignItems: 'center' } }, [
@@ -378,11 +378,11 @@ export function render(view) {
       toggle(store.foodLookupEnabled(), (v) => store.setSetting('foodLookup', v), t('settings.nutrition.foodLookup')),
     ]),
     el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: t('settings.nutrition.foodLookupHint') }),
-    // Namensnennung laut Nutzungsbedingungen von Open Food Facts (DOC-16).
+    // Attribution required by the terms of use of Open Food Facts (DOC-16).
     el('div', { class: 'dim mt-1', style: { fontSize: '.74rem' }, html: t('settings.nutrition.foodLookupCredit') }),
   ]));
 
-  /* ----- Verwaltung (nur Admin) – über dem Backup ----- */
+  /* ----- Administration (admin only) – above the backup ----- */
   if (store.isAdmin()) {
     view.appendChild(sectionHead(t('settings.sections.admin')));
     view.appendChild(el('button', { class: 'card card--link', style: { width: '100%', textAlign: 'left' }, onclick: () => navigate('#/familie-verwalten') }, [
@@ -408,7 +408,7 @@ export function render(view) {
     ]));
   }
 
-  /* ----- Daten ----- */
+/* ----- Data ----- */
   view.appendChild(sectionHead(t('settings.sections.data'), null, { help: 'backup' }));
   view.appendChild(el('div', { class: 'col gap-2' }, [
     el('button', { class: 'btn btn--soft btn--block', onclick: () => { syncNow().then(() => toast(t('settings.data.synced'), 'good')); } }, [icon('refresh'), t('settings.data.syncNow')]),
@@ -420,7 +420,7 @@ export function render(view) {
   view.appendChild(el('p', { class: 'dim', style: { fontSize: '.78rem', marginTop: '4px' }, text: t('settings.data.hint') }));
   if (!store.isManaging()) view.appendChild(readAccessCard());
 
-  // Admin-Vollbackup: gesamte Familie sichern/wiederherstellen (autoritativ).
+  // Admin full backup: back up/restore the whole family (authoritative).
   if (store.isAdmin()) {
     view.appendChild(el('div', { class: 'card', style: { marginTop: '12px', borderColor: 'var(--accent-soft)' } }, [
       el('div', { class: 'row gap-2', style: { alignItems: 'center', marginBottom: '8px' } }, [
@@ -435,7 +435,7 @@ export function render(view) {
     ]));
   }
 
-  /* ----- Über & Rechtliches ----- */
+  /* ----- About & legal ----- */
   view.appendChild(sectionHead(t('settings.sections.about')));
   const repo = 'https://github.com/Bingerminger/cat-o-fit';
   const legal = el('div', { class: 'card', style: { fontSize: '.8rem', lineHeight: '1.5' } }, [
@@ -450,7 +450,7 @@ export function render(view) {
   ]);
   view.appendChild(legal);
 
-  // App-Reset bewusst als ALLERLETZTE Aktion (destruktiv) – Gefahrenzone ganz unten.
+  // App reset deliberately as the VERY LAST action (destructive) – danger zone at the very bottom.
   if (store.isAdmin()) {
     view.appendChild(el('div', { class: 'card card--flat mt-4' }, [
       el('button', { class: 'btn btn--ghost btn--block', style: { color: 'var(--bad-text)' }, onclick: openResetSheet }, [icon('trash'), t('settings.reset.button')]),
@@ -463,9 +463,9 @@ export function render(view) {
 }
 
 /**
- * Sprungleiste über den Einstellungen: Konto · Profil · Ziele · Training · Darstellung ·
- * Module · Daten – vorher 6,3 Bildschirmhöhen ohne Orientierung, „Backup“ oder „Module“
- * fand man nur durch Scrollen (UI-15).
+ * Jump bar above the settings: Account · Profile · Goals · Training · Appearance ·
+ * Modules · Data – previously 6.3 screen heights without orientation, "Backup" or "Modules"
+ * could only be found by scrolling (UI-15).
  */
 function jumpNav(view) {
   const GROUPS = [
@@ -477,7 +477,7 @@ function jumpNav(view) {
     [t('settings.sections.modules'), t('settings.sections.modules')],
     [t('settings.sections.data'), t('settings.jump.backup')],
   ];
-  // [...] – im Browser eine NodeList (ohne find), im Test-DOM ein Array.
+  // [...] – a NodeList in the browser (without find), an array in the test DOM.
   const heads = [...view.querySelectorAll('.section-head')];
   const find = (title) => heads.find((h) => ([...h.querySelectorAll('.section-head__title')][0] || {}).textContent === title);
   return el('nav', { class: 'jump-nav', 'aria-label': t('settings.jump.aria') },
@@ -487,7 +487,7 @@ function jumpNav(view) {
     })));
 }
 
-/** Abgrenzung (Gate) und „Kalorienzahlen ausblenden“ – ein Status für die ganze App. */
+/** Eligibility (gate) and "Hide calorie figures" – one status for the whole app. */
 function eligibilityCard(elig, s, onChange) {
   let status;
   if (elig.minor) {
@@ -524,7 +524,7 @@ function eligibilityCard(elig, s, onChange) {
   ]);
 }
 
-/* App-Reset: löscht alles (Server & lokal) und führt zur Ersteinrichtung. Tippe-Bestätigung. */
+/* App reset: deletes everything (server & local) and leads to the initial setup. Type-to-confirm. */
 function openResetSheet() {
   const inp = input({ type: 'text', placeholder: t('settings.reset.word'), maxlength: '12', autocomplete: 'off' });
   const err = el('div', { class: 'pin-err', role: 'alert', hidden: true, text: t('settings.reset.typeWord', { word: t('settings.reset.word') }) });
@@ -532,15 +532,15 @@ function openResetSheet() {
   const doReset = async () => {
     if (busy) return;
     if (inp.value.trim().toUpperCase() !== t('settings.reset.word').toUpperCase()) { err.hidden = false; inp.focus(); return; }
-    // Der Server löscht nur für eine angemeldete Admin-Person – ohne ihn bliebe alles dort liegen.
+    // The server only deletes for a signed-in admin – without it everything would stay there.
     if (!store.serverSessionActive()) {
       toast(t('settings.reset.needServer'), 'bad', 5000);
       return;
     }
     busy = true;
-    try { await store.resetApp(); } catch { /* trotzdem neu starten */ }
+    try { await store.resetApp(); } catch { /* restart anyway */ }
     location.hash = '#/login';
-    location.reload();   // sauberer Neustart in die Ersteinrichtung
+    location.reload();   // clean restart into the initial setup
   };
   inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') doReset(); });
   const body = el('div', { class: 'col gap-3' }, [
@@ -552,9 +552,9 @@ function openResetSheet() {
   setTimeout(() => inp.focus(), 120);
 }
 
-/** Neues Gesundheitsziel anlegen (Metrik + Zielwert + optionale Frist). */
+/** Create a new health goal (metric + target value + optional deadline). */
 function openGoalSheet(view, elig = currentEligibility()) {
-  // Kinder, Schwangerschaft/Stillzeit, Essstörung: keine Gewichts- und Körperfettziele.
+  // Children, pregnancy/breastfeeding, eating disorder: no weight and body-fat goals.
   const metrics = GOAL_METRICS.filter((m) => !(elig.noWeightGoals && WEIGHT_METRICS.includes(m.key)));
   let metric = metrics[0].key;
   const metricSel = select(
@@ -564,7 +564,7 @@ function openGoalSheet(view, elig = currentEligibility()) {
   const targetI = input({ type: 'number', step: '0.1', inputmode: 'decimal', placeholder: t('settings.goalSheet.target') });
   const deadlineI = input({ type: 'date' });
   const hint = el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '2px' } });
-  // HRV-Ziele gelten für eine Messart (die des jüngsten Werts) – SDNN und RMSSD sind nicht vergleichbar.
+  // HRV goals apply to one measurement method (that of the most recent value) – SDNN and RMSSD are not comparable.
   const hrvMethod = currentHrvMethod(store.get('health'));
   function updateHint() {
     const cur = latestMetric(metric, { profile: store.profile(), health: store.get('health'), hrvMethod });
@@ -575,8 +575,8 @@ function openGoalSheet(view, elig = currentEligibility()) {
       : t('settings.goalSheet.noMeasurement');
   }
   updateHint();
-  // Riskante Ziele: Hinweis direkt im Sheet, erst der zweite Tipp legt an (eine Rückfrage
-  // als eigenes Sheet würde dieses schließen und die Eingaben verwerfen).
+  // Risky goals: hint directly in the sheet, only the second tap creates the goal (a follow-up question
+  // as a separate sheet would close this one and discard the inputs).
   const warnBox = warningBox();
   const createBtn = el('button', { class: 'btn btn--primary grow', text: t('settings.goalSheet.create') });
   const confirm = pendingConfirm(warnBox, createBtn, t('settings.goalSheet.create'), t('settings.goalSheet.createAnyway'));
@@ -610,12 +610,12 @@ function openGoalSheet(view, elig = currentEligibility()) {
   });
 }
 
-/** Hinweisfeld für riskante Zielwerte (im Sheet, zunächst verborgen). */
+/** Hint field for risky target values (in the sheet, hidden at first). */
 function warningBox() {
   return el('div', { class: 'card card--flat mt-2', role: 'alert', hidden: true, style: { borderLeft: '3px solid var(--warn)', fontSize: '.82rem' } });
 }
 
-/** Zweistufige Bestätigung im Sheet: erster Tipp zeigt den Hinweis, zweiter bestätigt. */
+/** Two-step confirmation in the sheet: the first tap shows the hint, the second confirms. */
 function pendingConfirm(box, btn, label, confirmLabel) {
   let shown = null;
   const reset = () => { shown = null; box.hidden = true; btn.textContent = label; };
@@ -629,7 +629,7 @@ function pendingConfirm(box, btn, label, confirmLabel) {
   };
 }
 
-/** Hinweis bei gesundheitlich riskanten Zielen (Untergewicht, sehr niedriger Körperfettanteil) – oder null. */
+/** Hint for goals that are risky for health (underweight, very low body-fat percentage) – or null. */
 function goalWarning(metric, target, profile = {}) {
   if (metric === 'weight') return targetWeightWarning(target, profile);
   if (metric === 'bodyFat') {
@@ -642,7 +642,7 @@ function goalWarning(metric, target, profile = {}) {
   return null;
 }
 
-/** Hinweis, wenn das Zielgewicht einem BMI unter 18,5 entspricht (oder null). */
+/** Hint when the target weight corresponds to a BMI below 18.5 (or null). */
 function targetWeightWarning(target, profile = {}) {
   const bmi = bmiFor(target, profile);
   if (bmi == null || bmi >= 18.5) return null;
@@ -650,9 +650,9 @@ function targetWeightWarning(target, profile = {}) {
 }
 
 /**
- * PIN ändern. Die eigene nur mit der bisherigen PIN (schützt vor einer fremden, noch
- * offenen Sitzung am geteilten Gerät); beim Verwalten setzt eine Admin-Person die PIN
- * des Mitglieds neu. Die neue PIN immer zweimal. Entfernen geht nicht – die PIN ist Pflicht.
+ * Change PIN. One's own only with the current PIN (protects against someone else's still
+ * open session on a shared device); when managing, an admin resets the member's
+ * PIN. The new PIN is always entered twice. Removing it is not possible – the PIN is mandatory.
  */
 function openPinSheet(member) {
   const self = member.id === store.identityId();
@@ -679,7 +679,7 @@ function openPinSheet(member) {
     }
     closeSheet();
     toast(self ? t('settings.pin.changed') : t('settings.pin.resetFor', { name: member.name }), 'good');
-    refreshView();   // Hinweise neu zeichnen
+    refreshView();   // redraw hints
   };
   [oldI, newI, new2I].filter(Boolean).forEach((f, i, all) => f.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
@@ -696,7 +696,7 @@ function openPinSheet(member) {
   setTimeout(() => (oldI || newI).focus(), 120);
 }
 
-/* ------------------------------- Profil-Sheet --------------------------- */
+/* ------------------------------- Profile sheet --------------------------- */
 function openProfileSheet() {
   const p = store.profile();
   const nameI = input({ value: p.name || '' });
@@ -707,7 +707,7 @@ function openProfileSheet() {
   const sexI = select([{ value: '', label: t('settings.profile.sexNone') }, { value: 'w', label: t('settings.profile.sexFemale') }, { value: 'm', label: t('settings.profile.sexMale') }], p.sex || '');
   const goalsI = textarea({ value: (p.goals || []).join('\n'), placeholder: t('settings.profile.goalsPlaceholder') });
 
-  // Zielgewicht: für Kinder und Jugendliche nicht angeboten; bei Schwangerschaft/Essstörung mit Hinweis.
+  // Target weight: not offered for children and adolescents; with a hint for pregnancy/eating disorder.
   const gate = store.settings().labsGate || {};
   const isMinor = () => {
     const age = ageOf({ birthYear: parseInt(byI.value) || null }, todayStr());
@@ -727,7 +727,7 @@ function openProfileSheet() {
   byI.addEventListener('input', syncTarget);
   syncTarget();
 
-  // Zielgewicht unter BMI 18,5: Hinweis im Sheet, erst der zweite Tipp speichert.
+  // Target weight below BMI 18.5: hint in the sheet, only the second tap saves.
   const warnBox = warningBox();
   const saveBtn = el('button', { class: 'btn btn--primary grow', text: t('settings.save') });
   const confirm = pendingConfirm(warnBox, saveBtn, t('settings.save'), t('settings.profile.saveAnyway'));
@@ -761,8 +761,8 @@ function openProfileSheet() {
       birthYear: parseInt(byI.value) || null, sex: sexI.value || null,
       goals: goalsI.value.split('\n').map((x) => x.trim()).filter(Boolean),
     };
-    // Startgewicht des Ziels merken: Daraus ergibt sich die Richtung (abnehmen/zunehmen),
-    // auch wenn das Ziel später über- oder unterschritten wird.
+    // Remember the starting weight of the goal: it determines the direction (lose/gain),
+    // even if the goal is later exceeded or undershot.
     if (targetWeightKg !== (p.targetWeightKg ?? null)) {
       changes.targetWeightStartKg = targetWeightKg != null ? weightNow(store.get('health'), { weightKg }, todayStr()) : null;
     }
@@ -783,8 +783,8 @@ async function exportData() {
   }
 }
 
-/** Lesezugang für eigene Werkzeuge, etwa einen selbst betriebenen KI-Assistenten (MKT-15).
-    Standardmäßig aus; nur lesend; ohne Zyklus, Labor und Ergänzungen. */
+/** Read access for your own tools, e.g. a self-hosted AI assistant (MKT-15).
+    Off by default; read-only; without cycle, lab values and supplements. */
 function readAccessCard() {
   const wrap = el('div', { class: 'card mt-3' });
   const draw = () => {
@@ -823,7 +823,7 @@ function readAccessCard() {
   return wrap;
 }
 
-/** CSV je Bereich – zum Weiterarbeiten in Excel, Numbers oder einer anderen App (MKT-12). */
+/** CSV per area – for further work in Excel, Numbers or another app (MKT-12). */
 function openCsvExport() {
   const save = async (label, file, csv) => {
     const name = `catofit-${file}-${todayStr()}.csv`;
@@ -882,7 +882,7 @@ function importData() {
   document.body.appendChild(inp); inp.click(); inp.remove();
 }
 
-/* ---------------------- Admin-Vollbackup (ganze Familie) ----------------- */
+/* ---------------------- Admin full backup (whole family) ----------------- */
 async function exportFamilyData() {
   let dump;
   try { dump = await store.exportFamilyAll(); }
@@ -900,8 +900,8 @@ async function exportFamilyData() {
 }
 
 function importFamilyData() {
-  // Die Familie ersetzt der Server nur für eine angemeldete Admin-Person – ohne sie
-  // käme nur ein Teil der Wiederherstellung an.
+  // The server only replaces the family for a signed-in admin – without it
+  // only part of the restore would arrive.
   if (!store.serverSessionActive()) {
     alertDialog({ title: t('settings.fullBackup.needServerTitle'), tone: 'bad', message: t('settings.fullBackup.needServerMsg') });
     return;

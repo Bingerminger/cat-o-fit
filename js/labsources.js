@@ -1,15 +1,15 @@
 import { t } from './i18n.js';
 /* =========================================================================
-   labsources.js — Woher bekomme ich als Sportler:in meine Laborwerte?
-   Reine Daten, DOM-frei – von der Labor-Ansicht und der In-App-Hilfe genutzt,
-   damit beide dieselbe Auskunft geben.
+   labsources.js — Where do athletes get their lab values?
+   Plain data, DOM-free – used by the labs view and the in-app help so that
+   both give the same answer.
 
-   Bezug: Deutschland. Kosten und Kassenleistungen sind Anhaltspunkte und können
-   sich ändern; verbindlich ist immer die Auskunft der eigenen Krankenkasse bzw.
-   der Praxis.
+   Scope: Germany. Costs and insurance coverage are rough guides and may change;
+   what counts is always the information from your own health insurer or the
+   practice.
    ========================================================================= */
 
-/** Wege zu einem Laborbefund – vom naheliegendsten zum ergänzenden. */
+/** Routes to a lab report – from the most obvious to the supplementary. */
 export const LAB_SOURCES = [
   {
     key: 'sportmedizin',
@@ -49,7 +49,7 @@ export const LAB_SOURCES = [
   },
 ];
 
-/** Was in Deutschland genormt ist – und was ausdrücklich nicht. */
+/** What is standardised in Germany – and what explicitly is not. */
 export const LAB_STANDARDS = {
   get regulated() { return [
     t('labSources.standards.rilibaek'),
@@ -62,6 +62,6 @@ export const LAB_STANDARDS = {
   ]; },
 };
 
-/** Kurzfassung für die Anzeige im leeren Modul. */
+/** Short version for display in the empty module. */
 export const labSourcesTeaser = () =>
   t('labSources.teaser');

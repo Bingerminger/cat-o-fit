@@ -1,6 +1,6 @@
 /* =========================================================================
-   dashboard-goals.js — Ziel-Karten auf „Heute“: Ziel-Cockpit (Lauf + Gewicht),
-   Wochenziele und Gesundheitsziele. Aus dashboard.js ausgelagert (FE-18).
+   dashboard-goals.js — goal cards on "Today": goal cockpit (running + weight),
+   weekly goals and health goals. Extracted from dashboard.js (FE-18).
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -14,15 +14,15 @@ import { progressRing } from './charts.js';
 
 import { t } from './i18n.js';
 
-/** Ziel-Cockpit (R4): Status aller Ziele (Lauf + Gewicht), Phasen-Schwerpunkt,
-    phasenabhängige Ernährungskopplung und der ehrliche Trainingsreiz-Check. */
+/** Goal cockpit (R4): status of all goals (running + weight), phase focus,
+    phase-dependent nutrition coupling and the honest training-stimulus check. */
 export function goalCockpitCard(today) {
   const sessions = store.get('sessions');
-  // Dieselbe Quelle wie die Ernährungskarte: Plan zum nächsten Wettkampf, geglättetes
-  // Gewicht, eine Definition von „Ziel erreicht“, dasselbe Defizit.
+  // Same source as the nutrition card: plan for the next race, smoothed
+  // weight, one definition of "goal reached", the same deficit.
   const energy = currentEnergyTargets(today);
   const plan = energy.plan, event = energy.event;
-  // Kinder, Schwangerschaft/Stillzeit, Essstörung: kein Gewichtsziel, kein Abnehm-Cockpit.
+  // Children, pregnancy/breastfeeding, eating disorder: no weight goal, no weight-loss cockpit.
   const gs = energy.elig.noWeightGoals ? null : energy.goalStatus;
   const hasWeight = !!gs;
   if (!plan && !hasWeight) return null;
@@ -61,7 +61,7 @@ export function goalCockpitCard(today) {
   ];
   if (plan) {
     const emph = phaseEmphasis(plan, today);
-    // Der Phasentext spricht vom Abnehmen – nur zeigen, wenn es ein Abnehmziel gibt.
+    // The phase text talks about losing weight – show only if there is a weight-loss goal.
     if (dual && gs.direction === 'down') children.push(el('div', { class: 'muted', style: { fontSize: '.8rem', marginTop: '4px' }, text: t('dashboardGoals.phaseNote', { phase: emph.phaseName, note: emph.note }) }));
     if (dual) {
       let head;
@@ -86,7 +86,7 @@ export function goalCockpitCard(today) {
   ]));
   return el('div', { class: 'card' }, children);
 }
-/** Kurzname des Wettkampfs für das Cockpit („Halbmarathon“, „10 km“ …). */
+/** Short name of the race for the cockpit ("Half marathon", "10 km" …). */
 const RACE_LABELS = {
   '5k': '5 km', '10k': '10 km', hyrox: 'Hyrox',
   get HM() { return t('dashboardGoals.halfMarathon'); },
@@ -112,7 +112,7 @@ function goalRow(ico, title, detail, tone) {
   ]);
 }
 
-/** Wochen-Gesundheitsziele: Aktivitätsminuten & Trainingstage als Ringe, plus Gewicht. */
+/** Weekly health goals: activity minutes & training days as rings, plus weight. */
 export function weekGoalsCard(today) {
   const prog = goalProgress({ profile: store.profile(), sessions: store.get('sessions'), health: store.get('health'), today });
   const ring = (p, label, color) => el('div', { class: 'col center', style: { flex: '1', gap: '6px' } }, [
@@ -145,7 +145,7 @@ export function weekGoalsCard(today) {
         : t('dashboardGoals.weekRemaining', { remaining: fmtNum(w.remaining, 1), target: fmtNum(w.target, 1) });
     children.push(el('div', { class: 'row gap-2 mt-3', style: { alignItems: 'center', justifyContent: 'center', fontSize: '.8rem' } }, [
       el('span', { style: { width: '18px', height: '18px', flexShrink: '0', color: 'var(--accent-strong)' }, html: iconSvg('target') }),
-      // Werte immer als Text setzen (nie als HTML) – sie stammen aus Nutzerdaten.
+      // Always set values as text (never as HTML) – they come from user data.
       el('span', {}, [el('strong', { text: `${fmtNum(w.current, 1)} kg` }), ` · ${txt}`]),
     ]));
   }
@@ -154,7 +154,7 @@ export function weekGoalsCard(today) {
   return el('div', { class: 'card mt-3' }, children);
 }
 
-/** Dedizierte Gesundheits-/Gewichtsziele (Zielwert je Metrik) mit Fortschrittsbalken. */
+/** Dedicated health/weight goals (target value per metric) with progress bars. */
 export function healthGoalsCard(today) {
   const items = goalsProgress({ profile: store.profile(), health: store.get('health'), today, noWeightGoals: currentEligibility(today).noWeightGoals });
   if (!items.length) return null;

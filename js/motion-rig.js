@@ -1,22 +1,22 @@
 /* =========================================================================
-   motion-rig.js — Gelenkfigur der animierten Übungen (reine Logik, DOM-frei).
+   motion-rig.js — articulated figure of the animated exercises (pure logic, DOM-free).
 
-   Eine Figur hat Becken, Rumpf, Kopf, zwei Beine und zwei Arme. Eine Pose legt
-   das Becken (`hip`), die Rumpfneigung (`torso`) und je Glied entweder ein Ziel
-   (`at`: Fuß- bzw. Handgelenk, gelöst per Zwei-Glieder-IK) oder absolute Winkel
-   (`a`) fest. Zwischen zwei Posen bleiben aufgesetzte Hände und Füße stehen:
-   Haben beide Posen ein Ziel, wandert das Ziel und die IK folgt – sonst werden
-   die Winkel überblendet.
+   A figure has pelvis, torso, head, two legs and two arms. A pose fixes
+   the pelvis (`hip`), the torso lean (`torso`) and, per limb, either a target
+   (`at`: ankle or wrist, solved by two-segment IK) or absolute angles
+   (`a`). Between two poses, planted hands and feet stay put:
+   if both poses have a target, the target moves and the IK follows – otherwise the
+   angles are cross-faded.
 
-   Koordinaten: SVG-Einheiten, Boden bei y = 0, nach oben negativ.
-   Seitenansicht: Blick auf die rechte Körperseite, die Figur schaut nach +x.
-   Frontansicht: die Figur schaut zur Betrachterin; ihre rechte Seite liegt links.
-   Glieder heißen anatomisch `r`/`l` – in der Seitenansicht ist `r` die nahe Seite.
-   `curl` rundet den Rücken (positiv, Katzenbuckel) oder wölbt ihn (negativ, Hohlkreuz).
-   `fs` verkürzt ein Glied, das zur Betrachterin zeigt (0…1, je Teilglied).
-   Winkel in Grad ab „senkrecht nach unten“ (0), positiv in Blickrichtung
-   (90 = waagerecht nach vorn, 180 = nach oben, −90 = nach hinten). In der
-   Frontansicht zeigt 90 nach rechts (+x).
+   Coordinates: SVG units, ground at y = 0, upwards negative.
+   Side view: looking at the right side of the body, the figure faces +x.
+   Front view: the figure faces the viewer; its right side is on the left.
+   Limbs are named anatomically `r`/`l` – in the side view `r` is the near side.
+   `curl` rounds the back (positive, cat-back) or arches it (negative, hollow back).
+   `fs` foreshortens a limb pointing towards the viewer (0…1, per segment).
+   Angles in degrees from "straight down" (0), positive in the viewing
+   direction (90 = horizontally forward, 180 = up, −90 = backward). In the
+   front view 90 points to the right (+x).
    ========================================================================= */
 
 import { t as tr } from './i18n.js';
@@ -26,7 +26,7 @@ export const BODY = Object.freeze({
   foot: 12, heel: 3, head: 9, neck: 8, ankle: 4, wrist: 3.5,
   hipW: 7, shoulderW: 12,
 });
-/** Beckenhöhe im aufrechten Stand. */
+/** Pelvis height when standing upright. */
 export const STAND_HIP = -(BODY.ankle + BODY.shin + BODY.thigh);
 
 const RAD = Math.PI / 180;
@@ -44,15 +44,15 @@ export function lerpAng(a, b, k) {
   return a + d * k;
 }
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
-/** Weiche Bewegung: langsam an, langsam aus. */
+/** Smooth movement: slow in, slow out. */
 export const ease = (k) => 0.5 - 0.5 * Math.cos(Math.PI * clamp(k, 0, 1));
 
-/** Richtung Becken → Schulter. `torso` 0 = aufrecht, + = nach vorn (Seite) bzw. nach rechts (Front). */
+/** Direction pelvis → shoulder. `torso` 0 = upright, + = forward (side) or to the right (front). */
 export const torsoDir = (t) => dir(180 - t);
-/** Vorderseite des Körpers (nur Seitenansicht sinnvoll). */
+/** Front of the body (only meaningful in the side view). */
 const bodyFront = (t) => dir(90 - t);
 
-/** Bevorzugte Knick-Richtung eines Glieds als Weltvektor. */
+/** Preferred bend direction of a limb as a world vector. */
 function bendVector(bend, pose, view, kind, side) {
   const t = pose.torso || 0;
   if (Array.isArray(bend)) return bend;
@@ -71,7 +71,7 @@ function bendVector(bend, pose, view, kind, side) {
   return kind === 'leg' ? bodyFront(t) : mul(bodyFront(t), -1);
 }
 
-/** Zwei-Glieder-IK: Gelenk (Knie/Ellbogen) und Endpunkt. Unerreichbares bleibt gestreckt in Zielrichtung. */
+/** Two-segment IK: joint (knee/elbow) and end point. Unreachable targets stay stretched in the target direction. */
 export function ik(root, target, a, b, pref) {
   const d = sub(target, root);
   const len = Math.hypot(d[0], d[1]);
@@ -86,15 +86,15 @@ export function ik(root, target, a, b, pref) {
   return { joint, end: add(root, mul(u, reach)) };
 }
 
-/** Wurzeln (Hüft- und Schultergelenke) einer Pose. */
+/** Roots (hip and shoulder joints) of a pose. */
 function roots(pose, view) {
   const t = pose.torso || 0;
   const u = torsoDir(t);
   const hip = pose.hip;
   const sh = add(hip, mul(u, BODY.torso));
   if (view !== 'front') return { hip, sh, hipR: hip, hipL: hip, shR: sh, shL: sh, u };
-  const n = [-u[1], u[0]];            // Querachse: zeigt bei aufrechtem Rumpf nach +x (Betrachter-rechts)
-  // Das Becken kippt mit dem Rumpf (Liegen, Seitstütz) – außer `pelvis` legt es fest (Seitneigung im Stand).
+  const n = [-u[1], u[0]];            // Transverse axis: points to +x with an upright torso (viewer's right)
+  // The pelvis tilts with the torso (lying, side plank) – unless `pelvis` fixes it (side lean while standing).
   const up = pose.pelvis != null ? torsoDir(pose.pelvis) : u;
   const np = [-up[1], up[0]];
   return {
@@ -104,10 +104,10 @@ function roots(pose, view) {
   };
 }
 
-/** Verkürzung eines Glieds (zeigt es zur Betrachterin, wirkt es kürzer): [Oberglied, Unterglied]. */
+/** Foreshortening of a limb (if it points towards the viewer it looks shorter): [upper segment, lower segment]. */
 const fsOf = (spec) => (spec && spec.fs != null ? (Array.isArray(spec.fs) ? spec.fs : [spec.fs, spec.fs]) : [1, 1]);
 
-/** Ein Glied lösen: { root, joint, end }. */
+/** Solve one limb: { root, joint, end }. */
 function solveLimb(root, spec, a0, b0, pose, view, kind, side) {
   const fs = fsOf(spec);
   const a = a0 * fs[0]; const b = b0 * fs[1];
@@ -120,7 +120,7 @@ function solveLimb(root, spec, a0, b0, pose, view, kind, side) {
   return { root, joint, end: add(joint, mul(dir(ang[1]), b)) };
 }
 
-/** Fußrichtung: ausdrücklich, sonst flach nach vorn (am Boden) bzw. rechtwinklig zum Schienbein. */
+/** Foot direction: explicit, otherwise flat forward (on the ground) or at right angles to the shin. */
 function footAngle(spec, leg, view, side) {
   if (spec && spec.foot != null) return spec.foot;
   if (view === 'front') return side === 'r' ? -90 : 90;
@@ -129,8 +129,8 @@ function footAngle(spec, leg, view, side) {
 }
 
 /**
- * Löst eine Pose zu Gelenkpunkten:
- * { view, hip, sh, head, legs: { r, l }, arms: { r, l } } – je Glied { root, joint, end, foot? }.
+ * Solves a pose into joint points:
+ * { view, hip, sh, head, legs: { r, l }, arms: { r, l } } – per limb { root, joint, end, foot? }.
  */
 export function solvePose(pose, view = 'side') {
   const R = roots(pose, view);
@@ -141,7 +141,7 @@ export function solvePose(pose, view = 'side') {
     const ls = (pose.legs || {})[side];
     const leg = solveLimb(side === 'r' ? R.hipR : R.hipL, ls, BODY.thigh, BODY.shin, pose, view, 'leg', side);
     const fa = footAngle(ls, leg, view, side);
-    // Von vorn ist der Fuß ein kurzer Querbalken am Fußgelenk (rechtwinklig zum Schienbein).
+    // From the front the foot is a short crossbar at the ankle (at right angles to the shin).
     const across = view === 'front' && !(ls && ls.foot != null) ? angOf(sub(leg.end, leg.joint)) + 90 : fa;
     leg.foot = view === 'front'
       ? [add(leg.end, mul(dir(across), 3.5)), add(leg.end, mul(dir(across), -3.5))]
@@ -153,14 +153,14 @@ export function solvePose(pose, view = 'side') {
   return { view, hip: R.hip, sh: R.sh, hipR: R.hipR, hipL: R.hipL, shR: R.shR, shL: R.shL, head, torso: t, curl: pose.curl || 0, legs, arms };
 }
 
-/** Absolute Winkel eines gelösten Glieds. */
+/** Absolute angles of a solved limb. */
 function limbAngles(limb) {
   return [angOf(sub(limb.joint, limb.root)), angOf(sub(limb.end, limb.joint))];
 }
 
 /**
- * Überblendet zwei Posen (k = 0…1, bereits weich gezeichnet).
- * Ziele bleiben Ziele (Kontakt bleibt stehen), sonst Winkel.
+ * Cross-fades two poses (k = 0…1, already eased).
+ * Targets stay targets (contact stays planted), otherwise angles.
  */
 export function blendPose(A, B, k, view = 'side') {
   const out = {
@@ -205,12 +205,12 @@ export function blendPose(A, B, k, view = 'side') {
   return out;
 }
 
-/* ------------------------------ Seitenwechsel ------------------------------ */
+/* ------------------------------ Side change ------------------------------ */
 
 const FLIP_BEND = { left: 'right', right: 'left' };
 function mirrorPoint(p, cx) { return [2 * cx - p[0], p[1]]; }
 
-/** Spiegelt eine Pose für die andere Körperseite (Seite: Glieder tauschen; Front: an cx spiegeln). */
+/** Mirrors a pose for the other side of the body (side: swap limbs; front: mirror at cx). */
 export function otherSide(pose, view = 'side', cx = 0) {
   const swap = (g) => ({ r: (g || {}).l, l: (g || {}).r });
   if (view !== 'front') {
@@ -238,11 +238,11 @@ export function otherSide(pose, view = 'side', cx = 0) {
   };
 }
 
-/* ------------------------------ Bewegungsablauf ------------------------------ */
+/* ------------------------------ Movement sequence ------------------------------ */
 
 /**
- * Ein Durchgang (eine Wiederholung; bei `sides: 'alternate'` beide Seiten) als
- * Liste von Abschnitten: { from, to, dur, label, cue, breath, side, hold }.
+ * One pass (one repetition; with `sides: 'alternate'` both sides) as a
+ * list of sections: { from, to, dur, label, cue, breath, side, hold }.
  */
 export function cycleOf(m, side = 'a') {
   const passes = m.sides === 'alternate' ? ['a', 'b'] : [side];
@@ -251,7 +251,7 @@ export function cycleOf(m, side = 'a') {
   return out;
 }
 
-/** Einmaliger Weg in die Ausgangsposition (`intro`) als Abschnittsliste – leer, wenn keiner. */
+/** One-off path into the starting position (`intro`) as a section list – empty if there is none. */
 export function introOf(m, side = 'a') {
   return m.intro ? phasesOf(m.intro.seq, m.intro.from, side, []) : [];
 }
@@ -272,10 +272,10 @@ function phasesOf(seq, from, pass, out) {
   return out;
 }
 
-/** Dauer eines Durchgangs in Sekunden. */
+/** Duration of one pass in seconds. */
 export function cycleDuration(m) { return cycleOf(m).reduce((s, p) => s + p.dur, 0); }
 
-/** Pose eines Schlüssels für einen Durchgang (Seite b = gespiegelt). */
+/** Pose of a key for one pass (side b = mirrored). */
 export function keyPose(m, key, pass = 'a') {
   const p = m.keys[key];
   if (!p) throw new Error(`Pose “${key}” is missing`);
@@ -283,8 +283,8 @@ export function keyPose(m, key, pass = 'a') {
 }
 
 /**
- * Zustand zum Zeitpunkt `t` (Sekunden) innerhalb eines Durchgangs:
- * { pose, phase, index, k } – `k` ist der Fortschritt im Abschnitt (0…1).
+ * State at time `t` (seconds) within one pass:
+ * { pose, phase, index, k } – `k` is the progress within the section (0…1).
  */
 export function frameAt(m, t, cycle = cycleOf(m)) {
   const total = cycle.reduce((s, p) => s + p.dur, 0) || 1;
@@ -302,16 +302,16 @@ export function frameAt(m, t, cycle = cycleOf(m)) {
   return { pose: keyPose(m, m.start), phase: cycle[0], index: 0, k: 0 };
 }
 
-/** Kaum sichtbares Atmen in Haltephasen, damit die Figur „lebt“. */
+/** Barely visible breathing in hold phases so that the figure "lives". */
 function breathe(pose, m, t) {
   if (m.still) return pose;
   const s = Math.sin((t / 4) * 2 * Math.PI);
   return { ...pose, torso: (pose.torso || 0) + s * 0.8, head: (pose.head || 0) + s * 1.2 };
 }
 
-/* ------------------------------ Begrenzung ------------------------------ */
+/* ------------------------------ Bounds ------------------------------ */
 
-/** Alle gezeichneten Punkte einer gelösten Pose (für Rahmen und Tests). */
+/** All drawn points of a solved pose (for the frame and tests). */
 export function posePoints(S) {
   const pts = [S.hip, S.sh, S.head];
   for (const side of ['r', 'l']) {

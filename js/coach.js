@@ -1,22 +1,22 @@
 /* =========================================================================
-   coach.js — EINE Tagesempfehlung für „Heute“. Reine, DOM-freie Logik.
+   coach.js — ONE daily recommendation for "Today". Pure, DOM-free logic.
 
-   Früher entschieden sieben Stellen unabhängig voneinander, welche Karte „Heute“
-   zeigt – mit zwei RPE-Fenstern, eigenen Schwellen und ohne Kenntnis voneinander.
-   Ergebnis: „Belastung hoch“ neben „Bereit für mehr“, „Erholungstag“ neben „ein
-   anspruchsvolles Training ist heute gut drin". `coachDecision` sammelt alle
-   Kandidaten und wählt nach fester Priorität GENAU EINE Empfehlung:
+   Previously seven places decided independently which card "Today"
+   shows – with two RPE windows, their own thresholds and no knowledge of each other.
+   Result: "load high" next to "ready for more", "recovery day" next to "a
+   demanding session is fine today". `coachDecision` collects all
+   candidates and picks EXACTLY ONE recommendation by fixed priority:
 
-     1. Warnsignale – behutsamer Wiedereinstieg nach Krankheit/Verletzung →
-        Erholungstag (mehr Last als geplant) → Bereitschaft heute niedrig →
-        nach Fußball lockerer → Anstrengung seit Wochen sehr hoch (Entlastung)
-     2. Plan-Pflege – zwei Einheiten an einem Tag entzerren → Schlüsseleinheit
-        nachholen → Wochenumfang ausgleichen (beides nie nach Krankheit/Verletzung)
-     3. Progression – kommende Woche steigern: nur ohne Warnsignal, mit belastbarer
-        Datenbasis, Last im üblichen Rahmen und nicht im Wiedereinstieg.
+     1. Warning signals – careful return after illness/injury →
+        recovery day (more load than planned) → readiness low today →
+        easier after football → effort very high for weeks (deload)
+     2. Plan upkeep – unstack two sessions on one day → make up a key session
+        → compensate weekly volume (both never after illness/injury)
+     3. Progression – increase the coming week: only without a warning signal, with a reliable
+        data basis, load in the usual range and not during a return.
 
-   Alles, was sonst noch gepasst hätte, steht als „zurückgestellt“ in der Begründung.
-   Feste Termine fasst keine Empfehlung an; geschützte Zyklustage auch nicht.
+   Everything else that would also have fitted is listed as "deferred" in the reasoning.
+   No recommendation touches fixed commitments; protected cycle days are left alone too.
    ========================================================================= */
 
 import { addDays, diffDays } from './ui.js';
@@ -30,12 +30,12 @@ import { destackSuggestion } from './triage.js';
 
 import { t, tp } from './i18n.js';
 
-/** So lange nach einem Ausfall wegen Krankheit/Verletzung gibt es keine Steigerung. */
+/** For this long after an absence due to illness/injury there is no progression. */
 export const RETURN_DAYS = 14;
-/** So lange steht der Wiedereinstiegs-Hinweis (solange noch kein hartes Training war). */
+/** For this long the return hint is shown (as long as there has been no hard training yet). */
 export const RETURN_HINT_DAYS = 10;
 
-/** Kurzbezeichnungen – für „zurückgestellt: …“ in der Begründung. */
+/** Short labels – for "deferred: …" in the reasoning. */
 export const COACH_LABELS = {
   get return() { return t('coach.labels.return'); },
   get rest() { return t('coach.labels.rest'); },
@@ -47,11 +47,11 @@ export const COACH_LABELS = {
   get volume() { return t('coach.labels.volume'); },
   get boost() { return t('coach.labels.boost'); },
 };
-/** Empfehlungen, die ein Warnsignal sind – solange eine davon gilt, keine Steigerung. */
+/** Recommendations that are a warning signal – as long as one of them applies, no progression. */
 export const WARNING_KINDS = new Set(['return', 'rest', 'soften', 'football', 'deload']);
 
 /**
- * Jüngster Ausfall wegen Krankheit oder Verletzung der letzten `days` Tage.
+ * Most recent absence due to illness or injury within the last `days` days.
  * @returns {{date:string, reason:'sick'|'injured', daysAgo:number}|null}
  */
 export function returnPhase(plans = [], today, days = RETURN_DAYS) {
@@ -65,8 +65,8 @@ export function returnPhase(plans = [], today, days = RETURN_DAYS) {
 }
 
 /**
- * Die eine Tagesempfehlung. `readiness` = Ergebnis von `adaptive.readinessScore`
- * (oder null). Einheiten müssen `planId` tragen, wenn die UI sie ändern soll.
+ * The one daily recommendation. `readiness` = result of `adaptive.readinessScore`
+ * (or null). Sessions must carry `planId` if the UI is to change them.
  * @returns {{primary: object|null, suppressed: Array<{kind:string,label:string}>, warning: boolean,
  *   ret: object|null, rpe: object|null, load: object}}
  */
@@ -80,10 +80,10 @@ export function coachDecision({ plans = [], sessions = [], today, isProtectedDay
   const fs = formState(formToday(sessions, today), ac.historyDays);
   const prog = rpeProgression(sessions, today);
 
-  // 1) Warnsignale
+  // 1) Warning signals
   if (ret && ret.daysAgo <= RETURN_HINT_DAYS) {
-    // Schon wieder hart trainiert (nach dem Ausfall)? Dann ist der Hinweis erledigt –
-    // die Steigerungssperre gilt trotzdem bis RETURN_DAYS.
+    // Trained hard again (after the absence)? Then the hint is done –
+    // the progression block still applies until RETURN_DAYS.
     let backToHard = false;
     for (let d = addDays(ret.date, 1); d <= today; d = addDays(d, 1)) if (dayIsHard(units, sessions, d)) { backToHard = true; break; }
     if (!backToHard) {
@@ -105,7 +105,7 @@ export function coachDecision({ plans = [], sessions = [], today, isProtectedDay
   const next = weekDeloadCandidates(units, today).filter((u) => ok(u.date));
   if (prog && prog.trend === 'ease' && next.length >= 2) cands.push({ kind: 'deload', units: next, prog });
 
-  // 2) Plan-Pflege
+  // 2) Plan upkeep
   const ds = destackSuggestion(units, today);
   if (ds && ok(ds.date)) cands.push({ kind: 'destack', ds });
   if (!ret) {
@@ -118,7 +118,7 @@ export function coachDecision({ plans = [], sessions = [], today, isProtectedDay
     if (bal && bal.suggestion && bal.suggestion.kind === 'add' && ok(bal.suggestion.unit.date)) cands.push({ kind: 'volume', bal });
   }
 
-  // 3) Progression – nur, wenn nichts dagegen spricht
+  // 3) Progression – only if nothing speaks against it
   const warning = cands.some((c) => WARNING_KINDS.has(c.kind));
   if (prog && prog.trend === 'progress' && !warning && !ret && next.length >= 2
     && ac.ratio != null && !ac.sparse && ac.ratio <= 1.3 && fs.key !== 'ermuedet'
@@ -135,7 +135,7 @@ export function coachDecision({ plans = [], sessions = [], today, isProtectedDay
   };
 }
 
-/** Begründung „warum diese Karte, warum keine andere“ – ein Satz für die UI. */
+/** Reasoning "why this card, why no other" – one sentence for the UI. */
 export function coachWhy(decision) {
   if (!decision || !decision.primary) return '';
   const p = decision.primary;

@@ -1,15 +1,15 @@
 /* =========================================================================
-   whatif.js — „Was passiert, wenn ich das ändere?“. Reine, DOM-freie Logik.
+   whatif.js — "What happens if I change this?". Pure, DOM-free logic.
 
-   Leitsatz: „Wenn der Sportler an seinem Plan oder Einheiten etwas ändert, sollte
-   er vor der Änderung wissen, was das für Auswirkungen haben soll." Dieses Modul
-   simuliert das Hinzufügen/Verschieben einer Einheit und liefert Vorher/Nachher
-   der betroffenen Woche (geplante Belastung, harte Einheiten, harte Folgetage)
-   plus eine Einordnung. Die UI zeigt das als Vorschau, bevor bestätigt wird.
+   Guiding principle: "When the athlete changes something in their plan or sessions, they
+   should know before the change what effects it is supposed to have." This module
+   simulates adding/moving a session and returns before/after
+   of the affected week (planned load, hard sessions, hard consecutive days)
+   plus a classification. The UI shows this as a preview before it is confirmed.
 
-   Eingeordnet wird die VERÄNDERUNG, nicht der Zustand der Woche: Eine Woche mit
-   zwei Fußballterminen, Tempo und Long Run hat schon vier harte Einheiten – früher
-   meldete dort jede Kleinigkeit (15 min Mobility) „deutlich fordernder“.
+   What is classified is the CHANGE, not the state of the week: a week with
+   two football dates, tempo and long run already has four hard sessions – earlier
+   every trifle there (15 min mobility) reported "clearly more demanding".
    ========================================================================= */
 
 import { weekStartMonday, addDays } from './ui.js';
@@ -18,26 +18,26 @@ import { isHard } from './planflow.js';
 
 import { t } from './i18n.js';
 
-/** Geschätzte Belastungspunkte einer geplanten Einheit – nach denselben Regeln wie
-    die erfasste Belastung (`load.js`): Fußball nach Intensität, Strecke nach Sportart. */
+/** Estimated load points of a planned session – by the same rules as
+    the recorded load (`load.js`): football by intensity, distance by sport. */
 export function unitLoad(u) {
   if (!u || u.type === 'rest') return 0;
-  // `dur`: Programmeinheiten aus früheren Versionen (Lese-Rückfall).
+  // `dur`: programme sessions from earlier versions (read fallback).
   const planned = Number(u.targetDurationMin) || Number(u.dur) || 0;
   const min = planned > 0 ? planned
     : (Number(u.targetDistanceKm) > 0 ? loadMinutes({ type: u.type, distanceKm: Number(u.targetDistanceKm) }).min : 40);
   return Math.round(min * sessionRpe({ type: u.type, intensity: u.intensity }));
 }
 
-/** Lastrelevante Einheiten (nicht verpasst, kein Ruhetag) im Datumsfenster. */
+/** Load-relevant sessions (not missed, not a rest day) in the date window. */
 function relevant(units, from, to) {
-  // Verschobene Einheiten zählen mit – sie belasten die Zielwoche (seit v3.16.0).
+  // Moved sessions count too – they load the target week (since v3.16.0).
   return (units || []).filter((u) => u && !u.deleted && u.date >= from && u.date <= to
     && u.type !== 'rest' && u.status !== 'verpasst');
 }
 
-/** Paare harter Tage direkt nacheinander, die die Woche berühren – inklusive
-    Sonntag davor und Montag danach (Spiel am Sonntag → Training am Montag). */
+/** Pairs of hard days directly after each other that touch the week – including
+    the Sunday before and the Monday after (game on Sunday → training on Monday). */
 function hardPairs(units, ws, we) {
   const hardDays = new Set(relevant(units, addDays(ws, -1), addDays(we, 1)).filter(isHard).map((u) => u.date));
   let n = 0;
@@ -47,8 +47,8 @@ function hardPairs(units, ws, we) {
   return n;
 }
 
-/** Geplante Kennzahlen der Mo–So-Woche von dateStr: Belastung, harte Einheiten,
-    Anzahl, harte Folgetage (über die Wochengrenze hinweg). */
+/** Planned figures of the Mon–Sun week of dateStr: load, hard sessions,
+    count, hard consecutive days (across the week boundary). */
 export function weekPlan(units = [], dateStr) {
   const ws = weekStartMonday(dateStr), we = addDays(ws, 6);
   const list = relevant(units, ws, we);
@@ -61,9 +61,9 @@ export function weekPlan(units = [], dateStr) {
 }
 
 /**
- * Einordnung aus der Veränderung: relative Laständerung, zusätzliche harte Einheit,
- * neuer harter Folgetag. „hoch“ = deutlich mehr Last (> 25 %) oder ein neuer harter
- * Folgetag; „erhöht“ = spürbar mehr (> 8 %) oder eine harte Einheit mehr.
+ * Classification from the change: relative load change, additional hard session,
+ * new hard consecutive day. "hoch" = clearly more load (> 25 %) or a new hard
+ * consecutive day; "erhöht" = noticeably more (> 8 %) or one more hard session.
  */
 function classify(before, after) {
   const rel = before.load > 0 ? (after.load - before.load) / before.load : (after.load > 0 ? 1 : 0);
@@ -72,7 +72,7 @@ function classify(before, after) {
   return 'ok';
 }
 
-/** Simuliert das HINZUFÜGEN einer Einheit → Vorher/Nachher der betroffenen Woche. */
+/** Simulates ADDING a session → before/after of the affected week. */
 export function simulateAdd(units = [], newUnit) {
   if (!newUnit || !newUnit.date) return null;
   const before = weekPlan(units, newUnit.date);
@@ -80,7 +80,7 @@ export function simulateAdd(units = [], newUnit) {
   return { date: newUnit.date, before, after, deltaLoad: after.load - before.load, level: classify(before, after) };
 }
 
-/** Simuliert das VERSCHIEBEN einer Einheit → Auswirkung auf alte UND neue Woche. */
+/** Simulates MOVING a session → effect on the old AND new week. */
 export function simulateMove(units = [], unitId, newDate) {
   const u = (units || []).find((x) => x.id === unitId);
   if (!u || !newDate) return null;
@@ -92,11 +92,11 @@ export function simulateMove(units = [], unitId, newDate) {
   if (sameWeek) return { target, source: null };
   const source = { date: u.date, before: weekPlan(units, u.date), after: weekPlan(moved, u.date) };
   source.deltaLoad = source.after.load - source.before.load;
-  source.level = classify(source.after, source.before); // Quelle wird leichter → informativ
+  source.level = classify(source.after, source.before); // source gets lighter → informational
   return { target, source };
 }
 
-/** Kurzer Klartext-Satz zur Auswirkung (für die Vorschau). */
+/** Short plain-language sentence on the effect (for the preview). */
 export function impactText(sim) {
   if (!sim) return '';
   const b = sim.before, a = sim.after;
@@ -107,7 +107,7 @@ export function impactText(sim) {
   const hardTxt = a.hard !== b.hard ? ` ${t('whatif.hardChange', { before: b.hard, after: a.hard })}` : '';
   const b2bTxt = (a.b2b || 0) > (b.b2b || 0) ? ` ${t('whatif.b2b')}` : '';
   if (sim.level === 'hoch' && a.load <= b.load) {
-    // Gleiche Last, aber ein neuer harter Folgetag (typisch: Verschieben in derselben Woche).
+    // Same load, but a new hard consecutive day (typical: moving within the same week).
     return t('whatif.sameLoadB2b', { load: b.load });
   }
   if (sim.level === 'hoch') return `${t('whatif.muchHarder', { load: loadTxt })}${hardTxt}${b2bTxt} ${t('whatif.mindRecovery')}`;

@@ -1,14 +1,14 @@
 /* =========================================================================
-   charts.js — leichtgewichtige, selbst gezeichnete SVG-Charts (kein CDN).
+   charts.js — lightweight, self-drawn SVG charts (no CDN).
 
-   Zeichnen in der TATSÄCHLICHEN Breite (FE-20): Die erste Zeichnung nutzt 320
-   Einheiten (vor dem Layout, in Tests), danach zeichnet ein ResizeObserver in der
-   gemessenen Pixelbreite neu – 1 Einheit = 1 px, feste Höhe, Schrift 10–11 px. Vorher
-   skalierte ein festes viewBox mit: 8 px Achsenwerte auf dem iPhone, 400 px hohe
-   Balken mit 22-px-Zahlen am Mac.
-   Farben kommen über CSS-Klassen/Variablen (FE-14) – ein Wechsel Hell/Dunkel färbt
-   die Diagramme ohne Neuzeichnen um. Jedes Diagramm trägt eine Zusammenfassung für
-   Screenreader (FE-13).
+   Drawing at the ACTUAL width (FE-20): the first drawing uses 320
+   units (before layout, in tests), after that a ResizeObserver redraws at the
+   measured pixel width – 1 unit = 1 px, fixed height, type 10–11 px. Previously
+   a fixed viewBox scaled along: 8 px axis values on the iPhone, 400 px tall
+   bars with 22 px numbers on the Mac.
+   Colours come through CSS classes/variables (FE-14) – switching light/dark recolours
+   the charts without redrawing. Every chart carries a summary for
+   screen readers (FE-13).
    ========================================================================= */
 
 import { fmtNum } from './ui.js';
@@ -23,24 +23,24 @@ function s(tag, attrs = {}, children) {
   return node;
 }
 function txt(content, attrs = {}) { const t = s('text', attrs); t.textContent = content; return t; }
-/** Farbe als Stil – `var(--…)` funktioniert dort zuverlässig, in Präsentationsattributen nicht. */
+/** Colour as style – `var(--…)` works reliably there, but not in presentation attributes. */
 const paint = (prop, color) => `${prop}:${color}`;
 const ACCENT = 'var(--accent)';
 
-const AXIS_FS = 10.5;     // Achsenwerte/Datum in px
-const LABEL_FS = 10.5;    // Balken-Beschriftung
-const VALUE_FS = 10;      // Werte über Balken
+const AXIS_FS = 10.5;     // Axis values/date in px
+const LABEL_FS = 10.5;    // Bar label
+const VALUE_FS = 10;      // Values above bars
 
 const dayNum = (iso) => Math.round(Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10)) / 86400000);
-/** „27. Sept.“ – mit Jahr, wenn die Spanne fast ein Jahr oder mehr umfasst. */
+/** "27. Sept." – with the year if the span covers almost a year or more. */
 function dateLabel(iso, withYear) {
   return `${fmtDayMonth(iso.slice(0, 10))}${withYear ? ` ${iso.slice(0, 4)}` : ''}`;
 }
 const isIso = (v) => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}/.test(v);
 
-/* --------------------- interne Helfer für Liniencharts ------------------- */
+/* --------------------- internal helpers for line charts ------------------- */
 
-/** „Runde“ Y-Ticks (1 / 2 / 2,5 / 5 × 10^k) innerhalb [min, max]. */
+/** "Round" y ticks (1 / 2 / 2.5 / 5 × 10^k) within [min, max]. */
 function niceTicks(min, max, count = 4) {
   const span = max - min;
   if (!(span > 0)) return { ticks: [], step: 1 };
@@ -52,10 +52,10 @@ function niceTicks(min, max, count = 4) {
   return { ticks, step };
 }
 
-/** Tick-Beschriftung: nur so viele Nachkommastellen wie die Schrittweite braucht. */
+/** Tick label: only as many decimals as the step size needs. */
 const tickFmt = (t, step) => fmtNum(t, step >= 1 ? 0 : step >= 0.1 ? 1 : 2);
 
-/** Dezente horizontale Gridlines + Tick-Werte am linken Rand. */
+/** Subtle horizontal gridlines + tick values at the left edge. */
 function yGrid(svg, { ticks, step, y, padL, W, padR }) {
   ticks.forEach((t) => {
     const ty = y(t);
@@ -64,13 +64,13 @@ function yGrid(svg, { ticks, step, y, padL, W, padR }) {
   });
 }
 
-/** Linker Innenabstand: so breit wie das längste Tick-Label. */
+/** Left inner padding: as wide as the longest tick label. */
 function tickPadL(ticks, step) {
   const chars = ticks.length ? Math.max(...ticks.map((t) => tickFmt(t, step).length)) : 2;
   return 10 + AXIS_FS * 0.6 * Math.max(2, chars);
 }
 
-/** Positionierbarer Wrapper – Anker für den Scrubber-Tooltip. */
+/** Positionable wrapper – anchor for the scrubber tooltip. */
 function chartWrap() {
   const wrap = document.createElement('div');
   wrap.className = 'chart-wrap';
@@ -78,8 +78,8 @@ function chartWrap() {
 }
 
 /**
- * In der tatsächlichen Breite zeichnen: erst mit 320 (vor dem Layout, in Tests), dann bei
- * jeder Breitenänderung neu. Der Beobachter löst sich, sobald das Element weg ist.
+ * Draw at the actual width: first with 320 (before layout, in tests), then redraw on
+ * every width change. The observer detaches as soon as the element is gone.
  */
 function fitWidth(host, draw) {
   let lastW = 320;
@@ -93,7 +93,7 @@ function fitWidth(host, draw) {
   ro.observe(host);
 }
 
-/** Leeres Diagramm („Keine Daten“). */
+/** Empty chart ("No data"). */
 function emptySvg(W, H) {
   const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, class: 'chart', style: `width:100%;height:${H}px`, role: 'img', 'aria-label': tr('charts.noData') });
   svg.appendChild(txt(tr('charts.noData'), { class: 'chart-axis', x: W / 2, y: H / 2, 'text-anchor': 'middle', 'font-size': 12 }));
@@ -101,12 +101,12 @@ function emptySvg(W, H) {
 }
 
 /**
- * Scrubber für Liniencharts: eine Führungslinie schnappt zum nächstgelegenen
- * Datenpunkt, ein HTML-Tooltip zeigt Datum + Wert(e). Bedienbar per Touch
- * (Wischen), Maus (Hover) und Tastatur (Pfeiltasten/Escape); vertikales
- * Scrollen bleibt frei (CSS touch-action: pan-y auf .chart-wrap).
- * Die Ereignisse hängen einmal am Wrapper; bei jedem Neuzeichnen bindet `bind()`
- * das neue SVG samt Konfiguration.
+ * Scrubber for line charts: a guide line snaps to the nearest
+ * data point, an HTML tooltip shows date + value(s). Operable by touch
+ * (swipe), mouse (hover) and keyboard (arrow keys/Escape); vertical
+ * scrolling stays free (CSS touch-action: pan-y on .chart-wrap).
+ * The events are attached once to the wrapper; on every redraw `bind()` binds
+ * the new SVG together with its configuration.
  * cfg: { W, H, padT, padB, n, xAt(i), nearest(vx), title(i), rows(i), pointsAt(i), label }
  */
 function attachScrubber(wrap) {
@@ -132,7 +132,7 @@ function attachScrubber(wrap) {
     const cx = cfg.xAt(i);
     cursor.setAttribute('x1', cx); cursor.setAttribute('x2', cx); cursor.setAttribute('opacity', 0.55);
 
-    tip.textContent = '';                       // Daten nur als Text einfügen (kein innerHTML)
+    tip.textContent = '';                       // Insert data as text only (no innerHTML)
     const title = document.createElement('div');
     title.className = 'chart-tip__title'; title.textContent = cfg.title(i) || '';
     tip.appendChild(title);
@@ -144,7 +144,7 @@ function attachScrubber(wrap) {
       tip.appendChild(row);
     });
     tip.hidden = false;
-    const ww = wrap.clientWidth || 0;           // Bubble an den Rändern nicht abschneiden
+    const ww = wrap.clientWidth || 0;           // Do not clip the bubble at the edges
     if (ww) {
       const half = (tip.offsetWidth || 0) / 2;
       tip.style.left = `${Math.max(half + 2, Math.min(ww - half - 2, (cx / cfg.W) * ww))}px`;
@@ -188,7 +188,7 @@ function attachScrubber(wrap) {
   };
 }
 
-/** Index des Punkts, dessen x-Position `vx` am nächsten liegt. */
+/** Index of the point whose x position is nearest to `vx`. */
 function nearestIdx(xs, vx) {
   let best = 0, bd = Infinity;
   xs.forEach((x, i) => { const d = Math.abs(x - vx); if (d < bd) { bd = d; best = i; } });
@@ -196,10 +196,10 @@ function nearestIdx(xs, vx) {
 }
 
 /**
- * Zeitachse (FE-09): Tragen alle Punkte ein Datum (`date`, ISO), stehen sie nach
- * Tagen – zwei Wochen und acht Monate bekommen nicht mehr dieselbe Breite.
- * Liefert je Punkt den Tagesversatz (oder null ohne Daten) und ob das Jahr in die
- * Beschriftung gehört.
+ * Time axis (FE-09): if all points carry a date (`date`, ISO), they are placed
+ * by day – two weeks and eight months no longer get the same width.
+ * Returns the day offset per point (or null without data) and whether the year belongs in
+ * the label.
  */
 function timeAxis(pts) {
   if (!pts.length || !pts.every((p) => isIso(p.date))) return null;
@@ -208,7 +208,7 @@ function timeAxis(pts) {
   return { days, span: Math.max(1, days[days.length - 1]), withYear: days[days.length - 1] > 330 };
 }
 
-/** Zusammenfassung für Screenreader: Zeitraum, Min/Max, letzter Wert. */
+/** Summary for screen readers: period, min/max, last value. */
 function summary(name, pts, fmt, unit, dates) {
   if (!pts.length) return tr('charts.noDataNamed', { name });
   const vals = pts.map((p) => p.value);
@@ -223,9 +223,9 @@ function summary(name, pts, fmt, unit, dates) {
 }
 
 /**
- * Liniendiagramm mit Y-Skala, dezenten Gridlines, optionaler Zielmarkierung
- * und Scrubber-Tooltip (Touch & Maus). Liefert einen Wrapper (<div>) mit SVG.
- * Punkte mit `date` (ISO) stehen nach Datum; `value: null` unterbricht die Linie.
+ * Line chart with y scale, subtle gridlines, optional target marker
+ * and scrubber tooltip (touch & mouse). Returns a wrapper (<div>) with SVG.
+ * Points with `date` (ISO) are placed by date; `value: null` breaks the line.
  * @param {Array<{label?:string, date?:string, value:number|null}>} points
  * @param {object} opts { color, target, targetLabel, height, unit, fmt, fill, bands, label }
  */
@@ -247,8 +247,8 @@ export function lineChart(points, opts = {}) {
   const ys = valid.map((p) => p.value);
   let min = Math.min(...ys), max = Math.max(...ys);
   if (opts.target != null) { min = Math.min(min, opts.target); max = Math.max(max, opts.target); }
-  // Korridore (`bands`): Grenzen in der Nähe der Werte kommen mit auf die Achse, weit
-  // entfernte (z. B. Ferritin-Obergrenze 300 bei Werten um 50) werden am Rand abgeschnitten.
+  // Corridors (`bands`): limits near the values are included on the axis, distant
+  // ones (e.g. ferritin upper limit 300 for values around 50) are clipped at the edge.
   const bands = (opts.bands || []).filter((b) => b && (b.lo != null || b.hi != null));
   const dataSpan = Math.max(max - min, Math.abs(max) * 0.1, 1e-9);
   bands.forEach((b) => [b.lo, b.hi].forEach((v) => {
@@ -280,11 +280,11 @@ export function lineChart(points, opts = {}) {
     grad.appendChild(s('stop', { offset: '100%', style: `${paint('stop-color', color)};stop-opacity:0` }));
     defs.appendChild(grad); svg.appendChild(defs);
 
-    // Y-Skala zuerst – Gridlines liegen hinter Fläche und Linie.
+    // Y scale first – gridlines lie behind area and line.
     yGrid(svg, { ticks, step, y, padL, W, padR });
 
-    // Korridore: `fill` = Fläche (z. B. Sport-Zielbereich), `frame` = gestrichelte Grenzen
-    // (z. B. Referenzbereich des Labors). Offene Grenzen (null) reichen bis zum Rand.
+    // Corridors: `fill` = area (e.g. sport target range), `frame` = dashed limits
+    // (e.g. the lab's reference range). Open limits (null) extend to the edge.
     const clampY = (v) => Math.max(padT, Math.min(H - padB, y(v)));
     bands.forEach((b) => {
       const top = b.hi == null ? padT : clampY(b.hi);
@@ -301,14 +301,14 @@ export function lineChart(points, opts = {}) {
       }
     });
 
-    // Zielmarkierung
+    // Target marker
     if (opts.target != null) {
       const ty = y(opts.target);
       svg.appendChild(s('line', { class: 'chart-target', x1: padL, y1: ty, x2: W - padR, y2: ty, 'stroke-width': 1, 'stroke-dasharray': '4 4' }));
       svg.appendChild(txt(opts.targetLabel || tr('charts.target', { value: fmt(opts.target) }), { class: 'chart-label', x: W - padR, y: ty - 4, 'text-anchor': 'end', 'font-size': AXIS_FS }));
     }
 
-    // Segmente: ein `null` in der Eingabe (Tag/Woche ohne Wert) unterbricht die Linie.
+    // Segments: a `null` in the input (day/week without a value) breaks the line.
     const segs = [];
     let curSeg = [];
     let vi = 0;
@@ -327,12 +327,12 @@ export function lineChart(points, opts = {}) {
       else svg.appendChild(s('circle', { cx: x(seg[0]), cy: y(valid[seg[0]].value), r: 2.6, style: paint('fill', color) }));
     });
 
-    // Letzter Punkt hervorheben
+    // Highlight last point
     const last = valid[n - 1];
     svg.appendChild(s('circle', { cx: x(n - 1), cy: y(last.value), r: 3.4, style: paint('fill', color) }));
     svg.appendChild(s('circle', { cx: x(n - 1), cy: y(last.value), r: 6, style: `${paint('fill', color)};opacity:0.18` }));
 
-    // X-Beschriftung (erste & letzte) – bei langen Zeiträumen mit Jahr.
+    // X labels (first & last) – with the year for long periods.
     const fl = labelOf(valid[0]), ll = labelOf(last);
     if (fl && n > 1) svg.appendChild(txt(fl, { class: 'chart-axis', x: padL, y: H - 6, 'font-size': AXIS_FS }));
     if (ll) svg.appendChild(txt(ll, { class: 'chart-axis', x: W - padR, y: H - 6, 'text-anchor': 'end', 'font-size': AXIS_FS }));
@@ -353,9 +353,9 @@ export function lineChart(points, opts = {}) {
 }
 
 /**
- * Mehrere Linien auf gemeinsamer Achse (z. B. Fitness/Ermüdung/Form) mit
- * Y-Skala, Gridlines und Scrubber-Tooltip über alle Reihen. Die Reihen teilen
- * sich die X-Positionen (gleiche Zeitachse); kürzere Reihen enden früher.
+ * Several lines on a shared axis (e.g. fitness/fatigue/form) with
+ * y scale, gridlines and scrubber tooltip across all series. The series share
+ * the x positions (same time axis); shorter series end earlier.
  * @param {Array<{name:string, color:string, points:Array<{label,value}>, width?:number, opacity?:number}>} series
  * @param {object} opts { height, zeroLine, fmt, label }
  */
@@ -399,7 +399,7 @@ export function multiLineChart(series, opts = {}) {
     const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, class: 'chart', style: `width:100%;height:${H}px`, preserveAspectRatio: 'none', 'aria-hidden': 'true' });
     yGrid(svg, { ticks, step, y, padL, W, padR });
 
-    // Nulllinie (für Form, die 0 kreuzt) – nur wenn kein Tick sie ohnehin zeichnet
+    // Zero line (for form, which crosses 0) – only if no tick draws it anyway
     if (opts.zeroLine && min < 0 && max > 0 && !ticks.some((t) => t === 0)) {
       svg.appendChild(s('line', { class: 'chart-grid', x1: padL, y1: y(0), x2: W - padR, y2: y(0), 'stroke-width': 1, 'stroke-dasharray': '3 3' }));
     }
@@ -407,7 +407,7 @@ export function multiLineChart(series, opts = {}) {
       const pts = ser.points.map((p, i) => `${x(i)},${y(p.value)}`).join(' ');
       svg.appendChild(s('polyline', { points: pts, fill: 'none', style: `${paint('stroke', ser.color || ACCENT)};opacity:${ser.opacity == null ? 1 : ser.opacity}`, 'stroke-width': ser.width || 2.2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }));
     });
-    // X-Beschriftung (erste & letzte) aus der längsten Reihe
+    // X labels (first & last) from the longest series
     const f = base.points[0].label, l = base.points[base.points.length - 1].label;
     if (f) svg.appendChild(txt(f, { class: 'chart-axis', x: padL, y: H - 6, 'font-size': AXIS_FS }));
     if (l) svg.appendChild(txt(l, { class: 'chart-axis', x: W - padR, y: H - 6, 'text-anchor': 'end', 'font-size': AXIS_FS }));
@@ -427,29 +427,29 @@ export function multiLineChart(series, opts = {}) {
   return wrap;
 }
 
-/** Grobe Textbreite in SVG-Einheiten (systemnahe Schrift, ~0,55 em je Zeichen). */
+/** Rough text width in SVG units (system-like font, ~0.55 em per character). */
 function estTextWidth(text, fontSize) {
   return String(text ?? '').length * fontSize * 0.55;
 }
 
 /**
- * Zeichnet nur so viele Beschriftungen, wie nebeneinander PASSEN – ausgedünnt
- * vom letzten Balken aus, damit der jüngste Wert immer beschriftet ist.
- * Ohne das überlappten bei vielen Balken (z. B. 21 Tage Einnahmetreue mit
- * Datumsangaben wie „13.07.“) sämtliche Achsenbeschriftungen zu Buchstabenbrei.
+ * Draws only as many labels as FIT side by side – thinned out
+ * from the last bar onward, so the most recent value is always labelled.
+ * Without that, with many bars (e.g. 21 days of medication adherence with
+ * dates such as "13.07.") all the axis labels blurred into a mess.
  * @returns {(i:number) => boolean}
  */
 function labelPicker(points, key, fontSize, step, n) {
   const maxW = points.reduce((m, p) => Math.max(m, estTextWidth(p[key], fontSize)), 0);
   if (!maxW || step <= 0) return () => true;
-  const every = Math.max(1, Math.ceil((maxW + 4) / step));   // +4 = Mindestluft
+  const every = Math.max(1, Math.ceil((maxW + 4) / step));   // +4 = minimum breathing room
   return (i) => (n - 1 - i) % every === 0;
 }
 
 /**
- * Balkendiagramm. points: [{label, value, color?, dim?}]. Liefert ein SVG.
- * Ausgedünnte Werte bleiben erreichbar: Tipp/Hover auf einen Balken zeigt ihn an
- * (FE-13), dazu eine Zusammenfassung für Screenreader.
+ * Bar chart. points: [{label, value, color?, dim?}]. Returns an SVG.
+ * Thinned-out values stay reachable: tap/hover on a bar shows it
+ * (FE-13), plus a summary for screen readers.
  * opts: { height, showValues, yUnit, fmt, min, label }
  */
 export function barChart(points, opts = {}) {
@@ -470,19 +470,19 @@ export function barChart(points, opts = {}) {
     })
     : tr('charts.noDataNamed', { name: opts.label || tr('charts.barChart') }));
 
-  let geo = null;   // aktuelle Geometrie für den Tipp-Hinweis
+  let geo = null;   // current geometry for the tap hint
   const tipG = s('g', { class: 'chart-bartip', opacity: 0, 'pointer-events': 'none' });
 
   const draw = (W) => {
     svg.textContent = '';
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
     svg.setAttribute('style', `width:100%;height:${H}px`);
-    // Abstand adaptiv: bei vielen Balken schrumpft er, damit die Balken selbst
-    // sichtbar breit bleiben (21 Tage ergaben mit festen 8 px nur 7-px-Striche).
+    // Gap is adaptive: with many bars it shrinks so that the bars themselves
+    // stay visibly wide (21 days with a fixed 8 px gave only 7 px strokes).
     const gap = Math.max(1.5, Math.min(8, W / (n * 4)));
     const bw = (W - gap * (n + 1)) / n;
     const step = bw + gap;
-    // X-Achsen-Baseline + optionale Y-Skala (Orientierung, #22)
+    // X axis baseline + optional y scale (orientation, #22)
     svg.appendChild(s('line', { class: 'chart-grid', x1: gap / 2, y1: H - padB + 0.5, x2: W - gap / 2, y2: H - padB + 0.5, 'stroke-width': 1 }));
     if (opts.yUnit) svg.appendChild(txt(`${Math.round(max)} ${opts.yUnit}`, { class: 'chart-axis', x: 3, y: padT - 6, 'font-size': AXIS_FS }));
 
@@ -495,7 +495,7 @@ export function barChart(points, opts = {}) {
       const h = ((p.value || 0) / max) * (H - padT - padB);
       const px = gap + i * step;
       const py = H - padB - h;
-      // `null` = kein Wert an diesem Tag (z. B. vor Planbeginn): kein Balken – anders als 0.
+      // `null` = no value on that day (e.g. before the plan start): no bar – unlike 0.
       if (p.value == null) {
         if (p.label && showLabel(i)) svg.appendChild(txt(p.label, { class: 'chart-axis', x: px + bw / 2, y: H - 7, 'text-anchor': 'middle', 'font-size': LABEL_FS }));
         return;
@@ -510,7 +510,7 @@ export function barChart(points, opts = {}) {
     svg.appendChild(tipG);
   };
 
-  // Tipp/Hover: Wert des Balkens unter dem Finger oben einblenden.
+  // Tap/hover: show the value of the bar under the finger at the top.
   const showTip = (ev) => {
     if (!geo || !svg.getBoundingClientRect) return;
     const r = svg.getBoundingClientRect();
@@ -537,7 +537,7 @@ export function barChart(points, opts = {}) {
   return svg;
 }
 
-/** Donut/Ringdiagramm. segments: [{label, value, color}] */
+/** Donut/ring chart. segments: [{label, value, color}] */
 export function donut(segments, opts = {}) {
   const size = opts.size || 130, r = size / 2 - 12, cx = size / 2, cy = size / 2;
   const circ = 2 * Math.PI * r;
@@ -565,8 +565,8 @@ export function donut(segments, opts = {}) {
   return svg;
 }
 
-/** Fortschrittsring 0..1. Schmückend neben einer Zahl → für Screenreader ausgeblendet,
-    sonst mit `opts.label` benannt. */
+/** Progress ring 0..1. Decorative next to a number → hidden from screen readers,
+    otherwise named with `opts.label`. */
 export function progressRing(pct, opts = {}) {
   const size = opts.size || 120, sw = opts.stroke || 12, r = size / 2 - sw / 2 - 2, cx = size / 2, cy = size / 2;
   const circ = 2 * Math.PI * r;
@@ -583,10 +583,10 @@ export function progressRing(pct, opts = {}) {
 }
 
 /**
- * Aktivitäts-Heatmap im GitHub-Contributions-Stil.
+ * Activity heatmap in the GitHub contributions style.
  * matrix = { cols: [{ weekStart, days: [{date, minutes, level, future}×7] }] }
- * 7 Zeilen (Mo–So) × N Spalten (Wochen). Farbe nach level (0–4); future = leer.
- * Zusammenfassung für Screenreader, Tageswerte per Tipp/Hover (deutsches Datum).
+ * 7 rows (Mon–Sun) × N columns (weeks). Colour by level (0–4); future = empty.
+ * Summary for screen readers, day values on tap/hover (German date).
  */
 export function heatmap(matrix, opts = {}) {
   const cell = opts.cell || 12, gap = 3;
@@ -606,7 +606,7 @@ export function heatmap(matrix, opts = {}) {
     }),
   });
 
-  // Wochentag-Labels (Mo/Mi/Fr)
+  // Weekday labels (Mon/Wed/Fri)
   const dayNames = weekdayNames();
   [[0, 1], [2, 3], [4, 5]].forEach(([d, wd]) =>
     svg.appendChild(txt(dayNames[wd], { class: 'chart-axis', x: 0, y: padT + d * (cell + gap) + cell - 1, 'font-size': 9 })));
@@ -614,7 +614,7 @@ export function heatmap(matrix, opts = {}) {
   let prevMonth = null;
   cols.forEach((col, c) => {
     const x = padL + c * (cell + gap);
-    // Monatslabel beim Monatswechsel
+    // Month label at the month change
     const month = parseInt(col.weekStart.slice(5, 7), 10) - 1;
     if (month !== prevMonth) {
       svg.appendChild(txt(monthNames(false)[month], { class: 'chart-axis', x, y: 10, 'font-size': 9 }));
@@ -636,7 +636,7 @@ export function heatmap(matrix, opts = {}) {
   return svg;
 }
 
-/** Legende „weniger → mehr“ für die Heatmap. */
+/** Legend "less → more" for the heatmap. */
 export function heatmapLegend() {
   const OP = [0, 0.28, 0.5, 0.74, 1];
   const W = 5 * 15 + 80;
@@ -649,7 +649,7 @@ export function heatmapLegend() {
   return svg;
 }
 
-/** Mini-Sparkline (nur Linie) – schmückend neben dem Wert, für Screenreader ausgeblendet. */
+/** Mini sparkline (line only) – decorative next to the value, hidden from screen readers. */
 export function sparkline(values, opts = {}) {
   const W = 100, H = opts.height || 30;
   const v = values.filter((x) => x != null);
@@ -662,12 +662,12 @@ export function sparkline(values, opts = {}) {
   return svg;
 }
 
-/* ------------------------------ Strecke ------------------------------------ */
+/* ------------------------------ Route ------------------------------------ */
 
 /**
- * Strecke als Linie – ohne Kartenkacheln, also ohne Anfrage an einen Kartendienst (MKT-17).
- * `route.poly` ist die kodierte, vereinfachte Strecke, `route.ele` optional das Höhenprofil
- * (gleich weit auseinanderliegende Werte). Liefert ein Element mit Karte und Profil.
+ * Route as a line – without map tiles, hence without a request to a map service (MKT-17).
+ * `route.poly` is the encoded, simplified route, `route.ele` optionally the elevation profile
+ * (evenly spaced values). Returns an element with map and profile.
  * @param {{poly:string, ele?:Array<number|null>}} route
  * @param {{distanceKm?:number, ascentM?:number, decode:Function}} opts
  */

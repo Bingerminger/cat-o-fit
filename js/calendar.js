@@ -1,6 +1,6 @@
 /* =========================================================================
-   calendar.js — Monats-/Wochenansicht mit Touch-tauglichem Drag & Drop.
-   Jede Einheit verlinkt per Deep-Link auf ihre Session (#/session/:id).
+   calendar.js — month/week view with touch-friendly drag & drop.
+   Every session links via deep link to its session page (#/session/:id).
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -20,7 +20,7 @@ import { weekdayNames } from './format.js';
 
 import { t, tp } from './i18n.js';
 
-/** Termine (datierte Checklisten-Punkte) für einen Tag – nur wenn das Modul an ist. */
+/** Appointments (dated checklist items) for a day – only when the module is on. */
 function termineOn(dateStr) {
   if (store.settings().modules?.checklist === false) return [];
   return datedItems(dateStr);
@@ -35,7 +35,7 @@ function unitsOn(dateStr) {
   store.get('plans').forEach((p) => (p.units || []).forEach((u) => { if (u.date === dateStr) out.push(u); }));
   return out.sort((a, b) => a.title.localeCompare(b.title));
 }
-/** Freie Trainings (ohne Plan, z. B. importiert oder spontan erfasst) an einem Tag. */
+/** Free trainings (without a plan, e.g. imported or logged spontaneously) on a day. */
 function freeSessionsOn(dateStr) {
   return store.get('sessions').filter((s) => s && s.date === dateStr && !s.plannedId);
 }
@@ -56,12 +56,12 @@ function draw() {
     actions: [{ icon: 'target', label: t('calendar.goToday'), onClick: () => { cursor = todayStr(); draw(); } }],
   });
 
-  // Umschalter
+  // Switcher
   view.appendChild(el('div', { class: 'row row--between mb-4' }, [
     segmented([{ value: 'month', label: t('calendar.month') }, { value: 'week', label: t('calendar.week') }], viewMode, (v) => { viewMode = v; draw(); }),
   ]));
 
-  // Navigationsleiste
+  // Navigation bar
   const label = viewMode === 'month'
     ? `${monthName(parseDate(cursor).getMonth())} ${parseDate(cursor).getFullYear()}`
     : weekLabel(cursor);
@@ -85,7 +85,7 @@ function weekLabel(dateStr) {
   return t('calendar.weekRange', { from: s.getDate(), to: e.getDate(), month: monthName(e.getMonth(), false) });
 }
 
-/* ------------------------------- Monat ---------------------------------- */
+/* ------------------------------- Month ---------------------------------- */
 function drawMonth(view) {
   const grid = el('div', { class: 'cal-grid' });
   const dows = weekdayNames();   // Sunday first; the grid starts on Monday
@@ -104,8 +104,8 @@ function drawMonth(view) {
     const units = unitsOn(date).filter((u) => u.type !== 'rest');
     const free = freeSessionsOn(date);
     const isRace = units.some((u) => u.type === 'race');
-    // Kurztitel („Long 14 km“) – ab 820 px Breite sichtbar statt nur farbiger Punkte (UI-17);
-    // für Screenreader nennt die Zelle Datum und Einheiten.
+    // Short title ("Long 14 km") – visible from 820 px width instead of only coloured dots (UI-17);
+    // for screen readers the cell announces the date and sessions.
     const titles = [...units.map((u) => `${typeMeta(u.type).short}${u.targetDistanceKm ? ` ${fmtKm(u.targetDistanceKm, u.targetDistanceKm % 1 ? 1 : 0)}` : ''}`),
       ...free.map((s) => `${typeMeta(s.type).short}${s.distanceKm ? ` ${fmtKm(s.distanceKm, 0)}` : ''} ✓`)];
     const aria = { weekday: fmtWeekday(date, true), date: fmtDayMonth(date), items: titles.length ? titles.join(', ') : t('calendar.nothingPlanned') };
@@ -126,9 +126,9 @@ function drawMonth(view) {
       el('div', { class: 'cal-cell__dots' }, [
         cycleDot(date),
         ...units.slice(0, 4).map((u) => el('span', { class: 'cal-dot', style: { background: typeMeta(u.type).color } })),
-        // Freie Trainings: Punkt mit Rand (erledigt, ohne Plan).
+        // Free trainings: dot with a border (done, without a plan).
         ...free.slice(0, 2).map((s) => el('span', { class: 'cal-dot cal-dot--free', style: { background: typeMeta(s.type).color }, title: s.title || typeMeta(s.type).label })),
-        // Termine als eckige Punkte (zur Unterscheidung von runden Trainings-Punkten).
+        // Appointments as square dots (to distinguish them from round training dots).
         ...termineOn(date).slice(0, 3).map((task) => el('span', { class: 'cal-dot cal-dot--task', style: { background: catMeta(task.category).color }, title: task.text })),
       ]),
     ]);
@@ -144,7 +144,7 @@ function legend() {
     el('span', { class: 'zones-legend__sw', style: { background: typeMeta(type).color } }),
     typeMeta(type).short,
   ]));
-  // Termine (eckiger Punkt) nur erwähnen, wenn das Checklisten-Modul aktiv ist.
+  // Mention appointments (square dot) only when the checklist module is active.
   if (store.settings().modules?.checklist !== false) {
     items.push(el('span', { class: 'zones-legend__item' }, [
       el('span', { class: 'zones-legend__sw', style: { background: 'var(--text-3)', borderRadius: '2px' } }),
@@ -154,7 +154,7 @@ function legend() {
   return el('div', { class: 'row wrap gap-3 mt-4', style: { justifyContent: 'center' } }, items);
 }
 
-/* ------------------------------- Woche ---------------------------------- */
+/* ------------------------------- Week ---------------------------------- */
 function drawWeek(view) {
   const start = weekStartMonday(cursor);
   const today = todayStr();
@@ -201,12 +201,12 @@ function weekUnit(u) {
   if (u.targetPaceSecPerKm) meta.push(`${fmtPace(u.targetPaceSecPerKm)}/km`);
   if (u.targetDurationMin && !u.targetDistanceKm) meta.push(`${u.targetDurationMin} min`);
 
-  // Griff als Knopf: ziehen verschiebt, antippen (oder Enter) öffnet den Verschieben-Dialog.
+  // Handle as a button: dragging moves, tapping (or Enter) opens the reschedule dialog.
   const handle = el('button', { class: 'cal-unit__handle', type: 'button', 'aria-label': t('calendar.moveUnit', { title: u.title }), title: t('calendar.dragOrTap'), html: iconSvg('grip') });
   attachDrag(handle, u);
 
   const eff0 = effectiveStatus(u);
-  // Schadfrei: an geschützten (Menstruations-)Tagen kein „überfällig“.
+  // No penalty: on protected (menstruation) days no "overdue".
   const eff = (eff0 === 'ueberfaellig' && isProtectedDay(u.date)) ? 'geplant' : eff0;
   const row = el('div', { class: `cal-unit ${eff === 'erledigt' ? 'cal-unit--done' : ''} ${eff === 'verpasst' ? 'cal-unit--missed' : ''} ${eff === 'ueberfaellig' ? 'cal-unit--overdue' : ''}` }, [
     handle,
@@ -219,8 +219,8 @@ function weekUnit(u) {
   return row;
 }
 
-/** Zeile für ein freies Training (ohne Plan) – verlinkt auf die Auswertung, dort
-    lässt es sich bearbeiten und löschen. */
+/** Row for a free training (without a plan) – links to the analysis, where it
+    can be edited and deleted. */
 function freeRow(s) {
   const meta = [];
   if (s.distanceKm) meta.push(fmtKm(s.distanceKm, s.distanceKm % 1 ? 1 : 0));
@@ -235,8 +235,8 @@ function freeRow(s) {
   ]);
 }
 
-/** Termin-Zeile (datierter Checklisten-Punkt). Verlinkt in die Checkliste zum
- *  Bearbeiten/Abhaken. Kein Drag – das Datum ändert man im Checklisten-Formular. */
+/** Appointment row (dated checklist item). Links into the checklist for
+ *  editing/ticking off. No drag – the date is changed in the checklist form. */
 function termineRow(task) {
   const cm = catMeta(task.category);
   const meta = [task.time, cm.label].filter(Boolean).join(' · ');
@@ -252,9 +252,9 @@ function termineRow(task) {
 }
 
 /* --------------------------- Drag & Drop (Pointer) ---------------------- */
-const EDGE = 72;   // px am oberen/unteren Rand, ab denen beim Ziehen gescrollt wird
+const EDGE = 72;   // px at the top/bottom edge from which the view scrolls while dragging
 function attachDrag(handle, unit) {
-  // Tastatur und Antippen ohne Ziehen: Verschieben-Dialog (mit Kollisionsprüfung).
+  // Keyboard and tap without dragging: reschedule dialog (with collision check).
   handle.addEventListener('click', () => { if (!handle.dataset.dragged) openRescheduleFor(unit); delete handle.dataset.dragged; });
   handle.addEventListener('pointerdown', (e) => {
     e.preventDefault();
@@ -263,7 +263,7 @@ function attachDrag(handle, unit) {
     let lastY = e.clientY;
     let lastX = e.clientX;
     let raf = 0;
-    // Auto-Scroll: Ziele außerhalb des Bildschirms (Sonntag unten) bleiben erreichbar.
+    // Auto-scroll: targets off-screen (Sunday at the bottom) stay reachable.
     const scrollTick = () => {
       const h = window.innerHeight;
       const dy = lastY < EDGE ? -14 : lastY > h - EDGE ? 14 : 0;
@@ -277,7 +277,7 @@ function attachDrag(handle, unit) {
       return tgt;
     };
     const move = (ev) => {
-      if (!moved && Math.hypot(ev.clientX - e.clientX, ev.clientY - e.clientY) < 6) return;   // Zittern ≠ Ziehen
+      if (!moved && Math.hypot(ev.clientX - e.clientX, ev.clientY - e.clientY) < 6) return;   // jitter ≠ drag
       if (!moved) { moved = true; raf = requestAnimationFrame(scrollTick); }
       lastX = ev.clientX; lastY = ev.clientY;
       ghost.style.left = `${ev.clientX + 14}px`;
@@ -293,9 +293,9 @@ function attachDrag(handle, unit) {
       ghost.remove();
       document.querySelectorAll('.cal-day.drag-over').forEach((x) => x.classList.remove('drag-over'));
       if (!moved) return;
-      handle.dataset.dragged = '1';          // der folgende click öffnet keinen Dialog
+      handle.dataset.dragged = '1';          // the following click does not open a dialog
       setTimeout(() => { delete handle.dataset.dragged; }, 400);
-      if (cancelled) return;                 // System hat die Geste abgebrochen (Scrollen, Anruf …)
+      if (cancelled) return;                 // the system cancelled the gesture (scrolling, a call …)
       const tgt = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('.cal-day');
       if (tgt && tgt.dataset.date && tgt.dataset.date !== unit.date) reschedule(unit, tgt.dataset.date);
     };
@@ -313,9 +313,9 @@ function openRescheduleFor(unit) {
 }
 
 /**
- * Verschieben per Ziehen: dieselbe Prüfung wie im Dialog (zwei Einheiten am selben Tag,
- * harte Einheit ohne Erholungstag) – bei einem Konflikt erst nachfragen – und danach
- * „Rückgängig“. Vorher speicherte das Ablegen sofort und ohne Warnung (UI-23).
+ * Rescheduling by dragging: the same check as in the dialog (two sessions on the same day,
+ * hard session without a recovery day) – ask first on a conflict – and afterwards
+ * "Undo". Previously dropping saved immediately and without a warning (UI-23).
  */
 export async function reschedule(unit, newDate) {
   const plan = store.get('plans').find((p) => p.id === unit.planId);
@@ -332,8 +332,8 @@ export async function reschedule(unit, newDate) {
     confirmLabel: t('calendar.moveAnyway'), cancelLabel: t('common.cancel'),
   }))) return;
   const before = { date: unit.date, dow: unit.dow, status: unit.status, movedFrom: unit.movedFrom ?? null };
-  // Status bleibt „geplant“ (die Einheit findet statt, nur an einem anderen Tag);
-  // die Verschiebung merkt sich `movedFrom`. Siehe session.js openReschedule.
+  // Status stays "geplant" (planned; the session still takes place, just on another day);
+  // the move is remembered in `movedFrom`. See session.js openReschedule.
   saveUnitPatch(unit.planId, unit.id, {
     date: newDate, dow: isoDow(newDate),
     status: unit.status === 'erledigt' ? 'erledigt' : 'geplant',
@@ -345,7 +345,7 @@ export async function reschedule(unit, newDate) {
   draw();
 }
 
-/* ------------------------------- Wetter --------------------------------- */
+/* ------------------------------- Weather --------------------------------- */
 function weatherCell(date) {
   const wb = weatherBadge(date);
   if (!wb) return null;
@@ -357,10 +357,10 @@ function weatherDay(date) {
   return el('span', { class: 'cal-day__weather', title: wb.label, text: `${wb.emoji} ${wb.tMin}–${wb.tMax}°` });
 }
 
-/* ------------------------------- Zyklus --------------------------------- */
+/* ------------------------------- Cycle --------------------------------- */
 function cycleDayTag(date) {
   const p = cyclePhase(date);
-  // Unter hormoneller Verhütung nur die Blutungstage markieren (keine Phasen).
+  // Under hormonal contraception only mark the bleeding days (no phases).
   if (!p || p.phase === 'neutral') return null;
   const m = PHASE_META[p.phase];
   return el('span', { class: 'cycle-tag', style: { background: `color-mix(in srgb, ${m.color} 18%, transparent)`, color: m.color }, title: p.predicted ? t('calendar.predicted', { label: m.label }) : m.label, text: `${m.emoji} ${m.label}` });

@@ -1,11 +1,11 @@
 import { t } from './i18n.js';
 /* =========================================================================
-   workouts.js — fertige Workouts zum Durchmachen (wie ein Video zum Mitmachen).
+   workouts.js — ready-made workouts to go through (like a video to follow along).
 
-   Jedes Workout ist eine Folge von Übungen aus der Bibliothek mit fester
-   Arbeits- und Pausenzeit (Intervall), Runden und Musikstil. Einseitige Übungen
-   („je Seite“) bekommen ihre Zeit je Seite – deshalb dort oft etwas kürzer.
-   Die Dauer rechnet show-program.js aus der tatsächlichen Zeitleiste.
+   Each workout is a sequence of exercises from the library with fixed
+   work and rest time (interval), rounds and music style. One-sided exercises
+   ("per side") get their time per side – hence often somewhat shorter there.
+   The duration is computed by show-program.js from the actual timeline.
    ========================================================================= */
 
 export const WORKOUTS = [
@@ -54,7 +54,7 @@ export const WORKOUTS = [
     style: 'flow', level: 1, work: 40, rest: 12, rounds: 1,
     items: ['cat_cow', 'bird_dog', 'glute_bridge', 'superman', { id: 'supine_twist', work: 30 }, 'cobra', 'child_pose'],
   },
-  // ---- Kraft ----
+  // ---- Strength ----
   {
     id: 'oberkoerper', cat: 'kraft', get title() { return t('workoutCatalog.oberkoerper.title'); }, get subtitle() { return t('workoutCatalog.oberkoerper.subtitle'); },
     style: 'power', level: 2, work: 40, rest: 20, rounds: 2, roundRest: 60,
@@ -85,7 +85,7 @@ export const WORKOUTS = [
     style: 'power', level: 1, work: 40, rest: 15, rounds: 2, roundRest: 45,
     items: ['monster_walk', { id: 'clamshell', work: 30 }, 'glute_bridge', { id: 'donkey_kick', work: 30 }, { id: 'side_lying_leg_raise', work: 30 }, 'sumo_squat'],
   },
-  // ---- Rumpf ----
+  // ---- Core ----
   {
     id: 'bauch-7', cat: 'rumpf', get title() { return t('workoutCatalog.bauch-7.title'); }, get subtitle() { return t('workoutCatalog.bauch-7.subtitle'); },
     style: 'groove', level: 2, work: 30, rest: 10, rounds: 2, roundRest: 30,
@@ -96,7 +96,7 @@ export const WORKOUTS = [
     style: 'groove', level: 1, work: 40, rest: 15, rounds: 2, roundRest: 45,
     items: ['dead_bug', 'bird_dog', 'glute_bridge_march', 'bear_plank', { id: 'side_plank', work: 25 }, { id: 'hollow_hold', work: 25 }],
   },
-  // ---- Kondition ----
+  // ---- Conditioning ----
   {
     id: 'tabata', cat: 'kondition', get title() { return t('workoutCatalog.tabata.title'); }, get subtitle() { return t('workoutCatalog.tabata.subtitle'); },
     style: 'hiit', level: 3, work: 20, rest: 10, rounds: 4, roundRest: 30,
@@ -107,7 +107,7 @@ export const WORKOUTS = [
     style: 'hiit', level: 2, work: 40, rest: 20, rounds: 2, roundRest: 45,
     items: ['squat', 'reverse_lunge', 'mountain_climber', 'bear_crawl', 'inchworm', 'shoulder_tap', 'side_lunge'],
   },
-  // ---- Beweglichkeit ----
+  // ---- Mobility ----
   {
     id: 'huefte', cat: 'beweglichkeit', get title() { return t('workoutCatalog.huefte.title'); }, get subtitle() { return t('workoutCatalog.huefte.subtitle'); },
     style: 'flow', level: 1, work: 45, rest: 10, rounds: 1,
@@ -123,7 +123,7 @@ export const WORKOUTS = [
     style: 'flow', level: 1, work: 50, rest: 10, rounds: 1,
     items: ['cat_cow', 'child_pose', { id: 'supine_twist', work: 40 }, { id: 'figure_four', work: 40 }, 'butterfly_stretch', { id: 'hamstring_stretch', work: 40 }],
   },
-  // ---- Laufen & Fußball ----
+  // ---- Running & football ----
   {
     id: 'lauf-abc', cat: 'laufen', get title() { return t('workoutCatalog.lauf-abc.title'); }, get subtitle() { return t('workoutCatalog.lauf-abc.subtitle'); },
     style: 'power', level: 2, work: 30, rest: 10, rounds: 1,
@@ -143,7 +143,7 @@ export const WORKOUTS = [
 
 export function findWorkout(id) { return WORKOUTS.find((w) => w.id === id) || null; }
 
-/** Filter des Workout-Katalogs. */
+/** Filter of the workout catalogue. */
 export const WORKOUT_CATS = [
   { key: 'kraft', get label() { return t('workoutCatalog.cats.kraft'); } },
   { key: 'rumpf', get label() { return t('workoutCatalog.cats.rumpf'); } },
@@ -152,5 +152,5 @@ export const WORKOUT_CATS = [
   { key: 'laufen', get label() { return t('workoutCatalog.cats.laufen'); } },
 ];
 
-/** Übungs-IDs eines Workouts. */
+/** Exercise IDs of a workout. */
 export function workoutIds(w) { return w.items.map((x) => (typeof x === 'string' ? x : x.id)); }

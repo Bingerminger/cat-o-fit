@@ -1,17 +1,16 @@
 /* =========================================================================
-   plangen.js — Generator der Wettkampfpläne: Periodisierung, Wochenumfang und
-   konkrete Einheiten. Rein (ohne Store und DOM) und damit vollständig per
-   node:test prüfbar; plans.js baut darauf Ansicht und Store-Anbindung.
+   plangen.js — race plan generator: periodisation, weekly volume and concrete
+   sessions. Pure (no store, no DOM) and therefore fully testable with
+   node:test; plans.js builds the view and the store wiring on top of it.
 
-   Grundlage → Aufbau → Spitze → Tapering. Der Wochenumfang folgt dem Niveau und
-   den Trainingstagen: Steigerung je Woche höchstens 8–12 % gegenüber der letzten
-   vollen Woche, jede 4. Woche Entlastung, danach zurück auf das Niveau davor (nie
-   mehr als +25 % zur Vorwoche). Der Long Run ist über seinen Anteil am
-   Wochenumfang, eine Distanz- und eine Zeitobergrenze gedeckelt (Daniels:
-   ~150 min; bei Laufanfänger:innen gingen Wochensprünge > 30 % mit mehr
-   Verletzungen einher, Nielsen et al. 2014). Tapering: zwei Wochen mit 70 % bzw.
-   50 % des Spitzenumfangs bei gehaltener Intensität (Bosquet et al. 2007).
-   Die Renneinheit steht an jedem Wochentag, die Tage davor werden entlastet.
+   Base → build → peak → taper. Weekly volume follows the level and the training
+   days: at most 8–12 % more per week than the last full week, every 4th week a
+   deload, afterwards back to the level before it (never more than +25 % over the
+   previous week). The long run is capped by its share of the weekly volume, a
+   distance cap and a time cap (Daniels: ~150 min; among novice runners, weekly
+   jumps > 30 % went along with more injuries, Nielsen et al. 2014). Taper: two
+   weeks at 70 % and 50 % of the peak volume with intensity held (Bosquet et al.
+   2007). The race session falls on any weekday, the days before it are eased.
    ========================================================================= */
 
 import { uid, nowIso, typeMeta, fmtKm, fmtPaceRange, addDays, isoDow, diffDays, weekStartMonday } from './ui.js';
@@ -20,8 +19,8 @@ import { isHard } from './planflow.js';
 
 import { t, tp } from './i18n.js';
 
-/** Generator-Stand. Pläne ohne dieses Feld stammen aus früheren Versionen: Sie
-    bleiben unverändert, bis jemand „Plan ab heute neu berechnen“ wählt. */
+/** Generator version. Plans without this field come from earlier versions: they
+    stay unchanged until someone chooses "Recalculate from today". */
 export const PLAN_GEN = 2;
 
 export const PLAN_LEVELS = {
@@ -37,21 +36,21 @@ const r5 = (v) => Math.max(5, Math.round(v / 5) * 5);
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const kmText = (km) => fmtKm(km, km % 1 ? 1 : 0);
 
-/* ===================== Wochengerüste ===================== */
+/* ===================== Weekly templates ===================== */
 
-/** Standard-Wochengerüst mit vier Lauftagen. Feste Termine (z. B. Vereinstraining)
-    kommen nicht aus dem Gerüst, sondern aus `plan.commitments`. */
+/** Default weekly template with four run days. Fixed commitments (e.g. club training)
+    do not come from the template but from `plan.commitments`. */
 export const DEFAULT_WEEK_TEMPLATE = [
   { dow: 2, label: 'Di', units: [{ role: 'quality' }] },
   { dow: 4, label: 'Do', units: [{ role: 'endurance' }] },
-  // Fr trägt kein fixes Training (frei vor dem Long Run). Kraft wird NICHT im
-  // Wettkampfplan vorgegeben – sie lässt sich über ein eigenes Ziel/Programm steuern.
+  // Friday carries no fixed session (rest before the long run). Strength is NOT
+  // prescribed in the race plan – it can be steered through a separate goal/programme.
   { dow: 6, label: 'Sa', units: [{ role: 'long' }] },
   { dow: 7, label: 'So', units: [{ role: 'recovery' }, { role: 'mobility' }] },
 ];
 
-/** Lauf-Wochengerüste je Anzahl Lauftage. Zwei Schlüsseltage (Di, Sa) liegen nie
-    nebeneinander; zusätzliche Tage sind kurze, lockere Läufe. */
+/** Run weekly templates by number of run days. Two key days (Tue, Sat) are never
+    adjacent; additional days are short, easy runs. */
 export const RUN_TEMPLATES = {
   3: [
     { dow: 2, label: 'Di', units: [{ role: 'quality' }] },
@@ -74,8 +73,8 @@ export const RUN_TEMPLATES = {
   ],
 };
 
-/** Triathlon: Montag frei, zwei Schwimm-, zwei Rad- und drei Laufeinheiten, Kraft
-    am lockeren Donnerstag. Harte Tage (Di, Do, So) liegen nie nebeneinander. */
+/** Triathlon: Monday off, two swim, two bike and three run sessions, strength on
+    the easy Thursday. Hard days (Tue, Thu, Sun) are never adjacent. */
 export const TRIATHLON_TEMPLATE = [
   { dow: 2, label: 'Di', units: [{ role: 'swim' }, { role: 'quality' }] },
   { dow: 3, label: 'Mi', units: [{ role: 'bike' }] },
@@ -85,8 +84,8 @@ export const TRIATHLON_TEMPLATE = [
   { dow: 7, label: 'So', units: [{ role: 'long' }, { role: 'mobility' }] },
 ];
 
-/** Hyrox: Montag frei, Lauf-Intervalle, Kraft, Stationstraining und ein ruhiger
-    langer Lauf. Die drei harten Tage (Di, Do, So) liegen nie nebeneinander. */
+/** Hyrox: Monday off, run intervals, strength, station training and an easy
+    long run. The three hard days (Tue, Thu, Sun) are never adjacent. */
 export const HYROX_TEMPLATE = [
   { dow: 2, label: 'Di', units: [{ role: 'quality' }] },
   { dow: 3, label: 'Mi', units: [{ role: 'endurance' }] },
@@ -98,7 +97,7 @@ export const HYROX_TEMPLATE = [
 
 const RUN_ROLES = ['quality', 'endurance', 'long', 'recovery', 'extra'];
 
-/** Wochengerüst nach Sportart und (bei Laufplänen) Lauftagen. */
+/** Weekly template by sport and (for run plans) run days. */
 export function weekTemplateFor(sport, daysPerWeek = 4) {
   if (sport === 'triathlon') return TRIATHLON_TEMPLATE;
   if (sport === 'hyrox') return HYROX_TEMPLATE;
@@ -107,20 +106,20 @@ export function weekTemplateFor(sport, daysPerWeek = 4) {
 
 export function clampDays(d) { return clamp(Math.round(Number(d) || 4), 3, 6); }
 
-/** Ist das ein Lauf-Wochengerüst (kein Triathlon/Hyrox)? */
+/** Is this a run weekly template (not triathlon/Hyrox)? */
 export function isRunTemplate(tpl) {
   const roles = new Set((tpl || []).flatMap((r) => (r.units || []).map((u) => u.role)));
   return !roles.has('swim') && !roles.has('bike') && !roles.has('long_bike') && !roles.has('functional');
 }
 
-/** Stabile IDs für die Fußballtermine der Altpläne (siehe planCommitments). */
+/** Stable IDs for the football commitments of legacy plans (see planCommitments). */
 export const LEGACY_COMMITMENT_IDS = ['c-legacy-mo', 'c-legacy-mi'];
 
-/** Feste Termine eines Plans. Neue Pläne tragen immer eine eigene Liste
-    (standardmäßig leer – gefragt wird beim Anlegen). Pläne aus Versionen vor
-    v3.7.0 haben kein Feld; für sie galten Mo + Mi Fußball. Diese Lese-Migration
-    hält das mit stabilen IDs fest, damit sich für echte Fußballer:innen nichts
-    ändert. Triathlon/Hyrox hatten nie Standardtermine. */
+/** Fixed commitments of a plan. New plans always carry their own list
+    (empty by default – asked for when the plan is created). Plans from versions
+    before v3.7.0 have no such field; for them, Mon + Wed were football. This read
+    migration pins that down with stable IDs so that nothing changes for real
+    football players. Triathlon/Hyrox never had default commitments. */
 export function planCommitments(plan) {
   if (!plan) return [];
   if (plan.commitments != null) return plan.commitments;
@@ -128,25 +127,25 @@ export function planCommitments(plan) {
   return defaultCommitments().map((c, i) => ({ ...c, id: LEGACY_COMMITMENT_IDS[i] || c.id }));
 }
 
-/* ===================== Kraft-Schwerpunkte ===================== */
+/* ===================== Strength focuses ===================== */
 
-/** Rotierende Kraft-Schwerpunkte – Eigengewicht oder mit Geräten, ohne Video-Zwang. */
+/** Rotating strength focuses – bodyweight or with equipment, no video required. */
 export const STRENGTH_FOCUS = [
   { get title() { return t('plangen.strengthFocus.fullBody.title'); }, get desc() { return t('plangen.strengthFocus.fullBody.desc'); } },
   { get title() { return t('plangen.strengthFocus.legs.title'); }, get desc() { return t('plangen.strengthFocus.legs.desc'); } },
   { get title() { return t('plangen.strengthFocus.core.title'); }, get desc() { return t('plangen.strengthFocus.core.desc'); } },
 ];
 
-/** Kraft für Hyrox: Beine/Schieben, Zug/Griff, Ganzkörper mit Wall Balls. */
+/** Strength for Hyrox: legs/pushing, pulling/grip, full body with wall balls. */
 export const HYROX_STRENGTH = [
   { get title() { return t('plangen.hyroxStrength.legsPush.title'); }, get desc() { return t('plangen.hyroxStrength.legsPush.desc'); } },
   { get title() { return t('plangen.hyroxStrength.pullGrip.title'); }, get desc() { return t('plangen.hyroxStrength.pullGrip.desc'); } },
   { get title() { return t('plangen.hyroxStrength.fullBody.title'); }, get desc() { return t('plangen.hyroxStrength.fullBody.desc'); } },
 ];
 
-/* ===================== Phasen ===================== */
+/* ===================== Phases ===================== */
 
-/** Verteilt die Gesamtwochen auf die vier Trainingsphasen. */
+/** Distributes the total weeks over the four training phases. */
 export function makePhases(weeks) {
   const defs = [
     { key: 'base', name: t('plangen.phases.base.name'), color: '#43c59e', focus: t('plangen.phases.base.focus'), frac: 0.40 },
@@ -155,8 +154,8 @@ export function makePhases(weeks) {
     { key: 'taper', name: t('plangen.phases.taper.name'), color: '#b079e6', focus: t('plangen.phases.taper.focus'), frac: 0.12 },
   ];
   if (weeks <= 1) return [{ ...defs[3], startWeek: 1, endWeek: weeks }].map(({ frac, ...p }) => p);
-  // Kurzpläne (2–3 Wochen): die Rennwoche ist IMMER Tapering – ein voller
-  // Aufbaublock direkt vor dem Wettkampf wäre kontraproduktiv.
+  // Short plans (2–3 weeks): race week is ALWAYS taper – a full build block
+  // right before the race would be counterproductive.
   if (weeks < 4) {
     return [
       { ...defs[0], startWeek: 1, endWeek: weeks - 1 },
@@ -180,9 +179,9 @@ export function phaseForWeek(plan, week) {
   return phases.find((p) => week >= p.startWeek && week <= p.endWeek) || phases.at(-1);
 }
 
-/* ===================== Distanz, Niveau, Historie ===================== */
+/* ===================== Distance, level, history ===================== */
 
-/** Schwerpunkt der Schlüsseleinheiten je Wettkampfdistanz (distanzspezifisch). */
+/** Focus of the key sessions per race distance (distance-specific). */
 export function distanceEmphasis(raceKm = 21.1) {
   const km = Number(raceKm) || 21.1;
   if (km <= 6) return { key: '5k', short: true, marathon: false, focus: t('plangen.emphasis.5k') };
@@ -191,13 +190,13 @@ export function distanceEmphasis(raceKm = 21.1) {
   return { key: 'marathon', short: false, marathon: true, focus: t('plangen.emphasis.marathon') };
 }
 
-/** Wettkampfformate für Triathlon. */
+/** Race formats for triathlon. */
 export const TRI_FORMATS = {
   tri_sprint: { get label() { return t('plangen.triFormats.sprint'); }, swimM: 750, bikeKm: 20, runKm: 5 },
   tri_olympic: { get label() { return t('plangen.triFormats.olympic'); }, swimM: 1500, bikeKm: 40, runKm: 10 },
 };
 
-/** Schlüssel des Wettkampfs für Umfang und Einheitenwahl. */
+/** Key of the race for volume and session choice. */
 export function raceKey(event = {}) {
   const sport = event.sport || 'run';
   const km = Number(event.distanceKm) || 21.0975;
@@ -212,7 +211,7 @@ export function raceKey(event = {}) {
 
 const raceLabel = (key) => t(`plangen.raceLabel.${key}`);
 
-/** Spitzen-Wochenumfang (Lauf-km) bei vier Lauftagen je Distanz und Niveau. */
+/** Peak weekly volume (run km) with four run days per distance and level. */
 const PEAK_WEEK_KM = {
   '5k':        { einsteiger: 20, fortgeschritten: 30, leistung: 45 },
   '10k':       { einsteiger: 25, fortgeschritten: 38, leistung: 55 },
@@ -222,33 +221,34 @@ const PEAK_WEEK_KM = {
   tri_olympic: { einsteiger: 16, fortgeschritten: 24, leistung: 32 },
   hyrox:       { einsteiger: 18, fortgeschritten: 28, leistung: 38 },
 };
-/** Obergrenze eines lockeren Dauerlaufs (km) je Niveau. */
+/** Upper limit of an easy continuous run (km) per level. */
 const ENDURANCE_MAX = { einsteiger: 14, fortgeschritten: 18, leistung: 22 };
-/** Entlastungswoche: Anteil des Umfangs der letzten vollen Woche. */
+/** Deload week: share of the volume of the last full week. */
 const DELOAD = 0.85;
-/** Mehr Lauftage tragen mehr Umfang. */
+/** More run days carry more volume. */
 const DAYS_FACTOR = { 3: 0.85, 4: 1, 5: 1.12, 6: 1.25 };
-/** Einstieg ohne Trainingshistorie als Anteil der Spitze. */
+/** Starting point without training history as a share of the peak. */
 const START_SHARE = { einsteiger: 0.45, fortgeschritten: 0.6, leistung: 0.65 };
-/** Höchste Steigerung je Woche gegenüber der letzten vollen Woche. */
+/** Largest weekly increase over the last full week. */
 const WEEK_STEP = { einsteiger: 0.08, fortgeschritten: 0.10, leistung: 0.12 };
-/** Höchster Anteil des Long Runs am Wochenumfang (bei vier Lauftagen). Für Marathon
-    und Halbmarathon etwas höher als die 25–30 % bei Daniels: Bei Freizeitumfängen
-    bliebe der Long Run sonst weit unter der Renndistanz. */
+/** Largest share of the long run in the weekly volume (with four run days). For the
+    marathon and half marathon slightly higher than the 25–30 % in Daniels: at
+    recreational volumes the long run would otherwise stay far below the race
+    distance. */
 const LONG_SHARE = { '5k': 0.33, '10k': 0.33, hm: 0.38, marathon: 0.4, tri_sprint: 0.4, tri_olympic: 0.4, hyrox: 0.4 };
-/** Zeitobergrenze des Long Runs (Minuten). */
+/** Time cap of the long run (minutes). */
 const LONG_TIME_CAP_MIN = { einsteiger: 150, fortgeschritten: 180, leistung: 180 };
-/** Long-Run-Pace, wenn keine Paces bekannt sind (Sek./km) – bewusst ruhig. */
+/** Long-run pace when no paces are known (s/km) – deliberately easy. */
 const FALLBACK_LONG_PACE = { einsteiger: 420, fortgeschritten: 370, leistung: 330 };
-/** Distanz-Obergrenze des Long Runs für Triathlon/Hyrox (Laufen ist dort ein Teil). */
+/** Distance cap of the long run for triathlon/Hyrox (running is only one part there). */
 const MULTI_LONG_CAP = {
   tri_sprint: { einsteiger: 8, fortgeschritten: 10, leistung: 12 },
   tri_olympic: { einsteiger: 12, fortgeschritten: 15, leistung: 18 },
   hyrox: { einsteiger: 10, fortgeschritten: 12, leistung: 14 },
 };
-/** Wiederholungen je Niveau (Einsteiger kürzere Qualitätsreize). */
+/** Repetitions per level (beginners get shorter quality stimuli). */
 const REP_FACTOR = { einsteiger: 0.65, fortgeschritten: 1, leistung: 1.25 };
-/** Empfohlene Mindestvorbereitung in Wochen (ohne passende Historie). */
+/** Recommended minimum preparation in weeks (without a matching history). */
 const MIN_WEEKS = {
   '5k': { einsteiger: 6, fortgeschritten: 4, leistung: 3 },
   '10k': { einsteiger: 8, fortgeschritten: 6, leistung: 4 },
@@ -258,23 +258,23 @@ const MIN_WEEKS = {
   tri_olympic: { einsteiger: 14, fortgeschritten: 10, leistung: 8 },
   hyrox: { einsteiger: 10, fortgeschritten: 8, leistung: 6 },
 };
-/** Ab diesem längsten Lauf gilt die Vorbereitung als ausreichend vorhanden. */
+/** From this longest run on, the preparation counts as sufficiently present. */
 const HISTORY_LONG_OK = { '5k': 6, '10k': 10, hm: 15, marathon: 26, tri_sprint: 6, tri_olympic: 10, hyrox: 8 };
 
-/** Distanz-bewusste Long-Run-Spitzendistanz (km) auf dem Niveau „Fortgeschritten“.
-    Kurze Distanzen brauchen relativ längere Grundlagen-Läufe, der Marathon wird bei
-    ~32 km gedeckelt. */
+/** Distance-aware long-run peak distance (km) at the "Advanced" level.
+    Short distances need relatively longer base runs, the marathon is capped at
+    ~32 km. */
 export function longRunPeak(raceKm) {
-  if (raceKm <= 6) return 15;                              // 5 km -> Grundlagen-Long
-  if (raceKm <= 12) return 19;                             // 10 km
-  if (raceKm <= 25) return Math.round(Math.min(raceKm * 0.9, 20)); // Halbmarathon
-  return Math.round(Math.min(raceKm * 0.76, 32));          // Marathon (gedeckelt)
+  if (raceKm <= 6) return 15;                              // if (raceKm <= 6) return 15;                              // 5 km -> base long run
+  if (raceKm <= 12) return 19;                             // if (raceKm <= 12) return 19;                             // 10 km
+  if (raceKm <= 25) return Math.round(Math.min(raceKm * 0.9, 20)); // if (raceKm <= 25) return Math.round(Math.min(raceKm * 0.9, 20)); // half marathon
+  return Math.round(Math.min(raceKm * 0.76, 32));          // return Math.round(Math.min(raceKm * 0.76, 32));          // marathon (capped)
 }
 
 const RUN_TYPES = ['easy', 'long', 'tempo', 'interval', 'race', 'run', 'recovery'];
 
-/** Trainingshistorie der letzten vier Wochen: Ø Wochen-km (erst ab zwei Wochen mit
-    Läufen) und längster Lauf. Nur Laufen – Rad und Gehen zählen hier nicht. */
+/** Training history of the last four weeks: average weekly km (only from two weeks
+    with runs) and longest run. Running only – cycling and walking do not count here. */
 export function trainingHistory(sessions = [], today) {
   let km = 0, longKm = 0;
   const weeks = new Set();
@@ -289,7 +289,7 @@ export function trainingHistory(sessions = [], today) {
   return { weekKm: weeks.size >= 2 ? r05(km / 4) : null, longKm: longKm >= 5 ? r05(longKm) : null, weeks: weeks.size };
 }
 
-/** Vorschlag fürs Niveau aus der Historie (die Person kann ihn ändern). */
+/** Suggested level from the history (the person can change it). */
 export function suggestLevel(hist = {}) {
   const wk = hist.weekKm || 0, lg = hist.longKm || 0;
   if (wk >= 40 || lg >= 18) return 'leistung';
@@ -297,15 +297,15 @@ export function suggestLevel(hist = {}) {
   return 'einsteiger';
 }
 
-/** Niveau eines Plans. Altpläne ohne Feld: aus ihrer Historie, sonst „Fortgeschritten“
-    (entspricht dem Umfang der früheren Pläne am ehesten). */
+/** Level of a plan. Legacy plans without the field: from their history, otherwise
+    "Advanced" (which comes closest to the volume of the earlier plans). */
 export function levelOf(plan = {}) {
   if (LEVELS.includes(plan.level)) return plan.level;
   if (plan.baseWeekKm || plan.baseLongKm) return suggestLevel({ weekKm: plan.baseWeekKm, longKm: plan.baseLongKm });
   return 'fortgeschritten';
 }
 
-/** Planstart (kommender Montag, bei sehr nahem Rennen heute) und Wochenzahl. */
+/** Plan start (coming Monday, today for a very near race) and number of weeks. */
 export function planWindow(eventDate, today) {
   let start = today;
   const dow = isoDow(today);
@@ -316,8 +316,8 @@ export function planWindow(eventDate, today) {
 }
 
 /**
- * Passt die Vorbereitungszeit? `past`/`today`: kein Plan mehr möglich; `short`:
- * kürzer als die empfohlene Mindestdauer (ohne passende Historie) – mit Alternativen.
+ * Does the preparation time fit? `past`/`today`: no plan possible any more; `short`:
+ * shorter than the recommended minimum duration (without a matching history) – with alternatives.
  */
 export function planReadiness(event, { today, level = 'fortgeschritten', hist = {} } = {}) {
   if (!event || !event.date) return { status: 'none' };
@@ -337,7 +337,7 @@ export function planReadiness(event, { today, level = 'fortgeschritten', hist = 
   return { status: 'ok', weeks, minWeeks };
 }
 
-/* ===================== Umfangsmodell ===================== */
+/* ===================== Volume model ===================== */
 
 function countRoles(tpl) {
   const c = {};
@@ -345,18 +345,18 @@ function countRoles(tpl) {
   return c;
 }
 
-/** Eckwerte des Umfangs für einen Plan (Spitze, Einstieg, Steigerung, Long-Run-Deckel). */
+/** Key figures of the volume for a plan (peak, starting point, increase, long-run cap). */
 export function volumeConfig(plan = {}, event = {}, pz = {}) {
   const key = raceKey({ ...event, sport: event.sport || plan.sport });
   const level = levelOf(plan);
   const roles = countRoles(plan.weekTemplate || DEFAULT_WEEK_TEMPLATE);
   const runDays = RUN_ROLES.reduce((n, r) => n + (roles[r] || 0), 0) || 4;
   const peak = r05(PEAK_WEEK_KM[key][level] * (DAYS_FACTOR[clamp(runDays, 3, 6)] || 1));
-  // Einstieg: der aktuelle Umfang (auch darunter, wenn wenig gelaufen wird), höchstens die
-  // Spitze des Niveaus; ohne Historie ein Anteil der Spitze.
+  // Starting point: the current volume (also below it if little is being run), at most the
+  // peak of the level; without a history, a share of the peak.
   let start;
   if (plan.baseWeekKm) start = plan.baseWeekKm;
-  else if (plan.baseLongKm) start = plan.baseLongKm * 2.5;   // ein Long Run lässt auf den Wochenumfang schließen
+  else if (plan.baseLongKm) start = plan.baseLongKm * 2.5;   // a long run allows inferring the weekly volume
   else start = peak * START_SHARE[level];
   start = r05(clamp(start, Math.min(8, peak * 0.5), peak));
   const long = pz && pz.long;
@@ -368,7 +368,7 @@ export function volumeConfig(plan = {}, event = {}, pz = {}) {
     : longRunPeak(raceKm) * ({ einsteiger: 0.85, fortgeschritten: 1, leistung: 1.1 })[level];
   const longShare = Math.max(0.28, LONG_SHARE[key] - Math.max(0, runDays - 4) * 0.03);
   const longCapKm = r05(Math.min(distCapKm, timeCapKm));
-  // Lauf-Geh-Wochen für Einsteiger:innen ohne Laufbasis (5 und 10 km).
+  // Run-walk weeks for beginners without a running base (5 and 10 km).
   const runWalkWeeks = level === 'einsteiger' && (key === '5k' || key === '10k') && start < 12 ? (start < 10 ? 6 : 3) : 0;
   return {
     key, level, runDays, peak, start,
@@ -380,9 +380,9 @@ export function volumeConfig(plan = {}, event = {}, pz = {}) {
 }
 
 /**
- * Wochen-Soll je Planwoche (Index 1..weeks): { km, deload, taper }.
- * `plan.anchorWeek` (beim Aktualisieren ab heute): Die Steigerung beginnt in dieser
- * Woche beim Einstiegsumfang – so setzt der Plan am aktuellen Stand an.
+ * Weekly target per plan week (index 1..weeks): { km, deload, taper }.
+ * `plan.anchorWeek` (when updating from today): the increase starts in this
+ * week at the starting volume – so the plan picks up at the current state.
  */
 export function weekVolumes(plan, cfg) {
   const weeks = Math.max(1, plan.weeks | 0);
@@ -408,35 +408,35 @@ export function weekVolumes(plan, cfg) {
   return out;
 }
 
-/** Nebeneinheiten als Anteil am Wochenumfang, gerundet und begrenzt. */
+/** Secondary sessions as a share of the weekly volume, rounded and limited. */
 export function supportRunKm(baseKm, frac, { min = 4, max = 16 } = {}) {
   const km = (Number(baseKm) || 0) * frac;
   if (!km) return min;
   return r05(Math.max(min, Math.min(max, km)));
 }
 
-/** Unter diesem Wochenumfang werden Regenerations- und Zusatzläufe zu zügigem
-    Gehen – vier Läufe à 2–3 km wären für Einsteiger:innen kein sinnvolles Training. */
+/** Below this weekly volume, recovery and extra runs turn into brisk walking –
+    four runs of 2–3 km would not be sensible training for beginners. */
 const WALK_BELOW_KM = 16;
 
-/** Verteilt den Wochenumfang auf die Rollen der Woche. Der Long Run hält seinen
-    Anteil auch an der tatsächlichen Wochensumme ein und wird im Tapering deutlich
-    kürzer (zwei Wochen vorher ≤ 75 %, eine Woche vorher ≤ 55 % der Spitze). */
+/** Distributes the weekly volume over the roles of the week. The long run keeps
+    its share also of the actual weekly total and becomes clearly shorter in the
+    taper (two weeks before ≤ 75 %, one week before ≤ 55 % of the peak). */
 function allocate(cfg, info, roles, phaseKey) {
   const V = info.km;
   const walk = V < WALK_BELOW_KM;
-  // Grundlagenphase: Dauerlauf mit Steigerungen (≤ 12 km), sonst strukturierte Einheit (≤ 16 km).
+  // Base phase: continuous run with strides (≤ 12 km), otherwise a structured session (≤ 16 km).
   const qMax = phaseKey === 'base' && !info.taper ? 12 : 16;
   const quality = r05(clamp(V * (cfg.key === 'hyrox' || cfg.key.startsWith('tri') ? 0.3 : 0.25), 3, qMax));
   const recovery = roles.recovery && !walk ? supportRunKm(V, 0.12, { min: 3, max: 8 }) : 0;
-  // Der Long Run folgt seinem Anteil am Wochenumfang – auch bei erfahrenen Läufer:innen
-  // (deren höherer Umfang ihm dann Raum gibt), gedeckelt über Distanz und Zeit.
+  // The long run follows its share of the weekly volume – also for experienced runners
+  // (whose higher volume then gives it room), capped by distance and time.
   let long = Math.min(V * cfg.longShare, cfg.longCapKm);
   if (info.taper === 'w2') long = Math.min(long, cfg.peakLongKm * 0.75);
   if (info.taper === 'w1') long = Math.min(long, cfg.peakLongKm * 0.55);
   const nExtra = roles.extra && !walk ? roles.extra : 0;
   const rest = V - long - quality - recovery;
-  // Der Dauerlauf (Do) bleibt der zweitlängste Lauf; Zusatzläufe teilen sich den Rest.
+  // The continuous run (Thu) remains the second-longest run; extra runs share the rest.
   const endurance = roles.endurance
     ? r05(clamp(nExtra ? Math.max(V * 0.2, rest * 0.4) : rest / roles.endurance, 3, ENDURANCE_MAX[cfg.level]))
     : 0;
@@ -446,7 +446,7 @@ function allocate(cfg, info, roles, phaseKey) {
   return { V, walk, long: r05(Math.max(3, long)), quality, recovery, extra, endurance };
 }
 
-/* ===================== Einheiten ===================== */
+/* ===================== Sessions ===================== */
 
 function pace(pz, key) {
   const z = pz[key];
@@ -455,9 +455,9 @@ function pace(pz, key) {
 
 const DEFAULT_HR = { easy: 2, long: 2, recovery: 1, threshold: 4, vo2: 5, race: 4, marathon: 3, race_hm: 4 };
 
-/** Kilometer für eine Belastungszeit (Sek.) bei einer Pace (Sek./km); ohne Pace 5:00. */
+/** Kilometres for a work time (s) at a pace (s/km); 5:00 without a pace. */
 function kmForSec(sec, paceSec) { return sec / (paceSec || 300); }
-/** Trabpause in km (≈ 6:40 min/km). */
+/** Jog recovery in km (≈ 6:40 min/km). */
 function jogKm(restSec) { return restSec / 400; }
 function midPace(z) { return z && z.min ? (z.min + (z.max || z.min)) / 2 : null; }
 
@@ -483,8 +483,8 @@ function mkUnit(ctx, type, extra = {}) {
   };
 }
 
-/** Pyramiden-Intervalle: aufsteigend bis `peakSec`, dann absteigend; je `restSec` Trabpause.
-    Liefert variable Segmente für den Workout-Modus (feinere Struktur als uniforme Runden). */
+/** Pyramid intervals: ascending up to `peakSec`, then descending; `restSec` jog recovery each.
+    Yields variable segments for the workout mode (finer structure than uniform rounds). */
 export function pyramidSegments(peakSec = 240, stepSec = 60, restSec = 90) {
   const up = [];
   for (let s = stepSec; s <= peakSec; s += stepSec) up.push(s);
@@ -492,27 +492,27 @@ export function pyramidSegments(peakSec = 240, stepSec = 60, restSec = 90) {
   return seq.map((workSec) => ({ workSec, restSec, label: `${Math.round(workSec / 60 * 10) / 10} min` }));
 }
 
-/** Wechselintervalle (Fahrtspiel): `rounds`× schnell/locker im Wechsel – die „Pause“
-    ist hier lockeres Weiterlaufen (Float), kein Stopp. */
+/** Alternating intervals (fartlek): `rounds`× fast/easy in turn – the "rest"
+    is easy continued running (float) here, not a stop. */
 export function alternatingSegments(rounds = 6, fastSec = 60, floatSec = 60) {
   return Array.from({ length: rounds }, () => ({ workSec: fastSec, restSec: floatSec, label: t('plangen.segments.fast'), floatRest: true }));
 }
 
-/** Aufwärm-/Auslaufstrecke nach Niveau. */
+/** Warm-up/cool-down distance by level. */
 function warmCool(cfg) {
   if (cfg.level === 'einsteiger' || cfg.key === 'hyrox') return { warm: 1.5, cool: 1.5 };
   if (cfg.level === 'leistung' && cfg.key === 'marathon') return { warm: 3, cool: 2 };
   return { warm: 2, cool: 2 };
 }
 
-/** Wiederholungen nach Niveau, so gekürzt, dass die Einheit ins Wochenbudget passt. */
+/** Repetitions by level, shortened so that the session fits the weekly budget. */
 function fitReps(base, min, kmOf, budget, cfg) {
   let n = Math.max(min, Math.round(base * REP_FACTOR[cfg.level]));
   while (n > min && kmOf(n) > budget * 1.15) n--;
   return n;
 }
 
-/** Zeit-Blöcke (Schwelle): n × workMin mit restMin Trabpause. */
+/** Time blocks (threshold): n × workMin with restMin jog recovery. */
 function timeBlocks(ctx, { base, min = 2, workMin, restMin, paceKey, type = 'tempo', title, desc }) {
   const { cfg, pz, alloc } = ctx;
   const { warm, cool } = warmCool(cfg);
@@ -527,7 +527,7 @@ function timeBlocks(ctx, { base, min = 2, workMin, restMin, paceKey, type = 'tem
   });
 }
 
-/** Strecken-Wiederholungen: n × workM mit Trabpause (Sek.). */
+/** Distance repetitions: n × workM with jog recovery (s). */
 function distanceReps(ctx, { base, min = 2, workM, restSec, paceKey, type = 'interval', title, desc }) {
   const { cfg, pz, alloc } = ctx;
   const { warm, cool } = warmCool(cfg);
@@ -544,10 +544,10 @@ function distanceReps(ctx, { base, min = 2, workM, restSec, paceKey, type = 'int
   });
 }
 
-/** Schlüsseleinheit der Woche – phasen-, distanz- und niveauabhängig. */
+/** Key session of the week – depends on phase, distance and level. */
 function qualityUnit(ctx) {
   const { week, cfg, pz, alloc, sport, info } = ctx;
-  // In den Tapering-Wochen gilt die Taper-Einheit, auch wenn die Phase noch „Spitze“ heißt.
+  // In the taper weeks the taper session applies, even if the phase is still called "Peak".
   const phase = info.taper ? { key: 'taper' } : ctx.phase;
   const emKey = cfg.key === 'tri_sprint' ? '5k' : cfg.key === 'tri_olympic' ? '10k' : cfg.key;
   const even = week % 2 === 0;
@@ -578,7 +578,7 @@ function qualityUnit(ctx) {
         desc: (n, w, c) => t('plangen.threshold.marathonDesc', { n, warm: w, cool: c }),
       });
     }
-    if (even) { // Abwechslung: Fahrtspiel mit fließenden Wechseln statt Schwellenlauf
+    if (even) { // variety: fartlek with flowing changes instead of a threshold run
       const { warm, cool } = warmCool(ctx.cfg);
       const n = fitReps(8, 4, (k) => warm + cool + k * (kmForSec(60, midPace(pz.threshold)) + kmForSec(60, midPace(pz.easy) || 380)), alloc.quality, cfg);
       return mkUnit(ctx, 'tempo', {
@@ -623,7 +623,7 @@ function qualityUnit(ctx) {
         });
     }
     if (emKey === '10k') {
-      if (even) { // Pyramide: Einsteiger 1-2-3-2-1, sonst 1-2-3-4-3-2-1 min
+      if (even) { // pyramid: beginners 1-2-3-2-1, otherwise 1-2-3-4-3-2-1 min
         const peakSec = cfg.level === 'einsteiger' ? 180 : 240;
         const segments = pyramidSegments(peakSec, 60, 90);
         const { warm, cool } = warmCool(cfg);
@@ -642,7 +642,7 @@ function qualityUnit(ctx) {
         desc: (n, w, c) => t('plangen.pace10k.desc', { n, warm: w, cool: c }),
       });
     }
-    // 5 km: kurze, schnelle VO₂max-Reize
+    // 5 km: short, fast VO₂max stimuli
     return even
       ? distanceReps(ctx, {
         base: 8, min: 4, workM: 400, restSec: 90, paceKey: 'vo2',
@@ -656,7 +656,7 @@ function qualityUnit(ctx) {
       });
   }
 
-  // Tapering (W-2/W-1): Reiz halten, Umfang runter
+  // Taper (W-2/W-1): hold the stimulus, reduce the volume
   if (emKey === 'marathon' || emKey === 'hm') {
     return distanceReps(ctx, {
       base: 2, min: 2, workM: 2000, restSec: 180, paceKey: 'race', type: 'tempo',
@@ -672,12 +672,12 @@ function qualityUnit(ctx) {
   });
 }
 
-/** Stufen des Lauf-Geh-Wechsels: [Wiederholungen, Laufzeit in Sek.], je 1 min Gehen. */
+/** Steps of the run-walk alternation: [repetitions, run time in s], 1 min walking each. */
 const RUN_WALK_STEPS = [[6, 120], [6, 180], [5, 240], [4, 300], [3, 480], [2, 720]];
 
-/** Lauf-Geh-Wechsel für Einsteiger:innen ohne Laufbasis. Alle Läufe der Woche folgen
-    derselben Stufe (kürzer, normal, länger) – ein durchgehender 3-km-Lauf wäre in
-    den ersten Wochen noch zu viel. */
+/** Run-walk alternation for beginners without a running base. All runs of the week follow
+    the same step (shorter, normal, longer) – a continuous 3 km run would still be
+    too much in the first weeks. */
 function runWalkUnit(ctx, variant = 'base') {
   const idx = Math.max(0, Math.min(ctx.week - 1, RUN_WALK_STEPS.length - 1) - (ctx.info.deload ? 1 : 0));
   let [n, runSec] = RUN_WALK_STEPS[idx];
@@ -695,7 +695,7 @@ function runWalkUnit(ctx, variant = 'base') {
   });
 }
 
-/** Zügiges Gehen statt eines sehr kurzen Laufs (kleine Wochenumfänge). */
+/** Brisk walking instead of a very short run (small weekly volumes). */
 function walkUnit(ctx) {
   return mkUnit(ctx, 'walk', {
     dur: 30, hrZone: 1, title: t('plangen.walk.title'),
@@ -703,7 +703,7 @@ function walkUnit(ctx) {
   });
 }
 
-/** Long Run der Woche (bei Hyrox ein ruhiger, langer Dauerlauf). */
+/** Long run of the week (for Hyrox a calm, long continuous run). */
 function longUnit(ctx) {
   const { phase, alloc, info, cfg, pz, sport } = ctx;
   const km = alloc.long;
@@ -735,7 +735,7 @@ function longUnit(ctx) {
   });
 }
 
-/** Faktor für Schwimm-/Rad-/Stationsdauer nach Phase und Woche. */
+/** Factor for swim/bike/station duration by phase and week. */
 function multiFactor(ctx, byPhase) {
   const { phase, info } = ctx;
   const f = byPhase[phase.key] ?? 1;
@@ -747,7 +747,7 @@ function swimUnit(ctx) {
   const fmt = TRI_FORMATS[ctx.cfg.key] || TRI_FORMATS.tri_sprint;
   const olympic = ctx.cfg.key === 'tri_olympic';
   const dur = r5((olympic ? 45 : 35) * multiFactor(ctx, { base: 1, build: 1.1, peak: 1.2, taper: 0.8 }));
-  if (ctx.dow === 2) { // Dienstag: Technik & Intervalle
+  if (ctx.dow === 2) { // if (ctx.dow === 2) { // Tuesday: technique & intervals
     const reps = ({ base: 6, build: 8, peak: 10, taper: 6 })[ctx.phase.key] + (olympic ? 2 : 0);
     return mkUnit(ctx, 'swim', {
       dur, title: t('plangen.swim.techTitle'),
@@ -820,10 +820,10 @@ function functionalUnit(ctx) {
 }
 
 /**
- * Einheiten in den Tagen vor dem Wettkampf (Rennwoche) – unabhängig vom Wochentag
- * des Rennens. Liefert eine Einheit, null (Ruhetag) oder undefined (normal planen).
- *   1 Tag vorher: Shakeout; 2 Tage vorher: frei; 3–6 Tage vorher: Aktivierung,
- *   kurze lockere Läufe, keine Kraft, keine langen Rad-/Stationseinheiten.
+ * Sessions in the days before the race (race week) – independent of the weekday
+ * of the race. Yields a session, null (rest day) or undefined (plan normally).
+ *   1 day before: shakeout; 2 days before: off; 3–6 days before: activation,
+ *   short easy runs, no strength, no long bike/station sessions.
  */
 function nearRaceUnit(role, ctx) {
   const dtr = ctx.daysToRace;
@@ -862,18 +862,18 @@ function nearRaceUnit(role, ctx) {
     case 'functional':
       return mkUnit(ctx, 'strength', { dur: 20, title: t('plangen.near.hyroxTitle'), desc: t('plangen.near.hyroxDesc') });
     default:
-      return null;   // Kraft & Co. in der Rennwoche: frei
+      return null;   // strength & co. in race week: off
   }
 }
 
-/** Wandelt eine Vorlagen-„Rolle“ in eine konkrete Einheit (phasen- und niveauabhängig). */
+/** Turns a template "role" into a concrete session (depends on phase and level). */
 function resolveRole(role, ctx) {
   const near = nearRaceUnit(role, ctx);
   if (near !== undefined) return near;
   const { pz, alloc, phase, week, sport, cfg } = ctx;
 
-  // Einsteiger:innen ohne Laufbasis: die ersten Wochen im Lauf-Geh-Wechsel (nie in
-  // den letzten beiden Wochen vor dem Rennen).
+  // Beginners without a running base: the first weeks as run-walk alternation (never in
+  // the last two weeks before the race).
   if (week <= cfg.runWalkWeeks && week < ctx.plan.weeks - 1) {
     if (role === 'quality') return runWalkUnit(ctx, 'base');
     if (role === 'endurance') return runWalkUnit(ctx, 'short');
@@ -883,7 +883,7 @@ function resolveRole(role, ctx) {
   if ((role === 'recovery' || role === 'extra') && alloc.walk) return walkUnit(ctx);
 
   switch (role) {
-    case 'cross_football': // Altpläne mit Fußball im Gerüst
+    case 'cross_football': // legacy plans with football in the template
       return mkUnit(ctx, 'cross_football', { dur: 90, title: t('plangen.football.title'), desc: t('plangen.football.desc') });
 
     case 'strength': {
@@ -926,7 +926,7 @@ function resolveRole(role, ctx) {
   }
 }
 
-/** Taktik je Distanz für die Renneinheit. */
+/** Tactics per distance for the race session. */
 function raceTactic(raceKm) {
   const km = Number(raceKm) || 21.0975;
   if (km <= 6) return t('plangen.tactic.5k');
@@ -935,7 +935,7 @@ function raceTactic(raceKm) {
   return t('plangen.tactic.marathon', { km: Math.round(km * 0.72) });
 }
 
-/** Renntempo-Zone ohne Plan-Paces (Altbestand): nach Distanz aus dem Profil. */
+/** Race-pace zone without plan paces (legacy data): by distance from the profile. */
 function legacyRaceZone(pz, raceKm) {
   const km = Number(raceKm) || 21.0975;
   const key = km <= 6 ? 'vo2' : km <= 12 ? 'threshold' : km <= 25 ? 'race_hm' : 'marathon';
@@ -945,7 +945,7 @@ function legacyRaceZone(pz, raceKm) {
 function mmss(sec) { const s = Math.round(sec); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }
 function hmsToSec(hms) { if (!hms) return 0; const p = String(hms).split(':').map(Number); while (p.length < 3) p.unshift(0); return p[0] * 3600 + p[1] * 60 + p[2]; }
 
-/** Die Renneinheit am Wettkampftag. */
+/** The race session on race day. */
 export function makeRaceUnit(plan, event, date, week, phase, pz = {}) {
   const ctx = { plan, date, week, phase };
   const sport = event.sport || plan.sport || 'run';
@@ -977,17 +977,17 @@ export function makeRaceUnit(plan, event, date, week, phase, pz = {}) {
   });
 }
 
-/** Baut die Einheit für einen festen Termin (Fußball/Spiel) an einem Datum. */
-/** Schlüsselrollen, die nicht neben einem harten festen Termin liegen sollen. */
+/** Builds the session for a fixed commitment (football/match) on a date. */
+/** Key roles that should not sit next to a hard fixed commitment. */
 const KEY_ROLES = new Set(['quality', 'long']);
 
-/** Fester Termin, der fordert: Spiel immer, Fußballtraining außer „leicht“. */
+/** Fixed commitment that is demanding: matches always, football training unless "light". */
 function isHardCommit(c) {
   const type = commitMeta(c && c.type).unitType;
   return type === 'match' || (type === 'cross_football' && c.intensity !== 'leicht');
 }
 
-/** Ersatz für eine Qualitätseinheit, die sonst direkt neben einem harten Termin läge. */
+/** Substitute for a quality session that would otherwise sit directly next to a hard commitment. */
 function stridesUnit(ctx) {
   const raceWeek = ctx.daysToRace <= 6;
   const short = ctx.cfg.level === 'einsteiger' ? 3 : ctx.cfg.level === 'leistung' ? 5 : 4;
@@ -1012,15 +1012,15 @@ function mkCommitUnit(plan, date, c, week, phase) {
     targetPaceSecPerKm: null, targetPaceMaxSecPerKm: null, targetHrZone: null,
     description: c.desc || '', time: null, intervals: null,
     status: 'geplant', executedSessionId: null,
-    commitmentId: c.id, fixed: true, intensity: c.intensity || null,  // Fußball-Intensität (#5)
+    commitmentId: c.id, fixed: true, intensity: c.intensity || null,  // football intensity (#5)
     createdAt: nowIso(), updatedAt: nowIso(),
   };
 }
 
-/** Schlüssel eines festen Termins an einem Tag – über Pläne hinweg eindeutig. */
+/** Key of a fixed commitment on a day – unique across plans. */
 export function fixedKey(unitType, date) { return `${unitType}|${date}`; }
 
-/** Feste Termine, die andere Pläne schon eintragen (gegen doppelte Einträge). */
+/** Fixed commitments that other plans already enter (against duplicate entries). */
 export function coveredFixed(plans = [], excludePlanId = null) {
   const out = new Set();
   (plans || []).forEach((p) => {
@@ -1030,9 +1030,9 @@ export function coveredFixed(plans = [], excludePlanId = null) {
   return out;
 }
 
-/** Erzeugt die Einheiten genau einer Plan-Woche (1-basiert) – Basis für die
-    selektive Wochen-Neuberechnung. `opts.coveredFixed`: feste Termine, die ein
-    anderer Plan schon einträgt – sie formen die Woche mit, erscheinen aber nicht doppelt. */
+/** Generates the sessions of exactly one plan week (1-based) – basis for the
+    selective weekly recalculation. `opts.coveredFixed`: fixed commitments that another
+    plan already enters – they shape the week but do not appear twice. */
 export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   const pz = plan.paces || (profile && profile.paceZones) || {};
   const sport = (event && event.sport) || plan.sport || 'run';
@@ -1047,7 +1047,7 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   const raceDate = event ? event.date : null;
   const covered = opts.coveredFixed || new Set();
 
-  // Feste Termine dieser Woche einsammeln (Wettkampftag hat immer Vorrang).
+  // Collect the fixed commitments of this week (race day always takes precedence).
   const commitByDate = new Map();
   for (const { date, commitment } of commitmentDates(planCommitments(plan), weekStart, weekEnd)) {
     if (raceDate && date >= raceDate) continue;
@@ -1057,14 +1057,14 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
 
   const dateOf = (dow) => {
     const d = addDays(monday, dow - 1);
-    return d < weekStart ? addDays(d, 7) : d;   // Planstart mitten in der Woche
+    return d < weekStart ? addDays(d, 7) : d;   // plan start in the middle of the week
   };
   const usedDates = new Set([...tpl.map((row) => dateOf(row.dow)), ...commitByDate.keys()]);
   const dtr = (date) => (raceDate ? diffDays(date, raceDate) : Infinity);
 
-  /** Freier Tag dieser Woche für eine verdrängte Einheit – möglichst nah am
-      ursprünglichen Tag, nie am Renntag oder in den zwei Tagen davor, nie direkt
-      neben einem festen Termin (sonst entsteht die nächste Doppelbelastung). */
+  /** Free day of this week for a displaced session – as close as possible to the
+      original day, never on race day or in the two days before it, never directly
+      next to a fixed commitment (otherwise the next double load arises). */
   const findFreeDay = (wishDate) => {
     const cands = [];
     for (let d = 0; d < 7; d++) {
@@ -1079,17 +1079,17 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
     return cands[0].date;
   };
 
-  // Rollen, die bei einer Kollision AUSWEICHEN statt zu entfallen: die Reize, die
-  // das Ziel tragen. Lockeres (Regeneration/Mobility/Zusatzlauf) entfällt an einem
-  // Termintag bewusst – der feste Termin ist an dem Tag die Belastung.
+  // Roles that EVADE on a collision instead of being dropped: the stimuli that
+  // carry the goal. Easy work (recovery/mobility/extra run) is deliberately dropped on
+  // a commitment day – the fixed commitment is the load on that day.
   const RELOCATABLE = new Set(['quality', 'long', 'endurance', 'strength', 'swim', 'bike', 'long_bike', 'functional']);
 
-  // Harte feste Termine (Fußball nicht „leicht“, Spiele) – auch die, die ein anderer
-  // Plan einträgt. Qualitätseinheit und Long Run liegen nie direkt daneben: Sonst
-  // baute der Plan selbst harte Tage in Folge, der Wochen-Check bemängelte die eigene
-  // Struktur, und der Coach schlug jede Woche vor, genau die Schlüsseleinheit zu streichen.
+  // Hard fixed commitments (football not "light", matches) – including those that another
+  // plan enters. Quality session and long run never sit directly next to them: otherwise
+  // the plan itself would build hard days in a row, the weekly check would criticise its own
+  // structure, and the coach would suggest every week to drop exactly the key session.
   const hardCommit = new Set();
-  // Inklusive Sonntag davor und Montag danach (Spiel am Sonntag → kein Tempo am Montag).
+  // Including the Sunday before and the Monday after (match on Sunday → no tempo on Monday).
   for (const { date, commitment } of commitmentDates(planCommitments(plan), addDays(weekStart, -1), addDays(weekEnd, 1))) {
     if ((!raceDate || date < raceDate) && isHardCommit(commitment)) hardCommit.add(date);
   }
@@ -1099,8 +1099,8 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   }
   const nextToHard = (date) => hardCommit.has(addDays(date, -1)) || hardCommit.has(addDays(date, 1));
   const keyDates = new Set(tpl.filter((row) => row.units.some((x) => KEY_ROLES.has(x.role))).map((row) => dateOf(row.dow)));
-  /** Ruhiger Tag für eine Schlüsseleinheit: frei, nicht neben einem harten Termin und
-      nicht neben einer anderen Schlüsseleinheit, nie in den zwei Tagen vor dem Rennen. */
+  /** Calm day for a key session: free, not next to a hard commitment and
+      not next to another key session, never in the two days before the race. */
   const findCalmDay = (wishDate) => {
     const cands = [];
     for (let d = 0; d < 7; d++) {
@@ -1139,8 +1139,8 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
           keyDates.delete(date);
           keyDates.add(alt);
         } else if (u.role === 'quality') {
-          // Kein ruhiger Tag frei: Die Intensität liefert in dieser Woche der Termin –
-          // die Laufeinheit bleibt locker mit Steigerungen.
+          // No calm day free: in this week the commitment provides the intensity –
+          // the run session stays easy with strides.
           downgrade = true;
           keyDates.delete(date);
         }
@@ -1153,11 +1153,11 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
       }
     }
   }
-  // Die Renneinheit steht am Wettkampftag – an jedem Wochentag.
+  // The race session falls on race day – on any weekday.
   if (event && raceDate >= weekStart && raceDate <= weekEnd && raceDate >= plan.startDate) {
     out.push(makeRaceUnit(plan, event, raceDate, week, phase, pz));
   }
-  // Feste Termine als Einheiten einfügen – der Plan wurde um sie herum gebaut.
+  // Insert fixed commitments as sessions – the plan was built around them.
   for (const [date, cs] of commitByDate) {
     for (const c of cs) {
       const type = commitMeta(c.type).unitType || 'cross_football';

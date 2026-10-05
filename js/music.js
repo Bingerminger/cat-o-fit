@@ -1,24 +1,24 @@
 /* =========================================================================
-   music.js — Trainingsmusik, live erzeugt (Web Audio, ohne Dateien).
+   music.js — training music, generated live (Web Audio, no files).
 
-   Vier Stile passend zur Kategorie: „power“ (Kraft, House), „groove“ (Rumpf,
-   ruhiger Beat), „flow“ (Beweglichkeit, Klangflächen) und „hiit“ (Kondition,
-   treibend). Drei Stärken: 0 = Pause (nur Fläche, gedämpft), 1 = Anlauf (Beat
-   kommt), 2 = Übung (alles).
+   Four styles matching the category: "power" (strength, house), "groove" (core,
+   calm beat), "flow" (mobility, soundscapes) and "hiit" (conditioning,
+   driving). Three intensities: 0 = rest (pad only, muffled), 1 = run-up (the beat
+   comes in), 2 = exercise (everything).
 
-   Takt und Bewegung gehören zusammen: `tempoFor()` wählt das Tempo so, dass eine
-   Wiederholung genau eine ganze Zahl Schläge dauert – jede Wiederholung beginnt
-   auf dem Beat. Die Muster (`barEvents`) sind reine Daten und getestet.
+   Beat and movement belong together: `tempoFor()` chooses the tempo so that one
+   repetition lasts exactly a whole number of beats – every repetition begins
+   on the beat. The patterns (`barEvents`) are plain data and tested.
 
-   Abgespielt wird seit 3.23.0 nicht mehr Note für Note in Echtzeit (auf dem iPad
-   brachte jedes Ruckeln der Seite die Musik aus dem Tritt), sondern als nahtlose
-   Schleife: `renderLoop()` rechnet vier Takte vorab (OfflineAudioContext), der
-   Player startet sie phasengenau zum Abschnitt und blendet über.
+   Since 3.23.0 playback is no longer note by note in real time (on the iPad
+   every stutter of the page threw the music off beat), but as a seamless
+   loop: `renderLoop()` pre-computes four bars (OfflineAudioContext), the
+   player starts it phase-exact to the section and crossfades.
    ========================================================================= */
 
 import { audioContext } from './audio.js';
 
-/* ------------------------------ Stile ------------------------------ */
+/* ------------------------------ Styles ------------------------------ */
 
 export const STYLES = {
   power: {
@@ -33,7 +33,7 @@ export const STYLES = {
   },
   flow: {
     bpm: [64, 80],
-    chords: [[50, 54, 57, 61], [47, 50, 54, 57], [43, 47, 50, 54], [45, 49, 52, 57]],   // Dmaj7 – Hm7 – Gmaj7 – A
+    chords: [[50, 54, 57, 61], [47, 50, 54, 57], [43, 47, 50, 54], [45, 49, 52, 57]],   // Dmaj7 – Bm7 – Gmaj7 – A
     bass: [38, 35, 31, 33],
   },
   hiit: {
@@ -43,15 +43,15 @@ export const STYLES = {
   },
 };
 
-/** Stil je Übungskategorie. */
+/** Style per exercise category. */
 export function styleFor(category) {
   return { strength: 'power', core: 'groove', mobility: 'flow', cardio: 'hiit' }[category] || 'power';
 }
 
 /**
- * Tempo für eine Bewegung mit Zykluslänge `cycleSec`: ganze Schläge je Wiederholung
- * im Tempobereich des Stils. Liefert { bpm, beats, speed } – `speed` (nahe 1) streckt
- * die Animation so, dass ein Zyklus genau `beats` Schläge dauert.
+ * Tempo for a movement with cycle length `cycleSec`: whole beats per repetition
+ * within the style's tempo range. Returns { bpm, beats, speed } – `speed` (near 1) stretches
+ * the animation so that one cycle lasts exactly `beats` beats.
  */
 export function tempoFor(cycleSec, style = 'power') {
   const [lo, hi] = (STYLES[style] || STYLES.power).bpm;
@@ -62,7 +62,7 @@ export function tempoFor(cycleSec, style = 'power') {
     const bpm = (60 * beats) / cycleSec;
     const clamped = Math.min(hi, Math.max(lo, bpm));
     const speed = cycleSec / ((60 * beats) / clamped);
-    // Bevorzugt: Tempo im Bereich, Bewegung kaum gestreckt, gerade Schlagzahl.
+    // Preferred: tempo within the range, movement barely stretched, even beat count.
     const cost = Math.abs(Math.log(speed)) * 4 + Math.abs(clamped - mid) / (hi - lo) + (beats % 2 ? 0.15 : 0);
     if (!best || cost < best.cost) best = { bpm: Math.round(clamped * 10) / 10, beats, speed, cost };
   }
@@ -70,11 +70,11 @@ export function tempoFor(cycleSec, style = 'power') {
   return { bpm: best.bpm, beats: best.beats, speed };
 }
 
-/* ------------------------------ Muster ------------------------------ */
+/* ------------------------------ Patterns ------------------------------ */
 
 /**
- * Ereignisse eines Takts (16 Schritte) für Stil, Stärke und Taktnummer:
- * { step, inst, vel, notes?, midi?, len? }. len in Schritten.
+ * Events of a bar (16 steps) for style, intensity and bar number:
+ * { step, inst, vel, notes?, midi?, len? }. len in steps.
  */
 export function barEvents(style, intensity, bar = 0) {
   const S = STYLES[style] || STYLES.power;
@@ -82,9 +82,9 @@ export function barEvents(style, intensity, bar = 0) {
   const root = S.bass[bar % 4];
   const ev = [];
   const add = (step, inst, vel, extra = {}) => ev.push({ step, inst, vel, ...extra });
-  const fill = bar % 4 === 3;   // letzter Takt der Schleife
+  const fill = bar % 4 === 3;   // last bar of the loop
 
-  // Fläche immer – in der Pause ist sie die Musik.
+  // Pad always – during the rest it is the music.
   add(0, style === 'groove' ? 'keys' : 'pad', intensity === 0 ? 0.8 : 0.6, { notes: chord, len: 16 });
 
   if (style === 'power') {
@@ -106,7 +106,7 @@ export function barEvents(style, intensity, bar = 0) {
     }
   } else if (style === 'flow') {
     add(0, 'bass', 0.6, { midi: root + 12, len: 16, soft: true });
-    // Helle Glockentöne: Flächen und Bass allein gibt ein iPad-Lautsprecher kaum wieder.
+    // Bright bell tones: an iPad speaker hardly reproduces pads and bass alone.
     [0, 6, 10].forEach((s, i) => add(s, 'pluck', intensity === 2 ? 0.35 : 0.5, { midi: chord[(i + bar) % chord.length] + 24 }));
     if (intensity >= 1) for (let s = 0; s < 16; s += 2) add(s, 'shaker', s % 4 === 0 ? 0.5 : 0.3);
     if (intensity === 2) {
@@ -128,12 +128,12 @@ export function barEvents(style, intensity, bar = 0) {
   return ev;
 }
 
-/* ------------------------------ Klang ------------------------------ */
+/* ------------------------------ Sound ------------------------------ */
 
 const mtof = (m) => 440 * 2 ** ((m - 69) / 12);
 const noiseCache = new WeakMap();
 
-/** Instrumente auf einem (Offline-)Kontext; `drums` und `duck` sind die Busse (Seitenkette). */
+/** Instruments on an (offline) context; `drums` and `duck` are the buses (sidechain). */
 function instrumentsFor(c, drums, duck) {
   const noiseBuf = () => {
     if (noiseCache.has(c)) return noiseCache.get(c);
@@ -244,7 +244,7 @@ function instrumentsFor(c, drums, duck) {
 
 const OfflineCtx = () => (typeof window !== 'undefined' && (window.OfflineAudioContext || window.webkitOfflineAudioContext)) || null;
 
-/** Rendert einen Offline-Kontext – Promise (heute) oder oncomplete (älteres Safari). */
+/** Renders an offline context – Promise (today) or oncomplete (older Safari). */
 function renderOffline(oc) {
   return new Promise((resolve, reject) => {
     oc.oncomplete = (e) => resolve(e.renderedBuffer);
@@ -253,12 +253,12 @@ function renderOffline(oc) {
   });
 }
 
-const LOW = { 0: 2200, 1: 5500, 2: 18000 };   // Klangfilter je Stärke: Pause gedämpft, Übung offen
-const LOUD = { 0: 0.09, 1: 0.13, 2: 0.16 };    // Ziel-Lautheit (RMS) je Stärke – alle Stile gleich laut
+const LOW = { 0: 2200, 1: 5500, 2: 18000 };   // Tone filter per intensity: rest muffled, exercise open
+const LOUD = { 0: 0.09, 1: 0.13, 2: 0.16 };    // Target loudness (RMS) per intensity – all styles equally loud
 
 /**
- * Rechnet `bars` Takte eines Stils als nahtlose Schleife (mono): Was über das Ende
- * hinausklingt, wird vorn wieder eingemischt. Liefert ein AudioBuffer (oder null).
+ * Computes `bars` bars of a style as a seamless loop (mono): what rings
+ * out past the end is mixed back in at the start. Returns an AudioBuffer (or null).
  */
 export async function renderLoop({ style, bpm, intensity, bars = 4, sampleRate = 44100, target = null }) {
   const OAC = OfflineCtx();
@@ -267,7 +267,7 @@ export async function renderLoop({ style, bpm, intensity, bars = 4, sampleRate =
   const loopLen = Math.round(bars * 16 * stepDur * sampleRate);
   const tail = Math.round(1.6 * sampleRate);
   const oc = new OAC(1, loopLen + tail, sampleRate);
-  const out = oc.createGain(); out.gain.value = 0.8;   // Reserve für Signaltöne und Ansagen
+  const out = oc.createGain(); out.gain.value = 0.8;   // Headroom for signal tones and announcements
   const comp = oc.createDynamicsCompressor();
   comp.threshold.value = -16; comp.ratio.value = 3.5; comp.attack.value = 0.01; comp.release.value = 0.2;
   const tone = oc.createBiquadFilter(); tone.type = 'lowpass'; tone.frequency.value = LOW[intensity] || 18000; tone.Q.value = 0.6;
@@ -277,7 +277,7 @@ export async function renderLoop({ style, bpm, intensity, bars = 4, sampleRate =
   const { I } = instrumentsFor(oc, drums, duck);
   for (let bar = 0; bar < bars; bar++) {
     for (const ev of barEvents(style, intensity, bar)) {
-      try { I[ev.inst]((bar * 16 + ev.step) * stepDur, ev.vel, ev, stepDur); } catch { /* einzelner Ton fällt aus */ }
+      try { I[ev.inst]((bar * 16 + ev.step) * stepDur, ev.vel, ev, stepDur); } catch { /* a single note drops out */ }
     }
   }
   const rendered = await renderOffline(oc);
@@ -286,7 +286,7 @@ export async function renderLoop({ style, bpm, intensity, bars = 4, sampleRate =
   const buf = make.createBuffer(1, loopLen, sampleRate);
   const o = buf.getChannelData(0);
   for (let i = 0; i < loopLen; i++) o[i] = d[i] + (i < tail && loopLen + i < d.length ? d[loopLen + i] : 0);
-  // Auf eine feste Lautheit bringen (Spitze höchstens 0,85): jeder Stil gleich gut hörbar.
+  // Bring to a fixed loudness (peak at most 0.85): every style equally audible.
   let sum = 0; let peak = 0;
   for (let i = 0; i < loopLen; i++) { const v = o[i]; sum += v * v; if (Math.abs(v) > peak) peak = Math.abs(v); }
   const rms = Math.sqrt(sum / loopLen) || 1;
@@ -295,7 +295,7 @@ export async function renderLoop({ style, bpm, intensity, bars = 4, sampleRate =
   return buf;
 }
 
-/** Einzelklänge: Rauschen, das 2 s lang anschwillt (Anlauf), und ein Becken (Einsatz). */
+/** One-off sounds: noise that swells for 2 s (run-up), and a cymbal (entry). */
 export async function renderOneShot(kind, { sampleRate = 44100 } = {}) {
   const OAC = OfflineCtx();
   if (!OAC) return null;
@@ -317,11 +317,11 @@ export async function renderOneShot(kind, { sampleRate = 44100 } = {}) {
 }
 
 /**
- * Musik-Player: spielt je Abschnitt eine vorab gerechnete Schleife, phasengenau zum
- * Takt der Anzeige. Ohne Web Audio eine stille Attrappe mit derselben Schnittstelle.
+ * Music player: plays a pre-computed loop per section, phase-exact to the
+ * beat of the display. Without Web Audio a silent dummy with the same interface.
  *
- *   prepare(spec)              Schleife im Hintergrund rechnen (spec: { style, bpm, intensity })
- *   play(spec, { at, phaseAt }) ab Audio-Zeit `at`; Taktanfang der Schleife liegt bei `phaseAt`
+ *   prepare(spec)              render the loop in the background (spec: { style, bpm, intensity })
+ *   play(spec, { at, phaseAt }) from audio time `at`; the bar start of the loop lies at `phaseAt`
  *   oneShot('riser'|'crash', at)
  *   start() · stop(fade) · setVolume(v) · duck(on) · dispose()
  */
@@ -331,7 +331,7 @@ export function createMusic() {
   if (!c || !OfflineCtx()) return silent;
 
   const master = c.createGain(); master.gain.value = 0; master.connect(c.destination);
-  const loops = new Map();        // Schlüssel → Promise<AudioBuffer>
+  const loops = new Map();        // key → Promise<AudioBuffer>
   const shots = new Map();
   let cur = null;                 // { src, gain }
   let token = 0;
@@ -358,10 +358,10 @@ export function createMusic() {
       node.gain.gain.setValueAtTime(node.gain.gain.value, Math.max(c.currentTime, at - 0.001));
       node.gain.gain.linearRampToValueAtTime(0, at + 0.06);
       node.src.stop(at + 0.1);
-    } catch { /* schon gestoppt */ }
+    } catch { /* already stopped */ }
   }
 
-  /** Startet die Schleife `spec` ab `at`; ihr Taktanfang liegt bei `phaseAt` (beide Audio-Zeit). */
+  /** Starts the loop `spec` from `at`; its bar start lies at `phaseAt` (both audio time). */
   function play(spec, { at = c.currentTime + 0.03, phaseAt = at } = {}) {
     const my = ++token;
     prepare(spec).then((buf) => {
@@ -400,13 +400,13 @@ export function createMusic() {
       if (cur) { fadeOut(cur, c.currentTime + fade); cur = null; }
     },
     setVolume(v) { volume = Math.max(0, Math.min(1, v)); if (running) master.gain.setTargetAtTime(level(), c.currentTime, 0.1); },
-    /** Leiser für die Dauer einer Ansage (Audio-Zeit `at`, Dauer `dur`). */
+    /** Quieter for the duration of an announcement (audio time `at`, duration `dur`). */
     duckFor(at, dur) {
       if (!running) return;
       master.gain.setTargetAtTime(volume * 0.3, Math.max(c.currentTime, at - 0.08), 0.04);
       master.gain.setTargetAtTime(level(), at + dur + 0.05, 0.3);
     },
-    /** Leiser, solange die Sprachausgabe des Geräts spricht (Rückfall ohne Aufnahmen). */
+    /** Quieter while the device's speech output is speaking (fallback without recordings). */
     duck(on) {
       if (on === ducked) return;
       ducked = on;
@@ -414,7 +414,7 @@ export function createMusic() {
     },
     dispose() { this.stop(0.1); },
     get running() { return running; },
-    /** Ausgabeverzögerung (Lautsprecher/Bluetooth): Töne entsprechend früher planen. */
+    /** Output latency (speakers/Bluetooth): schedule sounds correspondingly earlier. */
     get latency() { return Math.min(0.4, (c.outputLatency || 0) + (c.baseLatency || 0)); },
   };
 }

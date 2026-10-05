@@ -1,6 +1,6 @@
 /* =========================================================================
-   family-admin.js — Familienverwaltung (nur Admin):
-   Mitglieder anlegen/bearbeiten/entfernen/öffnen + gemeinsame Einstellungen.
+   family-admin.js — family management (admin only):
+   create/edit/remove/open members + shared settings.
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -29,7 +29,7 @@ export function render(view) {
     return;
   }
 
-  /* ----- Mitglieder ----- */
+/* ----- Members ----- */
   const canAdd = store.members().length < store.MAX_MEMBERS;
   view.appendChild(sectionHead(t('family.members'), canAdd ? { label: t('familyAdmin.add'), onClick: () => openMemberSheet(null) } : null));
   const list = el('div', { class: 'col gap-2' });
@@ -37,7 +37,7 @@ export function render(view) {
   view.appendChild(list);
   view.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: t('familyAdmin.memberCount', { n: store.members().length, max: store.MAX_MEMBERS }) }));
 
-  /* ----- Teams ----- */
+/* ----- Teams ----- */
   view.appendChild(sectionHead(t('familyAdmin.teams'), { label: t('familyAdmin.createTeam'), onClick: () => openTeamSheet(null) }));
   const teamList = store.teams();
   if (!teamList.length) {
@@ -48,7 +48,7 @@ export function render(view) {
     view.appendChild(tl);
   }
 
-  /* ----- Gemeinsame Einstellungen ----- */
+/* ----- Shared settings ----- */
   view.appendChild(sectionHead(t('familyAdmin.sharedSettings')));
   const sd = store.familySettings().shoppingDay ?? 2;
   view.appendChild(el('div', { class: 'card' }, [
@@ -60,7 +60,7 @@ export function render(view) {
     el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: t('familyAdmin.shoppingDayHint') }),
   ]));
 
-  /* ----- Team/Familie-Dashboard ----- */
+/* ----- Team/family dashboard ----- */
   view.appendChild(sectionHead(t('familyAdmin.dashboardTitle')));
   view.appendChild(metricsCard());
 }
@@ -68,7 +68,7 @@ export function render(view) {
 const dashMetrics = () => [['momentum', t('family.metricMomentum')], ['weekKm', t('familyAdmin.metricWeekKm')], ['streak', t('familyAdmin.metricStreak')]];
 const DEFAULT_DASH = ['momentum', 'weekKm'];
 
-/** Auswahl, welche Kennzahlen pro Mitglied im Familiendashboard erscheinen. */
+/** Selection of which key figures per member appear in the family dashboard. */
 function metricsCard() {
   const card = el('div', { class: 'card' });
   card.appendChild(el('div', { class: 'muted mb-2', style: { fontSize: '.8rem' }, text: t('familyAdmin.dashboardHint') }));
@@ -122,7 +122,7 @@ function openTeamSheet(team) {
     colorWrap.appendChild(b);
   });
 
-  // Mitglieder-Zuordnung per Checkbox – erlaubt Mehrfach-Mitgliedschaft und Teamwechsel.
+  // Member assignment via checkbox – allows multiple memberships and team changes.
   const memWrap = el('div', { class: 'col' });
   store.members().forEach((m) => {
     const cb = el('input', { type: 'checkbox' });
@@ -207,8 +207,8 @@ function openMemberSheet(m) {
 
   const roleCtl = segmented([{ value: 'user', label: t('family.roleMember') }, { value: 'admin', label: t('family.roleAdmin') }], st.role, (v) => { st.role = v; });
 
-  // Anlegen, Rollen ändern und Entfernen prüft der Server – dafür braucht es die
-  // Admin-Anmeldung mit Serververbindung (sonst lehnt er die Änderung ab).
+  // Creating, changing roles and removing are checked by the server – this needs the
+  // admin sign-in with a server connection (otherwise it rejects the change).
   const needsServer = (msg) => {
     if (store.serverSessionActive()) return false;
     toast(msg, 'bad', 5000);

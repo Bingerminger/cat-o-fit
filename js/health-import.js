@@ -1,9 +1,9 @@
 /* =========================================================================
-   health-import.js — Apple-Health-Daten in die App bringen.
-   Zwei Wege: (1) AUTOMATISCH & inkrementell über die App „Health Auto Export“
-   (REST-Automation -> api/health-ingest.php), Aktivierung/Token hier in der
-   Ansicht; (2) MANUELLER Voll-Import (Export-ZIP/export.xml) als Fallback.
-   Kein direkter HealthKit-Zugriff (Web-App auf der Synology).
+   health-import.js — bringing Apple Health data into the app.
+   Two ways: (1) AUTOMATIC & incremental via the "Health Auto Export" app
+   (REST automation -> api/health-ingest.php), activation/token here in the
+   view; (2) MANUAL full import (export ZIP/export.xml) as a fallback.
+   No direct HealthKit access (web app on the Synology).
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -20,13 +20,13 @@ import { findPlannedMatch } from './planflow.js';
 
 import { t, tp } from './i18n.js';
 
-/** Herkunft automatisch empfangener Werte: Apple Health bzw. Health Connect (Android). */
+/** Origin of automatically received values: Apple Health or Health Connect (Android). */
 const AUTO_SOURCES = ['apple-health', 'health-connect'];
 
-/** Strecken aus Dateien mitspeichern? Standard ja; sie zeigen, wo jemand unterwegs war. */
+/** Also save routes from files? Default yes; they show where someone has been. */
 export function routesWanted() { return store.settings().activityRoutes !== false; }
 
-/** Sportarten zur Auswahl beim Datei-Import. */
+/** Sports to choose from for the file import. */
 const FILE_SPORTS = [
   { value: 'run', get label() { return t('sessionTypes.run.label'); } },
   { value: 'cross_bike', get label() { return t('healthImport.sportBike'); } },
@@ -39,13 +39,13 @@ const FILE_SPORTS = [
 export function render(view) {
   setHeader({ title: t('healthImport.title'), back: '#/health' });
 
-  // Automatischer, inkrementeller Import (empfohlen) – über „Health Auto Export“.
+  // Automatic, incremental import (recommended) – via "Health Auto Export".
   view.appendChild(sectionHead(t('healthImport.autoHeading'), null, { help: 'apple-health' }));
-  // Kosten offen nennen (MKT-01/DOC-06): Die REST-Automation ist Premium; der Kurzbefehl ist gratis.
+  // State the costs openly (MKT-01/DOC-06): the REST automation is premium; the shortcut is free.
   view.appendChild(el('div', { class: 'muted mb-2', style: { fontSize: '.84rem' }, text: t('healthImport.autoIntro') }));
   view.appendChild(healthIngestCard());
-  // Android: Health Connect hat keine Web-Schnittstelle – eine Brücken-App schickt die Werte
-  // an dieselbe Adresse (MKT-02).
+  // Android: Health Connect has no web interface – a bridge app sends the values
+  // to the same address (MKT-02).
   view.appendChild(el('div', { class: 'card card--flat row gap-2 mt-2', style: { alignItems: 'flex-start' } }, [
     el('span', { html: iconSvg('info'), style: { color: 'var(--accent-text)', width: '20px', flex: '0 0 auto' } }),
     el('div', { class: 'grow' }, [
@@ -56,7 +56,7 @@ export function render(view) {
   ]));
   view.appendChild(healthIngestRecent());
 
-  // Manueller Voll-Import (Fallback)
+  // Manual full import (fallback)
   view.appendChild(sectionHead(t('healthImport.fullHeading')));
   view.appendChild(el('div', { class: 'card card--flat row gap-2', style: { alignItems: 'flex-start' } }, [
     el('span', { html: iconSvg('info'), style: { color: 'var(--accent-text)', width: '20px', flex: '0 0 auto' } }),
@@ -64,7 +64,7 @@ export function render(view) {
       t('healthImport.fullText')),
   ]));
 
-  // Anleitung
+  // Instructions
   view.appendChild(sectionHead(t('healthImport.howItWorks')));
   const steps = [
     t('healthImport.step1'),
@@ -79,7 +79,7 @@ export function render(view) {
   ])));
   view.appendChild(ol);
 
-  // Upload-Bereich
+  // Upload area
   view.appendChild(sectionHead(t('healthImport.uploadHeading')));
   const status = el('div', { class: 'card', hidden: true });
   const fileInput = el('input', { type: 'file', accept: '.zip,.xml,application/zip,text/xml', style: { display: 'none' } });
@@ -95,7 +95,7 @@ export function render(view) {
   view.appendChild(fileInput);
   view.appendChild(status);
 
-  // Einzelne Aktivität aus GPX/TCX (clientseitig, ohne Server)
+  // Single activity from GPX/TCX (client-side, without a server)
   view.appendChild(sectionHead(t('healthImport.activitiesHeading')));
   view.appendChild(el('div', { class: 'muted mb-2', style: { fontSize: '.84rem' }, text: t('healthImport.activitiesIntro', { days: ROUTE_DAYS }) }));
   view.appendChild(el('div', { class: 'row row--between mb-2', style: { alignItems: 'center', gap: '12px' } }, [
@@ -119,18 +119,18 @@ export function render(view) {
   view.appendChild(actInput);
   view.appendChild(actStatus);
 
-  // Hinweis
+  // Note
   view.appendChild(el('div', { class: 'dim mt-6', style: { fontSize: '.78rem' }, text: t('healthImport.bottomNote') }));
 }
 
-/** Zufalls-Token (hex) für den per-Nutzer-Health-Ingest-Endpunkt. */
+/** Random token (hex) for the per-user health-ingest endpoint. */
 function genToken() {
   const a = new Uint8Array(24);
   crypto.getRandomValues(a);
   return Array.from(a, (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-/** Karte „Apple Health · Auto-Import“: Token erzeugen, Endpunkt-URL, Status, Anleitung. */
+/** Card "Apple Health · Auto import": generate token, endpoint URL, status, instructions. */
 function healthIngestCard() {
   const wrap = el('div', {});
   const draw = () => {
@@ -144,8 +144,8 @@ function healthIngestCard() {
       return;
     }
     const base = new URL('api/api.php', location.href.split('#')[0]).href;
-    // Den Schlüssel als Header senden (X-Catofit-Token) statt in der URL – URLs landen in
-    // Server- und Proxy-Protokollen. Die frühere URL mit &token= funktioniert weiter.
+    // Send the key as a header (X-Catofit-Token) instead of in the URL – URLs end up in
+    // server and proxy logs. The earlier URL with &token= keeps working.
     const url = `${base}?action=health-ingest&user=${encodeURIComponent(store.activeUserId())}`;
     const recs = [...store.get('health'), ...store.get('sessions')].filter((x) => AUTO_SOURCES.includes(x.source));
     const last = recs.reduce((m, x) => ((x.updatedAt || '') > m ? (x.updatedAt || '') : m), '');
@@ -179,13 +179,13 @@ function healthIngestCard() {
   return wrap;
 }
 
-/** Übersicht der zuletzt automatisch importierten Apple-Health-Werte (Kontrolle für den Nutzer). */
+/** Overview of the most recently auto-imported Apple Health values (check for the user). */
 function healthIngestRecent() {
   const wrap = el('div', {});
   const byDateDesc = (a, b) => String(b.date || '').localeCompare(String(a.date || ''));
   const health = store.get('health').filter((h) => AUTO_SOURCES.includes(h.source)).sort(byDateDesc).slice(0, 8);
   const sess = store.get('sessions').filter((s) => AUTO_SOURCES.includes(s.source)).sort(byDateDesc).slice(0, 6);
-  if (!health.length && !sess.length) return wrap;   // noch nichts importiert -> nichts zeigen
+  if (!health.length && !sess.length) return wrap;   // nothing imported yet -> show nothing
 
   wrap.appendChild(sectionHead(t('healthImport.recentHeading')));
 
@@ -273,7 +273,7 @@ function openHealthAutoExportHelp() {
   });
 }
 
-/** Session-Felder aus einer geparsten GPX/TCX-Datei für eine Sportart. */
+/** Session fields from a parsed GPX/TCX file for a sport. */
 export function activityData(data, type, { route = true } = {}) {
   const isRun = typeMeta(type).cat === 'run';
   return {
@@ -282,7 +282,7 @@ export function activityData(data, type, { route = true } = {}) {
     avgHr: data.avgHr, maxHr: data.maxHr ?? null,
     splits: isRun || type === 'walk' || type === 'hike' ? (data.splits || []) : [],
     timeInZones: data.timeInZones || null,
-    // Uhrenwerte, wo die Datei sie hat: Kalorien (aktiv), Höhenmeter, vereinfachte Strecke.
+    // Watch values where the file has them: calories (active), elevation gain, simplified route.
     kcal: data.kcal ?? null,
     ascentM: data.ascentM ?? null,
     route: route ? (data.route || null) : null,
@@ -291,10 +291,10 @@ export function activityData(data, type, { route = true } = {}) {
 }
 
 /**
- * Speichert viele Aktivitäten auf einmal (Massenimport): Doppelte – schon vorhanden oder
- * doppelt im Archiv – überspringen, passende geplante Einheiten erledigen, der Rest als freie
- * Trainings in EINEM Schreibvorgang. Strecken nur für die letzten ROUTE_DAYS Tage – und nur,
- * wenn „Strecke mitspeichern“ an ist.
+ * Saves many activities at once (bulk import): skip duplicates – already present or
+ * duplicated in the archive –, complete matching planned sessions, the rest as free
+ * workouts in ONE write operation. Routes only for the last ROUTE_DAYS days – and only
+ * if "Save the route too" is on.
  * @returns {{added:number, matched:number, dup:number}}
  */
 export function importActivities(items = [], today = todayStr()) {
@@ -317,10 +317,10 @@ export function importActivities(items = [], today = todayStr()) {
   return { added, matched, dup };
 }
 
-/** Größer lesen wir ein Archiv nicht am Stück – der Browser hielte alles im Speicher. */
+/** We do not read an archive larger than this in one go – the browser would hold everything in memory. */
 const MAX_ARCHIVE = 800 * 1024 * 1024;
 
-/** Mehrere Dateien oder ein Archiv: lesen, Überblick zeigen, auf Wunsch alles übernehmen. */
+/** Several files or an archive: read, show an overview, adopt everything on request. */
 async function batchImport(files, status) {
   status.hidden = false; status.innerHTML = '';
   if (files.some((f) => f.size > MAX_ARCHIVE)) {
@@ -368,9 +368,9 @@ async function batchImport(files, status) {
 }
 
 /**
- * Speichert eine importierte Aktivität: passt eine offene geplante Einheit desselben
- * Tages und derselben Sportart, wird sie ihr zugeordnet (die Einheit gilt dann als
- * erledigt); sonst entsteht ein freies Training. Liefert { session, matched }.
+ * Saves an imported activity: if an open planned session of the same
+ * day and the same sport fits, it is assigned to it (the session then counts as
+ * done); otherwise a free workout is created. Returns { session, matched }.
  */
 export function saveImportedActivity(data, type, { link = true } = {}) {
   const match = link ? findPlannedMatch(store.get('plans'), { date: data.date, type }) : null;
@@ -384,8 +384,8 @@ export function saveImportedActivity(data, type, { link = true } = {}) {
   return { session, matched: null };
 }
 
-/** Liest eine GPX-, TCX- oder FIT-Datei clientseitig, zeigt sie zur Bestätigung (Sportart,
-    Zuordnung zur geplanten Einheit) und legt dann die Session an (mit Dedup). */
+/** Reads a GPX, TCX or FIT file client-side, shows it for confirmation (sport,
+    assignment to the planned session) and then creates the session (with dedup). */
 async function importActivity(file, status) {
   status.hidden = false; status.innerHTML = '';
   let bytes;
@@ -400,7 +400,7 @@ async function importActivity(file, status) {
     status.appendChild(el('div', { class: 'muted', style: { fontSize: '.86rem' }, text: t('healthImport.alreadyLogged') }));
     return;
   }
-  // Sportart: aus der Datei; unbekannt → nach dem Tempo vorschlagen (ab 18 km/h eher Rad).
+  // Sport: from the file; unknown → suggest by speed (above 18 km/h more likely cycling).
   let type = guessType(data);
   const options = FILE_SPORTS.some((o) => o.value === type) ? FILE_SPORTS : [{ value: type, label: typeMeta(type).label }, ...FILE_SPORTS];
   const sportSel = select(options, type, { 'aria-label': t('healthImport.sportLabel') });
@@ -464,7 +464,7 @@ function showPreview(status, result) {
     return;
   }
 
-  // Zyklusdaten nur auf Wunsch – sie bleiben privat (nie für Admins, nicht im Familien-Backup).
+  // Cycle data only on request – it stays private (never for admins, not in the family backup).
   let withCycle = false;
   if (result.periods?.length) {
     withCycle = store.settings().modules?.cycle !== false;
@@ -490,13 +490,13 @@ function showPreview(status, result) {
 
 export function importResult(result, { cycle = false } = {}) {
   let hImp = 0, wImp = 0, wSkip = 0, matched = 0, pImp = 0;
-  // `leanMass` = Apple „Lean Body Mass“ (fettfreie Masse); `muscleMass` bleibt für ältere Server,
-  // die sie noch so liefern (wird beim Lesen umgedeutet). `hrvMethod` gehört zum HRV-Wert.
+  // `leanMass` = Apple "Lean Body Mass" (fat-free mass); `muscleMass` stays for older servers
+  // that still send it that way (reinterpreted on read). `hrvMethod` belongs to the HRV value.
   const HKEYS = ['weight', 'bodyFat', 'muscleMass', 'leanMass', 'visceralFat', 'restingHr', 'hrv', 'hrvMethod', 'vo2max', 'sleepHours'];
 
-  // Einmal nachschlagen statt je Tag das ganze Array zu durchsuchen, und alles in EINEM
-  // Schreibvorgang speichern: Ein 10-Jahres-Export sind ~3 650 Tage – je Tag einzeln zu
-  // schreiben ließ die Oberfläche sekundenlang einfrieren und verdoppelte den Speicherbedarf.
+  // Look up once instead of searching the whole array per day, and save everything in ONE
+  // write: a 10-year export is ~3,650 days – writing each day separately froze the UI for
+  // seconds and doubled the memory footprint.
   const byDate = new Map(store.get('health').map((x) => [x.date, x]));
   const healthRecs = [];
   (result.health || []).forEach((h) => {
@@ -504,8 +504,8 @@ export function importResult(result, { cycle = false } = {}) {
     if (existing) {
       const patch = {};
       HKEYS.forEach((k) => { if (h[k] != null && existing[k] == null) patch[k] = h[k]; });
-      // Die Herkunft des bestehenden Eintrags bleibt: Ein manuell angelegter Tag wird nicht
-      // plötzlich zum Import (sonst würde seine Muskelmasse beim Lesen als Apple-Wert gedeutet).
+      // The existing entry keeps its source: a manually created day does not suddenly become
+      // an import (otherwise its muscle mass would be read as an Apple value).
       if (patch.hrv != null && h.hrvMethod) patch.hrvMethod = h.hrvMethod;
       if (Object.keys(patch).length) { const merged = { ...existing, ...patch, source: existing.source || 'health' }; byDate.set(h.date, merged); healthRecs.push(merged); hImp++; }
     } else {
@@ -516,7 +516,7 @@ export function importResult(result, { cycle = false } = {}) {
       hImp++;
     }
   });
-  if (healthRecs.length && !store.upsertMany('health', healthRecs).length) hImp = 0;   // Speicher voll: nichts übernommen
+  if (healthRecs.length && !store.upsertMany('health', healthRecs).length) hImp = 0;   // storage full: nothing taken over
 
   const sessionsByDate = new Map();
   const remember = (sx) => { (sessionsByDate.get(sx.date) || sessionsByDate.set(sx.date, []).get(sx.date)).push(sx); };
@@ -527,13 +527,13 @@ export function importResult(result, { cycle = false } = {}) {
     const dup = sameDay.find((sx) => Math.abs((sx.distanceKm || 0) - (w.distanceKm || 0)) < 0.4 && Math.abs((sx.durationSec || 0) - (w.durationSec || 0)) < 90);
     if (dup) { wSkip++; return; }
 
-    // Dieselbe Zuordnungsregel wie beim Datei-Import und auf „Heute“: offene geplante
-    // Einheit desselben Tages und derselben Sportart. Ältere Server liefern nur Läufe ohne Typ.
+    // Same matching rule as the file import and "Today": an open planned session on the same
+    // day and of the same sport. Older servers only send runs without a type.
     const type = w.type || 'easy';
     const match = findPlannedMatch(store.get('plans'), { date: w.date, type });
 
     const data = { distanceKm: w.distanceKm, durationSec: w.durationSec, paceSecPerKm: w.paceSecPerKm, avgHr: w.avgHr, maxHr: w.maxHr, kcal: w.kcal, source: 'health' };
-    // Auch zugeordnete Trainings merken, damit ein doppelt exportiertes übersprungen wird.
+    // Remember matched workouts too, so a workout exported twice is skipped.
     if (match) { remember(completeUnit(match.plan, match.unit, data)); matched++; wImp++; }
     else {
       const rec = { id: uid('ses'), plannedId: null, eventId: null, date: w.date, type, title: w.title || t('healthImport.importTitle', { type: typeMeta(type).label }), splits: [], ...data };
@@ -544,7 +544,7 @@ export function importResult(result, { cycle = false } = {}) {
   });
   if (newSessions.length && !store.upsertMany('sessions', newSessions).length) wImp -= newSessions.length;
 
-  // Zyklus (privat) nur auf Wunsch: Periodenbeginne, die noch nicht erfasst sind (± 3 Tage).
+  // Cycle (private) only on request: period starts not yet recorded (± 3 days).
   if (cycle && Array.isArray(result.periods) && result.periods.length) {
     const known = store.get('cycle').filter((c) => c && !c._kind && c.startDate).map((c) => c.startDate);
     const near = (a, b) => Math.abs(new Date(a + 'T12:00:00') - new Date(b + 'T12:00:00')) <= 3 * 86400000;

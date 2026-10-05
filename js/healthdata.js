@@ -1,29 +1,29 @@
 /* =========================================================================
-   healthdata.js — Körperwerte: Lese-Migration und Messart-Hilfen.
-   Reine, DOM-freie Logik → per node:test abgedeckt.
+   healthdata.js — body values: read migration and measurement-method helpers.
+   Pure, DOM-free logic → covered by node:test.
 
-   - Fettfreie Masse: Apple Health „Lean Body Mass“ landete bis v3.19.0 im Feld
-     `muscleMass` und stand dann als „Muskelmasse“ (≈ 55 kg) neben Waagenwerten
-     (≈ 28 kg). Seit v3.20.0 gibt es das eigene Feld `leanMass`; ältere Apple-Werte
-     werden beim Lesen dorthin umgedeutet (gespeichert wird nichts). Von Hand
-     eingetragene Muskelmasse (`muscleMassManual`) bleibt Muskelmasse – auch an Tagen,
-     die zusätzlich Apple-Werte tragen; sonst rechnete die Energieversorgung mit ihr
-     als fettfreier Masse.
-   - HRV: Apple speichert SDNN, viele Uhren und Ringe zeigen RMSSD. Die Zahlen sind
-     nicht vergleichbar – deshalb trägt jeder Wert seine Messart (`hrvMethod`), und
-     Trends, Ziele und Bereitschaft vergleichen nur innerhalb einer Messart.
+   - Fat-free mass: Apple Health "Lean Body Mass" ended up in the field
+     `muscleMass` up to v3.19.0 and then appeared as "Muscle mass" (≈ 55 kg) next to scale values
+     (≈ 28 kg). Since v3.20.0 there is the separate field `leanMass`; older Apple values
+     are reinterpreted there when reading (nothing is stored). Manually
+     entered muscle mass (`muscleMassManual`) stays muscle mass – even on days
+     that also carry Apple values; otherwise the energy availability calculation used it
+     as fat-free mass.
+   - HRV: Apple stores SDNN, many watches and rings show RMSSD. The numbers are
+     not comparable – that is why every value carries its measurement method (`hrvMethod`), and
+     trends, goals and readiness only compare within one method.
    ========================================================================= */
 
 import { todayStr, addDays } from './ui.js';
 
-/** Quellen, die aus Apple Health stammen (Auto-Export und Voll-Import). */
+/** Sources that come from Apple Health (auto export and full import). */
 export const APPLE_SOURCES = ['apple-health', 'health'];
 export const HRV_METHODS = { sdnn: 'SDNN', rmssd: 'RMSSD' };
 
 const memo = new WeakMap();
 const isApple = (h) => APPLE_SOURCES.includes(h && h.source);
 
-/** Deutet einen älteren Körperwert-Datensatz beim Lesen um (idempotent, ohne Schreiben). */
+/** Reinterprets an older body-value record when reading (idempotent, without writing). */
 export function migrateHealthRecord(h) {
   if (!h || typeof h !== 'object' || !isApple(h)) return h;
   const needsLean = h.muscleMass != null && !h.muscleMassManual;
@@ -34,26 +34,26 @@ export function migrateHealthRecord(h) {
   const out = { ...h };
   if (needsLean) {
     if (out.leanMass == null) out.leanMass = h.muscleMass;
-    delete out.muscleMass;              // Apple kennt keine Muskelmasse – das war die fettfreie Masse
+    delete out.muscleMass;              // Apple has no muscle mass – that was the fat-free mass
   }
   if (needsHrv) out.hrvMethod = 'sdnn';
   memo.set(h, out);
   return out;
 }
 
-/** Ganze Liste lesend umdeuten. */
+/** Reinterprets the whole list when reading. */
 export function migrateHealth(list = []) {
   return (list || []).map(migrateHealthRecord);
 }
 
-/** Messart eines HRV-Werts ('sdnn' | 'rmssd' | 'unbekannt'). */
+/** Measurement method of an HRV value ('sdnn' | 'rmssd' | 'unbekannt'). */
 export function hrvMethodOf(h) {
   if (!h || h.hrv == null) return null;
   if (h.hrvMethod === 'sdnn' || h.hrvMethod === 'rmssd') return h.hrvMethod;
   return isApple(h) ? 'sdnn' : 'unbekannt';
 }
 
-/** Messart des jüngsten HRV-Werts – danach richten sich Anzeige und Vergleich. */
+/** Measurement method of the latest HRV value – display and comparison follow it. */
 export function currentHrvMethod(health = []) {
   let best = null;
   for (const h of health || []) {
@@ -63,7 +63,7 @@ export function currentHrvMethod(health = []) {
   return best ? hrvMethodOf(best) : null;
 }
 
-/** Nur die HRV-Werte einer Messart (Datensätze ohne HRV bleiben erhalten, ihr HRV entfällt). */
+/** Only the HRV values of one method (records without HRV are kept, their HRV is dropped). */
 export function withHrvMethod(health = [], method) {
   return (health || []).map((h) => {
     if (!h || h.hrv == null || hrvMethodOf(h) === method) return h;
@@ -72,13 +72,13 @@ export function withHrvMethod(health = [], method) {
   });
 }
 
-/** Beschriftung „HRV (SDNN)“ o. ä. */
+/** Label "HRV (SDNN)" or similar. */
 export function hrvLabel(method) {
   return method && HRV_METHODS[method] ? `HRV (${HRV_METHODS[method]})` : 'HRV';
 }
 
-/* (aus badges.js hierher, damit health.js nicht badges.js importieren muss – FE-18) */
-/** Alkoholfreie Tage in Folge bis heute (null, wenn nie ein Alkohol-Tag erfasst wurde). */
+/* (moved here from badges.js so that health.js does not have to import badges.js – FE-18) */
+/** Alcohol-free days in a row up to today (null if no alcohol day was ever recorded). */
 export function alcoholFreeStreak(health, today = todayStr()) {
   const drinkDays = new Set((health || []).filter((h) => h && !h.deleted && h.alcohol === true).map((h) => h.date));
   if (!drinkDays.size) return null;

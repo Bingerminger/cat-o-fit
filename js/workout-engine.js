@@ -1,21 +1,21 @@
 /* =========================================================================
-   workout-engine.js — Phasen und Zeitrechnung des Workout-Modus. Rein (ohne
-   DOM, Audio oder Store) und damit per node:test prüfbar.
+   workout-engine.js — phases and timing of the workout mode. Pure (no
+   DOM, audio or store) and therefore testable with node:test.
 
-   - Phasen aus der Einheit: Einlaufen, Belastungen, Pausen, Auslaufen.
-     Strecken-Intervalle (400 m, 1 km …) werden über die Zielpace der Einheit in
-     Zeit umgerechnet – früher liefen „8×400 m“ als 8 × 3 Minuten.
-   - Fortschritt nach echter Zeit: `advance(state, phases, dt)` rechnet mit der
-     tatsächlich vergangenen Zeit weiter, auch über mehrere Phasen hinweg (nach
-     gesperrtem Bildschirm oder gedrosseltem Hintergrund-Tab). Früher zählte jeder
-     Timer-Tick fest 0,2 s – nach einer Pause liefen Belastungen zu lang.
+   - Phases from the session: warm-up, work intervals, rests, cool-down.
+     Distance intervals (400 m, 1 km …) are converted into time via the session's
+     target pace – previously "8×400 m" ran as 8 × 3 minutes.
+   - Progress by real time: `advance(state, phases, dt)` carries on with the
+     time that has actually elapsed, even across several phases (after a locked
+     screen or a throttled background tab). Previously every timer tick counted
+     a fixed 0.2 s – after a pause the work intervals ran too long.
    ========================================================================= */
 
 import { fmtDec } from './ui.js';
 
 import { t } from './i18n.js';
 
-/** Ein-/Auslauftempo aus der Zielpace (deutlich ruhiger), ohne Pace 6:30 min/km. */
+/** Warm-up/cool-down pace derived from the target pace (clearly easier); without a pace 6:30 min/km. */
 function easyPaceOf(unit) {
   const mid = paceMid(unit);
   return mid ? Math.round(mid * 1.25) : 390;
@@ -26,7 +26,7 @@ function paceMid(unit) {
 }
 function kmLabel(km) { return `${fmtDec(km)} km`; }
 
-/** Zielvorgabe einer Belastungsphase (Pace-Bereich, HF-Zone). */
+/** Target for a work phase (pace range, HR zone). */
 export function unitTarget(unit) {
   if (!unit) return null;
   const pace = unit.targetPaceSecPerKm ? [unit.targetPaceSecPerKm, unit.targetPaceMaxSecPerKm || unit.targetPaceSecPerKm] : null;
@@ -35,8 +35,8 @@ export function unitTarget(unit) {
 }
 
 /**
- * Struktur aus Titel/Beschreibung älterer Einheiten ohne Segmente, z. B.
- * „VO2max 6×800 m“, „Schwellenlauf 3×6 min“ oder „3×2 min im Renntempo“.
+ * Structure from the title/description of older sessions without segments, e.g.
+ * "VO2max 6×800 m", "Threshold run 3×6 min" or "3×2 min at race pace".
  * @returns {{rounds:number, workM?:number, workMin?:number}|null}
  */
 export function parseStructure(text = '') {
@@ -51,9 +51,9 @@ export function parseStructure(text = '') {
 }
 
 /**
- * Phasen einer Einheit oder null (Dauerlauf ohne Struktur → Stoppuhr).
- * Segmente (`intervals.segments`) haben Vorrang, dann eine gepflegte Runden-
- * Struktur (`intervals.rounds`), dann Titel/Beschreibung.
+ * Phases of a session, or null (continuous run without structure → stopwatch).
+ * Segments (`intervals.segments`) take precedence, then a maintained rounds
+ * structure (`intervals.rounds`), then title/description.
  */
 export function buildPhases(unit) {
   if (!unit) return null;
@@ -93,7 +93,7 @@ export function buildPhases(unit) {
       distanceM: s.workM || null,
     }));
   } else {
-    // Ältere Einheiten: gepflegte Runden oder die Struktur aus Titel/Beschreibung.
+    // Older sessions: maintained rounds, or the structure from title/description.
     let rounds = unit.type === 'tempo' ? 3 : 6, sec = unit.type === 'tempo' ? 360 : 180, rest = unit.type === 'tempo' ? 120 : 90, distanceM = null;
     if (iv && iv.rounds) {
       rounds = iv.rounds; sec = iv.workSec || sec; rest = iv.restSec || rest;
@@ -104,7 +104,7 @@ export function buildPhases(unit) {
         if (st.workMin) sec = Math.round(st.workMin * 60);
         if (st.workM) { distanceM = st.workM; sec = Math.round((st.workM / 1000) * (mid || 300)); }
       }
-      // Ohne gespeicherte Struktur: mit einem kurzen Einlaufen und Auslaufen rahmen.
+      // Without a stored structure: frame it with a short warm-up and cool-down.
       if (!warmSec) { warmSec = 600; warmLabel = t('workoutEngine.warmupDefault'); }
       if (!coolSec) { coolSec = 600; coolLabel = t('workoutEngine.cooldownDefault'); }
     }
@@ -125,9 +125,9 @@ export function buildPhases(unit) {
 }
 
 /**
- * Rechnet die Phasen um `dtSec` echte Sekunden weiter – auch über mehrere Phasen.
- * Liefert den neuen Stand und Ereignisse: `count` (3-2-1 vor dem Wechsel, nur im
- * normalen Takt, nicht beim Aufholen), `phase` (neue Phase begonnen), `done`.
+ * Carries the phases forward by `dtSec` real seconds – also across several phases.
+ * Returns the new state and events: `count` (3-2-1 before the change, only in the
+ * normal tick, not when catching up), `phase` (new phase started), `done`.
  * @returns {{phase:number, phaseElapsed:number, done:boolean, events:Array}}
  */
 export function advance(state, phases, dtSec) {
@@ -135,7 +135,7 @@ export function advance(state, phases, dtSec) {
   let phaseElapsed = state.phaseElapsed || 0;
   const events = [];
   let left = Math.max(0, Number(dtSec) || 0);
-  const live = left < 5;   // größere Sprünge = Aufholen nach Sperre/Hintergrund
+  const live = left < 5;   // larger jumps = catching up after a lock/background
   while (left > 1e-9 && phases && phase < phases.length) {
     const cur = phases[phase];
     const remainBefore = cur.sec - phaseElapsed;
@@ -153,7 +153,7 @@ export function advance(state, phases, dtSec) {
   return { phase, phaseElapsed, done: !!phases && phase >= phases.length, events };
 }
 
-/** Restzeit der aktuellen Phase (Sek., aufgerundet). */
+/** Time remaining in the current phase (seconds, rounded up). */
 export function phaseRemaining(state, phases) {
   const cur = phases && phases[state.phase];
   return cur ? Math.max(0, Math.ceil(cur.sec - (state.phaseElapsed || 0))) : 0;

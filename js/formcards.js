@@ -1,7 +1,7 @@
 /* =========================================================================
-   formcards.js — „Aktuelle Form“ (VDOT, Paces) und „Deine Trainingsbereiche“.
-   Dauer-Informationen: stehen unter „Fortschritt → Training“; auf „Heute“ erscheint
-   die Formkarte nur, wenn es etwas zu tun gibt (Paces passen nicht zur Form, UI-15).
+   formcards.js — "Current form" (VDOT, paces) and "Your training zones".
+   Permanent information: sits under "Progress → Training"; on "Today" the form
+   card only appears when there is something to do (paces do not match the form, UI-15).
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -34,8 +34,8 @@ export function zonesCard() {
   ]);
 }
 
-/** Formbasierte Zielpace: schätzt die aktuelle Form (VDOT) und gleicht sie mit
-    den Plan-Zielpaces ab – mit Option, die Trainingsbereiche nachzuführen. */
+/** Form-based target pace: estimates the current form (VDOT) and compares it with
+    the plan target paces – with the option to carry the training zones over. */
 export function formCard(today, { actionableOnly = false } = {}) {
   const est = estimateVdot(store.get('sessions'), today, 42, { hrZones: store.profile().hrZones });
   if (!est) return null;
@@ -62,8 +62,8 @@ export function formCard(today, { actionableOnly = false } = {}) {
     el('div', { class: 'mt-2' }, [paceRow(t('formCards.easy'), fresh.easy), paceRow(t('formCards.threshold'), fresh.threshold), paceRow(t('formCards.intervals'), fresh.vo2)]),
   ]);
   const faster = adj.deltaSec != null && adj.deltaSec >= 6;
-  // Langsamer ansetzen nur, wenn die Form aus harten Läufen stammt – lockere Läufe
-  // unterschätzen die Form und würden sonst genau die richtig Trainierenden bremsen.
+  // Start slower only if the form comes from hard runs – easy runs
+  // underestimate the form and would otherwise hold back exactly the people who are training properly.
   const slower = adj.deltaSec != null && adj.deltaSec <= -6 && !est.onlyEasy;
   if (actionableOnly && !faster && !slower) return null;
   if (faster || slower) {
@@ -79,10 +79,10 @@ export function formCard(today, { actionableOnly = false } = {}) {
 function applyFormPaces(vdot) {
   const zones = pacesFromVdot(vdot);
   store.setProfile({ paceZones: zones });
-  // Offene, künftige Lauf-Einheiten gleich mit anpassen – über den Zonenschlüssel der
-  // Einheit (`paceKey`), nicht über die HF-Zone: sonst bekam der Marathon das
-  // HM-Tempo. Das Renntempo bleibt bei einer Zielzeit das Ziel; ohne Zielzeit folgt
-  // es der Form.
+  // Adjust open, future run sessions right away – via the zone key of the
+  // session (`paceKey`), not via the HR zone: otherwise the marathon got the
+  // half-marathon pace. With a target time the race pace stays the goal; without a target time
+  // it follows the form.
   const today = todayStr();
   store.get('plans').forEach((plan) => {
     const event = store.find('events', plan.eventId);

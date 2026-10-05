@@ -1,5 +1,5 @@
 /* =========================================================================
-   events.js — Ziele (Wettkämpfe und Programme): Liste, Detail, Anlegen/Bearbeiten.
+   events.js — goals (races and programmes): list, detail, create/edit.
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -25,15 +25,15 @@ const DISTANCES = {
   '10k': { label: '10 km', km: 10 },
   'HM': { get label() { return t('events.distances.halfMarathon'); }, km: 21.0975 },
   'M': { get label() { return t('events.distances.marathon'); }, km: 42.195 },
-  // `beta`: Pläne für diese Formate sind noch jung (keine Rad-/Schwimmzonen,
-  // Stationen ohne Laststeuerung) – das Auswahlfeld sagt das ehrlich.
+  // `beta`: plans for these formats are still young (no bike/swim zones,
+  // stations without load control) – the selection field says so honestly.
   'tri-sprint': { get label() { return t('events.distances.triSprint'); }, km: 5, sport: 'triathlon', beta: true },
   'tri-olympic': { get label() { return t('events.distances.triOlympic'); }, km: 10, sport: 'triathlon', beta: true },
   'hyrox': { label: 'Hyrox', km: 8, sport: 'hyrox', beta: true },
   'custom': { get label() { return t('events.distances.custom'); }, km: null },
 };
 
-/* ------------------------------- Liste ---------------------------------- */
+/* ------------------------------- List ----------------------------------- */
 export function renderList(view) {
   setHeader({ title: t('events.title'), actions: [{ icon: 'plus', label: t('events.newGoal'), onClick: () => openAddChooser() }] });
 
@@ -69,7 +69,7 @@ export function renderList(view) {
   view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-6', onclick: () => openAddChooser() }, [icon('plus'), t('events.anotherGoal')]));
 }
 
-/** Karte für ein Trainingsprogramm (ohne Wettkampf-Countdown). */
+/** Card for a training programme (without race countdown). */
 function programCard(e, dim = false) {
   const meta = programMeta(e.programType);
   const plan = store.get('plans').find((p) => p.eventId === e.id);
@@ -131,7 +131,7 @@ export function renderDetail(view, id) {
   const dist = DISTANCES[e.distanceType] || { label: fmtKm(e.distanceKm, 1), km: e.distanceKm };
   const paceSec = targetPaceSecPerKm(e.targetTime, e.distanceKm);
 
-  // Countdown-Hero
+  // Countdown hero
   view.appendChild(el('div', { class: 'hero' }, [
     el('div', { class: 'hero__eyebrow', text: PRIORITIES[e.priority] || t('events.race') }),
     el('div', { class: 'hero__title', text: e.name }),
@@ -147,8 +147,8 @@ export function renderDetail(view, id) {
     ]),
   ]));
 
-  // Eckdaten. Laufstrecken als Zahl („21,1 km“, darunter „Halbmarathon“) – der Name allein
-  // passte auf dem iPhone nicht in die Kachel. Triathlon und Hyrox nennen ihr Format.
+  // Key facts. Running distances as a number ("21.1 km", with "Half marathon" below) – the name alone
+  // did not fit into the tile on the iPhone. Triathlon and Hyrox name their format.
   const distKm = e.distanceKm || dist.km;
   const distStat = !dist.sport && distKm
     ? miniStat(fmtKm(distKm, distKm % 1 ? 1 : 0), dist.label && !/km$/.test(dist.label) && e.distanceType !== 'custom' ? dist.label : t('events.distance'))
@@ -161,14 +161,14 @@ export function renderDetail(view, id) {
 
   if (e.notes) view.appendChild(el('div', { class: 'card card--flat mt-4', text: e.notes }));
 
-  // Plan-Bereich
+  // Plan section
   const plan = store.get('plans').find((p) => p.eventId === e.id);
   view.appendChild(sectionHead(t('events.trainingPlan')));
   if (plan) {
     const units = plan.units || [];
     const done = units.filter((u) => u.status === 'erledigt').length;
-    // Dieselbe Definition wie Statistik und Monatsbericht (heute, Krankheit/Verletzung
-    // und geschützte Zyklustage zählen nicht gegen dich).
+    // Same definition as statistics and the monthly report (today, illness/injury
+    // and protected cycle days do not count against you).
     const adh = adherence([plan], { today: todayStr(), isProtectedDay }).pct;
     view.appendChild(el('a', { class: 'card card--link', href: `#/plan/${e.id}` }, [
       el('div', { class: 'row row--between' }, [
@@ -184,7 +184,7 @@ export function renderDetail(view, id) {
       ]),
     ]));
   } else if (e.date <= todayStr()) {
-    // Kein leerer Plan für ein Rennen heute oder in der Vergangenheit.
+    // No empty plan for a race today or in the past.
     view.appendChild(el('div', { class: 'card' }, [
       el('p', { class: 'muted', text: e.date === todayStr()
         ? t('events.raceTodayNoPlan')
@@ -197,7 +197,7 @@ export function renderDetail(view, id) {
     ]));
   }
 
-  // Wettkampfprognose (Schätzung)
+  // Race prediction (estimate)
   const pred = predictRace(store.get('sessions'), e.distanceKm, { hrZones: store.profile().hrZones });
   if (pred) {
     view.appendChild(sectionHead(t('events.prediction'), null, { help: 'vdot' }));
@@ -214,7 +214,7 @@ export function renderDetail(view, id) {
     ]));
   }
 
-  // Status / Löschen
+  // Status / delete
   view.appendChild(sectionHead(t('events.manage')));
   view.appendChild(el('div', { class: 'card' }, [
     el('div', { class: 'row row--between', style: { padding: '4px 0' } }, [
@@ -240,7 +240,7 @@ export function renderDetail(view, id) {
   }, [icon('trash'), t('events.deleteRace')]));
 }
 
-/* --------------------------- Programm-Detail ---------------------------- */
+/* --------------------------- Programme detail --------------------------- */
 function renderProgramDetail(view, e) {
   const meta = programMeta(e.programType);
   setHeader({
@@ -330,8 +330,8 @@ function doCreatePlan(e) {
   openPlanSetup(e);
 }
 
-/* ------------------------------- Formular ------------------------------- */
-/** Bedeutung der Prioritäten – direkt im Formular sichtbar (UI-35). */
+/* ------------------------------- Form ----------------------------------- */
+/** Meaning of the priorities – visible right in the form (UI-35). */
 const PRIORITY_HINT = {
   get A() { return t('events.priorityHint.A'); },
   get B() { return t('events.priorityHint.B'); },
@@ -339,12 +339,12 @@ const PRIORITY_HINT = {
 };
 
 function openEventForm(existing = null) {
-  // Datum bewusst leer (UI-35): „heute“ war fast nie gemeint und wurde leicht übersehen.
+  // Date deliberately empty (UI-35): "today" was almost never meant and was easily overlooked.
   const e = existing || { distanceType: 'HM', priority: 'A', status: 'geplant', date: '' };
   let distType = e.distanceType || 'HM';
-  // Robustheit: Alt-/Importdaten könnten das LABEL statt des Schlüssels tragen
-  // (z. B. „Halbmarathon“ statt „HM“) – sonst crasht das Speichern (DISTANCES[distType].km).
-  // Auf einen gültigen Schlüssel mappen (per Label oder per Distanz), sonst „custom“.
+  // Robustness: legacy/import data could carry the LABEL instead of the key
+  // (e.g. the German label "Halbmarathon" instead of "HM") – otherwise saving crashes (DISTANCES[distType].km).
+  // Map to a valid key (by label or by distance), otherwise "custom".
   if (!DISTANCES[distType]) {
     distType = Object.keys(DISTANCES).find((k) => DISTANCES[k].label === e.distanceType)
       || Object.keys(DISTANCES).find((k) => DISTANCES[k].km && Math.abs(DISTANCES[k].km - (e.distanceKm ?? -1)) < 0.5)
@@ -354,8 +354,8 @@ function openEventForm(existing = null) {
   const nameI = input({ value: e.name || '', placeholder: t('events.namePlaceholder'), required: '' });
   const dateI = input({ type: 'date', value: e.date || '', required: '', min: existing ? '' : todayStr() });
   const locI = input({ value: e.location || '', placeholder: t('events.location') });
-  // Standard-Tastatur (kein inputmode:'numeric') – sonst fehlt auf iOS der Doppelpunkt
-  // und die Zielzeit „hh:mm:ss“ lässt sich nicht eingeben. Punkt und Komma gehen auch.
+  // Default keyboard (no inputmode:'numeric') – otherwise iOS lacks the colon
+  // and the target time "hh:mm:ss" cannot be entered. Dot and comma work too.
   const timeI = input({ value: e.targetTime || '', placeholder: t('events.timePlaceholder'), autocomplete: 'off' });
   const notesI = textarea({ value: e.notes || '', placeholder: t('events.notesPlaceholder') });
   const kmI = input({ type: 'number', step: '0.1', value: e.distanceKm || '', placeholder: 'km' });
@@ -391,7 +391,7 @@ function openEventForm(existing = null) {
       el('button', {
         class: 'btn btn--primary grow', text: t('events.save'),
         onclick: () => {
-          // Fehler direkt am Feld (UI-35) statt nur als Toast.
+          // Error directly at the field (UI-35) instead of only as a toast.
           if (!nameI.value.trim()) { fieldError(nameI, t('events.nameMissing')); return; }
           if (!dateI.value) { fieldError(dateI, t('events.dateMissing')); return; }
           if (timeI.value.trim() && !parseTargetTime(timeI.value)) { fieldError(timeI, t('events.timeInvalid')); return; }
@@ -410,9 +410,9 @@ function openEventForm(existing = null) {
             notes: notesI.value.trim(),
           };
           store.upsert('events', rec);
-          // Zielzeit- oder Datumsänderung: der vorhandene Plan merkt sich die Zielzeit;
-          // Paces und Einheiten ändern sich nicht still – das übernimmt „Plan ab heute
-          // neu berechnen" im Plan.
+          // Target time or date change: the existing plan remembers the target time;
+          // paces and sessions do not change silently – that is done by "Recalculate plan
+          // from today" in the plan.
           const plan = existing ? store.get('plans').find((p) => p.eventId === rec.id && p.kind !== 'program') : null;
           const planAffected = plan && (rec.targetTime !== e.targetTime || rec.date !== e.date || rec.distanceKm !== e.distanceKm);
           if (plan && rec.targetTime !== e.targetTime) store.patch('plans', plan.id, { goalTime: rec.targetTime });
@@ -427,7 +427,7 @@ function openEventForm(existing = null) {
   });
 }
 
-/* ---------------------- Auswahl: Wettkampf oder Programm ----------------- */
+/* ---------------------- Choice: race or programme ----------------------- */
 function openAddChooser() {
   openSheet({
     title: t('events.chooserTitle'),
@@ -456,14 +456,14 @@ function openAddChooser() {
   });
 }
 
-/* ---------------------- Programm-Formular -------------------------------- */
+/* ---------------------- Programme form ----------------------------------- */
 function openProgramForm(existing = null) {
   const e = existing || { programType: 'fitness', status: 'aktiv' };
   let type = e.programType || 'fitness';
   let days = e.daysPerWeek || programMeta(type).defaultDays;
   let weeks = e.weeks || 8;
 
-  // Neuer Name aus dem Schwerpunkt vorbelegt (UI-35) – solange niemand ihn selbst ändert.
+  // New name prefilled from the focus (UI-35) – as long as nobody changes it themselves.
   const nameI = input({ value: e.name || (existing ? '' : programMeta(type).label), placeholder: t('events.programmePlaceholder'), required: '' });
   let nameTouched = !!existing;
   nameI.addEventListener('input', () => { nameTouched = true; });
@@ -474,8 +474,8 @@ function openProgramForm(existing = null) {
   };
   setDesc();
 
-  // Kinder, Schwangerschaft/Stillzeit, Essstörung: kein Abnehmprogramm (eligibility.js).
-  // Ein bestehendes bleibt bearbeitbar, damit es sich umstellen lässt.
+  // Children, pregnancy/breastfeeding, eating disorder: no weight-loss programme (eligibility.js).
+  // An existing one stays editable so that it can be switched over.
   const noWeightGoals = currentEligibility().noWeightGoals;
   const typeSel = select(
     Object.entries(PROGRAM_TYPES)
@@ -527,8 +527,8 @@ function openProgramForm(existing = null) {
 function doCreateProgramPlan(e) {
   const old = store.get('plans').find((p) => p.eventId === e.id);
   const today = todayStr();
-  // Laufendes Programm (Start liegt zurück): ab heute neu, Vergangenes bleibt –
-  // sonst gingen erledigte Einheiten und die „% dabei“-Statistik verloren.
+  // Running programme (start lies in the past): recalculate from today, the past stays –
+  // otherwise completed sessions and the "% attendance" statistic would be lost.
   if (old && old.startDate && old.startDate <= today) {
     const weeks = Math.max(1, e.weeks | 0);
     const daysPerWeek = e.daysPerWeek || programMeta(e.programType).defaultDays;
@@ -550,7 +550,7 @@ function doCreateProgramPlan(e) {
   navigate(`#/plan/${e.id}`);
 }
 
-/* ------------------------------- Helfer --------------------------------- */
+/* ------------------------------- Helpers -------------------------------- */
 /** Status chip: the stored status (geplant/aktiv/abgeschlossen) in the active language. */
 function statusChip(s) {
   if (s === 'geplant') return t('events.statusChip.planned');
@@ -561,8 +561,8 @@ function statusChip(s) {
 function miniStat(val, label) {
   return el('div', { class: 'stat' }, [el('div', { class: 'stat__val num', style: { fontSize: '1.1rem' }, text: val }), el('div', { class: 'stat__label', text: label })]);
 }
-/** Zielzeit „h:mm:ss“ oder „mm:ss“ (auch mit Punkt oder Komma getrennt) → „hh:mm:ss“;
-    unlesbar → null. „75:30“ wird zu 01:15:30 (vorher entstand „00:75:30“). */
+/** Target time "h:mm:ss" or "mm:ss" (also separated by dot or comma) → "hh:mm:ss";
+    unreadable → null. "75:30" becomes 01:15:30 (previously "00:75:30" resulted). */
 export function parseTargetTime(v) {
   const p = String(v || '').trim().split(/[:.,]/).map((x) => x.trim());
   if (p.length < 2 || p.length > 3 || !p.every((x) => /^\d{1,3}$/.test(x))) return null;

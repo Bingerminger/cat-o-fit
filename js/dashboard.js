@@ -1,6 +1,6 @@
 /* =========================================================================
-   dashboard.js — Tagesübersicht: heutiges Training, Countdown, Woche, Quick-Actions.
-   Ziel-Karten: dashboard-goals.js · Coach-Karten: dashboard-coach.js.
+   dashboard.js — daily overview: today's training, countdown, week, quick actions.
+   Goal cards: dashboard-goals.js · Coach cards: dashboard-coach.js.
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -27,7 +27,7 @@ import { coachCard, rpeInfoCard, adaptLogCard, freeSessionCard, rpeAskCard, impo
 
 import { t, tp } from './i18n.js';
 
-/** Alle geplanten Einheiten (über alle Pläne) an einem Datum. */
+/** All planned sessions (across all plans) on a date. */
 function unitsOn(dateStr) {
   const out = [];
   store.get('plans').forEach((p) => (p.units || []).forEach((u) => { if (u.date === dateStr) out.push(u); }));
@@ -37,20 +37,20 @@ function unitsOn(dateStr) {
 export function render(view) {
   setHeader({ title: t('nav.today'), actions: [{ icon: 'settings', label: t('nav.settings'), onClick: () => navigate('#/settings') }] });
   const today = todayStr();
-  // Mitglieder tragen ihren Namen im Familienrecord, nicht zwingend im eigenen Profil
-  // -> erst Profilname, dann Mitgliedsname, sonst neutral.
+  // Members keep their name in the family record, not necessarily in their own profile
+  // -> profile name first, then member name, otherwise neutral.
   const name = store.profile().name || store.activeMember()?.name || t('dashboard.athlete');
   const h = new Date().getHours();
   const greet = h < 11 ? t('dashboard.greetMorning', { name }) : h < 18 ? t('dashboard.greetAfternoon', { name }) : t('dashboard.greetEvening', { name });
 
-  // Beim Verwalten eines anderen Profils NICHT „Guten Abend, Lea“ – das las sich, als
-  // sei Lea angemeldet (UI-02). Stattdessen klar: Leas Übersicht.
+  // When managing another profile, NOT "Good evening, Lea" – that read as if
+  // Lea were signed in (UI-02). Instead, clearly: Lea's overview.
   view.appendChild(el('div', { class: 'greeting' }, [
     el('div', { class: 'greeting__hi', text: store.isManaging() ? (/[sßxz]$/i.test(name.trim()) ? t('dashboard.overviewOfSibilant', { name: name.trim() }) : t('dashboard.overviewOf', { name: name.trim() })) : greet }),
     el('div', { class: 'greeting__sub', text: fmtDate(today) }),
   ]));
 
-  // Standard-PIN (0000) oder gar keine: unübersehbar erinnern, bis eine eigene gesetzt ist.
+  // Default PIN (0000) or none at all: remind conspicuously until a custom one is set.
   if (store.isViewingSelf() && store.pinIsWeak()) {
     view.appendChild(el('a', { class: 'card card--link mb-3', href: '#/settings', style: { borderLeft: '3px solid var(--warn)' } }, [
       el('div', { class: 'row gap-3', style: { alignItems: 'center' } }, [
@@ -64,8 +64,8 @@ export function render(view) {
     ]));
   }
 
-  // Ausgebliebene Periode: Warnsignal auch hier, nicht nur im Labor (Zyklus-Modul aktiv,
-  // eigene Sicht). Ist die Frage noch offen, führt der Hinweis zum Zyklus.
+  // Missed period: warning sign here too, not only in the labs (cycle module active,
+  // own view). If the question is still open, the note leads to the cycle.
   const ps = periodState(today);
   if (ps && ps.flag) {
     const card = periodFlagCard(periodFlag(ps));
@@ -78,8 +78,8 @@ export function render(view) {
     ]));
   }
 
-  // Momentum / Erfolge – klickbar zur Erfolgsseite, aber erst ab der ersten Einheit:
-  // „Momentum 42 · Der Funke ist da“ ohne jede Aktivität war eine leere Behauptung (UI-13).
+  // Momentum / achievements – clickable, leading to the achievements page, but only from the first session on:
+  // "Momentum 42 · The spark is there" without any activity was an empty claim (UI-13).
   const bdata = badgeData();
   const mom = momentum(bdata, today);
   const fresh = newlyUnlocked(bdata, today);
@@ -104,7 +104,7 @@ export function render(view) {
     ]),
   ]));
 
-  // Countdown-Hero zum nächsten Wettkampf
+  // Countdown hero to the next race
   const nextEvent = store.get('events')
     .filter((e) => e.status !== 'abgeschlossen' && e.date >= today)
     .sort((a, b) => (a.priority || 'Z').localeCompare(b.priority || 'Z') || a.date.localeCompare(b.date))[0];
@@ -123,7 +123,7 @@ export function render(view) {
     ]));
   }
 
-  // Überfällige Einheiten zum Nachholen
+  // Overdue sessions to catch up on
   const overdue = [];
   store.get('plans').forEach((p) => (p.units || []).forEach((u) => { if (isOverdue(u, today) && !isProtectedDay(u.date)) overdue.push(u); }));
   if (overdue.length) {
@@ -139,9 +139,9 @@ export function render(view) {
     ]));
   }
 
-  // Die EINE Tagesempfehlung des Coaches (feste Priorität: Warnsignale → Plan-Pflege →
-  // Steigerung). Früher entschieden sieben Stellen unabhängig voneinander – mit
-  // widersprüchlichen Karten am selben Morgen.
+  // The ONE daily recommendation of the coach (fixed priority: warning signs → plan upkeep →
+  // progression). Previously seven places decided independently of one another – with
+  // contradictory cards on the same morning.
   const coach = coachDecision({
     plans: store.get('plans'), sessions: store.get('sessions'), today, isProtectedDay,
     readiness: readinessScore(store.get('health'), today),
@@ -149,15 +149,15 @@ export function render(view) {
   const cCard = coachCard(view, coach, today);
   if (cCard) view.appendChild(cCard);
 
-  // Heutiges Training
+  // Today's training
   const todays = unitsOn(today);
   view.appendChild(sectionHead(t('nav.today')));
-  // Freie Trainings von heute (ohne Plan: spontan erfasst oder importiert).
+  // Free trainings of today (without a plan: logged spontaneously or imported).
   const freeToday = store.get('sessions').filter((s) => s && s.date === today && !s.plannedId);
   if (todays.length) {
     todays.forEach((u) => view.appendChild(todayCard(u)));
   } else if (!freeToday.length) {
-    // Ohne Plan ist heute kein „Ruhetag“ – es gibt einfach noch nichts zu tun (UI-13).
+    // Without a plan, today is not a "rest day" – there is simply nothing to do yet (UI-13).
     view.appendChild(el('div', { class: 'card today-card__none' }, [
       el('span', { class: 'type-icon', 'aria-hidden': 'true', style: { background: 'var(--surface-3)', color: 'var(--text-2)' }, html: iconSvg(hasPlan ? 'moon' : 'flag') }),
       hasPlan
@@ -166,31 +166,31 @@ export function render(view) {
     ]));
   }
   freeToday.forEach((s) => view.appendChild(freeSessionCard(s)));
-  // Training erfassen – auch ohne Plan (Radtour, Lauf am Ruhetag, Training ohne Ziel).
+  // Log a training – even without a plan (bike ride, run on a rest day, training without a goal).
   view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => openActivitySheet({ date: today }) }, [icon('plus'), t('dashboard.logActivity')]));
-  // Importierte Trainings (Apple Health, Datei) passenden geplanten Einheiten zuordnen.
+  // Assign imported trainings (Apple Health, file) to matching planned sessions.
   const matches = importedMatches(store.get('plans'), store.get('sessions'), today);
   if (matches.length) view.appendChild(importMatchCard(matches));
-  // Importierte Trainings ohne Anstrengung: kurz nachfragen statt still zu schätzen.
+  // Imported trainings without effort: ask briefly instead of silently estimating.
   const askRpe = rpeAskList(store.get('sessions'), today);
   if (askRpe.length) view.appendChild(rpeAskCard(askRpe));
 
-  // Trainingstipp
+  // Training tip
   view.appendChild(el('div', { class: 'card card--flat mt-2 row gap-2', style: { alignItems: 'flex-start' } }, [
     el('span', { html: iconSvg('sparkles'), style: { color: 'var(--accent-text)', width: '20px', flex: '0 0 auto' } }),
     el('div', { class: 'muted', style: { fontSize: '.86rem' }, text: trainingTip({ todaysUnits: todays.length ? todays : freeToday, streak: mom.streak, weekKm: 0, hasPlan }) }),
   ]));
-  // Bis hier „der Tag“ – ab 1180 px Breite die linke Spalte (UI-17).
+  // Up to here "the day" – from 1180 px width the left column (UI-17).
   const splitAt = view.childNodes.length;
 
-  // Coach – Informationen aus deinem Verhalten (kein zweites Belastungsurteil: das
-  // kommt allein aus „Belastung & Form“, die Empfehlung allein aus der Karte oben).
+  // Coach – information drawn from your behaviour (no second load verdict: that
+  // comes solely from "Load & form", the recommendation solely from the card above).
   const lsum = loadSummary(store.get('sessions'), today);
   const insights = adaptiveInsights({
     sessions: store.get('sessions'), health: store.get('health'), events: store.get('events'), profile: store.profile(), today,
     coachWarning: coach.warning ? coach.primary.kind : false, loadWarning: lsum.hasData && ['warn', 'bad'].includes(lsum.tone),
   });
-  const rpeCard = rpeInfoCard(coach.rpe);           // Anstrengung der letzten Einheiten (ohne Urteil)
+  const rpeCard = rpeInfoCard(coach.rpe);           // effort of the latest sessions (without a verdict)
   if (insights.length || rpeCard) {
     view.appendChild(sectionHead(t('dashboard.yourCoach')));
     const wrap = el('div', { class: 'col gap-2' });
@@ -206,8 +206,8 @@ export function render(view) {
         ]),
       ]);
     };
-    // Der wichtigste Hinweis offen, die übrigen gebündelt – vorher standen bis zu fünf
-    // Coach-Karten untereinander (UI-15).
+    // The most important note open, the others bundled – previously up to five
+    // coach cards stood one below the other (UI-15).
     if (insights.length) wrap.appendChild(insightCard(insights[0]));
     const more = [...insights.slice(1).map(insightCard), rpeCard].filter(Boolean);
     if (more.length) {
@@ -219,43 +219,43 @@ export function render(view) {
     view.appendChild(wrap);
   }
 
-  // Zuletzt automatisch angepasst (Transparenz-Log, R2)
+  // Recently adjusted automatically (transparency log, R2)
   const alCard = adaptLogCard();
   if (alCard) view.appendChild(alCard);
 
-  // Belastung & Form – Lastverhältnis + Fitness/Ermüdung/Form (eine Quelle: load.js)
+  // Load & form – load ratio + fitness/fatigue/form (one source: load.js)
   const lfCard = loadFormCard(lsum);
   if (lfCard) {
     view.appendChild(sectionHead(t('dashboard.loadForm')));
     view.appendChild(lfCard);
   }
 
-  // Wochenstreifen
+  // Week strip
   view.appendChild(sectionHead(t('dashboard.thisWeek'), { label: t('nav.calendar'), onClick: () => navigate('#/calendar') }));
   view.appendChild(weekStrip(today));
 
-  // Wochen-Kennzahlen (Soll/Ist)
+  // Weekly metrics (target/actual)
   view.appendChild(weekStats(today));
 
-  // Ziel-Cockpit: Status aller Ziele + Phasen-Schwerpunkt + Ernährungskopplung (R4)
+  // Goal cockpit: status of all goals + phase focus + nutrition coupling (R4)
   const gc = goalCockpitCard(today);
   if (gc) { view.appendChild(sectionHead(t('dashboard.yourGoals'))); view.appendChild(gc); }
 
-  // Wochen-Gesundheitsziele (Aktivität & Gewicht) – plan-unabhängig
+  // Weekly health goals (activity & weight) – independent of the plan
   view.appendChild(weekGoalsCard(today));
 
-  // Dedizierte Gesundheits-/Gewichtsziele mit Fortschritt (nur wenn definiert).
+  // Dedicated health/weight goals with progress (only if defined).
   const hgc = healthGoalsCard(today);
   if (hgc) view.appendChild(hgc);
 
-  // Form nur mit Handlungsbedarf (Paces passen nicht mehr); Form und Trainingsbereiche
-  // stehen sonst unter „Fortschritt → Training“. Der Schnellzugriff entfällt – Tab-Leiste
-  // und ＋ Erfassen decken ihn ab (UI-15: „Heute“ war 4,4 Bildschirme lang).
+  // Form only when action is needed (paces no longer fit); form and training zones
+  // otherwise sit under "Progress → Training". The quick access is dropped – the tab bar
+  // and ＋ Log cover it (UI-15: "Today" was 4.4 screens long).
   const fc = formCard(today, { actionableOnly: true });
   if (fc) view.appendChild(fc);
 
-  // iPad quer und Mac (≥ 1180 px): zwei Spalten – links der Tag, rechts Coach, Belastung,
-  // Woche und Ziele. Schmaler bleibt es eine Spalte in derselben Reihenfolge (UI-17).
+  // iPad landscape and Mac (≥ 1180 px): two columns – the day on the left; coach, load,
+  // week and goals on the right. When narrower it stays one column in the same order (UI-17).
   const kids = [...view.childNodes];
   const colA = el('div', { class: 'dash-col' });
   const colB = el('div', { class: 'dash-col' });
@@ -264,11 +264,11 @@ export function render(view) {
   view.appendChild(el('div', { class: 'dash-cols' }, [colA, colB]));
 }
 
-/** Belastung & Form: Lastverhältnis + Fitness/Ermüdung/Form-Kurve (Banister/PMC). */
+/** Load & form: load ratio + fitness/fatigue/form curve (Banister/PMC). */
 function loadFormCard(sum) {
-  if (!sum.hasData) return null;   // erst zeigen, wenn eine 28-Tage-Basis existiert
+  if (!sum.hasData) return null;   // only show once a 28-day basis exists
   const toneColor = { good: 'var(--good)', warn: '#f5a623', bad: '#e5484d', neutral: 'var(--accent)' }[sum.tone] || 'var(--accent)';
-  // Chip mit Tonfläche und lesbarer Textfarbe – Weiß auf Orange hatte nur 2,0:1 (UI-12).
+  // Chip with a tonal surface and readable text colour – white on orange had only 2.0:1 (UI-12).
   const toneText = { good: 'var(--good-text)', warn: 'var(--warn-text)', bad: 'var(--bad-text)', neutral: 'var(--accent-text)' }[sum.tone] || 'var(--accent-text)';
   const CTL = '#3d8bff', ATL = '#f5a623', FORM = '#43c59e';
   const lbl = (d) => `${d.date.slice(8, 10)}.${d.date.slice(5, 7)}.`;
@@ -284,7 +284,7 @@ function loadFormCard(sum) {
     el('span', { style: { fontWeight: '700' }, text: String(val) }),
   ]);
   const formVal = (sum.form.form > 0 ? '+' : '') + Math.round(sum.form.form);
-  // Form in Worten (relativ zur Fitness) – „Form −88“ allein sagte niemandem etwas.
+  // Form in words (relative to fitness) – "Form −88" on its own told nobody anything.
   const fs = sum.formState;
   const formWords = fs.reliable ? t('dashboard.formRelative', { label: fs.label, pct: `${fs.rel > 0 ? '+' : ''}${Math.round(fs.rel * 100)}` }) : fs.label;
 
@@ -308,8 +308,8 @@ function loadFormCard(sum) {
   ]);
 }
 
-/** Einstieg nach „Leer starten“: drei Schritte statt eines leeren Dashboards (UI-13).
-    Erledigte Schritte sind abgehakt; die Karte verschwindet mit dem ersten Plan/Training. */
+/** Entry point after "Start empty": three steps instead of an empty dashboard (UI-13).
+    Completed steps are ticked off; the card disappears with the first plan/training. */
 function startCard() {
   const p = store.profile();
   const steps = [
@@ -340,8 +340,8 @@ function todayCard(u) {
   if (u.targetDurationMin && !u.targetDistanceKm) meta.push(`${u.targetDurationMin} min`);
   if (u.targetPaceSecPerKm) meta.push(`${fmtPace(u.targetPaceSecPerKm)}/km`);
   const done = u.status === 'erledigt';
-  // Karte = Link zur Einheit; der ▶ daneben ist ein eigener Link, der das Training
-  // direkt startet. Vorher war er eine Attrappe innerhalb des Kartenlinks (UI-09).
+  // Card = link to the session; the ▶ next to it is a separate link that starts the training
+  // directly. Before, it was a dummy inside the card link (UI-09).
   const link = el('a', { class: 'today-unit__link', href: `#/session/${u.id}` }, [
     typeIcon(u.type, 'type-icon--lg'),
     el('div', { class: 'grow' }, [
@@ -389,7 +389,7 @@ function weekStats(today) {
     if (typeMeta(u.type).cat === 'run') planKm += u.targetDistanceKm || 0;
     if (u.status === 'erledigt') doneCount++;
   }));
-  // Soll und Ist zählen beide nur Laufen (Rad, Gehen, Schwimmen haben eigene km).
+  // Target and actual both count only running (cycling, walking, swimming have their own km).
   const realKm = runKm(store.get('sessions'), start, end);
 
   return el('div', { class: 'week-stats mt-3' }, [

@@ -1,37 +1,37 @@
-/* Unit-Tests für Zielpace, Riegel-Prognose und Trainingstipp (js/suggestions.js). */
+/* Unit tests for target pace, Riegel prediction and training tip (js/suggestions.js). */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { addDays, todayStr } from '../js/ui.js';
 import { targetPaceSecPerKm, riegel, predictRace, trainingTip } from '../js/suggestions.js';
 
-test('targetPaceSecPerKm: Zielzeit/Distanz -> Sek pro km', () => {
-  assert.equal(targetPaceSecPerKm('1:45:00', 21.1), 299); // 6300s / 21,1 km
+test('targetPaceSecPerKm: target time/distance -> seconds per km', () => {
+  assert.equal(targetPaceSecPerKm('1:45:00', 21.1), 299); // 6300s / 21.1 km
   assert.equal(targetPaceSecPerKm('0:50:00', 10), 300);
   assert.equal(targetPaceSecPerKm(null, 10), null);
   assert.equal(targetPaceSecPerKm('1:00:00', 0), null);
 });
 
-test('riegel: linear bei exp=1, überproportional bei Default-exp', () => {
-  assert.equal(riegel(1200, 5, 10, 1), 2400); // doppelte Distanz, exp 1 -> doppelte Zeit
-  const def = riegel(1200, 5, 10); // exp 1.06 -> etwas mehr als das Doppelte
-  assert.ok(def > 2400 && Math.abs(def - 2501.8) < 1, `Riegel-Default ~2501.8, war ${def}`);
+test('riegel: linear at exp=1, disproportionate at the default exp', () => {
+  assert.equal(riegel(1200, 5, 10, 1), 2400); // double distance, exp 1 -> double time
+  const def = riegel(1200, 5, 10); // exp 1.06 -> slightly more than double
+  assert.ok(def > 2400 && Math.abs(def - 2501.8) < 1, `Riegel default ~2501.8, was ${def}`);
   assert.equal(riegel(0, 5, 10), null);
   assert.equal(riegel(1200, 5, 0), null);
 });
 
-test('predictRace: nutzt die geglättete Form (VDOT), nicht den schnellsten Einzellauf', () => {
+test('predictRace: uses the smoothed form (VDOT), not the fastest single run', () => {
   const date = addDays(todayStr(), -5);
   const res = predictRace([{ date, distanceKm: 5, durationSec: 1200, type: 'tempo' }], 10);
   assert.ok(res);
   assert.equal(res.method, 'form');
-  // 5 km in 20:00 => VDOT ~49,8 => 10-km-Äquivalent knapp über 41 min.
-  assert.ok(res.seconds > 2400 && res.seconds < 2650, `10-km-Äquivalent plausibel, war ${res.seconds}`);
+  // 5 km in 20:00 => VDOT ~49.8 => 10 km equivalent just over 41 min.
+  assert.ok(res.seconds > 2400 && res.seconds < 2650, `10 km equivalent plausible, was ${res.seconds}`);
   assert.match(res.basis, /VDOT/);
 });
 
-test('predictRace: ein schneller Kurzlauf ohne Marathon-Umfang ergibt eine Prognose MIT Vorbehalt', () => {
+test('predictRace: a fast short run without marathon volume gives a forecast WITH a caveat', () => {
   const t = todayStr();
-  // Drei lange, lockere Läufe + ein sehr schneller 5er – Ø nur ~22 km pro Woche.
+  // Three long, easy runs + one very fast 5 km – avg only ~22 km per week.
   const sessions = [
     { date: addDays(t, -21), distanceKm: 30, durationSec: 10800, type: 'long' },
     { date: addDays(t, -14), distanceKm: 25, durationSec: 9000, type: 'long' },
@@ -41,13 +41,13 @@ test('predictRace: ein schneller Kurzlauf ohne Marathon-Umfang ergibt eine Progn
   const res = predictRace(sessions, 42.195, { today: t });
   assert.ok(res);
   assert.equal(res.method, 'form');
-  assert.equal(res.onlyEasy, false, 'die Form stammt aus dem harten Lauf');
-  // Die Äquivalenzzeit gilt nur mit passendem Umfang – das sagt die Prognose jetzt dazu.
+  assert.equal(res.onlyEasy, false, 'the form comes from the hard run');
+  // The equivalent time only holds with suitable volume – the forecast now says so.
   assert.equal(res.caveat, 'volume');
   assert.match(res.note, /ausreichender Vorbereitung/);
 });
 
-test('predictRace: mit Marathon-Umfang (≥ 50 km/Woche, Long Run ≥ 25 km) kein Vorbehalt', () => {
+test('predictRace: with marathon volume (≥ 50 km/week, long run ≥ 25 km) no caveat', () => {
   const t = todayStr();
   const sessions = [];
   for (let w = 0; w < 4; w++) {
@@ -60,7 +60,7 @@ test('predictRace: mit Marathon-Umfang (≥ 50 km/Woche, Long Run ≥ 25 km) kei
   assert.equal(res.note, null);
 });
 
-test('predictRace: nur lockere Läufe -> als „eher zu vorsichtig“ gekennzeichnet', () => {
+test('predictRace: easy runs only -> flagged as "rather too cautious"', () => {
   const t = todayStr();
   const sessions = [1, 8, 15].map((d) => ({ date: addDays(t, -d), distanceKm: 10, durationSec: 3600, type: 'easy' }));
   const res = predictRace(sessions, 10, { today: t });
@@ -68,29 +68,29 @@ test('predictRace: nur lockere Läufe -> als „eher zu vorsichtig“ gekennzeic
   assert.match(res.basis, /lockeren Trainingsläufen/);
 });
 
-test('predictRace: keine Basis -> null', () => {
+test('predictRace: no basis -> null', () => {
   assert.equal(predictRace([], 10), null);
   assert.equal(predictRace([{ date: todayStr(), distanceKm: 5, durationSec: 1200, type: 'tempo' }], 0), null);
-  // zu alt für beide Pfade (VDOT-Fenster 42 Tage, Riegel 50 Tage)
+  // too old for both paths (VDOT window 42 days, Riegel 50 days)
   assert.equal(predictRace([{ date: addDays(todayStr(), -60), distanceKm: 5, durationSec: 1200, type: 'tempo' }], 10), null);
 });
 
-test('predictRace: Riegel-Fallback nur bei vertretbarer Extrapolation', () => {
+test('predictRace: Riegel fallback only for a justifiable extrapolation', () => {
   const t = todayStr();
-  // 45 Tage alt: außerhalb des VDOT-Fensters (42 Tage), noch im Riegel-Fenster (50)
-  // -> der Fallback-Pfad greift.
+  // 45 days old: outside the VDOT window (42 days), still within the Riegel window (50)
+  // -> the fallback path applies.
   const old = [{ date: addDays(t, -45), distanceKm: 5, durationSec: 1500, type: 'tempo' }];
-  // 5 km auf 42,2 km wäre Faktor 8,4 (> Grenze 4): lieber keine Prognose als eine schlechte.
+  // 5 km to 42.2 km would be a factor of 8.4 (> limit 4): better no forecast than a poor one.
   assert.equal(predictRace(old, 42.195), null);
-  // Auf 10 km (Faktor 2) liefert der Fallback dagegen eine Schätzung.
+  // To 10 km (factor 2), by contrast, the fallback delivers an estimate.
   const near = predictRace(old, 10);
   assert.ok(near && near.method === 'riegel');
 });
 
-test('trainingTip: kontextabhängige, freundliche Hinweise', () => {
+test('trainingTip: context-dependent, friendly hints', () => {
   assert.match(trainingTip({ todaysUnits: [{ type: 'race' }] }), /Wettkampf/);
   assert.match(trainingTip({ todaysUnits: [{ type: 'long' }] }), /Long Run/);
   assert.match(trainingTip({ todaysUnits: [] }), /Ruhetag/);
-  // streak = Wochen-Serie (TRAIN-39) – Ruhetage gehören dazu.
+  // streak = weekly streak (TRAIN-39) – rest days count towards it.
   assert.match(trainingTip({ todaysUnits: [{ type: 'easy' }], streak: 5 }), /5 Wochen in Folge/);
 });

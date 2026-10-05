@@ -1,11 +1,11 @@
-/* Nachlesbare Oberfläche (Paket „Nachlesbar“):
-   - UI-35: Wettkampf-Formular ohne „Event“, Datum ohne Vorbelegung, Priorität erklärt,
-     Fehler direkt am Feld statt nur als Toast; Zielzeit versteht Punkt/Komma und „75:30“.
-   - DOC-20: keine doppelten Satzpunkte auf Urkunden, kein Markdown und keine privaten
-     Video-Hinweise in generierten Einheiten, kein „User“-Chip.
-   - DOC-15: kein wirkungsloser Modul-Schalter „Krafttraining“.
-   - DOC-16: Open Food Facts wird genannt. MKT-06: Positionierung „Trainingsplanung“.
-   - DOC-21/UI-33: Keine Ansicht zeigt mit den Demodaten eine Zahl mit Dezimalpunkt. */
+/* Readable interface (package "Nachlesbar"):
+   - UI-35: competition form without "Event", date without a default, priority explained,
+     errors directly at the field instead of just as a toast; target time understands dot/comma and "75:30".
+   - DOC-20: no doubled full stops on certificates, no Markdown and no private
+     video hints in generated units, no "User" chip.
+   - DOC-15: no ineffective module switch "Strength training".
+   - DOC-16: Open Food Facts is credited. MKT-06: positioning "training planning".
+   - DOC-21/UI-33: No view shows a number with a decimal point with the demo data. */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -29,16 +29,16 @@ const tick = (ms = 10) => new Promise((r) => setTimeout(r, ms));
 const buttons = (root) => root.querySelectorAll('button');
 const byText = (root, re) => buttons(root).find((b) => re.test(b.textContent));
 
-test('UI-35: Zielzeit als h:mm:ss, mm:ss, mit Punkt oder Komma – Unlesbares wird erkannt', () => {
+test('UI-35: target time as h:mm:ss, mm:ss, with dot or comma – unreadable input is detected', () => {
   assert.equal(parseTargetTime('1:55:00'), '01:55:00');
   assert.equal(parseTargetTime('1.55.00'), '01:55:00');
   assert.equal(parseTargetTime('1,55,00'), '01:55:00');
   assert.equal(parseTargetTime('45:30'), '00:45:30');
-  assert.equal(parseTargetTime('75:30'), '01:15:30', 'vorher „00:75:30“');
+  assert.equal(parseTargetTime('75:30'), '01:15:30', 'previously "00:75:30"');
   for (const bad of ['', 'schnell', '1:75:00', '45:61', '1:2:3:4', '0:00']) assert.equal(parseTargetTime(bad), null, bad);
 });
 
-test('UI-35: Fehler erscheint am Feld, ist benannt und verschwindet mit der Eingabe', () => {
+test('UI-35: error appears at the field, is named and disappears with the input', () => {
   shell();
   const i = input({});
   const wrap = field('Name', i);
@@ -50,11 +50,11 @@ test('UI-35: Fehler erscheint am Feld, ist benannt und verschwindet mit der Eing
   assert.equal(err.getAttribute('role'), 'alert');
   assert.equal(i.getAttribute('aria-describedby'), err.getAttribute('id'));
   i.dispatchEvent({ type: 'input', target: i });
-  assert.ok(!i.getAttribute('aria-invalid'), 'Markierung entfernt');
+  assert.ok(!i.getAttribute('aria-invalid'), 'marking removed');
   assert.equal(wrap.querySelector('.field__error'), null);
 });
 
-test('UI-35: Wettkampf anlegen – Titel, Prioritäten-Erklärung und Fehler am Feld', async () => {
+test('UI-35: creating a competition – title, priority explanation and error at the field', async () => {
   const view = shell();
   const events = await import('../js/events.js');
   events.renderList(view);
@@ -65,24 +65,24 @@ test('UI-35: Wettkampf anlegen – Titel, Prioritäten-Erklärung und Fehler am 
   assert.doesNotMatch(modal.textContent, /Event/);
   assert.match(modal.textContent, /A – Saisonhöhepunkt/);
   const date = modal.querySelectorAll('input').find((n) => n.getAttribute('type') === 'date');
-  assert.equal(date.value || '', '', 'Datum nicht mit heute vorbelegt');
+  assert.equal(date.value || '', '', 'date not pre-filled with today');
   byText(modal, /^Speichern$/).click();
   const name = modal.querySelectorAll('input')[0];
-  assert.equal(name.getAttribute('aria-invalid'), 'true', 'Name fehlt → am Feld markiert');
+  assert.equal(name.getAttribute('aria-invalid'), 'true', 'name missing → marked at the field');
   name.value = 'Stadtlauf';
   name.dispatchEvent({ type: 'input', target: name });
   byText(modal, /^Speichern$/).click();
-  assert.equal(date.getAttribute('aria-invalid'), 'true', 'Datum fehlt → am Feld markiert');
-  assert.equal(store.get('events').filter((e) => e.name === 'Stadtlauf').length, 0, 'nichts gespeichert');
+  assert.equal(date.getAttribute('aria-invalid'), 'true', 'date missing → marked at the field');
+  assert.equal(store.get('events').filter((e) => e.name === 'Stadtlauf').length, 0, 'nothing saved');
 });
 
-test('UI-35: Programmname aus dem Schwerpunkt, Planname ohne Dopplung', () => {
+test('UI-35: programme name from the focus, plan name without duplication', () => {
   assert.equal(programPlanName({ programType: 'fitness', name: 'Allgemeine Fitness' }), 'Allgemeine Fitness');
   assert.equal(programPlanName({ programType: 'fitness', name: 'Sommerform' }), 'Allgemeine Fitness · Sommerform');
   assert.equal(programPlanName({ programType: 'fitness', name: '' }), 'Allgemeine Fitness');
 });
 
-test('DOC-20: Urkunde ohne doppelten Satzpunkt', () => {
+test('DOC-20: certificate without a doubled full stop', () => {
   const r = buildGoalReport({ profile: { name: 'Alex' }, goalTitle: 'Ziel', goalDetail: 'Halbmarathon.', date: '2026-09-01' });
   assert.doesNotMatch(r.verdict, /\.\./);
   assert.match(r.verdict, /Halbmarathon\. Großartige Leistung!/);
@@ -90,22 +90,22 @@ test('DOC-20: Urkunde ohne doppelten Satzpunkt', () => {
   assert.match(s.verdict, /68 kg\. Großartige Leistung!/);
 });
 
-test('DOC-20: generierte Einheiten ohne Markdown und ohne privaten Video-Hinweis', () => {
+test('DOC-20: generated units without Markdown and without a private video hint', () => {
   const src = readFileSync(new URL('js/plangen.js', ROOT), 'utf8');
   assert.doesNotMatch(src, /Growingannanas/);
-  assert.doesNotMatch(src.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, ''), /\*\*[A-Za-zäöü]/, 'kein **fett** in Texten');
+  assert.doesNotMatch(src.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, ''), /\*\*[A-Za-zäöü]/, 'no **bold** in texts');
 });
 
-test('DOC-15/DOC-16/DOC-20: Einstellungen ohne Krafttraining-Schalter, mit Open Food Facts; kein „User“-Chip', async () => {
+test('DOC-15/DOC-16/DOC-20: settings without a strength training switch, with Open Food Facts; no "User" chip', async () => {
   const view = shell();
   store.setProfile({ ...store.profile(), name: 'Alex', birthYear: 1990 });
   (await import('../js/settings.js')).render(view);
   const labels = view.querySelectorAll('input').map((b) => b.getAttribute('aria-label') || '');
   assert.ok(labels.includes('Modul Ernährung'));
-  assert.ok(!labels.includes('Modul Krafttraining'), 'wirkungsloser Schalter entfernt');
+  assert.ok(!labels.includes('Modul Krafttraining'), 'ineffective switch removed');
   const html = view.querySelectorAll('div').concat(view.querySelectorAll('p')).map((n) => n._innerHTML || '').join(' ');
-  assert.match(html, /Open Food Facts<\/a> – Datenbank unter ODbL/, 'Namensnennung am Schalter');
-  assert.match(html, /nicht-kommerzielle Nutzung/, 'Open-Meteo-Bedingung');
+  assert.match(html, /Open Food Facts<\/a> – Datenbank unter ODbL/, 'attribution at the switch');
+  assert.match(html, /nicht-kommerzielle Nutzung/, 'Open-Meteo condition');
   assert.match(view.textContent, /Trainingsplanung für die ganze Familie/);
   const fa = readFileSync(new URL('js/family-admin.js', ROOT), 'utf8');
   assert.doesNotMatch(fa, /'User'/);
@@ -121,11 +121,11 @@ test('MKT-06: title and manifest speak of training plans (English shell, German 
   assert.doesNotMatch(html + manifest.description, /Fitness-, Health-/);
 });
 
-/** Zahl mit Dezimalpunkt im Fließtext – ohne Datumsangaben (29.09.), Versionen (v3.20.0)
-    und Tausenderpunkte (10.000). */
+/** Number with a decimal point in running text – without dates (29.09.), versions (v3.20.0)
+    and thousands separators (10.000). */
 const DECIMAL_POINT = /(?<![\d.v])\d+\.(?:\d{1,2}|\d{4,})(?![\d.])/g;
 
-test('DOC-21/UI-33: keine Ansicht zeigt mit den Demodaten Zahlen mit Dezimalpunkt', async () => {
+test('DOC-21/UI-33: no view shows numbers with a decimal point with the demo data', async () => {
   const view = shell();
   globalThis.__fakeServer.install();
   localStorage.clear();
@@ -153,11 +153,11 @@ test('DOC-21/UI-33: keine Ansicht zeigt mit den Demodaten Zahlen mit Dezimalpunk
   assert.deepEqual(hits, [], hits.join('\n'));
 });
 
-test('DOC-21: Zahl und Einheit bleiben in angezeigten Texten zusammen (geschütztes Leerzeichen)', async () => {
+test('DOC-21: number and unit stay together in displayed texts (non-breaking space)', async () => {
   const { el, keepUnits } = await import('../js/ui.js');
   assert.equal(keepUnits('noch 1,6 kg bis 72 kg'), 'noch 1,6 kg bis 72 kg');
   assert.equal(keepUnits('Ferritin 47 µg/l · 24 °C · 4 % · 12 Wdh.'), 'Ferritin 47 µg/l · 24 °C · 4 % · 12 Wdh.');
-  assert.equal(keepUnits('12 Wochen · 5 lockere Läufe · Mo, 28. Sept. · 2 mal'), '12 Wochen · 5 lockere Läufe · Mo, 28. Sept. · 2 mal', 'Wörter bleiben');
+  assert.equal(keepUnits('12 Wochen · 5 lockere Läufe · Mo, 28. Sept. · 2 mal'), '12 Wochen · 5 lockere Läufe · Mo, 28. Sept. · 2 mal', 'words stay');
   assert.equal(el('span', { text: '539 kcal je 100 g' }).textContent, '539 kcal je 100 g');
   assert.equal(el('span', {}, ['6,2 km', ' · Ø 138 bpm']).textContent, '6,2 km · Ø 138 bpm');
 });

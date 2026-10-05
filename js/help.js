@@ -1,7 +1,7 @@
 /* =========================================================================
-   help.js — Wissensbasis & Hilfe in der App (#/hilfe, #/hilfe/<id>).
-   Rendert die Inhalte aus helpcontent.js: Suche (mit Synonymen), adressierbare
-   Artikel und die Kurzansicht als Sheet für die ⓘ-Knöpfe an den Kennzahlen.
+   help.js — knowledge base and help inside the app (#/hilfe, #/hilfe/<id>).
+   Renders the content from helpcontent.js: search (with synonyms), addressable
+   articles and the short view as a sheet for the ⓘ buttons on the metrics.
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -11,20 +11,20 @@ import { helpSections, findArticle, articleText, loadHelpTexts } from './helpcon
 
 import { t } from './i18n.js';
 
-/** Anzeigename der aktiven Person; ohne Namen spricht die Hilfe neutral an. */
+/** Display name of the active person; without a name the help addresses the reader neutrally. */
 function userName() {
   return ((store.profile() && store.profile().name) || store.activeMember()?.name || '').trim();
 }
 
 /* ------------------------------- Rendering ------------------------------ */
 let pendingQuery = '';
-/** Öffnet die Hilfe mit vorausgefüllter Suche. */
+/** Opens the help with a pre-filled search. */
 export function openHelp(query = '') {
   pendingQuery = String(query || '');
   navigate('#/hilfe');
 }
 
-/** ⓘ an einer Kennzahl: den Artikel als Sheet zeigen – mit Sprung in die ganze Hilfe. */
+/** ⓘ on a metric: show the article as a sheet – with a jump into the full help. */
 export async function openHelpArticle(id) {
   await loadHelpTexts();
   const hit = findArticle(helpSections(userName()), id);
@@ -52,7 +52,7 @@ export async function render(view, articleId = null) {
   pendingQuery = '';
   const target = articleId ? findArticle(data, articleId) : null;
 
-  // Begrüßung
+  // Greeting
   view.appendChild(el('div', { class: 'card card--accent' }, [
     el('div', { class: 'row gap-3', style: { alignItems: 'center' } }, [
       el('span', { html: iconSvg('sparkles'), style: { width: '26px', flex: '0 0 auto' } }),
@@ -63,7 +63,7 @@ export async function render(view, articleId = null) {
     ]),
   ]));
 
-  // Suche
+  // Search
   const searchInput = el('input', { class: 'input', type: 'search', 'aria-label': t('helpView.searchLabel'), placeholder: t('helpView.searchPlaceholder'), style: { marginTop: '16px' } });
   view.appendChild(searchInput);
 
@@ -102,11 +102,11 @@ export async function render(view, articleId = null) {
   searchInput.addEventListener('input', debounce((e) => draw(e.target.value), 180));
   searchInput.value = initialQuery;
   draw(initialQuery);
-  // Direkt adressierter Artikel (#/hilfe/<id>): aufgeklappt und in Sicht.
+  // Directly addressed article (#/hilfe/<id>): expanded and scrolled into view.
   if (focusCard) setTimeout(() => focusCard.scrollIntoView?.({ block: 'start', behavior: 'smooth' }), 60);
 }
 
-/** Die Blöcke eines Artikels als DOM (für Karte und Sheet). */
+/** The blocks of an article as DOM (for card and sheet). */
 function articleBlocks(a) {
   const out = [];
   (a.body || []).forEach((b) => {

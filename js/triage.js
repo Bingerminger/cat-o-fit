@@ -1,18 +1,18 @@
 /* =========================================================================
-   triage.js — Wochen-Kollisionen erkennen und TRANSPARENT priorisieren.
-   Reine, DOM-freie Logik → per node:test abgedeckt.
+   triage.js — detect weekly collisions and prioritise them TRANSPARENTLY.
+   Pure, DOM-free logic → covered by node:test.
 
-   Leitsatz: „Wenn es eine Priorisierung der Ziele benötigt, ist immer transparent
-   darzustellen, wie du triagierst zwischen Kollisionen." Dieses Modul liefert
-   die Fakten (harte Back-to-Backs, zu viele harte Einheiten, kein Ruhetag,
-   doppelt belegte Tage) plus eine nachvollziehbare Prioritätsordnung – die UI
-   formuliert daraus die Hinweise.
+   Guiding principle: "If the goals need prioritising, it must always be shown
+   transparently how you triage between collisions." This module supplies
+   the facts (hard back-to-backs, too many hard sessions, no rest day,
+   doubly booked days) plus a traceable priority order – the UI
+   formulates the hints from them.
 
-   Prioritätsordnung (fix > Sicherheit/Erholung ist implizit; hier: was bei
-   Kollision Vorrang behält): feste Termine > Schlüssel-Laufeinheiten fürs
-   Zeitziel > Kraft > lockerer Umfang > Erholung. Erholung steht bewusst NICHT
-   ganz oben – sie ist der Puffer, der bei Kollision zuerst schrumpft; Sicherheit
-   entsteht dadurch, dass harte Reize entzerrt werden (siehe rolling.js).
+   Priority order (fixed > safety/recovery is implicit; here: what keeps
+   precedence in a collision): fixed commitments > key run sessions for the
+   time goal > strength > easy volume > recovery. Recovery is deliberately NOT
+   at the very top – it is the buffer that shrinks first in a collision; safety
+   comes from spreading out the hard stimuli (see rolling.js).
    ========================================================================= */
 
 import { weekStartMonday, addDays, isoDow } from './ui.js';
@@ -24,16 +24,16 @@ import { t } from './i18n.js';
 /** Short weekday name; isoDow counts Mon = 1 … Sun = 7, weekdayNames() starts on Sunday. */
 export function dowShort(dateStr) { return weekdayNames()[isoDow(dateStr) % 7] || ''; }
 
-/** Lastrelevante, nicht verpasste Einheiten der Mo–So-Woche von dateStr.
-    Verschobene Einheiten zählen MIT: sie stehen am neuen Tag im Plan und können
-    dort sehr wohl kollidieren (seit v3.16.0, siehe planflow.js countsToLoad). */
+/** Load-relevant, non-missed sessions of the Mon–Sun week of dateStr.
+    Moved sessions count TOO: they stand in the plan on the new day and can
+    very well collide there (since v3.16.0, see planflow.js countsToLoad). */
 export function weekUnits(units = [], dateStr) {
   const ws = weekStartMonday(dateStr), we = addDays(ws, 6);
   return (units || []).filter((u) => u && !u.deleted && u.date >= ws && u.date <= we
     && u.type !== 'rest' && u.status !== 'verpasst');
 }
 
-/** Prioritätsklasse einer Einheit (höher = behält bei Kollision Vorrang). */
+/** Priority class of a session (higher = keeps precedence in a collision). */
 export const PRIORITY_RANK = { fixed: 5, key: 4, strength: 3, endurance: 2, recovery: 1, other: 0 };
 export function unitPriority(u) {
   if (u && u.fixed) return 'fixed';
@@ -46,8 +46,8 @@ export function unitPriority(u) {
 }
 
 /**
- * Erkennt Kollisionen/Risiken einer Woche. Jede Kollision trägt einen Vorschlag,
- * der die niedriger priorisierte Einheit anfasst (Schlüssel/feste Termine bleiben).
+ * Detects collisions/risks of a week. Every collision carries a suggestion
+ * that touches the lower-priority session (key sessions/fixed commitments stay).
  * @returns {Array<{kind, severity, text, suggest, date?}>}
  */
 export function weekCollisions(units = [], dateStr) {
@@ -56,9 +56,9 @@ export function weekCollisions(units = [], dateStr) {
   const ws = weekStartMonday(dateStr), we = addDays(ws, 6);
   const inWeek = (d) => d >= ws && d <= we;
 
-  // 1) Harte Einheiten an aufeinanderfolgenden Tagen (Erholung fehlt zwischen den Reizen) –
-  //    inklusive Sonntag davor und Montag danach: Spiel am Sonntag → Training am Montag
-  //    ist die häufigste Kollision mit Vereinsfußball und lag früher „zwischen“ zwei Wochen.
+  // 1) Hard sessions on consecutive days (recovery missing between the stimuli) –
+  //    including the Sunday before and the Monday after: a match on Sunday → training on Monday
+  //    is the most common collision with club football and used to lie "between" two weeks.
   const ext = (units || []).filter((u) => u && !u.deleted && u.date >= addDays(ws, -1) && u.date <= addDays(we, 1)
     && u.type !== 'rest' && u.status !== 'verpasst').sort((a, b) => a.date.localeCompare(b.date));
   const dayLabel = (d) => (d < ws ? t('triage.dayPrevWeek', { day: dowShort(d) })
@@ -80,7 +80,7 @@ export function weekCollisions(units = [], dateStr) {
     }
   }
 
-  // 2) Zu viele harte Einheiten in der Woche
+  // 2) Too many hard sessions in the week
   const hard = list.filter(isHard);
   if (hard.length > 3) {
     const softest = hard.filter((u) => !u.fixed).sort((a, b) => PRIORITY_RANK[unitPriority(a)] - PRIORITY_RANK[unitPriority(b)])[0];
@@ -92,7 +92,7 @@ export function weekCollisions(units = [], dateStr) {
     });
   }
 
-  // 3) Kein Ruhetag (jeder Wochentag belegt)
+  // 3) No rest day (every weekday occupied)
   const days = new Set(list.map((u) => u.date));
   if (days.size >= 7) {
     out.push({
@@ -102,7 +102,7 @@ export function weekCollisions(units = [], dateStr) {
     });
   }
 
-  // 4) Zwei harte Einheiten am selben Tag
+  // 4) Two hard sessions on the same day
   const byDate = new Map();
   list.forEach((u) => { if (!byDate.has(u.date)) byDate.set(u.date, []); byDate.get(u.date).push(u); });
   byDate.forEach((us, date) => {
@@ -119,8 +119,8 @@ export function weekCollisions(units = [], dateStr) {
 }
 
 /**
- * Kompakte Wochen-Triage: Kollisionen + nach Priorität geordnete Einheiten
- * (transparent, wie die App im Konfliktfall abwägt).
+ * Compact weekly triage: collisions + sessions ordered by priority
+ * (transparent, how the app weighs things in a conflict).
  */
 export function weekTriage(units = [], dateStr) {
   const list = weekUnits(units, dateStr);
@@ -131,11 +131,11 @@ export function weekTriage(units = [], dateStr) {
 }
 
 /**
- * „Entstapeln“ bei zwei Zielen (#4): sucht den nächsten Tag in [today, today+horizon]
- * mit ≥2 offenen, lastrelevanten Einheiten (typisch: zwei Ziele überlagern sich) und
- * schlägt vor, die am niedrigsten priorisierte, verschiebbare davon auf einen freien
- * Tag zu legen – so entsteht echte Erholung statt zwei halber Einheiten am selben Tag.
- * Reine Funktion. @returns {{date, move, keep, target}|null}
+ * "Unstacking" with two goals (#4): looks for the next day in [today, today+horizon]
+ * with ≥2 open, load-relevant sessions (typically: two goals overlap) and
+ * suggests moving the lowest-priority, movable one of them to a free
+ * day – this creates real recovery instead of two half sessions on the same day.
+ * Pure function. @returns {{date, move, keep, target}|null}
  */
 export function destackSuggestion(units = [], today, horizon = 10) {
   const open = (u) => u && u.date >= today && isOpen(u);
@@ -148,8 +148,8 @@ export function destackSuggestion(units = [], today, horizon = 10) {
   for (const date of [...byDate.keys()].sort()) {
     const day = byDate.get(date);
     if (day.length < 2) continue;
-    if (!day.some(isHard)) continue;  // nur echte Last-Stapel entzerren, nicht zwei lockere Einheiten
-    // Die am niedrigsten priorisierte, NICHT feste Einheit ist der Verschiebe-Kandidat.
+    if (!day.some(isHard)) continue;  // only unstack genuine load stacks, not two easy sessions
+    // The lowest-priority, NOT fixed session is the candidate to move.
     const movable = day.filter((u) => !u.fixed)
       .sort((a, b) => PRIORITY_RANK[unitPriority(a)] - PRIORITY_RANK[unitPriority(b)]);
     if (!movable.length) continue;

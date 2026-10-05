@@ -1,6 +1,6 @@
 /* =========================================================================
-   statistics.js — Trends, Plan-Einhaltung (Adherence), Trainingslast (informativ),
-   Einheiten-Verteilung, Wettkampfprognose. Alles als Orientierung, ohne Druck.
+   statistics.js — trends, plan adherence, training load (informative),
+   session distribution, race prediction. All as guidance, without pressure.
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -32,7 +32,7 @@ export function render(view) {
     return;
   }
 
-  /* ---- Ampel: „Bin ich auf Plan?“ (#20) ---- */
+  /* ---- Traffic light: "Am I on track?" (#20) ---- */
   const st = planStatus({ plans: store.get('plans'), sessions, today, isProtectedDay });
   const a = AMPEL[st.level];
   view.appendChild(sectionHead(t('statistics.onPlanHeading'), null, { help: 'fortschritt' }));
@@ -54,7 +54,7 @@ export function render(view) {
     })),
   ]));
 
-  /* ---- Plan-Einhaltung (Detail zum 4-Wochen-Fenster) ---- */
+  /* ---- Plan adherence (detail for the 4-week window) ---- */
   const adherence = st.adherence ?? 0;
   view.appendChild(sectionHead(t('statistics.adherenceHeading')));
   view.appendChild(el('div', { class: 'card row gap-4', style: { alignItems: 'center' } }, [
@@ -66,7 +66,7 @@ export function render(view) {
     ]),
   ]));
 
-  /* ---- Wochenumfang (letzte 8 Wochen, nur Laufen – wie „Lauf-km“ darunter) ---- */
+  /* ---- Weekly volume (last 8 weeks, running only – like "Run km" below) ---- */
   view.appendChild(sectionHead(t('statistics.weeklyVolume')));
   const weeks = [];
   for (let i = 7; i >= 0; i--) {
@@ -79,12 +79,12 @@ export function render(view) {
     barChart(weeks, { showValues: true, height: 150, yUnit: 'km', label: t('statistics.weeklyAria') }),
   ]));
 
-  /* ---- Trainingsjahr (Heatmap im GitHub-Stil) ---- */
+  /* ---- Training year (heatmap in GitHub style) ---- */
   const matrix = activityMatrix({ sessions, today });
   view.appendChild(sectionHead(t('statistics.trainingYear')));
   const hmScroll = el('div', { style: { overflowX: 'auto', paddingBottom: '4px' } }, [heatmap(matrix)]);
-  // Wie bei GitHub: die aktuellste Woche (rechts) soll beim Öffnen sichtbar sein.
-  // Kurzes Timeout, damit das Layout (scrollWidth) bereits feststeht.
+  // As on GitHub: the most recent week (right) should be visible when opening.
+  // Short timeout so that the layout (scrollWidth) is already settled.
   setTimeout(() => { hmScroll.scrollLeft = hmScroll.scrollWidth; }, 60);
   view.appendChild(el('div', { class: 'card' }, [
     el('div', { class: 'dim', style: { fontSize: '.74rem', marginBottom: '6px' }, text: tp('statistics.heatmapNote', matrix.activeDays) }),
@@ -92,7 +92,7 @@ export function render(view) {
     el('div', { class: 'row', style: { justifyContent: 'flex-end', marginTop: '4px' } }, [heatmapLegend()]),
   ]));
 
-  /* ---- Trainingslast (7d vs 28d, informativ) ---- */
+  /* ---- Training load (7d vs 28d, informative) ---- */
   const { last7, last28, level: loadLevel, zone: loadZone } = st.load;
   const loadHint = {
     unklar: t('statistics.hint.unclear'),
@@ -113,7 +113,7 @@ export function render(view) {
     el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: t('statistics.loadHintNote', { hint: loadHint }) }),
   ]));
 
-  /* ---- Ausgefallene Einheiten nach Grund (#21) ---- */
+  /* ---- Cancelled sessions by reason (#21) ---- */
   if (st.missed.total > 0) {
     const MR = [['injured', '🩹', t('statistics.missed.injured')], ['sick', '🤒', t('statistics.missed.sick')], ['time', '⏰', t('statistics.missed.time')], ['other', '🤷', t('statistics.missed.other')]].filter(([k]) => st.missed.byReason[k] > 0);
     view.appendChild(sectionHead(t('statistics.missedHeading')));
@@ -128,7 +128,7 @@ export function render(view) {
     ]));
   }
 
-  /* ---- Einheiten-Verteilung ---- */
+  /* ---- Session distribution ---- */
   const byType = {};
   sessions.filter((s) => diffDays(s.date, today) <= 56 && diffDays(s.date, today) >= 0).forEach((s) => {
     const key = s.type || 'other';
@@ -147,7 +147,7 @@ export function render(view) {
     ]));
   }
 
-  /* ---- Werte & Ziele: halten/verbessern + Trend-Vermaschung (#19, #22) ---- */
+  /* ---- Values & goals: hold/improve + trend linking (#19, #22) ---- */
   const metrics = keyMetrics({ profile: store.profile(), health: store.get('health'), sessions, today, noWeightGoals: currentEligibility(today).noWeightGoals });
   if (metrics.length) {
     view.appendChild(sectionHead(t('statistics.metricsHeading')));
@@ -168,7 +168,7 @@ export function render(view) {
     })));
   }
 
-  /* ---- Gewichtstrend ---- */
+  /* ---- Weight trend ---- */
   const health = store.get('health').filter((h) => h.weight != null).sort((a, b) => a.date.localeCompare(b.date));
   if (health.length >= 2) {
     view.appendChild(sectionHead(t('statistics.weightHeading')));
@@ -178,7 +178,7 @@ export function render(view) {
     )));
   }
 
-  /* ---- Prognose ---- */
+  /* ---- Prediction ---- */
   const nextEvent = store.get('events').filter((e) => e.status !== 'abgeschlossen' && e.date >= today).sort((a, b) => a.date.localeCompare(b.date))[0];
   if (nextEvent) {
     const pred = predictRace(sessions, nextEvent.distanceKm, { hrZones: store.profile().hrZones, today });
@@ -198,7 +198,7 @@ export function render(view) {
     }
   }
 
-  /* ---- Form & Trainingsbereiche (von „Heute“ hierher, UI-15) ---- */
+  /* ---- Form & training zones (moved here from "Today", UI-15) ---- */
   const fc = formCard(today);
   const zc = zonesCard();
   if (fc || zc) {
@@ -207,7 +207,7 @@ export function render(view) {
     if (zc) view.appendChild(zc);
   }
 
-  /* ---- Trainings ohne Plan (spontan erfasst oder importiert) ---- */
+  /* ---- Sessions without a plan (logged spontaneously or imported) ---- */
   const free = sessions
     .filter((s) => s && !s.plannedId && s.date <= today && diffDays(s.date, today) <= 45)
     .sort((x, y) => y.date.localeCompare(x.date));

@@ -1,14 +1,14 @@
 /* =========================================================================
-   show-program.js — vom Plan zur durchgehenden Mitmach-Session (rein, ohne DOM).
+   show-program.js — from the plan to the continuous follow-along session (pure, no DOM).
 
-   1. `dosesFromText()` liest aus einer Einheitsbeschreibung, was der Plan je Übung
-      vorgibt („Kniebeugen 12× · Plank 30–45 s · Seitstütz 30 s/Seite“), dazu
-      Runden („3 Runden“) und die Pause zwischen den Runden („60–90 s Pause“).
-   2. `programForUnit()` / `programForWorkout()` machen daraus ein Programm.
-   3. `buildShow()` legt die Zeitleiste an: Start, Übung (je Seite), Seitenwechsel,
-      Pause mit Vorschau, Rundenpause – jede Bewegungsphase auf dem Beat
-      (`beatPlan`), Pausen auf ganze Takte, damit jede Übung auf „Eins“ beginnt.
-   4. `showStateAt()` sagt, was zum Zeitpunkt t zu sehen ist.
+   1. `dosesFromText()` reads from a session description what the plan prescribes per exercise
+      ("Squats 12× · Plank 30–45 s · Side plank 30 s/side"), plus
+      rounds ("3 rounds") and the rest between the rounds ("60–90 s rest").
+   2. `programForUnit()` / `programForWorkout()` turn that into a programme.
+   3. `buildShow()` lays out the timeline: start, exercise (per side), side change,
+      rest with preview, round rest – every movement phase on the beat
+      (`beatPlan`), rests on whole bars, so that every exercise begins on "one".
+   4. `showStateAt()` says what is to be seen at time t.
    ========================================================================= */
 
 import { findExercise, exerciseMentions, exercisesForUnit } from './exercises.js';
@@ -33,13 +33,13 @@ const sum = (list) => list.reduce((a, p) => a + p.dur, 0);
 const mid = (a, b) => (b != null ? (Number(a) + Number(b)) / 2 : Number(a));
 const round5 = (s) => Math.max(5, Math.round(s / 5) * 5);
 
-/* ------------------------------ Plantext lesen ------------------------------ */
+/* ------------------------------ Reading the plan text ------------------------------ */
 
-/** Menge aus dem Textstück einer Übung: { reps, holdS, perSide } (fehlende Werte null). */
+/** Amount from the text piece of an exercise: { reps, holdS, perSide } (missing values null). */
 export function doseOf(snippet = '') {
   const s = String(snippet);
   const perSide = new RegExp(`\\/\\s*(?:${words('perSide')})${R}|${L}(?:${words('perSidePhrase')})${R}`, 'iu').test(s);
-  // „2×30 m“ ist eine Strecke, keine Wiederholungszahl.
+  // "2×30 m" is a distance, not a repetition count.
   const reps = /(\d+)\s*(?:[–-]\s*(\d+))?\s*×(?!\s*\d)/.exec(s);
   const min = /(\d+(?:[,.]\d+)?)\s*(?:[–-]\s*(\d+))?\s*min\b/.exec(s);
   const sec = /(\d+)\s*(?:[–-]\s*(\d+))?\s*s\b/.exec(s);
@@ -51,9 +51,9 @@ export function doseOf(snippet = '') {
 }
 
 /**
- * Was eine Beschreibung vorgibt: Übungen in Reihenfolge mit Menge, Runden und Pause
- * zwischen den Runden. Das Textstück einer Übung reicht bis zum nächsten „·“ bzw.
- * Satzende.
+ * What a description prescribes: exercises in order with amount, rounds and rest
+ * between the rounds. The text piece of an exercise extends to the next "·" or
+ * end of sentence.
  */
 export function dosesFromText(text = '') {
   text = String(text || '');
@@ -63,7 +63,7 @@ export function dosesFromText(text = '') {
     let snippet = text.slice(first, next);
     const cut = snippet.search(/·|;|\.\s|\n/);
     if (cut > 0) snippet = snippet.slice(0, cut);
-    // „Brustöffner & Wirbelsäulen-Rotation 8×/Seite“: ohne eigene Zahl gilt die der nächsten.
+    // "Chest opener & spine rotation 8×/side": without a number of its own, that of the next one applies.
     return { id: e.id, ...doseOf(snippet), joined: !/\d/.test(snippet) && new RegExp(`(&|${L}(?:${words('and')})|,|\\/)\\s*$`, 'iu').test(snippet) };
   });
   for (let i = items.length - 2; i >= 0; i--) {
@@ -75,9 +75,9 @@ export function dosesFromText(text = '') {
   return { items, rounds: rounds ? Number(rounds[1]) : null, roundRest: pause ? Number(pause[1]) : null };
 }
 
-/* ------------------------------ Programme ------------------------------ */
+/* ------------------------------ Programmes ------------------------------ */
 
-/** Hauptstil eines Programms: Beweglichkeit → ruhig, sonst nach den meisten Übungen. */
+/** Main style of a programme: mobility → calm, otherwise by the most exercises. */
 function styleOf(items, hint = null) {
   if (hint) return hint;
   const count = {};
@@ -94,8 +94,8 @@ const itemOf = (id, dose = {}) => {
 };
 
 /**
- * Programm einer Plan-Einheit: zuerst die Übungen aus der Beschreibung (mit Menge),
- * dann die per „+“ angehängten. Ohne Übungen → null.
+ * Programme of a plan session: first the exercises from the description (with amount),
+ * then those appended via "+". Without exercises → null.
  */
 export function programForUnit(unit = {}) {
   const text = `${unit.title || ''} · ${unit.description || ''}`;
@@ -117,13 +117,13 @@ export function programForUnit(unit = {}) {
   };
 }
 
-/** Programm eines fertigen Workouts (workouts.js): feste Arbeits- und Pausenzeit. */
+/** Programme of a finished workout (workouts.js): fixed work and rest time. */
 export function programForWorkout(w) {
   const items = w.items.map((x) => (typeof x === 'string' ? itemOf(x, { work: w.work }) : itemOf(x.id, { work: x.work || w.work }))).filter(Boolean);
   return { title: w.title, format: 'interval', style: w.style || styleOf(items), rounds: w.rounds || 1, rest: w.rest ?? 15, roundRest: w.roundRest ?? 45, items, workoutId: w.id };
 }
 
-/** Was eine Übung im Programm dauert und vorgibt (für Übersicht und Ansage). */
+/** What an exercise lasts in the programme and prescribes (for overview and announcement). */
 export function doseLabel(it, program) {
   const each = it.m.sides === 'each';
   const side = it.m.sides ? ` ${tr('showProgram.perSide')}` : '';
@@ -133,18 +133,18 @@ export function doseLabel(it, program) {
   return `${it.reps || it.m.reps || 10}×${side}`;
 }
 
-/* ------------------------------ Zeitleiste ------------------------------ */
+/* ------------------------------ Timeline ------------------------------ */
 
 const barOf = (bpm) => (4 * 60) / bpm;
-/** Auf ganze Takte runden (mindestens `minBars`). */
+/** Round to whole bars (at least `minBars`). */
 const toBars = (sec, bpm, minBars = 1) => Math.max(minBars, Math.round(sec / barOf(bpm))) * barOf(bpm);
 
 /**
- * Bewegung im Takt: Jede Phase eines Zyklus (runter, halten, hoch …) dauert ganze
- * oder halbe Schläge (sehr schnelle Bewegungen Viertelschläge), eine Wiederholung
- * ganze Schläge – Bewegungswechsel fallen so auf den Beat. Gewählt wird das Tempo im Bereich des Stils, das die Bewegung am
- * wenigsten verbiegt (gerade Schlagzahlen bevorzugt). Liefert { bpm, beat, beats,
- * q (Halbschläge je Phase als Schläge), cyc } – `retime()` legt das auf eine Liste.
+ * Movement on the beat: every phase of a cycle (down, hold, up …) lasts whole
+ * or half beats (very fast movements quarter beats), one repetition
+ * whole beats – so movement changes fall on the beat. The tempo chosen within the style's range is the one that distorts the movement
+ * least (even beat counts preferred). Returns { bpm, beat, beats,
+ * q (half beats per phase as beats), cyc } – `retime()` lays that onto a list.
  */
 export function beatPlan(cycle, style = 'power') {
   const [lo, hi] = (STYLES[style] || STYLES.power).bpm;
@@ -153,21 +153,21 @@ export function beatPlan(cycle, style = 'power') {
   let best = null;
   for (let bpm = lo; bpm <= hi + 1e-9; bpm += 0.5) {
     const beat = 60 / bpm;
-    // Halbe Schläge; sehr schnelle Bewegungen (Sprünge) auf Viertelschläge.
+    // Half beats; very fast movements (jumps) to quarter beats.
     const q = cycle.map((ph) => {
-      // Bewegungen unter einem Schlag auf Viertelschläge, sonst auf halbe. Schneller als
-      // geplant (um mehr als 15 %) wird keine Bewegung – mitmachen geht vor Takt.
+      // Movements under one beat to quarter beats, otherwise to half. No movement becomes faster than
+      // planned (by more than 15 %) – following along takes priority over the beat.
       const res = ph.dur < beat ? 4 : 2;
       let n = Math.round((ph.dur / beat) * res) / res;
       if (!ph.hold && n * beat < ph.dur * 0.85) n += 1 / res;
       return ph.hold ? n : Math.max(1 / res, n);
     });
     let beats = q.reduce((a, b) => a + b, 0);
-    // Eine Wiederholung dauert ganze Schläge – sehr schnelle (Sprünge) einen halben.
+    // One repetition lasts whole beats – very fast ones (jumps) half a beat.
     const unit = beats < 0.75 ? 0.5 : 1;
     const missing = Math.ceil(beats / unit - 1e-9) * unit - beats;
     if (missing > 1e-9) {
-      // Auf ganze Schläge bringen: eine kurze Haltephase kürzen, sonst die längste verlängern.
+      // Bring to whole beats: shorten a short hold phase, otherwise lengthen the longest.
       const extra = unit - missing;
       const cut = cycle.findIndex((ph, i) => ph.hold && q[i] >= extra - 1e-9 && beats - extra >= unit);
       if (cut >= 0) { q[cut] -= extra; beats -= extra; } else {
@@ -185,15 +185,15 @@ export function beatPlan(cycle, style = 'power') {
   return { bpm: best.bpm, beat: best.beat, beats: best.beats, q: best.q, cyc: best.beats * best.beat };
 }
 
-/** Die Phasen einer Liste auf den Takt legen (Phasen ohne Dauer fallen weg). */
+/** Lay the phases of a list onto the beat (phases without a duration are dropped). */
 export function retime(list, plan) {
   return list.map((ph, i) => ({ ...ph, dur: plan.q[i] * plan.beat })).filter((ph) => ph.dur > 0);
 }
 
 /**
- * Bildfolge einer Vorschau (Pause/Start/Seitenwechsel) auf die nächste Übung: erst ein
- * bis zwei Probe-Wiederholungen im Takt bzw. die Ausgangspose, am Ende der Weg in die
- * Position – er endet genau mit dem Abschnitt in der Startpose.
+ * Frame sequence of a preview (rest/start/side change) of the next exercise: first one
+ * to two trial repetitions on the beat or the starting pose, at the end the way into the
+ * position – it ends exactly with the section in the starting pose.
  */
 function previewClips(it, side, dur, plan) {
   const intro = introOf(it.m, side);
@@ -209,8 +209,8 @@ function previewClips(it, side, dur, plan) {
 }
 
 /**
- * Zeitleiste der Session: Abschnitte { kind, i, round, side, dur, t0, bpm, style,
- * intensity, clips, reps?, cyc? } und Gesamtdauer.
+ * Timeline of the session: sections { kind, i, round, side, dur, t0, bpm, style,
+ * intensity, clips, reps?, cyc? } and total duration.
  * kind: ready · work · switch · rest · roundRest.
  */
 export function buildShow(program) {
@@ -226,8 +226,8 @@ export function buildShow(program) {
       const tp = plans[i];
       const sides = it.m.sides === 'each' ? ['a', 'b'] : ['a'];
       const introA = sum(introOf(it.m, 'a'));
-      // Davor: Start (allererste Übung), Rundenpause oder Pause – mit Vorschau auf diese Übung.
-      // Der Start lässt Zeit, vom Gerät zur Matte zu gehen.
+      // Before it: start (very first exercise), round rest or rest – with a preview of this exercise.
+      // The start leaves time to walk from the device to the mat.
       if (r === 1 && i === 0) {
         const dur = toBars(Math.max(12, introA + 4), tp.bpm, 2);
         push({ kind: 'ready', i, round: r, side: 'a', dur, bpm: tp.bpm, style, intensity: 1, clips: previewClips(it, 'a', dur, tp) });
@@ -240,14 +240,14 @@ export function buildShow(program) {
       }
       sides.forEach((side, k) => {
         if (k > 0) {
-          // Seitenwechsel: Zeit zum Umdrehen bzw. neu Hinlegen.
+          // Side change: time to turn around or lie down again.
           const dur = toBars(Math.max(8, sum(introOf(it.m, side)) + 3), tp.bpm, 2);
           push({ kind: 'switch', i, round: r, side, dur, bpm: tp.bpm, style, intensity: 1, clips: previewClips(it, side, dur, tp) });
         }
         const list = retime(cycleOf(it.m, side), tp);
         if (program.format === 'interval' || it.m.holdS != null) {
           const secs = program.format === 'interval' ? (it.work || 40) : (it.holdS || it.m.holdS);
-          // Zeitübungen laufen im Takt weiter; die Dauer endet auf einem ganzen Schlag.
+          // Timed exercises keep running on the beat; the duration ends on a whole beat.
           const dur = Math.max(tp.beat, Math.round(secs / tp.beat) * tp.beat);
           push({ kind: 'work', i, round: r, side, dur, bpm: tp.bpm, style, intensity: 2, timed: true, cyc: tp.cyc, clips: [{ at: 0, dur, list, speed: 1, loop: true }] });
         } else {
@@ -263,8 +263,8 @@ export function buildShow(program) {
 }
 
 /**
- * Zustand zum Zeitpunkt t: Abschnitt, Zeit darin, Restzeit, Wiederholung,
- * Animationszeit (`anim`: { list, t }) und Gesamtfortschritt.
+ * State at time t: section, time within it, remaining time, repetition,
+ * animation time (`anim`: { list, t }) and overall progress.
  */
 export function showStateAt(show, t) {
   const segs = show.segs;
@@ -280,7 +280,7 @@ export function showStateAt(show, t) {
   return out;
 }
 
-/** Animationszeit innerhalb der Bildfolge eines Abschnitts. */
+/** Animation time within the frame sequence of a section. */
 export function clipAt(clips, local) {
   let c = clips[0];
   for (const x of clips) if (local >= x.at - 1e-9 && x.dur > 0) c = x;
@@ -291,13 +291,13 @@ export function clipAt(clips, local) {
   return { list: c.list, t, clip: c };
 }
 
-/** Nächste Übung (Index) ab einem Abschnitt – für „Als Nächstes“. */
+/** Next exercise (index) from a section on – for "Up next". */
 export function nextWorkAfter(show, index) {
   for (let k = index + 1; k < show.segs.length; k++) if (show.segs[k].kind === 'work' && show.segs[k].i !== show.segs[index].i) return show.segs[k];
   return null;
 }
 
-/** Ein Programm aus einer Einheit – wenn es eins gibt (für Knöpfe „Durchgehend mitmachen“). */
+/** A programme from a session – if there is one (for the "Follow along non-stop" buttons). */
 export function hasProgram(unit) {
   if (!unit) return false;
   return exercisesForUnit(unit).named.length > 0 || (Array.isArray(unit.exerciseIds) && unit.exerciseIds.some((id) => MOTIONS[id]));

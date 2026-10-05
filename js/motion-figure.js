@@ -1,16 +1,16 @@
 /* =========================================================================
-   motion-figure.js — zeichnet die Gelenkfigur (motion-rig.js) als SVG.
+   motion-figure.js — draws the joint figure (motion-rig.js) as SVG.
 
-   Seit 3.23.0 zeichnet standardmäßig die Vorturnerin (coach-figure.js: Körper mit
-   Volumen, Kleidung, Zopf, Schatten). `style: 'line'` liefert die frühere Linienfigur:
-   runde „Kapsel“-Glieder statt Strichen. Der Körper ist neutral (Textfarbe),
-   die beanspruchten Muskeln leuchten in der Kategoriefarbe (`--mf-hi`), Arm und Bein
-   der abgewandten Seite sind blasser (Tiefe). Hilfsmittel (Matte, Bank, Wand,
-   Hantel …) stehen zurückhaltend daneben.
+   Since 3.23.0 the coach figure (coach-figure.js: body with volume, clothing,
+   ponytail, shadow) draws by default. `style: 'line'` yields the earlier line
+   figure: round "capsule" limbs instead of strokes. The body is neutral (text
+   colour), the muscles in use glow in the category colour (`--mf-hi`), the arm
+   and leg of the far side are paler (depth). Equipment (mat, bench, wall,
+   dumbbell …) sits discreetly beside it.
 
-   Zwei Wege mit derselben Geometrie: `motionSVG()`/`frameSVG()` liefern ein Bild als
-   Text (Kacheln, reduzierte Bewegung, Prüfbögen, Tests), `mountFigure()` baut die
-   Elemente einmal und `update()` setzt je Bild nur noch Koordinaten.
+   Two routes with the same geometry: `motionSVG()`/`frameSVG()` return an image as
+   text (tiles, reduced motion, check sheets, tests), `mountFigure()` builds the
+   elements once and `update()` only sets coordinates per frame.
    ========================================================================= */
 
 import { BODY, solvePose, posePoints, frameAt, cycleOf, introOf, keyPose, torsoDir } from './motion-rig.js';
@@ -19,7 +19,7 @@ import { coachParts, coachExtent, shadowOf, floorOf } from './coach-figure.js';
 const W = { torso: 13, thigh: 10, shin: 8.5, foot: 6, upper: 8, fore: 7 };
 const f1 = (n) => Math.round(n * 10) / 10;
 
-/** Formen einer gelösten Pose in Zeichenreihenfolge: { id, k, … , cls }. */
+/** Shapes of a solved pose in drawing order: { id, k, … , cls }. */
 export function figureParts(S, m) {
   const focus = new Set(m.focus || []);
   const tone = (seg, far) => `${focus.has(seg) ? 'mf-hi' : 'mf-ink'}${far ? ' mf-far' : ''}`;
@@ -47,9 +47,9 @@ export function figureParts(S, m) {
     parts.push({ id: 'both-hold', k: 'hold', what: h, at: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], view: S.view });
   };
   const glute = () => {
-    // Von vorn läge der Punkt im Schritt – dort zeigt die Färbung der Oberschenkel genug.
+    // From the front the point would lie in the crotch – there the colouring of the thighs shows enough.
     if (!focus.has('hip') || S.view === 'front') return;
-    // Das Gesäß sitzt hinter dem Becken; torsoDir(t + 90) zeigt zur Körpervorderseite.
+    // The buttock sits behind the pelvis; torsoDir(t + 90) points to the front of the body.
     const front = torsoDir((S.torso || 0) + 90);
     parts.push({ id: 'glute', k: 'dot', c: [S.hip[0] - front[0] * 3, S.hip[1] - front[1] * 3], r: 7, cls: 'mf-hi mf-fill' });
   };
@@ -58,8 +58,8 @@ export function figureParts(S, m) {
       parts.push({ id: 'torso', k: 'poly', pts: [S.hipR, S.hipL, S.shL, S.shR], cls: `${tone('torso')} mf-fill`, w: 7 });
       return;
     }
-    // Immer als Kurve, damit das Element beim Abspielen gleich bleibt; `curl` schiebt den
-    // Kontrollpunkt zum Rücken (Buckel) bzw. zum Bauch (Hohlkreuz).
+    // Always as a curve so that the element stays the same during playback; `curl` pushes the
+    // control point towards the back (hump) or towards the belly (hollow back).
     const front = torsoDir((S.torso || 0) + 90);
     const mid = [(S.hip[0] + S.sh[0]) / 2, (S.hip[1] + S.sh[1]) / 2];
     const c = [mid[0] - front[0] * (S.curl || 0), mid[1] - front[1] * (S.curl || 0)];
@@ -75,11 +75,11 @@ export function figureParts(S, m) {
   return parts;
 }
 
-/* ---------------------------------- Hilfsmittel ---------------------------------- */
+/* ---------------------------------- Equipment ---------------------------------- */
 
 /**
- * Hilfsmittel für eine Seite. Von vorn gespiegelte Übungen („je Seite“) spiegeln auf
- * der zweiten Seite auch Bank, Wand & Co. – sonst läge das Bein in der Luft.
+ * Equipment for one side. Exercises mirrored from the front ("per side") also mirror
+ * bench, wall & co. on the second side – otherwise the leg would hang in the air.
  */
 export function propsOf(m, side = 'a') {
   const P = m.props || {};
@@ -95,7 +95,7 @@ export function propsOf(m, side = 'a') {
   return out;
 }
 
-/** Statische Hilfsmittel (hinter der Figur). */
+/** Static equipment (behind the figure). */
 function propParts(m, vb, side = 'a') {
   const P = propsOf(m, side);
   const parts = [];
@@ -110,7 +110,7 @@ function propParts(m, vb, side = 'a') {
     if (m.view === 'front') {
       parts.push({ id: 'bar', k: 'line', p: [P.bar[0] - 42, P.bar[1]], q: [P.bar[0] + 42, P.bar[1]], w: 3.5, cls: 'mf-prop' });
     } else {
-      // Stange von der Seite: Querschnitt plus Pfosten bis zum Boden.
+      // Bar from the side: cross-section plus posts down to the floor.
       parts.push({ id: 'post', k: 'line', p: [P.bar[0] - 7, P.bar[1] + 2], q: [P.bar[0] - 7, 0], w: 2.4, cls: 'mf-prop' });
       parts.push({ id: 'bar', k: 'dot', c: P.bar, r: 4.6, cls: 'mf-prop mf-prop-fill' });
     }
@@ -119,7 +119,7 @@ function propParts(m, vb, side = 'a') {
   return parts;
 }
 
-/** Bänder zwischen Körperpunkten (dynamisch). */
+/** Bands between body points (dynamic). */
 function bandParts(m, S) {
   const pt = (ref) => {
     if (Array.isArray(ref)) return ref;
@@ -133,7 +133,7 @@ function bandParts(m, S) {
   return ((m.props || {}).band || []).map((b, i) => ({ id: `band${i}`, k: 'line', p: pt(b[0]), q: pt(b[1]), w: 2.4, cls: 'mf-band' }));
 }
 
-/** Gehaltenes Gerät als einfache Formen. */
+/** Held equipment as simple shapes. */
 function holdShapes(part) {
   const [x, y] = part.at;
   switch (part.what) {
@@ -151,7 +151,7 @@ function holdShapes(part) {
   }
 }
 
-/** Alle Formen eines Bildes (Figur, Geräte in der Hand, Bänder). `state` hält den Zopf-Nachschwung. */
+/** All shapes of a frame (figure, equipment in the hand, bands). `state` holds the ponytail's follow-through. */
 function shapesOf(m, pose, style = 'coach', state = null) {
   const S = solvePose(pose, m.view);
   const out = [];
@@ -164,7 +164,7 @@ function shapesOf(m, pose, style = 'coach', state = null) {
   return out;
 }
 
-/** Gehaltene Geräte der Vorturnerin: vor die Hand der jeweiligen Seite. */
+/** Equipment held by the coach figure: in front of the hand of the respective side. */
 function coachHolds(S, m, parts) {
   const h = m.hold || {};
   const out = [...parts];
@@ -176,13 +176,13 @@ function coachHolds(S, m, parts) {
   return out;
 }
 
-/* ---------------------------------- Rahmen ---------------------------------- */
+/* ---------------------------------- Frame ---------------------------------- */
 
 const vbCache = new WeakMap();
 const boundsCache = new WeakMap();
 /**
- * ViewBox, die alle Bilder der Übung fasst (3:2). `crop` (y-Wert) zeigt nur den
- * Oberkörper – bei reinen Armübungen wird die Figur so deutlich größer.
+ * ViewBox that fits all frames of the exercise (3:2). `crop` (y value) shows only the
+ * upper body – for arm-only exercises the figure becomes much larger this way.
  */
 export function viewBoxOf(m) {
   if (vbCache.has(m)) return vbCache.get(m);
@@ -191,19 +191,19 @@ export function viewBoxOf(m) {
   return vb;
 }
 
-/** ViewBox für ein anderes Seitenverhältnis (z. B. die Bühne der Session), unten bündig. */
+/** ViewBox for a different aspect ratio (e.g. the session stage), flush at the bottom. */
 export function viewBoxFor(m, aspect = 1.5) {
   return aspect > 0 && Number.isFinite(aspect) ? fitBox(boundsOf(m), aspect) : viewBoxOf(m);
 }
 
-/** Erweitert [x0, y0, x1, y1] auf das Seitenverhältnis – waagrecht mittig, nach oben. */
+/** Extends [x0, y0, x1, y1] to the aspect ratio – horizontally centred, upwards. */
 function fitBox([x0, y0, x1, y1], aspect) {
   let w = x1 - x0; let h = y1 - y0;
   if (w / h < aspect) { const nw = h * aspect; x0 -= (nw - w) / 2; w = nw; } else { const nh = w / aspect; y0 -= nh - h; h = nh; }
   return [f1(x0), f1(y0), f1(w), f1(h)];
 }
 
-/** Grenzen aller Bilder der Übung samt Rand: [x0, y0, x1, y1]. */
+/** Bounds of all frames of the exercise including margin: [x0, y0, x1, y1]. */
 function boundsOf(m) {
   if (boundsCache.has(m)) return boundsCache.get(m);
   const limit = m.crop != null ? m.crop : Infinity;
@@ -214,7 +214,7 @@ function boundsOf(m) {
     x0 = Math.min(x0, p[0] - pad); x1 = Math.max(x1, p[0] + pad); y0 = Math.min(y0, p[1] - pad);
     if (m.crop == null) y1 = Math.max(y1, p[1] + pad);
   };
-  // Alles abtasten, was gezeigt werden kann: Einstieg und Durchgang, bei „je Seite“ beide Seiten.
+  // Sample everything that can be shown: intro and cycle, for "per side" both sides.
   const sides = m.sides === 'each' ? ['a', 'b'] : ['a'];
   for (const side of sides) {
     for (const list of [introOf(m, side), cycleOf(m, side)]) {
@@ -236,17 +236,17 @@ function boundsOf(m) {
     if (P.ball) take([P.ball[0], P.ball[1]], (P.ball[2] || 7) + 3);
   }
   if (m.hold) { x0 -= 8; x1 += 8; }
-  // Rand; das Seitenverhältnis setzt fitBox (unten bündig: Boden bzw. Schnittkante).
+  // Margin; the aspect ratio is set by fitBox (flush at the bottom: floor or cut edge).
   x0 -= 6; x1 += 6; y0 -= 6;
   const b = [x0, y0, x1, y1];
   boundsCache.set(m, b);
   return b;
 }
 
-/** Boden sichtbar? (nicht bei Ausschnitt, Draufsicht oder hängenden Übungen) */
+/** Floor visible? (not for a crop, top-down view or hanging exercises) */
 const showFloor = (m) => m.floor !== false && m.crop == null;
 
-/** Welche Posen das Standbild zeigt: Start blass (`ghost`), Zielpose kräftig (`solid`). */
+/** Which poses the still image shows: start pale (`ghost`), target pose strong (`solid`). */
 export function thumbKeys(m) {
   const cyc = cycleOf(m);
   const peak = m.thumb || (cyc.find((p) => !p.hold && p.to !== m.start) || {}).to || m.start;
@@ -254,7 +254,7 @@ export function thumbKeys(m) {
   return { ghost: ghost && ghost !== peak ? ghost : null, solid: peak };
 }
 
-/* ---------------------------------- Text-Ausgabe ---------------------------------- */
+/* ---------------------------------- Text output ---------------------------------- */
 
 function attrsOf(s) {
   switch (s.k) {
@@ -280,17 +280,17 @@ function frameOpen(m, { color = '', label = '', side = 'a', style: look = 'coach
 }
 
 /**
- * Standbild als SVG-Text: `solid` kräftig, `ghost` (optional) blass dahinter –
- * so zeigt ein Bild Start und Ziel der Bewegung.
+ * Still image as SVG text: `solid` strong, `ghost` (optional) pale behind it –
+ * so one image shows the start and the goal of the movement.
  */
 export function motionSVG(m, { solid = null, ghost = null, color = '', label = '', side = 'a', style = 'coach' } = {}) {
-  // Der blasse Startzustand ohne Schatten – sonst stünden zwei Schatten am Boden.
+  // The pale start state without a shadow – otherwise two shadows would stand on the floor.
   const g = ghost ? `<g class="mf-ghost">${shapesOf(m, keyPose(m, ghost, side), style).filter((x) => x.cls !== 'cf-shadow').map(attrsOf).join('')}</g>` : '';
   const s = shapesOf(m, keyPose(m, solid || m.start, side), style).map(attrsOf).join('');
   return `${frameOpen(m, { color, label, side, style })}${g}<g>${s}</g></svg>`;
 }
 
-/** Ein beliebiges Bild des Ablaufs (t in Sekunden) als SVG-Text – für Prüfbögen und Tests. */
+/** Any frame of the sequence (t in seconds) as SVG text – for check sheets and tests. */
 export function frameSVG(m, t, { color = '', list = null, side = 'a', style = 'coach' } = {}) {
   const fr = frameAt(m, t, list || cycleOf(m, side));
   return `${frameOpen(m, { color, side, style })}<g>${shapesOf(m, fr.pose, style).map(attrsOf).join('')}</g></svg>`;
@@ -302,14 +302,14 @@ const SVGNS = 'http://www.w3.org/2000/svg';
 const TAG = { line: 'line', dot: 'circle', ring: 'circle', rect: 'rect', poly: 'polygon', curve: 'path', path: 'path', circle: 'circle', ellipse: 'ellipse' };
 
 /**
- * Baut die Figur einmal als DOM. `update(t, list)` zeichnet das Bild zum Zeitpunkt t
- * (Sekunden) innerhalb einer Abschnittsliste (Einstieg oder Durchgang) und liefert den
- * Abschnitt zurück; `setSide()` wechselt die gespiegelten Hilfsmittel.
+ * Builds the figure once as DOM. `update(t, list)` draws the frame at time t
+ * (seconds) within a section list (intro or cycle) and returns the
+ * section; `setSide()` switches the mirrored equipment.
  */
 export function mountFigure(svg, m, { color = '', side = 'a', style = 'coach', aspect = null } = {}) {
   const vb = aspect ? viewBoxFor(m, aspect) : viewBoxOf(m);
   const doc = svg.ownerDocument || document;
-  const state = {};   // Zopf-Nachschwung über die Bilder hinweg
+  const state = {};   // ponytail follow-through across the frames
   svg.setAttribute('viewBox', vb.join(' '));
   svg.setAttribute('class', style === 'coach' ? 'mf mf--coach' : 'mf');
   if (color) svg.setAttribute('style', `--mf-hi:${color}`);

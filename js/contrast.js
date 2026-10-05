@@ -1,16 +1,16 @@
 /* =========================================================================
-   contrast.js — Farbkontrast nach WCAG 2.x (UI-12): relative Luminanz,
-   Kontrastverhältnis und daraus abgeleitete Varianten der Akzentfarbe.
+   contrast.js — colour contrast according to WCAG 2.x (UI-12): relative luminance,
+   contrast ratio and the variants of the accent colour derived from them.
 
-   Die Akzentfarbe ist frei wählbar (acht Vorgaben, Mitgliedsfarben beim Verwalten).
-   Flächen behalten sie; für TEXT und Symbole errechnet die App passende Varianten:
-     onAccent   – Schrift AUF der Akzentfläche (Knöpfe, Chips): Weiß, dunkel getönt
-                  oder Schwarz – was ≥ 4,5:1 erreicht (vorher fest Weiß bis L 0,55:
-                  2,65:1 auf dem Standardgrün).
-     textOn     – Akzent als Text auf hellem bzw. dunklem Grund, so wenig wie nötig
-                  abgedunkelt/aufgehellt, bis ≥ 4,5:1.
-     heroEnd    – zweite Farbe des Hero-Verlaufs: weg von der Schriftfarbe (bei dunkler
-                  Schrift heller, bei weißer dunkler), damit der Kontrast überall hält.
+   The accent colour is freely selectable (eight presets, member colours in the
+   management view). Surfaces keep it; for TEXT and icons the app computes suitable variants:
+     onAccent   – text ON the accent surface (buttons, chips): white, dark-tinted
+                  or black – whichever reaches ≥ 4.5:1 (previously fixed white up to L 0.55:
+                  2.65:1 on the default green).
+     textOn     – accent as text on a light or dark background, darkened/lightened
+                  only as much as needed to reach ≥ 4.5:1.
+     heroEnd    – second colour of the hero gradient: moved away from the text colour (lighter
+                  for dark text, darker for white text) so that the contrast holds everywhere.
    ========================================================================= */
 
 export function hexToRgb(hex) {
@@ -25,7 +25,7 @@ export function rgbToHex([r, g, b]) {
   return '#' + [r, g, b].map((c) => Math.round(Math.max(0, Math.min(255, c))).toString(16).padStart(2, '0')).join('');
 }
 
-/** Relative Luminanz (WCAG 2.x). */
+/** Relative luminance (WCAG 2.x). */
 export function luminance(hex) {
   const rgb = hexToRgb(hex);
   if (!rgb) return 0;
@@ -34,20 +34,20 @@ export function luminance(hex) {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
-/** Kontrastverhältnis zweier Farben (1 … 21). */
+/** Contrast ratio of two colours (1 … 21). */
 export function contrast(a, b) {
   const la = luminance(a), lb = luminance(b);
   return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
 }
 
-/** Mischung in sRGB: t = Anteil von b (0 … 1) – wie color-mix(in srgb, a, b t). */
+/** Mix in sRGB: t = share of b (0 … 1) – like color-mix(in srgb, a, b t). */
 export function mix(a, b, t) {
   const A = hexToRgb(a), B = hexToRgb(b);
   if (!A || !B) return a;
   return rgbToHex(A.map((c, i) => c + (B[i] - c) * t));
 }
 
-/** Schrift auf der Akzentfläche: Weiß, sonst eine dunkle Tönung des Akzents, sonst Schwarz. */
+/** Text on the accent surface: white, otherwise a dark tint of the accent, otherwise black. */
 export function onAccent(accent, target = 4.5) {
   if (contrast('#ffffff', accent) >= target) return '#ffffff';
   const tinted = mix(accent, '#000000', 0.8);
@@ -55,7 +55,7 @@ export function onAccent(accent, target = 4.5) {
   return contrast('#000000', accent) >= contrast('#ffffff', accent) ? '#000000' : '#ffffff';
 }
 
-/** Akzent in kleinen Schritten Richtung `towards` verschieben, bis er auf `bg` ≥ target erreicht. */
+/** Shift the accent in small steps towards `towards` until it reaches ≥ target on `bg`. */
 export function textOn(accent, bg, { towards = '#000000', target = 4.5 } = {}) {
   for (let t = 0; t <= 1.0001; t += 0.02) {
     const c = mix(accent, towards, t);
@@ -65,9 +65,9 @@ export function textOn(accent, bg, { towards = '#000000', target = 4.5 } = {}) {
 }
 
 /**
- * Alle Akzent-Varianten für ein Theme. `dark`: dunkles Theme. Die Hintergründe entsprechen
- * css/style.css (hell: --bg, dunkel: --surface-2 – jeweils der ungünstigste Grund); der
- * Soft-Grund (Chips, Soft-Knöpfe) ist der Akzent zu 14 % darüber.
+ * All accent variants for a theme. `dark`: dark theme. The backgrounds correspond to
+ * css/style.css (light: --bg, dark: --surface-2 – in each case the least favourable background); the
+ * soft background (chips, soft buttons) is the accent at 14 % on top.
  */
 export function accentPalette(accent, dark = false) {
   const base = dark ? '#1d242c' : '#eef1f5';

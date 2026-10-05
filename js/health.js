@@ -1,7 +1,7 @@
 /* =========================================================================
-   health.js — Körperwerte (Health-Log): Trends, Charts, Erfassung.
-   Darstellung bewusst wertfrei (Trend, keine starren Vorgaben). Metriken
-   einzeln abschaltbar (Profil-Einstellungen).
+   health.js — body values (health log): trends, charts, recording.
+   Presentation deliberately non-judgemental (trend, no rigid targets). Metrics
+   can be switched off individually (profile settings).
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -24,14 +24,14 @@ import { t, tp } from './i18n.js';
 function metricsDef() {
   const p = store.profile();
   const elig = currentEligibility();
-  // Gewicht: „besser“ ist die Richtung zum Zielgewicht (abnehmen ODER zunehmen) – ohne Ziel,
-  // am Ziel oder ohne Gewichtsziele (Kinder, Schwangerschaft, Essstörung) bleibt die Farbe neutral.
+  // Weight: "better" is the direction towards the target weight (lose OR gain) – without a goal,
+  // at the goal or without weight goals (children, pregnancy, eating disorder) the colour stays neutral.
   const target = elig.noWeightGoals ? null : p.targetWeightKg;
   const gs = target != null
     ? weightGoalStatus({ current: weightNow(store.get('health'), p), target, start: p.targetWeightStartKg != null ? p.targetWeightStartKg : p.weightKg })
     : null;
   const weightToward = gs && gs.status !== 'halten' && gs.direction !== 'hold' ? gs.direction : null;
-  // HRV: Beschriftung nach der Messart des jüngsten Werts (SDNN von Apple, RMSSD von vielen Uhren).
+  // HRV: label by the measurement method of the most recent value (SDNN from Apple, RMSSD from many watches).
   const hrvMethod = currentHrvMethod(store.get('health'));
   return {
     weight: { label: t('healthView.metricWeight'), unit: 'kg', icon: 'scale', digits: 1, target, toward: weightToward },
@@ -52,7 +52,7 @@ function sortedHealth() {
   return store.get('health').slice().sort((a, b) => a.date.localeCompare(b.date));
 }
 
-/** Zeitraum der Verläufe; bleibt über das Neuzeichnen hinweg erhalten. */
+/** Time range of the trends; is kept across redraws. */
 const RANGES = [
   { value: '3m', get label() { return t('healthView.range3m'); }, days: 92 },
   { value: '1y', get label() { return t('healthView.range1y'); }, days: 366 },
@@ -60,7 +60,7 @@ const RANGES = [
 ];
 const uiState = { range: '1y' };
 
-/** Median je Kalenderwoche (Montag als Datum) – für lange Verläufe (FE-09). */
+/** Median per calendar week (Monday as the date) – for long trends (FE-09). */
 export function weeklyMedian(points) {
   const byWeek = new Map();
   points.forEach((p) => {
@@ -95,11 +95,11 @@ export function render(view) {
     return;
   }
 
-  // Alkoholfreie Tage in Folge – nur wenn überhaupt ein Alkohol-Tag erfasst wurde.
+  // Alcohol-free days in a row – only if an alcohol day was recorded at all.
   const sober = alcoholFreeStreak(store.get('health'));
   if (sober != null) view.appendChild(soberCard(sober));
 
-  // Kachel-Übersicht der aktuellen Werte (Muskelmasse der Waage, sonst fettfreie Masse)
+  // Tile overview of the current values (muscle mass from the scale, otherwise fat-free mass)
   const grid = el('div', { class: 'stat-grid stat-grid--pairs' });
   let anyDelta = false;
   const hasData = (k) => enabled[k] !== false && data.some((d) => d[k] != null);
@@ -108,8 +108,8 @@ export function render(view) {
     if (enabled[key] === false) return;
     const series = data.filter((d) => d[key] != null);
     if (!series.length) return;
-    // Angezeigt: der zuletzt gemessene Wert. Veränderung: geglätteter Trend (7-Tage-Median),
-    // damit Tagesschwankungen nicht als Fortschritt oder Rückschritt erscheinen.
+    // Shown: the most recently measured value. Change: smoothed trend (7-day median),
+    // so that daily fluctuations do not appear as progress or regression.
     const last = series.at(-1)[key];
     const d = defs[key];
     const ch = smoothedChange(data, key);
@@ -129,8 +129,8 @@ export function render(view) {
   view.appendChild(grid);
   if (anyDelta) view.appendChild(el('div', { class: 'dim mt-1', style: { fontSize: '.72rem' }, text: t('healthView.deltaNote') }));
 
-  // Zeitraum der Verläufe (bleibt beim Neuzeichnen stehen): 10 Jahre Apple-Health-Gewicht
-  // waren sonst ein einziges Band ohne ablesbaren Zeitraum (FE-09).
+  // Time range of the trends (stays when redrawing): 10 years of Apple Health weight
+  // used to be a single band with no readable time range (FE-09).
   const range = RANGES.find((r) => r.value === uiState.range) || RANGES[1];
   const from = range.days ? addDays(todayStr(), -range.days) : null;
   view.appendChild(el('div', { class: 'row row--between mt-4', style: { flexWrap: 'wrap', gap: '8px' } }, [
@@ -138,17 +138,17 @@ export function render(view) {
     segmented(RANGES, range.value, (v) => { uiState.range = v; refreshView(); }, { label: t('healthView.rangeLabel') }),
   ]));
 
-  // Charts je aktivierter Metrik mit Verlauf (HRV nur innerhalb einer Messart – SDNN und
-  // RMSSD sind verschiedene Größen, ein Gerätewechsel sähe sonst wie ein Einbruch aus).
+  // Charts per enabled metric with a trend (HRV only within one measurement method – SDNN and
+  // RMSSD are different quantities, a device change would otherwise look like a slump).
   Object.entries(defs).forEach(([key, d]) => {
     if (enabled[key] === false) return;
     const series = (key === 'hrv' ? withHrvMethod(data, d.method) : data)
       .filter((x) => x[key] != null && (!from || x.date >= from));
     if (series.length < 2) return;
     const raw = series.map((x) => ({ label: fmtDayMonth(x.date), date: x.date, value: x[key] }));
-    // Lange Reihen als Wochenmittel (Median je Kalenderwoche) – Tageswerte wären nur Rauschen.
+    // Long series as weekly means (median per calendar week) – daily values would be mere noise.
     const points = raw.length > 150 ? weeklyMedian(raw) : raw;
-    // „HRV (RMSSD)“ + Einheit → „HRV (RMSSD, ms)“ statt doppelter Klammern.
+    // "HRV (RMSSD)" + unit → "HRV (RMSSD, ms)" instead of double parentheses.
     const head = !d.unit ? d.label : d.label.endsWith(')') ? `${d.label.slice(0, -1)}, ${d.unit})` : `${d.label} (${d.unit})`;
     view.appendChild(sectionHead(head));
     const card = el('div', { class: 'card' });
@@ -162,7 +162,7 @@ export function render(view) {
     view.appendChild(card);
   });
 
-  // Letzte Einträge
+  // Latest entries
   view.appendChild(sectionHead(t('healthView.entries')));
   const list = el('div', { class: 'list-card' });
   data.slice().reverse().slice(0, 12).forEach((entry) => {
@@ -184,12 +184,12 @@ export function render(view) {
 
 function deltaColor(d, delta) {
   if (delta === 0) return 'var(--text-3)';
-  if (!d.toward) return 'var(--text-2)';   // ohne Zielrichtung wertfrei
+  if (!d.toward) return 'var(--text-2)';   // neutral without a target direction
   const improving = (d.toward === 'down' && delta < 0) || (d.toward === 'up' && delta > 0);
-  return improving ? 'var(--good)' : 'var(--text-2)'; // wertfrei: kein „rot“
+  return improving ? 'var(--good)' : 'var(--text-2)'; // neutral: no "red"
 }
 
-/* ----------------------------- Erfassung -------------------------------- */
+/* ----------------------------- Recording -------------------------------- */
 function soberCard(streak) {
   const medal = streak >= 100 ? '🏆' : streak >= 30 ? '💎' : streak >= 7 ? '🌿' : '🫧';
   const msg = streak >= 30 ? t('healthView.soberStrong') : streak >= 7 ? t('healthView.soberWeek') : t('healthView.soberKeepGoing');
@@ -208,9 +208,9 @@ export function openHealthEntry(existing = {}) {
   const enabled = store.settings().metricsEnabled || {};
   const defs = metricsDef();
   const date = existing.date || todayStr();
-  // Ein Eintrag je Datum. Die Felder zeigen IMMER den Eintrag des gewählten Tages –
-  // auch nach einem Datumswechsel im Dialog. Früher blieb der Eintrag des Öffnungstags
-  // gebunden und wurde beim Speichern auf das neue Datum verschoben (Datenverlust).
+  // One entry per date. The fields ALWAYS show the entry of the selected day –
+  // also after a date change in the dialog. Previously the entry of the opening day
+  // stayed bound and was moved to the new date on saving (data loss).
   const entryFor = (d) => store.get('health').find((h) => h.date === d)
     || (existing.id && existing.date === d ? existing : {});
   let current = entryFor(date);
@@ -218,7 +218,7 @@ export function openHealthEntry(existing = {}) {
   const dateI = input({ type: 'date', value: date });
   const inputs = {};
   const fields = [field(t('healthView.date'), dateI)];
-  // HRV-Messart: Apple liefert SDNN, viele Uhren und Ringe RMSSD – beides nicht vergleichbar.
+  // HRV measurement method: Apple supplies SDNN, many watches and rings RMSSD – not comparable.
   const methodSel = el('select', { class: 'select', 'aria-label': t('healthView.hrvMethodLabel') },
     Object.entries(HRV_METHODS).map(([v, l]) => el('option', { value: v, text: v === 'sdnn' ? t('healthView.methodApple', { method: l }) : t('healthView.methodWatch', { method: l }) })));
   const defaultMethod = () => current.hrvMethod || (defs.hrv.method && defs.hrv.method !== 'unbekannt' ? defs.hrv.method : 'rmssd');
@@ -237,15 +237,15 @@ export function openHealthEntry(existing = {}) {
   let alcohol = !!current.alcohol;
   const alcoholToggle = toggle(alcohol, (v) => { alcohol = v; }, t('healthView.alcohol'));
   const alcoholInput = alcoholToggle.querySelector('input');
-  // Toggle gehört in eine eigene Zeile (Label links, Schalter rechts) – nicht in
-  // ein block-`field`, sonst überdeckt der Schalter das Label.
+  // The toggle belongs in its own row (label left, switch right) – not in
+  // a block `field`, otherwise the switch covers the label.
   fields.push(el('div', { class: 'row row--between', style: { marginBottom: 'var(--sp-4)' } }, [
     el('span', { class: 'field__label', style: { marginBottom: '0' }, text: t('healthView.alcohol') }),
     alcoholToggle,
   ]));
   fields.push(field(t('healthView.notes'), notesI));
 
-  // Datum gewechselt -> Werte dieses Tages laden (oder leeren, wenn es noch keine gibt).
+  // Date changed -> load the values of this day (or clear them if there are none yet).
   const loadDay = () => {
     current = entryFor(dateI.value || date);
     Object.entries(inputs).forEach(([k, inp]) => { inp.value = current[k] ?? ''; });
@@ -266,8 +266,8 @@ export function openHealthEntry(existing = {}) {
         class: 'btn btn--primary grow', text: t('healthView.save'),
         onclick: () => {
           const d = dateI.value || date;
-          // Immer den Datensatz des GEWÄHLTEN Tages schreiben (oder neu anlegen) –
-          // der Eintrag des Öffnungstags bleibt unverändert.
+          // Always write the record of the SELECTED day (or create a new one) –
+          // the entry of the opening day stays unchanged.
           const base = entryFor(d);
           const rec = { ...base, id: base.id || uid('h'), date: d, source: base.source || 'manual', notes: notesI.value.trim() };
           Object.entries(inputs).forEach(([k, inp]) => {
@@ -275,8 +275,8 @@ export function openHealthEntry(existing = {}) {
             rec[k] = Number.isNaN(v) ? null : v;
           });
           rec.hrvMethod = rec.hrv != null ? methodSel.value : null;
-          // Von Hand eingetragene Muskelmasse ist echte Muskelmasse (Waage) – auch an einem Tag
-          // mit Apple-Werten, deren alte „Muskelmasse“ als fettfreie Masse gelesen wird.
+          // Muscle mass entered by hand is real muscle mass (scale) – also on a day
+          // with Apple values whose old "muscle mass" is read as fat-free mass.
           if (rec.muscleMass != null) rec.muscleMassManual = true; else delete rec.muscleMassManual;
           rec.alcohol = alcohol;
           store.upsert('health', rec);

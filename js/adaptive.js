@@ -1,12 +1,12 @@
 /* =========================================================================
-   adaptive.js — Coach-Hinweise (Information, keine Plan-Umschreibung):
-     - Bereitschaft aus HRV / Ruhepuls / Schlaf
-     - Formprognose vs. Zielzeit
-     - Herzfrequenz der lockeren Läufe
-   Ein Urteil über die Belastung fällt hier NICHT – das kommt allein aus load.js,
-   die Tagesempfehlung allein aus coach.js (früher standen hier ein eigenes
-   RPE-Belastungsurteil und damit widersprüchliche Karten auf „Heute“).
-   Alles als Orientierung, ohne Druck und ohne Versprechen.
+   adaptive.js — coach hints (information, no plan rewriting):
+     - Readiness from HRV / resting heart rate / sleep
+     - Form prediction vs. target time
+     - Heart rate of the easy runs
+   No judgement about the load is made here – that comes solely from load.js,
+   the daily recommendation solely from coach.js (formerly this file held its own
+   RPE load judgement and thus contradictory cards on "Today").
+   All of it as guidance, without pressure and without promises.
    ========================================================================= */
 
 import { diffDays, fmtDec, fmtDuration, parseHms } from './ui.js';
@@ -16,9 +16,9 @@ import { hrvMethodOf } from './healthdata.js';
 import { t } from './i18n.js';
 
 /**
- * HRV-Lage: ln(HRV) im 7-Tage-Mittel gegen die Normalbandbreite (Mittel ± 0,5 SD) der Tageswerte
- * der letzten 28 Tage – nur Werte derselben Messart wie der jüngste. Braucht mindestens 3 Werte
- * in 7 Tagen und 10 in 28 Tagen, sonst null.
+ * HRV status: ln(HRV) as 7-day mean against the normal range (mean ± 0.5 SD) of the daily values
+ * of the last 28 days – only values of the same measurement type as the latest. Needs at least 3 values
+ * in 7 days and 10 in 28 days, otherwise null.
  * @returns {{state:'low'|'normal'|'high', mean7:number, lo:number, hi:number}|null}
  */
 export function hrvBand(health, last, today) {
@@ -36,14 +36,14 @@ export function hrvBand(health, last, today) {
   return { state: mean7 < lo ? 'low' : mean7 > hi ? 'high' : 'normal', mean7, lo, hi };
 }
 
-/** Bereitschafts-Score (0–100) aus den jüngsten Erholungswerten. */
+/** Readiness score (0–100) from the latest recovery values. */
 export function readinessScore(health, today) {
   const sorted = (health || [])
     .filter((h) => !h.deleted && (h.restingHr != null || h.hrv != null || h.sleepHours != null))
     .sort((a, b) => a.date.localeCompare(b.date));
   if (!sorted.length) return null;
   const last = sorted.at(-1);
-  if (today && diffDays(last.date, today) > 4) return null; // zu alt
+  if (today && diffDays(last.date, today) > 4) return null; // too old
 
   const recent = sorted.slice(-14);
   const avg = (key) => {
@@ -59,10 +59,10 @@ export function readinessScore(health, today) {
     score -= d * 3;
     factors.push(d <= 0 ? t('adaptive.rhrLow') : t('adaptive.rhrRaised'));
   }
-  // HRV (TRAIN-48): nicht der Einzelwert gegen einen Schnitt, sondern ln(HRV) als 7-Tage-Mittel
-  // gegen die eigene Normalbandbreite der letzten 28 Tage (Mittel ± 0,5 SD, nach Plews/Buchheit).
-  // Tagesrauschen kippt so nichts mehr; erst eine Abweichung über mehrere Tage zählt. Nur Werte
-  // DERSELBEN Messart (SDNN ≠ RMSSD) – ein Wechsel der Uhr wäre sonst ein scheinbarer Sprung.
+  // HRV (TRAIN-48): not the single value against an average, but ln(HRV) as a 7-day mean
+  // against one's own normal range of the last 28 days (mean ± 0.5 SD, after Plews/Buchheit).
+  // Daily noise no longer tips anything; only a deviation over several days counts. Only values
+  // of the SAME measurement type (SDNN ≠ RMSSD) – a change of watch would otherwise be an apparent jump.
   const hrv = hrvBand(sorted, last, today || last.date);
   if (hrv) {
     if (hrv.state === 'low') { score -= 10; factors.push(t('adaptive.hrvLow')); }
@@ -79,7 +79,7 @@ export function readinessScore(health, today) {
   return { score, label, factors, date: last.date };
 }
 
-/** Gleicht die Herzfrequenz lockerer Läufe mit der Grundlagenzone ab (Pace vs. HF). */
+/** Compares the heart rate of easy runs with the base zone (pace vs. HR). */
 export function paceHrFeedback(sessions, profile, today) {
   const hrZones = (profile && profile.hrZones) || [];
   const z2 = hrZones.find((z) => z.zone === 2);
@@ -98,11 +98,11 @@ export function paceHrFeedback(sessions, profile, today) {
 }
 
 /**
- * Liefert die anzuzeigenden Coach-Hinweise (Information).
- * `coachWarning`: Die Tagesempfehlung (coach.js) ist gerade ein Warnsignal (Art als
- * Text, z. B. 'return', oder true) – dann darf die Bereitschaftskarte nicht
- * „anspruchsvolles Training ist heute gut drin“ danebenstellen. `loadWarning`: Die
- * Karte „Belastung & Form“ warnt (erhöhte Last, deutlich ermüdet …) – dann ebenso wenig.
+ * Supplies the coach hints to display (information).
+ * `coachWarning`: the daily recommendation (coach.js) is currently a warning signal (kind as
+ * text, e.g. 'return', or true) – then the readiness card must not place
+ * "a demanding session is fine today" next to it. `loadWarning`: the
+ * "Load & form" card warns (raised load, clearly fatigued …) – then likewise not.
  * @returns {Array<{icon,title,text,tone}>}
  */
 export function adaptiveInsights({ sessions = [], health = [], events = [], profile = {}, today, coachWarning = false, loadWarning = false }) {
@@ -126,10 +126,10 @@ export function adaptiveInsights({ sessions = [], health = [], events = [], prof
     const pred = predictRace(sessions, ev.distanceKm, { hrZones: profile.hrZones, today });
     if (pred) {
       const targetSec = parseHms(ev.targetTime);
-      const ahead = targetSec && pred.seconds <= targetSec * 0.97;   // deutlich schneller als das Ziel
+      const ahead = targetSec && pred.seconds <= targetSec * 0.97;   // clearly faster than the target
       const onTrack = !targetSec || pred.seconds <= targetSec * 1.02;
-      // „Ziel schärfen“ nur, wenn die Prognose trägt: nicht aus lockeren Läufen und
-      // nicht, solange Umfang/Long Run für Marathon bzw. Halbmarathon noch fehlen.
+      // The "sharpen target" hint only if the prediction holds: not from easy runs and
+      // not while volume/long run for marathon or half marathon are still missing.
       const solid = !pred.onlyEasy && !pred.caveat;
       out.push({
         icon: 'target',

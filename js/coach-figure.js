@@ -1,15 +1,15 @@
 /* =========================================================================
-   coach-figure.js — die Vorturnerin: zeichnet eine gelöste Pose (motion-rig.js)
-   als illustrierte Figur statt als Strichmännchen.
+   coach-figure.js — the demonstrator: draws a solved pose (motion-rig.js)
+   as an illustrated figure instead of a stick figure.
 
-   Körper mit Volumen (Oberschenkel, Wade, Oberarm, Rumpf mit Taille), Kleidung
-   (Top, Leggings, Schuhe), Kopf mit Haaren und Zopf. Der Zopf hängt der
-   Schwerkraft nach und schwingt beim Abspielen nach (`state`). Die Glieder der
-   abgewandten Seite sind dunkler (Tiefe), die beanspruchten Muskeln leuchten in
-   der Kategoriefarbe (`--mf-hi`).
+   Body with volume (thigh, calf, upper arm, torso with waist), clothing
+   (top, leggings, shoes), head with hair and braid. The braid hangs
+   with gravity and swings on during playback (`state`). The limbs of the
+   far side are darker (depth), the muscles being worked glow in
+   the category colour (`--mf-hi`).
 
-   Liefert nur Formen ({ k: 'path' | 'circle', … , cls }) – gezeichnet wird in
-   motion-figure.js, als Text (Kacheln) oder als DOM (Animation).
+   Only supplies shapes ({ k: 'path' | 'circle', … , cls }) – drawing is done in
+   motion-figure.js, as text (tiles) or as DOM (animation).
    ========================================================================= */
 
 import { BODY, torsoDir } from './motion-rig.js';
@@ -23,10 +23,10 @@ const norm = (a) => { const l = len(a) || 1; return [a[0] / l, a[1] / l]; };
 const perp = (u) => [-u[1], u[0]];
 const lerpP = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k];
 const r1 = (n) => Math.round(n * 10) / 10;
-/** Punkt in einem lokalen System: Ursprung o, Achsen x und y. */
+/** Point in a local system: origin o, axes x and y. */
 const at = (o, x, y, a, b) => add(o, add(mul(x, a), mul(y, b)));
 
-/** Geschlossene, weiche Kontur durch die Punkte (Catmull-Rom als kubische Bézier-Kurven). */
+/** Closed, soft outline through the points (Catmull-Rom as cubic Bézier curves). */
 export function smoothClosed(pts) {
   const n = pts.length;
   const P = (i) => pts[(i + n) % n];
@@ -41,8 +41,8 @@ export function smoothClosed(pts) {
 }
 
 /**
- * Umriss eines Glieds von p nach q: Radius ra → rb, `bulge` wölbt die Seite +n bzw. −n
- * (Muskelbauch bei `at`, Anteil der Länge). Die Enden sind rund.
+ * Outline of a limb from p to q: radius ra → rb, `bulge` bulges the side +n or −n
+ * (muscle belly at `at`, fraction of the length). The ends are round.
  */
 function limbPts(p, q, ra, rb, { plus = 0, minus = 0, at: m = 0.4 } = {}) {
   const u = norm(sub(q, p));
@@ -61,18 +61,18 @@ function limbPts(p, q, ra, rb, { plus = 0, minus = 0, at: m = 0.4 } = {}) {
   ];
 }
 
-/* ------------------------------ Maße ------------------------------ */
+/* ------------------------------ Dimensions ------------------------------ */
 
 const R = {
   thigh: [8.2, 4.7], shin: [4.2, 2.5], ankle: 2.2, upper: [4.3, 3.3], fore: [3.3, 2.5],
   hand: 3.1, neck: [3.3, 3.0], head: BODY.head,
 };
-/** Halbe Rumpfbreite vorn/hinten entlang der Wirbelsäule (t = 0 Becken … 1 Schulter), Seitenansicht. */
+/** Half torso width front/back along the spine (t = 0 pelvis … 1 shoulder), side view. */
 const SIDE_FRONT = [[0, 6.6], [0.16, 6.0], [0.36, 5.2], [0.56, 6.0], [0.72, 7.6], [0.88, 7.0], [1, 5.6]];
 const SIDE_BACK = [[0, 8.6], [0.16, 7.2], [0.36, 5.8], [0.56, 6.2], [0.72, 6.8], [0.88, 7.0], [1, 6.0]];
-/** Halbe Rumpfbreite von vorn. */
+/** Half torso width from the front. */
 const FRONT_W = [[-0.08, 9.6], [0, 11.8], [0.16, 11.4], [0.4, 9.0], [0.66, 10.4], [0.86, 12.6], [1, 11.6]];
-const TOP_FROM = 0.2;   // ab hier trägt der Rumpf das Top, darunter Leggings
+const TOP_FROM = 0.2;   // from here on the torso wears the top, below it leggings
 
 function profile(table, t) {
   for (let i = 1; i < table.length; i++) {
@@ -84,9 +84,9 @@ function profile(table, t) {
   return table[table.length - 1][1];
 }
 
-/* ------------------------------ Rumpf ------------------------------ */
+/* ------------------------------ Torso ------------------------------ */
 
-/** Wirbelsäule als quadratische Kurve wie in der Linienfigur (Becken → Schulter, `curl`). */
+/** Spine as a quadratic curve as in the line figure (pelvis → shoulder, `curl`). */
 function spineOf(S) {
   const front = torsoDir((S.torso || 0) + 90);
   const mid = lerpP(S.hip, S.sh, 0.5);
@@ -96,7 +96,7 @@ function spineOf(S) {
   return { point, tangent, front };
 }
 
-/** Rumpfumriss der Seitenansicht zwischen t0 und t1 (Becken: hinten mit Po). */
+/** Torso outline of the side view between t0 and t1 (pelvis: with the buttocks at the back). */
 function sideTorsoPts(S, t0, t1, grow = 0) {
   const sp = spineOf(S);
   const steps = [];
@@ -112,7 +112,7 @@ function sideTorsoPts(S, t0, t1, grow = 0) {
   return out;
 }
 
-/** Rumpfumriss von vorn: Achse Becken → Schulter, Breite nach FRONT_W. */
+/** Torso outline from the front: axis pelvis → shoulder, width after FRONT_W. */
 function frontTorsoPts(S, t0, t1, grow = 0) {
   const axis = sub(S.sh, S.hip);
   const u = norm(axis); const L = len(axis);
@@ -128,7 +128,7 @@ function frontTorsoPts(S, t0, t1, grow = 0) {
   return out;
 }
 
-/* ------------------------------ Glieder ------------------------------ */
+/* ------------------------------ Limbs ------------------------------ */
 
 function legShapes(S, side, far, hi) {
   const g = S.legs[side];
@@ -138,7 +138,7 @@ function legShapes(S, side, far, hi) {
   const thighU = norm(sub(g.joint, g.root));
   const shinU = norm(sub(g.end, g.joint));
   const front = S.view === 'front';
-  // Seitenansicht: Quadrizeps vorn, Beinbeuger und Wade hinten – Richtung aus Kniebeuge und Fußspitze.
+  // Side view: quadriceps in front, hamstring and calf at the back – direction from knee bend and toe.
   let thighSide = 1; let calfSide = 1;
   if (!front) {
     const n = perp(thighU);
@@ -148,11 +148,11 @@ function legShapes(S, side, far, hi) {
   }
   const thigh = limbPts(g.root, g.joint, R.thigh[0], R.thigh[1], front ? { plus: 0.8, minus: 0.8 }
     : (thighSide > 0 ? { plus: 1.3, minus: 0.6 } : { plus: 0.6, minus: 1.3 }));
-  // Leggings in 7/8-Länge: Sie enden knapp über dem Knöchel, darunter Haut und Schuh.
+  // Leggings in 7/8 length: they end just above the ankle, below it skin and shoe.
   const cuff = lerpP(g.joint, g.end, 0.84);
   const shin = limbPts(g.joint, cuff, R.shin[0], R.shin[1], front ? { plus: 0.6, minus: 0.6, at: 0.32 }
     : (calfSide > 0 ? { plus: 1.9, minus: 0.25, at: 0.3 } : { plus: 0.25, minus: 1.9, at: 0.3 }));
-  // Beanspruchte Muskeln: dieselbe Form noch einmal, in der Kategoriefarbe lasiert.
+  // Muscles being worked: the same shape once more, glazed in the category colour.
   const thighD = smoothClosed(thigh); const shinD = smoothClosed(shin);
   out.push({ k: 'path', d: thighD, cls: `cf-leg${tone}` });
   if (hi.has('thigh')) out.push({ k: 'path', d: thighD, cls: 'cf-hi' });
@@ -163,14 +163,14 @@ function legShapes(S, side, far, hi) {
   return out;
 }
 
-/** Turnschuh: Schaft mit Ferse, Spann und Kappe, darunter eine dunklere Sohle in Schuhlänge. */
+/** Sneaker: upper with heel, instep and toe cap, below it a darker sole the length of the shoe. */
 function shoeShapes(S, g, far, hot) {
   const tone = far ? ' cf-far' : '';
   const cls = `cf-shoe${tone}${hot ? ' cf-shoe-hi' : ''}`;
   if (S.view === 'front') {
     const c = norm(sub(g.foot[1], g.foot[0]));
     let n = perp(c);
-    if (dot(n, sub(g.end, g.joint)) < 0) n = mul(n, -1);   // n zeigt vom Bein weg (zum Boden)
+    if (dot(n, sub(g.end, g.joint)) < 0) n = mul(n, -1);   // n points away from the leg (towards the floor)
     const o = g.end;
     const P = (x, y) => at(o, c, n, x, y);
     return [
@@ -182,11 +182,11 @@ function shoeShapes(S, g, far, hot) {
   const L = len(sub(T, H));
   const u = norm(sub(T, H));
   let n = perp(u);
-  if (dot(n, sub(g.joint, H)) < 0) n = mul(n, -1);   // n zeigt zum Bein (Oberseite des Schuhs)
+  if (dot(n, sub(g.joint, H)) < 0) n = mul(n, -1);   // n points towards the leg (top of the shoe)
   const P = (x, y) => at(H, u, n, x, y);
-  // Die Fußlinie liegt auf Knöchelhöhe (BODY.ankle über der Sohle): Sohle darunter, Schaft um den Knöchel.
+  // The foot line lies at ankle height (BODY.ankle above the sole): sole below, upper around the ankle.
   const upper = [P(-1.3, -2.9), P(-1.8, -0.9), P(-1.2, 1.8), P(0.6, 2.8), P(2.7, 2.5), P(4.9, 1.0), P(L - 3.4, -0.5), P(L - 0.9, -1.2), P(L + 0.4, -2.2), P(L, -3.1), P(L * 0.45, -3.2)];
-  // Sohle als abgerundeter Streifen (ein Vieleck mit Ecken schwingt sonst über).
+  // Sole as a rounded strip (a polygon with corners would otherwise overshoot).
   const sole = limbPts(P(-1.2, -3.35), P(L + 0.2, -3.35), 0.75, 0.75);
   return [
     { k: 'path', d: smoothClosed(upper), cls },
@@ -210,15 +210,15 @@ function armShapes(S, side, far, hi) {
   return out;
 }
 
-/* ------------------------------ Kopf ------------------------------ */
+/* ------------------------------ Head ------------------------------ */
 
-/** Zopfrichtung: Schwerkraft plus nach hinten, dazu der Nachschwung aus `state`. */
+/** Braid direction: gravity plus backwards, plus the after-swing from `state`. */
 function tailDir(back, state) {
   const swing = state && state.swing ? state.swing : [0, 0];
   return norm(add(add([0, 1], mul(back, 0.5)), swing));
 }
 
-/** Zopf, der nicht durch den Boden hängt: Liegt die Spitze tiefer als `floorY`, legt er sich flach ab. */
+/** Braid that does not hang through the floor: if the tip is lower than `floorY`, it lies down flat. */
 function restOnFloor(anchor, d, L, floorY, fallbackX) {
   if (!(anchor[1] + d[1] * L > floorY)) return d;
   const dy = Math.max(0, floorY - anchor[1]);
@@ -229,10 +229,10 @@ function restOnFloor(anchor, d, L, floorY, fallbackX) {
 function headShapes(S, state, ponytailOnly = false, floorY = Infinity) {
   const H = S.head; const r = R.head;
   const U = norm(sub(S.head, S.sh));
-  const F = perp(U);                 // Gesichtsseite (Seitenansicht); von vorn: Bildachse
+  const F = perp(U);                 // Face side (side view); from the front: image axis
   const out = [];
   const front = S.view === 'front';
-  // Zopf: Ansatz hinten oben am Kopf, hängt der Schwerkraft nach.
+  // Braid: root at the back top of the head, hangs with gravity.
   const anchor = front ? at(H, F, U, 0, r * 0.55) : at(H, F, U, -r * 0.78, r * 0.55);
   const L = 17;
   const d = restOnFloor(anchor, tailDir(front ? [0, 0] : mul(F, -1), state), L, floorY, U[0]);
@@ -263,11 +263,11 @@ function neckShape(S) {
   return { k: 'path', d: smoothClosed(limbPts(base, top, R.neck[0], R.neck[1])), cls: 'cf-skin' };
 }
 
-/* ------------------------------ Figur ------------------------------ */
+/* ------------------------------ Figure ------------------------------ */
 
 /**
- * Formen der Vorturnerin in Zeichenreihenfolge. `state` (optional, über die Bilder
- * einer Animation erhalten) lässt den Zopf nachschwingen.
+ * Shapes of the demonstrator in drawing order. `state` (optional, kept across the frames
+ * of an animation) lets the braid swing on.
  */
 export function coachParts(S, m, state = null) {
   const hi = new Set(m.focus || []);
@@ -285,7 +285,7 @@ export function coachParts(S, m, state = null) {
     if (!hi.has('torso')) return;
     if (front) {
       const u = norm(sub(S.sh, S.hip)); const L = len(sub(S.sh, S.hip)); const x = perp(u);
-      // Gerade Bauchmuskeln als schmale Zone vom Becken bis unter die Brust.
+      // Straight abdominal muscles as a narrow zone from the pelvis to below the chest.
       const o = add(S.hip, mul(u, L * 0.08));
       out.push({ k: 'path', d: smoothClosed([at(o, x, u, -3.6, 0), at(o, x, u, 3.6, 0), at(o, x, u, 4.4, L * 0.3), at(o, x, u, 3.4, L * 0.5), at(o, x, u, -3.4, L * 0.5), at(o, x, u, -4.4, L * 0.3)]), cls: 'cf-hi' });
     } else {
@@ -326,13 +326,13 @@ export function coachParts(S, m, state = null) {
   return out;
 }
 
-/** Nachschwung des Zopfs: folgt verzögert der Kopfbewegung (gedämpfte Feder). */
+/** After-swing of the braid: follows the head movement with a delay (damped spring). */
 function swingStep(S, state) {
   const prev = state.prevHead;
   state.prevHead = S.head;
   if (!prev) { state.swing = [0, 0]; state.vel = [0, 0]; return; }
   const v = sub(S.head, prev);
-  if (len(v) > 12) { state.swing = [0, 0]; state.vel = [0, 0]; return; }   // Sprung (neuer Abschnitt)
+  if (len(v) > 12) { state.swing = [0, 0]; state.vel = [0, 0]; return; }   // jump (new section)
   const target = mul(v, -0.45);
   state.vel = add(mul(state.vel || [0, 0], 0.72), mul(sub(target, state.swing || [0, 0]), 0.22));
   state.swing = add(state.swing || [0, 0], state.vel);
@@ -340,7 +340,7 @@ function swingStep(S, state) {
   if (l > 1.1) state.swing = mul(state.swing, 1.1 / l);
 }
 
-/** Weicher Schatten am Boden unter der Figur (nur mit Boden). */
+/** Soft shadow on the floor under the figure (only with a floor). */
 export function shadowOf(S) {
   const xs = [S.legs.r.end[0], S.legs.l.end[0], S.hip[0], S.sh[0], S.head[0]];
   const lo = Math.min(...xs); const hi = Math.max(...xs);
@@ -349,12 +349,12 @@ export function shadowOf(S) {
   return { k: 'ellipse', c: [(lo + hi) / 2, 1.2], rx: Math.max(14, (hi - lo) / 2 + 10) * k, ry: 3.2 * k, cls: 'cf-shadow' };
 }
 
-/** Höhe, auf der ein liegender Zopf aufliegt (Matte bzw. Boden; ohne Boden nie). */
+/** Height at which a lying braid rests (mat or floor; never without a floor). */
 export function floorOf(m) {
   return m.floor === false ? Infinity : ((m.props || {}).mat || (m.props || {}).topMat ? -2.8 : -1);
 }
 
-/** Punkte mit Rand, die der Bildausschnitt zusätzlich fassen muss (Zopf, Po, Schuhe, Haare). */
+/** Points with margin that the image crop must additionally capture (braid, buttocks, shoes, hair). */
 export function coachExtent(S, floorY = Infinity) {
   const r = R.head;
   const U = norm(sub(S.head, S.sh));

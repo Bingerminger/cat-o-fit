@@ -1,15 +1,15 @@
 /* =========================================================================
-   audio.js — Ton für Übungen und Workouts: Freischalten, Signaltöne, Ansagen.
+   audio.js — sound for exercises and workouts: unlocking, beeps, announcements.
 
-   iPhone und iPad: Safari schaltet Web Audio stumm, solange das Gerät auf
-   „lautlos“ steht – Videos laufen trotzdem, weil sie als Wiedergabe gelten.
-   Deshalb meldet `unlockAudio()` die Audio-Sitzung als Wiedergabe an
-   (navigator.audioSession, Safari 17+), auf älteren Geräten hält ein stummes
-   <audio>-Element sie offen. Beides muss in einer Nutzergeste passieren
-   (Antippen), ebenso das Anlaufen des AudioContext und der Sprachausgabe.
+   iPhone and iPad: Safari mutes Web Audio while the device is set to
+   "silent" – videos still play because they count as media playback.
+   `unlockAudio()` therefore registers the audio session as playback
+   (navigator.audioSession, Safari 17+); on older devices a silent
+   <audio> element keeps it open. Both must happen inside a user gesture
+   (a tap), as must starting the AudioContext and speech synthesis.
 
-   Mit `mix: true` laufen andere Apps (z. B. eigene Musik) weiter; dann gilt
-   wieder der Lautlos-Schalter des Geräts.
+   With `mix: true` other apps (e.g. your own music) keep playing; the
+   device's silent switch then applies again.
    ========================================================================= */
 
 import { locale } from './i18n.js';
@@ -17,7 +17,7 @@ import { locale } from './i18n.js';
 let ctx = null;
 let silent = null;
 
-/** Der gemeinsame AudioContext (oder null, wenn der Browser keinen kennt). */
+/** The shared AudioContext (or null if the browser has none). */
 export function audioContext() {
   if (ctx) return ctx;
   try {
@@ -27,11 +27,11 @@ export function audioContext() {
   return ctx;
 }
 
-/** In einer Nutzergeste aufrufen: Sitzung anmelden, Kontext starten, Sprachausgabe wecken. */
+/** Call inside a user gesture: register the session, start the context, wake up speech synthesis. */
 export function unlockAudio({ mix = false } = {}) {
   try {
     if (typeof navigator !== 'undefined' && navigator.audioSession) navigator.audioSession.type = mix ? 'ambient' : 'playback';
-  } catch { /* ältere Browser */ }
+  } catch { /* older browsers */ }
   const c = audioContext();
   if (c) {
     try {
@@ -39,7 +39,7 @@ export function unlockAudio({ mix = false } = {}) {
       const buf = c.createBuffer(1, 1, 22050);
       const src = c.createBufferSource();
       src.buffer = buf; src.connect(c.destination); src.start(0);
-    } catch { /* ohne Ton weiter */ }
+    } catch { /* carry on without sound */ }
   }
   holdSession(!mix && !(typeof navigator !== 'undefined' && navigator.audioSession));
   try {
@@ -48,11 +48,11 @@ export function unlockAudio({ mix = false } = {}) {
       u.volume = 0;
       speechSynthesis.speak(u);
     }
-  } catch { /* keine Sprachausgabe */ }
+  } catch { /* no speech synthesis */ }
   return c;
 }
 
-/** Stummes <audio> in Schleife: hält auf älteren iOS-Versionen die Wiedergabe-Sitzung offen. */
+/** Silent looping <audio>: keeps the playback session open on older iOS versions. */
 function holdSession(on) {
   try {
     if (on) {
@@ -66,18 +66,18 @@ function holdSession(on) {
     } else if (silent) {
       silent.pause();
     }
-  } catch { /* egal */ }
+  } catch { /* ignore */ }
 }
 
-/** Gibt die Sitzung wieder frei (z. B. wenn ein Workout endet). */
+/** Releases the session again (e.g. when a workout ends). */
 export function releaseAudio() {
   holdSession(false);
   stopSpeaking();
 }
 
 /**
- * Kurzer Signalton mit weicher Hüllkurve (ohne Knacken). `when` = Sekunden ab jetzt
- * bzw. absolute Kontextzeit mit `at`.
+ * Short beep with a soft envelope (no clicking). `when` = seconds from now,
+ * or absolute context time with `at`.
  */
 export function tone(freq = 880, { ms = 140, gain = 0.32, type = 'sine', when = 0, at = null } = {}) {
   const c = audioContext();
@@ -92,10 +92,10 @@ export function tone(freq = 880, { ms = 140, gain = 0.32, type = 'sine', when = 
     g.gain.exponentialRampToValueAtTime(0.0001, t + ms / 1000);
     o.connect(g); g.connect(c.destination);
     o.start(t); o.stop(t + ms / 1000 + 0.03);
-  } catch { /* ohne Ton weiter */ }
+  } catch { /* carry on without sound */ }
 }
 
-/* ------------------------------ Sprachausgabe ------------------------------ */
+/* ------------------------------ Speech output ------------------------------ */
 
 /** BCP-47 tag for speech in the active language. */
 const speechLang = () => ({ en: 'en-GB', de: 'de-DE', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', nl: 'nl-NL' }[locale()] || locale());
@@ -117,14 +117,14 @@ function deviceVoice() {
   return v;
 }
 
-/** Ob das Gerät vorlesen kann. */
+/** Whether the device can read aloud. */
 export function canSpeak() {
   return typeof speechSynthesis !== 'undefined' && typeof SpeechSynthesisUtterance !== 'undefined';
 }
 
-/* Safari verliert Ansagen, deren Objekt niemand mehr hält (sie brechen ab, onend kommt
-   nie) – darum bleiben laufende Ansagen hier referenziert. Und direkt nach cancel()
-   verschluckt Safari die nächste Ansage; deshalb wartet speak() danach kurz. */
+/* Safari loses announcements whose object nobody holds any more (they abort, onend never
+   fires) – so running announcements stay referenced here. And straight after cancel()
+   Safari swallows the next announcement; that is why speak() waits briefly afterwards. */
 const live = new Set();
 let lastCancel = 0;
 
@@ -144,34 +144,34 @@ export function speak(text, { rate = 1.0 } = {}) {
     live.add(u);
     if (speechSynthesis.paused) speechSynthesis.resume();
     speechSynthesis.speak(u);
-    // Sicherheitsnetz: ohne onend (iOS) nach spätestens 8 s freigeben.
+    // Safety net: without onend (iOS), release after 8 s at the latest.
     setTimeout(() => { if (live.has(u)) done(); }, 8000);
-  } catch { /* ohne Ansage weiter */ }
+  } catch { /* carry on without the announcement */ }
 }
 
-/** Ob gerade vorgelesen wird (die Musik wird dann leiser). */
+/** Whether something is currently being read aloud (the music is then turned down). */
 export function speaking() {
   try { return canSpeak() && !!speechSynthesis.speaking; } catch { return false; }
 }
 
-/** Bricht alle Ansagen ab (Springen, Pause, Ende). */
+/** Cancels all announcements (skipping, pause, end). */
 export function stopSpeaking() {
-  try { if (canSpeak() && (speechSynthesis.speaking || speechSynthesis.pending)) { speechSynthesis.cancel(); lastCancel = Date.now(); } } catch { /* egal */ }
+  try { if (canSpeak() && (speechSynthesis.speaking || speechSynthesis.pending)) { speechSynthesis.cancel(); lastCancel = Date.now(); } } catch { /* ignore */ }
   live.clear();
 }
 
 /**
- * Weckt den Ton wieder, falls iOS ihn unterbrochen hat (z. B. durch eine Ansage oder
- * einen Anruf): Der AudioContext steht dann auf „interrupted“/„suspended“.
+ * Wakes the sound up again if iOS has interrupted it (e.g. by an announcement or
+ * a phone call): the AudioContext is then in the "interrupted"/"suspended" state.
  */
 export function wakeAudio() {
-  try { if (ctx && ctx.state !== 'running' && ctx.state !== 'closed' && ctx.resume) { const p = ctx.resume(); if (p && p.catch) p.catch(() => {}); } } catch { /* egal */ }
+  try { if (ctx && ctx.state !== 'running' && ctx.state !== 'closed' && ctx.resume) { const p = ctx.resume(); if (p && p.catch) p.catch(() => {}); } } catch { /* ignore */ }
 }
 
-/* ------------------------------ Bildschirm an ------------------------------ */
+/* ------------------------------ Screen on ------------------------------ */
 
 let wake = null;
-/** Hält den Bildschirm an (Wake Lock), solange `on`. */
+/** Keeps the screen on (Wake Lock) as long as `on`. */
 export async function keepAwake(on) {
   try {
     if (on && !wake && typeof navigator !== 'undefined' && 'wakeLock' in navigator) wake = await navigator.wakeLock.request('screen');

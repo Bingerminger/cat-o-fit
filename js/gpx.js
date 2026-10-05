@@ -1,34 +1,34 @@
 /* =========================================================================
-   gpx.js — clientseitiger Parser für einzelne GPX-/TCX-Dateien und die gemeinsame
-   Auswertung aller Aufzeichnungen (auch FIT, siehe fit.js).
-   Bewusst string-/regexbasiert (kein DOMParser) → ohne Browser-DOM testbar.
+   gpx.js — client-side parser for individual GPX/TCX files and the shared
+   analysis of all recordings (including FIT, see fit.js).
+   Deliberately string/regex based (no DOMParser) → testable without a browser DOM.
 
-   Liefert eine durchgeführte Session: Sportart (aus TCX `Sport` bzw. GPX
-   `<type>`), Datum in LOKALER Zeit (die Zeitstempel der Dateien sind UTC – ein
-   Lauf um 0:30 Uhr gehört zum lokalen Tag, nicht zum Vortag), Bewegungszeit
-   (Pausen herausgerechnet; TCX: Summe der Runden-Zeiten), Distanz, Ø-/Max-HF,
-   Kilometer-Splits, – mit den HF-Zonen des Profils – die Zeit je Zone, Höhenmeter
-   und eine vereinfachte Strecke (höchstens 150 Punkte, ohne Kartendienst gezeichnet).
+   Yields a completed session: sport (from TCX `Sport` or GPX
+   `<type>`), date in LOCAL time (the files' timestamps are UTC – a run at
+   0:30 belongs to the local day, not the day before), moving time
+   (pauses excluded; TCX: sum of the lap times), distance, avg/max HR,
+   kilometre splits, – with the profile's HR zones – the time per zone, elevation
+   gain and a simplified route (at most 150 points, drawn without a map service).
    ========================================================================= */
 
-const R = 6371000; // Erdradius in Metern
+const R = 6371000; // Earth radius in metres
 function toRad(d) { return (d * Math.PI) / 180; }
 function dist2(la1, lo1, la2, lo2) {
   const dLa = toRad(la2 - la1), dLo = toRad(lo2 - lo1);
   const a = Math.sin(dLa / 2) ** 2 + Math.cos(toRad(la1)) * Math.cos(toRad(la2)) * Math.sin(dLo / 2) ** 2;
   return 2 * R * Math.asin(Math.min(1, Math.sqrt(a)));
 }
-/** Summe der Haversine-Distanzen aufeinanderfolgender Punkte (Meter). */
+/** Sum of the haversine distances between consecutive points (metres). */
 export function haversineSum(points = []) {
   let sum = 0;
   for (let i = 1; i < points.length; i++) sum += dist2(points[i - 1][0], points[i - 1][1], points[i][0], points[i][1]);
   return sum;
 }
 
-/** Stillstand: langsamer als 0,5 m/s (1,8 km/h) zählt nicht zur Bewegungszeit. */
+/** Standing still: slower than 0.5 m/s (1.8 km/h) does not count towards moving time. */
 const MOVING_MIN_MPS = 0.5;
 
-/** Sportart aus dem Dateitext → Session-Typ (null = unbekannt). */
+/** Sport from the file text → session type (null = unknown). */
 const SPORT_TYPES = [
   [/^(running|run|trail_?running|treadmill_?running|laufen|9)$/i, 'run'],
   [/^(biking|cycling|ride|road_?biking|mountain_?biking|gravel_?cycling|radfahren|1)$/i, 'cross_bike'],
@@ -43,8 +43,8 @@ export function sportType(raw) {
   return null;
 }
 
-/** Kalendertag eines Zeitpunkts: mit bekanntem UTC-Versatz der Aufzeichnung (FIT) genau
-    dort, sonst in der Zeitzone des Geräts. */
+/** Calendar day of a point in time: exactly there when the recording's UTC offset is known (FIT),
+    otherwise in the device's time zone. */
 function localDate(ms, utcOffsetMin = null) {
   const p = (n) => String(n).padStart(2, '0');
   if (utcOffsetMin != null) {
@@ -57,7 +57,7 @@ function localDate(ms, utcOffsetMin = null) {
 
 function num(re, text) { const m = re.exec(text); return m ? parseFloat(m[1]) : null; }
 
-/** Messpunkte: { t (ms), lat, lon, d (kumulierte Meter aus TCX), hr, ele (m) }. */
+/** Measurement points: { t (ms), lat, lon, d (cumulative metres from TCX), hr, ele (m) }. */
 function readPoints(text, isTcx) {
   const pts = [];
   if (isTcx) {
@@ -85,12 +85,12 @@ function readPoints(text, isTcx) {
       });
     }
   }
-  // Reihenfolge der Datei beibehalten: rückwärts laufende Zeitstempel sind kaputt
-  // und führen (wie bisher) zu „keine gültige Aktivität“.
+  // Keep the file's order: timestamps running backwards are broken
+  // and lead (as before) to "no valid activity".
   return pts.filter((p) => !Number.isNaN(p.t));
 }
 
-/** Zone (1–5) einer Herzfrequenz; unterhalb von Zone 1 zählt Zone 1, oberhalb Zone 5. */
+/** Zone (1–5) of a heart rate; below zone 1 counts as zone 1, above zone 5 as zone 5. */
 function zoneOf(hr, zones) {
   const sorted = zones.slice().sort((a, b) => a.zone - b.zone);
   for (const z of sorted) if (hr >= z.min && hr <= z.max) return z.zone;
@@ -98,13 +98,13 @@ function zoneOf(hr, zones) {
   return sorted[sorted.length - 1].zone;
 }
 
-/* ------------------------- Strecke & Höhenprofil ------------------------- */
+/* ------------------------- Route & elevation profile ------------------------- */
 
-/** Höchstens so viele Punkte speichert eine Strecke (reicht fürs Bild, spart Speicher). */
+/** A route stores at most this many points (enough for the image, saves storage). */
 export const ROUTE_MAX_POINTS = 150;
 const ELE_SAMPLES = 60;
 
-/** Douglas-Peucker in lokaler Meter-Projektion; liefert die behaltenen Indizes. */
+/** Douglas-Peucker in a local metre projection; returns the retained indices. */
 function simplifyIdx(xy, eps) {
   const keep = new Uint8Array(xy.length);
   keep[0] = 1; keep[xy.length - 1] = 1;
@@ -128,7 +128,7 @@ function simplifyIdx(xy, eps) {
   return out;
 }
 
-/** Vereinfacht [lat, lon]-Punkte auf höchstens `max` Stück (Toleranz wächst, bis es passt). */
+/** Simplifies [lat, lon] points to at most `max` (the tolerance grows until it fits). */
 export function simplifyRoute(coords, max = ROUTE_MAX_POINTS) {
   if (coords.length <= max) return coords.slice();
   const lat0 = toRad(coords[0][0]);
@@ -138,7 +138,7 @@ export function simplifyRoute(coords, max = ROUTE_MAX_POINTS) {
   return idx.map((i) => coords[i]);
 }
 
-/** Polyline-Kodierung (Genauigkeit 1e-5 ≈ 1 m): ~5 Zeichen je Punkt statt ~20 als Zahlen. */
+/** Polyline encoding (precision 1e-5 ≈ 1 m): ~5 characters per point instead of ~20 as numbers. */
 export function encodePolyline(coords) {
   let out = '', pLa = 0, pLo = 0;
   const enc = (v) => {
@@ -166,9 +166,9 @@ export function decodePolyline(str) {
   return out;
 }
 
-/** Höhenmeter bergauf. Rauschen unter 3 m zählt nicht (Barometer und GPS schwanken): Ein
-    Anstieg gilt erst ab 3 m über dem letzten Tiefpunkt, danach zählt jeder weitere Meter,
-    bis ein Abstieg von mindestens 3 m ihn beendet. */
+/** Elevation gain. Noise below 3 m does not count (barometer and GPS fluctuate): a
+    climb only counts from 3 m above the last low point, after which every further metre counts,
+    until a descent of at least 3 m ends it. */
 export function ascentOf(eles) {
   let up = 0, ref = null, climbing = false;
   for (const e of eles) {
@@ -181,12 +181,12 @@ export function ascentOf(eles) {
   return Math.round(up);
 }
 
-/* ------------------------- Gemeinsame Auswertung ------------------------- */
+/* ------------------------- Shared analysis ------------------------- */
 
 /**
- * Aus Messpunkten eine Session – gemeinsam für GPX, TCX und FIT. `totals` darf Werte der
- * Datei vorgeben (start/end in ms, distanceM, durationSec als Stoppuhr-Zeit, avgHr, maxHr,
- * kcal, ascentM); sonst rechnet die Auswertung aus den Punkten.
+ * A session from measurement points – shared by GPX, TCX and FIT. `totals` may specify values from the
+ * file (start/end in ms, distanceM, durationSec as stopwatch time, avgHr, maxHr,
+ * kcal, ascentM); otherwise the analysis computes them from the points.
  * @returns {{date,durationSec,elapsedSec,distanceKm,avgHr,maxHr,type,sportKnown,splits,timeInZones,ascentM,route,kcal}|null}
  */
 export function buildActivity(pts = [], { type = null, totals = {}, hrZones = null, utcOffsetMin = null } = {}) {
@@ -195,7 +195,7 @@ export function buildActivity(pts = [], { type = null, totals = {}, hrZones = nu
   if (!(end > start)) return null;
   const elapsedSec = Math.round((end - start) / 1000);
 
-  // Kumulierte Strecke je Punkt (TCX/FIT direkt, sonst aus den Koordinaten).
+  // Cumulative distance per point (TCX/FIT directly, otherwise from the coordinates).
   let cum = 0;
   const track = pts.map((p, i) => {
     if (i > 0) {
@@ -211,7 +211,7 @@ export function buildActivity(pts = [], { type = null, totals = {}, hrZones = nu
     : (track.length >= 2 && track.some((p) => p.lat != null || p.d != null) ? track[track.length - 1].cum : null);
   const distanceKm = meters != null ? Math.round((meters / 1000) * 100) / 100 : null;
 
-  // Bewegungszeit: Stoppuhr der Datei, sonst Abschnitte in Bewegung.
+  // Moving time: the file's stopwatch, otherwise segments in motion.
   let durationSec = elapsedSec;
   if (totals.durationSec > 0) durationSec = Math.round(totals.durationSec);
   else if (hasTrack) {
@@ -224,7 +224,7 @@ export function buildActivity(pts = [], { type = null, totals = {}, hrZones = nu
     if (moving > 0) durationSec = Math.round(moving);
   }
 
-  // Herzfrequenz (Mittel der Messwerte, Maximum) – ohne Spread, lange Aufzeichnungen haben 30 000+ Punkte.
+  // Heart rate (mean of the readings, maximum) – without spread, long recordings have 30,000+ points.
   let hrSum = 0, hrN = 0, hrMax = 0;
   for (const p of pts) if (p.hr > 0) { hrSum += p.hr; hrN++; if (p.hr > hrMax) hrMax = p.hr; }
   const avgHr = totals.avgHr != null ? totals.avgHr : (hrN ? Math.round(hrSum / hrN) : null);
@@ -232,7 +232,7 @@ export function buildActivity(pts = [], { type = null, totals = {}, hrZones = nu
 
   const t = type || 'run';
 
-  // Kilometer-Splits (nur Laufen/Gehen/Wandern) – Zeit je voller Kilometer, interpoliert.
+  // Kilometre splits (running/walking/hiking only) – time per full kilometre, interpolated.
   const splits = [];
   if (['run', 'walk', 'hike'].includes(t) && track.length >= 2 && track[track.length - 1].cum >= 1000) {
     let nextKm = 1, lastT = track[0].t;
@@ -248,21 +248,21 @@ export function buildActivity(pts = [], { type = null, totals = {}, hrZones = nu
     }
   }
 
-  // Zeit je HF-Zone (braucht Zonen aus dem Profil und HF je Punkt).
+  // Time per HR zone (needs zones from the profile and HR per point).
   let timeInZones = null;
   if (Array.isArray(hrZones) && hrZones.length && hrN) {
     timeInZones = {};
     for (let i = 1; i < pts.length; i++) {
       const hr = pts[i].hr || pts[i - 1].hr;
       const dt = (pts[i].t - pts[i - 1].t) / 1000;
-      if (!(hr > 0) || !(dt > 0) || dt > 300) continue;   // Lücken > 5 min sind Pausen
+      if (!(hr > 0) || !(dt > 0) || dt > 300) continue;   // Gaps > 5 min are pauses
       const z = zoneOf(hr, hrZones);
       timeInZones[z] = Math.round((timeInZones[z] || 0) + dt);
     }
     if (!Object.keys(timeInZones).length) timeInZones = null;
   }
 
-  // Höhenmeter und Strecke (ohne Kartenkacheln – nur die Linie).
+  // Elevation gain and route (without map tiles – just the line).
   const eles = track.map((p) => p.ele);
   const hasEle = eles.filter((e) => e != null && Number.isFinite(e)).length >= 2;
   const ascentM = totals.ascentM != null ? Math.round(totals.ascentM) : (hasEle ? ascentOf(eles) : null);
@@ -271,7 +271,7 @@ export function buildActivity(pts = [], { type = null, totals = {}, hrZones = nu
   if (geo.length >= 2 && (meters == null || meters >= 200)) {
     route = { poly: encodePolyline(simplifyRoute(geo.map((p) => [p.lat, p.lon]))) };
     if (hasEle && track[track.length - 1].cum > 0) {
-      // Höhenprofil: 60 Werte in gleichen Streckenabständen.
+      // Elevation profile: 60 values at equal distance intervals.
       const total = track[track.length - 1].cum;
       const ele = [];
       let j = 0;
@@ -293,8 +293,8 @@ export function buildActivity(pts = [], { type = null, totals = {}, hrZones = nu
 }
 
 /**
- * Parst GPX- oder TCX-Text in eine Session. null, wenn es keine brauchbare
- * Aktivität ist (kein Zeitbereich erkennbar).
+ * Parses GPX or TCX text into a session. null if it is not a usable
+ * activity (no time range recognisable).
  * @param {string} text
  * @param {{hrZones?: Array<{zone,min,max}>}} [opts]
  */
@@ -306,7 +306,7 @@ export function parseActivityFile(text, { hrZones = null } = {}) {
 
   const pts = readPoints(text, isTcx);
   const totals = {};
-  // Ohne erkennbare Messpunkte: alle Zeitstempel der Datei als Rückfall.
+  // Without recognisable measurement points: all timestamps of the file as a fallback.
   if (pts.length < 2) {
     const times = [...text.matchAll(/<[Tt]ime>([^<]+)<\/[Tt]ime>/g)].map((m) => Date.parse(m[1].trim())).filter((t) => !Number.isNaN(t));
     if (times.length < 2) return null;
@@ -314,16 +314,16 @@ export function parseActivityFile(text, { hrZones = null } = {}) {
     const hrs = [...text.matchAll(/<(?:gpxtpx:hr|ns3:hr)>\s*(\d{2,3})\s*<|<HeartRateBpm[^>]*>\s*<Value>\s*(\d{2,3})/g)].map((m) => parseInt(m[1] || m[2], 10)).filter((n) => n > 0);
     if (hrs.length) { totals.avgHr = Math.round(hrs.reduce((a, b) => a + b, 0) / hrs.length); totals.maxHr = hrs.reduce((a, b) => Math.max(a, b), 0); }
   }
-  // Distanz – TCX nennt sie direkt (größter Wert), sonst die Summe der Koordinaten.
+  // Distance – TCX states it directly (largest value), otherwise the sum of the coordinates.
   if (isTcx) {
     const dists = [...text.matchAll(/<DistanceMeters>\s*([\d.]+)/g)].map((m) => parseFloat(m[1]));
     if (dists.length) totals.distanceM = dists.reduce((a, b) => Math.max(a, b), 0);
-    // Bewegungszeit: TCX-Runden-Zeiten (Stoppuhr der Uhr).
+    // Moving time: TCX lap times (the watch's stopwatch).
     const laps = [...text.matchAll(/<TotalTimeSeconds>\s*([\d.]+)/g)].map((m) => parseFloat(m[1]));
     if (laps.length) totals.durationSec = laps.reduce((a, b) => a + b, 0);
   }
 
-  // Sportart: TCX `Sport="…"`, GPX `<type>…</type>`.
+  // Sport: TCX `Sport="…"`, GPX `<type>…</type>`.
   const tcxSport = /<Activity\b[^>]*\bSport="([^"]+)"/.exec(text);
   const gpxType = /<type>\s*([^<]+?)\s*<\/type>/.exec(text);
   const known = sportType(tcxSport ? tcxSport[1] : gpxType ? gpxType[1] : '');

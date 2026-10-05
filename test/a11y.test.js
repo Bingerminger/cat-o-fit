@@ -1,9 +1,9 @@
 /* =========================================================================
-   a11y.test.js — Bedienbarkeit der Grundbausteine (Paket G):
-   UI-04  Knopfgruppen nicht in <label> (Tipp auf die Beschriftung wählte die 1. Option)
-   UI-19  Sheets als Dialog: Name, Escape, Fokus zurück zum Auslöser
-   UI-25  RPE-Skala mit Ankern als Radiogruppe, Dauer mit Einheiten
-   FE-15  Segmente als Radiogruppe (aria-checked)
+   a11y.test.js — operability of the basic building blocks (package G):
+   UI-04  button groups not inside <label> (tapping the caption selected the 1st option)
+   UI-19  sheets as dialogs: name, Escape, focus returns to the trigger
+   UI-25  RPE scale with anchors as a radio group, duration with units
+   FE-15  segments as a radio group (aria-checked)
    ========================================================================= */
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
@@ -20,24 +20,24 @@ beforeEach(() => {
 });
 const radios = (node) => node.querySelectorAll('button').filter((b) => b.getAttribute('role') === 'radio');
 
-test('UI-04: Knopfgruppen stehen in einer benannten Gruppe, nicht in <label>', () => {
+test('UI-04: button groups sit in a named group, not in <label>', () => {
   const f = field('Anstrengung (RPE)', rpeScale(0, () => {}));
-  assert.equal(f.tagName, 'DIV', 'kein <label>: sonst landet jeder Tipp auf der Beschriftung bei RPE 1');
+  assert.equal(f.tagName, 'DIV', 'no <label>: otherwise every tap on the caption lands on RPE 1');
   const label = f.querySelectorAll('.field__label')[0];
   const group = f.querySelectorAll('.rpe-scale')[0];
   assert.equal(group.getAttribute('role'), 'radiogroup');
-  assert.equal(group.getAttribute('aria-labelledby'), label.getAttribute('id'), 'Gruppe trägt den Feldnamen');
+  assert.equal(group.getAttribute('aria-labelledby'), label.getAttribute('id'), 'group carries the field name');
 
   const g2 = field('Portionsgröße', el('div', { class: 'row' }, [el('button', { text: 'Klein' }), el('button', { text: 'Mittel' })]));
   assert.equal(g2.tagName, 'DIV');
   assert.equal(g2.getAttribute('role'), 'group');
 
-  // Eingabefelder behalten das <label> (Tipp auf die Beschriftung setzt den Cursor).
+  // Input fields keep the <label> (tapping the caption places the cursor).
   assert.equal(field('Gewicht', input({ type: 'number' })).tagName, 'LABEL');
   assert.equal(field('Dauer', durationFields({ min: 30 }).node).tagName, 'LABEL');
 });
 
-test('FE-15: Segmente sind eine Radiogruppe mit aria-checked und einem Tab-Halt', () => {
+test('FE-15: segments are a radio group with aria-checked and a single tab stop', () => {
   let picked = null;
   const s = segmented([{ value: 'a', label: 'A' }, { value: 'b', label: 'B' }], 'a', (v) => { picked = v; });
   assert.equal(s.getAttribute('role'), 'radiogroup');
@@ -51,7 +51,7 @@ test('FE-15: Segmente sind eine Radiogruppe mit aria-checked und einem Tab-Halt'
   assert.equal(b.getAttribute('tabindex'), '0');
 });
 
-test('UI-25: RPE-Skala mit Ankern – jede Stufe benannt, Auswahl angesagt', () => {
+test('UI-25: RPE scale with anchors – every level named, selection announced', () => {
   let v = 0;
   const s = rpeScale(0, (x) => { v = x; });
   const r = radios(s);
@@ -68,14 +68,14 @@ test('UI-25: RPE-Skala mit Ankern – jede Stufe benannt, Auswahl angesagt', () 
   assert.equal(radios(f).find((b) => b.getAttribute('aria-checked') === 'true').getAttribute('aria-label'), 'gut');
 });
 
-test('UI-25: Dauerfelder tragen Einheit und Namen', () => {
+test('UI-25: duration fields carry unit and name', () => {
   const d = durationFields({ min: 45, sec: 30 });
   assert.equal(d.minI.getAttribute('aria-label'), 'Dauer in Minuten');
   assert.equal(d.secI.getAttribute('aria-label'), 'Sekunden');
   assert.match(d.node.textContent, /min.*s/);
 });
 
-test('UI-19: Sheet ist benannt, Escape schließt, der Fokus kehrt zum Auslöser zurück', () => {
+test('UI-19: sheet is named, Escape closes it, focus returns to the trigger', () => {
   const trigger = el('button', { text: 'Öffnen' });
   doc.getElementById('view').appendChild(trigger);
   let focused = null;
@@ -86,20 +86,20 @@ test('UI-19: Sheet ist benannt, Escape schließt, der Fokus kehrt zum Auslöser 
   const { sheet } = openSheet({ title: 'Körperwerte erfassen', body: el('p', { text: 'x' }), onClose: () => { closed++; } });
   assert.equal(sheet.getAttribute('role'), 'dialog');
   const titleId = sheet.getAttribute('aria-labelledby');
-  assert.ok(titleId, 'Dialog hat einen Namen');
+  assert.ok(titleId, 'dialog has a name');
   assert.equal(sheet.querySelectorAll(`#${titleId}`)[0].textContent, 'Körperwerte erfassen');
   sheet.dispatchEvent({ type: 'keydown', key: 'Escape', preventDefault() {} });
-  assert.equal(closed, 1, 'Escape schließt');
+  assert.equal(closed, 1, 'Escape closes');
   assert.equal(doc.getElementById('modal-root').classList.contains('is-open'), false);
-  assert.equal(focused, trigger, 'Fokus zurück zum Auslöser');
+  assert.equal(focused, trigger, 'focus returns to the trigger');
   delete doc.activeElement;
 });
 
-test('UI-19: Ist der Auslöser nach dem Speichern neu gezeichnet, landet der Fokus auf dem Seitentitel', () => {
+test('UI-19: if the trigger was redrawn after saving, focus lands on the page title', () => {
   const title = doc.getElementById('header-title');
   let focused = null;
   title.focus = () => { focused = title; };
-  const gone = el('button');       // nicht mehr im Dokument (isConnected fehlt)
+  const gone = el('button');       // no longer in the document (isConnected missing)
   doc.activeElement = gone;
   openSheet({ title: 'Test' });
   closeSheet();
@@ -107,7 +107,7 @@ test('UI-19: Ist der Auslöser nach dem Speichern neu gezeichnet, landet der Fok
   delete doc.activeElement;
 });
 
-test('UI-18: Jeder Schalter in den Einstellungen hat einen Namen', async () => {
+test('UI-18: every switch in the settings has a name', async () => {
   store.clearActiveUser();
   store.saveFamily({ members: [{ id: 'u-1', name: 'Alex', role: 'admin' }], settings: {} });
   await store.login('u-1', '');
@@ -115,13 +115,13 @@ test('UI-18: Jeder Schalter in den Einstellungen hat einen Namen', async () => {
   const view = doc.getElementById('view');
   settings.render(view);
   const boxes = view.querySelectorAll('input').filter((i) => i.getAttribute('type') === 'checkbox');
-  assert.ok(boxes.length >= 15, `nur ${boxes.length} Schalter gefunden`);
+  assert.ok(boxes.length >= 15, `only ${boxes.length} switches found`);
   const unnamed = boxes.filter((b) => !(b.getAttribute('aria-label') || '').trim());
-  assert.equal(unnamed.length, 0, `${unnamed.length} Schalter ohne Namen`);
+  assert.equal(unnamed.length, 0, `${unnamed.length} switches without a name`);
   assert.ok(boxes.some((b) => b.getAttribute('aria-label') === 'Modul Ernährung'));
 });
 
-test('UI-36: Backup auf dem iPhone über das Teilen-Menü, am Mac als Download – neutrale Meldung', async () => {
+test('UI-36: backup on iPhone via the share menu, on the Mac as a download – neutral message', async () => {
   const { saveFile, savedFileMessage } = await import('../js/ui.js');
   const realMM = globalThis.matchMedia;
   const realNav = globalThis.navigator;
@@ -141,7 +141,7 @@ test('UI-36: Backup auf dem iPhone über das Teilen-Menü, am Mac als Download �
   }
 });
 
-test('UI-15: Einstellungen beginnen mit einer Sprungleiste zu den Abschnitten', async () => {
+test('UI-15: settings start with a jump bar to the sections', async () => {
   store.clearActiveUser();
   store.saveFamily({ members: [{ id: 'u-1', name: 'Alex', role: 'admin' }], settings: {} });
   await store.login('u-1', '');

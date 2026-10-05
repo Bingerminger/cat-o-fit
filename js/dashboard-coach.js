@@ -1,8 +1,8 @@
 /* =========================================================================
-   dashboard-coach.js — die Coach-Karten auf „Heute“: die eine Tagesempfehlung
-   (coach.js) als Karte samt „Übernehmen“/„Rückgängig“, dazu die Nachfragen
-   (Anstrengung, importierte Trainings, freie Einheiten). Aus dashboard.js
-   ausgelagert (FE-18); die Entscheidung selbst trifft coach.js.
+   dashboard-coach.js — the coach cards on "Today": the one daily recommendation
+   (coach.js) as a card including "Apply"/"Undo", plus the prompts
+   (effort, imported workouts, free sessions). Moved out of dashboard.js
+   (FE-18); the decision itself is made by coach.js.
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -19,7 +19,7 @@ import { applyAdapt, undoAdapt as undoAdaptStore, canUndo } from './adapt.js';
 
 import { t } from './i18n.js';
 
-/** Die eine Tagesempfehlung (coach.js) als Karte – mit Begründung, warum genau diese. */
+/** The one daily recommendation (coach.js) as a card – with the reason why exactly this one. */
 export function coachCard(view, coach, today) {
   const p = coach.primary;
   if (!p) return null;
@@ -45,7 +45,7 @@ export function coachCard(view, coach, today) {
   return card;
 }
 
-/** Wiedereinstieg nach Krankheit/Verletzung: erst locker, stufenweise steigern. */
+/** Return after illness/injury: easy first, then build up step by step. */
 function returnCard(p) {
   const r = p.ret;
   const u = p.unit;
@@ -61,7 +61,7 @@ function returnCard(p) {
   ]);
 }
 
-/** Coach-Karte: automatischer Wochenumfang-Ausgleich (Vorschlag mit „Übernehmen“). */
+/** Coach card: automatic weekly volume compensation (suggestion with "Apply"). */
 function volumeBalanceCard(bal) {
   const s = bal.suggestion;
   const apply = el('button', { class: 'btn btn--soft mt-2', style: { fontSize: '.82rem' } }, [icon('check'), t('dashboardCoach.raiseTo', { title: s.unit.title, km: fmtDec(s.newKm) })]);
@@ -82,8 +82,8 @@ function volumeBalanceCard(bal) {
   ]);
 }
 
-/** Anstrengung der letzten Einheiten – reine Information, kein Belastungsurteil
-    (das kommt allein aus „Belastung & Form“). */
+/** Effort of the last sessions – pure information, no verdict on the load
+    (that comes solely from "Load & form"). */
 export function rpeInfoCard(prog) {
   if (!prog) return null;
   return el('div', { class: 'card', style: { borderLeft: '3px solid var(--accent)' } }, [
@@ -97,15 +97,15 @@ export function rpeInfoCard(prog) {
   ]);
 }
 
-/** Kompakte Karte mit HF-Zonen und Zielpaces (klickbar zu den Einstellungen). */
+/** Compact card with HR zones and target paces (clickable to the settings). */
 
-/* --- Rollierende Anpassungen: zentral anwenden, protokollieren, rückgängig --- */
+/* --- Rolling adjustments: apply centrally, log, undo --- */
 
-// applyAdapt (Anwenden + Log + Rückgängig-Snapshot) lebt jetzt zentral in adapt.js,
-// damit auch cycle.js die zyklusbewusste Auto-Entschärfung darüber protokolliert (#3).
+// applyAdapt (apply + log + undo snapshot) now lives centrally in adapt.js,
+// so that cycle.js also logs the cycle-aware automatic easing through it (#3).
 
-/** Macht eine protokollierte Anpassung rückgängig (Store-Kern) + UI (Toast/Reload).
-    Erledigte oder verpasste Einheiten bleiben dabei, wie sie sind. */
+/** Undoes a logged adjustment (store core) + UI (toast/reload).
+    Completed or missed sessions stay as they are. */
 function undoAdapt(planId, logId) {
   const res = undoAdaptStore(planId, logId);
   if (res) {
@@ -114,8 +114,8 @@ function undoAdapt(planId, logId) {
   }
 }
 
-/** Automatischer Erholungstag (load-getrieben). Liegen an dem Tag mehrere Einheiten
-    (zwei Ziele), wird der GANZE Tag ruhig gestellt – nicht nur eine Einheit (#4). */
+/** Automatic recovery day (load-driven). If several sessions fall on that day
+    (two goals), the WHOLE day is set to easy – not just one session (#4). */
 function restDayCard(rd) {
   const u = rd.unit;
   const dayCount = store.get('plans').reduce((n, p) => n + dayLoadUnits(p.units || [], rd.date).length, 0);
@@ -133,7 +133,7 @@ function restDayCard(rd) {
     el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => restDayApply(rd.date) }, [icon('feather'), whole ? t('dashboardCoach.restWholeButton') : t('dashboardCoach.restButton')]),
   ]);
 }
-/** Stellt ALLE offenen, nicht-fixen Einheiten eines Tages auf Erholung – planübergreifend (#4). */
+/** Sets ALL open, non-fixed sessions of a day to recovery – across plans (#4). */
 function restDayApply(date) {
   let count = 0;
   store.get('plans').forEach((plan) => {
@@ -149,7 +149,7 @@ function restDayApply(date) {
   refreshView();
 }
 
-/** Nach forderndem Fußball: die nächste harte Einheit lockerer anbieten (#5). */
+/** After demanding football: offer the next hard session in an easier form (#5). */
 function footballEaseCard(fb) {
   const u = fb.unit;
   return el('div', { class: 'card', style: { borderLeft: '5px solid #5cc97a' } }, [
@@ -173,7 +173,7 @@ function footballEaseApply(unit) {
   refreshView();
 }
 
-/** Entstapeln bei zwei Zielen: eine der zwei Einheiten eines Tages auf einen freien Tag (#4). */
+/** Unstacking with two goals: move one of the two sessions of a day to a free day (#4). */
 function destackCard(sug) {
   const m = sug.move, k = sug.keep;
   return el('div', { class: 'card', style: { borderLeft: '5px solid #5b8def' } }, [
@@ -196,10 +196,10 @@ function destackApply(unit, target) {
   refreshView();
 }
 
-/** Transparenz-Log der automatischen Anpassungen (mit Rückgängig). */
+/** Transparency log of the automatic adjustments (with undo). */
 export function adaptLogCard() {
   const entries = [];
-  // „Rückgängig“ nur, solange mindestens eine betroffene Einheit noch offen ist.
+  // "Undo" only as long as at least one affected session is still open.
   store.get('plans').forEach((p) => (p.adaptLog || []).forEach((e) => entries.push({ ...e, planId: p.id, undoable: canUndo(p.units || [], e) })));
   if (!entries.length) return null;
   entries.sort((a, b) => String(b.ts).localeCompare(String(a.ts)));
@@ -225,7 +225,7 @@ export function adaptLogCard() {
   return wrap;
 }
 
-/** Adaptiver Tageshinweis: niedrige Bereitschaft + fordernde Einheit -> lockerer machen. */
+/** Adaptive daily hint: low readiness + demanding session -> make it easier. */
 function readinessAdjustCard(soft) {
   const u = soft.unit;
   return el('div', { class: 'card', style: { borderLeft: '5px solid #e8a13a' } }, [
@@ -255,7 +255,7 @@ function makeEasier(unit, reason = t('dashboardCoach.log.lowReadinessReason')) {
   refreshView();
 }
 
-/** Adaptive Umplanung: verpasste Schlüsseleinheit auf einen freien Tag nachholen. */
+/** Adaptive replanning: make up a missed key session on a free day. */
 function makeupCard(unit, targetDay) {
   return el('div', { class: 'card', style: { borderLeft: '5px solid #5b8def' } }, [
     el('div', { class: 'row gap-2', style: { alignItems: 'flex-start' } }, [
@@ -276,8 +276,8 @@ function makeupMove(unit, targetDay) {
   refreshView();
 }
 
-/** Adaptive Entlastung: bei dauerhaft sehr fordernden Einheiten (RPE) die kommende
-    Woche zurücknehmen – feste Termine bleiben, wie sie sind. */
+/** Adaptive deload: with persistently very demanding sessions (RPE), scale back the coming
+    week – fixed commitments stay as they are. */
 function deloadCard(cands, prog) {
   return el('div', { class: 'card', style: { borderLeft: '5px solid #e8a13a' } }, [
     el('div', { class: 'row gap-2', style: { alignItems: 'flex-start' } }, [
@@ -302,8 +302,8 @@ function applyDeload(cands) {
   refreshView();
 }
 
-/** Adaptive Steigerung: nur ohne Warnsignal, mit Last im üblichen Rahmen – die
-    kommende Woche etwas fordernder machen (feste Termine bleiben, wie sie sind). */
+/** Adaptive progression: only without a warning signal and with load in the usual range – make the
+    coming week somewhat more demanding (fixed commitments stay as they are). */
 function boostCard(cands, prog) {
   return el('div', { class: 'card', style: { borderLeft: '5px solid #2bb673' } }, [
     el('div', { class: 'row gap-2', style: { alignItems: 'flex-start' } }, [
@@ -328,7 +328,7 @@ function applyBoost(cands) {
   refreshView();
 }
 
-/** Freies Training von heute als kompakte Karte (Link zur Auswertung). */
+/** Today's free training as a compact card (link to the analysis). */
 export function freeSessionCard(s) {
   const meta = [typeMeta(s.type).label];
   if (s.distanceKm) meta.push(fmtKm(s.distanceKm, 1));
@@ -345,9 +345,9 @@ export function freeSessionCard(s) {
   ]);
 }
 
-/** Importierte Trainings, die zu offenen geplanten Einheiten passen – mit Rückfrage
-    zuordnen. Zugeordnet gilt die Einheit als erledigt; es entsteht keine zweite Session. */
-/** Antworten auf „Wie hart war's?“ – ein Tipp setzt die Anstrengung (RPE 1–10). */
+/** Imported workouts that match open planned sessions – assign them after
+    asking. Once assigned, the session counts as done; no second session is created. */
+/** Answers to "How hard was it?" – one tap sets the effort (RPE 1–10). */
 const RPE_CHOICES = [[3, 'light'], [5, 'medium'], [7, 'hard'], [9, 'veryHard']];   // rpe.<key> in the catalog
 
 export function rpeAskCard(list) {

@@ -1,22 +1,22 @@
 /* =========================================================================
-   demo.js — Demodaten-Builder für die Ersteinrichtung (DOM-frei, testbar).
+   demo.js — demo data builder for the first-run setup (DOM-free, testable).
 
-   Liefert deterministisch (relativ zu `today`) ein VOLLSTÄNDIGES Beispiel-Set –
-   in jeder Kategorie sind Daten enthalten, damit nach „Mit Demodaten starten“
-   überall etwas zu sehen ist:
-     • Admin (Nora): angereichertes Profil (HF-/Pace-Zonen, Ziele), Standort
-       Dresden (Wetter), Zyklus-Modul, Wettkampf, ~9 Wochen Trainingshistorie,
-       LANGE realistische Körper-/Fitness-Zeitreihe (alle Metriken), Zyklus-
-       Historie, Wochen-Speiseplan, Ess-Tagebuch, Einkaufsliste, Checkliste.
-     • Gemeinsames Familien-Lager (`pantry`).
-     • 9 Demo-Mitglieder mit VOLLSTÄNDIGEN Stammdaten (Profil: Größe/Gewicht/Alter/
-       Geschlecht/HF-/Pace-Zonen, Standort, Module, Wochenziele) + Trainings-/
-       Körper-/Ernährungshistorie (Team-Dashboard/-Badges).
+   Deterministically (relative to `today`) delivers a COMPLETE sample set –
+   every category contains data, so that after "Start with demo data"
+   there is something to see everywhere:
+     • Admin (Nora): enriched profile (HR/pace zones, goals), location
+       Dresden (weather), cycle module, race, ~9 weeks of training history,
+       LONG realistic body/fitness time series (all metrics), cycle
+       history, weekly meal plan, food diary, shopping list, checklist.
+     • Shared family pantry (`pantry`).
+     • 9 demo members with COMPLETE master data (profile: height/weight/age/
+       sex/HR/pace zones, location, modules, weekly goals) + training/
+       body/nutrition history (team dashboard/badges).
 
-   Den **Trainingsplan** baut `storage.seedDemo()` über den echten Generator
-   (`createPlanForEvent`/`generatePlanUnits`) inkl. fester Termine. Zyklusdaten hat
-   der Admin selbst UND jedes weibliche Mitglied – jeweils die EIGENEN, privaten
-   Daten (`PRIVATE_AREAS` schützt sie beim Verwalten fremder Mitglieder).
+   The **training plan** is built by `storage.seedDemo()` using the real generator
+   (`createPlanForEvent`/`generatePlanUnits`), including fixed appointments. Cycle data is held
+   by the admin personally AND by every female member – in each case their OWN, private
+   data (`PRIVATE_AREAS` protects it when managing other members).
    ========================================================================= */
 import { addDays, isoDow } from './ui.js';
 import { pacesFromVdot } from './vdot.js';
@@ -31,24 +31,24 @@ const TITLE = {
   get interval() { return t('demo.titleInterval'); },
   get recovery() { return t('demo.titleRecovery'); },
 };
-// Session-Durchschnitts-Paces (s/km). Wichtig: konsistent mit den Plan-Zielpaces (DEMO_PACE_ZONES
-// ≈ VDOT 39–40, passend zum 1:55-HM-Ziel). Die Intervalle sind als VO₂max-Schlüsselreiz der schnellste
-// Wert und ergeben eine „aktuelle Form“ von ~VDOT 42 – ein realistischer, sichtbarer Vorsprung von
-// ~18 s/km, an dem sich die Pace-Anpassung nachvollziehbar zeigen lässt (früher: 4:10/km ⇒ VDOT 48,8,
-// ein absurder 51-s/km-Sprung).
+// Session average paces (s/km). Important: consistent with the plan target paces (DEMO_PACE_ZONES
+// ≈ VDOT 39–40, matching the 1:55 half-marathon goal). As the key VO₂max stimulus, the intervals are the fastest
+// value and yield a "current form" of ~VDOT 42 – a realistic, visible lead of
+// ~18 s/km, which makes the pace adjustment easy to follow (formerly: 4:10/km ⇒ VDOT 48.8,
+// an absurd 51 s/km jump).
 const PACE = { easy: 360, tempo: 305, long: 372, interval: 285, recovery: 396 };
 const HR = { easy: 138, tempo: 162, long: 146, interval: 172, recovery: 128 };
 
 const R1 = (v) => Math.round(v * 10) / 10;
 const CLAMP = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-// Deterministischer Pseudo-Zufall (reproduzierbar – kein Math.random, damit die
-// Demodaten und die Tests stabil bleiben).
+// Deterministic pseudo-randomness (reproducible – no Math.random, so that the
+// demo data and the tests stay stable).
 const NZ = (i, amp) => { const x = Math.sin((i + 1) * 12.9898) * 43758.5453; return ((x - Math.floor(x)) - 0.5) * 2 * amp; };
 
 /**
- * Lange, realistische Körper-/Fitness-Zeitreihe (ALLE Metriken) über `days` Tage,
- * ein Messpunkt alle `step` Tage. Trends: Gewicht/Körperfett/Viszeralfett/Ruhepuls
- * fallen, Muskelmasse/HRV/VO₂max steigen; Schlaf/Energie/Stimmung schwanken.
+ * Long, realistic body/fitness time series (ALL metrics) over `days` days,
+ * one data point every `step` days. Trends: weight/body fat/visceral fat/resting heart rate
+ * fall, muscle mass/HRV/VO₂max rise; sleep/energy/mood fluctuate.
  */
 export function demoHealthSeries(today, opts = {}) {
   const { days = 84, step = 2, w0 = 75, dw = 3, bf0 = 28, rhr0 = 56, mm0 = 27.3, seed = 0 } = opts;
@@ -56,7 +56,7 @@ export function demoHealthSeries(today, opts = {}) {
   const out = [];
   for (let k = n; k >= 0; k--) {
     const date = addDays(today, -k * step);
-    const progress = 1 - k / n; // 0 = ältester Punkt … 1 = heute (Fortschritt)
+    const progress = 1 - k / n; // 0 = oldest point … 1 = today (progress)
     const s = seed;
     out.push({
       id: `demo-h-${s}-${date}`, date, source: 'demo', notes: '',
@@ -65,29 +65,29 @@ export function demoHealthSeries(today, opts = {}) {
       muscleMass: R1(mm0 + 0.9 * progress + NZ(k + s + 3, 0.15)),
       visceralFat: Math.round(CLAMP(8 - 2 * progress + NZ(k + s + 11, 0.5), 4, 12)),
       restingHr: Math.round(CLAMP(rhr0 - 6 * progress + NZ(k + s + 5, 1.6), 40, 68)),
-      hrv: Math.round(CLAMP(52 + 11 * progress + NZ(k + s + 2, 3.5), 40, 90)), hrvMethod: 'rmssd',   // Uhr (nicht Apple)
+      hrv: Math.round(CLAMP(52 + 11 * progress + NZ(k + s + 2, 3.5), 40, 90)), hrvMethod: 'rmssd',   // watch (not Apple)
       sleepHours: R1(CLAMP(7.2 + 0.25 * Math.sin(k / 3) + NZ(k + s + 4, 0.9), 5, 9)),
       energy: CLAMP(Math.round(6.3 + 1.3 * progress + NZ(k + s + 6, 1.6)), 1, 10),
       mood: CLAMP(Math.round(6.4 + 1.1 * progress + NZ(k + s + 8, 1.5)), 1, 10),
-      vo2max: (k % 3 === 0) ? R1(44 + 4 * progress + NZ(k + s + 9, 0.4)) : null, // wird seltener gemessen
+      vo2max: (k % 3 === 0) ? R1(44 + 4 * progress + NZ(k + s + 9, 0.4)) : null, // measured less often
     });
   }
   return out;
 }
 
-/** Kompakter Datensatz eines Team-Mitglieds (volle Datenfülle: Läufe, lange
-    Werte-Reihe, optional Wettkampf) – deterministisch je `seed`. */
-/* ---- Mitglieder-Stammdaten (individuelles Profil + Einstellungen) ---- */
+/** Compact data set of a team member (full range of data: runs, long
+    series of values, optional race) – deterministic per `seed`. */
+/* ---- Member master data (individual profile + settings) ---- */
 const CITIES = {
   Dresden: { lat: 51.0504, lon: 13.7373 }, Leipzig: { lat: 51.3397, lon: 12.3731 },
   Meißen: { lat: 51.1642, lon: 13.4736 }, Berlin: { lat: 52.52, lon: 13.405 },
   Radebeul: { lat: 51.1064, lon: 13.6603 },
 };
-/** HF-Zonen (5) aus der maximalen Herzfrequenz – dieselbe Rechnung wie in den Einstellungen. */
+/** HR zones (5) from the maximum heart rate – same calculation as in the settings. */
 function memberHrZones(maxHr) {
   return hrZonesFrom({ maxHr });
 }
-/** Vollständiges, individuelles Mitglieder-Profil inkl. Einstellungen (Standort, Module …). */
+/** Complete, individual member profile incl. settings (location, modules …). */
 function demoMemberProfile(spec, today) {
   const female = spec.sex === 'w';
   const minor = spec.age < 18;
@@ -98,7 +98,7 @@ function demoMemberProfile(spec, today) {
   const loc = CITIES[spec.city] || CITIES.Dresden;
   return {
     heightCm: spec.heightCm || (female ? 164 + (spec.age % 9) : 178 + (spec.age % 11)),
-    // Kinder- und Jugendprofil: kein Zielgewicht (die App rechnet dafür keine Gewichtsziele).
+    // Child and teenage profile: no target weight (the app does not calculate weight goals for them).
     weightKg: spec.w0, targetWeightKg: minor ? null : Math.round(spec.w0 - (spec.level === 'low' ? 4 : 2)),
     birthYear: (+today.slice(0, 4)) - spec.age, sex: spec.sex,
     maxHr, restHr, thresholdPaceSecPerKm: pz.threshold.min,
@@ -109,14 +109,14 @@ function demoMemberProfile(spec, today) {
       theme: 'system', accent: spec.color, weekStart: 1, units: 'metric', weather: true,
       location: { name: spec.city, country: 'DE', ...loc },
       modules: { cycle: female, nutrition: true, shopping: true, checklist: true, strength: true, labs: true },
-      // Abgrenzungs-Fragen beantwortet (alle „nein“) -> Modul im vollen Umfang. Das Alter
-      // kennt die App aus dem Geburtsjahr (Kinder- und Jugendprofil automatisch).
+      // Screening questions answered (all "no") -> module at full scope. The app
+      // knows the age from the birth year (child and teenage profile applied automatically).
       labsGate: { chronicCondition: false, medication: false, pregnancy: false, eatingDisorder: false, minor },
       metricsEnabled: { weight: true, bodyFat: true, muscleMass: true, visceralFat: true, restingHr: true, hrv: true, vo2max: true, sleepHours: true, energy: true, mood: true },
-      // Kinder und Jugendliche: WHO-Empfehlung rund 60 Minuten Bewegung am Tag.
+      // Children and teenagers: WHO recommendation of around 60 minutes of physical activity a day.
       weeklyGoals: minor ? { activeMinutes: 420, trainingDays: 5 }
         : { activeMinutes: spec.level === 'high' ? 300 : spec.level === 'low' ? 150 : 210, trainingDays: spec.level === 'high' ? 5 : spec.level === 'low' ? 3 : 4 },
-      // Trainer-Sicht: Wer seine Belastung freigibt, erscheint bei den Admins unter „Belastung im Team“.
+      // Coach view: anyone who shares their load appears for the admins under "Team load".
       shareLoad: !minor && spec.shareLoad === true,
     },
   };
@@ -138,7 +138,7 @@ export function demoMemberData(prefix, today, { w0 = 78, seed = 1, level = 'mid'
     add(base + 4, w % 2 ? 'tempo' : 'long', w % 2 ? 6 : 11 + (8 - w) * 0.6, w % 2 ? 7 : 6);
     if (w % 2 === 0) add(base + 6, 'recovery', 4, 2);
   }
-  // Kinder wachsen: Gewicht und Muskelmasse steigen leicht statt zu fallen.
+  // Children grow: weight and muscle mass rise slightly instead of falling.
   const health = minor
     ? demoHealthSeries(today, { days: 60, step: 3, w0, dw: -0.8, seed, rhr0: 66, bf0: 18, mm0: 17 })
     : demoHealthSeries(today, { days: 60, step: 3, w0, seed, rhr0: 54 + (seed % 5), bf0: sex === 'w' ? 27 : 19 });
@@ -153,21 +153,21 @@ export function demoMemberData(prefix, today, { w0 = 78, seed = 1, level = 'mid'
 }
 
 /* =========================================================================
-   Labor & Ergänzung — Demodaten
-   Bewusst als kleine Geschichten angelegt, damit jede Auswertung der App an
-   den Demodaten etwas Sinnvolles zeigt:
-     • Ferritin fällt über vier Messungen  -> Trendprojektion & Sport-Korridor
-     • Vitamin D unter dem Zielbereich     -> saisonale Empfehlung
-     • CRP bei einem Mitglied erhöht       -> „nicht beurteilbar“ (Kontext)
-     • Magnesium/B12 im Bereich            -> „alles gut“ als Gegenbeispiel
+   Lab & supplements — demo data
+   Deliberately set up as small stories, so that every analysis in the app
+   shows something meaningful on the demo data:
+     • Ferritin falls over four measurements  -> trend projection & sport corridor
+     • Vitamin D below the target range       -> seasonal recommendation
+     • CRP raised for one member              -> "can't be assessed" (context)
+     • Magnesium/B12 within range             -> "all good" as a counter-example
    ========================================================================= */
 
-/** Laborwerte des Admins: vier Messzeitpunkte über ein Jahr, fallender Eisenspeicher. */
+/** Lab values of the admin: four measurement dates over a year, falling iron stores. */
 export function demoLabs(today) {
   const D = (n) => addDays(today, n);
-  const at = [-330, -220, -110, -12];              // vier Befunde übers Jahr
-  const ferritin = [88, 72, 58, 47];               // fällt deutlich, noch im Sportkorridor -> Projektion
-  const vitD = [98, 74, 52, 46];                   // Sommer -> Winter
+  const at = [-330, -220, -110, -12];              // four lab reports over the year
+  const ferritin = [88, 72, 58, 47];               // falls markedly, still within the sport corridor -> projection
+  const vitD = [98, 74, 52, 46];                   // summer -> winter
   const hb = [13.6, 13.4, 13.2, 13.1];
   const out = [];
   let i = 0;
@@ -179,17 +179,17 @@ export function demoLabs(today) {
     add('ferritin', ferritin[k], off, k === 3 ? t('demo.labFollowUp') : null);
     add('vitaminD', vitD[k], off);
     add('hb', hb[k], off);
-    add('crp', k === 3 ? 1.8 : 2.4, off);          // unauffällig -> Ferritin beurteilbar
+    add('crp', k === 3 ? 1.8 : 2.4, off);          // unremarkable -> ferritin can be assessed
   });
-  // Einzelwerte aus dem jüngsten Befund (zeigen „im Zielbereich“)
+  // Single values from the most recent lab report (show "in the target range")
   add('b12', 68, -12);
-  add('magnesium', 1.45, -12);                     // Vollblut, im Referenzbereich
+  add('magnesium', 1.45, -12);                     // whole blood, within the reference range
   add('ft3', 4.6, -12);
   add('zinc', 13.2, -12);
   return out;
 }
 
-/** Supplement-Plan des Admins + Einnahmehistorie (für die Einnahmetreue). */
+/** Supplement plan of the admin + intake history (for adherence). */
 export function demoSupplements(today) {
   const D = (n) => addDays(today, n);
   const plans = [
@@ -197,7 +197,7 @@ export function demoSupplements(today) {
     { id: 'demo-sup-mg', _kind: 'plan', supplementKey: 'magnesium', name: t('demo.supMagnesium'), dose: t('demo.supMagnesiumDose'), timing: t('demo.supEvening'), active: true, from: D(-30), to: null, source: 'demo' },
   ];
   const intakes = [];
-  // Realistische Einnahmetreue: Vitamin D fast täglich, Magnesium mit Lücken.
+  // Realistic adherence: vitamin D almost daily, magnesium with gaps.
   for (let k = 0; k < 21; k++) {
     if (k % 7 !== 5) intakes.push({ id: `demo-int-vd-${k}`, _kind: 'intake', planId: 'demo-sup-vd', date: D(-k), source: 'demo' });
     if (k % 3 !== 0) intakes.push({ id: `demo-int-mg-${k}`, _kind: 'intake', planId: 'demo-sup-mg', date: D(-k), source: 'demo' });
@@ -205,7 +205,7 @@ export function demoSupplements(today) {
   return [...plans, ...intakes];
 }
 
-/** Laborwerte eines Mitglieds – je nach Typ eine andere, lehrreiche Konstellation. */
+/** Lab values of a member – a different, instructive constellation depending on the type. */
 export function demoMemberLabs(prefix, today, { sex = 'm', level = 'mid', seed = 1 } = {}) {
   const D = (n) => addDays(today, n);
   const out = [];
@@ -213,22 +213,22 @@ export function demoMemberLabs(prefix, today, { sex = 'm', level = 'mid', seed =
   const add = (analyte, value, off) => out.push({
     id: `${prefix}-lab-${analyte}-${++i}`, analyte, value, unit: null, date: D(off), source: 'demo',
   });
-  // Zwei Befunde: vor einem halben Jahr und aktuell.
-  const base = sex === 'w' ? 42 : 120;             // Frauen haben typisch niedrigere Speicher
-  const drift = level === 'high' ? -12 : 4;        // viel Training zehrt am Eisen
+  // Two lab reports: half a year ago and current.
+  const base = sex === 'w' ? 42 : 120;             // women typically have lower stores
+  const drift = level === 'high' ? -12 : 4;        // a lot of training drains iron
   add('ferritin', base, -190);
   add('ferritin', Math.max(12, base + drift), -20);
   add('vitaminD', 62 + (seed % 5) * 6, -190);
   add('vitaminD', 48 + (seed % 4) * 7, -20);
   add('hb', sex === 'w' ? 13.2 : 15.1, -20);
-  // Ein Mitglied (seed 4) hat einen Infekt: CRP hoch -> Ferritin nicht beurteilbar.
+  // One member (seed 4) has an infection: CRP high -> ferritin can't be assessed.
   add('crp', seed === 4 ? 14 : 1.6, -20);
   if (seed % 3 === 0) add('b12', 44 + seed, -20);
-  if (seed % 2 === 0) add('magnesium', 1.5, -20);   // Vollblut, unauffällig
+  if (seed % 2 === 0) add('magnesium', 1.5, -20);   // whole blood, unremarkable
   return out;
 }
 
-/** Zyklus-Historie (~alle 28 Tage) über die letzten `n` Zyklen. */
+/** Cycle history (~every 28 days) over the last `n` cycles. */
 export function demoCycle(today, n = 6) {
   const out = [];
   for (let k = n; k >= 1; k--) {
@@ -238,7 +238,7 @@ export function demoCycle(today, n = 6) {
   return out;
 }
 
-/** HF-Zonen (aus Max-/Ruhepuls) – realistische Demo-Werte. */
+/** HR zones (from max/resting heart rate) – realistic demo values. */
 const demoHrZones = () => [
   { zone: 1, name: zoneName(1), minPct: 50, maxPct: 60, min: 95, max: 114, color: '#7fb8ff' },
   { zone: 2, name: zoneName(2), minPct: 60, maxPct: 70, min: 114, max: 133, color: '#43c59e' },
@@ -258,23 +258,23 @@ const demoPaceZones = () => ({
 });
 
 /**
- * Trainings der Demo-Historie im Planzeitraum [planStart, today): Die alte Lauf-Routine
- * endet mit dem Planstart (sonst liefe die Demo-Person Plan UND Routine – doppelte
- * Last, „deutlich ermüdet“). Fußball und ausdrücklich zusätzliche Einheiten (`extra`)
- * bleiben. Liefert eine neue Liste.
+ * Trainings of the demo history in the plan period [planStart, today): the old running routine
+ * ends with the plan start (otherwise the demo person would run plan AND routine – double
+ * load, "clearly tired"). Football and explicitly additional sessions (`extra`)
+ * stay. Returns a new list.
  */
 export function planPeriodSessions(sessions = [], planStart, today) {
   return (sessions || []).filter((s) => !(s && s.source === 'demo' && !s.extra && s.type !== 'cross_football'
     && s.date >= planStart && s.date < today));
 }
 
-/** Anstrengung (RPE) je Einheitentyp für Demo-Trainings aus dem Plan. */
+/** Effort (RPE) per session type for demo trainings from the plan. */
 const DEMO_RPE = { easy: 4, recovery: 3, long: 6, tempo: 7, interval: 8, race: 9, strength: 5, mobility: 2, walk: 2, cross_bike: 5 };
 
-/** Übungen der Demo-Krafteinheiten – im Workout-Modus mit Satz-Erfassung und „Letztes Mal“. */
+/** Exercises of the demo strength sessions – in workout mode with set logging and "Last time". */
 export const DEMO_STRENGTH_IDS = ['squat', 'lunge', 'glute_bridge'];
 
-/** Kraftsätze der k-ten erledigten Demo-Krafteinheit (0 = älteste): das Gewicht steigt behutsam. */
+/** Strength sets of the k-th completed demo strength session (0 = oldest): the weight rises gently. */
 export function demoStrengthSets(k = 0) {
   const kg = 12 + 2 * Math.min(k, 3);
   return [
@@ -285,9 +285,9 @@ export function demoStrengthSets(k = 0) {
 }
 
 /**
- * Beispielstrecke: eine Runde um den Großen Garten in Dresden (ungefähr `km` lang) mit
- * sanftem Höhenprofil – die Demo zeigt „Strecke“ und Höhenmeter wie nach einem Datei-Import.
- * Unter 5 Hm je km, damit die Form-Schätzung der Demo unverändert bleibt.
+ * Sample route: a loop around the Großer Garten in Dresden (roughly `km` long) with
+ * a gentle elevation profile – the demo shows the route and elevation gain as after a file import.
+ * Under 5 m of ascent per km, so that the demo's form estimate stays unchanged.
  * @returns {{route:{poly:string, ele:number[]}, ascentM:number}}
  */
 export function demoRoute(km) {
@@ -298,7 +298,7 @@ export function demoRoute(km) {
     const rr = r * (1 + 0.12 * Math.sin(3 * angle) + 0.05 * Math.sin(7 * angle + 1));
     return [lat0 + (rr * 0.8 * Math.sin(angle)) / 111.32, lon0 + (rr * 1.25 * Math.cos(angle)) / (111.32 * cosLat)];
   });
-  const perKm = haversineSum(shape(1)) / 1000;           // Länge der Form bei r = 1 km
+  const perKm = haversineSum(shape(1)) / 1000;           // length of the shape at r = 1 km
   const coords = shape(km / perKm);
   const eles = coords.map((_, i) => { const angle = (2 * Math.PI * i) / N; return 116 + 9 * Math.sin(2 * angle) + 3 * Math.sin(9 * angle); });
   const ele = Array.from({ length: 60 }, (_, k) => Math.round(eles[Math.round((k * N) / 59)]));
@@ -306,14 +306,14 @@ export function demoRoute(km) {
 }
 
 /**
- * Ergänzt jede vergangene, erledigte Plan-Einheit ohne Training um ein passendes
- * Demo-Training (Strecke, Dauer, Anstrengung, HF aus den Zielwerten; Fußball und
- * Spiele mit geplanter Dauer und Intensität) und verknüpft beide. Vorher zeigte jede
- * dieser Einheiten „als erledigt markiert, es wurden aber keine Messwerte erfasst“,
- * und die festen Termine fehlten in der Belastung. Seit v3.21.0 zeigt die Demo auch die
- * Datei- und Kraft-Funktionen: Krafteinheiten tragen ihre Übungen (`exerciseIds`), erledigte
- * Kraft-Trainings ihre Sätze, und der jüngste lange Lauf hat Strecke und Höhenmeter.
- * Liefert neue Listen.
+ * Adds a matching demo training to every past, completed plan session that has no training
+ * (route, duration, effort, HR from the target values; football and
+ * games with planned duration and intensity) and links the two. Previously each
+ * of these sessions showed "This session is marked as done, but no data was logged",
+ * and the fixed appointments were missing from the load. Since v3.21.0 the demo also shows the
+ * file and strength features: strength sessions carry their exercises (`exerciseIds`), completed
+ * strength trainings their sets, and the most recent long run has a route and elevation gain.
+ * Returns new lists.
  */
 export function completeDemoUnits(units = [], sessions = [], today, eventId = null) {
   const us = units.map((u) => (u.type === 'strength' && !Array.isArray(u.exerciseIds) ? { ...u, exerciseIds: [...DEMO_STRENGTH_IDS] } : { ...u }));
@@ -337,23 +337,23 @@ export function completeDemoUnits(units = [], sessions = [], today, eventId = nu
     out.push(s);
     u.executedSessionId = id;
   }
-  // Kraftsätze der erledigten Demo-Krafteinheiten, älteste zuerst (das Gewicht steigt).
+  // Strength sets of the completed demo strength sessions, oldest first (the weight rises).
   out.filter((s) => s.type === 'strength' && s.source === 'demo' && String(s.id).startsWith('demo-pu'))
     .sort((a, b) => a.date.localeCompare(b.date))
     .forEach((s, k) => { s.strengthSets = demoStrengthSets(k); });
-  // Der jüngste lange Lauf bekommt Strecke und Höhenmeter (als neues Objekt – die Eingabe bleibt).
+  // The most recent long run gets a route and elevation gain (as a new object – the input stays untouched).
   const longs = out.filter((s) => s.type === 'long' && s.date < today && Number(s.distanceKm) > 0);
   const last = longs.sort((a, b) => a.date.localeCompare(b.date))[longs.length - 1];
   if (last) out[out.indexOf(last)] = { ...last, ...demoRoute(Number(last.distanceKm)) };
   return { units: us, sessions: out };
 }
 
-/** Baut das komplette Demo-Set relativ zum heutigen Datum. */
+/** Builds the complete demo set relative to today's date. */
 export function buildDemo(today) {
   const D = (n) => addDays(today, n);
 
-  /* ---- Admin: 14 Wochen Trainingshistorie (easy · Tempo/Intervalle · Long · alle 3 Wo. Regeneration) ----
-     Über 90 Tage, damit die Fitnesskurve eingeschwungen ist und „Belastung & Form“ die Form bewertet. */
+  /* ---- Admin: 14 weeks of training history (easy · tempo/intervals · long · recovery every 3rd week) ----
+     Over 90 days, so that the fitness curve has settled and "Load & form" rates the form. */
   const sessions = [];
   let sid = 0;
   const addS = (off, type, km, rpe) => sessions.push({
@@ -365,17 +365,17 @@ export function buildDemo(today) {
   for (let w = HIST_WEEKS; w >= 1; w--) {
     const base = -(w * 7);
     addS(base + 1, 'easy', 8, 4);
-    addS(base + 3, w % 2 === 0 ? 'tempo' : 'interval', 8, 7); // abwechselnd Tempo/Intervalle
+    addS(base + 3, w % 2 === 0 ? 'tempo' : 'interval', 8, 7); // alternating tempo/intervals
     addS(base + 5, 'long', 9 + Math.round((HIST_WEEKS - w) * 0.6), 6);
-    if (w % 3 === 0) addS(base + 6, 'recovery', 4, 2);        // alle 3 Wochen ein Regenerationslauf
+    if (w % 3 === 0) addS(base + 6, 'recovery', 4, 2);        // a recovery run every 3 weeks
   }
-  // Diese Woche zusätzlich zum Plan zwei harte Einheiten (`extra`) – eine Abweichung
-  // vom Plan, an der Belastungs- & Erholungssteuerung sichtbar werden.
+  // This week two hard sessions (`extra`) in addition to the plan – a deviation
+  // from the plan that makes the load and recovery management visible.
   addS(-1, 'tempo', 9, 8);
   addS(-3, 'interval', 8, 8);
   sessions.slice(-2).forEach((s) => { s.extra = true; });
-  // Vereinsfußball Mo + Mi (90 min, „normal“) – gehört zur Belastung dazu. Ohne ihn
-  // zeigte die Demo Lastverhältnis und Form ohne die Fußball-Last (TRAIN-46).
+  // Club football Mon + Wed (90 min, "normal") – part of the load. Without it,
+  // the demo showed load ratio and form without the football load (TRAIN-46).
   for (let off = HIST_WEEKS * 7; off >= 1; off--) {
     const date = D(-off);
     if (![1, 3].includes(isoDow(date))) continue;
@@ -385,33 +385,33 @@ export function buildDemo(today) {
     });
   }
 
-  /* ---- Lange, realistische Körper-/Fitness-Zeitreihe (alle Metriken) ---- */
+  /* ---- Long, realistic body/fitness time series (all metrics) ---- */
   const health = demoHealthSeries(today);
 
-  /* ---- Wettkampf (mit Stadt für das Wetter) ---- */
+  /* ---- Race (with city for the weather) ---- */
   const events = [{
     id: 'demo-e1', name: t('demo.raceCityHalf'), kind: 'race', date: D(70),
     distanceType: 'HM', distanceKm: 21.0975, targetTime: '01:55:00',
     priority: 'A', location: 'Dresden, Altstadt', status: 'geplant', createdAt: D(-42),
   }];
 
-  // Angereichertes Profil: HF-/Pace-Zonen + Ziele; birthYear + sex speisen den
-  // Grundumsatz (Kalorienbilanz). Zielgewicht bewusst unter dem aktuellen Wert
-  // (Zeitreihe endet ~72 kg) → Abnehm-Ziel „in Arbeit“ fürs Dual-Goal-Cockpit.
+  // Enriched profile: HR/pace zones + goals; birthYear + sex feed the
+  // basal metabolic rate (calorie balance). Target weight deliberately below the current value
+  // (time series ends at ~72 kg) → weight-loss goal "in progress" for the dual-goal cockpit.
   const profile = {
     heightCm: 179, weightKg: 72, targetWeightKg: 69, targetWeightStartKg: 75, birthYear: 1990, sex: 'w',
     maxHr: 190, restHr: 52, thresholdPaceSecPerKm: 312,
     goals: [t('demo.goalBodyFat'), t('demo.goalMuscle'), t('demo.goalHalf')],
     hrZones: demoHrZones(), paceZones: demoPaceZones(),
   };
-  // Standort (Dresden) für die Wettervorhersage, aktive Module (inkl. Zyklus!),
-  // sichtbare Metriken und Gesundheitsziele (Fortschritt auf „Heute“).
+  // Location (Dresden) for the weather forecast, active modules (incl. cycle!),
+  // visible metrics and health goals (progress set to "Today").
   const settings = {
     theme: 'system', accent: '#18b48a', weekStart: 1, units: 'metric', weather: true,
     location: { name: 'Dresden', country: 'DE', lat: 51.0504, lon: 13.7373 },
     modules: { cycle: true, nutrition: true, shopping: true, checklist: true, strength: true, labs: true },
-    // Abgrenzungs-Fragen der Demo-Person beantwortet (alle „nein“) – sonst stünde
-    // das Labor-Modul in der Demo dauerhaft im Einrichtungs-Schritt.
+    // Screening questions of the demo person answered (all "no") – otherwise the
+    // lab module would permanently sit in the setup step in the demo.
     labsGate: { chronicCondition: false, medication: false, pregnancy: false, eatingDisorder: false, minor: false },
     metricsEnabled: {
       weight: true, bodyFat: true, muscleMass: true, visceralFat: true, restingHr: true,
@@ -423,9 +423,9 @@ export function buildDemo(today) {
       { id: 'demo-g2', metric: 'bodyFat', target: 24, start: 28, deadline: D(70) },
       { id: 'demo-g3', metric: 'restingHr', target: 50, start: 56, deadline: D(70) },
     ],
-    // Übungs-Nutzungszähler (v3.11.0): realistische Historie über alte UND neue Übungen,
-    // damit im Katalog die „×N“-Zähler und in den Einheiten die nach Häufigkeit sortierten
-    // Vorschläge sofort sichtbar sind.
+    // Exercise usage counters (v3.11.0): realistic history across old AND new exercises,
+    // so that the "×N" counters show up in the catalogue and the suggestions sorted by
+    // frequency show up in the sessions straight away.
     exerciseUsage: {
       plank: 11, glute_bridge: 9, hip_flexor_stretch: 8, cat_cow: 8, hamstring_stretch: 7,
       calf_stretch: 6, child_pose: 5, dead_bug: 4, squat: 4, side_plank: 3, superman: 3,
@@ -433,10 +433,10 @@ export function buildDemo(today) {
     },
   };
 
-  /* ---- Wochen-Speiseplan des Admins (geplante Gerichte → Einkaufsliste) ---- */
+  /* ---- Weekly meal plan of the admin (planned dishes → shopping list) ---- */
   const nutrition = [
-    // Nährwerte wie im Rezeptkatalog (aus den Zutaten geschätzt) – Katalog, Speiseplan
-    // und Tagebuch zeigen für dasselbe Gericht dieselben Zahlen.
+    // Nutritional values as in the recipe catalogue (estimated from the ingredients) – catalogue, meal plan
+    // and diary show the same numbers for the same dish.
     { id: 'demo-n1', suggestionId: 'overnight-oats-mit-beeren', category: 'fruehstueck', title: t('demo.mealOvernightOats'), kcal: 520, protein: 30, tags: ['proteinreich', 'vegetarisch', 'meal-prep'], ingredients: tList('demo.mealOvernightOatsIngredients') || [], plannedServings: 3 },
     { id: 'demo-n2', suggestionId: 'protein-porridge-mit-banane', category: 'fruehstueck', title: t('demo.mealProteinPorridge'), kcal: 600, protein: 39, tags: ['proteinreich', 'vegetarisch'], ingredients: tList('demo.mealProteinPorridgeIngredients') || [], plannedServings: 2 },
     { id: 'demo-n3', suggestionId: 'haehnchen-reis-bowl-mit-brokkoli', category: 'mittag', title: t('demo.mealChickenRiceBowl'), kcal: 600, protein: 46, tags: ['proteinreich', 'meal-prep'], ingredients: tList('demo.mealChickenRiceBowlIngredients') || [], plannedServings: 4 },
@@ -445,11 +445,11 @@ export function buildDemo(today) {
     { id: 'demo-n6', suggestionId: 'skyr-mit-beeren', category: 'snack', title: t('demo.mealSkyr'), kcal: 140, protein: 18, tags: ['proteinreich', 'vegetarisch', 'schnell'], ingredients: tList('demo.mealSkyrIngredients') || [], plannedServings: 4 },
   ];
 
-  /* ---- Ess-Tagebuch: acht Wochen (Kalorienbilanz + Verlauf der Energieversorgung) ----
-     Bewusst VOLLSTÄNDIG erfasste Tage mit realistischer Menge: Bei ~72 kg,
-     Grundumsatz ~1500 kcal und vier Trainingseinheiten pro Woche sind rund
-     2400 kcal stimmig. Jeder vergangene Tag ist als „vollständig erfasst“ bestätigt –
-     nur solche Tage zählen für die Energieversorgung; heute ist noch offen. */
+  /* ---- Food diary: eight weeks (calorie balance + course of the energy supply) ----
+     Deliberately COMPLETELY logged days with a realistic amount: at ~72 kg,
+     basal metabolic rate ~1500 kcal and four training sessions per week, around
+     2400 kcal is plausible. Every past day is confirmed as "fully logged" –
+     only such days count towards the energy supply; today is still open. */
   const diary = [];
   const dayMeals = [
     { title: t('demo.mealOvernightOats'), kcal: 520, protein: 30 },
@@ -460,7 +460,7 @@ export function buildDemo(today) {
     { title: t('demo.mealCheeseBread'), kcal: 220, protein: 12 },
   ];
   for (let off = 0; off >= -55; off--) {
-    // Leichte Tagesschwankung (deterministisch) – kein Wert ist jeden Tag gleich.
+    // Slight daily variation (deterministic) – no value is the same every day.
     const swing = 1 + NZ(-off, 0.07);
     dayMeals.forEach((m, i) => diary.push({
       id: `demo-d${-off}-${i}`, date: D(off), title: m.title,
@@ -469,7 +469,7 @@ export function buildDemo(today) {
     if (off < 0) diary.push({ id: `day-${D(off)}`, _kind: 'day', date: D(off), complete: true });
   }
 
-  /* ---- Gemeinsames Familien-Lager (Vorräte) – reduziert den Einkaufsbedarf ---- */
+  /* ---- Shared family pantry (supplies) – reduces the shopping need ---- */
   const pantry = [
     { id: 'demo-p1', name: t('demo.pantryOats'), unit: 'g', amount: 500, category: 'Trockenwaren' },
     { id: 'demo-p2', name: t('demo.pantryRice'), unit: 'g', amount: 1000, category: 'Trockenwaren' },
@@ -479,7 +479,7 @@ export function buildDemo(today) {
     { id: 'demo-p6', name: t('demo.pantryOliveOil'), unit: 'ml', amount: 500, category: 'Sonstiges' },
   ];
 
-  /* ---- Einkaufsliste (manuelle Positionen; die App ergänzt Zutaten aus dem Plan) ---- */
+  /* ---- Shopping list (manual items; the app adds ingredients from the plan) ---- */
   const shopping = [
     { id: 'demo-sh1', name: t('demo.shopBananas'), category: 'Obst & Gemüse', qty: t('demo.shopBananasQty'), checked: false },
     { id: 'demo-sh2', name: t('demo.shopBerries'), category: 'Obst & Gemüse', qty: '500 g', checked: false },
@@ -489,14 +489,14 @@ export function buildDemo(today) {
     { id: 'demo-sh6', name: t('demo.shopProteinPowder'), category: 'Sonstiges', qty: t('demo.shopProteinPowderQty'), checked: false },
   ];
 
-  /* ---- Zyklusdaten des Admins (eigene, strikt private Daten) ---- */
+  /* ---- Cycle data of the admin (own, strictly private data) ---- */
   const cycle = demoCycle(today);
 
-  /* ---- Labor & Ergänzung des Admins (ebenfalls strikt privat) ---- */
+  /* ---- Lab & supplements of the admin (likewise strictly private) ---- */
   const labs = demoLabs(today);
   const supplements = demoSupplements(today);
 
-  /* ---- Checkliste & Erinnerungen (Routinen + Termine) ---- */
+  /* ---- Checklist & reminders (routines + appointments) ---- */
   const checklist = [
     { id: 'demo-cl1', text: t('demo.checkStretch'), recurring: true, category: 'training', checked: false },
     { id: 'demo-cl2', text: t('demo.checkWater'), recurring: true, category: 'health', checked: true },
@@ -505,7 +505,7 @@ export function buildDemo(today) {
     { id: 'demo-cl5', text: t('demo.checkRacePack'), dueDate: D(68), time: '17:00', category: 'appointment' },
   ];
 
-  /* ---- 9 Demo-Mitglieder mit voller Datenfülle (Läufe, lange Werte-Reihe, Wettkämpfe) ---- */
+  /* ---- 9 demo members with the full range of data (runs, long series of values, races) ---- */
   const MEMBER_SPECS = [
     { name: 'Max', role: 'admin', emoji: '🚴', color: '#3d8bff', w0: 82, level: 'high', race: 45, sex: 'm', age: 34, city: 'Dresden', shareLoad: true },
     { name: 'Lea', role: 'user', emoji: '🌟', color: '#ff5d8f', w0: 63, level: 'low', race: null, sex: 'w', age: 27, city: 'Leipzig' },
@@ -516,21 +516,21 @@ export function buildDemo(today) {
     { name: 'Deniz', role: 'admin', emoji: '🔥', color: '#18b48a', w0: 74, level: 'high', race: 20, sex: 'w', age: 36, city: 'Dresden' },
     { name: 'Elif', role: 'user', emoji: '👩', color: '#43c59e', w0: 64, level: 'mid', race: 52, sex: 'w', age: 31, city: 'Radebeul', shareLoad: true },
     { name: 'Frido', role: 'user', emoji: '🐶', color: '#5b8def', w0: 85, level: 'low', race: null, sex: 'm', age: 45, city: 'Dresden' },
-    // Kinder- und Jugendprofil (12 Jahre): keine Kalorien- und Gewichtsziele, Labor nur dokumentierend.
+    // Child and teenage profile (12 years): no calorie and weight goals, lab only documenting.
     { name: 'Jonas', role: 'user', emoji: '⚽', color: '#2bb673', w0: 41, heightCm: 152, level: 'low', race: null, sex: 'm', age: 12, city: 'Dresden' },
   ];
   const members = MEMBER_SPECS.map((spec, idx) => {
     const data = demoMemberData(`dm${idx}`, today, { w0: spec.w0, seed: idx + 1, level: spec.level, raceOffset: spec.race, sex: spec.sex, minor: spec.age < 18 });
-    // Weibliche Mitglieder haben ihre EIGENEN, privaten Zyklusdaten (eindeutige IDs je Mitglied).
+    // Female members have their OWN, private cycle data (unique IDs per member).
     if (spec.sex === 'w') data.cycle = demoCycle(today, 5).map((c, i) => ({ ...c, id: `dm${idx}-cyc${i + 1}` }));
-    // Eigene, private Laborwerte je Mitglied (PRIVATE_AREAS – für Admins unsichtbar).
+    // Own, private lab values per member (PRIVATE_AREAS – invisible to admins).
     data.labs = demoMemberLabs(`dm${idx}`, today, { sex: spec.sex, level: spec.level, seed: idx + 1 });
     return { name: spec.name, role: spec.role, emoji: spec.emoji, color: spec.color, sex: spec.sex, profile: demoMemberProfile(spec, today), data };
   });
 
-  // 3 Teams à 3 (Basis). Henriette ist zusätzlich im 2. Team (Mehrfach-Mitgliedschaft),
-  // Horst bleibt ohne Team. '__self__' = die angemeldete Admin-Person (in der Demo: Nora).
-  // Admins insgesamt: Nora + Max + Henriette + Deniz = 4.
+  // 3 teams of 3 (base). Henriette is additionally in the 2nd team (multiple membership),
+  // Horst stays without a team. '__self__' = the signed-in admin person (in the demo: Nora).
+  // Admins in total: Nora + Max + Henriette + Deniz = 4.
   const teams = [
     { name: t('demo.teamRed'), emoji: '🔴', color: '#ff5d5d', memberNames: ['__self__', 'Max', 'Bjarne', 'Jonas'] },
     { name: t('demo.teamBlue'), emoji: '🔵', color: '#3d8bff', memberNames: ['Lea', 'Carla', 'Deniz', 'Henriette'] },

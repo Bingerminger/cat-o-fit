@@ -1,9 +1,8 @@
 /* =========================================================================
-   boot-check.test.js — Startdiagnose (FE-08): Ein langsamer Start (Server im
-   Ruhezustand, schwaches Netz) ist kein Fehler; die Fehlerseite erscheint nur,
-   wenn das Programm nicht lief oder ein echter Fehler aufgezeichnet wurde – und
-   verschwindet, sobald die App doch startet. Der Service Worker nimmt nach 3 s
-   die gespeicherte Shell.
+   boot-check.test.js — start-up diagnostics (FE-08): a slow start (server
+   idle, weak network) is not an error; the error page appears only if the
+   program did not run or a real error was recorded – and disappears as soon
+   as the app does start. After 3 s the service worker takes the stored shell.
    ========================================================================= */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -12,7 +11,7 @@ import vm from 'node:vm';
 
 const SRC = readFileSync(new URL('../js/boot-check.js', import.meta.url), 'utf8');
 
-/** Führt boot-check.js mit nachgebautem Fenster und Hand-Timern aus. */
+/** Runs boot-check.js with a simulated window and hand-driven timers. */
 function run({ moduleLoaded = true } = {}) {
   const listeners = {};
   const timers = [];
@@ -30,35 +29,35 @@ function run({ moduleLoaded = true } = {}) {
   return { win, body, listeners, tick, timers };
 }
 
-test('FE-08: langsamer Start ohne Fehler zeigt keine Fehlerseite', () => {
+test('FE-08: slow start without an error shows no error page', () => {
   const r = run();
   r.listeners.load();
-  r.tick();                         // nach 8 s: noch nicht gebootet, aber kein Fehler
-  assert.equal(r.body.kids.length, 0, 'keine Fehlerseite');
+  r.tick();                         // after 8 s: not booted yet, but no error
+  assert.equal(r.body.kids.length, 0, 'no error page');
   r.win.__catofitBooted = true;
-  r.tick();                         // spätere Prüfung
+  r.tick();                         // later check
   assert.equal(r.body.kids.length, 0);
 });
 
-test('FE-08: echter Fehler zeigt die Diagnose – und sie verschwindet, wenn die App doch startet', () => {
+test('FE-08: a real error shows the diagnostics – and they disappear if the app does start after all', () => {
   const r = run();
   r.listeners.error({ message: 'Boom', target: r.win });
   r.listeners.load();
   r.tick();
-  assert.equal(r.body.kids.length, 1, 'Fehlerseite bei echtem Fehler');
+  assert.equal(r.body.kids.length, 1, 'error page on a real error');
   r.win.__catofitBooted = true;
-  r.tick();                         // Wächter räumt auf
-  assert.equal(r.body.kids.length, 0, 'nach dem späten Start wieder weg');
+  r.tick();                         // watchdog cleans up
+  assert.equal(r.body.kids.length, 0, 'gone again after the late start');
 });
 
-test('FE-08: nicht ausgeführtes Programm (MIME/fehlende Datei) zeigt die Diagnose weiterhin', () => {
+test('FE-08: program not executed (MIME/missing file) still shows the diagnostics', () => {
   const r = run({ moduleLoaded: false });
   r.listeners.load();
   r.tick();
   assert.equal(r.body.kids.length, 1);
 });
 
-test('FE-08/UI-43: Service Worker nimmt nach 3 s die gespeicherte Shell', () => {
+test('FE-08/UI-43: service worker takes the stored shell after 3 s', () => {
   const sw = readFileSync(new URL('../service-worker.js', import.meta.url), 'utf8');
   assert.match(sw, /setTimeout\(\(\) => resolve\('timeout'\), 3000\)/);
   assert.match(sw, /Promise\.race\(\[network, timeout\]\)/);

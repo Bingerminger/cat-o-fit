@@ -1,12 +1,12 @@
 /* =========================================================================
-   csv-export.js — eigene Daten als Tabelle (CSV) für Excel, Numbers, die Ärztin
-   oder eine andere App. DOM-frei; die Einstellungen bieten den Download an.
+   csv-export.js — your own data as a table (CSV) for Excel, Numbers, your doctor
+   or another app. DOM-free; the settings offer the download.
 
-   Format für deutsche Tabellenprogramme: Semikolon als Trenner, Dezimalkomma,
-   UTF-8 mit BOM (sonst zeigt Excel Umlaute falsch), Datum als JJJJ-MM-TT.
-   Texte, die mit = + - @ beginnen, bekommen ein Hochkomma vorangestellt – sonst
-   läse ein Tabellenprogramm eine Notiz wie „=HYPERLINK(…)“ als Formel.
-   Das JSON-Backup bleibt das vollständige Format; die CSV ist zum Weiterarbeiten.
+   Format for German spreadsheet programs: semicolon as separator, decimal comma,
+   UTF-8 with BOM (otherwise Excel shows umlauts wrongly), date as YYYY-MM-DD.
+   Text that begins with = + - @ gets a leading apostrophe – otherwise a spreadsheet
+   would read a note such as "=HYPERLINK(…)" as a formula.
+   The JSON backup remains the complete format; the CSV is for further work.
    ========================================================================= */
 
 import { ANALYTES } from './labs.js';
@@ -17,14 +17,14 @@ import { t } from './i18n.js';
 
 const BOM = '﻿';
 
-/** Zahl mit Dezimalkomma; leer für fehlende Werte. */
+/** Number with decimal comma; empty for missing values. */
 function numCell(v, digits = null) {
   if (v == null || v === '' || !Number.isFinite(Number(v))) return '';
   const n = Number(v);
   const s = digits == null ? String(n) : n.toFixed(digits);
   return s.replace('.', ',');
 }
-/** Textzelle: Anführungszeichen verdoppeln, bei Trenner/Umbruch einschließen, Formeln entschärfen. */
+/** Text cell: double the quotation marks, enclose when it contains a separator/line break, defuse formulas. */
 function textCell(v) {
   if (v == null) return '';
   let s = String(v);
@@ -32,7 +32,7 @@ function textCell(v) {
   return /[;"\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 
-/** Tabelle aus Spalten `[überschrift, (zeile) => zelle]` – Zellen schon als Text. */
+/** Table from columns `[heading, (row) => cell]` – cells already as text. */
 export function toCsv(rows, columns) {
   const head = columns.map(([h]) => textCell(h)).join(';');
   const body = rows.map((r) => columns.map(([, f]) => f(r)).join(';'));
@@ -41,7 +41,7 @@ export function toCsv(rows, columns) {
 
 const live = (list) => (list || []).filter((x) => x && !x.deleted && !x._kind && x.date).sort((a, b) => String(a.date).localeCompare(String(b.date)));
 
-/** Trainings mit Dauer, Strecke, Herzfrequenz, Anstrengung und Belastungspunkten. */
+/** Workouts with duration, distance, heart rate, effort and load points. */
 export function sessionsCsv(sessions) {
   return toCsv(live(sessions), [
     [t('csvExport.date'), (s) => s.date],
@@ -61,7 +61,7 @@ export function sessionsCsv(sessions) {
   ]);
 }
 
-/** Körperwerte je Tag. */
+/** Body measurements per day. */
 export function healthCsv(health) {
   return toCsv(live(health), [
     [t('csvExport.date'), (h) => h.date],
@@ -82,7 +82,7 @@ export function healthCsv(health) {
   ]);
 }
 
-/** Laborwerte mit Einheit und dem Referenzbereich des eigenen Labors (roh, ohne Bewertung). */
+/** Lab values with unit and the reference range of the person's own lab (raw, without rating). */
 export function labsCsv(labs) {
   return toCsv(live(labs), [
     [t('csvExport.date'), (l) => l.date],
@@ -95,7 +95,7 @@ export function labsCsv(labs) {
   ]);
 }
 
-/** Ess-Tagebuch (ohne die „Tag vollständig“-Markierungen). */
+/** Food diary (without the "day complete" markers). */
 export function diaryCsv(diary) {
   return toCsv(live(diary), [
     [t('csvExport.date'), (d) => d.date],

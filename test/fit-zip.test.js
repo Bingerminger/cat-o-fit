@@ -1,7 +1,7 @@
 /* =========================================================================
-   fit-zip.test.js — Trainingsdateien ohne Bibliothek: FIT (Binärformat der Uhren),
-   ZIP und GZ (Massenexporte), dazu Strecke (Polyline) und Höhenmeter.
-   Die FIT- und ZIP-Dateien baut der Test selbst – so ist jedes Feld bekannt.
+   fit-zip.test.js — training files without a library: FIT (binary format of watches),
+   ZIP and GZ (bulk exports), plus route (polyline) and ascent.
+   The test builds the FIT and ZIP files itself – so every field is known.
    ========================================================================= */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -14,7 +14,7 @@ import { encodePolyline, decodePolyline, simplifyRoute, ascentOf, parseActivityF
 const FIT_EPOCH = Date.UTC(1989, 11, 31) / 1000;
 const fitTs = (iso) => Math.round(Date.parse(iso) / 1000 - FIT_EPOCH);
 
-/** Minimaler FIT-Schreiber: Definitionen + Daten, optional komprimierte Zeitstempel. */
+/** Minimal FIT writer: definitions + data, optionally compressed timestamps. */
 function fitFile({ records = [], session = null, activity = null, bigEndianSession = false, compressed = false }) {
   const chunks = [];
   const def = (local, global, fields, little = true) => {
@@ -67,13 +67,13 @@ function fitFile({ records = [], session = null, activity = null, bigEndianSessi
   return Uint8Array.from([...head, ...body, 0, 0]);
 }
 
-/** Lauf nach Norden: 60 Punkte, alle 30 s 100 m, bergauf 1 m je Punkt. */
+/** Run northwards: 60 points, 100 m every 30 s, 1 m uphill per point. */
 function runRecords(startIso = '2026-09-27T22:30:00Z', n = 60) {
   const t0 = fitTs(startIso);
   return Array.from({ length: n }, (_, i) => ({ ts: t0 + i * 30, lat: 51 + (i * 100) / 111195, lon: 13, ele: 100 + i, hr: 140 + (i % 20), dist: i * 100 }));
 }
 
-/** ZIP mit „stored“- und „deflate“-Einträgen (Prüfsumme 0 – der Leser prüft sie nicht). */
+/** ZIP with "stored" and "deflate" entries (checksum 0 – the reader does not check it). */
 function zipFile(entries) {
   const local = [], central = [];
   let off = 0;
@@ -97,56 +97,56 @@ function zipFile(entries) {
   return Uint8Array.from([...local, ...central, new Uint8Array(eo.buffer)].flatMap((c) => [...c]));
 }
 
-test('FIT: Lauf mit Summen der Uhr, Strecke, Höhe, Kalendertag in der Ortszeit', () => {
+test('FIT: run with watch totals, route, elevation, calendar day in local time', () => {
   const recs = runRecords();
   const start = recs[0].ts;
   const file = fitFile({
     records: recs,
     session: { start, sport: 1, elapsedMs: 1800000, timerMs: 1770000, distCm: 590000, kcal: 410, avgHr: 150, maxHr: 170, ascent: 42 },
-    activity: { ts: start + 1800, local: start + 1800 + 7200 },   // Uhr lief auf UTC+2
+    activity: { ts: start + 1800, local: start + 1800 + 7200 },   // watch ran on UTC+2
   });
   assert.ok(isFit(file));
   const a = parseFit(file);
   assert.equal(a.type, 'run');
   assert.equal(a.sportKnown, true);
-  assert.equal(a.durationSec, 1770, 'Stoppuhr-Zeit der Uhr');
+  assert.equal(a.durationSec, 1770, 'stopwatch time of the watch');
   assert.equal(a.distanceKm, 5.9);
   assert.equal(a.avgHr, 150);
   assert.equal(a.maxHr, 170);
   assert.equal(a.kcal, 410);
-  assert.equal(a.ascentM, 42, 'Höhenmeter der Uhr haben Vorrang');
-  assert.equal(a.date, '2026-09-28', 'Start 22:30 UTC = 0:30 Uhr Ortszeit am Folgetag');
-  assert.equal(a.splits.length, 5, 'fünf volle Kilometer aus den Messpunkten');
+  assert.equal(a.ascentM, 42, 'ascent of the watch takes precedence');
+  assert.equal(a.date, '2026-09-28', 'start 22:30 UTC = 0:30 local time on the next day');
+  assert.equal(a.splits.length, 5, 'five full kilometres from the measuring points');
   const pts = decodePolyline(a.route.poly);
   assert.ok(pts.length >= 2 && pts.length <= 150);
-  assert.ok(Math.abs(pts[0][0] - 51) < 1e-4 && Math.abs(pts[0][1] - 13) < 1e-4, 'Strecke beginnt am Start');
+  assert.ok(Math.abs(pts[0][0] - 51) < 1e-4 && Math.abs(pts[0][1] - 13) < 1e-4, 'route starts at the start');
   assert.equal(a.route.ele.length, 60);
   assert.equal(a.route.ele[0], 100);
   assert.equal(a.route.ele[59], 159);
 });
 
-test('FIT: komprimierte Zeitstempel, Big-Endian-Session, Sportarten aus Unterart', () => {
+test('FIT: compressed timestamps, big-endian session, sports from sub-type', () => {
   const recs = runRecords('2026-09-20T07:00:00Z', 40).map((r, i) => ({ ...r, ts: r.ts }));
   const file = fitFile({ records: recs, compressed: true, session: { start: recs[0].ts, sport: 10, sub: 20, elapsedMs: 1200000, timerMs: 1200000, distCm: 0, kcal: 200, avgHr: 120, maxHr: 150, ascent: 0 }, bigEndianSession: true });
   const fit = readFit(file);
   assert.equal(fit.records.length, 40);
-  assert.equal(fit.records[5][253], recs[5].ts, 'Zeitstempel aus dem komprimierten Kopf');
+  assert.equal(fit.records[5][253], recs[5].ts, 'timestamp from the compressed header');
   const a = parseFit(file);
-  assert.equal(a.type, 'strength', 'Training + Unterart Kraft');
+  assert.equal(a.type, 'strength', 'training + sub-type strength');
   assert.equal(a.durationSec, 1200);
   const bike = parseFit(fitFile({ records: runRecords(), session: { start: runRecords()[0].ts, sport: 2, elapsedMs: 1800000, timerMs: 1800000, distCm: 1500000, kcal: 300, avgHr: 130, maxHr: 150, ascent: 10 } }));
   assert.equal(bike.type, 'cross_bike');
-  assert.deepEqual(bike.splits, [], 'keine Lauf-Splits fürs Rad');
+  assert.deepEqual(bike.splits, [], 'no run splits for cycling');
 });
 
-test('FIT: kaputte oder fremde Dateien → null', () => {
+test('FIT: broken or foreign files → null', () => {
   assert.equal(parseFit(new Uint8Array([1, 2, 3])), null);
   assert.equal(isFit(new TextEncoder().encode('<gpx></gpx>')), false);
-  const cut = fitFile({ records: runRecords() }).slice(0, 60);   // mitten in den Daten abgeschnitten
+  const cut = fitFile({ records: runRecords() }).slice(0, 60);   // cut off in the middle of the data
   assert.doesNotThrow(() => parseFit(cut));
 });
 
-test('Strecke: Polyline hin und zurück, Vereinfachung auf höchstens 150 Punkte, Höhenmeter ohne Rauschen', () => {
+test('Route: polyline round trip, simplification to at most 150 points, ascent without noise', () => {
   const pts = [[51.05, 13.7373], [51.0512, 13.7401], [51.049, 13.745]];
   assert.deepEqual(decodePolyline(encodePolyline(pts)), pts);
   const zigzag = Array.from({ length: 1000 }, (_, i) => [51 + i * 1e-4, 13 + (i % 2 ? 2e-4 : 0)]);
@@ -154,10 +154,10 @@ test('Strecke: Polyline hin und zurück, Vereinfachung auf höchstens 150 Punkte
   assert.ok(s.length <= 150 && s.length >= 2);
   assert.deepEqual(s[0], zigzag[0]);
   assert.deepEqual(s[s.length - 1], zigzag[999]);
-  assert.equal(ascentOf([100, 101, 99, 100, 102, 110, 109, 120]), 21, 'vom Tiefpunkt 99 auf 120 – der Wackler 110 → 109 zählt nicht');
+  assert.equal(ascentOf([100, 101, 99, 100, 102, 110, 109, 120]), 21, 'from the low point 99 to 120 – the wobble 110 → 109 does not count');
 });
 
-test('GPX: Höhe (<ele>) ergibt Höhenmeter und Profil', () => {
+test('GPX: elevation (<ele>) gives ascent and profile', () => {
   const t0 = Date.parse('2026-09-26T08:00:00Z');
   const gpx = `<gpx><trk><type>running</type><trkseg>${Array.from({ length: 30 }, (_, i) =>
     `<trkpt lat="${(51 + (i * 100) / 111195).toFixed(6)}" lon="13.000000"><ele>${200 + i * 2}</ele><time>${new Date(t0 + i * 30000).toISOString()}</time></trkpt>`).join('')}</trkseg></trk></gpx>`;
@@ -166,7 +166,7 @@ test('GPX: Höhe (<ele>) ergibt Höhenmeter und Profil', () => {
   assert.equal(a.route.ele[0], 200);
 });
 
-test('ZIP und GZ: Einträge entpacken, Ordner und Fremdes überspringen', async () => {
+test('ZIP and GZ: unpack entries, skip folders and foreign files', async () => {
   const fit = fitFile({ records: runRecords() });
   const zip = zipFile([
     { name: 'activities/', data: new Uint8Array(0) },
@@ -176,14 +176,14 @@ test('ZIP und GZ: Einträge entpacken, Ordner und Fremdes überspringen', async 
   assert.ok(isZip(zip));
   const all = await unzip(zip);
   assert.deepEqual(all.map((e) => e.name), ['activities/1.fit', 'activities/notes.txt']);
-  assert.deepEqual([...all[0].data], [...fit], 'deflate-Eintrag byte-gleich entpackt');
+  assert.deepEqual([...all[0].data], [...fit], 'deflate entry unpacked byte-identical');
   const onlyFit = await unzip(zip, (n) => n.endsWith('.fit'));
   assert.equal(onlyFit.length, 1);
   assert.deepEqual([...(await gunzip(new Uint8Array(gzipSync(Buffer.from('abc')))))], [97, 98, 99]);
   await assert.rejects(() => unzip(new Uint8Array(40)), /kein ZIP/);
 });
 
-test('Massenimport: ZIP im ZIP (Garmin), .fit.gz (Strava), GPX – sortiert, Unlesbares gezählt', async () => {
+test('Bulk import: ZIP in ZIP (Garmin), .fit.gz (Strava), GPX – sorted, unreadable counted', async () => {
   const run = fitFile({ records: runRecords('2026-09-02T06:00:00Z'), session: { start: fitTs('2026-09-02T06:00:00Z'), sport: 1, elapsedMs: 1800000, timerMs: 1800000, distCm: 600000, kcal: 400, avgHr: 150, maxHr: 170, ascent: 5 } });
   const ride = fitFile({ records: runRecords('2026-09-01T06:00:00Z'), session: { start: fitTs('2026-09-01T06:00:00Z'), sport: 2, elapsedMs: 3600000, timerMs: 3600000, distCm: 3000000, kcal: 700, avgHr: 130, maxHr: 150, ascent: 80 } });
   const inner = zipFile([{ name: 'UploadedFiles_0-_Part1/run.fit', data: run, deflate: true }]);
@@ -195,14 +195,14 @@ test('Massenimport: ZIP im ZIP (Garmin), .fit.gz (Strava), GPX – sortiert, Unl
   ]);
   const seen = [];
   const r = await activitiesFrom([{ name: 'export.zip', data: outer }], { onProgress: (n) => seen.push(n) });
-  assert.deepEqual(r.activities.map((x) => x.act.type), ['cross_bike', 'run'], 'älteste zuerst');
+  assert.deepEqual(r.activities.map((x) => x.act.type), ['cross_bike', 'run'], 'oldest first');
   assert.equal(r.activities[1].name, 'UploadedFiles_0-_Part1/run.fit');
-  assert.equal(r.activities[0].name, 'activities/ride.fit', '.gz entpackt');
-  assert.equal(r.skipped, 1, 'kaputte Datei gezählt, README gar nicht erst gelesen');
+  assert.equal(r.activities[0].name, 'activities/ride.fit', '.gz unpacked');
+  assert.equal(r.skipped, 1, 'broken file counted, README not even read');
   assert.ok(seen.length >= 3);
 });
 
-test('Doppel-Erkennung und Sportart-Schätzung', () => {
+test('Duplicate detection and sport guess', () => {
   assert.ok(sameActivity({ date: '2026-09-01', distanceKm: 10, durationSec: 3000 }, { date: '2026-09-01', distanceKm: 10.2, durationSec: 3050 }));
   assert.ok(!sameActivity({ date: '2026-09-01', distanceKm: 10, durationSec: 3000 }, { date: '2026-09-02', distanceKm: 10, durationSec: 3000 }));
   assert.equal(guessType({ sportKnown: false, distanceKm: 30, durationSec: 3600 }), 'cross_bike');

@@ -1,12 +1,12 @@
 /* =========================================================================
-   commitments.js — feste Termine / Verpflichtungen (Fußballtraining, Spiele).
-   Reine, DOM-freie Logik -> per node:test abgedeckt.
+   commitments.js — fixed appointments / commitments (football training, games).
+   Pure, DOM-free logic -> covered by node:test.
 
-   Eine Verpflichtung ist ein wiederkehrender fester Termin, um den herum der
-   Trainingsplan gebaut wird – statt ihn (wie früher) fest ins Wochengerüst zu
-   verdrahten. So sind die Tage konfigurierbar und editierbar:
-     - wöchentlich an einem Wochentag (z. B. Mo+Mi Fußballtraining),
-     - optional mit Gültigkeitszeitraum (z. B. Sonntagsspiele ab 19.08.).
+   A commitment is a recurring fixed appointment around which the
+   training plan is built – instead of (as before) hard-wiring it into the weekly
+   skeleton. This way the days are configurable and editable:
+     - weekly on a weekday (e.g. Mon+Wed football training),
+     - optionally with a validity period (e.g. Sunday games from 19 Aug).
    ========================================================================= */
 
 import { uid, isoDow, addDays } from './ui.js';
@@ -14,7 +14,7 @@ import { weekdayNames } from './format.js';
 
 import { t } from './i18n.js';
 
-/** Verpflichtungs-Vorlagen: Anzeigename, Einheitentyp und Standarddauer. */
+/** Commitment templates: display name, session type and default duration. */
 export const COMMIT_TYPES = {
   cross_football: {
     get label() { return t('commitments.footballTraining'); }, unitType: 'cross_football', durationMin: 90,
@@ -28,14 +28,14 @@ export const COMMIT_TYPES = {
 
 export function commitMeta(type) { return COMMIT_TYPES[type] || COMMIT_TYPES.cross_football; }
 
-/** Wählbare Fußball-Intensitäten – steuern Belastung (RPE) und Plan-Entlastung (#5). */
+/** Selectable football intensities – control load (RPE) and plan relief (#5). */
 export const FOOTBALL_INTENSITY = [
   { key: 'leicht', get label() { return t('commitments.intensityLight'); } },
   { key: 'normal', get label() { return t('commitments.intensityNormal'); } },
   { key: 'intensiv', get label() { return t('commitments.intensityIntense'); } },
 ];
 
-/** Baut eine Verpflichtung. `dow` = ISO-Wochentag (1=Mo … 7=So). */
+/** Builds a commitment. `dow` = ISO weekday (1=Mon … 7=Sun). */
 export function mkCommit(type, dow, extra = {}) {
   const meta = commitMeta(type);
   return {
@@ -44,7 +44,7 @@ export function mkCommit(type, dow, extra = {}) {
     label: extra.label || meta.label,
     dow,
     durationMin: extra.durationMin != null ? extra.durationMin : meta.durationMin,
-    // Fußball-Intensität (leicht/normal/intensiv); Default „normal“. Nur für Training relevant.
+    // Football intensity (leicht/normal/intensiv); default "normal". Only relevant for training.
     intensity: type === 'cross_football' ? (extra.intensity || 'normal') : null,
     fromDate: extra.fromDate || null,
     untilDate: extra.untilDate || null,
@@ -52,14 +52,14 @@ export function mkCommit(type, dow, extra = {}) {
   };
 }
 
-/** Fußballtraining Mo + Mi (90 min). KEIN Standard für neue Pläne mehr – neue Pläne
-    fragen beim Anlegen nach festen Terminen. Genutzt von der Demo und als
-    Lese-Migration für Pläne aus Versionen vor v3.7.0 (siehe plangen.planCommitments). */
+/** Football training Mon + Wed (90 min). NO LONGER a default for new plans – new plans
+    ask for fixed appointments on creation. Used by the demo and as a
+    read migration for plans from versions before v3.7.0 (see plangen.planCommitments). */
 export function defaultCommitments() {
   return [mkCommit('cross_football', 1), mkCommit('cross_football', 3)];
 }
 
-/** Gilt die Verpflichtung an diesem Datum (Wochentag + Datumsbereich)? */
+/** Does the commitment apply on this date (weekday + date range)? */
 export function commitmentActiveOn(c, dateStr) {
   if (!c || !dateStr) return false;
   if (isoDow(dateStr) !== c.dow) return false;
@@ -68,7 +68,7 @@ export function commitmentActiveOn(c, dateStr) {
   return true;
 }
 
-/** Alle aktiven Verpflichtungs-Termine in [fromDate, toDate], chronologisch. */
+/** All active commitment dates in [fromDate, toDate], chronological. */
 export function commitmentDates(commitments = [], fromDate, toDate) {
   const out = [];
   if (!fromDate || !toDate || fromDate > toDate) return out;
@@ -86,7 +86,7 @@ export function dowLabel(dow) {
   return Number.isInteger(i) && i >= 1 && i <= 7 ? weekdayNames()[i % 7] : '';
 }
 
-/** Kurzbeschreibung fürs UI, z. B. „Fußball Mo, Mi · Spiele So ab 19.08.“. */
+/** Short description for the UI, e.g. "Football Mon, Wed · Games Sun from 19.08.". */
 export function commitmentsSummary(commitments = []) {
   if (!commitments.length) return t('commitments.none');
   const footballCs = commitments.filter((c) => c.type === 'cross_football').sort((a, b) => a.dow - b.dow);

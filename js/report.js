@@ -1,14 +1,14 @@
 /* =========================================================================
-   report.js — erzeugt unveränderliche Report-/Urkunden-Snapshots.
+   report.js — creates immutable report/certificate snapshots.
 
-   Reine, DOM-freie Logik: aus den Roh-Daten (Profil, Sessions, Pläne, Werte,
-   Events) wird ein eingefrorener Datensatz gebaut, der später nur noch
-   angezeigt/gedruckt wird. Drei Typen:
-   - month: Monatsbericht (Training, Einhaltung, Werte, Erfolge)
-   - event: Wettkampf-/Event-Bericht (Vorbereitung + Ergebnis + Fazit)
-   - goal:  Urkunde für ein erreichtes Ziel
+   Pure, DOM-free logic: from the raw data (profile, sessions, plans, values,
+   events) a frozen record is built that is afterwards only
+   displayed/printed. Three types:
+   - month: monthly report (training, adherence, values, achievements)
+   - event: race/event report (preparation + result + conclusion)
+   - goal:  certificate for an achieved goal
 
-   Keine externen Quellen. Per node:test abgedeckt.
+   No external sources. Covered by node:test.
    ========================================================================= */
 
 import { diffDays, fmtKm, fmtDuration, fmtDate, typeMeta, parseHms, fmtDec, monthName } from './ui.js';
@@ -25,7 +25,7 @@ function hms(sec) {
 }
 function live(arr) { return (arr || []).filter((r) => r && !r.deleted); }
 
-/** {from,to,label} für 'YYYY-MM'. */
+/** {from,to,label} for 'YYYY-MM'. */
 export function monthRange(monthStr) {
   const [y, m] = monthStr.split('-').map(Number);
   const last = new Date(y, m, 0).getDate();
@@ -34,9 +34,9 @@ export function monthRange(monthStr) {
 
 function inRange(items, key, from, to) { return live(items).filter((s) => s[key] >= from && s[key] <= to); }
 
-/** Aggregiert eine Session-Liste zu Kennzahlen. `km` = gelaufene Kilometer (wie
-    „Lauf-km“ in Statistik und auf „Heute“); die Strecken von Rad, Gehen, Wandern
-    und Schwimmen stehen getrennt in `otherKm`. */
+/** Aggregates a session list into figures. `km` = kilometres run (like
+    "running km" in statistics and on "Today"); the distances of cycling, walking, hiking
+    and swimming are listed separately in `otherKm`. */
 export function aggregateSessions(sessions) {
   let km = 0, otherKm = 0, dur = 0; const days = new Set(); const byType = {};
   for (const s of sessions) {
@@ -50,12 +50,12 @@ export function aggregateSessions(sessions) {
   return { count: sessions.length, km, otherKm, durationSec: dur, activeDays: days.size, byType };
 }
 
-/** Stichtag eines Berichts: Fensterende, höchstens heute – künftige Einheiten sind
-    noch nicht fällig (ein vor Monatsende versiegelter Bericht hielte sonst eine zu
-    niedrige Einhaltung dauerhaft fest). */
+/** Reference date of a report: end of the window, at most today – future sessions are
+    not yet due (a report sealed before the end of the month would otherwise lock in too
+    low an adherence permanently). */
 function asOfDate(to, today) { return today && today < to ? today : to; }
 
-/** Median einer Zahlenliste (auf 0,1 gerundet). */
+/** Median of a list of numbers (rounded to 0.1). */
 function median(vals) {
   const v = vals.slice().sort((a, b) => a - b);
   const m = Math.floor(v.length / 2);
@@ -63,9 +63,9 @@ function median(vals) {
 }
 
 /**
- * Gewicht zu Monatsbeginn und -ende als 7-Tage-Median (erste bzw. letzte Messwoche im Monat).
- * Zwei Einzelmessungen zu vergleichen hätte Tagesschwankungen von ± 1 kg im versiegelten
- * Bericht festgeschrieben.
+ * Weight at the start and end of the month as a 7-day median (first and last measurement week of the month).
+ * Comparing two single measurements would have locked day-to-day fluctuations of ± 1 kg into the sealed
+ * report.
  */
 function weightDelta(health, from, to) {
   const hs = inRange(health, 'date', from, to)
@@ -82,7 +82,7 @@ function unlockedBadges(data, asOf) {
   return evaluateBadges(data, asOf).filter((b) => b.unlocked).map((b) => `${b.emoji} ${b.name}`);
 }
 
-/* ----------------------------- Monatsbericht ---------------------------- */
+/* ----------------------------- Monthly report ---------------------------- */
 export function buildMonthReport({ profile = {}, sessions = [], plans = [], health = [], events = [], monthStr, today, showWeight = true, isProtectedDay = () => false } = {}) {
   const { from, to, label } = monthRange(monthStr);
   const asOf = asOfDate(to, today);
@@ -124,8 +124,8 @@ export function buildMonthReport({ profile = {}, sessions = [], plans = [], heal
     title: t('report.titleMonth', { label }),
     subtitle: profile.name ? t('report.forName', { name: profile.name }) : '',
     subject: { name: profile.name || '' },
-    // Laufender Monat: der Stand steht im (versiegelten) Bericht – sonst sah ein Bericht vom
-    // 28. wie ein vollständiger Monat aus (UI-39).
+    // Current month: the state as of now is in the (sealed) report – otherwise a report from the
+    // 28th looked like a complete month (UI-39).
     period: { label, from, to, ...(asOf < to ? { asOf } : {}) },
     sections,
     highlights: unlockedBadges({ sessions, plans, health, events, profile, isProtectedDay }, asOf),
@@ -133,7 +133,7 @@ export function buildMonthReport({ profile = {}, sessions = [], plans = [], heal
   };
 }
 
-/* --------------------------- Wettkampf-/Eventbericht -------------------- */
+/* --------------------------- Race/event report -------------------- */
 export function buildEventReport({ profile = {}, event = {}, plan = null, sessions = [], health = [], today, isProtectedDay = () => false } = {}) {
   const start = plan?.startDate || null;
   const end = event.date;
@@ -142,7 +142,7 @@ export function buildEventReport({ profile = {}, event = {}, plan = null, sessio
   const asOf = asOfDate(end, today);
   const adh = start ? adherence(plan ? [plan] : [], { from: start, to: asOf, today: asOf, isProtectedDay }) : { due: 0, done: 0, pct: null };
 
-  // Ergebnis: erledigte Wettkampf-Einheit -> verknüpfte Session, sonst Session am Eventtag
+  // Result: completed race session -> linked session, otherwise session on the event day
   const raceUnit = plan ? (plan.units || []).find((u) => u.type === 'race') : null;
   let result = raceUnit && raceUnit.executedSessionId ? live(sessions).find((s) => s.id === raceUnit.executedSessionId) : null;
   if (!result) result = live(sessions).find((s) => s.date === end && (s.type === 'race' || s.eventId === event.id));
@@ -201,7 +201,7 @@ export function buildEventReport({ profile = {}, event = {}, plan = null, sessio
   };
 }
 
-/* -------------------------------- Urkunde ------------------------------- */
+/* -------------------------------- Certificate ------------------------------- */
 export function buildGoalReport({ profile = {}, goalTitle, goalDetail = '', date } = {}) {
   const goal = sentenceEnd(`${goalTitle || ''}${goalDetail ? ' – ' + goalDetail : ''}`);
   return {
@@ -217,7 +217,7 @@ export function buildGoalReport({ profile = {}, goalTitle, goalDetail = '', date
   };
 }
 
-/** Satzende ohne doppelten Punkt (vorher „… Halbmarathon.. Großartige Leistung!“). */
+/** Sentence end without a double full stop (previously "… half marathon.. Great performance!"). */
 function sentenceEnd(s) {
   const x = String(s || '').trim();
   return /[.!?…]$/.test(x) ? x : `${x}.`;

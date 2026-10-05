@@ -1,12 +1,12 @@
 /* =========================================================================
-   checklist.js — Checkliste & Erinnerungen.
+   checklist.js — checklist & reminders.
 
-   Zwei Arten von Punkten:
-   - Tägliche Routine (recurring): abhakbar, per „Zurücksetzen“ wieder offen.
-   - Termin mit Datum/Uhrzeit: einmalige Erinnerung, als .ics in den Kalender
-     exportierbar (clientseitig erzeugt, kein Server nötig).
-   Dazu Kategorien, Gruppierung (überfällig/heute/demnächst/Routinen) und
-   Vorlagen (z. B. Wettkampf-Vorbereitung).
+   Two kinds of items:
+   - Daily routine (recurring): can be ticked off, set back to open via "Reset routines".
+   - Appointment with date/time: one-off reminder, exportable to the calendar as .ics
+     (generated client-side, no server needed).
+   Plus categories, grouping (overdue/today/upcoming/routines) and
+   templates (e.g. race preparation).
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -31,15 +31,15 @@ const CATEGORIES = {
 };
 export function catMeta(c) { return CATEGORIES[c] || CATEGORIES.routine; }
 
-/** Termine (Einträge mit Datum) für einen Tag – für die Kalender-Anzeige.
- *  Nach Uhrzeit sortiert; Einträge ohne Uhrzeit ans Ende. */
+/** Appointments (entries with a date) for a day – for the calendar display.
+ *  Sorted by time; entries without a time go to the end. */
 export function datedItems(dateStr) {
   return store.get('checklist')
     .filter((i) => i.dueDate === dateStr)
     .sort((a, b) => (a.time || '99:99').localeCompare(b.time || '99:99'));
 }
 
-/* ---- Vorlagen (mehrere Punkte auf einmal) -------------------------------- */
+/* ---- Templates (several items at once) -------------------------------- */
 const TEMPLATES = {
   race_prep: {
     get label() { return t('checklist.templates.racePrep.label'); },
@@ -85,7 +85,7 @@ export function render(view) {
   const overdue = dated.filter((i) => !i.checked && i.dueDate < today);
   const upcoming = dated.filter((i) => i.dueDate > today);
 
-  // Fortschritt (Routinen + heutige Termine zählen als „heute“)
+  // Progress (routines + today's appointments count as "today")
   const todayScope = [...routines, ...todays];
   if (todayScope.length) {
     const done = todayScope.filter((i) => i.checked).length;
@@ -104,7 +104,7 @@ export function render(view) {
   if (upcoming.length) { view.appendChild(sectionHead(t('checklist.upcoming'))); appendList(view, upcoming); }
   if (routines.length) { view.appendChild(sectionHead(t('checklist.dailyRoutines'))); appendList(view, routines); }
 
-  // Häufig genutzte Punkte (gelernt) – Schnell-Hinzufügen
+  // Frequently used items (learned) – quick add
   const onList = items.map((i) => i.text.toLowerCase());
   const freq = frequentChecks(onList);
   if (freq.length) {
@@ -126,8 +126,9 @@ function row(i, danger = false) {
   const sub = [];
   if (i.dueDate) sub.push(`${fmtDate(i.dueDate)}${i.time ? ' · ' + i.time : ''}`);
   sub.push(cm.label);
-  // Abhaken als echte Checkbox (Kreis/Haken, Name = Eintrag); der Eintrag selbst ist ein
-  // Knopf – per Tastatur erreichbar. Vorher „offen, Taste“ und ein klickbares div (UI-41).
+  // Ticking off as a real checkbox (circle/tick, name = entry); the entry itself is a
+  // button – reachable by keyboard. Before: announced as "open, Taste" (button) and a
+  // clickable div (UI-41).
   return el('div', { class: 'list-item' }, [
     el('button', {
       class: 'icon-btn check-toggle', type: 'button', role: 'checkbox', 'aria-checked': i.checked ? 'true' : 'false',
@@ -141,7 +142,7 @@ function row(i, danger = false) {
     ]),
     i.dueDate ? el('button', { class: 'icon-btn', 'aria-label': t('checklist.addToCalendar'), title: t('checklist.addToCalendar'), onclick: () => exportIcs(i) }, icon('calendar')) : null,
     el('button', { class: 'icon-btn', 'aria-label': t('checklist.deleteItem', { text: i.text }), title: t('checklist.delete'), onclick: () => {
-      // Löschen mit „Rückgängig“ statt endgültig per Fehltipp (UI-30).
+      // Delete with "Undo" instead of permanently after a mis-tap (UI-30).
       const prev = { ...i };
       store.remove('checklist', i.id); rerender();
       toastUndo(t('checklist.deleted'), () => { store.upsert('checklist', { ...prev, deleted: undefined }); rerender(); });
@@ -149,7 +150,7 @@ function row(i, danger = false) {
   ]);
 }
 
-/* ------------------------------ Formular -------------------------------- */
+/* ------------------------------ Form -------------------------------- */
 export function openForm(existing = null) {
   const e = existing || { category: 'routine', recurring: true };
   let kind = e.dueDate ? 'termin' : 'routine';
@@ -199,7 +200,7 @@ export function openForm(existing = null) {
   });
 }
 
-/* ------------------------------ Vorlagen -------------------------------- */
+/* ------------------------------ Templates -------------------------------- */
 function openTemplates() {
   const body = el('div', { class: 'col gap-2' }, Object.entries(TEMPLATES).map(([k, tpl]) => el('button', {
     class: 'card card--link', style: { textAlign: 'left', width: '100%' },
@@ -214,12 +215,12 @@ function openTemplates() {
   openSheet({ title: t('checklist.useTemplate'), body });
 }
 
-/* ----------------------- .ics-Export (clientseitig) --------------------- */
+/* ----------------------- .ics export (client-side) --------------------- */
 function pad(n) { return String(n).padStart(2, '0'); }
 function icsStamp(d) {
   return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;
 }
-/** RFC-5545-Zeilenfaltung: max. 75 Oktette/Zeile, nie in einem UTF-8-Zeichen. */
+/** RFC 5545 line folding: max. 75 octets per line, never inside a UTF-8 character. */
 function foldIcs(line) {
   const enc = new TextEncoder();
   if (enc.encode(line).length <= 75) return line;
@@ -258,17 +259,17 @@ function exportIcs(item) {
 }
 
 function resetAll() {
-  // Nur Routinen zurücksetzen; erledigte Termine bleiben erledigt.
+  // Reset routines only; completed appointments stay completed.
   store.get('checklist').forEach((i) => { if (i.checked && !i.dueDate) store.patch('checklist', i.id, { checked: false }); });
   toast(t('checklist.routinesReset'), 'good'); rerender();
 }
 
-/* --------------- Häufig genutzte Punkte lernen (clientseitig) ----------- */
+/* --------------- Learn frequently used items (client-side) ----------- */
 function loadFreq() { try { return JSON.parse(lsGet('freqChecklist') || '{}'); } catch { return {}; } }
 function bumpFreq(text) {
   const f = loadFreq(); const k = text.toLowerCase();
   f[k] = { text, count: ((f[k] && f[k].count) || 0) + 1 };
-  try { lsSet('freqChecklist', JSON.stringify(f)); } catch { /* voll */ }
+  try { lsSet('freqChecklist', JSON.stringify(f)); } catch { /* full */ }
 }
 function frequentChecks(excludeLower) {
   return Object.values(loadFreq())
@@ -277,6 +278,6 @@ function frequentChecks(excludeLower) {
     .slice(0, 8);
 }
 
-// Neu zeichnen über den Router (Scrollposition bleibt, auch wenn das Formular von
-// einer anderen Ansicht aus geöffnet wurde); ohne App-Shell (Tests) direkt.
+// Redraw via the router (the scroll position stays, even if the form was opened from
+// another view); without the app shell (tests) directly.
 function rerender() { rerenderView(render); }

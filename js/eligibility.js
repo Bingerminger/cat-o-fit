@@ -1,27 +1,27 @@
 /* =========================================================================
-   eligibility.js — EIN Eignungsstatus je Person für die ganze App.
-   Reine, DOM-freie Logik → per node:test abgedeckt.
+   eligibility.js — ONE eligibility status per person for the whole app.
+   Pure, DOM-free logic → covered by node:test.
 
-   Cat-O-Fit richtet sich an gesunde Erwachsene. Früher fragte nur das
-   Labormodul nach Erkrankung, Medikamenten, Schwangerschaft, Essstörung und
-   Alter – Ernährung, Ziele und Programme rechneten trotzdem Defizite vor, auch
-   für Kinder. Jetzt fragen alle Module diesen einen Status ab:
+   Cat-O-Fit is aimed at healthy adults. Previously only the lab module asked
+   about illness, medication, pregnancy, eating disorder and age – nutrition,
+   goals and programmes nevertheless calculated deficits, even for children.
+   Now all modules query this one status:
 
-   • Minderjährig (automatisch aus dem Geburtsjahr, sonst aus der Antwort):
-     Kinder- und Jugendprofil – keine Kalorien- und Gewichtsziele, kein
-     Abnehmprogramm, keine Leistungspräparate, Labor nur dokumentierend.
-   • Schwangerschaft/Stillzeit oder Essstörung: keine Abnehm- oder Defizitziele.
-   • Erkrankung/Medikamente: Labor und Ergänzung im Dokumentationsmodus.
-   • „Zahlen ausblenden“: Kalorienzahlen verbergen – für alle, denen sie nicht
-     guttun (bei Minderjährigen immer).
+   • Minor (automatically from the birth year, otherwise from the answer):
+     child and teenage profile – no calorie and weight goals, no
+     weight-loss programme, no performance supplements, labs only documenting.
+   • Pregnancy/breastfeeding or eating disorder: no weight-loss or deficit goals.
+   • Illness/medication: labs and supplements in documentation mode.
+   • "Hide calorie figures": hide calorie numbers – for everyone they do not
+     agree with (always for minors).
 
-   Gespeichert bleibt das Gate wie bisher in `settings.labsGate` (bestehende
-   Antworten gelten weiter), dazu `settings.hideCalorieNumbers`.
+   The gate remains stored as before in `settings.labsGate` (existing
+   answers still apply), plus `settings.hideCalorieNumbers`.
    ========================================================================= */
 
 import { t, tp } from './i18n.js';
 
-/** Fragen zur Abgrenzung. `minor` wird nur gefragt, wenn kein Geburtsjahr bekannt ist. */
+/** Screening questions. `minor` is only asked if no birth year is known. */
 export const GATE_QUESTIONS = [
   { key: 'chronicCondition', get label() { return t('eligibility.chronicCondition'); } },
   { key: 'medication', get label() { return t('eligibility.medication'); } },
@@ -30,7 +30,7 @@ export const GATE_QUESTIONS = [
   { key: 'minor', get label() { return t('eligibility.minor'); } },
 ];
 
-/** Alter in Jahren aus dem Geburtsjahr (Stichtag `today`) – oder null. */
+/** Age in years from the birth year (reference date `today`) – or null. */
 export function ageOf(profile = {}, today = null) {
   const by = Number(profile && profile.birthYear);
   if (!Number.isFinite(by) || by < 1900) return null;
@@ -39,13 +39,13 @@ export function ageOf(profile = {}, today = null) {
   return age >= 0 && age < 130 ? age : null;
 }
 
-/** Welche Fragen diese Person beantworten muss (Alter fragt nur, wer kein Geburtsjahr hat). */
+/** Which questions this person has to answer (age is only asked of those without a birth year). */
 export function gateQuestionsFor(profile = {}, today = null) {
   return ageOf(profile, today) != null ? GATE_QUESTIONS.filter((q) => q.key !== 'minor') : GATE_QUESTIONS;
 }
 
 /**
- * Eignungsstatus einer Person.
+ * Eligibility status of a person.
  * @returns {{answered:boolean, mode:'full'|'documentation', reasons:string[], age:number|null,
  *   minor:boolean, pregnancy:boolean, eatingDisorder:boolean, noWeightGoals:boolean,
  *   noPerformanceSupplements:boolean, labsEvaluate:boolean, hideNumbers:boolean}}
@@ -61,7 +61,7 @@ export function eligibilityFor({ profile = {}, settings = {}, today = null } = {
   const pregnancy = gate.pregnancy === true;
   const eatingDisorder = gate.eatingDisorder === true;
   return {
-    answered: answered || minor,          // Minderjährige sind auch ohne Antworten eingeordnet
+    answered: answered || minor,          // Minors are classified even without answers
     mode: reasons.length ? 'documentation' : 'full',
     reasons, age, minor, pregnancy, eatingDisorder,
     noWeightGoals: minor || pregnancy || eatingDisorder,
@@ -71,7 +71,7 @@ export function eligibilityFor({ profile = {}, settings = {}, today = null } = {
   };
 }
 
-/** Kurzer, freundlicher Grund, warum keine Abnehmziele gerechnet werden (oder null). */
+/** Short, friendly reason why no weight-loss goals are calculated (or null). */
 export function weightGoalBlockReason(elig) {
   if (!elig) return null;
   if (elig.minor) return t('eligibility.blockMinor');

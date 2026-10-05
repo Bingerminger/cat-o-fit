@@ -1,23 +1,23 @@
 /*
- * service-worker.js — App-Shell-Caching für Offline-Betrieb.
+ * service-worker.js — app-shell caching for offline operation.
  *
- * Strategie:
- *   - App-Shell (HTML/CSS/JS/Icons): "network-first" mit Cache-Fallback.
- *     Online sieht man immer die neueste Version, offline läuft die App weiter.
- *   - API/Daten (/api/, /data/): NICHT cachen (network-only). Die Offline-
- *     Fähigkeit der Daten liefert der LocalStorage im Frontend (local-first).
+ * Strategy:
+ *   - App shell (HTML/CSS/JS/icons): "network-first" with cache fallback.
+ *     Online you always see the latest version, offline the app keeps running.
+ *   - API/data (/api/, /data/): do NOT cache (network-only). The offline
+ *     capability of the data comes from LocalStorage in the frontend (local-first).
  *
- * Bei jeder Versionserhöhung wird der alte Cache verworfen.
+ * On every version increase the old cache is discarded.
  */
 
 const VERSION = 'catofit-v115';
-// Cache-Name pro Deployment-Pfad eindeutig: Produktion (/cat-o-fit/) und Abnahme
-// (/cat-o-fit-acc/) liegen auf DERSELBEN Origin und teilen sich sonst den
-// CacheStorage – dann landet die App-Shell der einen Umgebung in der anderen.
+// Cache name unique per deployment path: production (/cat-o-fit/) and acceptance
+// (/cat-o-fit-acc/) live on the SAME origin and would otherwise share the
+// CacheStorage – then the app shell of one environment ends up in the other.
 const SCOPE_PATH = new URL('./', self.location.href).pathname;
 const SHELL_CACHE = `${VERSION}-${SCOPE_PATH}-shell`;
 
-// Relative Pfade -> die App funktioniert in jedem Unterverzeichnis.
+// Relative paths -> the app works in any subdirectory.
 const SHELL_ASSETS = [
   './',
   './index.html',
@@ -145,7 +145,7 @@ const SHELL_ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(SHELL_CACHE).then(async (cache) => {
-      // Einzeln hinzufügen, damit ein fehlendes Asset den Install nicht killt.
+      // Add individually so that a missing asset does not kill the install.
       await Promise.allSettled(SHELL_ASSETS.map((url) => cache.add(url)));
       // The ui catalog of every language, so a language switch also works offline;
       // the list comes from languages.json, so a new language needs no change here.
@@ -159,8 +159,8 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    // NUR die eigenen (scope-gleichen) Alt-Caches löschen – niemals die der
-    // anderen Umgebung auf derselben Origin.
+    // Delete ONLY the own (same-scope) old caches – never those of the
+    // other environment on the same origin.
     caches.keys().then((keys) =>
       Promise.all(keys
         .filter((k) => k !== SHELL_CACHE && k.includes(`-${SCOPE_PATH}-`))
@@ -175,37 +175,37 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(request.url);
 
-  // Fremde Origins und dynamische Endpunkte nicht anfassen.
+  // Do not touch foreign origins and dynamic endpoints.
   if (url.origin !== self.location.origin) return;
   if (url.pathname.includes('/api/') || url.pathname.includes('/data/')) return;
 
-  // App-Shell: network-first mit Revalidierung (no-cache), dann Cache.
-  // So kommen Änderungen online sofort an, ohne dass der HTTP-Cache eine
-  // veraltete Datei liefert; offline greift weiterhin der Cache.
+  // App shell: network-first with revalidation (no-cache), then cache.
+  // This way changes arrive online immediately, without the HTTP cache serving a
+  // stale file; offline the cache still applies.
   let req = request;
-  try { req = new Request(request, { cache: 'no-cache' }); } catch { /* manche Requests sind nicht klonbar */ }
+  try { req = new Request(request, { cache: 'no-cache' }); } catch { /* some requests cannot be cloned */ }
   const network = fetch(req).then((response) => {
-    // Erfolgreiche Antworten im Hintergrund auffrischen.
+    // Refresh successful responses in the background.
     if (response && response.ok && response.type === 'basic') {
       const copy = response.clone();
       caches.open(SHELL_CACHE).then((cache) => cache.put(request, copy));
     }
     return response;
   });
-  // NUR aus dem eigenen Cache lesen (nicht caches.match über alle Caches), sonst könnte
-  // offline die Shell der anderen Umgebung ausgeliefert werden.
+  // Read ONLY from the own cache (not caches.match across all caches), otherwise the
+  // shell of the other environment could be served offline.
   const fromCache = async () => {
     const cache = await caches.open(SHELL_CACHE);
     const cached = await cache.match(request);
     if (cached) return cached;
-    // Navigationsanfragen offline auf die App-Shell zurückfallen lassen.
+    // Let navigation requests fall back to the app shell offline.
     if (request.mode === 'navigate') return cache.match('./index.html');
     return null;
   };
   event.respondWith((async () => {
-    // Antwortet der Server nicht binnen 3 s (Heimserver im Ruhezustand, schwaches Netz
-    // unterwegs), startet die App aus dem Cache; die späte Antwort frischt ihn trotzdem
-    // auf. Vorher wartete jeder der ~70 Shell-Abrufe ohne Zeitgrenze (FE-08, UI-43).
+    // If the server does not respond within 3 s (home server asleep, weak network
+    // on the go), the app starts from the cache; the late response refreshes it anyway.
+    // Previously each of the ~70 shell fetches waited without a time limit (FE-08, UI-43).
     const timeout = new Promise((resolve) => setTimeout(() => resolve('timeout'), 3000));
     try {
       const first = await Promise.race([network, timeout]);

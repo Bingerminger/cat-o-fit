@@ -1,6 +1,6 @@
-/* Export-Fenster „In Kalender exportieren“ (3.21.3): Den Abo-Link gibt es nur mit
-   Kalender-Schlüssel, die Anleitung dazu öffnet den Hilfeartikel, und der Hinweis nennt keinen
-   eigenen (veralteten) iOS-Weg mehr – die Schritte je Kalender pflegt nur die Hilfe. */
+/* "Export to calendar" window (3.21.3): the subscription link exists only with a
+   calendar key, the instructions for it open the help article, and the hint no longer names an
+   own (outdated) iOS route – the steps per calendar are maintained only in the help. */
 import { test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import * as store from '../js/storage.js';
@@ -25,7 +25,7 @@ beforeEach(async () => {
 });
 afterEach(() => { globalThis.fetch = realFetch; });
 
-/** Server, der den Kalender-Schlüssel ausgibt – oder verweigert. */
+/** Server that hands out the calendar key – or refuses. */
 const serveToken = (ok) => {
   globalThis.fetch = async (url) => ({
     ok, status: ok ? 200 : 403,
@@ -35,7 +35,7 @@ const serveToken = (ok) => {
   });
 };
 
-test('ohne Kalender-Schlüssel: nur die Dateien, kein Abo-Link und keine Abo-Anleitung', async () => {
+test('without a calendar key: only the files, no subscription link and no subscription instructions', async () => {
   serveToken(false);
   await openIcsSheet({ event: EVENT });
   assert.match(root.textContent, /In Kalender exportieren/);
@@ -44,15 +44,15 @@ test('ohne Kalender-Schlüssel: nur die Dateien, kein Abo-Link und keine Abo-Anl
   assert.doesNotMatch(root.textContent, /So richtest du das Abo ein/);
 });
 
-test('mit Kalender-Schlüssel: Abo-Link, Anleitung aus der Hilfe, kein veralteter iOS-Weg im Hinweis', async () => {
+test('with a calendar key: subscription link, instructions from the help, no outdated iOS route in the hint', async () => {
   serveToken(true);
   await openIcsSheet({ event: EVENT });
   assert.match(root.textContent, /Abo-Link kopieren/);
   assert.match(root.textContent, /Als Abo bleibt der Plan von selbst aktuell/);
-  assert.doesNotMatch(root.textContent, /Accounts → Account hinzufügen/, 'Menüwege nennt nur die Hilfe');
+  assert.doesNotMatch(root.textContent, /Accounts → Account hinzufügen/, 'only the help names menu paths');
   root.querySelectorAll('button').find((b) => b.textContent.includes('So richtest du das Abo ein')).click();
   await wait(() => /Den Plan im Kalender abonnieren/.test(root.textContent));
-  assert.match(root.textContent, /Den Plan im Kalender abonnieren/, 'die Anleitung öffnet den Hilfeartikel');
+  assert.match(root.textContent, /Den Plan im Kalender abonnieren/, 'the instructions open the help article');
   assert.match(root.textContent, /Vom Web abonnieren/);
   assert.match(root.textContent, /Kalenderabonnement hinzufügen/);
 });

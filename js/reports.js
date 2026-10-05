@@ -1,10 +1,10 @@
 /* =========================================================================
-   reports.js — Berichte & Urkunden (Ansicht).
+   reports.js — reports & certificates (view).
 
-   Zeigt die abgelegten, versiegelten Reports und erzeugt neue (Monatsbericht,
-   Wettkampf-Bericht, Urkunde). Reports sind unveränderlich (Store-seitig
-   versiegelt) und werden hier nur dargestellt bzw. gedruckt (window.print,
-   lokal – keine externen Dienste).
+   Shows the stored, sealed reports and creates new ones (monthly report,
+   race report, certificate). Reports are immutable (sealed on the store side)
+   and are only displayed or printed here (window.print, local – no
+   external services).
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -65,13 +65,13 @@ export function render(view) {
   view.appendChild(list);
 }
 
-/* ----------------------------- Erstellen -------------------------------- */
+/* ----------------------------- Create -------------------------------- */
 function openCreate() {
   let type = 'month';
   const bodyHost = el('div');
   const formWrap = el('div');
   const previewHost = el('div', { hidden: true });
-  // Erst ansehen, dann versiegeln (UI-39): „Ändern“ kehrt zum Formular zurück, die Eingaben bleiben.
+  // Look first, then seal (UI-39): "Edit" returns to the form, the entries stay.
   const toPreview = (report) => {
     formWrap.hidden = true;
     previewHost.hidden = false;
@@ -97,7 +97,7 @@ function openCreate() {
   openSheet({ title: t('reports.create'), body: el('div', {}, [formWrap, previewHost]) });
 }
 
-/** Vorschau eines noch nicht gespeicherten Berichts – so, wie er danach aussieht. */
+/** Preview of a report that has not been saved yet – as it will look afterwards. */
 export function reportPreview(report, { onEdit, onSave }) {
   const m = tMeta(report.type);
   const isCert = report.type === 'goal' || report.certificate;
@@ -123,7 +123,7 @@ function seal(report) {
 }
 
 function monthForm(done) {
-  // letzte 12 Monate als Auswahl
+  // last 12 months as the selection
   const today = todayStr();
   const opts = [];
   const d = new Date(today + 'T00:00:00');
@@ -132,8 +132,8 @@ function monthForm(done) {
     opts.push({ value: ms, label: monthRange(ms).label });
     d.setMonth(d.getMonth() - 1);
   }
-  // Vorgewählt ist der letzte ABGESCHLOSSENE Monat; der laufende bleibt wählbar, mit Hinweis –
-  // ein Bericht wird versiegelt und lässt sich nicht mehr ergänzen (UI-39).
+  // The last COMPLETED month is preselected; the current one stays selectable, with a note –
+  // a report is sealed and can no longer be amended (UI-39).
   let month = opts[1].value;
   const note = el('div', { class: 'dim mt-1', style: { fontSize: '.78rem' } });
   const setNote = () => {
@@ -149,9 +149,9 @@ function monthForm(done) {
     el('button', { class: 'btn btn--primary btn--block mt-3', onclick: () => done(buildMonthReport({
       profile: store.profile(), sessions: store.get('sessions'), plans: store.get('plans'),
       health: store.get('health'), events: store.get('events'), monthStr: month, today: todayStr(),
-      // Kinder, Schwangerschaft/Stillzeit, Essstörung: kein Gewichtsverlauf im Bericht.
+      // Children, pregnancy/breastfeeding, eating disorder: no weight trend in the report.
       showWeight: !currentEligibility().noWeightGoals,
-      // Geschützte Zyklustage zählen wie in Statistik und Erfolgen nicht als verpasst.
+      // Protected cycle days do not count as missed, as in statistics and achievements.
       isProtectedDay,
     })) }, [icon('check'), t('reports.createMonth')]),
   ]);
@@ -208,7 +208,7 @@ export function renderDetail(view, id) {
   view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-4 no-print', onclick: () => window.print() }, [icon('download'), t('reports.printOrSave')]));
 }
 
-/** „🌱 Name“ -> { emoji, name } für schöne Badge-Kacheln. */
+/** "🌱 Name" -> { emoji, name } for nice badge tiles. */
 function splitBadge(h) {
   const sp = h.indexOf(' ');
   return sp < 0 ? { emoji: '🏅', name: h } : { emoji: h.slice(0, sp), name: h.slice(sp + 1) };
@@ -223,7 +223,7 @@ function badgeTiles(highlights) {
   }));
 }
 
-/* ----------------------------- Urkunde ---------------------------------- */
+/* ----------------------------- Certificate ---------------------------------- */
 function buildCertificate(sheet, r) {
   sheet.appendChild(el('div', { class: 'cert__corner cert__corner--tl' }));
   sheet.appendChild(el('div', { class: 'cert__corner cert__corner--tr' }));
@@ -250,9 +250,9 @@ function buildCertificate(sheet, r) {
   sheet.appendChild(el('div', { class: 'cert__seal-note', text: t('reports.permanentRecordCert') }));
 }
 
-/* ----------------------------- Bericht ---------------------------------- */
+/* ----------------------------- Report ---------------------------------- */
 function buildReport(sheet, r, m) {
-  // farbige Kopfleiste
+  // coloured header bar
   sheet.appendChild(el('div', { class: 'report-head' }, [
     el('div', { class: 'report-head__row' }, [
       el('span', { class: 'report-head__brand' }, [el('span', { class: 'report-head__logo', html: iconSvg('activity') }), 'Cat-O-Fit']),

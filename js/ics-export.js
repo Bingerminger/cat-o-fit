@@ -1,7 +1,7 @@
 /* =========================================================================
-   ics-export.js — UI für den .ics-Kalenderexport.
-   Die Datei wird serverseitig erzeugt (api/ics.php). Auf iOS ist der native
-   Kalender + VALARM der zuverlässigste Erinnerungsweg.
+   ics-export.js — UI for the .ics calendar export.
+   The file is generated server-side (api/ics.php). On iOS the native
+   calendar + VALARM is the most reliable way to get reminders.
    ========================================================================= */
 
 import { icsUrl, icsToken } from './api-client.js';
@@ -10,8 +10,8 @@ import { el, icon, iconSvg, openSheet, closeSheet, toast } from './ui.js';
 
 import { t } from './i18n.js';
 
-// Kalender-Links öffnen sich außerhalb der App (Safari/Kalender, ohne Sitzungs-Cookie) und
-// tragen deshalb den Kalender-Schlüssel der Person (seit v3.20.0). Einmal je Sitzung holen.
+// Calendar links open outside the app (Safari/Calendar, without a session cookie) and
+// therefore carry the person's calendar key (since v3.20.0). Fetch once per session.
 const tokens = new Map();
 async function tokenFor(user) {
   if (!user) return null;
@@ -50,9 +50,9 @@ export async function openIcsSheet({ scope = 'event', id, event = null, unit = n
     const planUrl = icsUrl('event', event.id, u, token);
     list.appendChild(optionRow(t('icsExport.fullPlan'), t('icsExport.fullPlanSub'), planUrl));
     list.appendChild(optionRow(t('icsExport.raceOnly'), event.name, icsUrl('race', event.id, u, token)));
-    // Abo statt Einmal-Datei (DOC-29): Der Kalender holt Änderungen dann selbst.
+    // Subscription instead of a one-off file (DOC-29): the calendar then fetches changes itself.
     if (token) subscribe = el('button', { class: 'btn btn--soft btn--block mt-3', type: 'button', onclick: () => copySubscription(planUrl) }, [icon('link'), t('icsExport.copyLink')]);
-    // Die Schritte je Kalender (iPhone, Mac, Google, Outlook, Heimnetz) pflegt nur die Hilfe.
+    // The steps per calendar (iPhone, Mac, Google, Outlook, home network) are maintained only by the help.
     if (token) guide = el('button', { class: 'btn btn--ghost btn--block mt-2', type: 'button', onclick: () => import('./help.js').then((m) => m.openHelpArticle('kalender-abo')) }, [icon('info'), t('icsExport.howTo')]);
   }
 
@@ -67,7 +67,7 @@ export async function openIcsSheet({ scope = 'event', id, event = null, unit = n
   openSheet({ title: t('icsExport.title'), body: [list, subscribe, guide, hint].filter(Boolean) });
 }
 
-/** Abo-Link als volle Adresse in die Zwischenablage; ohne Zwischenablage zum Abschreiben. */
+/** Subscription link as a full address to the clipboard; without clipboard access, to copy by hand. */
 async function copySubscription(url) {
   const abs = typeof location !== 'undefined' ? new URL(url, location.href).href : url;
   try {

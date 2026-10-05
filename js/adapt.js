@@ -1,12 +1,12 @@
 /* =========================================================================
-   adapt.js — zentraler Anwende-/Rückgängig-Kern für automatische Plan-
-   Anpassungen (Erholungstag, Entlastung, Zyklus-Entschärfung …).
+   adapt.js — central apply/undo core for automatic plan adjustments
+   (recovery day, relief, cycle easing …).
 
-   Bislang lag diese Logik privat in dashboard.js. Ausgelagert, damit auch
-   andere Module (z. B. cycle.js für die zyklusbewusste Entschärfung, #3)
-   Einheiten anpassen UND transparent protokollieren können – jede Anpassung
-   bleibt über den Snapshot rückgängig machbar. Store-nah; die Regeln fürs
-   Rückgängigmachen sind reine Funktionen (`undoUnits`, `canUndo`).
+   So far this logic lay privately in dashboard.js. Extracted so that other
+   modules (e.g. cycle.js for the cycle-aware easing, #3) can adjust sessions
+   AND log them transparently – every adjustment remains undoable via the
+   snapshot. Store-adjacent; the rules for undoing are pure functions
+   (`undoUnits`, `canUndo`).
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -15,13 +15,13 @@ import { pushAdaptLog } from './rolling.js';
 import { isOpen } from './planflow.js';
 
 /**
- * Wendet Unit-Patches auf einen Plan an und protokolliert die Anpassung
- * (mit Rückgängig-Snapshot der betroffenen Einheiten und den geänderten Feldern).
+ * Applies unit patches to a plan and logs the adjustment
+ * (with an undo snapshot of the affected sessions and the changed fields).
  * @param {string} planId
- * @param {string[]} unitIds  IDs der zu ändernden Einheiten
- * @param {(u:object)=>object} patchFor  liefert je Einheit die Patch-Felder
- * @param {object} logEntry  { kind, title, reason } – erscheint im Anpassungs-Log
- * @returns {string|null} die id des neuen Log-Eintrags (oder null, wenn kein Plan)
+ * @param {string[]} unitIds  IDs of the sessions to change
+ * @param {(u:object)=>object} patchFor  returns the patch fields per session
+ * @param {object} logEntry  { kind, title, reason } – appears in the adjustment log
+ * @returns {string|null} the id of the new log entry (or null if there is no plan)
  */
 export function applyAdapt(planId, unitIds, patchFor, logEntry) {
   const plan = store.find('plans', planId);
@@ -40,19 +40,19 @@ export function applyAdapt(planId, unitIds, patchFor, logEntry) {
   return adaptLog[0] && adaptLog[0].id;
 }
 
-/** Felder, die ein Rückgängig nie anfasst: Sie gehören zum Stand NACH der Anpassung
-    (erledigt, verpasst, Session-Verknüpfung) – früher setzte „Rückgängig“ eine inzwischen
-    erledigte Einheit blind auf „geplant“ zurück und ließ die Session verwaist zurück. */
+/** Fields that an undo never touches: they belong to the state AFTER the adjustment
+    (done, missed, session link) – previously "Undo" blindly reset a session that had
+    been completed in the meantime to "planned" and left the session orphaned. */
 const NEVER_RESTORE = ['id', 'status', 'executedSessionId', 'missedReason', 'updatedAt'];
-/** Für Alt-Einträge ohne gespeicherte Feldliste: diese Felder bleiben zusätzlich stehen
-    (eine spätere Verschiebung soll nicht zurückspringen) – außer beim Entzerren, dessen
-    Anpassung genau das Datum war. */
+/** For legacy entries without a stored field list: these fields additionally stay as they are
+    (a later reschedule should not jump back) – except when de-stacking, whose
+    adjustment was exactly the date. */
 const KEEP_POSITION = ['date', 'dow', 'movedFrom'];
 
 /**
- * Stellt die Einheiten einer protokollierten Anpassung wieder her – aber nur, solange
- * sie noch offen sind, und nur die Felder, die die Anpassung geändert hat. Erledigte
- * oder verpasste Einheiten bleiben unverändert. Reine Funktion.
+ * Restores the sessions of a logged adjustment – but only while they are still
+ * open, and only the fields the adjustment changed. Completed or missed sessions
+ * remain unchanged. Pure function.
  * @returns {{units:object[], restored:number, skipped:number}}
  */
 export function undoUnits(units = [], entry = {}) {
@@ -76,7 +76,7 @@ export function undoUnits(units = [], entry = {}) {
   return { units: out, restored, skipped };
 }
 
-/** Lässt sich die Anpassung noch zurücknehmen? (mindestens eine betroffene Einheit offen) */
+/** Can the adjustment still be reverted? (at least one affected session still open) */
 export function canUndo(units = [], entry = {}) {
   if (!entry || !entry.undo) return false;
   const ids = new Set((entry.undo.units || []).map((u) => u.id));
@@ -84,8 +84,8 @@ export function canUndo(units = [], entry = {}) {
 }
 
 /**
- * Macht eine protokollierte Anpassung anhand ihres Snapshots rückgängig (siehe
- * `undoUnits`). Der Log-Eintrag verschwindet danach.
+ * Undoes a logged adjustment using its snapshot (see
+ * `undoUnits`). The log entry disappears afterwards.
  * @returns {{restored:number, skipped:number}|false}
  */
 export function undoAdapt(planId, logId) {

@@ -1,11 +1,11 @@
-/* Hilfe direkt an der Kennzahl (DOC-19, UI-21, DOC-12):
-   - Jeder Hilfeartikel hat eine eindeutige, adressierbare ID (#/hilfe/<id>).
-   - Jede ⓘ-Verknüpfung im Code (infoButton / sectionHead-help) zeigt auf einen Artikel.
-   - Jeder Verweis in der Hilfe führt auf eine registrierte Route.
-   - Die Suche kennt Synonyme (RED-S → Energieversorgung).
-   - Die Labor-Wege kommen aus labsources.js – eine Quelle für Labor-Ansicht und Hilfe.
-   Vor v3.21.0 hatten Artikel keine Adresse, keine Ansicht verlinkte in die Hilfe, und
-   help.js pflegte eine eigene, abweichende Fassung der Labor-Wege. */
+/* Help right at the metric (DOC-19, UI-21, DOC-12):
+   - Every help article has a unique, addressable ID (#/hilfe/<id>).
+   - Every ⓘ link in the code (infoButton / sectionHead-help) points to an article.
+   - Every link in the help leads to a registered route.
+   - The search knows synonyms (RED-S → energy availability).
+   - The lab routes come from labsources.js – one source for the lab view and the help.
+   Before v3.21.0 articles had no address, no view linked into the help, and
+   help.js maintained its own, diverging version of the lab routes. */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
@@ -27,26 +27,26 @@ function shell() {
   return view;
 }
 
-test('DOC-19: jeder Artikel hat eine eindeutige ID aus Kleinbuchstaben', () => {
+test('DOC-19: every article has a unique lower-case ID', () => {
   const ids = articles.map((a) => a.id);
-  assert.ok(ids.length >= 60, `nur ${ids.length} Artikel`);
-  assert.ok(ids.every((id) => /^[a-z0-9-]+$/.test(id)), 'IDs als Adresse brauchbar');
-  assert.deepEqual(ids.filter((id, i) => ids.indexOf(id) !== i), [], 'keine doppelten IDs');
+  assert.ok(ids.length >= 60, `only ${ids.length} articles`);
+  assert.ok(ids.every((id) => /^[a-z0-9-]+$/.test(id)), 'IDs usable as an address');
+  assert.deepEqual(ids.filter((id, i) => ids.indexOf(id) !== i), [], 'no duplicate IDs');
 });
 
-test('DOC-19/UI-21: jede ⓘ im Code zeigt auf einen vorhandenen Artikel', () => {
+test('DOC-19/UI-21: every ⓘ in the code points to an existing article', () => {
   const refs = [];
   for (const f of readdirSync(JS).filter((n) => n.endsWith('.js'))) {
     const src = read(f);
     for (const m of src.matchAll(/infoButton\('([a-z0-9-]+)'/g)) refs.push([f, m[1]]);
     for (const m of src.matchAll(/\{ help: '([a-z0-9-]+)' \}/g)) refs.push([f, m[1]]);
   }
-  assert.ok(refs.length >= 10, `nur ${refs.length} ⓘ gefunden`);
+  assert.ok(refs.length >= 10, `only ${refs.length} ⓘ found`);
   const missing = refs.filter(([, id]) => !findArticle(sections, id));
-  assert.deepEqual(missing, [], 'unbekannte Artikel');
+  assert.deepEqual(missing, [], 'unknown articles');
 });
 
-test('DOC-12: jeder Verweis in der Hilfe führt auf eine registrierte Route', () => {
+test('DOC-12: every link in the help leads to a registered route', () => {
   const routes = [...read('app.js').matchAll(/router\.register\('([^']+)'/g)].map((m) => m[1]);
   const toRx = (r) => new RegExp('^' + r.replace(/:[a-zA-Z]+/g, '[^/]+') + '$');
   const bad = [];
@@ -58,10 +58,10 @@ test('DOC-12: jeder Verweis in der Hilfe führt auf eine registrierte Route', ()
     }
   }
   assert.deepEqual(bad, []);
-  assert.ok(routes.includes('/hilfe/:id'), 'Artikel sind adressierbar');
+  assert.ok(routes.includes('/hilfe/:id'), 'articles are addressable');
 });
 
-test('UI-21: die Suche kennt Synonyme (RED-S, ACWR, sRPE)', () => {
+test('UI-21: the search knows synonyms (RED-S, ACWR, sRPE)', () => {
   const find = (q) => articles.filter((a) => articleText(a).toLowerCase().includes(q.toLowerCase())).map((a) => a.id);
   assert.ok(find('RED-S').includes('energieverfuegbarkeit'));
   assert.ok(find('sRPE').includes('belastungspunkte'));
@@ -69,25 +69,25 @@ test('UI-21: die Suche kennt Synonyme (RED-S, ACWR, sRPE)', () => {
   assert.ok(find('3-2-1').includes('backup'));
 });
 
-test('DOC-12: die Labor-Wege der Hilfe kommen aus labsources.js', () => {
+test('DOC-12: the lab routes in the help come from labsources.js', () => {
   const a = findArticle(sections, 'laborwerte-woher').article;
   const steps = a.body.find((b) => b.steps).steps;
   assert.equal(steps.length, LAB_SOURCES.length);
   LAB_SOURCES.forEach((s, i) => assert.ok(steps[i].startsWith(s.title), s.title));
-  assert.ok(articleText(a).includes('60–200 €'), 'Kassenzuschuss je nach Kasse (MKT-14)');
+  assert.ok(articleText(a).includes('60–200 €'), 'statutory insurance subsidy depends on the insurer (MKT-14)');
   assert.doesNotMatch(articleText(a), /100–150 €/);
 });
 
-test('DOC-14/DOC-22: neutrale Ansprache ohne Namen, keine Persona-Reste', () => {
+test('DOC-14/DOC-22: neutral address without a name, no persona leftovers', () => {
   const anon = helpSections('');
   assert.equal(anon[0].articles[0].q, 'Willkommen!');
   const all = anon.flatMap((s) => s.articles).map(articleText).join('\n');
   assert.doesNotMatch(all, /Sportlerin|Noras|Session-Ansicht|Team-Badges|aufs Trinken/);
-  assert.doesNotMatch(all, /Aktiviere ihn in den Einstellungen/, 'Zyklus ist kein Opt-in (DOC-15)');
-  assert.doesNotMatch(all, /erscheint das Team\/Familie-Dashboard/, 'Start ist die Anmeldung');
+  assert.doesNotMatch(all, /Aktiviere ihn in den Einstellungen/, 'cycle is not opt-in (DOC-15)');
+  assert.doesNotMatch(all, /erscheint das Team\/Familie-Dashboard/, 'the start is the login');
 });
 
-test('DOC-06/DOC-07: Apple Health nennt Premium-Kosten und den Header nur als Ausnahme', () => {
+test('DOC-06/DOC-07: Apple Health mentions the premium costs and the header only as an exception', () => {
   const t = articleText(findArticle(sections, 'apple-health').article);
   assert.match(t, /Premium/);
   assert.match(t, /Kostenlos/);
@@ -95,18 +95,18 @@ test('DOC-06/DOC-07: Apple Health nennt Premium-Kosten und den Header nur als Au
   assert.match(t, /brauchst du nur, falls/);
 });
 
-test('DOC-19: #/hilfe/<id> öffnet genau diesen Artikel', async () => {
+test('DOC-19: #/hilfe/<id> opens exactly this article', async () => {
   const view = shell();
   const help = await import('../js/help.js');
   await help.render(view, 'bereitschaft');
   const card = view.querySelector('#hilfe-bereitschaft');
-  assert.ok(card, 'Artikel hat eine Adresse im DOM');
+  assert.ok(card, 'article has an address in the DOM');
   assert.ok(card.classList.contains('help-article--focus'));
-  assert.equal(card.querySelector('.help-article__body').hidden, false, 'aufgeklappt');
-  assert.equal(view.querySelector('#hilfe-vdot').querySelector('.help-article__body').hidden, true, 'andere bleiben zu');
+  assert.equal(card.querySelector('.help-article__body').hidden, false, 'expanded');
+  assert.equal(view.querySelector('#hilfe-vdot').querySelector('.help-article__body').hidden, true, 'others stay closed');
 });
 
-test('UI-21: ⓘ öffnet den Artikel als Sheet mit Sprung in die Hilfe', async () => {
+test('UI-21: ⓘ opens the article as a sheet with a jump into the help', async () => {
   shell();
   const { infoButton } = await import('../js/ui.js');
   const btn = infoButton('energieverfuegbarkeit', 'Energieversorgung');
@@ -118,11 +118,11 @@ test('UI-21: ⓘ öffnet den Artikel als Sheet mit Sprung in die Hilfe', async (
   assert.match(sheet.textContent, /In der Hilfe öffnen/);
 });
 
-test('UI-21: Abschnitte der Einstellungen tragen ihr ⓘ', async () => {
+test('UI-21: settings sections carry their ⓘ', async () => {
   const view = shell();
   store.setProfile({ ...store.profile(), name: 'Alex', birthYear: 1990, heightCm: 170, weightKg: 62 });
   const settings = await import('../js/settings.js');
   settings.render(view);
   const ids = view.querySelectorAll('[data-help]').map((b) => b.getAttribute('data-help'));
-  for (const id of ['hf-zonen', 'module', 'backup']) assert.ok(ids.includes(id), `${id} fehlt in ${ids.join(', ')}`);
+  for (const id of ['hf-zonen', 'module', 'backup']) assert.ok(ids.includes(id), `${id} missing in ${ids.join(', ')}`);
 });

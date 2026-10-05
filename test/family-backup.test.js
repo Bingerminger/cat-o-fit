@@ -1,16 +1,16 @@
-/* Tests für das Admin-Vollbackup der gesamten Familie (js/storage.js):
-   - nur Admin darf exportieren/wiederherstellen
-   - strikt private Zyklusdaten sind NIE im Vollbackup
-   - Wiederherstellung ist autoritativ (Mitglieder + alle enthaltenen Bereiche)
-   - Zyklusdaten bleiben bei der Wiederherstellung unangetastet erhalten */
+/* Tests for the admin full backup of the whole family (js/storage.js):
+   - only an admin may export/restore
+   - strictly private cycle data is NEVER in the full backup
+   - restore is authoritative (members + all included areas)
+   - cycle data remains untouched on restore */
 import { test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 import * as store from '../js/storage.js';
 import { scopeKey } from '../js/ui.js';
 
-// fetch-Mock: bedient GET ?area= aus dem LocalStorage (wie der echte Server die
-// logische Sicht liefert); ops/changes antworten leer. So liest exportFamilyAll
-// (peekUserArea -> apiGet) die im Test gesetzten Daten.
+// fetch mock: serves GET ?area= from LocalStorage (as the real server delivers
+// the logical view); ops/changes answer empty. This way exportFamilyAll
+// (peekUserArea -> apiGet) reads the data set in the test.
 const realFetch = globalThis.fetch;
 beforeEach(() => {
   globalThis.fetch = async (url) => {
@@ -22,7 +22,7 @@ beforeEach(() => {
     const user = u.searchParams.get('user');
     let data = [];
     if (scope !== 'family' && area) {
-      let recs = null; try { recs = JSON.parse(localStorage.getItem(scopeKey(`${user}:${area}`)) || 'null'); } catch { /* egal */ }
+      let recs = null; try { recs = JSON.parse(localStorage.getItem(scopeKey(`${user}:${area}`)) || 'null'); } catch { /* ignore */ }
       if (Array.isArray(recs)) data = recs.filter((r) => !r.deleted).map((r) => { const c = { ...r }; delete c.rev; return c; });
       else if (recs) data = recs;
     }
@@ -41,17 +41,17 @@ beforeEach(() => {
 });
 afterEach(() => { globalThis.fetch = realFetch; });
 
-test('exportFamilyAll erfordert eine Admin-Person', async () => {
-  await store.login('u-2', '');                 // Kind (user)
+test('exportFamilyAll requires an admin person', async () => {
+  await store.login('u-2', '');                 // child (user)
   await assert.rejects(() => store.exportFamilyAll(), /Administrator/);
 });
 
-test('exportFamilyAll bündelt alle Mitglieder + Familie, OHNE private Zyklusdaten', async () => {
-  // Daten für beide Mitglieder anlegen (u-1 über den Store, u-2 direkt im LS).
+test('exportFamilyAll bundles all members + family, WITHOUT private cycle data', async () => {
+  // Create data for both members (u-1 via the store, u-2 directly in LS).
   await store.login('u-1', '');
   store.upsert('events', { id: 'e1', name: 'Stadtlauf' });
   store.addReport({ id: 'r1', kind: 'certificate', title: 'Finisher' });
-  store.replaceArea('cycle', [{ id: 'c1', date: '2026-06-01' }]);  // privat!
+  store.replaceArea('cycle', [{ id: 'c1', date: '2026-06-01' }]);  // private!
   localStorage.setItem(scopeKey('u-2:events'), JSON.stringify([{ id: 'e2', name: 'Schwimmen' }]));
   localStorage.setItem(scopeKey('u-2:cycle'), JSON.stringify([{ id: 'c2', date: '2026-06-10' }]));
 
@@ -59,38 +59,38 @@ test('exportFamilyAll bündelt alle Mitglieder + Familie, OHNE private Zyklusdat
   assert.equal(dump.app, 'catofit');
   assert.equal(dump.kind, 'family-full');
   assert.equal(dump.family.members.length, 2);
-  assert.equal(dump.family.pantry.length, 1, 'Familien-Lager ist enthalten');
+  assert.equal(dump.family.pantry.length, 1, 'family pantry is included');
 
-  // Beide Mitglieder enthalten – Reports ja, Zyklus niemals.
-  assert.ok(dump.users['u-1'], 'u-1 enthalten');
-  assert.ok(dump.users['u-2'], 'u-2 enthalten');
+  // Both members included – reports yes, cycle never.
+  assert.ok(dump.users['u-1'], 'u-1 included');
+  assert.ok(dump.users['u-2'], 'u-2 included');
   assert.equal(dump.users['u-1'].events.length, 1);
   assert.equal(dump.users['u-1'].events[0].name, 'Stadtlauf');
-  assert.ok(Array.isArray(dump.users['u-1'].reports) && dump.users['u-1'].reports.length === 1, 'Urkunden/Reports sind im Vollbackup');
-  assert.equal(dump.users['u-1'].cycle, undefined, 'Zyklus von u-1 ist NICHT im Vollbackup');
-  assert.equal(dump.users['u-2'].cycle, undefined, 'Zyklus von u-2 ist NICHT im Vollbackup');
+  assert.ok(Array.isArray(dump.users['u-1'].reports) && dump.users['u-1'].reports.length === 1, 'certificates/reports are in the full backup');
+  assert.equal(dump.users['u-1'].cycle, undefined, 'cycle of u-1 is NOT in the full backup');
+  assert.equal(dump.users['u-2'].cycle, undefined, 'cycle of u-2 is NOT in the full backup');
 });
 
-test('importFamilyAll erfordert eine Admin-Person', async () => {
+test('importFamilyAll requires an admin person', async () => {
   await store.login('u-2', '');
   await assert.rejects(() => store.importFamilyAll({ app: 'catofit', kind: 'family-full', family: { members: [] }, users: {} }), /Administrator/);
 });
 
-test('importFamilyAll lehnt ungültige Dateien und Backups ohne Admin ab', async () => {
+test('importFamilyAll rejects invalid files and backups without an admin', async () => {
   await store.login('u-1', '');
   await assert.rejects(() => store.importFamilyAll(null), /gültige/);
   await assert.rejects(() => store.importFamilyAll({ app: 'andere', kind: 'family-full', family: { members: [] }, users: {} }), /gültige/);
   await assert.rejects(() => store.importFamilyAll({ app: 'catofit', kind: 'family-full', family: { members: [{ id: 'x', role: 'user' }] }, users: {} }), /Admin-Person/);
 });
 
-test('importFamilyAll stellt Mitglieder + Bereiche autoritativ wieder her', async () => {
+test('importFamilyAll restores members + areas authoritatively', async () => {
   await store.login('u-1', '');
   const dump = {
     app: 'catofit', kind: 'family-full', version: 1, exportedAt: new Date().toISOString(),
     family: {
       members: [
         { id: 'u-1', name: 'Nora', role: 'admin' },
-        { id: 'u-9', name: 'Opa', role: 'user' },   // neues Mitglied aus dem Backup
+        { id: 'u-9', name: 'Opa', role: 'user' },   // new member from the backup
       ],
       settings: { accent: '#7c5cff' }, pantry: [],
     },
@@ -103,29 +103,29 @@ test('importFamilyAll stellt Mitglieder + Bereiche autoritativ wieder her', asyn
   assert.equal(res.users, 2);
   assert.ok(res.areas >= 3);
 
-  // Familie autoritativ ersetzt (u-2 ist weg, u-9 ist da).
+  // Family replaced authoritatively (u-2 is gone, u-9 is there).
   const ids = store.members().map((m) => m.id).sort();
   assert.deepEqual(ids, ['u-1', 'u-9']);
   assert.equal(store.familySettings().accent, '#7c5cff');
 
-  // Fremd-Mitglied u-9 liegt im LocalStorage bereit (server-autoritativ separat).
+  // Foreign member u-9 is ready in LocalStorage (server-authoritative separately).
   assert.deepEqual(JSON.parse(localStorage.getItem(scopeKey('u-9:events'))), [{ id: 'eB', name: 'Walken' }]);
   assert.deepEqual(JSON.parse(localStorage.getItem(scopeKey('u-9:reports'))), [{ id: 'rB', title: 'Urkunde' }]);
 
-  // Aktive Sicht (u-1) wurde neu geladen.
+  // Active view (u-1) was reloaded.
   assert.equal(store.find('events', 'eA').name, 'Marathon');
 });
 
-test('importFamilyAll lässt private Zyklusdaten unangetastet', async () => {
+test('importFamilyAll leaves private cycle data untouched', async () => {
   await store.login('u-1', '');
-  store.replaceArea('cycle', [{ id: 'c1', date: '2026-06-01' }]);   // privat, lokal vorhanden
+  store.replaceArea('cycle', [{ id: 'c1', date: '2026-06-01' }]);   // private, present locally
   const dump = {
     app: 'catofit', kind: 'family-full', version: 1,
     family: { members: [{ id: 'u-1', name: 'Nora', role: 'admin' }], settings: {}, pantry: [] },
-    users: { 'u-1': { events: [{ id: 'eX', name: 'Lauf' }] } },   // kein cycle im Backup
+    users: { 'u-1': { events: [{ id: 'eX', name: 'Lauf' }] } },   // no cycle in the backup
   };
   await store.importFamilyAll(dump);
-  // Zyklus bleibt erhalten (nicht überschrieben, nicht gelöscht).
+  // Cycle is retained (not overwritten, not deleted).
   assert.equal(store.get('cycle').length, 1);
   assert.equal(store.get('cycle')[0].id, 'c1');
 });

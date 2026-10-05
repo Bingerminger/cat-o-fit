@@ -1,15 +1,15 @@
 /* =========================================================================
-   labs-view.js — Ansicht „Labor & Ergänzung“.
+   labs-view.js — the "Labs & supplements" view.
 
-   Aufbau von oben nach unten, bewusst in dieser Reihenfolge:
-     1. Rote Flaggen (falls vorhanden) – alles andere tritt dann zurück
-     2. Energieversorgung (RED-S/LEA) – das häufigste echte Problem
-     3. Laborwerte mit Einordnung und Verlauf
-     4. Vorschläge zur Ergänzung (nur im Vollmodus, immer „food first“)
-     5. Eigener Einnahmeplan mit Abhaken
+   Structure from top to bottom, deliberately in this order:
+     1. Red flags (if any) – everything else then steps back
+     2. Energy supply (RED-S/LEA) – the most common real problem
+     3. Lab values with classification and trend
+     4. Supplement suggestions (full mode only, always "food first")
+     5. Own intake plan with check-off
 
-   Die gesamte Fachlogik liegt in labs.js / supplements.js / redflags.js; hier
-   wird nur dargestellt und erfasst.
+   All the domain logic lives in labs.js / supplements.js / redflags.js; this file
+   only presents and records.
    ========================================================================= */
 
 import * as store from './storage.js';
@@ -40,9 +40,9 @@ import { cycleCheck, avgCycleLength } from './cycle.js';
 import { t, tp } from './i18n.js';
 
 const TONE_COLOR = { good: 'var(--good)', warn: 'var(--warn)', bad: 'var(--bad)', neutral: 'var(--text-3)' };
-/** Dieselben Töne als lesbare Textfarbe (≥ 4,5:1) – die Flächenfarben sind für Schrift zu hell (UI-12). */
+/** The same tones as a readable text colour (≥ 4.5:1) – the fill colours are too light for text (UI-12). */
 const TONE_TEXT = { good: 'var(--good-text)', warn: 'var(--warn-text)', bad: 'var(--bad-text)', neutral: 'var(--text-2)' };
-/** Mittel, die meist nur situativ genommen werden – im Plan standardmäßig „bei Bedarf“. */
+/** Supplements that are usually only taken situationally – in the plan "as needed" by default. */
 const AS_NEEDED = ['caffeine', 'beetroot', 'electrolytes'];
 
 export function labsEnabled() {
@@ -54,7 +54,7 @@ export function labsEnabled() {
 export function render(view) {
   setHeader({ title: t('nav.labs') });
 
-  // Datenschutz: wie Zyklusdaten ausschließlich für die Person selbst sichtbar.
+  // Privacy: like cycle data, visible only to the person themselves.
   if (store.isManaging()) {
     const who = store.activeMember();
     view.appendChild(el('div', { class: 'empty', style: { paddingTop: '48px' } }, [
@@ -71,17 +71,17 @@ export function render(view) {
   const s = store.settings();
   const labs = store.get('labs');
   const supps = store.get('supplements');
-  // Ein Eignungsstatus für die ganze App (Gate + Alter aus dem Geburtsjahr).
+  // One eligibility status for the whole app (gate + age from the birth year).
   const elig = currentEligibility(today);
 
-  /* --- Ersteinrichtung: Abgrenzung klären ------------------------------- */
+  /* --- Initial setup: clarify eligibility ------------------------------- */
   if (!elig.answered) {
     view.appendChild(introCard());
     view.appendChild(el('button', { class: 'btn btn--primary btn--block mt-3', onclick: () => openGateSheet({ onSaved: rerender }) }, [icon('check'), t('labsView.setUp')]));
     return;
   }
 
-  /* --- 1. Rote Flaggen --------------------------------------------------- */
+/* --- 1. Red flags ------------------------------------------------------ */
   const flags = redFlags({
     labs, cycle: store.get('cycle'), today,
     gate: s.labsGate || {}, cycleCheck: cycleCheck(), avgLen: avgCycleLength(),
@@ -96,14 +96,14 @@ export function render(view) {
     ]),
   ])));
 
-  /* --- 2. Energieversorgung (RED-S) -------------------------------------- */
-  // Kinder- und Jugendprofil: keine Kalorienrechnung (die Schwellen gelten für Erwachsene).
+/* --- 2. Energy supply (RED-S) ------------------------------------------ */
+  // Child and adolescent profile: no calorie calculation (the thresholds apply to adults).
   if (!elig.minor) {
     const health = store.get('health');
     const tg = currentEnergyTargets(today);
     const eaArgs = {
       profile, health, sessions: store.get('sessions'), diary: store.get('diary'), today,
-      // Beim Abnehmen ist 30–45 vorübergehend vertretbar – eigener Hinweis statt Alarm.
+      // When losing weight, 30–45 is temporarily acceptable – a separate hint instead of an alarm.
       lossGoal: !tg.block && !!tg.goalStatus && tg.goalStatus.status === 'abnehmen',
     };
     const ea = energyAvailability(eaArgs);
@@ -119,7 +119,7 @@ export function render(view) {
     }
   }
 
-  /* --- 3. Laborwerte ----------------------------------------------------- */
+/* --- 3. Lab values ----------------------------------------------------- */
   view.appendChild(sectionHead(t('labsView.yourValues'), { label: t('labsView.logValue'), onClick: () => openValueSheet(elig) }, { help: 'labor' }));
 
   if (!elig.labsEvaluate) {
@@ -139,10 +139,10 @@ export function render(view) {
     view.appendChild(list);
     view.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: elig.labsEvaluate ? t('labsView.tapHintEvaluate') : t('labsView.tapHint') }));
   }
-  // Ganzer Befund auf einmal statt Wert für Wert (MKT-09).
+  // Whole report at once instead of value by value (MKT-09).
   view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => openReportSheet() }, [icon('flask'), t('labsView.logReport')]));
 
-  /* --- 4. Vorschläge ----------------------------------------------------- */
+  /* --- 4. Suggestions ---------------------------------------------------- */
   view.appendChild(sectionHead(t('labsView.supplements')));
   if (elig.mode === 'documentation') {
     view.appendChild(el('div', { class: 'card card--flat row gap-2', style: { alignItems: 'flex-start' } }, [
@@ -176,7 +176,7 @@ export function render(view) {
     ])));
   }
 
-  /* --- 5. Eigener Einnahmeplan ------------------------------------------ */
+/* --- 5. Own intake plan ------------------------------------------------ */
   view.appendChild(sectionHead(t('labsView.yourPlan'), { label: t('labsView.add'), onClick: () => openPlanSheet(null, elig) }));
   const plans = activePlans(supps, today);
   if (!plans.length) {
@@ -194,7 +194,7 @@ export function render(view) {
           el('div', { class: 'num', style: { fontWeight: '800', color: ad.pct >= 80 ? 'var(--good)' : ad.pct >= 50 ? 'var(--warn)' : 'var(--bad)' }, text: t('labsView.percent', { pct: ad.pct }) }),
         ]),
         el('div', { class: 'dim', style: { fontSize: '.76rem' }, text: tp('labsView.adherenceCaption', ad.expected, { taken: ad.taken, extra: plans.some((p) => !isDaily(p)) ? ` · ${t('labsView.adherenceAsNeeded')}` : '' }) }),
-        // 100 % als fester Anker: Ohne ihn sah eine durchgehend halbe Einnahme aus wie volle.
+        // 100 % as a fixed anchor: without it, a consistently halved intake looked like a full one.
         ser.length ? barChart(ser, { height: 90, min: 100, yUnit: '%', label: t('labsView.adherencePerDay') }) : null,
       ]));
     }
@@ -206,7 +206,7 @@ export function render(view) {
   ]));
 }
 
-/* ------------------------------- Bausteine -------------------------------- */
+/* ------------------------------- Building blocks ------------------------- */
 
 function introCard() {
   return el('div', { class: 'card' }, [
@@ -223,7 +223,7 @@ function noteCard(text) {
   ]);
 }
 
-/** Gibt es in den letzten 14 Tagen Mahlzeiten? (Dann lohnt der Hinweis auf fehlendes Körperfett.) */
+/** Are there meals in the last 14 days? (Then the hint about missing body fat is worthwhile.) */
 function hasRecentMeals(diary, today) {
   const from = new Date(Date.parse(`${today}T00:00:00Z`) - 13 * 86400000).toISOString().slice(0, 10);
   return (diary || []).some((m) => m && !m.deleted && !m._kind && m.kcal && m.date >= from && m.date <= today);
@@ -231,7 +231,7 @@ function hasRecentMeals(diary, today) {
 
 const EA_TONE = { kritisch: 'bad', niedrig: 'warn', unklar: 'neutral', gut: 'good' };
 
-/** Energieversorgung mit Zahl – gerundet und als Spanne, weil alle Eingangsgrößen Schätzungen sind. */
+/** Energy supply with a number – rounded and as a range, because all inputs are estimates. */
 function eaCard(ea, eaArgs) {
   const tone = EA_TONE[ea.level] || 'neutral';
   return el('div', { class: 'card mt-2', style: { borderLeft: `4px solid ${TONE_COLOR[tone]}` } }, [
@@ -239,8 +239,8 @@ function eaCard(ea, eaArgs) {
       el('div', { class: 'card__title', style: { fontSize: '.92rem' }, text: t('labsView.energyAvailability') }),
       infoButton('energieverfuegbarkeit', t('labsView.energyAvailability')),
     ]),
-    // Bei unklarer Datenlage keine Zahl in den Vordergrund stellen – sie wäre
-    // aus lückenhaften Tagebuch-Einträgen gerechnet und damit irreführend.
+    // With unclear data, do not put a number in the foreground – it would be
+    // calculated from patchy diary entries and thus misleading.
     ea.level === 'unklar' ? null : el('div', { class: 'row gap-3 mt-2', style: { alignItems: 'baseline', flexWrap: 'wrap' } }, [
       el('div', { class: 'num', style: { fontSize: '1.6rem', fontWeight: '800', color: TONE_TEXT[tone] }, text: `≈ ${ea.eaRounded}` }),
       el('div', { class: 'muted', style: { fontSize: '.8rem' }, text: t('labsView.eaRange', { low: ea.range[0], high: ea.range[1], target: EA_OPTIMAL }) }),
@@ -259,7 +259,7 @@ function eaCard(ea, eaArgs) {
   ]);
 }
 
-/** Energieversorgung ohne Zahlen – für alle, die Kalorienzahlen ausgeblendet haben. */
+/** Energy supply without numbers – for everyone who has hidden calorie figures. */
 function eaCardPlain(ea) {
   const tone = EA_TONE[ea.level] || 'neutral';
   const text = {
@@ -283,7 +283,7 @@ function eaCardPlain(ea) {
   ]);
 }
 
-/** „Woher bekomme ich Werte?“ – aufklappbar, solange noch nichts erfasst ist. */
+/** "Where do I get lab values?" – collapsible as long as nothing has been recorded yet. */
 function sourcesCard() {
   const body = el('div', { hidden: true, style: { marginTop: '6px' } },
     LAB_SOURCES.map((src, i) => el('div', { style: { padding: '8px 0', borderTop: i ? '1px solid var(--border)' : 'none' } }, [
@@ -308,7 +308,7 @@ function sourcesCard() {
   ]);
 }
 
-/** Kennzahlen-Zeile über allen Werten: Überblick auf einen Blick. */
+/** Key-figures row above all values: overview at a glance. */
 function labStats(rows, labs, evaluate = true) {
   const good = rows.filter((r) => r.assessment.status === 'gut').length;
   const attention = rows.filter((r) => ['niedrig', 'hoch', 'grenzwertig'].includes(r.assessment.status)).length;
@@ -316,7 +316,7 @@ function labStats(rows, labs, evaluate = true) {
   const dates = [...new Set((labs || []).filter((l) => l && !l.deleted).map((l) => l.date))].sort();
   const last = dates.at(-1);
   const counts = t('labsView.counts', { measurements: tp('labsView.measurements', measured), dates: tp('labsView.dates', dates.length), last: last ? fmtDate(last) : '–' });
-  // Nur dokumentierend (Kinder- und Jugendprofil): keine Ampel, nur der Überblick.
+  // Documenting only (child and adolescent profile): no traffic light, just the overview.
   if (!evaluate) {
     return el('div', { class: 'card' }, [
       el('div', { class: 'row gap-2', style: { alignItems: 'baseline' } }, [
@@ -352,9 +352,9 @@ function labStats(rows, labs, evaluate = true) {
 }
 
 const num = fmtDec;
-/** Bereich als Text: „15–300“ oder „ab 35“ (ohne Obergrenze). */
+/** Range as text: "15–300" or "from 35" (no upper limit). */
 const fmtRange = (r) => (r[1] == null ? t('labsView.rangeFrom', { value: num(r[0]) }) : `${num(r[0])}–${num(r[1])}`);
-/** Wert so, wie er auf dem Befund stand (Einheit des Befunds), sonst kanonisch. */
+/** Value as it stood on the report (unit of the report), otherwise canonical. */
 function valueText(rec, unit) {
   if (rec && rec.enteredUnit && rec.enteredValue != null) return `${num(rec.enteredValue)} ${rec.enteredUnit}`;
   return `${num(rec ? rec.value : '')} ${unit}`;
@@ -369,7 +369,7 @@ function valueRow(r, i, labs) {
   if (r.stale) sub.push(t('labsView.staleShort'));
   if (trd && trd.dir !== 'flat') sub.push(t('labsView.perMonth', { arrow, value: num(Math.abs(trd.perMonth)), unit: r.unit }));
 
-  // Mini-Verlauf direkt in der Zeile: Trend erkennen, ohne aufzuklappen.
+  // Mini trend right in the row: spot the trend without expanding.
   const pts = series(labs, r.key).map((l) => Number(l.value));
   const spark = pts.length >= 3
     ? el('span', { style: { width: '54px', flex: '0 0 auto', opacity: '.85' } }, [sparkline(pts, { color: TONE_COLOR[a.tone] })])
@@ -391,7 +391,7 @@ function valueRow(r, i, labs) {
   return el('div', {}, [row, detail]);
 }
 
-/** Verlauf der Energieverfügbarkeit über die letzten Wochen. */
+/** Trend of energy availability over the last weeks. */
 function eaChart(args) {
   const ser = energyAvailabilitySeries(args, { weeks: 10 });
   if (ser.filter((p) => p.value != null).length < 3) return null;
@@ -407,12 +407,12 @@ function fillDetail(box, r) {
   const pts = all.map((l) => ({ label: fmtDate(l.date), date: l.date, value: Number(l.value) }));
   const a = r.assessment;
   const rec = r.record || latest(labs, r.key);
-  // Nur dokumentierend: der Bereich vom eigenen Befund (der ist altersgerecht), keine Bewertung.
+  // Documenting only: the range from the person's own report (which is age-appropriate), no rating.
   const ownOnly = a.status === 'unbewertet' && hasOwnRef(rec) ? [Number(rec.refLow), Number(rec.refHigh)] : null;
   const ref = a.ref || ownOnly;
   const sportDiffers = a.sport && (!ref || a.sport[0] !== ref[0] || a.sport[1] !== ref[1]);
   if (pts.length >= 2) {
-    // Beide Korridore: Referenz als gestrichelter Rahmen, Sport-Zielbereich als Fläche.
+    // Both corridors: reference as a dashed frame, sport target range as a filled area.
     const bands = [];
     if (sportDiffers) bands.push({ lo: a.sport[0], hi: a.sport[1], kind: 'fill', label: t('labsView.sportRange') });
     if (ref) bands.push({ lo: ref[0], hi: ref[1], kind: 'frame', label: a.ownRef || ownOnly ? t('labsView.refOwnLab') : t('labsView.reference') });
@@ -446,7 +446,7 @@ function fillDetail(box, r) {
   const src = ANALYTES[r.key] && ANALYTES[r.key].source;
   if (src) box.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.72rem' }, text: t('labsView.rangesBasis', { source: src }) }));
 
-  // Messungen: bearbeiten (Tippfehler, falsche Einheit) und löschen.
+  // Measurements: edit (typos, wrong unit) and delete.
   const list = el('div', { class: 'mt-2', style: { borderTop: '1px solid var(--border)' } });
   all.slice().reverse().forEach((m) => list.appendChild(el('div', { class: 'row row--between', style: { alignItems: 'center', padding: '6px 0', gap: '8px' } }, [
     el('span', { style: { fontSize: '.82rem' }, text: `${fmtDate(m.date)} · ${valueText(m, r.unit)}` }),
@@ -512,7 +512,7 @@ function planRow(p, today, i) {
   ]);
 }
 
-/* -------------------------------- Aktionen -------------------------------- */
+/* -------------------------------- Actions -------------------------------- */
 
 function toggleIntake(plan, date, done) {
   const supps = store.get('supplements');
@@ -527,8 +527,8 @@ function toggleIntake(plan, date, done) {
   rerender();
 }
 
-/** Laborwert von außerhalb der Labor-Ansicht erfassen (＋ Erfassen): Ist die Abgrenzung
-    noch nicht geklärt, zuerst die kurze Einrichtung, danach direkt das Formular. */
+/** Record a lab value from outside the Labs view (the add button): if eligibility
+    is not yet clarified, first the short setup, then directly the form. */
 export function openLabEntry() {
   if (!labsEnabled()) return;
   const elig = currentEligibility();
@@ -537,13 +537,13 @@ export function openLabEntry() {
 }
 
 /**
- * Laborwert erfassen oder bearbeiten (`existing`). Die Einheit steht direkt neben dem Wert;
- * der Referenzbereich des Labors ist nur ein PLATZHALTER (in der gewählten Einheit) –
- * gespeichert wird nur, was jemand vom Befund abtippt. Bis v3.19.0 wurde die Vorbelegung
- * als „dein Labor“ gespeichert und beim Einheitenwechsel sogar falsch umgerechnet.
+ * Record or edit a lab value (`existing`). The unit sits right next to the value;
+ * the lab's reference range is only a PLACEHOLDER (in the chosen unit) –
+ * only what someone types in from the report is saved. Up to v3.19.0 the prefill
+ * was saved as "your lab" and was even converted wrongly when the unit changed.
  */
-/** Einen ganzen Befund erfassen: Datum und Umstände einmal, darunter alle Werte mit Einheit und
-    dem Referenzbereich des eigenen Labors. Leere Zeilen bleiben unberücksichtigt. */
+/** Record a whole report: date and circumstances once, below them all values with unit and
+    the reference range of the person's own lab. Empty rows are ignored. */
 function openReportSheet() {
   const profile = store.profile();
   const dateI = input({ type: 'date', value: todayStr(), max: todayStr() });
@@ -615,7 +615,7 @@ function openValueSheet(elig = currentEligibility(), existing = null) {
   const ex = existing ? migrateLabRecord(existing) : null;
   let key = ex && ANALYTES[ex.analyte] ? ex.analyte : 'ferritin';
   let unit = ex && ex.enteredUnit && unitFactor(key, ex.enteredUnit) ? ex.enteredUnit : ANALYTES[key].unit;
-  // Kinder- und Jugendprofil: keine Erwachsenen-Bereiche als Platzhalter – der Befund kennt die passenden.
+  // Child and adolescent profile: no adult ranges as placeholders – the report knows the matching ones.
   const suggest = elig.labsEvaluate;
   const inUnit = (v) => (v == null ? '' : String(fromCanonical(key, v, unit)));
   const dateI = input({ type: 'date', value: ex ? ex.date : todayStr() });
@@ -626,7 +626,7 @@ function openValueSheet(elig = currentEligibility(), existing = null) {
   const refLoI = input({ type: 'number', step: 'any', inputmode: 'decimal', 'aria-label': t('labsView.referenceFrom'), value: ownRef ? inUnit(ex.refLow) : '' });
   const refHiI = input({ type: 'number', step: 'any', inputmode: 'decimal', 'aria-label': t('labsView.referenceTo'), value: ownRef ? inUnit(ex.refHigh) : '' });
   const refUnitLbl = el('span', { class: 'muted', style: { alignSelf: 'center', fontSize: '.8rem', whiteSpace: 'nowrap' } });
-  // Platzhalter mit sinnvoller Genauigkeit (20 statt 20,032).
+  // Placeholder with sensible precision (20 instead of 20.032).
   const nice = (v) => {
     const a = Math.abs(v);
     const d = a >= 100 ? 0 : a >= 10 ? 1 : a >= 1 ? 2 : 3;
@@ -648,7 +648,7 @@ function openValueSheet(elig = currentEligibility(), existing = null) {
     unitSel.disabled = opts.length < 2;
   };
   unitSel.addEventListener('change', () => {
-    // Bereits eingetippte Referenzgrenzen mit umrechnen – sonst stünden Zahlen der alten Einheit da.
+    // Also convert reference limits that were already typed in – otherwise numbers in the old unit would remain.
     const prev = unit; unit = unitSel.value;
     [refLoI, refHiI].forEach((i) => {
       if (i.value === '') return;
@@ -671,8 +671,8 @@ function openValueSheet(elig = currentEligibility(), existing = null) {
   drawUnits(true);
   fillPlaceholders();
 
-  // Umstände der Blutentnahme (optional) – daraus Kontextregeln (Belastung, Zyklus, Biotin).
-  // Bei einem neuen Wert vom selben Tag übernehmen wir die Angaben des anderen Werts.
+  // Circumstances of the blood draw (optional) – context rules derive from them (load, cycle, biotin).
+  // For a new value from the same day, we adopt the details of the other value.
   const sameDay = !ex && store.get('labs').find((l) => l.date === dateI.value && (l.exercise48h || l.fasting || l.biotin || l.cycleDay));
   const ctxSrc = ex || sameDay || {};
   const ctx = { exercise48h: !!ctxSrc.exercise48h, fasting: !!ctxSrc.fasting, biotin: !!ctxSrc.biotin };
@@ -689,7 +689,7 @@ function openValueSheet(elig = currentEligibility(), existing = null) {
   const ctxToggle = el('button', { type: 'button', class: 'btn btn--ghost btn--block mt-2', style: { fontSize: '.8rem' },
     onclick: () => { ctxBody.hidden = !ctxBody.hidden; } }, t('labsView.circumstancesOptional'));
 
-  // Unplausible Größenordnung: erst Hinweis „Einheit prüfen?“, der zweite Tipp speichert.
+  // Implausible order of magnitude: first a "Check unit?" hint, the second tap saves.
   const warnBox = el('div', { class: 'card card--flat mt-2', role: 'alert', hidden: true, style: { borderLeft: '3px solid var(--warn)', fontSize: '.82rem' } });
   const saveBtn = el('button', { class: 'btn btn--primary btn--block' }, [icon('check'), t('labsView.save')]);
   const confirm = {
@@ -756,7 +756,7 @@ function openValueSheet(elig = currentEligibility(), existing = null) {
 }
 
 function openPlanSheet(presetKey = null, elig = currentEligibility()) {
-  // Minderjährige: keine Leistungspräparate im Katalog.
+  // Minors: no performance supplements in the catalogue.
   const keys = catalogFor(elig);
   const opts = keys.map((k) => ({ value: k, label: SUPPLEMENTS[k].label }));
   let key = presetKey && keys.includes(presetKey) ? presetKey : opts[0].value;
@@ -764,7 +764,7 @@ function openPlanSheet(presetKey = null, elig = currentEligibility()) {
   const doseI = input({ type: 'text', value: SUPPLEMENTS[key].typical, placeholder: t('labsView.amount') });
   const timingI = input({ type: 'text', value: SUPPLEMENTS[key].timing || '', placeholder: t('labsView.when') });
   const doping = el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '4px' }, text: dopingNote(), hidden: !SUPPLEMENTS[key].performance });
-  // Häufigkeit: Situative Mittel (z. B. vor Wettkämpfen) sind keine tägliche Pflicht.
+  // Frequency: situational supplements (e.g. before races) are not a daily obligation.
   const freqFor = (k) => (AS_NEEDED.includes(k) ? 'bedarf' : 'taeglich');
   const freqSel = select([{ value: 'taeglich', label: t('labsView.daily') }, { value: 'bedarf', label: t('labsView.asNeededExample') }], freqFor(key));
   sel.addEventListener('change', () => {
@@ -795,6 +795,6 @@ function openPlanSheet(presetKey = null, elig = currentEligibility()) {
   });
 }
 
-// Neu zeichnen über den Router (Scrollposition bleibt, auch wenn das Formular von
-// einer anderen Ansicht aus geöffnet wurde); ohne App-Shell (Tests) direkt.
+// Redraw via the router (scroll position stays, even if the form was opened from
+// another view); without an app shell (tests) directly.
 function rerender() { rerenderView(render); }

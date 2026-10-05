@@ -1,11 +1,11 @@
 /* =========================================================================
-   badges.js — Belohnungssystem: Erfolgs-Badges + Momentum.
-   Philosophie „Motivation ohne Druck“: viele positive, humorvolle Abzeichen;
-   das Momentum (eine Schwung-Flamme) reagiert sanft auf Konsistenz – es
-   schrumpft bei Lücken, formuliert aber immer aktivierend statt strafend.
+   badges.js — reward system: achievement badges + momentum.
+   Philosophy "motivation without pressure": many positive, humorous badges;
+   the momentum (a momentum flame) reacts gently to consistency – it
+   shrinks when there are gaps, but always words things encouragingly rather than punitively.
 
-   Badges werden live aus den vorhandenen Daten berechnet. Die „schon gesehen“-
-   Liste liegt clientseitig im LocalStorage (das Feier-Erlebnis muss nicht syncen).
+   Badges are calculated live from the existing data. The "already seen"
+   list sits client-side in LocalStorage (the celebration does not need to sync).
    ========================================================================= */
 
 import { diffDays, todayStr, addDays, typeMeta, el, iconSvg, sectionHead, fmtNum, weekStartMonday } from './ui.js';
@@ -22,16 +22,16 @@ export { alcoholFreeStreak };
 import { adherence as planAdherence, isHealthMiss, isRunSession } from './fitness.js';
 import { periodStarts } from './cyclecalc.js';
 
-/** Trainingstage: Datum jeder Session und jeder erledigten Plan-Einheit. */
+/** Training days: date of every session and of every completed plan session. */
 function activeDateSet(sessions = [], plans = []) {
   const active = new Set((sessions || []).filter((s) => s && !s.deleted && s.date).map((s) => s.date));
   (plans || []).forEach((p) => ((p && p.units) || []).forEach((u) => { if (u && u.status === 'erledigt') active.add(u.date); }));
   return active;
 }
 
-/** Tage mit gesundheitsbedingtem Ausfall (krank, verletzt) der letzten `days` Tage –
-    Lücken bis 3 Tage zwischen zwei solchen Ausfällen zählen mit (die Krankheit dauert
-    ja auch an Tagen ohne geplante Einheit). */
+/** Days with a health-related absence (ill, injured) in the last `days` days –
+    gaps of up to 3 days between two such absences count too (the illness
+    continues on days without a planned session as well). */
 export function illnessDays(plans = [], today, days = 60) {
   const dates = [];
   (plans || []).forEach((p) => ((p && p.units) || []).forEach((u) => {
@@ -47,12 +47,12 @@ export function illnessDays(plans = [], today, days = 60) {
 }
 
 /**
- * Wochen-Serie: aufeinanderfolgende Kalenderwochen (Mo–So) mit mindestens `minDays`
- * Trainingstagen. Die laufende Woche zählt, sobald sie das Ziel erreicht – solange
- * sie läuft, bricht sie die Serie nicht. Ruhetage erhalten die Serie: belohnt wird
- * Regelmäßigkeit, nicht Training ohne Pause (früher zählten „Tage in Folge“, und die
- * höchsten Abzeichen verlangten 60 Tage ohne Ruhetag). Wochen mit krankheits- oder
- * verletzungsbedingtem Ausfall pausieren die Serie, statt sie zu brechen.
+ * Weekly streak: consecutive calendar weeks (Mon–Sun) with at least `minDays`
+ * training days. The current week counts as soon as it reaches the goal – while
+ * it is still running, it does not break the streak. Rest days preserve the streak: what is
+ * rewarded is regularity, not training without a break (previously "days in a row" counted, and the
+ * highest badges demanded 60 days without a rest day). Weeks with an illness- or
+ * injury-related absence pause the streak instead of breaking it.
  */
 export function weekStreak({ sessions = [], plans = [] } = {}, today = todayStr(), minDays = 3) {
   const active = activeDateSet(sessions, plans);
@@ -71,41 +71,41 @@ export function weekStreak({ sessions = [], plans = [] } = {}, today = todayStr(
 }
 
 
-/* ------------------------- Kennzahlen aus dem Bestand ------------------- */
+/* ------------------------- Metrics from the existing data ------------------- */
 /**
- * Kennzahlen für Abzeichen und Momentum. `data.isProtectedDay` (optional) ersetzt die
- * Zyklus-Regel der angemeldeten Person – das Team-Dashboard übergibt `() => false`,
- * weil es für andere Mitglieder keine Zyklusdaten gibt (und nicht geben darf).
- * `data.cycle` (optional, nur in der eigenen Sicht) zählt die eingetragenen Periodenstarts.
+ * Metrics for badges and momentum. `data.isProtectedDay` (optional) replaces the
+ * cycle rule of the signed-in person – the team dashboard passes `() => false`,
+ * because there is no cycle data for other members (and there must not be).
+ * `data.cycle` (optional, own view only) counts the logged period starts.
  */
 export function computeStats(data = {}, today = todayStr()) {
   const { sessions = [], plans = [], health = [], events = [], profile = {}, cycle = [] } = data;
   const protectedDay = typeof data.isProtectedDay === 'function' ? data.isProtectedDay : isProtectedDay;
   const run = sessions.filter((s) => !s.deleted);
   const totalSessions = run.length;
-  // „km gesammelt“: alle Sportarten mit Strecke. Der längste LAUF zählt nur Läufe –
-  // sonst schaltete eine 40-km-Radtour „Ein Lauf über 21 km“ frei.
+  // "km collected": all sports with a distance. The longest RUN counts only runs –
+  // otherwise a 40 km bike ride would unlock "A run over 21 km".
   const totalKm = run.reduce((a, s) => a + (s.distanceKm || 0), 0);
   const longestRun = run.filter(isRunSession).reduce((m, s) => Math.max(m, s.distanceKm || 0), 0);
   const intervalCount = run.filter((s) => s.type === 'interval').length;
   const qualityCount = run.filter((s) => ['tempo', 'interval'].includes(s.type)).length;
 
-  // Wochen-Serie (Kalenderwochen mit ≥ 3 Trainingstagen); Ruhetage erhalten die Serie.
+  // Weekly streak (calendar weeks with ≥ 3 training days); rest days preserve the streak.
   const streak = weekStreak({ sessions: run, plans }, today);
 
-  // Plan-Einhaltung – dieselbe Definition wie Statistik, Wettkampfseite und Monatsbericht.
+  // Plan adherence – same definition as statistics, race page and monthly report.
   const adherence = planAdherence(plans, { today, isProtectedDay: protectedDay }).pct ?? 0;
 
-  // Zyklus protokolliert (neutral: belohnt das Eintragen, nicht Training trotz Periode).
+  // Cycle logged (neutral: rewards logging, not training despite a period).
   const cycleStarts = periodStarts(cycle).length;
 
-  // Perfekte Woche: irgendeine vergangene Plan-Woche komplett erledigt.
+  // Perfect week: any past plan week fully completed.
   let perfectWeek = false;
   plans.forEach((p) => {
     const byWeek = {};
-    // Woche aus dem Datum ableiten (nicht aus u.week): sonst landen manuell
-    // angelegte Einheiten ohne `week`-Feld gemeinsam im „undefined“-Eimer und
-    // könnten eine „Perfekte Woche“ fälschlich auslösen.
+    // Derive the week from the date (not from u.week): otherwise manually
+    // created sessions without a `week` field land together in the "undefined" bucket and
+    // could wrongly trigger a "Perfect week".
     (p.units || []).forEach((u) => {
       if (u.type === 'rest') return;
       const wk = weekOfDate(p, u.date) ?? u.week;
@@ -116,21 +116,21 @@ export function computeStats(data = {}, today = todayStr()) {
     });
   });
 
-  // Gewicht: jemals Zielgewicht erreicht?
+  // Weight: has the target weight ever been reached?
   const target = profile.targetWeightKg;
   const minWeight = health.filter((h) => h.weight != null).reduce((m, h) => Math.min(m, h.weight), Infinity);
   const weightReached = target != null && minWeight <= target;
 
-  // Wettkampf gefinisht.
+  // Race finished.
   const raceFinished = run.some((s) => s.type === 'race') || events.some((e) => e.status === 'abgeschlossen');
 
-  // Schlaf-Serie: 7 der letzten Einträge ≥ 7 h.
+  // Sleep streak: 7 of the latest entries ≥ 7 h.
   const sleepStreak = health.filter((h) => h.sleepHours != null).sort((a, b) => b.date.localeCompare(a.date))
     .slice(0, 7).filter((h) => h.sleepHours >= 7).length;
 
   const soberStreak = alcoholFreeStreak(health, today) || 0;
 
-  // Sportart-Zähler (je Trainingsart) + Vielfalt
+  // Sport counters (per training type) + variety
   const byType = {};
   run.forEach((s) => { if (s.type) byType[s.type] = (byType[s.type] || 0) + 1; });
   const cnt = (type) => byType[type] || 0;
@@ -138,7 +138,7 @@ export function computeStats(data = {}, today = todayStr()) {
   const distinctCats = new Set(run.map((s) => typeMeta(s.type).cat).filter((c) => c && c !== 'rest')).size;
   const marathonRun = longestRun >= 42;
 
-  // Event-/Wettkampfarten (abgeschlossene Events)
+  // Event/race types (completed events)
   const doneEvents = events.filter((e) => !e.deleted && e.status === 'abgeschlossen');
   const racesFinishedCount = Math.max(
     doneEvents.filter((e) => e.kind !== 'program').length,
@@ -152,20 +152,20 @@ export function computeStats(data = {}, today = todayStr()) {
   return {
     totalSessions, totalKm, longestRun, intervalCount, qualityCount, streak, adherence, perfectWeek,
     weightReached, raceFinished, sleepStreak, cycleStarts, soberStreak,
-    // Sportarten
+    // Sports
     byType, distinctTypes, distinctCats, marathonRun,
     swimCount: cnt('swim'), hikeCount: cnt('hike'), rowingCount: cnt('rowing'),
     bikeCount: cnt('cross_bike') + cnt('spinning'), strengthCount: cnt('strength') + cnt('gym'),
     racketCount: cnt('tennis') + cnt('badminton') + cnt('squash') + cnt('tabletennis'),
     walkCount: cnt('walk'),
-    // Eventarten
+    // Event types
     racesFinishedCount, programsDone, distinctDistances, hyroxDone, triathlonDone,
   };
 }
 
 /* ------------------------------- Badges --------------------------------- */
-// Jeder Badge: emoji, name, desc, Kategorie und eine Fortschrittsfunktion.
-// tier = Aufwand/Schwierigkeit: 4 Legendär · 3 Episch · 2 Fortgeschritten · 1 Einsteiger.
+// Each badge: emoji, name, desc, category and a progress function.
+// tier = effort/difficulty: 4 Legendary · 3 Epic · 2 Advanced · 1 Beginner.
 export const TIERS = [
   { tier: 4, get label() { return t('badges.tiers.legendary'); }, color: '#f5a623' },
   { tier: 3, get label() { return t('badges.tiers.epic'); }, color: '#7c5cff' },
@@ -174,22 +174,22 @@ export const TIERS = [
 ];
 
 export const BADGES = [
-  /* ---- Einstieg & Konstanz ---- */
+  /* ---- Getting started & consistency ---- */
   { id: 'first', tier: 1, emoji: '🌱', get name() { return t('badges.items.first.name'); }, cat: 'Start', get desc() { return t('badges.items.first.desc'); }, p: (s) => [s.totalSessions, 1] },
-  // Konstanz in Wochen (≥ 3 Trainingstage je Woche) – Ruhetage gehören dazu.
+  // Consistency in weeks (≥ 3 training days per week) – rest days are part of it.
   { id: 'weeks3', tier: 1, emoji: '🔥', get name() { return t('badges.items.weeks3.name'); }, cat: 'Konstanz', get desc() { return t('badges.items.weeks3.desc'); }, p: (s) => [s.streak, 3] },
   { id: 'weeks6', tier: 2, emoji: '💪', get name() { return t('badges.items.weeks6.name'); }, cat: 'Konstanz', get desc() { return t('badges.items.weeks6.desc'); }, p: (s) => [s.streak, 6] },
   { id: 'weeks12', tier: 3, emoji: '⚡', get name() { return t('badges.items.weeks12.name'); }, cat: 'Konstanz', get desc() { return t('badges.items.weeks12.desc'); }, p: (s) => [s.streak, 12] },
   { id: 'weeks26', tier: 4, emoji: '🏔️', get name() { return t('badges.items.weeks26.name'); }, cat: 'Konstanz', get desc() { return t('badges.items.weeks26.desc'); }, p: (s) => [s.streak, 26] },
   { id: 'weeks52', tier: 4, emoji: '❄️', get name() { return t('badges.items.weeks52.name'); }, cat: 'Konstanz', get desc() { return t('badges.items.weeks52.desc'); }, p: (s) => [s.streak, 52] },
 
-  /* ---- Umfang (Trainings) ---- */
+  /* ---- Volume (trainings) ---- */
   { id: 'count10', tier: 1, emoji: '📦', get name() { return t('badges.items.count10.name'); }, cat: 'Umfang', get desc() { return t('badges.items.count10.desc'); }, p: (s) => [s.totalSessions, 10] },
   { id: 'count50', tier: 3, emoji: '🎯', get name() { return t('badges.items.count50.name'); }, cat: 'Umfang', get desc() { return t('badges.items.count50.desc'); }, p: (s) => [s.totalSessions, 50] },
   { id: 'count100', tier: 4, emoji: '👑', get name() { return t('badges.items.count100.name'); }, cat: 'Umfang', get desc() { return t('badges.items.count100.desc'); }, p: (s) => [s.totalSessions, 100] },
   { id: 'count200', tier: 4, emoji: '🏛️', get name() { return t('badges.items.count200.name'); }, cat: 'Umfang', get desc() { return t('badges.items.count200.desc'); }, p: (s) => [s.totalSessions, 200] },
 
-  /* ---- Distanz (km) ---- */
+  /* ---- Distance (km) ---- */
   { id: 'km100', tier: 2, emoji: '🛣️', get name() { return t('badges.items.km100.name'); }, cat: 'Distanz', get desc() { return t('badges.items.km100.desc'); }, p: (s) => [s.totalKm, 100] },
   { id: 'km500', tier: 3, emoji: '🚀', get name() { return t('badges.items.km500.name'); }, cat: 'Distanz', get desc() { return t('badges.items.km500.desc'); }, p: (s) => [s.totalKm, 500] },
   { id: 'km1000', tier: 4, emoji: '🌍', get name() { return t('badges.items.km1000.name'); }, cat: 'Distanz', get desc() { return t('badges.items.km1000.desc'); }, p: (s) => [s.totalKm, 1000] },
@@ -202,33 +202,33 @@ export const BADGES = [
   { id: 'quality1', tier: 1, emoji: '🌶️', get name() { return t('badges.items.quality1.name'); }, cat: 'Tempo', get desc() { return t('badges.items.quality1.desc'); }, p: (s) => [s.qualityCount, 1] },
   { id: 'interval10', tier: 3, emoji: '🎡', get name() { return t('badges.items.interval10.name'); }, cat: 'Tempo', get desc() { return t('badges.items.interval10.desc'); }, p: (s) => [s.intervalCount, 10] },
 
-  /* ---- Sportarten: Schwimmen ---- */
+  /* ---- Sports: swimming ---- */
   { id: 'swim1', tier: 1, emoji: '🏊', get name() { return t('badges.items.swim1.name'); }, cat: 'Schwimmen', get desc() { return t('badges.items.swim1.desc'); }, p: (s) => [s.swimCount, 1] },
   { id: 'swim10', tier: 2, emoji: '🌊', get name() { return t('badges.items.swim10.name'); }, cat: 'Schwimmen', get desc() { return t('badges.items.swim10.desc'); }, p: (s) => [s.swimCount, 10] },
   { id: 'swim25', tier: 3, emoji: '🐬', get name() { return t('badges.items.swim25.name'); }, cat: 'Schwimmen', get desc() { return t('badges.items.swim25.desc'); }, p: (s) => [s.swimCount, 25] },
 
-  /* ---- Sportarten: Wandern & Gehen ---- */
+  /* ---- Sports: hiking & walking ---- */
   { id: 'hike1', tier: 1, emoji: '🥾', get name() { return t('badges.items.hike1.name'); }, cat: 'Wandern', get desc() { return t('badges.items.hike1.desc'); }, p: (s) => [s.hikeCount, 1] },
   { id: 'hike10', tier: 3, emoji: '⛰️', get name() { return t('badges.items.hike10.name'); }, cat: 'Wandern', get desc() { return t('badges.items.hike10.desc'); }, p: (s) => [s.hikeCount, 10] },
   { id: 'walk10', tier: 1, emoji: '🚶', get name() { return t('badges.items.walk10.name'); }, cat: 'Gehen', get desc() { return t('badges.items.walk10.desc'); }, p: (s) => [s.walkCount, 10] },
 
-  /* ---- Sportarten: Rudern ---- */
+  /* ---- Sports: rowing ---- */
   { id: 'row1', tier: 1, emoji: '🚣', get name() { return t('badges.items.row1.name'); }, cat: 'Rudern', get desc() { return t('badges.items.row1.desc'); }, p: (s) => [s.rowingCount, 1] },
   { id: 'row10', tier: 3, emoji: '🛶', get name() { return t('badges.items.row10.name'); }, cat: 'Rudern', get desc() { return t('badges.items.row10.desc'); }, p: (s) => [s.rowingCount, 10] },
 
-  /* ---- Sportarten: Rückschlag, Rad, Kraft ---- */
+  /* ---- Sports: setback, cycling, strength ---- */
   { id: 'racket1', tier: 1, emoji: '🎾', get name() { return t('badges.items.racket1.name'); }, cat: 'Rückschlag', get desc() { return t('badges.items.racket1.desc'); }, p: (s) => [s.racketCount, 1] },
   { id: 'racket10', tier: 2, emoji: '🏓', get name() { return t('badges.items.racket10.name'); }, cat: 'Rückschlag', get desc() { return t('badges.items.racket10.desc'); }, p: (s) => [s.racketCount, 10] },
   { id: 'bike10', tier: 2, emoji: '🚴', get name() { return t('badges.items.bike10.name'); }, cat: 'Radsport', get desc() { return t('badges.items.bike10.desc'); }, p: (s) => [s.bikeCount, 10] },
   { id: 'strength10', tier: 2, emoji: '🏋️', get name() { return t('badges.items.strength10.name'); }, cat: 'Kraft', get desc() { return t('badges.items.strength10.desc'); }, p: (s) => [s.strengthCount, 10] },
   { id: 'strength50', tier: 4, emoji: '🦾', get name() { return t('badges.items.strength50.name'); }, cat: 'Kraft', get desc() { return t('badges.items.strength50.desc'); }, p: (s) => [s.strengthCount, 50] },
 
-  /* ---- Vielfalt ---- */
+  /* ---- Variety ---- */
   { id: 'variety5', tier: 2, emoji: '🎨', get name() { return t('badges.items.variety5.name'); }, cat: 'Vielfalt', get desc() { return t('badges.items.variety5.desc'); }, p: (s) => [s.distinctTypes, 5] },
   { id: 'cats4', tier: 3, emoji: '🤹', get name() { return t('badges.items.cats4.name'); }, cat: 'Vielfalt', get desc() { return t('badges.items.cats4.desc'); }, p: (s) => [s.distinctCats, 4] },
   { id: 'variety10', tier: 4, emoji: '🌈', get name() { return t('badges.items.variety10.name'); }, cat: 'Vielfalt', get desc() { return t('badges.items.variety10.desc'); }, p: (s) => [s.distinctTypes, 10] },
 
-  /* ---- Eventarten / Wettkämpfe ---- */
+  /* ---- Event types / races ---- */
   { id: 'race', tier: 3, emoji: '🏅', get name() { return t('badges.items.race.name'); }, cat: 'Wettkampf', get desc() { return t('badges.items.race.desc'); }, p: (s) => [s.racesFinishedCount, 1] },
   { id: 'races3', tier: 4, emoji: '🥇', get name() { return t('badges.items.races3.name'); }, cat: 'Wettkampf', get desc() { return t('badges.items.races3.desc'); }, p: (s) => [s.racesFinishedCount, 3] },
   { id: 'dist3', tier: 3, emoji: '🎽', get name() { return t('badges.items.dist3.name'); }, cat: 'Wettkampf', get desc() { return t('badges.items.dist3.desc'); }, p: (s) => [s.distinctDistances, 3] },
@@ -237,7 +237,7 @@ export const BADGES = [
   { id: 'program1', tier: 2, emoji: '📋', get name() { return t('badges.items.program1.name'); }, cat: 'Programm', get desc() { return t('badges.items.program1.desc'); }, p: (s) => [s.programsDone, 1] },
   { id: 'program3', tier: 4, emoji: '🎖️', get name() { return t('badges.items.program3.name'); }, cat: 'Programm', get desc() { return t('badges.items.program3.desc'); }, p: (s) => [s.programsDone, 3] },
 
-  /* ---- Plan & Gesundheit ---- */
+  /* ---- Plan & health ---- */
   { id: 'perfectweek', tier: 2, emoji: '📅', get name() { return t('badges.items.perfectweek.name'); }, cat: 'Plan', get desc() { return t('badges.items.perfectweek.desc'); }, p: (s) => [s.perfectWeek ? 1 : 0, 1] },
   { id: 'adherence90', tier: 3, emoji: '🤝', get name() { return t('badges.items.adherence90.name'); }, cat: 'Plan', get desc() { return t('badges.items.adherence90.desc'); }, p: (s) => [s.adherence, 90] },
   { id: 'weight', tier: 3, emoji: '⚖️', get name() { return t('badges.items.weight.name'); }, cat: 'Gesundheit', get desc() { return t('badges.items.weight.desc'); }, p: (s) => [s.weightReached ? 1 : 0, 1] },
@@ -247,12 +247,12 @@ export const BADGES = [
   { id: 'cycle3', tier: 1, emoji: '🌙', get name() { return t('badges.items.cycle3.name'); }, cat: 'Zyklus', get desc() { return t('badges.items.cycle3.desc'); }, p: (s) => [s.cycleStarts, 3] },
 ];
 
-/** Abzeichen, die nur aus Trainingsdaten entstehen – das Team-Dashboard zählt nur
-    diese (Gesundheits- und Zyklusdaten anderer Mitglieder sieht es nie). */
+/** Badges that arise only from training data – the team dashboard counts only
+    these (it never sees health and cycle data of other members). */
 export const TRAINING_BADGE_CATS = new Set(['Start', 'Konstanz', 'Umfang', 'Distanz', 'Long Run', 'Tempo',
   'Schwimmen', 'Wandern', 'Gehen', 'Rudern', 'Rückschlag', 'Radsport', 'Kraft', 'Vielfalt', 'Wettkampf', 'Programm', 'Plan']);
 
-/** Bewertet alle Badges gegen die aktuellen Kennzahlen. */
+/** Evaluates all badges against the current metrics. */
 export function evaluateBadges(data, today = todayStr()) {
   const stats = computeStats(data, today);
   return BADGES.map((b) => {
@@ -263,15 +263,15 @@ export function evaluateBadges(data, today = todayStr()) {
 }
 
 /* ------------------------------ Momentum -------------------------------- */
-/** Höchstens so viele Trainingstage je Kalenderwoche heben das Momentum – mehr
-    Training ohne Ruhetag bringt keinen zusätzlichen Schwung. */
+/** At most this many training days per calendar week raise the momentum – more
+    training without a rest day brings no additional momentum. */
 const MOMENTUM_DAYS_PER_WEEK = 5;
 
 /**
- * Schwung-Wert (0–100) aus den Trainingstagen der letzten 15 Tage, offenen Lücken und
- * der Wochen-Serie. Gesundheitsbedingte Ausfälle pausieren das Momentum: Sie ziehen
- * nichts ab, und die Krankheitstage fallen aus dem Fenster (es reicht dafür weiter
- * zurück) – wer krank ist, verliert keinen Schwung.
+ * Momentum value (0–100) from the training days of the last 15 days, open gaps and
+ * the weekly streak. Health-related absences pause the momentum: they deduct
+ * nothing, and the illness days drop out of the window (it reaches further
+ * back for that) – anyone who is ill loses no momentum.
  */
 export function momentum(data, today = todayStr()) {
   const { sessions = [], plans = [] } = data;
@@ -319,10 +319,10 @@ export function momentum(data, today = todayStr()) {
   return { score, level, flames, missed, activeDays, done14: activeDays, streak: weeks, paused, message };
 }
 
-/* --------------------------- „Neu freigeschaltet“ ----------------------- */
+/* --------------------------- "Newly unlocked" ----------------------- */
 function loadSeen() { try { return new Set(JSON.parse(lsGet('seenBadges') || '[]')); } catch { return new Set(); } }
 
-/** Liefert neu erreichte Badges seit dem letzten Aufruf und merkt sie vor. */
+/** Returns badges newly reached since the last call and remembers them. */
 export function newlyUnlocked(data, today = todayStr()) {
   const seen = loadSeen();
   const unlocked = evaluateBadges(data, today).filter((b) => b.unlocked);
@@ -334,15 +334,15 @@ export function markSeen(ids) {
   ids.forEach((id) => seen.add(id));
   lsSet('seenBadges', JSON.stringify([...seen]));
 }
-/** Alle aktuell erreichten Badges als gesehen markieren (z. B. nach Anzeige). */
+/** Mark all currently reached badges as seen (e.g. after they have been shown). */
 export function markAllSeen(data, today = todayStr()) {
   markSeen(evaluateBadges(data, today).filter((b) => b.unlocked).map((b) => b.id));
 }
 
-/* ------------------------------- Ansicht -------------------------------- */
-/** Datenbasis für Abzeichen und Momentum der angemeldeten Person (eigene Sicht:
-    mit Zyklus-Einträgen, sofern das Modul aktiv ist). Dashboard und Erfolgsseite
-    nutzen dieselbe Quelle – so feiert der Toast genau, was die Seite zeigt. */
+/* ------------------------------- View -------------------------------- */
+/** Data basis for badges and momentum of the signed-in person (own view:
+    with cycle entries, provided the module is active). Dashboard and achievements page
+    use the same source – so the toast celebrates exactly what the page shows. */
 export function badgeData() {
   return {
     sessions: store.get('sessions'), plans: store.get('plans'), health: store.get('health'), events: store.get('events'),
@@ -375,7 +375,7 @@ export function render(view) {
     el('div', { style: { marginTop: '10px', opacity: '.95', fontSize: '.9rem', position: 'relative' }, text: m.message }),
   ]));
 
-  // Abzeichen – nach Aufwand gruppiert, die anspruchsvollste Stufe zuerst.
+  // Badges – grouped by effort, the most demanding tier first.
   view.appendChild(sectionHead(t('badges.heading', { got: unlockedCount, total: badges.length })));
   TIERS.forEach(({ tier, label, color }) => {
     const group = badges.filter((b) => (b.tier || 1) === tier);
@@ -387,20 +387,20 @@ export function render(view) {
       el('span', { class: 'badge-tier-count', text: `${got}/${group.length}` }),
     ]));
     const grid = el('div', { class: 'badge-grid' });
-    // freigeschaltete innerhalb der Stufe zuerst (motivierend), sonst Definitionsreihenfolge
+    // unlocked ones first within the tier (motivating), otherwise definition order
     group.slice().sort((a, b) => (b.unlocked ? 1 : 0) - (a.unlocked ? 1 : 0)).forEach((b) => grid.appendChild(badgeCard(b)));
     view.appendChild(grid);
   });
 
   view.appendChild(el('p', { class: 'dim center mt-6', style: { fontSize: '.78rem' }, text: t('badges.footnote') }));
 
-  // Erreichte als „gesehen“ markieren (keine erneute Feier).
+  // Mark reached ones as "seen" (no renewed celebration).
   markAllSeen(data, today);
 }
 
-// Weiches Trennzeichen (U+00AD) vor dem Hauptwort zusammengesetzter Substantive:
-// Lange Namen brechen dort um – MIT Trennstrich („Tausend-/sassa“), nur wenn nötig.
-// Das Null-Breiten-Leerzeichen brach ohne Strich um und las sich wie ein Fehler (UI-42).
+// Soft hyphen (U+00AD) before the head noun of German compound nouns:
+// long names wrap there – WITH a hyphen ("Tausend-/sassa"), only when needed.
+// The zero-width space wrapped without a hyphen and read like an error (UI-42).
 const WRAP_PARTS = [
   'bummler', 'meister', 'st\u00fcrmer', 'sammler', 'champion', 'sieger', 'ratte',
   'paket', 'k\u00e4mpfer', 'fahrer', 'geher', 'probe', 'liebe', 'sassa', 'rounder', 'held',

@@ -1,17 +1,17 @@
 import { t, has, locale } from './i18n.js';
 /* =========================================================================
-   api-client.js — HTTP-Zugriff auf die PHP-API mit Retry.
-   Seit v3.0.0 ist der Server die Merge-Autorität: Der Client schickt
-   OPERATIONEN (pushOps) und holt Änderungen inkrementell (pullChanges).
-   Die persistente Offline-/Op-Queue lebt im Store (storage.js), nicht hier.
+   api-client.js — HTTP access to the PHP API with retry.
+   Since v3.0.0 the server is the merge authority: the client sends
+   OPERATIONS (pushOps) and fetches changes incrementally (pullChanges).
+   The persistent offline/op queue lives in the store (storage.js), not here.
    ========================================================================= */
 
-// API-Basis relativ zur App ermitteln -> funktioniert in jedem Unterordner.
+// Determine the API base relative to the app -> works in any subfolder.
 const API = new URL('api/api.php', location.href.split('#')[0]).href;
 
-// Nur bei explizitem navigator.onLine === false als offline starten; ist der
-// Wert unbekannt (manche Umgebungen liefern undefined), online annehmen – ein
-// echter Ausfall zeigt sich ohnehin am fehlschlagenden fetch.
+// Start as offline only on an explicit navigator.onLine === false; if the
+// value is unknown (some environments return undefined), assume online – a
+// real outage shows up anyway as a failing fetch.
 let online = navigator.onLine !== false;
 const statusListeners = new Set();
 
@@ -38,12 +38,12 @@ function foodLocaleQuery() {
   return `&lc=${encodeURIComponent(lc)}${cc ? `&cc=${encodeURIComponent(cc)}` : ''}`;
 }
 
-/** Client-Fehler (4xx) werden nicht wiederholt – sie werden beim nächsten Versuch
-    nicht besser (z. B. 413 „zu viele Operationen“). Ausnahmen: 408 und 429. */
+/** Client errors (4xx) are not retried – they do not get better on the next
+    attempt (e.g. 413 "too many operations"). Exceptions: 408 and 429. */
 function isFinalStatus(status) { return status >= 400 && status < 500 && status !== 408 && status !== 429; }
 
-/** fetch mit Timeout und exponentiellem Backoff. Fehler tragen `status`, falls der
-    Server geantwortet hat. */
+/** fetch with timeout and exponential backoff. Errors carry `status` if the
+    server has answered. */
 async function request(url, opts = {}, { retries = 2, timeout = 9000 } = {}) {
   let lastErr;
   for (let attempt = 0; attempt <= retries; attempt++) {
@@ -64,7 +64,7 @@ async function request(url, opts = {}, { retries = 2, timeout = 9000 } = {}) {
   throw lastErr;
 }
 
-/** Baut eine Endpunkt-URL mit Nutzer-/Familien-Scope und optionalen Parametern. */
+/** Builds an endpoint URL with user/family scope and optional parameters. */
 function endpoint(area, { user = null, scope = 'user', action = null, since = null } = {}) {
   let url = `${API}?area=${encodeURIComponent(area)}`;
   if (action) url += `&action=${encodeURIComponent(action)}`;
@@ -75,8 +75,8 @@ function endpoint(area, { user = null, scope = 'user', action = null, since = nu
 }
 
 /**
- * Holt die Änderungen eines Bereichs ab der bekannten rev. Liefert
- * { rev, records } – records inkl. Tombstones, jeweils mit server-`rev`.
+ * Fetches the changes of an area from the known rev. Returns
+ * { rev, records } – records including tombstones, each with the server `rev`.
  */
 export async function pullChanges(area, opts = {}) {
   const res = await request(endpoint(area, { ...opts, action: 'changes', since: opts.since ?? 0 }), {
@@ -88,8 +88,8 @@ export async function pullChanges(area, opts = {}) {
 }
 
 /**
- * Wendet eine Operationsliste serverseitig an. Liefert { rev, records } –
- * die geänderten Datensätze mit ihrer neuen server-`rev`.
+ * Applies an operation list on the server. Returns { rev, records } –
+ * the changed records with their new server `rev`.
  * Ops: {op:'upsert', record} | {op:'delete', id} | {op:'replace', records}
  */
 export async function pushOps(area, ops, opts = {}) {
@@ -97,7 +97,7 @@ export async function pushOps(area, ops, opts = {}) {
   const res = await request(endpoint(area, { ...where, action: 'ops' }), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    // Mit `since` schickt ein Server mit 'ops-since' alle Änderungen seit dieser rev mit.
+    // With `since`, a server with 'ops-since' sends along all changes since this rev.
     body: JSON.stringify(since != null ? { ops, since } : { ops }),
   });
   const json = await res.json();
@@ -106,12 +106,12 @@ export async function pushOps(area, ops, opts = {}) {
   return {
     rev: json.rev || 0,
     records: Array.isArray(json.records) ? json.records : [],
-    rejected: Array.isArray(json.rejected) ? json.rejected : [],   // vom Server abgelehnte Ops (Familie)
+    rejected: Array.isArray(json.rejected) ? json.rejected : [],   // rejected: Array.isArray(json.rejected) ? json.rejected : [],   // ops rejected by the server (family)
     changes: ch && Array.isArray(ch.records) ? { rev: ch.rev || 0, records: ch.records } : null,
   };
 }
 
-/** Logische Sicht eines Bereichs (Liste/Objekt) – für Backup/Peek read-only. */
+/** Logical view of an area (list/object) – read-only, for backup/peek. */
 export async function apiGet(area, opts = {}) {
   const res = await request(endpoint(area, opts), { method: 'GET', headers: { Accept: 'application/json' } });
   const json = await res.json();
@@ -120,9 +120,9 @@ export async function apiGet(area, opts = {}) {
 }
 
 /**
- * Open-Food-Facts-Nährwerte je 100 g/ml zu einem Zutatennamen (über den eigenen
- * Server-Proxy, server-seitig gecacht). Liefert {kcal100, protein100} oder null –
- * bei null (offline, Fehler, kein Treffer) nutzt der Aufrufer die lokale Heuristik.
+ * Open Food Facts nutrition values per 100 g/ml for an ingredient name (via the own
+ * server proxy, cached server-side). Returns {kcal100, protein100} or null –
+ * on null (offline, error, no match) the caller uses the local heuristic.
  */
 export async function foodfactsLookup(name) {
   const q = String(name || '').trim();
@@ -136,8 +136,8 @@ export async function foodfactsLookup(name) {
 }
 
 /**
- * Produkt zu einem Strichcode (EAN/GTIN) über den eigenen Server-Proxy (Open Food Facts).
- * Liefert { name, kcal100, protein100 } oder null (offline, unbekannt, Fehler).
+ * Product for a barcode (EAN/GTIN) via the own server proxy (Open Food Facts).
+ * Returns { name, kcal100, protein100 } or null (offline, unknown, error).
  */
 export async function foodfactsBarcode(code) {
   const c = String(code || '').replace(/\D/g, '');
@@ -150,7 +150,7 @@ export async function foodfactsBarcode(code) {
   } catch { return null; }
 }
 
-/** Löscht das Datenverzeichnis eines Nutzers serverseitig (Mitglied entfernen; Admin-Sitzung). */
+/** Deletes a user's data directory on the server (remove a member; admin session). */
 export async function deleteUserData(userId) {
   try {
     await request(`${API}?action=delete-user&user=${encodeURIComponent(userId)}`, {
@@ -160,10 +160,10 @@ export async function deleteUserData(userId) {
   } catch { return false; }
 }
 
-/* --------------------------- Server-Sitzung (v3.20.0) --------------------------- */
+/* --------------------------- Server session (v3.20.0) --------------------------- */
 /**
- * POST mit JSON-Body an eine Aktion. Liefert { status, json } – auch bei 4xx (dann mit
- * maschinenlesbarem Grund `json.code`). Wirft nur, wenn der Server nicht erreichbar war.
+ * POST with a JSON body to an action. Returns { status, json } – also for 4xx (then with a
+ * machine-readable reason `json.code`). Only throws if the server was unreachable.
  */
 async function postAction(action, body, { timeout = 9000 } = {}) {
   const ctrl = new AbortController();
@@ -184,7 +184,7 @@ async function postAction(action, body, { timeout = 9000 } = {}) {
   }
 }
 
-/** Antwort als Ergebnis { ok, … } oder null, wenn sie nicht zur Aktion passt. */
+/** Response as a result { ok, … } or null if it does not fit the action. */
 function actionResult({ json }, check) {
   if (json.ok === true && check(json)) return { ok: true, ...json };
   if (json.ok === false && json.code) return { ok: false, code: json.code, error: serverError(json), left: json.left, retryAfter: json.retryAfter };
@@ -192,22 +192,22 @@ function actionResult({ json }, check) {
 }
 
 /**
- * PIN am Server prüfen und eine Sitzung (HttpOnly-Cookie) öffnen.
- * Liefert { ok:true, user, role, weakPin } | { ok:false, code, error, left, retryAfter }
- * oder null, wenn der Server nicht erreichbar war bzw. keine Sitzungen kennt.
+ * Verify the PIN on the server and open a session (HttpOnly cookie).
+ * Returns { ok:true, user, role, weakPin } | { ok:false, code, error, left, retryAfter }
+ * or null if the server was unreachable or knows no sessions.
  */
 export async function serverLogin(user, pin) {
   if (!online) return null;
   try { return actionResult(await postAction('login', { user, pin }), (j) => j.user === user); } catch { return null; }
 }
 
-/** Sitzung am Server beenden (best effort). */
+/** End the session on the server (best effort). */
 export async function serverLogout() {
   if (!online) return false;
   try { return (await postAction('logout', {}, { timeout: 4000 })).status === 200; } catch { return false; }
 }
 
-/** Wer ist am Server angemeldet? { user, role } oder null (nicht erreichbar/unbekannt). */
+/** Who is signed in on the server? { user, role } or null (unreachable/unknown). */
 export async function serverSession() {
   if (!online) return null;
   try {
@@ -217,13 +217,13 @@ export async function serverSession() {
   } catch { return null; }
 }
 
-/** PIN setzen: eigene mit `old`, fremde als Admin. Ergebnis wie serverLogin (null = offline). */
+/** Set a PIN: one's own with `old`, someone else's as admin. Result like serverLogin (null = offline). */
 export async function serverSetPin(user, pin, old = null) {
   if (!online) return null;
   try { return actionResult(await postAction('set-pin', old == null ? { user, pin } : { user, pin, old }), () => true); } catch { return null; }
 }
 
-/** Schlüssel für die Kalender-Links eines Mitglieds (oder null). */
+/** Key for a member's calendar links (or null). */
 export async function icsToken(user) {
   if (!online) return null;
   try {
@@ -232,11 +232,11 @@ export async function icsToken(user) {
   } catch { return null; }
 }
 
-/** Kurzer Verfügbarkeits-Check. Vor jedem Abgleich und vor der Server-Anmeldung mit
-    2,5 s: `navigator.onLine` sagt unterwegs nichts darüber, ob der Heimserver antwortet (FE-08). */
+/** Short availability check. Before every sync and before the server sign-in, with
+    2.5 s: `navigator.onLine` says nothing on the move about whether the home server answers (FE-08). */
 export const REACH_TIMEOUT = 2500;
 let features = [];
-/** Kann der Server das (laut letztem ping)? Z. B. 'changes-all' (Sammelabruf), 'ops-since'. */
+/** Can the server do this (according to the last ping)? E.g. 'changes-all' (bulk fetch), 'ops-since'. */
 export function serverHas(feature) { return features.includes(feature); }
 
 export async function ping(timeout = 3500) {
@@ -250,8 +250,8 @@ export async function ping(timeout = 3500) {
 }
 
 /**
- * Änderungen mehrerer Bereiche einer Person in EINER Anfrage (Server mit 'changes-all').
- * `since` = { bereich: rev }. Liefert { revs, changes: { bereich: [datensätze] }, locked }.
+ * Changes of several areas of one person in ONE request (server with 'changes-all').
+ * `since` = { area: rev }. Returns { revs, changes: { area: [records] }, locked }.
  */
 export async function pullAllChanges(user, since) {
   const list = Object.entries(since).map(([a, r]) => `${a}:${Math.max(0, r | 0)}`).join(',');
@@ -263,11 +263,11 @@ export async function pullAllChanges(user, since) {
   return { revs: json.revs || {}, changes: json.changes || {}, locked: Array.isArray(json.locked) ? json.locked : [] };
 }
 
-/** Lädt einen Apple-Health-Export hoch und liefert die geparsten Kandidaten. */
+/** Uploads an Apple Health export and returns the parsed candidates. */
 export async function uploadHealthExport(file, onProgress) {
   const fd = new FormData();
   fd.append('file', file);
-  // XHR statt fetch, damit ein Upload-Fortschritt angezeigt werden kann.
+  // XHR instead of fetch so that upload progress can be shown.
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open('POST', `${API}?action=health-import`);
@@ -288,7 +288,7 @@ export async function uploadHealthExport(file, onProgress) {
   });
 }
 
-/** URL für serverseitige .ics-Erzeugung (Download), mit Kalender-Schlüssel, falls vorhanden. */
+/** URL for server-side .ics generation (download), with calendar key if present. */
 export function icsUrl(scope, id, user, token = null) {
   const u = user ? `&user=${encodeURIComponent(user)}` : '';
   const tokenQuery = token ? `&token=${encodeURIComponent(token)}` : '';

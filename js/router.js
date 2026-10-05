@@ -1,6 +1,6 @@
 /* =========================================================================
-   router.js — Hash-Routing mit Deep-Links (#/session/:id).
-   Kein Server-Rewrite nötig; jede View rendert in #view und setzt den Header.
+   router.js — hash routing with deep links (#/session/:id).
+   No server rewrite needed; every view renders into #view and sets the header.
    ========================================================================= */
 
 import { el, clear, icon, navigate } from './ui.js';
@@ -11,14 +11,14 @@ let guard = null;
 let current = { path: '', params: {}, handler: null };
 const afterRenderCbs = new Set();
 
-/** Registriert eine Route. pattern z. B. "/session/:id". */
+/** Registers a route. pattern e.g. "/session/:id". */
 export function register(pattern, handler) {
   const keys = [];
   const rx = new RegExp('^' + pattern.replace(/:[^/]+/g, (m) => { keys.push(m.slice(1)); return '([^/]+)'; }) + '$');
   routes.push({ rx, keys, handler, pattern });
 }
 export function setNotFound(handler) { notFound = handler; }
-/** Guard vor jedem Rendern. Gibt der Guard false zurück, hat er selbst umgeleitet. */
+/** Guard before every render. If the guard returns false, it has redirected by itself. */
 export function setGuard(fn) { guard = fn; }
 export function onAfterRender(cb) { afterRenderCbs.add(cb); return () => afterRenderCbs.delete(cb); }
 
@@ -28,8 +28,8 @@ function parseHash() {
   return h.replace(/\/+$/, '') || '/';
 }
 
-/** Parameter aus dem Pfad – ein kaputt kodierter Link („%E0%A4%A“) darf den Start nicht
-    abbrechen (FE-25): dann gilt die Route als unbekannt. */
+/** Parameters from the path – a badly encoded link ("%E0%A4%A") must not abort the
+    start (FE-25): the route then counts as unknown. */
 function decodeParams(r, m) {
   const params = {};
   try {
@@ -40,7 +40,7 @@ function decodeParams(r, m) {
 
 function resolve(opts = {}) {
   const path = parseHash();
-  if (guard && guard(path) === false) return;  // Guard hat selbst umgeleitet
+  if (guard && guard(path) === false) return;  // guard has redirected by itself
   for (const r of routes) {
     const m = path.match(r.rx);
     if (m) {
@@ -54,8 +54,8 @@ function resolve(opts = {}) {
 }
 
 function render(route, path, params, { keep = false } = {}) {
-  // Neu zeichnen derselben Ansicht (nach dem Speichern, nach einem Sync) behält die
-  // Scrollposition; nur ein Seitenwechsel beginnt oben (UI-10, FE-12).
+  // Redrawing the same view (after saving, after a sync) keeps the
+  // scroll position; only a page change starts at the top (UI-10, FE-12).
   const same = keep && current.path === path;
   const scrollY = same ? window.scrollY : 0;
   current = { path, params, handler: route.handler, pattern: route.pattern };
@@ -77,17 +77,17 @@ function render(route, path, params, { keep = false } = {}) {
   };
   let result;
   try { result = route.handler(view, params); } catch (e) { fail(e); }
-  // Ansichten, die erst bei Bedarf geladen werden (FE-19), liefern ein Promise –
-  // Scrollposition und Nacharbeiten erst, wenn sie gezeichnet sind.
+  // Views that are loaded only on demand (FE-19) return a promise –
+  // scroll position and follow-up work only once they are drawn.
   if (result && typeof result.then === 'function') result.then(done, (e) => { fail(e); done(); });
   else done();
 }
 
-/** Zeichnet die aktuelle Route neu (nach dem Speichern, nach Hintergrund-Sync) – die
-    Scrollposition bleibt, es gibt keinen Seitenwechsel und kein Neuladen. */
+/** Redraws the current route (after saving, after a background sync) – the
+    scroll position stays, there is no page change and no reload. */
 export function refresh() { resolve({ keep: true }); }
 
-/** Pfad der aktuell gezeichneten Route (z. B. „/plan/e1“). */
+/** Path of the currently drawn route (e.g. "/plan/e1"). */
 export function currentPath() { return current.path; }
 
 export function start() {
@@ -96,13 +96,13 @@ export function start() {
   resolve();
 }
 
-/* ------------------------------ Header-API ------------------------------ */
+/* ------------------------------ Header API ------------------------------ */
 function resetHeader() {
   setHeader({ title: 'Cat-O-Fit', subtitle: '', back: null, actions: [] });
 }
 
 /**
- * Setzt Kopfzeile.
+ * Sets the header.
  * @param {{title?:string, subtitle?:string, back?:(string|true|null), actions?:Array}} cfg
  */
 export function setHeader({ title = 'Cat-O-Fit', subtitle = '', back = null, actions = [] } = {}) {
@@ -123,7 +123,7 @@ export function setHeader({ title = 'Cat-O-Fit', subtitle = '', back = null, act
   const actEl = document.getElementById('header-actions');
   clear(actEl);
   actions.forEach((a) => {
-    // title = Tooltip am Mac: Symbole allein erklärten nicht, was sie tun (UI-34).
+    // title = tooltip on the Mac: icons alone did not explain what they do (UI-34).
     const b = el('button', { class: 'icon-btn', type: 'button', 'aria-label': a.label || '', title: a.label || '', onclick: a.onClick });
     b.appendChild(icon(a.icon));
     if (a.badge) b.appendChild(el('span', { class: 'badge', text: String(a.badge), style: { position: 'absolute', transform: 'translate(12px,-12px)' } }));

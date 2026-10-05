@@ -1,12 +1,12 @@
-/* Doku-Aussagen mit Tests absichern (DOC-12, DOC-13, DOC-21, DOC-27):
-   - Jeder relative Link und jedes Bild in den Markdown-Dateien zeigt auf eine vorhandene Datei,
-     jeder Anker auf eine vorhandene Überschrift (GitHub-Schreibweise).
-   - Keine byte-gleichen Doppel unter den Doku-Bildern.
-   - Zahlen im Text stimmen mit dem Code überein (Übungen, Rezepte, Laborwerte, Personen, Tests).
-   - Version: js/version.js = package.json = oberster CHANGELOG-Eintrag.
-   - Menüpfade („Mehr → …“, „Fortschritt → …“, „Einstellungen → …“) gibt es wirklich.
-   - Deutsche Anführungszeichen schließen oben („…“), nicht mit dem geraden Zeichen.
-   Vor v3.21.0 prüfte nichts davon die Doku – Zahlen, Pfade und Bilder drifteten unbemerkt. */
+/* Securing documentation statements with tests (DOC-12, DOC-13, DOC-21, DOC-27):
+   - Every relative link and image in the Markdown files points to an existing file,
+     every anchor to an existing heading (GitHub spelling).
+   - No byte-identical duplicates among the documentation images.
+   - Numbers in the text match the code (exercises, recipes, lab values, people, tests).
+   - Version: js/version.js = package.json = topmost CHANGELOG entry.
+   - Menu paths ("More → …", "Progress → …", "Settings → …") really exist.
+   - German quotation marks close at the top („…“), not with the straight character.
+   Before v3.21.0 nothing checked the documentation – numbers, paths and images drifted unnoticed. */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
@@ -31,12 +31,12 @@ const mdFiles = walk(ROOT, (p) => p.endsWith('.md') && !p.includes(`${join('docs
 const read = (p) => readFileSync(p, 'utf8');
 const rel = (p) => relative(ROOT, p);
 
-/** Markdown ohne Code-Blöcke und Inline-Code (dort sind „Links“ nur Beispiele). */
+/** Markdown without code blocks and inline code (there, "links" are only examples). */
 function prose(md) {
   return md.replace(/```[\s\S]*?```/g, '').replace(/`[^`\n]*`/g, '');
 }
 
-/** GitHub-Anker einer Überschrift. */
+/** GitHub anchor of a heading. */
 function slug(text) {
   return text.trim().toLowerCase()
     .replace(/<[^>]+>/g, '')
@@ -70,8 +70,8 @@ function linksOf(md) {
   return out.filter((t) => !/^(https?:|mailto:|webcal:|data:)/.test(t));
 }
 
-test('DOC-12: alle relativen Links und Bilder der Doku zeigen auf vorhandene Dateien und Anker', () => {
-  assert.ok(mdFiles.length >= 25, `nur ${mdFiles.length} Markdown-Dateien gefunden`);
+test('DOC-12: all relative links and images in the documentation point to existing files and anchors', () => {
+  assert.ok(mdFiles.length >= 25, `only ${mdFiles.length} Markdown files found`);
   const broken = [];
   for (const file of mdFiles) {
     for (const target of linksOf(read(file))) {
@@ -86,7 +86,7 @@ test('DOC-12: alle relativen Links und Bilder der Doku zeigen auf vorhandene Dat
   assert.deepEqual(broken, [], broken.join('\n'));
 });
 
-test('DOC-13: keine byte-gleichen Doppel unter den Doku-Bildern', () => {
+test('DOC-13: no byte-identical duplicates among the documentation images', () => {
   const imgs = walk(join(ROOT, 'docs', 'assets'), (p) => /\.(png|jpe?g|webp)$/i.test(p));
   const byHash = new Map();
   for (const p of imgs) {
@@ -97,7 +97,7 @@ test('DOC-13: keine byte-gleichen Doppel unter den Doku-Bildern', () => {
   assert.deepEqual(dups, []);
 });
 
-test('DOC-12: Zahlen in der Doku stimmen mit dem Code', async () => {
+test('DOC-12: numbers in the documentation match the code', async () => {
   const { EXERCISES } = await import('../js/exercises.js');
   const { SUGGESTED_MEALS } = await import('../js/nutrition.js');
   const { ANALYTES } = await import('../js/labs.js');
@@ -116,17 +116,17 @@ test('DOC-12: Zahlen in der Doku stimmen mit dem Code', async () => {
   assert.deepEqual(wrong, [], wrong.join('\n'));
 });
 
-test('DOC-27: die Testzahl im README ist eine Untergrenze, die stimmt', () => {
+test('DOC-27: the test count in the README is a lower bound that is correct', () => {
   const count = walk(join(ROOT, 'test'), (p) => p.endsWith('.test.js'))
     .reduce((n, f) => n + (read(f).match(/^\s*test\(/gm) || []).length, 0);
   const en = read(join(ROOT, 'README.md')).match(/(\d+)\+ automated tests/);
   const de = read(join(ROOT, 'README.de.md')).match(/über (\d+) automatisierte Tests/);
-  assert.ok(en && de, 'README nennt die Testzahl');
-  assert.ok(count >= Number(en[1]) && count >= Number(de[1]), `${count} Tests, README verspricht ${en[1]}+ / über ${de[1]}`);
-  assert.doesNotMatch(read(join(ROOT, 'README.md')), /badge\/Tests-\d+/, 'kein statisches Test-Badge mehr');
+  assert.ok(en && de, 'README states the test count');
+  assert.ok(count >= Number(en[1]) && count >= Number(de[1]), `${count} tests, README promises ${en[1]}+ / more than ${de[1]}`);
+  assert.doesNotMatch(read(join(ROOT, 'README.md')), /badge\/Tests-\d+/, 'no static test badge any more');
 });
 
-test('DOC-12: Version in version.js, package.json und oberstem CHANGELOG-Eintrag gleich', async () => {
+test('DOC-12: version identical in version.js, package.json and topmost CHANGELOG entry', async () => {
   const { APP_VERSION } = await import('../js/version.js');
   const pkg = JSON.parse(read(join(ROOT, 'package.json')));
   const top = read(join(ROOT, 'CHANGELOG.md')).match(/^## \[(\d+\.\d+\.\d+)\]/m);
@@ -135,7 +135,7 @@ test('DOC-12: Version in version.js, package.json und oberstem CHANGELOG-Eintrag
   assert.match(read(join(ROOT, 'service-worker.js')), /const VERSION = 'catofit-v\d+';/);
 });
 
-test('DOC-12: Menüpfade in Doku und Hilfe gibt es wirklich', async () => {
+test('DOC-12: menu paths in the documentation and help really exist', async () => {
   const { MORE_GROUPS, PROGRESS_TABS } = await import('../js/nav.js');
   const more = MORE_GROUPS.flatMap((g) => g.items.map((i) => i.label));
   const progress = PROGRESS_TABS.map((t) => t.label);
@@ -153,17 +153,17 @@ test('DOC-12: Menüpfade in Doku und Hilfe gibt es wirklich', async () => {
     }
   };
   for (const f of files) {
-    // Zeilenumbrüche im Fließtext (Markdown) und Einrückungen wie ein Leerzeichen behandeln.
+    // Treat line breaks in running text (Markdown) and indentation like a single space.
     const text = read(f).replace(/\*\*/g, '').replace(/\s*\n\s*(?:>\s*)?/g, ' ');
     check(text, rel(f), /(?<![\w-])Mehr → „?([^„“,.;)]+)/g, [...more, 'Abmelden'], 'Mehr');
     check(text, rel(f), /(?<![\w-])Fortschritt → „?([A-ZÄÖÜ][^„“,.;)→]*)/g, progress, 'Fortschritt');
-    // „iOS-Einstellungen → …“ meint die Systemeinstellungen des iPhones, nicht die App.
+    // "iOS Settings → …" means the iPhone system settings, not the app.
     check(text, rel(f), /(?<![\w-])Einstellungen → „?([A-ZÄÖÜ][^„“,.;)→]*)/g, settings, 'Einstellungen');
   }
   assert.deepEqual(bad, [], bad.join('\n'));
 });
 
-test('DOC-21: deutsche Anführungszeichen schließen oben (keine „…" mit geradem Zeichen)', () => {
+test('DOC-21: German quotation marks close at the top (no „…" with a straight character)', () => {
   const files = [...mdFiles, ...walk(join(ROOT, 'js'), (p) => p.endsWith('.js')), join(ROOT, 'index.html')];
   const bad = [];
   for (const f of files) {
@@ -171,10 +171,10 @@ test('DOC-21: deutsche Anführungszeichen schließen oben (keine „…" mit ger
     text.split('\n').forEach((line, i) => {
       if (/„[^“"\n]{0,120}"/.test(line)) bad.push(`${rel(f)}:${i + 1}`);
     });
-    // Im Fließtext umbrochene Zitate („… Zeilenende / Rest …") – nur Markdown, ohne Code-Blöcke.
+    // Quotes wrapped inside running text („… line end / rest …") – Markdown only, without code blocks.
     if (f.endsWith('.md')) {
       for (const m of prose(text).matchAll(/„[^“"\n]{0,160}\n[^“"\n]{0,160}"/g)) bad.push(`${rel(f)}: „${m[0].slice(1, 40).replace(/\n/g, ' ')}…`);
     }
   }
-  assert.deepEqual(bad.slice(0, 40), [], `${bad.length} Stellen, z. B.:\n${bad.slice(0, 40).join('\n')}`);
+  assert.deepEqual(bad.slice(0, 40), [], `${bad.length} places, e.g.:\n${bad.slice(0, 40).join('\n')}`);
 });

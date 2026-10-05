@@ -1,8 +1,8 @@
-/* XSS-Sweep: Ein präparierter Text landet in (fast) allen Feldern der Demodaten – so wie
-   er per API oder über eine fremde Backup-Datei hereinkommen könnte. Danach werden alle
-   Ansichten gerendert. Kein innerHTML, kein Attribut und kein Stil darf den Text als
-   Markup bzw. als nachladbare Adresse enthalten (Regel: Nutzertext nur per textContent).
-   Vor v3.20.0 fand der Sweep die Zielgewicht-Zeile auf „Heute“ (Gewicht als HTML). */
+/* XSS sweep: a prepared text ends up in (almost) all fields of the demo data – as it
+   could arrive via the API or a foreign backup file. Afterwards all views are rendered.
+   No innerHTML, no attribute and no style may contain the text as markup
+   or as a reloadable address (rule: user text only via textContent).
+   Before v3.20.0 the sweep found the target weight line on "Today" (weight as HTML). */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import * as store from '../js/storage.js';
@@ -26,7 +26,7 @@ function taint(o, depth = 0) {
   return o;
 }
 
-test('Kein Nutzertext wird als HTML, Attribut-Markup oder Stil-Adresse ausgegeben', async () => {
+test('No user text is output as HTML, attribute markup or style address', async () => {
   for (const id of ['view', 'header-title', 'header-subtitle', 'header-back', 'header-actions', 'modal-root', 'toast-root', 'sync-indicator', 'manage-banner']) {
     const n = document.createElement('div'); n.setAttribute('id', id); document.body.appendChild(n);
   }
@@ -76,7 +76,7 @@ test('Kein Nutzertext wird als HTML, Attribut-Markup oder Stil-Adresse ausgegebe
   assert.deepEqual(hits, [], hits.join('\n'));
 });
 
-test('Akzentfarbe: nur Hex-Werte, sonst die Standardfarbe', () => {
+test('Accent colour: hex values only, otherwise the default colour', () => {
   assert.equal(safeAccent('#3d8bff'), '#3d8bff');
   assert.equal(safeAccent('#abc'), '#abc');
   assert.equal(safeAccent('url(https://evil.example/x)'), '#18b48a');

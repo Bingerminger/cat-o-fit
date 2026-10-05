@@ -1,22 +1,22 @@
 /* =========================================================================
-   test-setup.js — Browser-Globals-Shim für die Node-Unit- UND UI-Tests.
+   test-setup.js — browser-globals shim for the Node unit AND UI tests.
 
-   Die App-Module sind fürs Browser-Umfeld geschrieben. Hier stellen wir genug
-   bereit, dass (a) reine Logik-Module in Node laden und der Store befüllbar ist
-   und (b) die View-Module (el(), Render-Funktionen) gegen ein leichtgewichtiges,
-   ABHÄNGIGKEITSFREIES Mini-DOM getestet werden können – kein jsdom, kein Build.
+   The app modules are written for the browser environment. Here we provide enough
+   that (a) pure logic modules load in Node and the store can be populated, and
+   (b) the view modules (el(), render functions) can be tested against a lightweight,
+   DEPENDENCY-FREE mini DOM – no jsdom, no build.
 
-   Das Mini-DOM deckt genau die von ui.js `el()`/`append()` und charts.js (SVG)
-   genutzten APIs ab: Knoten/Attribute/Klassen/Style/Events/textContent sowie ein
-   einfacher querySelector(All) (tag, .class, #id, [attr], [attr="v"], Kommas).
+   The mini DOM covers exactly the APIs used by ui.js `el()`/`append()` and charts.js (SVG):
+   nodes/attributes/classes/style/events/textContent plus a simple
+   querySelector(All) (tag, .class, #id, [attr], [attr="v"], commas).
 
-   Wird via `node --import ./test-setup.js` vor den Tests geladen.
+   Loaded before the tests via `node --import ./test-setup.js`.
    ========================================================================= */
 const g = globalThis;
 
 /* ----------------------------- LocalStorage ----------------------------- */
-// Mit simulierbarem Kontingent (Zeichen): `localStorage.__setQuota(n)` lässt setItem
-// wie im Browser mit QuotaExceededError scheitern, sobald die Summe überschritten wird.
+// With a simulable quota (characters): `localStorage.__setQuota(n)` makes setItem
+// fail with QuotaExceededError as in the browser as soon as the total is exceeded.
 class MemStorage {
   constructor() { this._m = new Map(); this._quota = Infinity; }
   getItem(k) { return this._m.has(k) ? this._m.get(k) : null; }
@@ -88,7 +88,7 @@ class MiniNode {
   remove() { if (this.parentNode) this.parentNode.removeChild(this); }
   insertBefore(n, ref) { const i = this.childNodes.indexOf(ref); if (i < 0) return this.appendChild(n); n.parentNode = this; this.childNodes.splice(i, 0, n); return n; }
 
-  // Wie im Browser: Das value-ATTRIBUT füllt ein <textarea> nicht (nur die Eigenschaft).
+  // As in the browser: the value ATTRIBUTE does not fill a <textarea> (only the property).
   setAttribute(k, v) { this.attributes[k] = String(v); if (k === 'class') this.className = v; if (k === 'value' && this.tagName !== 'TEXTAREA') this.value = v; }
   getAttribute(k) { return k in this.attributes ? this.attributes[k] : null; }
   hasAttribute(k) { return k in this.attributes; }
@@ -111,7 +111,7 @@ class MiniNode {
 
 function textNode(t) { const n = new MiniNode(); n.nodeType = TEXT_NODE; n.nodeName = '#text'; n._text = t; return n; }
 
-/** Sehr einfacher Selektor-Matcher: tag, .class, #id, [attr], [attr="v"]. */
+/** Very simple selector matcher: tag, .class, #id, [attr], [attr="v"]. */
 function matchSel(node, sel) {
   sel = sel.trim(); if (!sel) return false;
   const tag = sel.match(/^[a-zA-Z][\w-]*/);
@@ -139,17 +139,17 @@ function query(root, selector, firstOnly) {
   return firstOnly ? (out[0] || null) : out;
 }
 
-/** Test-Helfer: erzeugt einen frischen Render-Container (#view-artig). */
+/** Test helper: creates a fresh render container (#view-like). */
 function makeViewRoot() { const v = new MiniNode('div'); v.setAttribute('id', 'view'); document.body.appendChild(v); return v; }
 
-/* ------------------------------ Globals setzen --------------------------- */
+/* ------------------------------ Setting globals --------------------------- */
 function provide(name, value) {
   try { if (g[name] == null) Object.defineProperty(g, name, { value, writable: true, configurable: true }); }
-  catch { /* read-only global -> unverändert lassen */ }
+  catch { /* read-only global -> leave unchanged */ }
 }
 function force(name, value) {
   try { Object.defineProperty(g, name, { value, writable: true, configurable: true }); }
-  catch { try { g[name] = value; } catch { /* non-configurable -> aufgeben */ } }
+  catch { try { g[name] = value; } catch { /* non-configurable -> give up */ } }
 }
 
 const document = {
@@ -171,16 +171,16 @@ force('sessionStorage', new MemStorage());
 provide('location', new URL('http://localhost/catofit/'));
 force('document', document);
 provide('navigator', { onLine: true, userAgent: 'catofit-test', serviceWorker: { register: async () => ({}) } });
-// Node bringt ein eingebautes fetch mit -> hart überschreiben. Default: schnelle,
-// LEERE Antwort (kein echter Netzzugriff, keine Retries). Tests, die echtes
-// Sync-Verhalten prüfen, installieren ihren eigenen fetch-Mock (siehe sync.test.js).
+// Node ships a built-in fetch -> overwrite it forcibly. Default: fast,
+// EMPTY response (no real network access, no retries). Tests that check real
+// sync behaviour install their own fetch mock (see sync.test.js).
 force('fetch', async () => ({ ok: true, status: 200, json: async () => ({ ok: true, rev: 0, records: [], data: [] }) }));
 provide('matchMedia', () => ({ matches: false, addEventListener() {}, removeEventListener() {}, addListener() {} }));
 provide('getComputedStyle', () => ({ getPropertyValue: () => '' }));
 provide('requestAnimationFrame', (cb) => setTimeout(() => cb(Date.now()), 0));
 provide('cancelAnimationFrame', (id) => clearTimeout(id));
-// Fenster-Ereignisse: kleines Register, damit Tests z. B. 'offline'/'online' auslösen
-// können (api-client.js lauscht darauf) und App-Ereignisse ('catofit:…') ankommen.
+// Window events: a small registry so that tests can trigger e.g. 'offline'/'online'
+// (api-client.js listens for them) and app events ('catofit:…') arrive.
 if (typeof g.addEventListener !== 'function') {
   const winListeners = {};
   g.addEventListener = (type, fn) => { (winListeners[type] ||= []).push(fn); };
@@ -190,22 +190,22 @@ if (typeof g.addEventListener !== 'function') {
 if (typeof g.removeEventListener !== 'function') g.removeEventListener = () => {};
 provide('window', g);
 
-// Für UI-Tests importierbar machen.
+// Make it importable for UI tests.
 g.__domTest = { MiniNode, textNode, query, makeViewRoot };
 
-/* ---------------- Protokolltreuer Test-Server (opt-in, v3.20.0) -----------------
-   Bildet api/storage.php nach: globale rev je Bereich, Tombstones, replace mit
-   optionalem baseRev, höchstens 2000 Ops je Anfrage (sonst 413). Die Push-Antwort
-   trägt – wie der echte Server – die GLOBALE Bereichs-rev, aber nur die eigenen
-   Datensätze. Der frühere Standard-fetch („immer leer, immer OK“) hat genau die
-   Sync-Fehler verdeckt, die dieser Server sichtbar macht.
-   Nutzung: `const srv = __fakeServer.install();` – danach steuern
-     srv.opts.latencyMs (Zahl oder (url, init) => ms), srv.opts.offline,
+/* ---------------- Protocol-faithful test server (opt-in, v3.20.0) -----------------
+   Emulates api/storage.php: global rev per area, tombstones, replace with
+   optional baseRev, at most 2000 ops per request (otherwise 413). The push response
+   carries – like the real server – the GLOBAL area rev, but only the caller's own
+   records. The earlier default fetch ("always empty, always OK") hid exactly the
+   sync errors that this server makes visible.
+   Usage: `const srv = __fakeServer.install();` – afterwards control
+     srv.opts.latencyMs (number or (url, init) => ms), srv.opts.offline,
      srv.opts.failStatus, srv.opts.opLimit, srv.opts.features (['changes-all', 'ops-since'] =
-     Sammelabruf und „since“ in der ops-Antwort) und srv.store(area, {user, scope}).
-   Seit v3.20.0 bildet er auch api/auth.php nach: login/logout/session/set-pin/
-   ics-token mit EINER simulierten Browser-Sitzung (srv.auth.session), Sperre der
-   privaten Bereiche, Familien-Regeln (Admin-Sitzung, PIN-Hash nie in Antworten). */
+     bulk fetch and "since" in the ops response) and srv.store(area, {user, scope}).
+   Since v3.20.0 it also emulates api/auth.php: login/logout/session/set-pin/
+   ics-token with ONE simulated browser session (srv.auth.session), locking of the
+   private areas, family rules (admin session, PIN hash never in responses). */
 function createFakeServer() {
   const stores = {};
   const requests = [];
@@ -247,7 +247,7 @@ function createFakeServer() {
     }
     return applied;
   }
-  /* --- Anmeldung wie api/auth.php (ein simulierter Browser mit einem Sitzungs-Cookie) --- */
+  /* --- Sign-in like api/auth.php (one simulated browser with one session cookie) --- */
   const PRIVATE = ['cycle', 'labs', 'supplements'];
   const auth = { session: null, fails: {}, icsTokens: {} };
   const fam = () => srv(key('family', 'family', null));
@@ -267,7 +267,7 @@ function createFakeServer() {
     return c;
   };
   const hasAdmin = (s) => Object.values(s.records).some((r) => r && !r.deleted && (r._kind || 'member') === 'member' && r.role === 'admin');
-  /** Familien-Op prüfen wie family_guard() in api/auth.php. */
+  /** Check a family op like family_guard() in api/auth.php. */
   function familyGuard(op, s) {
     const admin = sessionRole() === 'admin';
     const trusted = admin || !hasAdmin(s);
@@ -351,7 +351,7 @@ function createFakeServer() {
     const entry = { action, area, scope, user, ops: null, status: null, url: String(url), body: init.body || null };
     requests.push(entry);
     const delay = typeof opts.latencyMs === 'function' ? opts.latencyMs(u, init) : opts.latencyMs;
-    // Wie ein echter Browser: ein abgebrochener Abruf (Timeout im Client) endet sofort.
+    // As in a real browser: an aborted request (timeout in the client) ends immediately.
     if (delay) {
       await new Promise((r, reject) => {
         const t = setTimeout(r, delay);
@@ -362,7 +362,7 @@ function createFakeServer() {
     const failing = opts.failStatus || (typeof opts.failWhen === 'function' ? opts.failWhen(u, init) : null);
     if (failing) { entry.status = failing; return resp({ ok: false, error: 'Testfehler' }, failing); }
     if (action === 'ping') return resp({ ok: true, pong: true, apiVersion: 1, features: opts.features });
-    // Sammelabruf wie api.php: nur die genannten Bereiche, private nur mit eigener Sitzung.
+    // Bulk fetch like api.php: only the named areas, private ones only with the person's own session.
     if (action === 'changes-all' && opts.features.includes('changes-all')) {
       const revs = {}, changes = {}, locked = [];
       for (const pair of (u.searchParams.get('since') || '').split(',')) {
@@ -387,7 +387,7 @@ function createFakeServer() {
       for (const k of Object.keys(stores)) if (k.startsWith(`user|${user}|`)) delete stores[k];
       return resp({ ok: true, deleted: user });
     }
-    // Private Bereiche: nur die angemeldete Person selbst (wie api.php).
+    // Private areas: only the signed-in person themself (like api.php).
     if (scope === 'user' && PRIVATE.includes(area) && (!auth.session || auth.session !== user)) {
       entry.status = auth.session ? 403 : 401;
       return resp({ ok: false, error: 'Dieser Bereich ist privat.', code: auth.session ? 'private' : 'session' }, entry.status);
@@ -405,7 +405,7 @@ function createFakeServer() {
       entry.ops = ops.length;
       if (ops.length > opts.opLimit) { entry.status = 413; return resp({ ok: false, error: 'Zu viele Operationen in einem Batch.' }, 413); }
       if (scope === 'family') {
-        // Wie apply_ops mit Guard: jede Op gegen den laufenden Stand prüfen, dann anwenden.
+        // Like apply_ops with guard: check every op against the current state, then apply it.
         const rejected = []; const applied = [];
         for (const op of ops) {
           const checked = familyGuard(op, s);

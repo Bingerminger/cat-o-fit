@@ -1,13 +1,13 @@
 /* =========================================================================
-   cyclecalc.js — reine Zyklus-Rechnungen (ohne Store/DOM, per node:test).
+   cyclecalc.js — pure cycle calculations (without store/DOM, via node:test).
 
-   • Typische Zykluslänge: Abstände zwischen 18 und 90 Tagen zählen – auch lange
-     Zyklen (Oligomenorrhoe, > 35 Tage) sind echte Zyklen und dürfen nicht still
-     auf 28 Tage zurückfallen. Ein Abstand, der etwa ein Vielfaches der üblichen
-     Länge ist, gilt dagegen als vergessener Eintrag.
-   • Ausbleibende Periode: Erst fragen („ausgeblieben? schwanger? Verhütung? nur
-     nicht eingetragen?"), dann warnen – kein Fehlalarm bei Schwangerschaft,
-     hormoneller Verhütung oder beendeter Erfassung.
+   • Typical cycle length: intervals between 18 and 90 days count – long
+     cycles too (oligomenorrhoea, > 35 days) are real cycles and must not silently
+     fall back to 28 days. An interval that is roughly a multiple of the usual
+     length, on the other hand, counts as a forgotten entry.
+   • Missed period: ask first ("missed? pregnant? contraception? just not
+     logged?"), then warn – no false alarm for pregnancy,
+     hormonal contraception or ended tracking.
    ========================================================================= */
 
 import { t } from './i18n.js';
@@ -21,7 +21,7 @@ const median = (xs) => {
   return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
 };
 
-/** Sortierte, eindeutige Periodenstarts (ISO) aus den Zyklus-Datensätzen. */
+/** Sorted, unique period starts (ISO) from the cycle records. */
 export function periodStarts(cycle = []) {
   return [...new Set((cycle || [])
     .filter((c) => c && !c.deleted && !c._kind && c.startDate)
@@ -29,8 +29,8 @@ export function periodStarts(cycle = []) {
 }
 
 /**
- * Abstände, die als echte Zyklen zählen: 18–90 Tage, ohne vermutlich vergessene
- * Einträge (Abstand ≈ 2× oder 3× des Medians der übrigen, ±5 Tage).
+ * Intervals that count as real cycles: 18–90 days, without presumably forgotten
+ * entries (interval ≈ 2× or 3× the median of the others, ±5 days).
  */
 export function cycleGaps(starts = []) {
   const all = [];
@@ -42,18 +42,18 @@ export function cycleGaps(starts = []) {
   return inRange.filter((d) => d <= 40 || ![2, 3].some((k) => Math.abs(d - k * m) <= 5));
 }
 
-/** Durchschnittliche Zykluslänge (Tage) – `fallback`, solange keine zwei Starts vorliegen. */
+/** Average cycle length (days) – `fallback` as long as there are not two starts. */
 export function typicalCycleLength(starts = [], fallback = 28) {
   const g = cycleGaps(starts);
   return g.length ? Math.round(g.reduce((a, b) => a + b, 0) / g.length) : fallback;
 }
 
-/** Wie viele der letzten `lastN` Zyklen länger als 35 Tage waren. */
+/** How many of the last `lastN` cycles were longer than 35 days. */
 export function longCycleCount(starts = [], lastN = 6) {
   return cycleGaps(starts).slice(-lastN).filter((d) => d > 35).length;
 }
 
-/** Antworten auf „Periode ausgeblieben?“. */
+/** Answers to "Period missed?". */
 export const PERIOD_ANSWERS = [
   { key: 'ausgeblieben', get label() { return t('cycle.answerMissed'); } },
   { key: 'schwanger', get label() { return t('cycle.answerPregnant'); } },
@@ -62,18 +62,18 @@ export const PERIOD_ANSWERS = [
 ];
 
 /**
- * Zustand rund um eine überfällige Periode.
+ * State around an overdue period.
  * @param {{starts:string[], today:string, avgLen?:number, gate?:object, check?:object}} p
- *   `check` = gespeicherte Antwort {for: letzterStart, answer}
+ *   `check` = stored answer {for: lastStart, answer}
  * @returns {null|{state:'ask'|'missed'|'pregnancy'|'contraception'|'untracked', flag:boolean, days:number, lastStart:string}}
- *   `flag` = ärztlichen Hinweis zeigen (ausgeblieben bestätigt oder > 90 Tage ohne Antwort).
+ *   `flag` = show a medical hint (missed confirmed or > 90 days without an answer).
  */
 export function periodSignal({ starts = [], today = null, avgLen = null, gate = {}, check = null } = {}) {
   if (!starts.length || !today) return null;
   const last = starts.at(-1);
   const days = gap(last, today);
   const len = avgLen || typicalCycleLength(starts);
-  if (days <= len + 7) return null;                     // noch im üblichen Rahmen
+  if (days <= len + 7) return null;                     // still within the usual range
   const base = { days, lastStart: last };
   if (gate && gate.pregnancy === true) return { ...base, state: 'pregnancy', flag: false };
   const answer = check && check.for === last ? check.answer : null;

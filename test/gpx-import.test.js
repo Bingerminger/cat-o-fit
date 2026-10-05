@@ -1,6 +1,6 @@
-/* GPX/TCX-Import: Sportart, lokales Datum, Bewegungszeit, Splits, Zeit in
-   HF-Zonen (TRAIN-28, FE-21, FE-22). Zeitzone fest auf Europe/Berlin – dieser
-   Testprozess läuft für sich, die Einstellung wirkt nur hier. */
+/* GPX/TCX import: sport type, local date, moving time, splits, time in
+   HR zones (TRAIN-28, FE-21, FE-22). Time zone fixed to Europe/Berlin – this
+   test process runs on its own, so the setting only applies here. */
 process.env.TZ = 'Europe/Berlin';
 const { test } = await import('node:test');
 const assert = (await import('node:assert/strict')).default;
@@ -10,7 +10,7 @@ function gpx(points, type = null) {
   return `<gpx><trk>${type ? `<type>${type}</type>` : ''}<trkseg>${points.map((p) =>
     `<trkpt lat="${p.lat}" lon="${p.lon}"><time>${p.t}</time>${p.hr ? `<extensions><gpxtpx:hr>${p.hr}</gpxtpx:hr></extensions>` : ''}</trkpt>`).join('')}</trkseg></trk></gpx>`;
 }
-/** Gerade Strecke nach Norden: je Punkt `stepM` Meter in `stepSec` Sekunden. */
+/** Straight track heading north: `stepM` metres in `stepSec` seconds per point. */
 function track({ start = '2026-09-26T08:00:00Z', n = 60, stepM = 100, stepSec = 30, hr = 140, pauseAt = null, pauseSec = 0 } = {}) {
   const pts = [];
   let t = Date.parse(start);
@@ -22,14 +22,14 @@ function track({ start = '2026-09-26T08:00:00Z', n = 60, stepM = 100, stepSec = 
   return pts;
 }
 
-test('FE-21: Datum in lokaler Zeit – Nachtlauf um 0:40 Uhr gehört zum lokalen Tag', () => {
-  const s = parseActivityFile(gpx(track({ start: '2026-09-27T22:40:00Z', n: 10 })));   // So 28.09. 00:40 MESZ
+test('FE-21: date in local time – a night run at 00:40 belongs to the local day', () => {
+  const s = parseActivityFile(gpx(track({ start: '2026-09-27T22:40:00Z', n: 10 })));   // Sun 28.09. 00:40 CEST
   assert.equal(s.date, '2026-09-28');
-  const ny = parseActivityFile(gpx(track({ start: '2026-12-31T23:30:00Z', n: 10 })));  // Fr 01.01.2027 00:30 MEZ
+  const ny = parseActivityFile(gpx(track({ start: '2026-12-31T23:30:00Z', n: 10 })));  // Fri 01.01.2027 00:30 CET
   assert.equal(ny.date, '2027-01-01');
 });
 
-test('TRAIN-28: Sportart aus der Datei – eine Radtour wird kein Lauf', () => {
+test('TRAIN-28: sport type from the file – a bike ride does not become a run', () => {
   const tcx = `<TrainingCenterDatabase><Activities><Activity Sport="Biking"><Lap><TotalTimeSeconds>4200</TotalTimeSeconds><DistanceMeters>20000</DistanceMeters><Track>
     <Trackpoint><Time>2026-09-20T07:00:00Z</Time><DistanceMeters>0</DistanceMeters></Trackpoint>
     <Trackpoint><Time>2026-09-20T08:10:00Z</Time><DistanceMeters>20000</DistanceMeters></Trackpoint>
@@ -39,21 +39,21 @@ test('TRAIN-28: Sportart aus der Datei – eine Radtour wird kein Lauf', () => {
   assert.equal(s.sportKnown, true);
   assert.equal(parseActivityFile(gpx(track({ n: 5 }), 'running')).type, 'run');
   assert.equal(parseActivityFile(gpx(track({ n: 5 }), 'hiking')).type, 'hike');
-  assert.equal(parseActivityFile(gpx(track({ n: 5 }))).sportKnown, false, 'ohne Angabe: unbekannt (der Import fragt nach)');
+  assert.equal(parseActivityFile(gpx(track({ n: 5 }))).sportKnown, false, 'no type given: unknown (the import asks)');
   assert.equal(sportType('9'), 'run');
   assert.equal(sportType('1'), 'cross_bike');
   assert.equal(sportType('Yoga'), null);
 });
 
-test('TRAIN-28: Bewegungszeit statt Bruttozeit (Pausen herausgerechnet)', () => {
+test('TRAIN-28: moving time instead of gross time (pauses excluded)', () => {
   const pts = track({ n: 61, stepM: 100, stepSec: 30, pauseAt: 30, pauseSec: 600 });
   const s = parseActivityFile(gpx(pts, 'running'));
   assert.equal(s.elapsedSec, 60 * 30 + 600);
-  assert.ok(Math.abs(s.durationSec - 60 * 30) <= 31, `10 min Pause nicht mitgezählt, war ${s.durationSec}`);
+  assert.ok(Math.abs(s.durationSec - 60 * 30) <= 31, `10 min pause not counted, was ${s.durationSec}`);
 });
 
-test('FE-22: Kilometer-Splits und Zeit in HF-Zonen aus den Trackpunkten', () => {
-  // 6 km in 100-m-Schritten, erste 3 km à 5:00, dann à 4:30 min/km.
+test('FE-22: kilometre splits and time in HR zones from the track points', () => {
+  // 6 km in 100 m steps, first 3 km at 5:00, then at 4:30 min/km.
   const pts = [];
   let t = Date.parse('2026-09-26T08:00:00Z');
   for (let i = 0; i <= 62; i++) {
@@ -63,9 +63,9 @@ test('FE-22: Kilometer-Splits und Zeit in HF-Zonen aus den Trackpunkten', () => 
   const zones = [{ zone: 1, min: 95, max: 114 }, { zone: 2, min: 114, max: 133 }, { zone: 3, min: 133, max: 152 }, { zone: 4, min: 152, max: 171 }, { zone: 5, min: 171, max: 190 }];
   const s = parseActivityFile(gpx(pts, 'running'), { hrZones: zones });
   assert.equal(s.splits.length, 6);
-  assert.ok(Math.abs(s.splits[0].sec - 300) <= 2, `km 1 ≈ 5:00, war ${s.splits[0].sec}`);
-  assert.ok(Math.abs(s.splits[5].sec - 270) <= 2, `km 6 ≈ 4:30, war ${s.splits[5].sec}`);
+  assert.ok(Math.abs(s.splits[0].sec - 300) <= 2, `km 1 ≈ 5:00, was ${s.splits[0].sec}`);
+  assert.ok(Math.abs(s.splits[5].sec - 270) <= 2, `km 6 ≈ 4:30, was ${s.splits[5].sec}`);
   assert.ok(s.timeInZones[3] > 800 && s.timeInZones[4] > 700, JSON.stringify(s.timeInZones));
-  assert.equal(parseActivityFile(gpx(pts, 'running')).timeInZones, null, 'ohne Zonen keine Zonenzeiten');
-  assert.equal(parseActivityFile(gpx(pts, 'cycling')).splits.length, 0, 'Rad: keine Lauf-Splits');
+  assert.equal(parseActivityFile(gpx(pts, 'running')).timeInZones, null, 'no zones, no time in zones');
+  assert.equal(parseActivityFile(gpx(pts, 'cycling')).splits.length, 0, 'cycling: no running splits');
 });

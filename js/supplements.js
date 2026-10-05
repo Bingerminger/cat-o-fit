@@ -1,23 +1,23 @@
 /* =========================================================================
-   supplements.js — Nahrungsergänzung für Sportlerinnen und Sportler:
-   Katalog, regelbasierte Vorschläge, Wechselwirkungen und Obergrenzen.
-   Reine, DOM-freie Logik → per node:test abgedeckt.
+   supplements.js — dietary supplements for athletes:
+   catalogue, rule-based suggestions, interactions and upper limits.
+   Pure, DOM-free logic → covered by node:test.
 
-   Grundsätze, die das ganze Modul tragen:
+   Principles that carry the whole module:
 
-   • FOOD FIRST. Jeder Vorschlag nennt zuerst den Weg über die Ernährung. Ein
-     Präparat ist die Lücke­nfüllung, nicht der Standardweg.
-   • BEGRÜNDUNG STATT ORAKEL. Jede Empfehlung trägt die Auslöser mit sich
-     (welcher Wert, welches Datum, welche Trainingslast) – nachvollziehbar wie das
-     Anpassungs-Protokoll des Trainingsplans.
-   • KEINE EMPFEHLUNG INS BLAUE. Eisen etwa wird NIE ohne Laborwert vorgeschlagen:
-     Eisen auf Verdacht zu nehmen ist bei vollen Speichern schädlich.
-   • GRENZEN KENNEN. Zu jedem Mittel gehören Obergrenze, typische Wechselwirkung
-     und – für Wettkampfsport – der Hinweis auf geprüfte Produkte.
+   • FOOD FIRST. Every suggestion names the dietary route first. A
+     supplement fills a gap; it is not the default route.
+   • REASONS INSTEAD OF ORACLES. Every recommendation carries its triggers with it
+     (which value, which date, which training load) – traceable like the
+     adaptation log of the training plan.
+   • NO RECOMMENDATION OUT OF THE BLUE. Iron, for example, is NEVER suggested without a lab value:
+     taking iron on suspicion is harmful when the stores are full.
+   • KNOW THE LIMITS. Every supplement comes with an upper limit, a typical interaction
+     and – for competitive sport – the hint towards tested products.
 
-   Cat-O-Fit ist kein Medizinprodukt: Die Hinweise ersetzen keine ärztliche
-   Beratung, und bei auffälligen Werten verweist die App bewusst dorthin
-   (siehe redflags.js).
+   Cat-O-Fit is not a medical device: the hints do not replace medical
+   advice, and for abnormal values the app deliberately points there
+   (see redflags.js).
    ========================================================================= */
 
 import { latest, freshLatest, assess, trend } from './labs.js';
@@ -31,14 +31,14 @@ const dateIn = (d, opts) => {
 };
 const dmy = (d) => (d ? dateIn(d, { day: '2-digit', month: '2-digit', year: 'numeric' }) : '');
 
-/* ------------------------------- Katalog --------------------------------- */
+/* ------------------------------- Catalogue ------------------------------- */
 
 /**
- * Supplement-Katalog. `evidence`: 'stark' (gut belegt), 'mittel', 'situativ'.
- * `typical` = allgemeine Information zur üblichen Menge (keine persönliche Dosierung),
- * ausgerichtet an den Höchstmengenvorschlägen des BfR bzw. den Obergrenzen der EFSA;
- * `ul` = Obergrenze bzw. Warnhinweis; `source` = Grundlage der Mengenangabe;
- * `performance` = Leistungspräparat (nicht für Minderjährige, Doping-/Verunreinigungshinweis).
+ * Supplement catalogue. `evidence`: 'stark' (well documented), 'mittel', 'situativ'.
+ * `typical` = general information on the usual amount (no personal dosage),
+ * aligned with the maximum-amount proposals of the BfR and the upper limits of the EFSA;
+ * `ul` = upper limit or warning; `source` = basis of the amount given;
+ * `performance` = performance supplement (not for minors, doping/contamination hint).
  */
 export const SUPPLEMENTS = {
   vitaminD: {
@@ -140,15 +140,15 @@ export const SUPPLEMENTS = {
   },
 };
 
-/** Hinweis zu Leistungspräparaten (Kontaminations- und Dopingrisiko, IOC-Konsens 2018). */
+/** Hint on performance supplements (contamination and doping risk, IOC consensus 2018). */
 export const dopingNote = () => t('supplements.dopingNote');
 
-/** Katalog-Schlüssel, die für diese Person infrage kommen (Minderjährige: keine Leistungspräparate). */
+/** Catalogue keys that come into question for this person (minors: no performance supplements). */
 export function catalogFor(elig = null) {
   return Object.keys(SUPPLEMENTS).filter((k) => !(elig && elig.noPerformanceSupplements && SUPPLEMENTS[k].performance));
 }
 
-/** Bekannte Wechselwirkungen/Timing-Konflikte zwischen empfohlenen Mitteln. */
+/** Known interactions/timing conflicts between recommended supplements. */
 const INTERACTIONS = [
   { a: 'iron', b: 'zinc', get text() { return t('supplements.interaction.ironZinc'); } },
   { a: 'iron', b: 'magnesium', get text() { return t('supplements.interaction.ironMagnesium'); } },
@@ -156,20 +156,20 @@ const INTERACTIONS = [
   { a: 'zinc', b: 'magnesium', get text() { return t('supplements.interaction.zincMagnesium'); } },
 ];
 
-/* ------------------------------ Regelwerk -------------------------------- */
+/* ------------------------------ Rule set --------------------------------- */
 
 const mk = (key, priority, reason, action, extra = {}) => ({
   key, ...SUPPLEMENTS[key], priority, reason, action, ...extra,
 });
 
-/** Monat aus einem ISO-Datum (1–12). */
+/** Month from an ISO date (1–12). */
 const monthOf = (d) => Number(String(d || '').slice(5, 7)) || 0;
 
 /**
- * Leitet Vorschläge aus Laborwerten, Profil, Training und Ernährung ab.
+ * Derives suggestions from lab values, profile, training and nutrition.
  *
  * @returns {{items:Array, interactions:Array<string>, foodFirst:string}}
- *   items sind nach Priorität sortiert (1 = am wichtigsten).
+ *   items are sorted by priority (1 = most important).
  */
 export function recommend({
   labs = [], profile = {}, sessions = [], today = null, diet = null, cycle = [], diary = [], elig = null,
@@ -178,27 +178,27 @@ export function recommend({
   const sex = profile.sex || null;
   const month = monthOf(today);
   const pregnant = !!(elig && elig.pregnancy);
-  // Nur Werte, die noch aktuell sind, tragen Vorschläge (Vitamin D: ein Sommerwert zählt
-  // im Winter nicht, Ferritin nach einem Jahr nicht mehr).
+  // Only values that are still current carry suggestions (vitamin D: a summer value does not
+  // count in winter, ferritin no longer after a year).
   const fresh = (key) => freshLatest(labs, key, today);
   const judge = (key, rec) => assess(key, rec.value, { sex, labs, today, record: rec, pregnant });
-  // Ein zu HOHER Wert führt nie zu „ergänzen“, sondern zum Hinweis, die Einnahme zu prüfen.
+  // A value that is too HIGH never leads to "add", but to a hint to review the intake.
   const tooHigh = (key, label, rec, unit) => mk(key, 1,
     t('supplements.tooHighReason', { label, value: num(rec.value), unit, date: dmy(rec.date) }),
     t('supplements.tooHighAction'),
     { holdOnly: true, high: true });
 
-  /* --- Eisen: ausschließlich laborgestützt ------------------------------- */
+  /* --- Iron: lab-supported only ------------------------------------------ */
   const ferritin = fresh('ferritin');
   if (ferritin) {
-    // `record` mitgeben, damit der Referenzbereich DES BEFUNDS und das CRP DERSELBEN
-    // Blutentnahme gelten – sonst bewertet die Empfehlung anders als die Werte-Liste.
+    // Pass `record` so that the reference range OF THE REPORT and the CRP OF THE SAME
+    // blood draw apply – otherwise the recommendation judges differently from the values list.
     const a = judge('ferritin', ferritin);
     if (a.status === 'unbeurteilbar') {
       items.push(mk('iron', 2, a.blocked, t('supplements.ironInflamedWait'), { holdOnly: true }));
     } else if (a.side === 'low' && a.inflamed) {
-      // Niedrig trotz Entzündung: auffällig, aber Eisen wird bei Entzündung schlecht aufgenommen –
-      // das gehört ärztlich entschieden, nicht in den eigenen Plan.
+      // Low despite inflammation: conspicuous, but iron is poorly absorbed during inflammation –
+      // that is for a doctor to decide, not for the own plan.
       items.push(mk('iron', 1,
         t('supplements.ironInflamedReason', { value: num(ferritin.value), date: dmy(ferritin.date), assessment: a.label }),
         t('supplements.ironInflamedAction'),
@@ -224,7 +224,7 @@ export function recommend({
     }
   }
 
-  /* --- Vitamin D: Laborwert (DGE: ab 50 nmol/l ausreichend) oder Jahreszeit --- */
+  /* --- Vitamin D: lab value (DGE: sufficient from 50 nmol/l) or season --- */
   const vd = fresh('vitaminD');
   if (vd) {
     const a = judge('vitaminD', vd);
@@ -246,7 +246,7 @@ export function recommend({
       t('supplements.vitaminDMeasureAction')));
   }
 
-  /* --- B12: Laborwert (Holo-TC oder gesamt) oder pflanzliche Ernährung ---- */
+  /* --- B12: lab value (holo-TC or total) or plant-based diet ------------- */
   const b12 = fresh('b12');
   const b12t = b12 ? null : fresh('b12total');
   if (b12) {
@@ -274,9 +274,9 @@ export function recommend({
       t('supplements.veganAction')));
   }
 
-  /* --- Magnesium: nur mit Laborwert (Vollblut oder Serum) -----------------
-     Ohne Befund kein Präparatehinweis: Für Krampfvorbeugung gibt es keine belastbare
-     Evidenz (Cochrane 2020), und das IOC rät von Ergänzung ohne Mangel ab. */
+  /* --- Magnesium: only with a lab value (whole blood or serum) -----------
+     Without a report no supplement hint: there is no reliable evidence for
+     cramp prevention (Cochrane 2020), and the IOC advises against supplementing without a deficiency. */
   const mgVb = fresh('magnesium');
   const mgSe = fresh('magnesiumSerum');
   const mg = mgVb && mgSe ? (mgVb.date >= mgSe.date ? mgVb : mgSe) : (mgVb || mgSe);
@@ -292,7 +292,7 @@ export function recommend({
     }
   }
 
-  /* --- Eiweiß: aus dem Ess-Tagebuch statt aus der Trainingslast ----------- */
+  /* --- Protein: from the food diary instead of the training load ---------- */
   const kg = Number(profile.weightKg) || null;
   if (kg && today) {
     const since = new Date(Date.parse(`${today}T00:00:00Z`) - 13 * 86400000).toISOString().slice(0, 10);
@@ -311,7 +311,7 @@ export function recommend({
     }
   }
 
-  /* --- Kreatin: bei regelmäßigem Krafttraining (strukturiert, nicht per Zieltext) --- */
+  /* --- Creatine: with regular strength training (structured, not via goal text) --- */
   if (today) {
     const since = new Date(Date.parse(`${today}T00:00:00Z`) - 27 * 86400000).toISOString().slice(0, 10);
     const strength = (sessions || []).filter((s) => s && !s.deleted && s.type === 'strength' && s.date >= since && s.date <= today).length;
@@ -322,7 +322,7 @@ export function recommend({
     }
   }
 
-  /* --- Zyklusbewusst: Eisenbedarf bei starker Periode -------------------- */
+  /* --- Cycle-aware: iron requirement with heavy periods ------------------ */
   const hasCycle = (cycle || []).some((c) => c && !c.deleted && !c._kind && c.startDate);
   if (hasCycle && !ferritin) {
     items.push(mk('iron', 2,
@@ -330,13 +330,13 @@ export function recommend({
       t('supplements.cycleIronAction'), { holdOnly: true }));
   }
 
-  // „Nie ohne Befund“ technisch absichern: Mittel mit `requiresLab` erscheinen nur als
-  // laborgestützter Vorschlag oder als reiner Mess-/Prüfhinweis – nie aus einer anderen Regel.
-  // Minderjährige: keine Leistungspräparate.
+  // Technically secure "never without a report": supplements with `requiresLab` appear only as a
+  // lab-supported suggestion or as a pure measurement/check hint – never from another rule.
+  // Minors: no performance supplements.
   const allowed = items.filter((it) => (!SUPPLEMENTS[it.key].requiresLab || it.holdOnly || it.labBased)
     && !(elig && elig.noPerformanceSupplements && SUPPLEMENTS[it.key].performance));
 
-  // Dubletten desselben Mittels zusammenführen (höchste Priorität gewinnt).
+  // Merge duplicates of the same supplement (highest priority wins).
   const byKey = new Map();
   for (const it of allowed) {
     const cur = byKey.get(it.key);
@@ -344,8 +344,8 @@ export function recommend({
   }
   const list = [...byKey.values()].sort((a, b) => a.priority - b.priority);
 
-  // Wechselwirkungen nur für tatsächlich einzunehmende Mittel – wo bloß eine
-  // Messung angeraten wird (`holdOnly`), gibt es noch nichts zu kombinieren.
+  // Interactions only for supplements that are actually to be taken – where merely a
+  // measurement is advised (`holdOnly`), there is nothing to combine yet.
   const keys = new Set(list.filter((i) => !i.holdOnly).map((i) => i.key));
   const interactions = INTERACTIONS
     .filter((i) => keys.has(i.a) && keys.has(i.b))
@@ -358,22 +358,22 @@ export function recommend({
   };
 }
 
-/* --------------------------- Einnahme-Protokoll --------------------------- */
+/* --------------------------- Intake log ---------------------------------- */
 
-/** Aktive Plan-Einträge (Records mit `_kind: 'plan'`). */
+/** Active plan entries (records with `_kind: 'plan'`). */
 export function activePlans(supplements = [], today = null) {
   return (supplements || []).filter((s) => s && !s.deleted && s._kind === 'plan'
     && s.active !== false
     && (!today || ((!s.from || s.from <= today) && (!s.to || s.to >= today))));
 }
 
-/** Wurde ein geplantes Mittel an diesem Tag abgehakt? */
+/** Was a planned supplement ticked off on this day? */
 export function takenOn(supplements = [], planId, date) {
   return (supplements || []).some((s) => s && !s.deleted && s._kind === 'intake'
     && s.planId === planId && s.date === date);
 }
 
-/** Tagesliste (ISO) der letzten `days` Tage, endend bei `today`. */
+/** Day list (ISO) of the last `days` days, ending at `today`. */
 function lastDays(today, days) {
   const out = [];
   for (let i = days - 1; i >= 0; i--) {
@@ -382,15 +382,15 @@ function lastDays(today, days) {
   return out;
 }
 
-/** Mittel, die nur bei Bedarf genommen werden (z. B. Koffein oder Rote Bete vor Wettkämpfen),
-    zählen nicht als tägliche Pflicht – sonst sähe richtige Einnahme wie Vergessen aus. */
+/** Supplements that are only taken as needed (e.g. caffeine or beetroot before races)
+    do not count as a daily obligation – otherwise correct intake would look like forgetting. */
 export function isDaily(plan) { return !plan || plan.frequency !== 'bedarf'; }
 
 /**
- * Einnahmetreue je Tag über `days` Tage – als Balkenreihe für die Anzeige.
- * Tage ohne fälligen Plan (vor Planbeginn) sind `null` statt 0 %: Kein Balken, denn
- * dort wurde nichts verpasst.
- * @returns {Array<{label:string, value:number|null, date:string}>} value = % des Tages
+ * Adherence per day over `days` days – as a series of bars for display.
+ * Days without a due plan (before the plan began) are `null` instead of 0 %: no bar, because
+ * nothing was missed there.
+ * @returns {Array<{label:string, value:number|null, date:string}>} value = % of the day
  */
 export function adherenceSeries(supplements = [], today, days = 21) {
   const plans = activePlans(supplements, today).filter(isDaily);
@@ -407,7 +407,7 @@ export function adherenceSeries(supplements = [], today, days = 21) {
 }
 
 /**
- * Einnahmetreue der letzten `days` Tage über alle aktiven, täglichen Pläne.
+ * Adherence over the last `days` days across all active, daily plans.
  * @returns {{pct:number, taken:number, expected:number}|null}
  */
 export function adherence(supplements = [], today, days = 14) {
