@@ -138,7 +138,7 @@ test('Ansagen aus Sprachbausteinen: jeder Baustein liegt als Datei vor, jede Ans
   const { voiceTexts, doseKeys } = await import('../js/voice.js');
   const { WORKOUTS, WORKOUT_CATS } = await import('../js/workouts.js');
   const texts = voiceTexts(EXERCISES);
-  for (const key of Object.keys(texts)) assert.ok(existsSync(new URL(`../assets/voice/${key}.m4a`, import.meta.url)), `Baustein fehlt: ${key}`);
+  for (const key of Object.keys(texts)) assert.ok(existsSync(new URL(`../assets/voice/de/${key}.m4a`, import.meta.url)), `Baustein fehlt: ${key}`);
   for (const e of EXERCISES) assert.ok(texts[`ex-${e.id}`], `Name fehlt: ${e.id}`);
   assert.deepEqual(doseKeys('12×'), ['reps-12']);
   assert.deepEqual(doseKeys('10× je Seite'), ['reps-10', 'per-side']);

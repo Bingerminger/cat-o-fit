@@ -12,6 +12,8 @@
    wieder der Lautlos-Schalter des Geräts.
    ========================================================================= */
 
+import { locale } from './i18n.js';
+
 let ctx = null;
 let silent = null;
 
@@ -95,16 +97,24 @@ export function tone(freq = 880, { ms = 140, gain = 0.32, type = 'sine', when = 
 
 /* ------------------------------ Sprachausgabe ------------------------------ */
 
-let voice = null;
-function germanVoice() {
-  if (voice) return voice;
+/** BCP-47 tag for speech in the active language. */
+const speechLang = () => ({ en: 'en-GB', de: 'de-DE', fr: 'fr-FR', es: 'es-ES', it: 'it-IT', nl: 'nl-NL' }[locale()] || locale());
+const voices = new Map();
+/** Best device voice for the active language (premium/enhanced local voices first). */
+function deviceVoice() {
+  const lang = speechLang();
+  if (voices.has(lang)) return voices.get(lang);
+  let v = null;
   try {
-    const all = speechSynthesis.getVoices() || [];
-    const de = all.filter((v) => /^de(-|_|$)/i.test(v.lang));
-    voice = de.find((v) => v.localService && /premium|enhanced|anna|helena|petra|markus/i.test(v.name))
-      || de.find((v) => v.localService) || de[0] || null;
-  } catch { voice = null; }
-  return voice;
+    const base = lang.split('-')[0];
+    const all = (speechSynthesis.getVoices() || []).filter((x) => String(x.lang).replace('_', '-').toLowerCase().startsWith(base));
+    const exact = all.filter((x) => String(x.lang).replace('_', '-').toLowerCase() === lang.toLowerCase());
+    const pool = exact.length ? exact : all;
+    v = pool.find((x) => x.localService && /premium|enhanced|anna|helena|petra|markus/i.test(x.name))
+      || pool.find((x) => x.localService) || pool[0] || null;
+  } catch { v = null; }
+  if (v) voices.set(lang, v);
+  return v;
 }
 
 /** Ob das Gerät vorlesen kann. */
@@ -118,15 +128,15 @@ export function canSpeak() {
 const live = new Set();
 let lastCancel = 0;
 
-/** Liest einen Satz auf Deutsch vor (hängt sich an laufende Ansagen an). */
+/** Reads a sentence aloud in the active language (queues behind running announcements). */
 export function speak(text, { rate = 1.0 } = {}) {
   if (!text || !canSpeak()) return;
   const wait = 260 - (Date.now() - lastCancel);
   if (wait > 0) { setTimeout(() => speak(text, { rate }), wait); return; }
   try {
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'de-DE';
-    const v = germanVoice();
+    u.lang = speechLang();
+    const v = deviceVoice();
     if (v) u.voice = v;
     u.rate = rate;
     const done = () => { live.delete(u); wakeAudio(); };

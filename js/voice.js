@@ -10,9 +10,15 @@
    ========================================================================= */
 
 import { audioContext } from './audio.js';
+import { t, tVariants, locale } from './i18n.js';
 
-/** Aussprachehilfen für englische Namen – die deutsche Stimme liest, was sie sieht. */
-const SAY = {
+/** Languages with recorded clips (assets/voice/<lang>/<key>.m4a). Other languages get the
+    device voice in their language instead (the show passes the text as fallback). */
+export const VOICE_LANGUAGES = ['de'];
+const clipLanguage = () => (VOICE_LANGUAGES.includes(locale()) ? locale() : null);
+
+/** Pronunciation help for English names – the German voice reads what it sees (German only). */
+const SAY_DE = {
   dead_bug: 'Dedd Bagg', split_squat: 'Bulgarischer Splitt Skwott', step_up: 'Stepp-app', crunch: 'Krantsch',
   hollow_hold: 'Hollo Hould', superman: 'Supermän', bird_dog: 'Börd Dogg', nordic_hamstring: 'Nordik Hämstring Körl',
   copenhagen: 'Kopenhagen-Seitstütz', clamshell: 'Klämschell', monster_walk: 'Monster Wook', goblet_squat: 'Goblett Skwott',
@@ -25,7 +31,7 @@ const SAY = {
 
 /** Name zum Sprechen: ohne Klammerzusatz, englische Namen lautgerecht. */
 export function spokenName(e) {
-  return SAY[e.id] || e.name.replace(/\s*\(.*\)\s*$/, '');
+  return (locale() === 'de' && SAY_DE[e.id]) || e.name.replace(/\s*\(.*\)\s*$/, '');
 }
 
 export const MAX_REPS = 50;
@@ -33,19 +39,19 @@ export const SECONDS = Array.from({ length: 36 }, (_, i) => (i + 1) * 5);   // 5
 
 /** Alle Bausteine als { Schlüssel: Text } – für das Erzeugen und für Tests. */
 export function voiceTexts(exercises) {
-  const t = {
-    intro: 'Los geht\'s! Zuerst:',
-    next: 'Pause. Als Nächstes:',
-    'next-short': 'Als Nächstes:',
-    switch: 'Seitenwechsel.',
-    done: 'Geschafft! Stark gemacht.',
-    'per-side': 'pro Seite',
+  const out = {
+    intro: t('voice.intro'),
+    next: t('voice.next'),
+    'next-short': t('voice.nextShort'),
+    switch: t('voice.switch'),
+    done: t('voice.done'),
+    'per-side': t('voice.perSide'),
   };
-  for (let r = 1; r <= 5; r++) t[`round-${r}`] = `Runde ${r} geschafft. Durchatmen. Gleich Runde ${r + 1}:`;
-  for (let n = 1; n <= MAX_REPS; n++) t[`reps-${n}`] = n === 1 ? 'eine Wiederholung' : `${n} Wiederholungen`;
-  for (const s of SECONDS) t[`sec-${s}`] = `${s} Sekunden`;
-  for (const e of exercises) t[`ex-${e.id}`] = spokenName(e);
-  return t;
+  for (let r = 1; r <= 5; r++) out[`round-${r}`] = t('voice.round', { r, next: r + 1 });
+  for (let n = 1; n <= MAX_REPS; n++) out[`reps-${n}`] = n === 1 ? t('voice.oneRep') : t('voice.reps', { n });
+  for (const s of SECONDS) out[`sec-${s}`] = t('voice.seconds', { s });
+  for (const e of exercises) out[`ex-${e.id}`] = spokenName(e);
+  return out;
 }
 
 /** Bausteine einer Menge: „12×“ → reps-12, „40 s je Seite“ → sec-40 + per-side. */
@@ -55,7 +61,7 @@ export function doseKeys(label) {
   const sec = /^(\d+) s/.exec(label);
   if (reps && Number(reps[1]) <= MAX_REPS) keys.push(`reps-${reps[1]}`);
   else if (sec && SECONDS.includes(Number(sec[1]))) keys.push(`sec-${sec[1]}`);
-  if (keys.length && / je Seite/.test(label)) keys.push('per-side');
+  if (keys.length && [' je Seite', ...tVariants('showProgram.perSide').map((w) => ` ${w}`)].some((w) => label.includes(w))) keys.push('per-side');
   return keys;
 }
 
@@ -75,12 +81,15 @@ function decode(c, data) {
 
 /** Lädt einen Baustein (einmal; danach aus dem Speicher). */
 export function loadClip(key) {
-  if (!cache.has(key)) {
+  const lang = clipLanguage();
+  if (!lang) return Promise.resolve(null);
+  const id = `${lang}/${key}`;
+  if (!cache.has(id)) {
     const c = audioContext();
-    cache.set(key, !c || typeof fetch !== 'function' ? Promise.resolve(null)
-      : fetch(`assets/voice/${key}.m4a`).then((r) => (r.ok ? r.arrayBuffer() : null)).then((b) => (b ? decode(c, b) : null)).catch(() => null));
+    cache.set(id, !c || typeof fetch !== 'function' ? Promise.resolve(null)
+      : fetch(`assets/voice/${id}.m4a`).then((r) => (r.ok ? r.arrayBuffer() : null)).then((b) => (b ? decode(c, b) : null)).catch(() => null));
   }
-  return cache.get(key);
+  return cache.get(id);
 }
 
 /** Lädt Bausteine im Voraus (beim Start einer Session). */
@@ -97,11 +106,11 @@ export async function sayClips(keys, { at = null, gap = 0.1, gain = 1 } = {}) {
   if (bufs.some((b) => !b)) return null;
   if (!out) { out = c.createGain(); out.connect(c.destination); }
   out.gain.value = gain;
-  let t = Math.max(at != null ? at : c.currentTime + 0.02, c.currentTime + 0.02);
-  const start = t;
+  let when = Math.max(at != null ? at : c.currentTime + 0.02, c.currentTime + 0.02);
+  const start = when;
   for (const b of bufs) {
-    const s = c.createBufferSource(); s.buffer = b; s.connect(out); s.start(t);
-    t += b.duration + gap;
+    const s = c.createBufferSource(); s.buffer = b; s.connect(out); s.start(when);
+    when += b.duration + gap;
   }
-  return { at: start, dur: t - start - gap };
+  return { at: start, dur: when - start - gap };
 }

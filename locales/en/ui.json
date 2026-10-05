@@ -3753,5 +3753,17 @@
     "note": "Note",
     "meal": "Meal",
     "proteinG": "Protein (g)"
+  },
+  "voice": {
+    "intro": "Let’s go! First:",
+    "next": "Rest. Next up:",
+    "nextShort": "Next up:",
+    "switch": "Switch sides.",
+    "done": "Done! Great work.",
+    "perSide": "each side",
+    "round": "Round {r} done. Catch your breath. Round {next} coming up:",
+    "oneRep": "one rep",
+    "reps": "{n} reps",
+    "seconds": "{s} seconds"
   }
 }

@@ -3753,5 +3753,17 @@
     "note": "Notiz",
     "meal": "Mahlzeit",
     "proteinG": "Eiweiß (g)"
+  },
+  "voice": {
+    "intro": "Los geht's! Zuerst:",
+    "next": "Pause. Als Nächstes:",
+    "nextShort": "Als Nächstes:",
+    "switch": "Seitenwechsel.",
+    "done": "Geschafft! Stark gemacht.",
+    "perSide": "pro Seite",
+    "round": "Runde {r} geschafft. Durchatmen. Gleich Runde {next}:",
+    "oneRep": "eine Wiederholung",
+    "reps": "{n} Wiederholungen",
+    "seconds": "{s} Sekunden"
   }
 }

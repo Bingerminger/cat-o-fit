@@ -29,7 +29,7 @@ const TRANSLATED_MODULES = [
   'js/weather.js', 'js/ics-export.js', 'js/suggestions.js', 'js/sollist.js', 'js/help.js', 'js/wellness.js',
   'js/eligibility.js', 'js/strength.js', 'js/hrzones.js', 'js/goals.js', 'js/planflow.js', 'js/formcards.js',
   'js/storage.js', 'js/motion-rig.js', 'js/zip.js', 'js/csv-export.js', 'js/healthgoals.js',
-  'js/motion-figure.js', 'js/coach-figure.js',
+  'js/motion-figure.js', 'js/coach-figure.js', 'js/audio.js',
 ];
 /** Internal values (compared in code, never shown) that happen to be German words. */
 const INTERNAL_VALUES = ["'erhöht'", "'Obst & Gemüse'", "'Stück'", "'Rückschlag'", "'geschätzt'"];
