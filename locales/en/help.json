@@ -63,17 +63,17 @@
         "0": "The “Load & form” card on “Today” answers three questions – in plain language instead of jargon.",
         "1": [
           "Are you building up too fast? The load ratio compares your last 7 days with the average of the three weeks before (ACWR). 1.3 means “30% more than usual”; between 0.8 and 1.3 you are close to your average.",
-          "Are you recovered? Fitness minus fatigue gives your form – ranked relative to your fitness: fresh, balanced, in training or clearly fatigued. Only rated once there are roughly three months of data.",
+          "Are you recovered? Fitness minus fatigue gives your form – ranked relative to your fitness: fresh, balanced, in training or clearly tired. Only rated once there are roughly three months of data.",
           "Are you training too uniformly? A note appears only when your training days look very alike and the week is well above your average; walking and mobility don’t count here."
         ],
-        "2": "The thresholds are a guide drawn from observational data in team sport – not an injury barometer and not a promise of protection. In the first four weeks the card honestly says “Still gathering data”. Strength, football and cycling count just like running; the values are load points (AU = minutes × effort)."
+        "2": "The thresholds are a guide drawn from observational data in team sport – not an injury barometer and not a promise of protection. In the first four weeks the card honestly says “Your data is still building up”. Strength, football and cycling count just like running; the values are load points (AU = minutes × effort)."
       }
     },
     "wettkampf-anlegen": {
       "q": "Creating a race and generating the plan",
       "blocks": {
         "0": [
-          "Open “Goals” and tap “+” → choose “Race”.",
+          "Open “Goals & plans” and tap “+” → choose “Race”.",
           "Enter the name, date, distance and target time, and choose the priority: A – season highlight, B – important race, C – build-up or fun race.",
           "Save – you land on the goal page.",
           "Tap “Create plan” and choose your level (Beginner, Intermediate, Advanced), run days per week (3–6) and whether you have fixed commitments (e.g. club training) – none by default.",
@@ -89,7 +89,7 @@
       "blocks": {
         "0": "You just want to get fitter, stronger or healthier – without a race? Then create a training programme.",
         "1": [
-          "Open “Goals” and tap “+” → choose “Training programme”.",
+          "Open “Goals & plans” and tap “+” → choose “Training programme”.",
           "Choose a focus: General fitness, Strength & muscle, Weight loss or Mobility & health.",
           "Set the training days per week (3–5) and the duration (4, 8 or 12 weeks).",
           "Save & create plan – the weekly plan is ready straight away."
@@ -103,7 +103,7 @@
       "blocks": {
         "0": [
           "On the dashboard or in the calendar, tap today’s session.",
-          "You see the target (distance, target pace, HR zone). Tap “Start workout”.",
+          "You see the target (distance, target pace, HR zone). Tap “Start”.",
           "In workout mode the clock runs; for intervals Cat-O-Fit guides you with sound through warm-up, effort, rest and cool-down – with the target pace and HR zone of each phase.",
           "At the end tap “End workout” → enter distance, effort (RPE) and feeling → done. Discarding without saving asks you to confirm."
         ],
@@ -119,7 +119,7 @@
           "Tap “Log as done”.",
           "Enter what you know (distance, time, feeling) – everything is optional."
         ],
-        "2": "The planned-vs-actual comparison is honest: an easy run that was far too fast doesn’t count as “achieved”; intervals aren’t judged on the average of the whole session."
+        "2": "The planned-vs-actual comparison is honest: an easy run that was far too fast doesn’t count as “Target largely hit”; intervals aren’t judged on the average of the whole session."
       }
     },
     "training-ohne-plan": {
@@ -131,7 +131,7 @@
           "Enter sport, date, duration, distance, heart rate and effort.",
           "If a planned session on the same day fits, the app offers to link the training to it."
         ],
-        "2": "Unplanned activities appear in the calendar, on “Today” and in Progress under “Activities without a plan” – open, edit or delete them there. “Today” suggests imported activities (Apple Health, GPX/TCX) for matching."
+        "2": "Unplanned activities appear in the calendar, on “Today” and in Progress under “Sessions without a plan” – open, edit or delete them there. “Today” suggests imported activities (Apple Health, GPX/TCX) for matching."
       }
     },
     "einheit-verschieben": {
@@ -155,12 +155,12 @@
         "0": "Your plan belongs to you – adjust it whenever you like.",
         "1": [
           "Open a session and tap the pencil icon at the top: type, target pace, HR zone, interval structure, distance and description are all editable.",
-          "With the “+” in the training plan you create a brand-new session – with a wide choice of sports: swimming, hiking, rowing, tennis, badminton, squash, table tennis, indoor cycling, cross-trainer, gym machines and more.",
+          "With the “+” in the training plan you create a brand-new session – with a wide choice of sports: swimming, hiking, rowing, tennis, badminton, squash, table tennis, indoor cycling, elliptical, gym training and more.",
           "In the edit dialog you can also delete a session."
         ],
         "2": "If you create a session yourself and a similarly intense one is already in the same week, Cat-O-Fit offers to take that one out of the plan – so the weekly load stays constant. You decide: “Remove from plan” or “Keep both”.",
-        "3": "Has something fundamentally changed for a week (e.g. start of the season, a training camp)? In the plan’s weekly overview, “Recalculate this week” recalculates just that one week afresh – training you have already done is kept.",
-        "4": "Missed? Past, open sessions show up as “overdue”. On the dashboard a note reminds you to reschedule, log or tick them off.",
+        "3": "Has something fundamentally changed for a week (e.g. start of the season, a training camp)? In the plan’s “Weeks at a glance” overview, “Recalculate this week” recalculates just that one week afresh – training you have already done is kept.",
+        "4": "Missed? Past, open sessions show up as “Overdue”. On the dashboard a note reminds you to reschedule, log or tick them off.",
         "5": "If you have marked a key session (tempo, intervals, long run, strength) as missed, the dashboard offers to make it up on a free day next week – instead of letting it lapse."
       }
     },
@@ -171,8 +171,8 @@
           "Tap “＋ Log” → “Body stats” (or Progress → Body → “+”).",
           "Enter e.g. weight, resting heart rate or sleep – only what you want.",
           "The charts show your trend with a y-scale, and for weight with a target line.",
-          "“Muscle mass” is the value from a body-analysis scale; “lean body mass” (e.g. from Apple Health) is considerably higher and feeds into energy availability.",
-          "HRV with measurement type: Apple stores SDNN, many watches and rings show RMSSD. The numbers aren’t comparable – trend, goals and readiness only compare values of the same measurement type."
+          "“Muscle mass” is the value from a body-analysis scale; “Lean mass” (e.g. from Apple Health) is considerably higher and feeds into energy availability.",
+          "HRV method: Apple stores SDNN, many watches and rings show RMSSD. The numbers aren’t comparable – trend, goals and readiness only compare values of the same measurement type."
         ],
         "1": "Want the exact value? Drag your finger across a chart (on a computer: hover with the mouse) – a guide line jumps to the nearest point and shows date + value.",
         "2": "The presentation is deliberately neutral: it’s about the trend, not daily fluctuations. You can hide individual values in Settings.",
@@ -185,11 +185,11 @@
       "blocks": {
         "0": "Your sources (Garmin, Apple Watch, Withings …) write to Apple Health. From there the most important values reach Cat-O-Fit{hi} – weight, resting heart rate, HRV, VO₂max, sleep, steps, active energy and workouts. There are three ways:",
         "1": [
-          "Automatically with “Health Auto Export – JSON+CSV” (App Store): the app itself is free, but the automatic transfer you need (REST API) is only available with Premium – according to the App Store about €8 a year or €30 one-off. Set-up: in Cat-O-Fit, under Health import, “Enable auto-import” and copy the endpoint URL; in Health Auto Export, under Automations → + → “REST API”, paste the URL, method POST, format JSON (export version 2), choose metrics + workouts, aggregation “Daily”, period “Since last sync” → save → “Run now”.",
+          "Automatically with “Health Auto Export – JSON+CSV” (App Store): the app itself is free, but the automatic transfer you need (REST API) is only available with Premium – according to the App Store about €8 a year or €30 one-off. Set-up: in Cat-O-Fit, under Health import, “Switch on auto-import” and copy the endpoint URL; in Health Auto Export, under Automations → + → “REST API”, paste the URL, method POST, format JSON (export version 2), choose metrics + workouts, aggregation “daily”, period “Since last sync” → save → “Run now”.",
           "Free and automatic via a shortcut: with Apple’s “Shortcuts” app you can read health values and send them to the same address – the instructions are in the docs (Apple Health). Whether the automation runs reliably while the iPhone is locked depends on iOS.",
           "Free, by hand: iPhone → Health app → profile picture → “Export All Health Data” and upload the ZIP under Health import (full import). Individual recordings as a GPX or TCX file (Garmin, Strava …) work too – with sport, moving time, kilometre splits and time in HR zones."
         ],
-        "2": "You only need an additional login (“Authorization” header) if your instance sits behind an upstream login – the container’s built-in Basic Auth lets the health endpoint through anyway. Check: in Health import, “Last imported” shows the daily values taken over; manual entries are kept, duplicate workouts are detected.",
+        "2": "You only need an additional login (“Authorization” header) if your instance sits behind an upstream login – the container’s built-in Basic Auth lets the health endpoint through anyway. Check: in Health import, “Recently imported (automatic)” shows the daily values taken over; manual entries are kept, duplicate workouts are detected.",
         "3": "Go to Health import"
       }
     },
@@ -199,7 +199,7 @@
       "blocks": {
         "0": "On Android, Health Connect collects the values from your watch and apps. Websites can’t read from it – so a small bridge app on the device sends the data to Cat-O-Fit, for example the open-source “HC Webhook”.",
         "1": [
-          "In Cat-O-Fit, under Health import, “Enable auto-import” and copy the endpoint URL and key.",
+          "In Cat-O-Fit, under Health import, “Switch on auto-import” and copy the endpoint URL and key.",
           "In the bridge app, enter the URL as the webhook address and send the key as the header “X-Catofit-Token” (if that isn’t possible: append “&token=<key>” to the address).",
           "Allow the data types: weight, body fat, lean body mass, resting heart rate, HRV, sleep, steps, active calories, workouts and heart rate. Cycle only if you want it imported – it stays private."
         ],
@@ -213,7 +213,7 @@
         "0": "The most reliable way on iPhone/iPad is the native calendar.",
         "1": [
           "Open a session or the plan and tap the export icon.",
-          "Choose “Entire plan”, “This session” or “Race only”.",
+          "Choose “Complete plan”, “This session” or “Race only”.",
           "The .ics file opens in the iOS calendar – including a reminder 1 hour before and on the evening before."
         ]
       }
@@ -221,13 +221,13 @@
     "fortschritt": {
       "q": "Understanding your progress",
       "blocks": {
-        "0": "Under “Progress” you see at a glance where you stand – right at the top the traffic light “Am I on plan?”.",
+        "0": "Under “Progress” you see at a glance where you stand – right at the top the traffic light “Am I on track?”.",
         "1": [
           "Traffic light (green/amber/red): sums up adherence, load and missed sessions over the last 4 weeks – with reasons.",
           "Plan adherence: how many due sessions you completed in the 4-week window.",
           "Weekly volume & training load: your load over time (7 vs. 28 days).",
           "Missed sessions: by reason – those due to injury or illness don’t count against you.",
-          "Values & goals: weight, circumference, pace, resting heart rate & VO₂max with a trend arrow and “maintain/improve”.",
+          "Metrics & goals: weight, circumference, pace, resting heart rate & VO₂max with a trend arrow and “maintain/improve”.",
           "Training year: a heatmap of the last 12 months (like on GitHub) – the darker a day, the more training time.",
           "Race prediction: a rough estimate of your possible time."
         ],
@@ -265,7 +265,7 @@
     "trainingsplan": {
       "q": "Training plan",
       "blocks": {
-        "0": "The plan for a race or programme: phase timeline, key facts (level, run days, target paces), weekly overview and all sessions. Via “…” at the top you update it from today, set fixed commitments or export it to your calendar."
+        "0": "The plan for a race or programme: phase timeline, key facts (level, run days, target paces), the “Weeks at a glance” overview and all sessions. Via “…” at the top you update it from today, set fixed commitments or export it to your calendar."
       }
     },
     "einheit-ansicht": {
@@ -291,7 +291,7 @@
     "fortschritt-training": {
       "q": "Progress → Training",
       "blocks": {
-        "0": "A traffic light “Am I on plan?”, plan adherence, weekly volume, training-year heatmap, training load, missed sessions by reason, distribution of sessions, values & goals (maintain/improve), race prediction, plus current form and training zones.",
+        "0": "A traffic light “Am I on track?”, plan adherence, weekly volume, training-year heatmap, training load, missed sessions by reason, distribution of sessions, metrics & goals (maintain/improve), race prediction, plus current form and training zones.",
         "1": "Open"
       }
     },
@@ -320,16 +320,16 @@
       }
     },
     "durchgehend": {
-      "q": "Follow along non-stop – with music and announcements",
+      "q": "Follow along non-stop – with music and voice cues",
       "aliases": "workout|workouts|music|announcements|voice|video|session|non-stop|follow along|in one go",
       "blocks": {
         "0": "A whole session in one go – like a video to follow along with: the on-screen instructor demonstrates each exercise to the beat, with a break in between showing a preview, side changes and a rest between rounds. Meant for an iPad or phone on the floor; you don’t have to tap anything.",
         "1": [
           "Start: in a strength or mobility session, tap “Follow along non-stop” – the amounts come from the description (“12×”, “30 s/side”, “3 rounds”) – or, in the Exercise library under “Workouts”, pick one from the catalogue (search and filters for strength, core, mobility, cardio, running & football).",
-          "On the overview, set the rounds and rest, choose music and announcements, then tap “Let’s go”.",
+          "On the overview, set the rounds and rest, choose music and voice cues, then tap “Let’s go”.",
           "Music: a beat that fits the exercise, every movement on the beat; quieter during breaks. “Own music” lets e.g. Spotify keep playing – for that the device must not be on silent.",
-          "Announcements come during the breaks (next exercise, switching sides). During the exercise, tones guide you: three tones before you start, the last three reps or seconds tick, a double tone at “10 seconds left”, a low tone at the end.",
-          "Tapping shows the control bar: pause, back, forward, music and announcements on/off, finish. Tapping the section bar jumps to that section.",
+          "Voice cues come during the breaks (next exercise, switching sides). During the exercise, tones guide you: three tones before you start, the last three reps or seconds tick, a double tone at “10 seconds left”, a low tone at the end.",
+          "Tapping shows the control bar: pause, back, forward, music and voice cues on/off, finish. Tapping the section bar jumps to that section.",
           "At the end all exercises count as done; from a planned session, “Log as done” records them straight away with the duration."
         ],
         "2": "No sound? Turn the volume up. With “Music” you hear it even when the device is on silent; with “Own music” you don’t.",
@@ -350,7 +350,7 @@
         "1": [
           "When you log a value, the “Your lab’s reference range” fields show a typical range only as a grey hint – in the unit you have chosen.",
           "Copy the range from your report. Only what you enter yourself is saved; if you leave it empty, the typical range applies.",
-          "Cat-O-Fit then rates the value against YOUR lab. The sport target corridor remains alongside it as a second layer."
+          "Cat-O-Fit then rates the value against YOUR lab. The sport target range remains alongside it as a second layer."
         ],
         "2": "Up to v3.19.0 the pre-filled default was saved along with the value (and converted incorrectly when you changed the unit). The app recognises such older values and rates them against the typical range again – you don’t need to correct anything.",
         "3": "What is standardised – and what isn’t:"
@@ -359,10 +359,10 @@
     "labor": {
       "q": "Labs & supplements",
       "blocks": {
-        "0": "Log values from your lab report, follow their progress and have them put into a sport context. The point: lab ranges apply to the general population – a ferritin of 25 µg/l is “normal”, but marginal for endurance training. Cat-O-Fit shows you both corridors.",
+        "0": "Log values from your lab report, follow their progress and have them put into a sport context. The point: lab ranges apply to the general population – a ferritin of 25 µg/l is “normal”, but marginal for endurance training. Cat-O-Fit shows you both ranges.",
         "1": [
           "The first time you open it, you get a few short questions to define the scope – they apply to the whole app: Cat-O-Fit is designed for healthy adults. With illness, medication, pregnancy, breastfeeding or an eating disorder, the module stays at pure documentation, without recommendations. The app recognises children and teenagers from the year of birth: their values are only documented, not rated.",
-          "“+ Log value”: analyte, date, measured value and the unit right next to it – for almost every value the units customary in Germany are available (e.g. CRP in mg/l or mg/dl, vitamin D in nmol/l or ng/ml); the app converts and shows the value as it was on the report. If a value is far outside the usual range, it asks: “Is the unit right?”",
+          "“+ Log a value”: analyte, date, measured value and the unit right next to it – for almost every value the units customary in Germany are available (e.g. CRP in mg/l or mg/dl, vitamin D in nmol/l or ng/ml); the app converts and shows the value as it was on the report. If a value is far outside the usual range, it asks: “Is the unit right?”",
           "Magnesium comes as a whole-blood and as a serum value – please choose the matching one. For B12 there are holo-TC and total B12.",
           "Under “Circumstances of the blood draw” you can note hard exercise in the 48 hours before, fasting, biotin and, for women, the cycle day. After hard exercise the app then does not rate CK, urea and CRP, and rates oestradiol only against your lab’s range for the cycle phase.",
           "Tapping a value shows its progress with both ranges (reference dashed, sport target range as an area), the source of the ranges and all measurements – you can edit and delete values there.",
@@ -372,7 +372,7 @@
           "Under “Supplements” you find general information with the reasoning, the usual amount (in line with the BfR maximum levels and the EFSA upper limits), timing and interactions – always the route via food first. A value that is too high never leads to “supplement”, but to the advice to check your intake. For performance products there is a note about batch-tested products (Cologne List).",
           "What you take regularly, you enter under “Your plan” and tick off. Products you only take as needed (e.g. caffeine before races) you mark as such – they don’t count towards adherence."
         ],
-        "2": "At the very top the app estimates your energy supply: whether you eat enough for what you train. The calculation uses only days you have confirmed as “Day complete” in Nutrition, and the result is a range, not a measurement. For this the app needs your fat-free mass – measured (scales, Apple Health) or from a body-fat value from the last four months. Too little energy is a more common problem in endurance sport than a missing supplement – and a frequent cause of declining performance, injuries and cycle disturbances.",
+        "2": "At the very top the app estimates your energy supply: whether you eat enough for what you train. The calculation uses only days you have confirmed with “Mark day complete” in Nutrition, and the result is a range, not a measurement. For this the app needs your fat-free mass – measured (scales, Apple Health) or from a body-fat value from the last four months. Too little energy is a more common problem in endurance sport than a missing supplement – and a frequent cause of declining performance, injuries and cycle disturbances.",
         "3": "Iron is never suggested without a lab value – taken on suspicion it is harmful when stores are full. Cat-O-Fit is for documentation and general information for healthy adults – not a medical device, not a diagnosis: for abnormal values the app explicitly refers you to a doctor. Your values are private: not visible to admins in the app, and the server only releases them after you sign in with your PIN. However, whoever runs the server can read the stored files.",
         "4": "Open"
       }
@@ -383,7 +383,7 @@
       "blocks": {
         "0": "Energy supply estimates whether you eat enough for what you train. Technically it is called energy availability: the energy you eat minus exercise energy expenditure, divided by fat-free mass in kg.",
         "1": [
-          "The calculation uses only days you have confirmed as “Day complete” in Nutrition – until enough days are in, the app says so instead of claiming a shortfall.",
+          "The calculation uses only days you have confirmed with “Mark day complete” in Nutrition – until enough days are in, the app says so instead of claiming a shortfall.",
           "Guideline about 45 kcal per kg of fat-free mass. With a weight-loss goal, 30–45 is acceptable temporarily; below 30 (for men below 25) it becomes critical for hormones, bones and recovery.",
           "Fat-free mass comes from a measurement (scales, Apple Health) or from a body-fat value from the last four months. Because all inputs are estimates, the app shows a range."
         ],
@@ -413,7 +413,7 @@
     "ernaehrung-einkauf": {
       "q": "Nutrition, shopping & checklist",
       "blocks": {
-        "0": "Protein-rich meal ideas with recipe suggestions, a calorie balance for today, an automatic shopping list with pantry stock (from the weekly meal plan) and “Checklist & reminders”: daily routines or appointments with date/time. Appointments also appear automatically in the Calendar (week and month view) and can additionally be exported as .ics – plus templates such as race preparation. Can be switched off in Settings."
+        "0": "Protein-rich meal ideas with recipe suggestions, a calorie balance for today, an automatic shopping list with pantry stock (from the weekly meal plan) and “Checklist” with reminders: daily routines or appointments with date/time. Appointments also appear automatically in the Calendar (week and month view) and can additionally be exported as .ics – plus templates such as race preparation. Can be switched off in Settings."
       }
     },
     "einstellungen": {
@@ -441,8 +441,8 @@
         "0": "Cat-O-Fit uses five zones, derived from your maximum heart rate – optionally with resting heart rate via heart rate reserve (Karvonen) or from your threshold HR (“Threshold”): from performance testing or a 30-minute field test (average HR of the last 20 minutes), zones after Friel. If you don’t know your max HR, the app estimates it in Settings from your age (Tanaka: 208 − 0.7 × age); a measured value is always better.",
         "1": [
           "Z1 Recovery – very easy.",
-          "Z2 Base – “conversational” pace, this is where endurance is built.",
-          "Z3 Tempo – brisk, but controlled.",
+          "Z2 Base endurance – “conversational” pace, this is where endurance is built.",
+          "Z3 Steady tempo – brisk, but controlled.",
           "Z4 Threshold – fast, “comfortably hard”.",
           "Z5 VO₂max – very hard, only briefly."
         ],
@@ -461,9 +461,9 @@
       "blocks": {
         "0": "RPE (1–10) is your subjective perceived exertion. It complements heart rate and pace – especially on days when the numbers “feel different”.",
         "1": [
-          "1–2 very easy to easy – walking, an easy cool-down.",
+          "1–2 very light to light – walking, an easy cool-down.",
           "3–4 easy to moderate – you could chat the whole time.",
-          "5–6 medium to demanding – you can still speak in short sentences.",
+          "5–6 somewhat hard to challenging – you can still speak in short sentences.",
           "7–8 hard to very hard – tempo, intervals, racing over longer distances.",
           "9–10 extremely hard to maximal – sustainable only briefly, a finishing sprint."
         ],
@@ -474,8 +474,8 @@
       "q": "Training load & recovery",
       "blocks": {
         "0": "The statistics show your running kilometres for the last 7 and 28 days – runs only; cycling, walking and swimming don’t count there. If the load rises very quickly, deliberately plan recovery. Cat-O-Fit makes no promises about injury protection, only gives pointers.",
-        "1": "The “Load points · 7 days” figure calculates minutes × effort across all sports – so strength, football, cycling or a friendly match count too, not just the running km. Without a logged duration the planned duration counts, and only then 30 minutes.",
-        "2": "The coach adapts in both directions: if your sessions have been very hard for weeks, the dashboard suggests a recovery week (volume down, fixed dates stay); if they were rather easy and nothing speaks against it, you can increase the coming week a little."
+        "1": "The “Load points · 7 days” figure calculates minutes × effort across all sports – so strength, football, cycling or a practice match count too, not just the running km. Without a logged duration the planned duration counts, and only then 30 minutes.",
+        "2": "The coach adapts in both directions: if your sessions have been very hard for weeks, the dashboard suggests a lighter week (volume down, fixed dates stay); if they were rather easy and nothing speaks against it, you can step up the coming week a little."
       }
     },
     "vdot": {
@@ -485,14 +485,14 @@
         "1": "How to read the card:",
         "2": [
           "The VDOT chip (e.g. “VDOT 41.9”) is your estimated current performance.",
-          "“smoothed over 7 weeks · latest 8.0 km in 38:00 on Wed, 1 July” means: the form is NOT a single run but a smoothed value from your last weeks – each week your best hard run counts (race, tempo, intervals or an effort of 7 or more), more recent weeks count more, and individual outliers are capped. “latest …” names your most recent quality run. Easy runs underestimate your form – if you only run easy, the card says so and does not advise slower paces.",
+          "“smoothed over 7 weeks · latest 8.0 km in 38:00 on Wed 1 Jul” means: the form is NOT a single run but a smoothed value from your last weeks – each week your best hard run counts (race, tempo, intervals or an effort of 7 or more), more recent weeks count more, and individual outliers are capped. “latest …” names your most recent quality run. Easy runs underestimate your form – if you only run easy, the card says so and does not advise slower paces.",
           "So the form does NOT jump after a single very fast (or slow) day – it reflects your stable trend.",
           "Easy / Threshold / Intervals are the paces that match this form.",
-          "The line below compares form and plan, e.g. “Your form is about 7 s/km faster than your plan target paces – time to sharpen them.” If the two match, it says “suit your current form well”."
+          "The line below compares form and plan, e.g. “Your form is about 7 s/km faster than your planned target paces – time to sharpen them.” If the two match, it says “suit your current form well”."
         ],
         "3": "Adapt with one tap:",
         "4": [
-          "Tap “Adapt training zones to your form”.",
+          "Tap “Adjust training zones to your form”.",
           "Cat-O-Fit immediately applies the form paces to your training zones AND to all open, future running sessions in your plan – each session gets the zone for its type (long run → long run, threshold → threshold). With a target time, race pace remains your goal.",
           "Afterwards the card says “suit … well” – form and plan match again."
         ],
@@ -511,9 +511,9 @@
       "blocks": {
         "0": "The coach gives you exactly one recommendation on Today{hi} – in a fixed order, so two cards never contradict each other:",
         "1": [
-          "Warning signs first: a careful return after illness/injury, a recovery day when the load is clearly higher than planned, easier today when readiness is low, easier after a hard-played football match, a recovery week after weeks of very hard sessions.",
-          "Then your plan: separating two sessions on the same day, making up a missed key session, gently making up running km that were left over – never after illness or injury.",
-          "Last, progression (“Still some reserves”) – only without a warning sign, with load in the usual range and not in the 14 days after a lay-off.",
+          "Warning signs first: a gentle comeback after illness/injury, a recovery day when the load is clearly higher than planned, easier today when readiness is low, easier after football when the match was hard-played, a lighter week after weeks of very hard sessions.",
+          "Then your plan: spread out the day (two sessions on the same day), make up the key session you missed, balance weekly volume (gently making up running km that were left over) – never after illness or injury.",
+          "Last, progression (“More in the tank”) – only without a warning sign, with load in the usual range and not in the 14 days after a lay-off.",
           "Below that, information without a verdict of its own: readiness (HRV, resting heart rate, sleep), form forecast, heart rate on easy runs, effort of recent sessions (average RPE)."
         ],
         "2": "“Why this recommendation?” below the card shows what else would have fitted. Training according to plan is not a warning sign, and the coach never touches fixed dates. Changes to the plan only happen when you trigger them."
@@ -525,7 +525,7 @@
         "0": "The “Load & form” card on Today summarises your training load – across all sports (running, strength, football …), calculated as load points (AU): minutes × effort (RPE 1–10).",
         "1": [
           "Load ratio (ACWR) – your last 7 days in relation to the average of the 21 days before (decoupled: the acute days are not included in their own reference value). 0.8–1.3 means: close to your average.",
-          "Fitness / fatigue / form – long-term fitness (CTL) minus short-term fatigue (ATL) gives your form (TSB), classified relative to fitness: fresh (above +10 %), balanced, in training (down to −30 %), clearly fatigued. During the first roughly three months the fitness curve is still settling in – until then there is no rating.",
+          "Fitness / fatigue / form – long-term fitness (CTL) minus short-term fatigue (ATL) gives your form (TSB), classified relative to fitness: fresh (above +10 %), balanced, in training (down to −30 %), clearly tired. During the first roughly three months the fitness curve is still settling in – until then there is no rating.",
           "Monotony & strain – a notice only when uniform training days coincide with a week clearly above your average; very light activity doesn’t count."
         ],
         "2": "Limits of the metric: the values 0.8/1.3/1.5 come from observational data in team sports. That training according to this traffic light prevents injuries is not proven – take it as a pointer to how much your load has risen compared with your own average. These values also feed the automatic recovery day."
@@ -571,15 +571,15 @@
       }
     },
     "feste-termine": {
-      "q": "Planning around fixed appointments (football & matches)",
+      "q": "Planning around fixed commitments (football & matches)",
       "blocks": {
-        "0": "You enter recurring fixed appointments once – the training plan then arranges itself around them. New plans have no default appointments; the app asks about them when you create one. If the same appointment is in two plans, it only appears once per day.",
+        "0": "You enter recurring fixed commitments once – the training plan then arranges itself around them. New plans have no default commitments; the app asks about them when you create one. If the same commitment is in two plans, it only appears once per day.",
         "1": [
           "Choose your football training days (e.g. Mon & Wed) and give the duration and intensity (light/normal/intense).",
           "Add recurring matches with a start date (e.g. “from 19 Aug, every Sunday, 2 h”) – they count as hard load.",
-          "On a match day the planned session drops out; the week is planned around the fixed appointments."
+          "On a match day the planned session drops out; the week is planned around the fixed commitments."
         ],
-        "2": "Football is HIIT-like and costs a lot of energy: from “normal” upwards, a football day counts as a demanding day (it feeds fully into load & form). The plan never puts a quality session or long run directly next to a demanding appointment – if there is no quiet day, the quality session becomes “Easy with strides”. If you played hard and a tough session is still coming up afterwards, the coach suggests taking it more easily."
+        "2": "Football is HIIT-like and costs a lot of energy: from “normal” upwards, a football day counts as a demanding day (it feeds fully into load & form). The plan never puts a quality session or long run directly next to a demanding commitment – if there is no quiet day, the quality session becomes “Easy with strides”. If you played hard and a tough session is still coming up afterwards, the coach suggests taking it more easily."
       }
     },
     "erholungstag": {
@@ -600,7 +600,7 @@
       "blocks": {
         "0": "The week check in the plan shows when too much overlaps in a week – and the order in which Cat-O-Fit triages.",
         "1": [
-          "Fixed appointments (football/matches) come first.",
+          "Fixed commitments (football/matches) come first.",
           "Then the key runs (tempo/intervals, long run).",
           "After that strength, and finally extra volume.",
           "Preview (what-if): before you add or move a session, the app shows the effect on the weekly load."
@@ -651,7 +651,7 @@
     "vorlieben": {
       "q": "How does Cat-O-Fit learn my preferences?",
       "blocks": {
-        "0": "In Nutrition you mark favourite dishes with ♥ and tap “Cooked” after cooking. From that, Cat-O-Fit learns which tags (e.g. high-protein, vegetarian) you prefer and suggests matching dishes under “For you”.",
+        "0": "In Nutrition you mark favourite dishes with ♥ and tap “Cooked” after cooking. From that, Cat-O-Fit learns which tags (e.g. high-protein, vegetarian) you prefer and suggests matching dishes under “Recommended for you”.",
         "1": "The daily checklist also remembers what you use often and offers it as a quick add."
       }
     },
@@ -660,14 +660,14 @@
       "blocks": {
         "0": "At the top of Nutrition you see your daily balance: energy used versus energy taken in.",
         "1": [
-          "Used = basal metabolic rate (from height, weight, birth year, sex) + everyday activity + today’s training.",
+          "Used = basal metabolic rate (from height, weight, year of birth, sex) + everyday activity + today’s training.",
           "Taken in = the entries in your food diary for today. “Cooked” and “Log what you ate” write into it; “Eaten today” lists them (each can be deleted individually).",
           "The daily target is based on your target weight (lose/maintain/gain) – calculated with the weekly average of your scale, not a single measurement. Within 0.5 kg of the target counts as “maintain”; if you drop below a weight-loss target you get “maintain”, never automatically “gain”.",
           "When losing weight, the daily target stays above your basal metabolic rate and above your training needs. If your target weight is below a BMI of 18.5, the app calculates no deficit.",
-          "Once you have logged everything for the day, tap “Day complete” under “Eaten today” – only such days count towards energy availability in the labs module."
+          "Once you have logged everything for the day, tap “Mark day complete” under “Eaten today” – only such days count towards energy availability in the labs module."
         ],
         "2": "When you create a meal, the “estimate” button roughly estimates the kcal from the ingredients. Everything is meant as a guide – not diet advice.",
-        "3": "For the balance you need height, weight and birth year in your profile; sex makes the basal metabolic rate more accurate."
+        "3": "For the balance you need height, weight and year of birth in your profile; sex makes the basal metabolic rate more accurate."
       }
     },
     "eignung": {
@@ -677,7 +677,7 @@
         "1": [
           "Illness or medication: labs and supplements for documentation only, with no recommendations.",
           "Pregnancy, breastfeeding or an eating disorder: in addition, no weight-loss or deficit goals and no weight-loss programme.",
-          "Under 18 (from the birth year): child and youth profile – no calorie or weight goals, no weight-loss programme, no performance supplements, lab values documented only, calorie figures hidden.",
+          "Under 18 (from the year of birth): child and youth profile – no calorie or weight goals, no weight-loss programme, no performance supplements, lab values documented only, calorie figures hidden.",
           "“Hide calorie figures” hides kcal figures in Nutrition, on “Today” and in energy availability – for anyone who doesn’t feel good about numbers around eating."
         ],
         "2": "Until the scope check has been answered, the app suggests no weight-loss deficit. The questions are deliberately not pre-filled.",
@@ -691,7 +691,7 @@
         "1": [
           "Each member plans dishes with portions for the week in Nutrition (basket icon).",
           "Cat-O-Fit pulls all the planned dishes together, adds up the ingredients (e.g. oats from several people into one amount) and subtracts the shared pantry – the list shows exactly what you need.",
-          "When you shop, tap “All bought”: the amounts move into the shared pantry. “Cooked” deducts them again."
+          "When you shop, tap “Bought everything → add to pantry”: the amounts move into the shared pantry. “Cooked” deducts them again."
         ],
         "2": "The shopping day applies to everyone and is set by admins in the team/family management (default Tuesday).",
         "3": "Go to the shopping list"
@@ -743,8 +743,8 @@
       "blocks": {
         "0": "Yes! Cat-O-Fit is for your whole team or family (up to 32 people). At start-up the sign-in appears – tap your tile and enter your PIN.",
         "1": "Each member has their own plans, training, body stats and settings.",
-        "2": "Admins manage the team or family (More → “Manage team”: add members, roles, teams, shopping day) and can “open” a member, e.g. to plan for children or the team – the top of the screen then reads “You are managing …” with “Back to me”. Cycle, labs and supplements always stay private in the process. Adding members, changing roles and removing them only work with a connection to the server.",
-        "3": "In Settings → Account you decide whether your main goal and your figures are visible in the shared dashboard – hidden goals appear there as “🔒 private”.",
+        "2": "Admins manage the team or family (More → “Manage team”: add members, roles, teams, shopping day) and can “Open” a member, e.g. to plan for children or the team – the top of the screen then reads “You are managing …” with “Back to me”. Cycle, labs and supplements always stay private in the process. Adding members, changing roles and removing them only work with a connection to the server.",
+        "3": "In Settings → Visibility on the team/family dashboard you decide whether your main goal and your figures are shown – hidden goals appear on the dashboard as “🔒 private”.",
         "4": "Newly added members start with the PIN “0000”; until they set their own in Settings → Account (using the previous PIN), “Today” reminds them. Forgotten your PIN? An admin opens the member and sets a new one under Settings → Account. If the only admin has forgotten their PIN, the only help is working on the server itself (see Troubleshooting).",
         "5": "Go to the team/family dashboard"
       }
@@ -753,8 +753,8 @@
       "q": "Forming teams, assigning members and evaluating per team",
       "blocks": {
         "0": "Besides the whole family, as an admin you can form teams – e.g. “Team Red”, “Team Blue”, “Team Green”. A member can be in SEVERAL teams at once, and some stay without any team at all.",
-        "1": "You create teams under More → “Manage team”: “Create team”, choose a name and symbol and assign the members with ticks. To change teams, simply move the ticks – that’s how you take someone out of one team and put them into another (or additionally into a second).",
-        "2": "On the team/family dashboard you switch at the top between “All”, the individual teams and “No team”. All figures – weekly kilometres, monthly km & milestone, “active this week” and the team badges – are then added up for exactly the members of the chosen team.",
+        "1": "You create teams under More → “Manage team”: “Create team”, choose a name and icon and assign the members with ticks. To change teams, simply move the ticks – that’s how you take someone out of one team and put them into another (or additionally into a second).",
+        "2": "On the team/family dashboard you switch at the top between “All”, the individual teams and “No team”. All figures – weekly kilometres, monthly km & milestone, “Active this week” and the team badges – are then added up for exactly the members of the chosen team.",
         "3": "A member in two teams counts in both – handy if someone is, say, in the running group AND the football team.",
         "4": "If a member is removed, they disappear automatically from all teams – no “ghosts” are left behind.",
         "5": "Manage teams"
@@ -808,7 +808,7 @@
       "blocks": {
         "0": [
           "The server’s “data” folder is the complete backup – all people, including cycle, labs and supplements. It belongs in the regular backup of the server (e.g. Hyper Backup on the Synology).",
-          "Full backup (admins only, Settings → Data & backup): all members, roles, teams, reports and training data – without the private areas.",
+          "Full family backup (admins only, Settings → Data & backup): all members, roles, teams, reports and training data – without the private areas.",
           "My backup (everyone): your own data including cycle, labs and supplements. On iPhone and iPad via the Share menu (“Save to Files”)."
         ],
         "1": "The tried-and-tested 3-2-1 rule: three copies, on two different media, one of them off-site. The full backup doesn’t replace backing up the server folder – otherwise, after losing the server, the private areas of everyone without their own backup would be missing.",
@@ -824,7 +824,7 @@
           "Status stays “Offline”: is the server reachable on your home network (Wi-Fi, VPN)? Changes stay on the device and go out automatically as soon as the server answers – nothing is lost. “Sync now” in Settings → Data & backup triggers it by hand.",
           "“Please confirm your PIN”: the sign-in to the server has expired or is needed again after an update. With your PIN, cycle, labs and supplements are synced again; “Later” postpones it until the next time you open the app.",
           "Forgotten PIN: an admin opens the member and sets a new PIN under Settings → Account. For the only admin there is a tool for running the server (docs “Troubleshooting”).",
-          "“The app couldn’t start”: usually the server doesn’t deliver a file, or delivers it with the wrong file type (for instance after an incomplete update). The message names the file concerned; the operations docs explain the causes.",
+          "“The app could not start”: usually the server doesn’t deliver a file, or delivers it with the wrong file type (for instance after an incomplete update). The message names the file concerned; the operations docs explain the causes.",
           "Health import reports an error: 401 means wrong key, 403 missing key – copy the key again in Health import."
         ]
       }
@@ -847,7 +847,7 @@
           "Momentum – your drive from the last few weeks; pauses during illness.",
           "Planned vs actual – comparison of the plan with the training you actually did.",
           "Readiness – daily score from resting heart rate, HRV and sleep compared with your last two weeks.",
-          "RPE (effort) – how hard a session was, from 1 (very easy) to 10 (maximal).",
+          "RPE (effort) – how hard a session was, from 1 (very light) to 10 (maximal).",
           "Session – a planned training in the plan; training – what you actually did.",
           "Tapering – the weeks before a race with less volume so you start fresh.",
           "VDOT – fitness value after Jack Daniels; forecast and training paces come from it."
@@ -855,5 +855,5 @@
       }
     }
   },
-  "labBest": "best match"
+  "labBest": "best fit"
 }

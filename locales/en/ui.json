@@ -456,7 +456,7 @@
       "short": "Tempo"
     },
     "interval": {
-      "label": "Intervals (VO2)",
+      "label": "Intervals (VO₂)",
       "short": "Int."
     },
     "race": {
@@ -576,7 +576,7 @@
     "light": "light",
     "easy": "easy",
     "moderate": "moderate",
-    "medium": "somewhat hard",
+    "medium": "medium",
     "challenging": "challenging",
     "hard": "hard",
     "veryHard": "very hard",
@@ -1564,7 +1564,7 @@
     "zoneMarathon": "Marathon race pace",
     "zoneHalf": "Half-marathon race pace",
     "zoneThreshold": "Threshold / tempo",
-    "zoneVo2": "Intervals (VO2max)",
+    "zoneVo2": "Intervals (VO₂max)",
     "racePace": "Race pace"
   },
   "dashboard": {
@@ -1979,7 +1979,7 @@
       },
       "peak": {
         "name": "Peak",
-        "focus": "VO2max & race pace"
+        "focus": "VO₂max & race pace"
       },
       "taper": {
         "name": "Taper",
@@ -2043,14 +2043,14 @@
       "desc": "Race-pace specific: {warm} easy warm-up, then {n}×3 km at your target half-marathon pace with 2 min easy jogging after each. {cool} cool-down. The pace should feel controlled – the way you want to hold it for 21 km on race day."
     },
     "vo2": {
-      "intervalsTitle": "VO2max intervals {n}×800 m",
+      "intervalsTitle": "VO₂max intervals {n}×800 m",
       "desc800": "{warm} warm-up. Then {n}×800 m hard (Z5 – only single words possible) at your target pace, with ~2:30 min very easy jogging in between. {cool} cool-down. Keep all intervals at the same speed – better even than a first one that’s too fast.",
-      "title": "VO2max {n}×{m} m",
+      "title": "VO₂max {n}×{m} m",
       "desc400": "{warm} warm-up. Then {n}×400 m fast (Z5) around your 5 km race pace, with ~90 s very easy jogging in between. {cool} cool-down. Short, sharp, clean – the speed for your 5 km race.",
       "desc1000": "{warm} warm-up. {n}×1000 m hard (Z5) at 5–10 km pace, with ~2:30 min easy jogging in between. {cool} cool-down. Stay even all the way."
     },
     "pyramid": {
-      "title": "VO2max pyramid {seq} min",
+      "title": "VO₂max pyramid {seq} min",
       "desc": "{warm} warm-up. Then a pyramid: {seq} min hard (Z5) with 90 s very easy jogging after each. The {peak}-minute step in the middle is the high point – hold it evenly, don’t overdo it. {cool} cool-down."
     },
     "pace10k": {
@@ -3573,7 +3573,7 @@
       "other": "Your period has been missing for {count} weeks."
     },
     "shortDate": "{dd}/{mm}",
-    "eaConfirm": "Fully confirmed: {confirmed} of {days} days with meals. In Nutrition, tap “Day complete” under “Eaten today” once you’ve logged everything – from {minDays} confirmed days Cat-O-Fit estimates your energy supply. Incomplete days would make it come out too low.",
+    "eaConfirm": "Fully confirmed: {confirmed} of {days} days with meals. In Nutrition, tap “Mark day complete” under “Eaten today” once you’ve logged everything – from {minDays} confirmed days Cat-O-Fit estimates your energy supply. Incomplete days would make it come out too low.",
     "eaCritical": "Note: by the numbers you have about {ea} kcal per kg of lean mass ({approx}) left – not much for your training. Over time that can lead to a drop in performance, injuries, and hormone and cycle problems. Eat more rather than looking for a supplement – and talk to a doctor.",
     "eaLossBand": "About {ea} kcal per kg of lean mass ({approx}) – within the range that is acceptable for a while when losing weight ({low}–{optimal}). Look after your sleep and recovery; below that it gets risky.",
     "eaLow": "About {ea} kcal per kg of lean mass ({approx}) – below the guideline of {optimal}. In hard training phases you should deliberately eat more, otherwise recovery and the quality of your sessions suffer.",
@@ -3702,7 +3702,7 @@
     "base": "Base endurance",
     "steady": "Steady tempo",
     "threshold": "Threshold",
-    "vo2max": "VO2max"
+    "vo2max": "VO₂max"
   },
   "goals": {
     "weight": "Weight",
@@ -4153,7 +4153,7 @@
     },
     "eaRange": "kcal per kg fat-free mass (range {low}–{high}) · guideline value {target}",
     "eaBasis": "From {days} fully logged days: avg. {intake} kcal eaten, avg. {training} kcal for training ({trainingSource}), {ffm} kg fat-free mass ({ffmSource}).",
-    "eaPlainUnclear": "Too few fully logged days to assess ({days} of {total}). In Nutrition, confirm “Day complete” once you have logged everything.",
+    "eaPlainUnclear": "Too few fully logged days to assess ({days} of {total}). In Nutrition, confirm “Mark day complete” once you have logged everything.",
     "cost": "Cost: {cost}",
     "counts": "{measurements} on {dates} · latest {last}",
     "valuesDocumented": {
