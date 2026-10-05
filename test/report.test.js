@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { monthRange, aggregateSessions, buildMonthReport, buildEventReport, buildGoalReport } from '../js/report.js';
 
-const profile = { name: 'Nora', targetWeightKg: 65 };
+const profile = { name: 'Robin', targetWeightKg: 65 };
 
 test('monthRange: month boundaries and label', () => {
   assert.deepEqual(monthRange('2026-06'), { from: '2026-06-01', to: '2026-06-30', label: 'Juni 2026' });
@@ -36,7 +36,7 @@ test('buildMonthReport: structure, master data, values section', () => {
   const r = buildMonthReport({ profile, sessions, plans: [], health, events: [], monthStr: '2026-06', today: '2026-06-29' });
   assert.equal(r.type, 'month');
   assert.match(r.title, /Juni 2026/);
-  assert.equal(r.subject.name, 'Nora');
+  assert.equal(r.subject.name, 'Robin');
   const training = r.sections.find((s) => s.heading === 'Training');
   assert.ok(training.items.some((i) => i.label === 'Trainingseinheiten' && i.value === '2'));
   const weight = r.sections.find((s) => s.heading === 'Körpergewicht');
@@ -82,8 +82,8 @@ test('buildGoalReport: certificate with master data', () => {
   const r = buildGoalReport({ profile, goalTitle: 'Zielgewicht 65 kg erreicht', goalDetail: 'von 72 auf 65 kg', date: '2026-06-29' });
   assert.equal(r.type, 'goal');
   assert.equal(r.certificate, true);
-  assert.equal(r.subject.name, 'Nora');
-  assert.match(r.verdict, /Nora/);
+  assert.equal(r.subject.name, 'Robin');
+  assert.match(r.verdict, /Robin/);
   assert.match(r.verdict, /Zielgewicht/);
 });
 

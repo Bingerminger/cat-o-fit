@@ -103,7 +103,7 @@ test('Sync: own records with a server rev do not trigger a redraw, changes from 
   const srv = globalThis.__fakeServer.install();
   try {
     store.clearActiveUser();
-    store.saveFamily({ members: [{ id: 'u-1', name: 'Nora', role: 'admin', createdAt: '2026-01-01T00:00:00Z' }], settings: {}, pantry: [], teams: [] });
+    store.saveFamily({ members: [{ id: 'u-1', name: 'Robin', role: 'admin', createdAt: '2026-01-01T00:00:00Z' }], settings: {}, pantry: [], teams: [] });
     await store.login('u-1', '');
     await store.syncNow();
     const events = [];

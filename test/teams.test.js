@@ -6,7 +6,7 @@ import { filterTeamMembers, teamlessMembers, teamMonthKm } from '../js/teamstats
 // Fresh family (admin + members) before each test – saveFamily also cleans up teams.
 beforeEach(async () => {
   store.saveFamily({ members: [
-    { id: 'u-1', name: 'Nora', role: 'admin' },
+    { id: 'u-1', name: 'Robin', role: 'admin' },
     { id: 'u-2', name: 'Max', role: 'user' },
     { id: 'u-3', name: 'Henriette', role: 'admin' },
     { id: 'u-4', name: 'Horst', role: 'user' },
@@ -19,7 +19,7 @@ test('addTeam / teams / teamMembers resolved', () => {
   const t = store.addTeam({ name: 'Rot', memberIds: ['u-1', 'u-2'] });
   assert.ok(t && t.id);
   assert.equal(store.teams().length, 1);
-  assert.deepEqual(store.teamMembers(t.id).map((m) => m.name).sort(), ['Max', 'Nora']);
+  assert.deepEqual(store.teamMembers(t.id).map((m) => m.name).sort(), ['Max', 'Robin']);
 });
 
 test('Multiple membership: Henriette in two teams', () => {

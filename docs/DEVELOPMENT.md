@@ -533,10 +533,12 @@ The app itself speaks seven languages (`de`, `en`, `fr`, `es`, `it`, `pt-BR`, `n
    `js/helpcontent.js`, texts in `locales/<lang>/help.json`). New or changed UI texts go into the
    catalogs of every language (see “Translations” above).
 7. Re-render the documentation images: `node tools/render-screenshots.mjs` (once
-   `npm install --no-save playwright`). The script starts a fresh instance with an empty `data/`,
-   a fixed demo day and the persona “Alex” and writes all images to `docs/assets` (individual ones with
-   `--only 05,16`, the banner with `--only promo`); the images are kept per language in `docs/assets/de/` and
-   `docs/assets/en/` under identical names. Texts that quote values from the images –
+   `npm install --no-save playwright`). For each language the script starts a fresh instance with an
+   empty `data/`, a fixed demo day and the persona “Alex”, and writes the images to
+   `docs/assets/<lang>/` under identical names (`--lang en|de|all`, default all; individual images with
+   `--only 05,16`, the promo images with `--only promo`: `docs/assets/promo/banner.png`, `banner.de.png`
+   and `social-preview.png`). Buttons and fields are found through the catalogs, so a renamed label
+   needs no change in the script. Texts that quote values from the images –
    “Current form” in `docs/usage/coach-and-load.md`, the ferritin example in
    `docs/usage/labs.md` (and their German copies under `docs/de/usage/`) – must be proofread afterwards.
 

@@ -13,7 +13,7 @@ let root;
 beforeEach(async () => {
   localStorage.clear();
   store.clearActiveUser();
-  store.saveFamily({ members: [{ id: 'u-1', name: 'Nora', role: 'admin' }], settings: {}, pantry: [] });
+  store.saveFamily({ members: [{ id: 'u-1', name: 'Robin', role: 'admin' }], settings: {}, pantry: [] });
   await store.login('u-1', '');
   document.body.childNodes = [];
   root = new MiniNode('div');

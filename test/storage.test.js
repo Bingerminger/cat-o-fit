@@ -7,7 +7,7 @@ import * as store from '../js/storage.js';
 
 beforeEach(() => {
   store.clearActiveUser();
-  store.saveFamily({ members: [{ id: 'u-1', name: 'Nora', role: 'admin' }], settings: {} });
+  store.saveFamily({ members: [{ id: 'u-1', name: 'Robin', role: 'admin' }], settings: {} });
 });
 
 test('ARRAY_AREAS covers exactly all list areas (only profile is an object)', () => {
@@ -30,7 +30,7 @@ test('exportAll carries the app identifier, version and user context', async () 
   assert.equal(dump.app, 'catofit');
   assert.equal(typeof dump.version, 'number');
   assert.equal(dump.user, 'u-1');
-  assert.equal(dump.userName, 'Nora');
+  assert.equal(dump.userName, 'Robin');
 });
 
 test('Export/import round trip restores data', async () => {
@@ -96,7 +96,7 @@ test('exportAll leaves out private areas (cycle) when managing other members', a
 });
 
 test('exportAll includes the cycle for the person themselves', async () => {
-  store.saveFamily({ members: [{ id: 'u-1', name: 'Nora', role: 'admin' }], settings: {} });
+  store.saveFamily({ members: [{ id: 'u-1', name: 'Robin', role: 'admin' }], settings: {} });
   await store.login('u-1', '');
   store.upsert('cycle', { id: 'c2', startDate: '2026-06-01' });
   const dump = store.exportAll();

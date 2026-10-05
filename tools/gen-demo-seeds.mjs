@@ -27,7 +27,7 @@ const d = buildDemo(REF);
 
 // Profile as a flat object incl. settings (bootstrap copies it 1:1 to u-1).
 const profile = {
-  id: 'profile', name: 'Nora', ...d.profile, settings: d.settings,
+  id: 'profile', name: 'Robin', ...d.profile, settings: d.settings,
   createdAt: now, updatedAt: now,
 };
 

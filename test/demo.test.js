@@ -91,13 +91,13 @@ test('buildDemo: 3 teams – Henriette in 2 teams, Horst in none', () => {
   const inTeams = (name) => d.teams.filter((t) => t.memberNames.includes(name)).length;
   assert.equal(inTeams('Henriette'), 2, 'Henriette in two teams (multiple membership)');
   assert.equal(inTeams('Horst'), 0, 'Horst stays without a team');
-  assert.ok(d.teams.some((t) => t.memberNames.includes('__self__')), 'admin (Nora) is in a team');
+  assert.ok(d.teams.some((t) => t.memberNames.includes('__self__')), 'admin (Robin) is in a team');
   assert.ok(d.teams.every((t) => t.name && t.memberNames.length >= 3));
 });
 
 test('buildDemo: the admin AND every woman have cycle data – each their own, unique (private)', () => {
   const d = buildDemo(TODAY);
-  assert.ok(Array.isArray(d.self.cycle) && d.self.cycle.length >= 1, 'admin (Nora) has own cycle data');
+  assert.ok(Array.isArray(d.self.cycle) && d.self.cycle.length >= 1, 'admin (Robin) has own cycle data');
   const women = d.members.filter((m) => m.sex === 'w');
   const men = d.members.filter((m) => m.sex === 'm');
   assert.ok(women.length >= 4, 'several female members');

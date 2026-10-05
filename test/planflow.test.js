@@ -53,7 +53,7 @@ test('suggestOffsetUnit: suggests the same load class in the same week', () => {
     { id: 'tempo1', date: WED, type: 'tempo', status: 'geplant' },
     { id: 'done', date: FRI, type: 'easy', status: 'erledigt' }, // done -> cannot be deselected
   ];
-  // Nora adds an extra run (endurance) on Sunday
+  // Robin adds an extra run (endurance) on Sunday
   const neu = { id: 'neu', date: SUN, type: 'easy', status: 'geplant' };
   const offset = suggestOffsetUnit(units, neu);
   assert.equal(offset.id, 'easy1'); // the open base run, not the done/quality unit

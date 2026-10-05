@@ -221,7 +221,7 @@ test('plans.render: week check shows a collision (R3 triage, without a crash)', 
 
 test('dashboard.render: R4 goal cockpit (dual goal HM + weight loss)', () => {
   const today = todayStr();
-  store.setProfile({ name: 'Nora', weightKg: 72, targetWeightKg: 65, heightCm: 170, birthYear: 1990, sex: 'w' });
+  store.setProfile({ name: 'Robin', weightKg: 72, targetWeightKg: 65, heightCm: 170, birthYear: 1990, sex: 'w' });
   store.replaceArea('health', [{ id: 'h1', date: addDays(today, -2), weight: 70 }]);
   store.replaceArea('events', [{ id: 'e1', name: 'Stadtlauf Halbmarathon', date: addDays(today, 60), distanceKm: 21.0975, kind: 'race', targetTime: '01:55:00' }]);
   store.replaceArea('sessions', [

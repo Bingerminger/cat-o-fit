@@ -57,7 +57,7 @@ beforeEach(() => { localStorage.clear(); installMock(); store.clearActiveUser();
 afterEach(() => { globalThis.fetch = realFetch; });
 
 test('Storage keys carry the environment namespace (no flat catofit:<user>:<area>)', async () => {
-  store.saveFamily({ members: [{ id: 'u-1', name: 'Nora', role: 'admin' }], settings: {}, pantry: [] });
+  store.saveFamily({ members: [{ id: 'u-1', name: 'Robin', role: 'admin' }], settings: {}, pantry: [] });
   await store.login('u-1', '');
   store.upsert('events', { id: 'e1', name: 'Stadtlauf' });
 
@@ -68,7 +68,7 @@ test('Storage keys carry the environment namespace (no flat catofit:<user>:<area
 });
 
 test('resetApp deletes ONLY its own environment – foreign namespaces remain', async () => {
-  store.saveFamily({ members: [{ id: 'u-1', name: 'Nora', role: 'admin' }], settings: {}, pantry: [] });
+  store.saveFamily({ members: [{ id: 'u-1', name: 'Robin', role: 'admin' }], settings: {}, pantry: [] });
   await store.login('u-1', '');
   store.upsert('events', { id: 'e1', name: 'X' });
 
@@ -86,12 +86,12 @@ test('resetApp deletes ONLY its own environment – foreign namespaces remain', 
 test('createFirstAdmin creates NO second admin if the server already has a family', async () => {
   // The server already has an admin (e.g. created on another device).
   const fam = srv(key('family', 'family', null));
-  fam.records['u-existing'] = { id: 'u-existing', _kind: 'member', name: 'Nora', role: 'admin', createdAt: '2026-06-01T10:00:00Z', rev: ++fam.rev };
+  fam.records['u-existing'] = { id: 'u-existing', _kind: 'member', name: 'Robin', role: 'admin', createdAt: '2026-06-01T10:00:00Z', rev: ++fam.rev };
 
   // Locally the family is still empty (the pull had not finished at boot).
-  const id = await store.createFirstAdmin({ name: 'Nora-Doppel', pin: '1234' });
+  const id = await store.createFirstAdmin({ name: 'Robin-Doppel', pin: '1234' });
 
   assert.equal(id, null, 'no new admin created');
   const names = store.members().map((m) => m.name);
-  assert.deepEqual(names, ['Nora'], 'only the existing server admin, no duplicate');
+  assert.deepEqual(names, ['Robin'], 'only the existing server admin, no duplicate');
 });

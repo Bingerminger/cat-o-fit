@@ -19,7 +19,7 @@ beforeEach(async () => {
   store.clearActiveUser();
   store.saveFamily({
     members: [
-      { id: 'u-1', name: 'Nora', role: 'admin', createdAt: '2026-01-01T00:00:00Z' },
+      { id: 'u-1', name: 'Robin', role: 'admin', createdAt: '2026-01-01T00:00:00Z' },
       { id: 'u-2', name: 'Kind', role: 'user', createdAt: '2026-01-02T00:00:00Z' },
     ],
     settings: {}, pantry: [], teams: [],
@@ -200,7 +200,7 @@ test('FE-16/API-06: restore waits for the server, reports what is pending and ov
   srv.opts.failWhen = (u) => (u.searchParams.get('action') === 'ops' && u.searchParams.get('user') === 'u-2' ? 500 : null);
   const dump = {
     app: 'catofit', kind: 'family-full', version: 1,
-    family: { members: [{ id: 'u-1', name: 'Nora', role: 'admin' }, { id: 'u-2', name: 'Kind', role: 'user' }], settings: {}, pantry: [], teams: [] },
+    family: { members: [{ id: 'u-1', name: 'Robin', role: 'admin' }, { id: 'u-2', name: 'Kind', role: 'user' }], settings: {}, pantry: [], teams: [] },
     users: { 'u-1': { events: [{ id: 'e-bak' }] }, 'u-2': { sessions: [{ id: 's-bak' }] } },
   };
   const res = await store.importFamilyAll(dump);

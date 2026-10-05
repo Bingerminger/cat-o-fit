@@ -68,7 +68,7 @@ beforeEach(async () => {
   localStorage.clear();
   installMock(true);
   store.clearActiveUser();
-  store.saveFamily({ members: [{ id: 'u-1', name: 'Nora', role: 'admin' }], settings: {}, pantry: [] });
+  store.saveFamily({ members: [{ id: 'u-1', name: 'Robin', role: 'admin' }], settings: {}, pantry: [] });
   await store.login('u-1', '');
 });
 afterEach(() => { globalThis.fetch = realFetch; });
@@ -107,7 +107,7 @@ test('Several profile upserts before the push: newest fields remain (regression 
   // BEFORE pushing. Since v3.20.0 the queue compacts ops of the same record:
   // exactly ONE profile op with all fields remains (previously three, and the server
   // returned several 'profile' records, of which the first wrongly won).
-  store.setProfile({ name: 'Nora' });
+  store.setProfile({ name: 'Robin' });
   store.setSetting('location', { name: 'Dresden', lat: 51.05, lon: 13.74 });
   store.setSetting('weather', true);
   const meta = JSON.parse(localStorage.getItem(scopeKey('u-1:__meta')) || '{}');
@@ -116,7 +116,7 @@ test('Several profile upserts before the push: newest fields remain (regression 
   await store.syncNow();
   assert.equal(store.settings().location?.name, 'Dresden', 'location survives the sync');
   assert.equal(store.settings().weather, true, 'weather survives the sync');
-  assert.equal(store.profile().name, 'Nora');
+  assert.equal(store.profile().name, 'Robin');
 });
 
 test('Tombstone propagates: remote delete removes the record locally', async () => {
@@ -147,5 +147,5 @@ test('Family: two admins each add a member -> no silent loss', async () => {
   f.records['u-other'] = { id: 'u-other', _kind: 'member', name: 'Kind B', role: 'user', createdAt: '2026-06-29T20:00:00Z', rev: ++f.rev };
   await store.refreshFamily();
   const names = store.members().map((m) => m.name).sort();
-  assert.ok(names.includes('Kind A') && names.includes('Kind B') && names.includes('Nora'), `both children + Nora expected, was: ${names}`);
+  assert.ok(names.includes('Kind A') && names.includes('Kind B') && names.includes('Robin'), `both children + Robin expected, was: ${names}`);
 });

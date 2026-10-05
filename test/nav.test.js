@@ -30,7 +30,7 @@ const item = (label) => MORE_GROUPS.flatMap((g) => g.items).find((i) => i.label 
 async function family({ manage = false } = {}) {
   store.clearActiveUser();
   store.saveFamily({ members: [
-    { id: 'u-1', name: 'Nora', role: 'admin', emoji: '🏃', color: '#18b48a' },
+    { id: 'u-1', name: 'Robin', role: 'admin', emoji: '🏃', color: '#18b48a' },
     { id: 'u-2', name: 'Lea', role: 'user', emoji: '🧒', color: '#ff5d8f' },
   ], settings: {} });
   await store.login('u-1', '');
@@ -64,7 +64,7 @@ test('Visibility: switched-off modules and "Manage team" only for admins', async
   store.setSetting('modules', { nutrition: false });
   const labels = visibleGroups().flatMap((g) => g.items.map((i) => i.label));
   assert.ok(!labels.includes('Ernährung'));
-  assert.ok(labels.includes('Team verwalten'), 'Nora is an admin');
+  assert.ok(labels.includes('Team verwalten'), 'Robin is an admin');
   store.clearActiveUser();
   await store.login('u-2', '');
   assert.ok(!visibleGroups().flatMap((g) => g.items.map((i) => i.label)).includes('Team verwalten'));
@@ -81,13 +81,13 @@ test('Managing: cycle and labs disappear from More and Capture', async () => {
 
 test('The account header shows the SIGNED-IN person and, while managing, the way back (UI-02)', async () => {
   let block = accountBlock({ onBack: () => {} });
-  assert.match(block.textContent, /Nora/);
+  assert.match(block.textContent, /Robin/);
   assert.match(block.textContent, /Administrator:in · angemeldet/);
   assert.doesNotMatch(block.textContent, /verwaltet gerade/);
   await family({ manage: true });
   let back = 0;
   block = accountBlock({ onBack: () => { back++; } });
-  assert.match(block.textContent, /Nora/, 'not Lea as "signed in"');
+  assert.match(block.textContent, /Robin/, 'not Lea as "signed in"');
   assert.doesNotMatch(block.textContent, /Lea.*angemeldet/);
   assert.match(block.textContent, /verwaltet gerade: Lea/);
   const btn = block.querySelectorAll('button').find((b) => b.textContent === 'Zurück zu mir');
@@ -119,7 +119,7 @@ test('Settings: the account card names the signed-in person while managing', asy
   const view = setupShell();
   settings.render(view);
   const text = view.textContent;
-  assert.match(text, /Nora/);
+  assert.match(text, /Robin/);
   assert.match(text, /Du verwaltest gerade Lea/);
   assert.match(text, /Zurück zu mir/);
   assert.match(text, /PIN für Lea setzen/);

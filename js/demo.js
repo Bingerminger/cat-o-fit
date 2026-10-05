@@ -4,7 +4,7 @@
    Deterministically (relative to `today`) delivers a COMPLETE sample set –
    every category contains data, so that after "Start with demo data"
    there is something to see everywhere:
-     • Admin (Nora): enriched profile (HR/pace zones, goals), location
+     • Admin (the signed-in person): enriched profile (HR/pace zones, goals), location
        Dresden (weather), cycle module, race, ~9 weeks of training history,
        LONG realistic body/fitness time series (all metrics), cycle
        history, weekly meal plan, food diary, shopping list, checklist.
@@ -529,8 +529,8 @@ export function buildDemo(today) {
   });
 
   // 3 teams of 3 (base). Henriette is additionally in the 2nd team (multiple membership),
-  // Horst stays without a team. '__self__' = the signed-in admin person (in the demo: Nora).
-  // Admins in total: Nora + Max + Henriette + Deniz = 4.
+  // Horst stays without a team. '__self__' = the signed-in admin person (in the demo: the person who set it up).
+  // Admins in total: the signed-in person + Max + Henriette + Deniz = 4.
   const teams = [
     { name: t('demo.teamRed'), emoji: '🔴', color: '#ff5d5d', memberNames: ['__self__', 'Max', 'Bjarne', 'Jonas'] },
     { name: t('demo.teamBlue'), emoji: '🔵', color: '#3d8bff', memberNames: ['Lea', 'Carla', 'Deniz', 'Henriette'] },

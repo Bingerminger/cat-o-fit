@@ -112,7 +112,7 @@ test('refreshFamily does NOT empty the members when the server is equally curren
   // Earlier cause of the intermittent login-tile bug: with an identical
   // timestamp mergeObject returned the family reference; the subsequent
   // "delete, then assign" emptied it. Server == local -> members remain.
-  store.saveFamily({ members: [{ id: 'u-1', name: 'Nora', role: 'admin' }], settings: {}, pantry: [] });
+  store.saveFamily({ members: [{ id: 'u-1', name: 'Robin', role: 'admin' }], settings: {}, pantry: [] });
   const remote = JSON.parse(JSON.stringify(store.getFamily()));  // identical updatedAt
   const realFetch = globalThis.fetch;
   globalThis.fetch = async () => ({ ok: true, json: async () => ({ ok: true, data: remote }) });

@@ -13,7 +13,7 @@ beforeEach(async () => {
   localStorage.__setQuota(Infinity);
   localStorage.clear();
   store.clearActiveUser();
-  store.saveFamily({ members: [{ id: 'u-1', name: 'Nora', role: 'admin' }], settings: {}, pantry: [] });
+  store.saveFamily({ members: [{ id: 'u-1', name: 'Robin', role: 'admin' }], settings: {}, pantry: [] });
   await store.login('u-1', '');
 });
 afterEach(() => { localStorage.setItem = realSetItem; localStorage.__setQuota(Infinity); });

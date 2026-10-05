@@ -32,7 +32,7 @@ beforeEach(() => {
   store.clearActiveUser();
   store.saveFamily({
     members: [
-      { id: 'u-1', name: 'Nora', role: 'admin', emoji: '👩', color: '#18b48a' },
+      { id: 'u-1', name: 'Robin', role: 'admin', emoji: '👩', color: '#18b48a' },
       { id: 'u-2', name: 'Kind', role: 'user', emoji: '🧒', color: '#3d8bff' },
     ],
     settings: { accent: '#18b48a' },
@@ -89,7 +89,7 @@ test('importFamilyAll restores members + areas authoritatively', async () => {
     app: 'catofit', kind: 'family-full', version: 1, exportedAt: new Date().toISOString(),
     family: {
       members: [
-        { id: 'u-1', name: 'Nora', role: 'admin' },
+        { id: 'u-1', name: 'Robin', role: 'admin' },
         { id: 'u-9', name: 'Opa', role: 'user' },   // new member from the backup
       ],
       settings: { accent: '#7c5cff' }, pantry: [],
@@ -121,7 +121,7 @@ test('importFamilyAll leaves private cycle data untouched', async () => {
   store.replaceArea('cycle', [{ id: 'c1', date: '2026-06-01' }]);   // private, present locally
   const dump = {
     app: 'catofit', kind: 'family-full', version: 1,
-    family: { members: [{ id: 'u-1', name: 'Nora', role: 'admin' }], settings: {}, pantry: [] },
+    family: { members: [{ id: 'u-1', name: 'Robin', role: 'admin' }], settings: {}, pantry: [] },
     users: { 'u-1': { events: [{ id: 'eX', name: 'Lauf' }] } },   // no cycle in the backup
   };
   await store.importFamilyAll(dump);

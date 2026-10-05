@@ -12,7 +12,7 @@ import { sessionLoad } from '../js/load.js';
 
 beforeEach(async () => {
   store.clearActiveUser();
-  store.saveFamily({ members: [{ id: 'u-1', name: 'Nora', role: 'admin', emoji: '🏃', color: '#18b48a' }], settings: {} });
+  store.saveFamily({ members: [{ id: 'u-1', name: 'Robin', role: 'admin', emoji: '🏃', color: '#18b48a' }], settings: {} });
   await store.login('u-1', '');
 });
 
