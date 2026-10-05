@@ -1,1 +1,57 @@
-{}
+{
+  "ics": {
+    "calendarName": "Catofit Treino",
+    "training": "Treino",
+    "race": "Prova",
+    "distance": "Distância: {km} km",
+    "pace": "Pace alvo: {pace} min/km",
+    "hrZone": "Zona de FC: Z{zone}",
+    "openInApp": "Abrir no app: {url}",
+    "raceDistance": "Distância: {distance}",
+    "raceDistanceKm": "Distância: {distance} ({km} km)",
+    "targetTime": "Tempo alvo: {time}",
+    "priority": "Prioridade: {priority}",
+    "alarmHour": "{title} em 1 hora",
+    "alarmTomorrow": "Amanhã: {title}",
+    "alarmRace": "Prova em 2 horas – hora de aquecer!",
+    "alarmRaceTomorrow": "Prova amanhã: {name}",
+    "file": {
+      "session": "treino",
+      "race": "prova",
+      "plan": "plano"
+    },
+    "error": {
+      "missingId": "O parâmetro “id” está faltando.",
+      "invalidUser": "O parâmetro “user” está faltando ou é inválido.",
+      "linkInvalid": "Este link de calendário não é mais válido. Exporte o compromisso novamente pelo app.",
+      "linkExpired": "Links de calendário sem chave não são mais válidos. Exporte o compromisso novamente pelo app.",
+      "unitNotFound": "Treino não encontrado.",
+      "eventNotFound": "Evento não encontrado."
+    }
+  },
+  "import": {
+    "title": "{type} ({source})",
+    "type": {
+      "easy": "Corrida",
+      "walk": "Caminhada",
+      "hike": "Trilha",
+      "cross_bike": "Passeio de bike",
+      "swim": "Natação",
+      "strength": "Força",
+      "rowing": "Remo",
+      "tennis": "Tênis",
+      "tabletennis": "Tênis de mesa",
+      "cross_football": "Futebol",
+      "mobility": "Mobilidade",
+      "other": "Treino"
+    },
+    "source": {
+      "appleHealth": "Apple Health",
+      "healthConnect": "Health Connect",
+      "healthImport": "Importação de saúde"
+    }
+  },
+  "food": {
+    "product": "Produto {code}"
+  }
+}

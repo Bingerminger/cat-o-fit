@@ -11,7 +11,7 @@
    Alles ist als Orientierung gedacht – bewusst grob, keine Diät-Beratung.
    ========================================================================= */
 
-import { parseIngredient } from './food.js';
+import { parseIngredient, fold, keywordIn, wordRe } from './food.js';
 import { fmtInt } from './format.js';
 import { t } from './i18n.js';
 
@@ -322,15 +322,14 @@ const KCAL_STK = [
   [['avocado', 'avocados'], 240],
 ];
 const matchKcal = (name, table, fallback) => {
-  const n = name.toLowerCase();
-  for (const [kws, v] of table) if (kws.some((k) => n.includes(k))) return v;
+  const n = fold(name);
+  for (const [kws, v] of table) if (kws.some((k) => keywordIn(n, k))) return v;
   return fallback;
 };
 // Ganzes Wort (auch in Zusammensetzungen am Wortanfang/-ende nicht): „Ei“ ist nicht
-// „Reiswaffel“ oder „Pizzateig“. JS-\b kennt keine Umlaute, daher eigene Grenzen.
-const wordRe = (k) => new RegExp(`(^|[^\\p{L}])${k}($|[^\\p{L}])`, 'u');
+// „Reiswaffel“ oder „Pizzateig“ (wordRe und das „=“-Stichwort: food.js).
 const matchWord = (name, table, fallback) => {
-  const n = name.toLowerCase();
+  const n = fold(name);
   for (const [kws, v] of table) if (kws.some((k) => wordRe(k).test(n))) return v;
   return fallback;
 };
@@ -384,7 +383,7 @@ const NEGLIGIBLE = ['salz', 'pfeffer', 'gewürz', 'zimt', 'kräuter', 'petersili
 
 /** Menge einer Zutat in Gramm/Milliliter (oder null, wenn nicht ableitbar). */
 function gramsOf(p) {
-  const n = p.name.toLowerCase();
+  const n = fold(p.name);
   if (p.amount == null) return null;
   switch (p.unit) {
     case 'g': case 'ml': return p.amount;
@@ -520,8 +519,8 @@ const NUTRI_100 = [
 ];
 /** Standard-Nährwerte je 100 g/ml zu einem Zutatennamen aus der kuratierten Tabelle – oder null. */
 function curatedNutrition(name) {
-  const n = String(name).toLowerCase();
-  for (const [kws, kcal, prot] of NUTRI_100) if (kws.some((k) => n.includes(k))) return { kcal100: kcal, protein100: prot };
+  const n = fold(name);
+  for (const [kws, kcal, prot] of NUTRI_100) if (kws.some((k) => keywordIn(n, k))) return { kcal100: kcal, protein100: prot };
   return null;
 }
 
@@ -547,7 +546,7 @@ export function estimateNutrition(ingredients = [], lookup = null) {
     const p = parseIngredient(raw);
     if (!p.name) return;
     counted++;
-    const lname = p.name.toLowerCase();
+    const lname = fold(p.name);
     if (NEGLIGIBLE.some((k) => wordRe(k).test(lname) || lname === k)) return;   // Gewürze
     const grams = gramsOf(p);
     if (grams != null) {

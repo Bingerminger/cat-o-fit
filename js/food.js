@@ -9,10 +9,10 @@
    und aggregieren (Bedarf) -> Einkaufsliste = Bedarf − Lagerbestand.
    ========================================================================= */
 
-import { has, t, tp } from './i18n.js';
+import { has, locale, t, tp } from './i18n.js';
 import { fmtDec } from './format.js';
 
-/** Bekannte Einheiten -> kanonische Form. */
+/** Bekannte Einheiten -> kanonische Form (de/en; weitere Sprachen siehe unten). */
 const UNIT_CANON = {
   g: 'g', gramm: 'g', gr: 'g', kg: 'g',
   ml: 'ml', l: 'ml', liter: 'ml',
@@ -28,8 +28,64 @@ const UNIT_CANON = {
   can: 'Dose', cans: 'Dose', tin: 'Dose', tins: 'Dose', pack: 'Packung', packs: 'Packung',
   packet: 'Packung', packets: 'Packung', pot: 'Becher', pots: 'Becher', tub: 'Becher', tubs: 'Becher',
   jar: 'Glas', jars: 'Glas',
+  // French (“pot”/“pots”: see English; “c. à s.” & co. are in UNIT_PHRASES)
+  càs: 'EL', càc: 'TL', pincée: 'Prise', pincées: 'Prise', botte: 'Bund', bottes: 'Bund', gousse: 'Zehe', gousses: 'Zehe',
+  pièce: 'Stück', pièces: 'Stück', tranche: 'Scheibe', tranches: 'Scheibe', boîte: 'Dose', boîtes: 'Dose', boite: 'Dose', boites: 'Dose',
+  paquet: 'Packung', paquets: 'Packung', bocal: 'Glas', bocaux: 'Glas', gramme: 'g', grammes: 'g',
+  // Spanish
+  cda: 'EL', cdas: 'EL', cucharada: 'EL', cucharadas: 'EL', cdta: 'TL', cdtas: 'TL', cucharadita: 'TL', cucharaditas: 'TL',
+  pizca: 'Prise', pizcas: 'Prise', manojo: 'Bund', manojos: 'Bund', diente: 'Zehe', dientes: 'Zehe',
+  pieza: 'Stück', piezas: 'Stück', ud: 'Stück', uds: 'Stück', unidad: 'Stück', unidades: 'Stück',
+  rebanada: 'Scheibe', rebanadas: 'Scheibe', loncha: 'Scheibe', lonchas: 'Scheibe', lata: 'Dose', latas: 'Dose',
+  paquete: 'Packung', paquetes: 'Packung', tarrina: 'Becher', tarrinas: 'Becher', bote: 'Glas', botes: 'Glas',
+  frasco: 'Glas', frascos: 'Glas', gramo: 'g', gramos: 'g',
+  // Italian
+  cucchiaio: 'EL', cucchiai: 'EL', cucchiaino: 'TL', cucchiaini: 'TL', pizzico: 'Prise', pizzichi: 'Prise',
+  mazzetto: 'Bund', mazzetti: 'Bund', mazzo: 'Bund', mazzi: 'Bund', spicchio: 'Zehe', spicchi: 'Zehe',
+  pezzo: 'Stück', pezzi: 'Stück', fetta: 'Scheibe', fette: 'Scheibe', scatola: 'Dose', scatole: 'Dose',
+  lattina: 'Dose', lattine: 'Dose', confezione: 'Packung', confezioni: 'Packung', vasetto: 'Becher', vasetti: 'Becher',
+  barattolo: 'Glas', barattoli: 'Glas', grammo: 'g', grammi: 'g',
+  // Portuguese (Brazil; “lata”/“latas”/“unidades”: see Spanish)
+  colher: 'EL', colheres: 'EL', colherinha: 'TL', colherinhas: 'TL', pitada: 'Prise', pitadas: 'Prise',
+  maço: 'Bund', maços: 'Bund', dente: 'Zehe', dentes: 'Zehe', unidade: 'Stück', peça: 'Stück', peças: 'Stück',
+  fatia: 'Scheibe', fatias: 'Scheibe', pacote: 'Packung', pacotes: 'Packung', pote: 'Becher', potes: 'Becher',
+  vidro: 'Glas', vidros: 'Glas', grama: 'g', gramas: 'g',
+  // Dutch (“el”/“tl”/“gram”: see German/English; “pot”/“potten” depend on the language, see LOCALE_UNITS)
+  eetlepel: 'EL', eetlepels: 'EL', theelepel: 'TL', theelepels: 'TL', snuf: 'Prise', snufje: 'Prise', snufjes: 'Prise',
+  mespunt: 'Prise', mespuntje: 'Prise', bos: 'Bund', bossen: 'Bund', bosje: 'Bund', bosjes: 'Bund',
+  teen: 'Zehe', tenen: 'Zehe', teentje: 'Zehe', teentjes: 'Zehe', stuk: 'Stück', stuks: 'Stück', stukje: 'Stück', stukjes: 'Stück',
+  snee: 'Scheibe', sneden: 'Scheibe', sneetje: 'Scheibe', sneetjes: 'Scheibe', plak: 'Scheibe', plakken: 'Scheibe',
+  plakje: 'Scheibe', plakjes: 'Scheibe', blik: 'Dose', blikken: 'Dose', blikje: 'Dose', blikjes: 'Dose',
+  pak: 'Packung', pakken: 'Packung', pakje: 'Packung', pakjes: 'Packung', verpakking: 'Packung', verpakkingen: 'Packung',
+  bakje: 'Becher', bakjes: 'Becher', potje: 'Glas', potjes: 'Glas',
+  // Metric words of the new languages (the stored unit stays g / ml)
+  kilo: 'g', kilos: 'g', kilogramme: 'g', kilogrammes: 'g', kilogramo: 'g', kilogramos: 'g', chilo: 'g', chilogrammo: 'g',
+  chilogrammi: 'g', quilo: 'g', quilos: 'g', quilograma: 'g', quilogramas: 'g',
+  litro: 'ml', litros: 'ml', litri: 'ml', dl: 'ml', cl: 'ml',
 };
-const UNIT_FACTOR = { kg: 1000, l: 1000, liter: 1000, kilogram: 1000, kilograms: 1000, litre: 1000, litres: 1000, liters: 1000 }; // -> g / ml
+const UNIT_FACTOR = {
+  kg: 1000, l: 1000, liter: 1000, kilogram: 1000, kilograms: 1000, litre: 1000, litres: 1000, liters: 1000,   // -> g / ml
+  kilo: 1000, kilos: 1000, kilogramme: 1000, kilogrammes: 1000, kilogramo: 1000, kilogramos: 1000, chilo: 1000,
+  chilogrammo: 1000, chilogrammi: 1000, quilo: 1000, quilos: 1000, quilograma: 1000, quilogramas: 1000,
+  litro: 1000, litros: 1000, litri: 1000, dl: 100, cl: 10,
+};
+// A jar in Dutch, a tub in French/English – the only unit word whose meaning depends on the language.
+const LOCALE_UNITS = { nl: { pot: 'Glas', potten: 'Glas' } };
+function unitWord(tok) {
+  const loc = locale();
+  if (Object.hasOwn(LOCALE_UNITS, loc) && Object.hasOwn(LOCALE_UNITS[loc], tok)) return LOCALE_UNITS[loc][tok];
+  return Object.hasOwn(UNIT_CANON, tok) ? UNIT_CANON[tok] : null;
+}
+/** Multi-word / abbreviated unit phrases, tried before the one-word token. Spaces match any run of
+    whitespace, a dot after a word is optional. */
+const UNIT_PHRASES = [
+  ['c. à s.', 'EL'], ['c. à soupe', 'EL'], ['cuillère à soupe', 'EL'], ['cuillères à soupe', 'EL'],
+  ['c. à c.', 'TL'], ['c. à café', 'TL'], ['cuillère à café', 'TL'], ['cuillères à café', 'TL'],
+  ['colher de sopa', 'EL'], ['colheres de sopa', 'EL'], ['colher de chá', 'TL'], ['colheres de chá', 'TL'],
+  ['colher de café', 'TL'], ['colheres de café', 'TL'],
+].map(([p, unit]) => [new RegExp(`^${p.split(' ').map((w) => w.replace(/\./g, '')).join('\\.?\\s*')}\\.?(?![\\p{L}])`, 'iu'), unit]);
+// “200 g de poulet”, “1 cucchiaio d’olio”, “1 lata de atum”: the little word after a unit is not part of the name.
+const PARTICLE = /^(?:de\s+(?:la\s+|l['’]\s*|los\s+|las\s+)?|d['’]\s*|di\s+|dell['’]\s*|do\s+|da\s+)(?=\p{L})/iu;
 
 /** "1/2", "1 1/2", "250", "1,5" -> Zahl (oder null). */
 export function parseAmount(str) {
@@ -56,9 +112,17 @@ export function parseIngredient(raw) {
   let unit = null;
   let amt = amount;
 
-  if (tok && UNIT_CANON[tok]) {
-    unit = UNIT_CANON[tok];
-    if (UNIT_FACTOR[tok]) amt = amount * UNIT_FACTOR[tok];
+  // Mehrwort-Einheiten („c. à s.“, „colher de sopa“) vor dem Ein-Wort-Token.
+  const rest = s.slice(m[1].length).trimStart();
+  const phrase = UNIT_PHRASES.find(([re]) => re.test(rest));
+  const known = tok ? unitWord(tok) : null;
+  if (phrase) {
+    unit = phrase[1];
+    name = rest.replace(phrase[0], '').trim().replace(PARTICLE, '');
+  } else if (known) {
+    unit = known;
+    if (Object.hasOwn(UNIT_FACTOR, tok)) amt = amount * UNIT_FACTOR[tok];
+    name = name.replace(PARTICLE, '');
   } else if (tok) {
     // Kein bekanntes Einheitenwort -> gehört zum Namen (z. B. „Eier“, „Avocado“).
     name = (m[2] + (name ? ' ' + name : '')).trim();
@@ -70,21 +134,38 @@ export function parseIngredient(raw) {
   return { name: name.replace(/\s+/g, ' ').trim(), amount: amt, unit, raw: s };
 }
 
-// Category values stay German (stored in the pantry); English keywords sit next to the German ones.
+/** Name as the keyword tables see it: lower case, typographic apostrophe, œ/æ spelled out. */
+export const fold = (s) => String(s).toLowerCase().replace(/'/g, '’').replace(/œ/g, 'oe').replace(/æ/g, 'ae');
+// Ganzes Wort (Zusammensetzungen am Wortanfang/-ende zählen nicht): „Ei“ ist nicht „Reiswaffel“. JS-\b kennt keine
+// Umlaute, daher eigene Grenzen.
+const wordRes = new Map();
+export function wordRe(k) {
+  let re = wordRes.get(k);
+  if (!re) wordRes.set(k, re = new RegExp(`(^|[^\\p{L}])${k}($|[^\\p{L}])`, 'u'));
+  return re;
+}
+/** Kommt das Stichwort im (gefalteten) Namen vor? Gewöhnliche Stichwörter zählen auch mitten im Wort („hähnchen“ in
+    „Hähnchenbrust“); ein vorangestelltes „=“ verlangt ein ganzes Wort („=riz“ steckt nicht in „chorizo“). */
+export function keywordIn(name, k) {
+  return k.charCodeAt(0) === 61 ? wordRe(k.slice(1)).test(name) : name.includes(k);
+}
+
+// Category values stay German (stored in the pantry). The other languages' keywords follow the German and English ones
+// (one line per language: fr, es, it, pt-BR, nl); a keyword with a leading "=" must stand alone as a word, like “=ei”.
 // 'eggplant'/'veggie' come first so the dairy keyword 'egg' does not catch them.
 const CAT_KW = [
   ['Obst & Gemüse', ['tomate', 'avocado', 'brokkoli', 'paprika', 'spinat', 'beere', 'banane', 'süßkartoffel', 'bohne', 'zitrone', 'salat', 'apfel', 'zwiebel', 'knoblauch', 'gemüse', 'obst', 'kartoffel',
     'tomato', 'broccoli', 'pepper', 'spinach', 'berry', 'berries', 'banana', 'sweet potato', 'bean', 'lemon', 'salad', 'lettuce', 'apple', 'onion', 'garlic', 'vegetable', 'veggie', 'eggplant', 'fruit', 'potato']],
-  ['Milchprodukte', ['skyr', 'quark', 'joghurt', 'milch', 'feta', 'käse', 'butter', 'sahne', 'ei', 'eier',
+  ['Milchprodukte', ['skyr', 'quark', 'joghurt', 'milch', 'feta', 'käse', 'butter', 'sahne', '=ei', 'eier', 'eigelb', 'eiklar', '=eiweiß', 'rührei', 'spiegelei', 'hühnerei', 'wachtelei',
     'yoghurt', 'yogurt', 'milk', 'cheese', 'cream', 'egg']],
   ['Fleisch & Fisch', ['hähnchen', 'lachs', 'fisch', 'rind', 'pute', 'thunfisch', 'hack',
     'chicken', 'salmon', 'fish', 'beef', 'turkey', 'tuna', 'mince']],
-  ['Trockenwaren', ['haferflocken', 'quinoa', 'reis', 'linse', 'nudel', 'mehl', 'honig', 'kakao', 'protein', 'brot', 'mandel', 'walnuss',
+  ['Trockenwaren', ['haferflocken', 'quinoa', 'reis', 'linse', 'nudel', 'mehl', 'honig', 'kakao', 'protein', 'brot', 'mandel', 'walnuss', 'eiweißpulver',
     'oats', 'rice', 'lentil', 'noodle', 'pasta', 'flour', 'honey', 'cocoa', 'bread', 'almond', 'walnut']],
 ];
 export function guessCategory(name) {
-  const n = String(name).toLowerCase();
-  for (const [cat, kws] of CAT_KW) if (kws.some((k) => n.includes(k))) return cat;
+  const n = fold(name);
+  for (const [cat, kws] of CAT_KW) if (kws.some((k) => keywordIn(n, k))) return cat;
   return 'Sonstiges';
 }
 

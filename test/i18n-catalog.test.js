@@ -29,9 +29,9 @@ const DYNAMIC_PREFIXES = ['format.', 'sessionTypes.', 'feelings.', 'priorities.'
 const SERVER_AREAS = ['server'];
 /** Key prefixes api/*.php builds at run time (e.g. "import.type.{$type}"). */
 const SERVER_DYNAMIC_PREFIXES = ['import.type.', 'import.source.', 'ics.file.'];
-/** Languages that must have every key. The others fall back to English until their
-    translation pass (package P3); before the v4.0.0 release this list holds all languages. */
-const COMPLETE_LANGUAGES = ['en', 'de'];
+/** Languages that must have every key – all of them. A language added later may start with
+    fewer keys (it falls back to English) until its translation is done. */
+const COMPLETE_LANGUAGES = LANGS;
 /** Content whose English source lives in code (the catalogs hold the other languages):
     phase labels and cues of the exercise animations (js/exercise-motions.js). */
 const SOURCE_IN_CODE = [{ area: 'exercises', re: /^[^.]+\.(phases|intro)\./ }];
