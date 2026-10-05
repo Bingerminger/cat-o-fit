@@ -3807,5 +3807,635 @@
     "oneRep": "eine Wiederholung",
     "reps": "{n} Wiederholungen",
     "seconds": "{s} Sekunden"
+  },
+  "energy": {
+    "holdingWell": "Du hältst dein Gewicht gut.",
+    "overTarget": "Rund {kcal} kcal über dem Tagesziel.",
+    "underTarget": "Rund {kcal} kcal unter dem Tagesziel – genug essen.",
+    "floorBmr": "Hinweis: Das Tagesziel liegt bereits auf deinem Grundumsatz – weniger zu essen wäre bei diesem Trainingsumfang kontraproduktiv.",
+    "floorEa": "Hinweis: Das Defizit ist begrenzt, damit dir nach dem Training genug Energie bleibt (mindestens 30 kcal je kg fettfreier Masse).",
+    "floorShare": "Hinweis: Das Defizit ist auf 15 % deines Tagesumsatzes begrenzt.",
+    "onTrackLose": "Im Zielkorridor zum Abnehmen.",
+    "onTrackGain": "Im Zielkorridor zum Zunehmen."
+  },
+  "labSources": {
+    "sportsMedicine": {
+      "title": "Sportmedizinische Untersuchung",
+      "what": "Der eigentlich passende Weg: Ärztin oder Arzt mit der Zusatzbezeichnung Sportmedizin, oft an sportmedizinischen Instituten, Unikliniken oder in größeren Praxen. Meist Blutbild, Eisenstatus, Leber- und Nierenwerte – häufig zusammen mit einer Leistungsdiagnostik.",
+      "cost": "etwa 100–300 €",
+      "tip": "Viele gesetzliche Krankenkassen bezuschussen den Sportcheck als freiwillige Satzungsleistung – je nach Kasse etwa 60–200 €, meist alle zwei Jahre. Das wissen die wenigsten: Einfach vorher bei deiner Kasse nachfragen."
+    },
+    "gp": {
+      "title": "Haus- oder Facharztpraxis",
+      "what": "Auf Kassenkosten nur bei medizinischer Indikation – also bei Beschwerden oder einem konkreten Verdacht. „Ferritin, weil ich viel laufe“ ist keine Indikation; das läuft dann als Selbstzahlerleistung (IGeL) nach der Gebührenordnung für Ärzte.",
+      "cost": "Kasse bei Indikation, sonst etwa 20–60 €",
+      "tip": "Wenn du ohnehin wegen etwas anderem Blut abgeben musst: frag, ob die für dich interessanten Werte gleich mitbestimmt werden können."
+    },
+    "checkup": {
+      "title": "Check-up 35 (gesetzliche Vorsorge)",
+      "what": "Einmalig zwischen 18 und 34, danach alle drei Jahre. Enthält Cholesterin, Blutzucker und Urinstatus – aber weder Ferritin noch Vitamin D.",
+      "cost": "Kassenleistung",
+      "tip": "Gut als Basis-Check, deckt die sportrelevanten Werte aber nur teilweise ab."
+    },
+    "mailInLab": {
+      "title": "Einsende- und Selbstzahlerlabore",
+      "what": "Testkits für zu Hause (Kapillarblut aus der Fingerbeere) oder Selbstzahler-Angebote klassischer Labore mit venöser Blutentnahme.",
+      "cost": "etwa 30–150 €",
+      "tip": "Kapillarblut ist empfindlicher in der Vorbereitung als eine venöse Blutentnahme. Für Verlaufsvergleiche möglichst beim selben Verfahren und Labor bleiben."
+    },
+    "bloodDonation": {
+      "title": "Blutspende",
+      "what": "Bei jeder Spende wird der Hämoglobinwert bestimmt; manche Spendedienste messen bei regelmäßigen Spenderinnen und Spendern zusätzlich das Ferritin.",
+      "cost": "kostenlos",
+      "tip": "Regelmäßiges Spenden senkt die Eisenspeicher spürbar – als Ausdauersportler:in lohnt der Blick aufs Ferritin besonders."
+    },
+    "standards": {
+      "rilibaek": "Die **RiliBÄK** (Richtlinie der Bundesärztekammer) ist für alle deutschen Labore verbindlich und regelt die Qualitätssicherung samt Ringversuchen.",
+      "isoAccreditation": "Viele Labore sind zusätzlich nach **DIN EN ISO 15189** akkreditiert.",
+      "dataExchange": "Für die Übermittlung an Praxen gibt es **LDT** als deutschen Standard, international **HL7 FHIR**. Über die **elektronische Patientenakte (ePA)** kommen Befunde zunehmend digital bei den Versicherten an.",
+      "referenceRanges": "**Referenzbereiche sind nicht bundesweit einheitlich.** Jedes Labor gibt eigene an – abhängig von Messmethode, Gerät und Referenzkollektiv. Bei Ferritin, fT3 oder Vitamin B12 unterscheiden sie sich deutlich. Deshalb steht der Bereich immer auf dem Befund: Er gehört zum Wert dazu.",
+      "sportRanges": "**Sportspezifische Referenzwerte gibt es offiziell nicht.** Was Cat-O-Fit als Sport-Zielkorridor zeigt, stammt aus sportmedizinischer Fachliteratur und internationalen Positionspapieren – nicht aus einer deutschen Norm. Die Quelle je Wert steht in der Detailansicht unter „Grundlage der Bereiche“."
+    },
+    "teaser": "Die meisten Werte bekommst du über eine sportmedizinische Untersuchung (von vielen Kassen bezuschusst), über die Hausarztpraxis oder über ein Einsendelabor."
+  },
+  "labs": {
+    "analyte": {
+      "ferritin": {
+        "label": "Ferritin",
+        "source": "Laborüblicher Bereich; Sportkorridor nach GSSI (Peeling, Sim, McKay); Entzündung: WHO 2020; biologische Variation: Scand J Clin Lab Invest 2023",
+        "hint": "Eisenspeicher. Für Ausdauersport sind Werte deutlich über der unteren Laborgrenze günstig – niedrige Speicher können die Leistung schon beeinträchtigen, bevor eine Blutarmut sichtbar wird."
+      },
+      "transferrinSat": {
+        "label": "Transferrin-Sättigung",
+        "source": "GSSI (Peeling, Sim, McKay: unter 16 % Eisenmangel-Stadium 2); EASL 2022 (über 45 % bei hohem Ferritin abklären)",
+        "hint": "Wie viel Eisen tatsächlich transportiert wird – ergänzt das Ferritin."
+      },
+      "hb": {
+        "label": "Hämoglobin",
+        "source": "WHO 2024 (Anämiegrenzen 12,0 g/dl Frauen, 13,0 g/dl Männer, 11,0 g/dl in der Schwangerschaft); biologische Variation: EFLM 2019",
+        "hint": "Sauerstofftransport. Bei Ausdauersport oft leicht niedrig durch das größere Blutplasma („Pseudoanämie“) – das ist kein Mangel."
+      },
+      "crp": {
+        "label": "CRP",
+        "source": "IQWiG, gesundheitsinformation.de (bis 5 mg/l bzw. 0,5 mg/dl); nach Ausdauerbelastung erhöht: Thomas, Labor und Diagnose, Kap. 51",
+        "hint": "Entzündungsmarker. Nach harten Einheiten kurzzeitig erhöht; dauerhaft hohe Werte sprechen gegen einen belastbaren Trainingszustand."
+      },
+      "vitaminD": {
+        "label": "Vitamin D (25-OH)",
+        "source": "DGE 2012 (ab 50 nmol/l ausreichend); IOC 2018 und Endocrine Society 2024 (kein Konsens für höhere Zielwerte)",
+        "hint": "Trägt zur normalen Funktion von Muskeln, Knochen und Immunsystem bei. In unseren Breiten fällt der Wert von Oktober bis März regelmäßig ab. Manche Sportmediziner streben 75 nmol/l an – dafür gibt es keinen Konsens, deshalb gilt hier der DGE-Wert."
+      },
+      "b12": {
+        "label": "Vitamin B12 (Holo-TC)",
+        "source": "LADR Laborverbund (unter 35 Mangel wahrscheinlich, 35–50 Graubereich, über 50 unwahrscheinlich; keine Obergrenze)",
+        "hint": "Holo-Transcobalamin zeigt die aktiv verfügbare Form – aussagekräftiger als das Gesamt-B12. Besonders relevant bei vegetarischer/veganer Ernährung.",
+        "grey": "Graubereich – Mangel möglich (35–50)"
+      },
+      "b12total": {
+        "label": "Vitamin B12 (gesamt)",
+        "source": "Laborübliche Einordnung (unter 150 pmol/l bzw. 200 pg/ml Mangel wahrscheinlich; im Graubereich Holo-TC oder Methylmalonsäure)",
+        "hint": "Das häufig bestimmte Gesamt-B12 ist weniger aussagekräftig als Holo-TC. Nicht verwechseln: Die Zahlen liegen deutlich höher als beim Holo-TC.",
+        "grey": "Graubereich – Holo-TC oder MMA bestimmen lassen"
+      },
+      "folate": {
+        "label": "Folsäure",
+        "source": "Laborüblicher Bereich (laborabhängig – eigenen Bereich eintragen)",
+        "hint": "Wichtig für Blutbildung und Zellteilung."
+      },
+      "magnesium": {
+        "label": "Magnesium (Vollblut)",
+        "source": "Laborbereiche Vollblut: Medizinische Laboratorien Düsseldorf 1,28–1,69; Medics Labor 1,28–1,83; Labor Mustafa 1,2–1,72 mmol/l (methodenabhängig)",
+        "hint": "Im Vollblut gemessen (Heparin- oder EDTA-Röhrchen). Die Bereiche hängen stark von der Methode ab – trag den Bereich deines Labors ein. Den häufiger bestimmten Serumwert erfasst du unter „Magnesium (Serum)“."
+      },
+      "magnesiumSerum": {
+        "label": "Magnesium (Serum)",
+        "source": "Laborüblicher Serumbereich (z. B. 0,70–1,10 mmol/l, Medizinische Laboratorien Düsseldorf)",
+        "hint": "Serum-Magnesium ist der häufigste Laborwert für Magnesium. Er bildet die Speicher nur grob ab."
+      },
+      "zinc": {
+        "label": "Zink",
+        "hint": "Immunfunktion und Regeneration; Verluste über Schweiß sind bei hohem Umfang relevant."
+      },
+      "selenium": {
+        "label": "Selen",
+        "hint": "Antioxidativer Schutz und Schilddrüsenstoffwechsel. Überdosierung ist schädlich – Zielbereich nicht überschreiten."
+      },
+      "sodium": {
+        "label": "Natrium",
+        "source": "Laborüblicher Bereich",
+        "hint": "Bei sehr langen Belastungen mit viel Trinken kann Natrium gefährlich absinken (Hyponatriämie)."
+      },
+      "tsh": {
+        "label": "TSH",
+        "source": "Laborüblicher Bereich; Biotin-Störung: BfR",
+        "hint": "Steuerhormon der Schilddrüse."
+      },
+      "ft3": {
+        "label": "fT3",
+        "source": "Laborüblicher Bereich; niedriges fT3 als Hinweis auf Energiemangel: IOC 2023 (REDs)",
+        "hint": "Sinkt bei anhaltendem Energiemangel oft früh ab – ein Warnzeichen für zu wenig Energie im Verhältnis zum Training."
+      },
+      "testosterone": {
+        "label": "Testosteron (gesamt)",
+        "source": "Laborübliche Bereiche je Geschlecht; niedrige Werte als Hinweis auf Energiemangel: IOC 2023 (REDs)",
+        "hint": "Fällt bei dauerhaftem Energiedefizit und Übertraining ab."
+      },
+      "estradiol": {
+        "label": "Östradiol",
+        "source": "Laborüblicher Bereich für Männer; bei Frauen je Zyklusphase laut eigenem Labor (IOC 2023: Zyklusstatus unter hormoneller Verhütung nicht beurteilbar)",
+        "hint": "Stark zyklusabhängig – bei Frauen nur zusammen mit dem Zyklustag und dem Bereich deines Labors für diese Phase beurteilbar. Dauerhaft niedrige Werte plus ausbleibende Periode sind ein Alarmzeichen."
+      },
+      "ck": {
+        "label": "Kreatinkinase (CK)",
+        "source": "Laborübliche Bereiche je Geschlecht; Sportlerinnen 47–513 und Sportler 82–1083 U/l: Thomas, Labor und Diagnose, Kap. 51",
+        "hint": "Marker für Muskelbeanspruchung. Nach harten Einheiten stark erhöht – erst nach mindestens einem Ruhetag aussagekräftig."
+      },
+      "urea": {
+        "label": "Harnstoff",
+        "source": "Laborüblicher Bereich; nach Marathon bis 24 h erhöht: Thomas, Labor und Diagnose, Kap. 51",
+        "hint": "Steigt bei hoher Trainingslast und eiweißreicher Kost; anhaltend hohe Werte sprechen für unvollständige Erholung."
+      }
+    },
+    "sourceLabDependent": "Laborüblicher Bereich (laborabhängig)",
+    "statusUnknown": "unbekannt",
+    "blockedNeedsSex": "Für {label} gelten je nach Geschlecht andere Bereiche. Trag dein Geschlecht im Profil ein oder den Bereich deines Labors beim Wert.",
+    "cycleDayNoted": "Zyklustag {day} ist notiert –",
+    "blockedCycle": "{label} schwankt im Zyklus stark.{day} Einordnen lässt sich der Wert nur mit dem Bereich, den dein Labor für diese Zyklusphase angibt – trag ihn beim Wert ein.",
+    "blockedExercise": "Vor der Blutentnahme hast du hart trainiert – {label} ist dann oft vorübergehend erhöht. In Ruhe (nach mindestens einem trainingsfreien Tag) erneut bestimmen lassen.",
+    "caveatCrp": "CRP derselben Blutentnahme: {crp} mg/l. Bei einer Entzündung steigt Ferritin an – ein Wert unter 70 µg/l spricht dann trotzdem für einen Eisenmangel (WHO 2020).",
+    "blockedCrp": "CRP derselben Blutentnahme liegt bei {crp} mg/l – {label} steigt bei Entzündungen an und lässt sich dann nicht sinnvoll einordnen. Nach Abklingen erneut messen.",
+    "unrated": "ohne Bewertung (unter 18)",
+    "errorInvalidValue": "{label}: kein gültiger Wert",
+    "errorBothLimits": "{label}: bitte beide Grenzen des Referenzbereichs eintragen – oder keine",
+    "errorUpperLimit": "{label}: die obere Grenze muss größer als die untere sein",
+    "notAssessable": "nicht beurteilbar",
+    "blockedNoRange": "Für diesen Wert ist kein Bereich hinterlegt.",
+    "caveatBiotin": "Biotin (auch in Haut-, Haar- und Kombipräparaten) kann diesen Test verfälschen – vor der nächsten Blutentnahme nach Rücksprache einige Tage pausieren.",
+    "inflamedLow": "trotz Entzündung niedrig – spricht für einen Eisenmangel",
+    "inflamedSuspicious": "bei Entzündung verdächtig niedrig (unter 70)",
+    "caveatNoCrp": "Ohne CRP derselben Blutentnahme gilt die Einordnung mit Vorbehalt – Ferritin steigt bei Entzündungen an.",
+    "highForAthletes": "über dem Laborbereich, für Trainierende häufig – in Ruhe kontrollieren",
+    "belowRangeDeficient": "deutlich unter dem Referenzbereich (Mangel)",
+    "belowRange": "unter dem Referenzbereich",
+    "aboveRange": "über dem Referenzbereich",
+    "normalButTight": "im Normbereich, für Sport eher knapp",
+    "normalButHigh": "im Normbereich, aber hoch",
+    "favourable": "im günstigen Bereich",
+    "group": {
+      "iron": "Eisenstatus",
+      "vitamins": "Vitamine",
+      "minerals": "Mineralstoffe",
+      "hormones": "Hormone & Stoffwechsel",
+      "loadRecovery": "Belastung & Regeneration",
+      "inflammation": "Entzündung"
+    }
+  },
+  "supplements": {
+    "vitaminD": {
+      "label": "Vitamin D",
+      "typical": "800 IE (20 µg) pro Tag",
+      "food": "Fetter Fisch (Lachs, Hering), Eigelb, Pilze – und im Sommer 15 Minuten Sonne auf Armen und Gesicht.",
+      "timing": "Zu einer fetthaltigen Mahlzeit (fettlöslich).",
+      "ul": "Obergrenze der EFSA: 4000 IE (100 µg) pro Tag – darüber nur ärztlich begleitet.",
+      "note": "Bei bekanntem Mangel den Wert nach 3 Monaten kontrollieren.",
+      "source": "DGE-Referenzwert, BfR, EFSA"
+    },
+    "magnesium": {
+      "label": "Magnesium",
+      "typical": "bis 250 mg pro Tag aus Präparaten, auf zwei Portionen verteilt",
+      "food": "Haferflocken, Nüsse, Hülsenfrüchte, Vollkorn, dunkle Schokolade, magnesiumreiches Mineralwasser.",
+      "timing": "Wird oft abends genommen – mit Abstand zu Eisen und Zink.",
+      "ul": "Mehr als 250 mg pro Tag aus Präparaten führt häufig zu weichem Stuhl (Obergrenze der EFSA).",
+      "note": "Citrat oder Glycinat werden besser vertragen als Oxid."
+    },
+    "sourceBfrEfsa": "BfR-Höchstmengenvorschlag, EFSA",
+    "iron": {
+      "label": "Eisen",
+      "typical": "nur nach ärztlicher Rücksprache",
+      "food": "Rotes Fleisch, Hülsenfrüchte, Haferflocken, Hirse – zusammen mit Vitamin C (Paprika, Zitrus) aufnehmen.",
+      "timing": "Nüchtern oder mit Vitamin C; mindestens 2 Stunden Abstand zu Kaffee, Tee, Milch und Kalzium.",
+      "ul": "Nie ohne Laborwert einnehmen – bei vollen Speichern ist Eisen schädlich.",
+      "note": "Jede Eisensupplementierung gehört ärztlich begleitet und kontrolliert.",
+      "source": "BfR, IOC 2018"
+    },
+    "b12": {
+      "label": "Vitamin B12",
+      "typical": "bis 25 µg pro Tag als Nahrungsergänzung; bei rein pflanzlicher Ernährung sind höhere Mengen nach ärztlicher Rücksprache üblich",
+      "food": "Fleisch, Fisch, Eier, Milchprodukte. Rein pflanzliche Ernährung erreicht den Bedarf nicht – hier ist ein Präparat der Normalfall.",
+      "timing": "Unabhängig von den Mahlzeiten.",
+      "ul": "Keine Obergrenze festgelegt; höhere Mengen nur mit Grund.",
+      "source": "BfR-Höchstmengenvorschlag"
+    },
+    "creatine": {
+      "label": "Kreatin (Monohydrat)",
+      "typical": "3–5 g pro Tag",
+      "food": "Rotes Fleisch und Fisch – die wirksame Menge ist über Nahrung kaum erreichbar.",
+      "timing": "Täglich zur gleichen Zeit, Tageszeit egal. Die Wirkung baut sich über etwa 3–4 Wochen auf.",
+      "ul": "Gut untersucht; bei gesunden Nieren gilt die übliche Menge als unbedenklich. Ausreichend trinken.",
+      "note": "Anfangs 1–2 kg mehr auf der Waage durch Wasser im Muskel – das ist kein Fett."
+    },
+    "sourceIoc2018": "IOC-Konsens 2018",
+    "protein": {
+      "label": "Eiweißpulver",
+      "typical": "nur zum Auffüllen der Tagesmenge",
+      "food": "Quark, Skyr, Hüttenkäse, Eier, Fisch, Hülsenfrüchte – Pulver ist reine Bequemlichkeit, kein Zaubermittel.",
+      "timing": "Über den Tag verteilt, üblich sind 20–40 g je Portion.",
+      "ul": "Kein Grenzwert; Eiweiß aus echten Lebensmitteln bevorzugen.",
+      "source": "ACSM 2016 (1,2–2,0 g je kg Körpergewicht)"
+    },
+    "caffeine": {
+      "label": "Koffein",
+      "typical": "etwa 3 mg je kg Körpergewicht; ohne Erfahrung nicht mehr als 200 mg auf einmal",
+      "food": "Kaffee, Espresso, grüner Tee.",
+      "timing": "45–60 Minuten vor der Belastung. Mindestens 8 Stunden vor dem Schlafengehen die letzte Dosis.",
+      "ul": "Mehr als 400 mg pro Tag (Erwachsene) erhöht Unruhe, Herzklopfen und Schlafstörungen.",
+      "note": "Vorher im Training ausprobieren – nie zum ersten Mal im Wettkampf.",
+      "source": "EFSA 2015, IOC-Konsens 2018"
+    },
+    "beetroot": {
+      "label": "Rote-Bete-Konzentrat (Nitrat)",
+      "typical": "~70 ml Shot",
+      "food": "Rote Bete, Rucola, Spinat, Mangold.",
+      "timing": "2–3 Stunden vor der Belastung; in den Tagen davor testen.",
+      "ul": "Keine Dauereinnahme nötig – wird situativ vor Wettkämpfen genommen.",
+      "note": "Untersucht vor allem bei Belastungen von 5–30 Minuten Dauer."
+    },
+    "betaAlanine": {
+      "label": "Beta-Alanin",
+      "typical": "3–6 g pro Tag über 10–12 Wochen",
+      "food": "Fleisch und Fisch (geringe Mengen).",
+      "timing": "Auf mehrere kleine Portionen verteilen – das mindert das Kribbeln auf der Haut.",
+      "ul": "Größere Einzelportionen lösen Hautkribbeln aus – daher aufteilen.",
+      "note": "Untersucht vor allem bei harten Belastungen von 30 Sekunden bis 10 Minuten."
+    },
+    "electrolytes": {
+      "label": "Elektrolyte (Natrium)",
+      "typical": "300–700 mg Natrium je Stunde bei langer Belastung",
+      "food": "Salzige Snacks, Brühe, Sportgetränk.",
+      "timing": "Während langer Einheiten über 90 Minuten, besonders bei Hitze.",
+      "ul": "Nur bei entsprechender Belastung – nicht als Dauerbeigabe.",
+      "note": "Bei sehr langen Belastungen schützt Natrium vor gefährlich niedrigen Blutwerten.",
+      "source": "ACSM 2016"
+    },
+    "omega3": {
+      "label": "Omega-3 (EPA/DHA)",
+      "typical": "1000–2000 mg pro Tag",
+      "food": "Lachs, Hering, Makrele zweimal pro Woche; pflanzlich Leinöl und Walnüsse.",
+      "timing": "Zu einer Mahlzeit.",
+      "ul": "Mehr als 3000 mg pro Tag nur nach Rücksprache (Blutgerinnung); die EFSA hält bis 5 g für unbedenklich.",
+      "source": "EFSA 2012"
+    },
+    "zinc": {
+      "label": "Zink",
+      "typical": "bis 6,5 mg pro Tag aus Präparaten",
+      "food": "Fleisch, Käse, Haferflocken, Kürbiskerne, Linsen.",
+      "timing": "Nicht gleichzeitig mit Eisen oder Kalzium.",
+      "ul": "Dauerhaft mehr als 25 mg pro Tag stört die Kupferaufnahme (Obergrenze der EFSA)."
+    },
+    "interaction": {
+      "ironZinc": "Eisen und Zink konkurrieren um dieselben Aufnahmewege – mit mehreren Stunden Abstand einnehmen.",
+      "ironMagnesium": "Magnesium (und Kalzium) bremsen die Eisenaufnahme – Eisen morgens, Magnesium abends.",
+      "caffeineIron": "Kaffee und Tee hemmen die Eisenaufnahme deutlich – mindestens zwei Stunden Abstand halten.",
+      "zincMagnesium": "Zink und Magnesium besser zeitversetzt nehmen, sonst behindern sie sich gegenseitig."
+    },
+    "tooHighReason": "{label} {value} {unit} ({date}) – über dem Bereich.",
+    "ironInflamedReason": "Ferritin {value} µg/l ({date}) – {assessment}. Das CRP derselben Blutentnahme ist erhöht.",
+    "ferritinReason": "Ferritin {value} µg/l ({date}) – {assessment}.",
+    "ferritinFalling": "Ferritin fällt seit mehreren Messungen deutlicher als die übliche Schwankung (etwa {rate} µg/l pro Monat) und erreicht bei diesem Verlauf {when} den knappen Bereich.",
+    "vitaminDReason": "Vitamin D {value} nmol/l ({date}) – {assessment}.",
+    "vitaminDOld": "Dein letzter Vitamin-D-Wert ({date}) stammt aus einer anderen Jahreszeit oder ist älter als vier Monate.",
+    "holoTcReason": "Holo-TC {value} pmol/l ({date}) – {assessment}.",
+    "b12TotalReason": "Vitamin B12 (gesamt) {value} pmol/l ({date}) – {assessment}.",
+    "magnesiumReason": "{label} {value} mmol/l ({date}) – {assessment}.",
+    "proteinReason": "Laut Ess-Tagebuch im Schnitt {value} g Eiweiß je kg Körpergewicht ({days} Tage) – für Training sind 1,2–2,0 g je kg üblich.",
+    "creatineReason": {
+      "one": "{count} Krafteinheit in den letzten vier Wochen – für Kraft- und Muskelaufbau ist Kreatin das am besten untersuchte Nahrungsergänzungsmittel.",
+      "other": "{count} Krafteinheiten in den letzten vier Wochen – für Kraft- und Muskelaufbau ist Kreatin das am besten untersuchte Nahrungsergänzungsmittel."
+    },
+    "dopingNote": "Für Wettkämpfe mit Dopingkontrollen nur chargengeprüfte Produkte verwenden (z. B. aus der Kölner Liste) – Nahrungsergänzungsmittel sind häufiger verunreinigt, als man denkt.",
+    "tooHighAction": "Nicht (weiter) ergänzen. Falls du ein Präparat nimmst, die Einnahme überprüfen und den Wert ärztlich einordnen lassen.",
+    "ironInflamedWait": "Ferritin nach Abklingen der Entzündung erneut bestimmen lassen – vorher keine Eisengabe.",
+    "ironInflamedAction": "Ärztlich abklären lassen: Bei einer Entzündung wird Eisen schlecht aufgenommen – ob und wann eine Eisengabe sinnvoll ist, entscheidet die Ärztin oder der Arzt.",
+    "ironLowAction": "Ärztlich abklären lassen: Erst mit Befund entscheiden, ob und wie viel Eisen sinnvoll ist. Bis dahin über die Ernährung nachlegen.",
+    "ironHighAction": "Kein Eisen einnehmen. Hohe Speicherwerte ärztlich einordnen lassen (z. B. mit der Transferrin-Sättigung).",
+    "ironFallingAction": "Noch kein Präparat nötig – eisenreicher essen und in etwa drei Monaten erneut messen lassen.",
+    "vitaminDDeficientAction": "Ein Mangel gehört ärztlich begleitet – Menge und Kontrolle mit der Ärztin oder dem Arzt festlegen.",
+    "vitaminDLowAction": "Eine Ergänzung über die dunklen Monate ist in diesem Fall üblich – den Wert nach etwa drei Monaten kontrollieren lassen.",
+    "vitaminDWinter": "Zwischen Oktober und März reicht die Sonne in unseren Breiten nicht aus, um Vitamin D selbst zu bilden.",
+    "vitaminDMeasureAction": "Wert einmal bestimmen lassen – das ist die verlässlichste Grundlage. Ohne Wert empfiehlt die DGE bei fehlender Sonne 20 µg (800 IE) am Tag.",
+    "b12LowAction": "Eine Ergänzung ist in diesem Fall üblich – den Wert nach etwa drei Monaten kontrollieren lassen.",
+    "b12GreyAction": "Im Graubereich klärt eine Bestimmung von Methylmalonsäure oder Homocystein, ob wirklich ein Mangel besteht.",
+    "b12TotalAction": "Das Gesamt-B12 ist wenig spezifisch: Holo-TC oder Methylmalonsäure bestimmen lassen und das Ergebnis ärztlich einordnen.",
+    "veganReason": "Rein pflanzliche Ernährung deckt den B12-Bedarf nicht.",
+    "veganAction": "Hier ist ein Präparat kein Extra, sondern notwendig – dauerhaft, mit gelegentlicher Kontrolle des Werts.",
+    "magnesiumAction": "Zuerst magnesiumreich essen; eine Ergänzung ist möglich (wird oft abends genommen).",
+    "proteinAction": "Zuerst über echte Lebensmittel abdecken; Pulver nur, wenn die Tagesmenge sonst nicht zusammenkommt.",
+    "creatineAction": "Nur bei Bedarf und dauerhaftem Krafttraining sinnvoll; die übliche Menge steht unten.",
+    "cycleIronReason": "Menstruierende Ausdauersportlerinnen verlieren regelmäßig Eisen – ohne Laborwert lässt sich der Speicher aber nicht einschätzen.",
+    "cycleIronAction": "Ferritin (zusammen mit CRP) bestimmen lassen, bevor über ein Eisenpräparat nachgedacht wird.",
+    "foodFirst": "Erst die Ernährung, dann das Präparat: Was auf dem Teller landet, wirkt zuverlässiger als jede Kapsel – und ist billiger.",
+    "ironBorderline": "im Normbereich, für Ausdauersport aber knapp",
+    "ferritinUnusuallyHigh": "für Sport ungewöhnlich hoch",
+    "inFewWeeks": "in wenigen Wochen",
+    "inAboutMonths": {
+      "one": "in rund {count} Monat",
+      "other": "in rund {count} Monaten"
+    }
+  },
+  "labsView": {
+    "privateNote": "Laborwerte und Ergänzungen sind private Gesundheitsdaten – nur für {name} selbst sichtbar, auch für Admins.",
+    "docModeMinor": "Grund: {reasons}. Für Kinder und Jugendliche gibt Cat-O-Fit keine Einnahme-Empfehlungen – Nahrungsergänzung gehört hier in ärztliche Hände. Erfassen und Verlauf ansehen kannst du weiterhin alles.",
+    "docModeAdult": "Grund: {reasons}. Cat-O-Fit richtet sich an gesunde Erwachsene und gibt in diesem Fall bewusst keine Einnahme-Empfehlungen. Erfassen und Verlauf ansehen kannst du weiterhin alles – besprich die Werte mit deiner Ärztin oder deinem Arzt.",
+    "percent": "{pct} %",
+    "adherenceCaption": {
+      "one": "{taken} von {count} Einnahme in 14 Tagen · Balken = letzte 21 Tage (volle Höhe = 100 %){extra}",
+      "other": "{taken} von {count} Einnahmen in 14 Tagen · Balken = letzte 21 Tage (volle Höhe = 100 %){extra}"
+    },
+    "eaRange": "kcal je kg fettfreier Masse (Spanne {low}–{high}) · Richtwert {target}",
+    "eaBasis": "Aus {days} vollständig erfassten Tagen: Ø {intake} kcal gegessen, Ø {training} kcal fürs Training ({trainingSource}), {ffm} kg fettfreie Masse ({ffmSource}).",
+    "eaPlainUnclear": "Noch zu wenige vollständig erfasste Tage für eine Einschätzung ({days} von {total}). Bestätige in der Ernährung „Tag vollständig“, wenn du alles erfasst hast.",
+    "cost": "Kosten: {cost}",
+    "counts": "{measurements} an {dates} · zuletzt {last}",
+    "valuesDocumented": {
+      "one": "Wert dokumentiert",
+      "other": "Werte dokumentiert"
+    },
+    "rangeFrom": "ab {value}",
+    "months": {
+      "one": "{count} Monat",
+      "other": "{count} Monate"
+    },
+    "perMonth": "{arrow} {value} {unit}/Monat",
+    "eaChartCaption": "Verlauf der letzten Wochen (nur vollständig erfasste Tage) · Linie = Richtwert {target}, kritisch unter {critical}",
+    "chartLabel": "{label} im Verlauf",
+    "onReport": "Auf dem Befund: {entered} {enteredUnit} = {value} {unit}",
+    "drawContext": "Blutentnahme: {items}",
+    "staleLong": "Dieser Wert ist älter als {age}{season} – für Vorschläge zählt er nicht mehr. Neu bestimmen lassen.",
+    "inAboutMonths": {
+      "one": "in etwa {count} Monat",
+      "other": "in etwa {count} Monaten"
+    },
+    "trendAbove": "Tendenz: Bei gleichbleibendem Verlauf wird der günstige Bereich {when} überschritten – ein guter Anlass für die nächste Kontrolle.",
+    "noteLine": "Notiz: {note}",
+    "rangesBasis": "Grundlage der Bereiche: {source}",
+    "editMeasurement": "Messung vom {date} bearbeiten",
+    "deleteMeasurement": "Messung vom {date} löschen",
+    "deleteBody": "{label} vom {date} ({value}) wird entfernt.",
+    "usualAmount": "Übliche Menge: {amount} · {timing} · {limit}",
+    "basis": "Grundlage: {source}",
+    "removeTitle": "„{name}“ entfernen?",
+    "valuePlaceholder": "Wert",
+    "ariaUnit": "{label}: Einheit",
+    "ariaRefFrom": "{label}: Referenz von",
+    "ariaRefTo": "{label}: Referenz bis",
+    "implausibleReport": "Bitte prüfen: {items} – weit außerhalb des Üblichen. Stimmt die Einheit? Auf vielen Befunden steht z. B. CRP in mg/dl statt mg/l.",
+    "valuesSaved": {
+      "one": "{count} Wert gespeichert",
+      "other": "{count} Werte gespeichert"
+    },
+    "exampleValue": "z. B. {value}",
+    "implausibleValue": "{value} {unit} liegt weit außerhalb des Üblichen für {label}. Stimmt die Einheit? Auf vielen Befunden steht z. B. CRP in mg/dl statt mg/l oder Vitamin D in ng/ml statt nmol/l.",
+    "analyte": "Wert",
+    "private": "Privat",
+    "setUp": "Einrichten",
+    "ffmMissing": "Für die Einschätzung deiner Energieversorgung fehlt die fettfreie Masse. Trag bei den Körperwerten den Körperfettanteil oder die fettfreie Masse ein (z. B. von der Waage oder aus Apple Health) – ein Wert aus den letzten vier Monaten genügt.",
+    "toBodyStats": "Zu den Körperwerten",
+    "yourValues": "Deine Werte",
+    "logValue": "+ Wert erfassen",
+    "minorNote": "Kinder- und Jugendprofil: Cat-O-Fit dokumentiert deine Werte nur und bewertet sie nicht – die hinterlegten Bereiche gelten für Erwachsene. Die passenden Bereiche für dein Alter stehen auf dem Befund; besprich ihn mit deiner Kinder- und Jugendärztin oder deinem Kinder- und Jugendarzt.",
+    "noValuesYet": "Noch keine Werte",
+    "emptyEvaluate": "Trage Werte aus deinem Laborbefund ein – Cat-O-Fit ordnet sie sportbezogen ein und zeigt dir den Verlauf.",
+    "emptyPlain": "Trage Werte aus deinem Laborbefund ein – Cat-O-Fit zeigt dir den Verlauf.",
+    "tapHintEvaluate": "Antippen öffnet den Verlauf mit Referenz- und Sport-Zielbereich.",
+    "tapHint": "Antippen öffnet den Verlauf.",
+    "logReport": "Befund mit mehreren Werten erfassen",
+    "supplements": "Ergänzung",
+    "docMode": "Dokumentationsmodus",
+    "changeAnswers": "Angaben ändern",
+    "holdBack": "Solange ein Wert ärztlich abzuklären ist, gibt Cat-O-Fit keine Empfehlungen zur Ergänzung.",
+    "noSuggestion": "Aus deinen Werten ergibt sich derzeit kein Anlass für eine Ergänzung. Das ist eine gute Nachricht.",
+    "yourPlan": "Dein Plan",
+    "add": "+ Hinzufügen",
+    "planEmpty": "Noch nichts eingeplant. Was du regelmäßig nimmst, kannst du hier eintragen und täglich abhaken.",
+    "adherence": "Einnahmetreue",
+    "adherencePerDay": "Einnahmetreue je Tag",
+    "disclaimer": "Dokumentation und allgemeine Information für gesunde Erwachsene – keine Diagnose, keine Therapie, kein Medizinprodukt. Bei Beschwerden oder auffälligen Werten gehört die Beurteilung in ärztliche Hände. Deine Werte sind privat: in der App auch für Admins nicht sichtbar, und der Server gibt sie nur nach deiner PIN-Anmeldung heraus. Wer den Server betreibt, kann die gespeicherten Dateien allerdings lesen.",
+    "introWhat": "Erfasse Werte aus deinem Laborbefund, sieh ihren Verlauf und bekomme eine sportbezogene Einordnung – zum Beispiel, dass ein Ferritin von 25 zwar „normal“ ist, für Ausdauertraining aber knapp.",
+    "introGate": "Vorher eine kurze Abgrenzung: Cat-O-Fit ist für gesunde Erwachsene gedacht. Wer in ärztlicher Behandlung ist, Medikamente nimmt, schwanger ist oder stillt oder eine Essstörung hat, nutzt das Modul nur zum Dokumentieren – Empfehlungen gibt die App dann bewusst nicht. Die Antworten gelten für die ganze App.",
+    "energyAvailability": "Energieversorgung",
+    "toFoodDiaryConfirm": "Tage im Ess-Tagebuch bestätigen",
+    "toFoodDiary": "Zum Ess-Tagebuch",
+    "eaPlainCritical": "Rechnerisch bleibt für dein Training zu wenig Energie übrig. Iss mehr, statt ein Präparat zu suchen – und sprich mit einer Ärztin oder einem Arzt.",
+    "eaPlainLossBand": "Deine Energieversorgung ist knapp – beim Abnehmen vorübergehend vertretbar. Achte auf Schlaf und Regeneration.",
+    "eaPlainLow": "Deine Energieversorgung ist eher knapp. In harten Trainingsphasen solltest du bewusst mehr essen.",
+    "eaPlainGood": "Deine Energieversorgung passt zum Training.",
+    "bestFit": "passt am besten",
+    "tip": "Tipp: ",
+    "whereToGet": "Woher bekomme ich Laborwerte?",
+    "referenceNote": "Wichtig: Referenzbereiche sind in Deutschland nicht einheitlich – jedes Labor hat eigene. Trag beim Erfassen den Bereich von deinem Befund mit ein, dann bewertet Cat-O-Fit gegen dein Labor.",
+    "inTarget": "im Zielbereich",
+    "attention": "beachten",
+    "notAssessed": "ohne Bewertung",
+    "valuesCenter": "Werte",
+    "donutLabel": "Laborwerte nach Bewertung",
+    "inSportTarget": "im Sport-Zielbereich",
+    "toWatch": "zum Beobachten",
+    "staleShort": "älter – neu bestimmen lassen",
+    "eaPerWeek": "Energieversorgung je Woche",
+    "guideline": "Richtwert",
+    "sportRange": "Sport-Zielbereich",
+    "refOwnLab": "Referenz deines Labors",
+    "reference": "Referenz",
+    "refTypical": "Referenz (üblich)",
+    "eachLabOwn": "Jedes Labor hat eigene Referenzbereiche – trag beim Wert den von deinem Befund ein, dann bewertet Cat-O-Fit gegen dein Labor.",
+    "seasonalNote": "Vitamin D schwankt mit der Jahreszeit – ein Teil des Verlaufs kann daran liegen.",
+    "noTrend": "Die Messungen schwanken im üblichen Rahmen – daraus lässt sich kein Trend ablesen.",
+    "deleteTitle": "Messung löschen?",
+    "delete": "Löschen",
+    "deleted": "Messung gelöscht",
+    "evidenceStrong": "gut belegt",
+    "evidenceSome": "belegt",
+    "evidenceSituational": "situativ",
+    "generalInfo": "Allgemeine Information",
+    "why": "Warum: ",
+    "foodFirst": "Zuerst über das Essen: ",
+    "howTo": "Vorgehen: ",
+    "addToPlan": "In meinen Plan",
+    "undoIntake": "Einnahme zurücknehmen",
+    "markTaken": "Als eingenommen markieren",
+    "asNeeded": "bei Bedarf",
+    "daily": "täglich",
+    "remove": "Entfernen",
+    "labOrOccasion": "Labor oder Anlass (optional)",
+    "exampleCycleDay": "z. B. 12",
+    "from": "von",
+    "to": "bis",
+    "saveReport": "Befund speichern",
+    "enterOneValue": "Bitte mindestens einen Wert eintragen",
+    "saveAnyway": "Trotzdem speichern",
+    "saveFailed": "Speichern fehlgeschlagen – Gerätespeicher voll?",
+    "reportTitle": "Befund erfassen",
+    "drawDate": "Datum der Blutentnahme",
+    "note": "Notiz",
+    "reportIntro": "Trag nur ein, was auf deinem Befund steht – leere Zeilen zählen nicht. Den Referenzbereich deines Labors findest du neben dem Wert; er hat Vorrang vor den Standardbereichen.",
+    "drawCircumstancesAll": "Umstände der Blutentnahme (gelten für alle Werte)",
+    "hardExercise48h": "Harte Belastung in den 48 Stunden davor",
+    "fasting": "Nüchtern",
+    "biotinTaken": "Biotin genommen (auch in Haar- oder Hautpräparaten)",
+    "cycleDayOptional": "Zyklustag (optional)",
+    "noteOptional": "Notiz (optional), z. B. Labor oder Anlass",
+    "referenceFrom": "Referenz von",
+    "referenceTo": "Referenz bis",
+    "unit": "Einheit",
+    "circumstancesOptional": "Umstände der Blutentnahme (optional)",
+    "save": "Speichern",
+    "enterValidValue": "Bitte einen gültigen Wert eingeben",
+    "enterBothLimits": "Bitte beide Grenzen des Referenzbereichs eintragen – oder keine.",
+    "upperLimit": "Die obere Grenze muss größer als die untere sein.",
+    "valueChanged": "Wert geändert",
+    "valueSaved": "Wert gespeichert",
+    "editTitle": "Laborwert bearbeiten",
+    "addTitle": "Laborwert erfassen",
+    "date": "Datum",
+    "measuredValue": "Messwert",
+    "refRangeLab": "Referenzbereich deines Labors (optional)",
+    "refHintAdult": "Steht auf deinem Befund neben dem Wert – trag ihn ab, dann bewertet Cat-O-Fit gegen DEIN Labor. Leer gelassen gilt ein üblicher Bereich (grau angedeutet).",
+    "refHintMinor": "Steht auf deinem Befund neben dem Wert – dort gilt er für dein Alter. Trag ihn ab, damit du ihn im Verlauf wiederfindest.",
+    "amount": "Menge",
+    "when": "Wann",
+    "timing": "Zeitpunkt",
+    "frequency": "Häufigkeit",
+    "supplement": "Mittel",
+    "asNeededExample": "bei Bedarf (z. B. vor Wettkämpfen)",
+    "addToPlanTitle": "In den Plan aufnehmen",
+    "planSheetHint": "Nur was du wirklich nimmst – der Plan dient dir zum Abhaken und zeigt deine Einnahmetreue. Mittel „bei Bedarf“ zählen dort nicht mit.",
+    "addedToPlan": "Zum Plan hinzugefügt",
+    "apply": "Übernehmen",
+    "thisMember": "das Mitglied",
+    "labValue": "Laborwert",
+    "ariaResult": "{label}: Messwert",
+    "adherenceAsNeeded": "Mittel „bei Bedarf“ zählen nicht mit",
+    "eaTrainingMeasured": "von der Uhr gemessen",
+    "eaTrainingMixed": "teils gemessen, teils geschätzt",
+    "eaTrainingEstimated": "geschätzt",
+    "eaFfmMeasured": "gemessen",
+    "eaFfmEstimated": "aus Gewicht und Körperfett geschätzt",
+    "ctxAfterExercise": "nach harter Belastung",
+    "ctxFasting": "nüchtern",
+    "ctxCycleDay": "Zyklustag {day}",
+    "ctxBiotin": "Biotin eingenommen",
+    "staleSeason": "oder stammt aus einer anderen Jahreszeit",
+    "inFewWeeks": "in wenigen Wochen",
+    "trendBelow": "Tendenz: Bei gleichbleibendem Verlauf wird der günstige Bereich {when} unterschritten – ein guter Anlass für die nächste Kontrolle.",
+    "measurements": {
+      "one": "{count} Messung",
+      "other": "{count} Messungen"
+    },
+    "dates": {
+      "one": "{count} Termin",
+      "other": "{count} Terminen"
+    }
+  },
+  "demo": {
+    "zoneMarathon": "Marathon-Pace",
+    "zoneHalfRace": "HM-Wettkampf",
+    "zoneRepetition": "Wiederholungen",
+    "mealProteinBowlIngredients": [
+      "150 g Hähnchen",
+      "80 g Reis",
+      "200 g Gemüse"
+    ],
+    "mealSkyrIngredients": [
+      "150 g Skyr",
+      "100 g Beeren"
+    ],
+    "mealOvernightOatsIngredients": [
+      "60 g Haferflocken",
+      "150 g Skyr",
+      "150 ml Milch",
+      "100 g Beeren",
+      "1 EL Honig"
+    ],
+    "mealProteinPorridgeIngredients": [
+      "60 g Haferflocken",
+      "30 g Proteinpulver",
+      "250 ml Milch",
+      "1 Banane"
+    ],
+    "mealChickenRiceBowlIngredients": [
+      "150 g Hähnchen",
+      "80 g Reis",
+      "200 g Brokkoli",
+      "1 EL Öl"
+    ],
+    "mealSalmonIngredients": [
+      "150 g Lachs",
+      "250 g Süßkartoffel",
+      "Spinat",
+      "1 EL Öl"
+    ],
+    "mealOmeletteIngredients": [
+      "3 Eier",
+      "50 g Feta",
+      "200 g Tomaten",
+      "Spinat"
+    ],
+    "goalEnjoyMoving": "Spaß an Bewegung",
+    "goalClubSport": "Fit für den Vereinssport",
+    "goalRunRegularly": "Regelmäßig laufen",
+    "goalFitHealthy": "Fit & gesund bleiben",
+    "goalEndurance": "Ausdauer aufbauen",
+    "goalKeepWeight": "Gewicht halten",
+    "goalBodyFat": "Körperfett reduzieren",
+    "goalMuscle": "Muskelmasse erhöhen",
+    "goalHalf": "Halbmarathon unter 1:55 h",
+    "raceTenK": "10-km-Wettkampf",
+    "raceFun": "Volkslauf",
+    "raceCityHalf": "Stadtlauf Halbmarathon",
+    "labFollowUp": "Kontrolle nach der Aufbauphase",
+    "supVitaminD": "Vitamin D",
+    "supVitaminDDose": "800 IE (20 µg)/Tag",
+    "supWithBreakfast": "Zum Frühstück",
+    "supMagnesium": "Magnesium",
+    "supMagnesiumDose": "250 mg/Tag",
+    "supEvening": "Abends",
+    "mealProteinBowl": "Protein-Bowl",
+    "mealSkyrBerries": "Skyr & Beeren",
+    "mealOvernightOats": "Overnight Oats mit Beeren",
+    "mealProteinPorridge": "Protein-Porridge mit Banane",
+    "mealChickenRiceBowl": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "mealSalmon": "Lachs mit Süßkartoffel & Spinat",
+    "mealOmelette": "Omelett mit Feta & Tomaten",
+    "mealSkyr": "Skyr mit Beeren",
+    "mealSkyrNuts": "Skyr mit Beeren & Nüssen",
+    "mealBananaBar": "Banane & Haferriegel",
+    "mealCheeseBread": "Vollkornbrot mit Käse",
+    "pantryOats": "Haferflocken",
+    "pantryRice": "Reis",
+    "pantryMilk": "Milch",
+    "pantryEggs": "Eier",
+    "pantrySkyr": "Skyr",
+    "pantryOliveOil": "Olivenöl",
+    "shopBananas": "Bananen",
+    "shopBananasQty": "6 Stück",
+    "shopBerries": "Beeren (TK)",
+    "shopChicken": "Hähnchenbrust",
+    "shopSalmon": "Lachsfilet",
+    "shopCoffee": "Kaffee",
+    "shopProteinPowder": "Proteinpulver",
+    "shopProteinPowderQty": "1 Dose",
+    "checkStretch": "Dehnen & Faszienrolle nach dem Lauf",
+    "checkWater": "2 Liter Wasser trinken",
+    "checkSleep": "Mind. 7 Stunden Schlaf",
+    "checkShoes": "Neue Laufschuhe einlaufen",
+    "checkRacePack": "Startunterlagen Halbmarathon abholen",
+    "teamRed": "Team Rot",
+    "teamBlue": "Team Blau",
+    "teamGreen": "Team Grün",
+    "titleEasy": "Lockerer Lauf",
+    "titleTempo": "Tempolauf",
+    "titleLong": "Long Run",
+    "titleInterval": "Intervalle",
+    "titleRecovery": "Regeneration"
   }
 }

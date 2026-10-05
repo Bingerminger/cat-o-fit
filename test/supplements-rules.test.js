@@ -5,7 +5,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { addDays } from '../js/ui.js';
 import { assess, overview } from '../js/labs.js';
-import { recommend, catalogFor, SUPPLEMENTS, DOPING_NOTE } from '../js/supplements.js';
+import { recommend, catalogFor, SUPPLEMENTS, dopingNote } from '../js/supplements.js';
 import { energyAvailability, leanMassNow, EA_LOW, EA_LOW_MALE } from '../js/redflags.js';
 
 const T = '2026-09-29';
@@ -105,7 +105,7 @@ test('supplements: keine Leistungspräparate für Minderjährige', () => {
 });
 
 test('supplements: Doping-Hinweis und Quelle im Katalog (HEALTH-38, HEALTH-17)', () => {
-  assert.match(DOPING_NOTE, /Kölner Liste/);
+  assert.match(dopingNote(), /Kölner Liste/);
   for (const [key, s] of Object.entries(SUPPLEMENTS)) assert.ok(s.source, `${key} ohne Quellenangabe`);
   // Mengen an den Obergrenzen ausgerichtet (Beispiele aus dem Befund).
   assert.match(SUPPLEMENTS.magnesium.typical, /250 mg/);

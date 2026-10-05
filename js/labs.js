@@ -21,6 +21,7 @@
    ========================================================================= */
 
 import { diffDays, fmtDec } from './ui.js';
+import { locale, t } from './i18n.js';
 
 /* ----------------------------- Analyt-Katalog ---------------------------- */
 
@@ -44,121 +45,121 @@ import { diffDays, fmtDec } from './ui.js';
  */
 export const ANALYTES = {
   ferritin: {
-    label: 'Ferritin', unit: 'µg/l', alt: { 'ng/ml': 1 }, group: 'Eisenstatus',
+    get label() { return t('labs.analyte.ferritin.label'); }, unit: 'µg/l', alt: { 'ng/ml': 1 }, group: 'Eisenstatus',
     ref: [15, 300], sport: [40, 200], higherBetter: true, context: 'crp', rcv: 48, validDays: 365,
-    source: 'Laborüblicher Bereich; Sportkorridor nach GSSI (Peeling, Sim, McKay); Entzündung: WHO 2020; biologische Variation: Scand J Clin Lab Invest 2023',
-    hint: 'Eisenspeicher. Für Ausdauersport sind Werte deutlich über der unteren Laborgrenze günstig – niedrige Speicher können die Leistung schon beeinträchtigen, bevor eine Blutarmut sichtbar wird.',
+    get source() { return t('labs.analyte.ferritin.source'); },
+    get hint() { return t('labs.analyte.ferritin.hint'); },
   },
   transferrinSat: {
-    label: 'Transferrin-Sättigung', unit: '%', group: 'Eisenstatus',
+    get label() { return t('labs.analyte.transferrinSat.label'); }, unit: '%', group: 'Eisenstatus',
     ref: [16, 45], sport: [20, 45], higherBetter: true, validDays: 365,
-    source: 'GSSI (Peeling, Sim, McKay: unter 16 % Eisenmangel-Stadium 2); EASL 2022 (über 45 % bei hohem Ferritin abklären)',
-    hint: 'Wie viel Eisen tatsächlich transportiert wird – ergänzt das Ferritin.',
+    get source() { return t('labs.analyte.transferrinSat.source'); },
+    get hint() { return t('labs.analyte.transferrinSat.hint'); },
   },
   hb: {
-    label: 'Hämoglobin', unit: 'g/dl', group: 'Eisenstatus',
+    get label() { return t('labs.analyte.hb.label'); }, unit: 'g/dl', group: 'Eisenstatus',
     alt: { 'mmol/l': 1.6114 }, bySex: { m: [13.5, 17.5], w: [12.0, 16.0] }, needsSex: true,
     pregnancyLow: 11.0, higherBetter: true, rcv: 9, validDays: 365,
-    source: 'WHO 2024 (Anämiegrenzen 12,0 g/dl Frauen, 13,0 g/dl Männer, 11,0 g/dl in der Schwangerschaft); biologische Variation: EFLM 2019',
-    hint: 'Sauerstofftransport. Bei Ausdauersport oft leicht niedrig durch das größere Blutplasma („Pseudoanämie“) – das ist kein Mangel.',
+    get source() { return t('labs.analyte.hb.source'); },
+    get hint() { return t('labs.analyte.hb.hint'); },
   },
   crp: {
-    label: 'CRP', unit: 'mg/l', alt: { 'mg/dl': 10 }, group: 'Entzündung',
+    get label() { return t('labs.analyte.crp.label'); }, unit: 'mg/l', alt: { 'mg/dl': 10 }, group: 'Entzündung',
     ref: [0, 5], lowerBetter: true, exercise: true, validDays: 60,
-    source: 'IQWiG, gesundheitsinformation.de (bis 5 mg/l bzw. 0,5 mg/dl); nach Ausdauerbelastung erhöht: Thomas, Labor und Diagnose, Kap. 51',
-    hint: 'Entzündungsmarker. Nach harten Einheiten kurzzeitig erhöht; dauerhaft hohe Werte sprechen gegen einen belastbaren Trainingszustand.',
+    get source() { return t('labs.analyte.crp.source'); },
+    get hint() { return t('labs.analyte.crp.hint'); },
   },
   vitaminD: {
-    label: 'Vitamin D (25-OH)', unit: 'nmol/l', alt: { 'ng/ml': 2.496 }, group: 'Vitamine',
+    get label() { return t('labs.analyte.vitaminD.label'); }, unit: 'nmol/l', alt: { 'ng/ml': 2.496 }, group: 'Vitamine',
     ref: [50, 125], sport: [50, 125], deficiencyBelow: 30, higherBetter: true, seasonal: true, rcv: 30, validDays: 120,
-    source: 'DGE 2012 (ab 50 nmol/l ausreichend); IOC 2018 und Endocrine Society 2024 (kein Konsens für höhere Zielwerte)',
-    hint: 'Trägt zur normalen Funktion von Muskeln, Knochen und Immunsystem bei. In unseren Breiten fällt der Wert von Oktober bis März regelmäßig ab. Manche Sportmediziner streben 75 nmol/l an – dafür gibt es keinen Konsens, deshalb gilt hier der DGE-Wert.',
+    get source() { return t('labs.analyte.vitaminD.source'); },
+    get hint() { return t('labs.analyte.vitaminD.hint'); },
   },
   b12: {
-    label: 'Vitamin B12 (Holo-TC)', unit: 'pmol/l', group: 'Vitamine',
-    ref: [35, null], sport: [50, null], greyLabel: 'Graubereich – Mangel möglich (35–50)', higherBetter: true, validDays: 365,
-    source: 'LADR Laborverbund (unter 35 Mangel wahrscheinlich, 35–50 Graubereich, über 50 unwahrscheinlich; keine Obergrenze)',
-    hint: 'Holo-Transcobalamin zeigt die aktiv verfügbare Form – aussagekräftiger als das Gesamt-B12. Besonders relevant bei vegetarischer/veganer Ernährung.',
+    get label() { return t('labs.analyte.b12.label'); }, unit: 'pmol/l', group: 'Vitamine',
+    ref: [35, null], sport: [50, null], get greyLabel() { return t('labs.analyte.b12.grey'); }, higherBetter: true, validDays: 365,
+    get source() { return t('labs.analyte.b12.source'); },
+    get hint() { return t('labs.analyte.b12.hint'); },
   },
   b12total: {
-    label: 'Vitamin B12 (gesamt)', unit: 'pmol/l', alt: { 'pg/ml': 0.738 }, group: 'Vitamine',
-    ref: [150, null], sport: [300, null], greyLabel: 'Graubereich – Holo-TC oder MMA bestimmen lassen', higherBetter: true, validDays: 365,
-    source: 'Laborübliche Einordnung (unter 150 pmol/l bzw. 200 pg/ml Mangel wahrscheinlich; im Graubereich Holo-TC oder Methylmalonsäure)',
-    hint: 'Das häufig bestimmte Gesamt-B12 ist weniger aussagekräftig als Holo-TC. Nicht verwechseln: Die Zahlen liegen deutlich höher als beim Holo-TC.',
+    get label() { return t('labs.analyte.b12total.label'); }, unit: 'pmol/l', alt: { 'pg/ml': 0.738 }, group: 'Vitamine',
+    ref: [150, null], sport: [300, null], get greyLabel() { return t('labs.analyte.b12total.grey'); }, higherBetter: true, validDays: 365,
+    get source() { return t('labs.analyte.b12total.source'); },
+    get hint() { return t('labs.analyte.b12total.hint'); },
   },
   folate: {
-    label: 'Folsäure', unit: 'nmol/l', alt: { 'ng/ml': 2.266 }, group: 'Vitamine',
+    get label() { return t('labs.analyte.folate.label'); }, unit: 'nmol/l', alt: { 'ng/ml': 2.266 }, group: 'Vitamine',
     ref: [10, 45], higherBetter: true, validDays: 365,
-    source: 'Laborüblicher Bereich (laborabhängig – eigenen Bereich eintragen)',
-    hint: 'Wichtig für Blutbildung und Zellteilung.',
+    get source() { return t('labs.analyte.folate.source'); },
+    get hint() { return t('labs.analyte.folate.hint'); },
   },
   magnesium: {
-    label: 'Magnesium (Vollblut)', unit: 'mmol/l', alt: { 'mg/dl': 0.4114 }, group: 'Mineralstoffe',
+    get label() { return t('labs.analyte.magnesium.label'); }, unit: 'mmol/l', alt: { 'mg/dl': 0.4114 }, group: 'Mineralstoffe',
     ref: [1.3, 1.7], higherBetter: true, validDays: 180,
-    source: 'Laborbereiche Vollblut: Medizinische Laboratorien Düsseldorf 1,28–1,69; Medics Labor 1,28–1,83; Labor Mustafa 1,2–1,72 mmol/l (methodenabhängig)',
-    hint: 'Im Vollblut gemessen (Heparin- oder EDTA-Röhrchen). Die Bereiche hängen stark von der Methode ab – trag den Bereich deines Labors ein. Den häufiger bestimmten Serumwert erfasst du unter „Magnesium (Serum)“.',
+    get source() { return t('labs.analyte.magnesium.source'); },
+    get hint() { return t('labs.analyte.magnesium.hint'); },
   },
   magnesiumSerum: {
-    label: 'Magnesium (Serum)', unit: 'mmol/l', alt: { 'mg/dl': 0.4114, 'mval/l': 0.5 }, group: 'Mineralstoffe',
+    get label() { return t('labs.analyte.magnesiumSerum.label'); }, unit: 'mmol/l', alt: { 'mg/dl': 0.4114, 'mval/l': 0.5 }, group: 'Mineralstoffe',
     ref: [0.70, 1.05], higherBetter: true, validDays: 180,
-    source: 'Laborüblicher Serumbereich (z. B. 0,70–1,10 mmol/l, Medizinische Laboratorien Düsseldorf)',
-    hint: 'Serum-Magnesium ist der häufigste Laborwert für Magnesium. Er bildet die Speicher nur grob ab.',
+    get source() { return t('labs.analyte.magnesiumSerum.source'); },
+    get hint() { return t('labs.analyte.magnesiumSerum.hint'); },
   },
   zinc: {
-    label: 'Zink', unit: 'µmol/l', alt: { 'µg/dl': 0.153, 'µg/l': 0.0153 }, group: 'Mineralstoffe',
+    get label() { return t('labs.analyte.zinc.label'); }, unit: 'µmol/l', alt: { 'µg/dl': 0.153, 'µg/l': 0.0153 }, group: 'Mineralstoffe',
     ref: [11, 18], higherBetter: true, validDays: 365,
-    source: 'Laborüblicher Bereich (laborabhängig)',
-    hint: 'Immunfunktion und Regeneration; Verluste über Schweiß sind bei hohem Umfang relevant.',
+    get source() { return t('labs.sourceLabDependent'); },
+    get hint() { return t('labs.analyte.zinc.hint'); },
   },
   selenium: {
-    label: 'Selen', unit: 'µg/l', alt: { 'µmol/l': 78.96 }, group: 'Mineralstoffe',
+    get label() { return t('labs.analyte.selenium.label'); }, unit: 'µg/l', alt: { 'µmol/l': 78.96 }, group: 'Mineralstoffe',
     ref: [70, 130], higherBetter: true, validDays: 365,
-    source: 'Laborüblicher Bereich (laborabhängig)',
-    hint: 'Antioxidativer Schutz und Schilddrüsenstoffwechsel. Überdosierung ist schädlich – Zielbereich nicht überschreiten.',
+    get source() { return t('labs.sourceLabDependent'); },
+    get hint() { return t('labs.analyte.selenium.hint'); },
   },
   sodium: {
-    label: 'Natrium', unit: 'mmol/l', alt: { 'mval/l': 1 }, group: 'Mineralstoffe',
+    get label() { return t('labs.analyte.sodium.label'); }, unit: 'mmol/l', alt: { 'mval/l': 1 }, group: 'Mineralstoffe',
     ref: [135, 145], validDays: 30,
-    source: 'Laborüblicher Bereich',
-    hint: 'Bei sehr langen Belastungen mit viel Trinken kann Natrium gefährlich absinken (Hyponatriämie).',
+    get source() { return t('labs.analyte.sodium.source'); },
+    get hint() { return t('labs.analyte.sodium.hint'); },
   },
   tsh: {
-    label: 'TSH', unit: 'mU/l', alt: { 'µIU/ml': 1 }, group: 'Hormone & Stoffwechsel',
+    get label() { return t('labs.analyte.tsh.label'); }, unit: 'mU/l', alt: { 'µIU/ml': 1 }, group: 'Hormone & Stoffwechsel',
     ref: [0.4, 4.0], biotin: true, validDays: 365,
-    source: 'Laborüblicher Bereich; Biotin-Störung: BfR',
-    hint: 'Steuerhormon der Schilddrüse.',
+    get source() { return t('labs.analyte.tsh.source'); },
+    get hint() { return t('labs.analyte.tsh.hint'); },
   },
   ft3: {
-    label: 'fT3', unit: 'pmol/l', alt: { 'pg/ml': 1.536 }, group: 'Hormone & Stoffwechsel',
+    get label() { return t('labs.analyte.ft3.label'); }, unit: 'pmol/l', alt: { 'pg/ml': 1.536 }, group: 'Hormone & Stoffwechsel',
     ref: [3.1, 6.8], higherBetter: true, biotin: true, validDays: 365,
-    source: 'Laborüblicher Bereich; niedriges fT3 als Hinweis auf Energiemangel: IOC 2023 (REDs)',
-    hint: 'Sinkt bei anhaltendem Energiemangel oft früh ab – ein Warnzeichen für zu wenig Energie im Verhältnis zum Training.',
+    get source() { return t('labs.analyte.ft3.source'); },
+    get hint() { return t('labs.analyte.ft3.hint'); },
   },
   testosterone: {
-    label: 'Testosteron (gesamt)', unit: 'nmol/l', alt: { 'ng/ml': 3.467, 'ng/dl': 0.03467 }, group: 'Hormone & Stoffwechsel',
+    get label() { return t('labs.analyte.testosterone.label'); }, unit: 'nmol/l', alt: { 'ng/ml': 3.467, 'ng/dl': 0.03467 }, group: 'Hormone & Stoffwechsel',
     bySex: { m: [8.6, 29], w: [0.3, 1.7] }, needsSex: true, higherBetter: true, validDays: 365,
-    source: 'Laborübliche Bereiche je Geschlecht; niedrige Werte als Hinweis auf Energiemangel: IOC 2023 (REDs)',
-    hint: 'Fällt bei dauerhaftem Energiedefizit und Übertraining ab.',
+    get source() { return t('labs.analyte.testosterone.source'); },
+    get hint() { return t('labs.analyte.testosterone.hint'); },
   },
   estradiol: {
-    label: 'Östradiol', unit: 'pmol/l', alt: { 'pg/ml': 3.671 }, group: 'Hormone & Stoffwechsel',
+    get label() { return t('labs.analyte.estradiol.label'); }, unit: 'pmol/l', alt: { 'pg/ml': 3.671 }, group: 'Hormone & Stoffwechsel',
     bySex: { m: [40, 160] }, needsSex: true, cycle: true, validDays: 365,
-    source: 'Laborüblicher Bereich für Männer; bei Frauen je Zyklusphase laut eigenem Labor (IOC 2023: Zyklusstatus unter hormoneller Verhütung nicht beurteilbar)',
-    hint: 'Stark zyklusabhängig – bei Frauen nur zusammen mit dem Zyklustag und dem Bereich deines Labors für diese Phase beurteilbar. Dauerhaft niedrige Werte plus ausbleibende Periode sind ein Alarmzeichen.',
+    get source() { return t('labs.analyte.estradiol.source'); },
+    get hint() { return t('labs.analyte.estradiol.hint'); },
   },
   ck: {
-    label: 'Kreatinkinase (CK)', unit: 'U/l', alt: { 'µkat/l': 60 }, group: 'Belastung & Regeneration',
+    get label() { return t('labs.analyte.ck.label'); }, unit: 'U/l', alt: { 'µkat/l': 60 }, group: 'Belastung & Regeneration',
     bySex: { m: [0, 190], w: [0, 170] }, ref: [0, 170],
     sportBySex: { m: [0, 1083], w: [0, 513] }, sport: [0, 513], sportFirst: true,
     lowerBetter: true, exercise: true, validDays: 60,
-    source: 'Laborübliche Bereiche je Geschlecht; Sportlerinnen 47–513 und Sportler 82–1083 U/l: Thomas, Labor und Diagnose, Kap. 51',
-    hint: 'Marker für Muskelbeanspruchung. Nach harten Einheiten stark erhöht – erst nach mindestens einem Ruhetag aussagekräftig.',
+    get source() { return t('labs.analyte.ck.source'); },
+    get hint() { return t('labs.analyte.ck.hint'); },
   },
   urea: {
-    label: 'Harnstoff', unit: 'mmol/l', alt: { 'mg/dl': 0.1665, 'mg/dl (BUN)': 0.357 }, group: 'Belastung & Regeneration',
+    get label() { return t('labs.analyte.urea.label'); }, unit: 'mmol/l', alt: { 'mg/dl': 0.1665, 'mg/dl (BUN)': 0.357 }, group: 'Belastung & Regeneration',
     ref: [2.5, 7.5], lowerBetter: true, exercise: true, validDays: 60,
-    source: 'Laborüblicher Bereich; nach Marathon bis 24 h erhöht: Thomas, Labor und Diagnose, Kap. 51',
-    hint: 'Steigt bei hoher Trainingslast und eiweißreicher Kost; anhaltend hohe Werte sprechen für unvollständige Erholung.',
+    get source() { return t('labs.analyte.urea.source'); },
+    get hint() { return t('labs.analyte.urea.hint'); },
   },
 };
 
@@ -167,6 +168,19 @@ export const ANALYTE_GROUPS = [
   'Eisenstatus', 'Vitamine', 'Mineralstoffe', 'Hormone & Stoffwechsel',
   'Belastung & Regeneration', 'Entzündung',
 ];
+
+/** Anzeigename einer Analyt-Gruppe (die Gruppe selbst bleibt der deutsche interne Wert). */
+export function groupLabel(group) {
+  switch (group) {
+    case 'Eisenstatus': return t('labs.group.iron');
+    case 'Vitamine': return t('labs.group.vitamins');
+    case 'Mineralstoffe': return t('labs.group.minerals');
+    case 'Hormone & Stoffwechsel': return t('labs.group.hormones');
+    case 'Belastung & Regeneration': return t('labs.group.loadRecovery');
+    case 'Entzündung': return t('labs.group.inflammation');
+    default: return group;
+  }
+}
 
 /** Datenstand neuer Laborwerte: ab 2 gelten Magnesium-Art und Referenzherkunft als geklärt. */
 export const LAB_SCHEMA = 2;
@@ -359,7 +373,7 @@ const fmt = fmtDec;
 export function assess(key, value, { sex = null, labs = [], today = null, record = null, pregnant = false } = {}) {
   const a = ANALYTES[key];
   const v = Number(value);
-  if (!a || !Number.isFinite(v)) return { status: 'unbekannt', label: 'unbekannt', tone: 'neutral', caveats: [] };
+  if (!a || !Number.isFinite(v)) return { status: 'unbekannt', label: t('labs.statusUnknown'), tone: 'neutral', caveats: [] };
   const rec = migrateLabRecord(record);
 
   const ownRef = hasOwnRef(rec);
@@ -367,25 +381,25 @@ export function assess(key, value, { sex = null, labs = [], today = null, record
   const sport = sportRange(a, sex);
   const caveats = [];
   const base = { ref, sport, ownRef, caveats, source: a.source };
-  const blockedResult = (text) => ({ ...base, status: 'unbeurteilbar', side: null, label: 'nicht beurteilbar', tone: 'neutral', blocked: text });
+  const blockedResult = (text) => ({ ...base, status: 'unbeurteilbar', side: null, label: t('labs.notAssessable'), tone: 'neutral', blocked: text });
 
   // Ohne Geschlecht (und ohne eigenen Laborbereich) kein Standard.
   if (!ref) {
     return blockedResult(a.needsSex
-      ? `Für ${a.label} gelten je nach Geschlecht andere Bereiche. Trag dein Geschlecht im Profil ein oder den Bereich deines Labors beim Wert.`
-      : 'Für diesen Wert ist kein Bereich hinterlegt.');
+      ? t('labs.blockedNeedsSex', { label: a.label })
+      : t('labs.blockedNoRange'));
   }
   // Zyklusabhängig: bei Frauen nur mit dem Bereich des eigenen Labors (für die Zyklusphase).
   if (a.cycle && sex === 'w' && !ownRef) {
-    const day = rec && rec.cycleDay ? ` Zyklustag ${rec.cycleDay} ist notiert –` : '';
-    return blockedResult(`${a.label} schwankt im Zyklus stark.${day} Einordnen lässt sich der Wert nur mit dem Bereich, den dein Labor für diese Zyklusphase angibt – trag ihn beim Wert ein.`);
+    const day = rec && rec.cycleDay ? ` ${t('labs.cycleDayNoted', { day: rec.cycleDay })}` : '';
+    return blockedResult(t('labs.blockedCycle', { label: a.label, day }));
   }
   // Nach harter Belastung erhöht (CK, Harnstoff, CRP): erst in Ruhe aussagekräftig.
   if (a.exercise && rec && rec.exercise48h && ref[1] != null && v > ref[1]) {
-    return blockedResult(`Vor der Blutentnahme hast du hart trainiert – ${a.label} ist dann oft vorübergehend erhöht. In Ruhe (nach mindestens einem trainingsfreien Tag) erneut bestimmen lassen.`);
+    return blockedResult(t('labs.blockedExercise', { label: a.label }));
   }
   if (a.biotin && rec && rec.biotin) {
-    caveats.push('Biotin (auch in Haut-, Haar- und Kombipräparaten) kann diesen Test verfälschen – vor der nächsten Blutentnahme nach Rücksprache einige Tage pausieren.');
+    caveats.push(t('labs.caveatBiotin'));
   }
 
   // Ferritin: CRP DERSELBEN Blutentnahme. Bei Entzündung sagt ein hoher Wert nichts,
@@ -397,27 +411,27 @@ export function assess(key, value, { sex = null, labs = [], today = null, record
         const clearlyLow = v < ref[0] || v < 30;
         return {
           ...base, status: clearlyLow ? 'niedrig' : 'grenzwertig', side: 'low', tone: clearlyLow ? 'bad' : 'warn', inflamed: true,
-          label: clearlyLow ? 'trotz Entzündung niedrig – spricht für einen Eisenmangel' : 'bei Entzündung verdächtig niedrig (unter 70)',
-          caveats: [...caveats, `CRP derselben Blutentnahme: ${fmt(crp.value)} mg/l. Bei einer Entzündung steigt Ferritin an – ein Wert unter 70 µg/l spricht dann trotzdem für einen Eisenmangel (WHO 2020).`],
+          label: clearlyLow ? t('labs.inflamedLow') : t('labs.inflamedSuspicious'),
+          caveats: [...caveats, t('labs.caveatCrp', { crp: fmt(crp.value) })],
         };
       }
-      return blockedResult(`CRP derselben Blutentnahme liegt bei ${fmt(crp.value)} mg/l – ${a.label} steigt bei Entzündungen an und lässt sich dann nicht sinnvoll einordnen. Nach Abklingen erneut messen.`);
+      return blockedResult(t('labs.blockedCrp', { crp: fmt(crp.value), label: a.label }));
     }
-    if (!crp && rec && rec.date) caveats.push('Ohne CRP derselben Blutentnahme gilt die Einordnung mit Vorbehalt – Ferritin steigt bei Entzündungen an.');
+    if (!crp && rec && rec.date) caveats.push(t('labs.caveatNoCrp'));
   }
 
   // Über dem Laborbereich, aber im Sportkorridor (CK): für Trainierende häufig.
   if (a.sportFirst && sport && ref[1] != null && v > ref[1] && (sport[1] == null || v <= sport[1])) {
-    return { ...base, status: 'grenzwertig', side: 'high', label: 'über dem Laborbereich, für Trainierende häufig – in Ruhe kontrollieren', tone: 'warn' };
+    return { ...base, status: 'grenzwertig', side: 'high', label: t('labs.highForAthletes'), tone: 'warn' };
   }
   if (v < ref[0]) {
     const deficient = a.deficiencyBelow != null && v < a.deficiencyBelow;
-    return { ...base, status: 'niedrig', side: 'low', label: deficient ? 'deutlich unter dem Referenzbereich (Mangel)' : 'unter dem Referenzbereich', tone: 'bad', deficient };
+    return { ...base, status: 'niedrig', side: 'low', label: deficient ? t('labs.belowRangeDeficient') : t('labs.belowRange'), tone: 'bad', deficient };
   }
-  if (ref[1] != null && v > ref[1]) return { ...base, status: 'hoch', side: 'high', label: 'über dem Referenzbereich', tone: 'bad' };
-  if (sport && v < sport[0]) return { ...base, status: 'grenzwertig', side: 'low', label: a.greyLabel || 'im Normbereich, für Sport eher knapp', tone: 'warn' };
-  if (sport && sport[1] != null && v > sport[1]) return { ...base, status: 'grenzwertig', side: 'high', label: 'im Normbereich, aber hoch', tone: 'warn' };
-  return { ...base, status: 'gut', side: null, label: 'im günstigen Bereich', tone: 'good' };
+  if (ref[1] != null && v > ref[1]) return { ...base, status: 'hoch', side: 'high', label: t('labs.aboveRange'), tone: 'bad' };
+  if (sport && v < sport[0]) return { ...base, status: 'grenzwertig', side: 'low', label: a.greyLabel || t('labs.normalButTight'), tone: 'warn' };
+  if (sport && sport[1] != null && v > sport[1]) return { ...base, status: 'grenzwertig', side: 'high', label: t('labs.normalButHigh'), tone: 'warn' };
+  return { ...base, status: 'gut', side: null, label: t('labs.favourable'), tone: 'good' };
 }
 
 /**
@@ -475,7 +489,7 @@ export function trend(labs = [], key, { days = 540, sex = null } = {}) {
 
 /** Einordnung ohne Bewertung – für Kinder und Jugendliche: Die hinterlegten Bereiche
     gelten für Erwachsene, altersgerechte Bereiche kennt nur das eigene Labor. */
-const UNRATED = { status: 'unbewertet', side: null, label: 'ohne Bewertung (unter 18)', tone: 'neutral', ref: null, sport: null, caveats: [] };
+const UNRATED = { status: 'unbewertet', side: null, get label() { return t('labs.unrated'); }, tone: 'neutral', ref: null, sport: null, caveats: [] };
 
 /**
  * Gesamtbild: alle erfassten Analyte mit Bewertung und Trend, auffällige zuerst.
@@ -500,7 +514,7 @@ export function overview(labs = [], { sex = null, today = null, evaluate = true,
     })
     .filter(Boolean)
     .sort((x, y) => (rank[x.assessment.status] - rank[y.assessment.status])
-      || x.label.localeCompare(y.label, 'de'));
+      || x.label.localeCompare(y.label, locale()));
 }
 
 /**
@@ -536,12 +550,12 @@ export function labRecordsFromReport({ date, note = '', ctx = {}, rows = [] } = 
     if (!a || txt(r.value) === '') continue;
     const unit = r.unit && unitFactor(r.key, r.unit) ? r.unit : a.unit;
     const v = toCanonical(r.key, txt(r.value), unit);
-    if (v == null) { errors.push(`${a.label}: kein gültiger Wert`); continue; }
+    if (v == null) { errors.push(t('labs.errorInvalidValue', { label: a.label })); continue; }
     const lo0 = txt(r.refLow), hi0 = txt(r.refHigh);
-    if ((lo0 === '') !== (hi0 === '')) { errors.push(`${a.label}: bitte beide Grenzen des Referenzbereichs eintragen – oder keine`); continue; }
+    if ((lo0 === '') !== (hi0 === '')) { errors.push(t('labs.errorBothLimits', { label: a.label })); continue; }
     const lo = lo0 !== '' ? toCanonical(r.key, lo0, unit) : null;
     const hi = hi0 !== '' ? toCanonical(r.key, hi0, unit) : null;
-    if (lo0 !== '' && !(lo != null && hi != null && hi > lo)) { errors.push(`${a.label}: die obere Grenze muss größer als die untere sein`); continue; }
+    if (lo0 !== '' && !(lo != null && hi != null && hi > lo)) { errors.push(t('labs.errorUpperLimit', { label: a.label })); continue; }
     if (implausible(r.key, v, sex)) odd.push(a.label);
     records.push({
       analyte: r.key, value: v, unit: a.unit, date, note: note ? String(note).trim() || null : null,

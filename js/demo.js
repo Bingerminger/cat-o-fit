@@ -20,10 +20,17 @@
    ========================================================================= */
 import { addDays, isoDow } from './ui.js';
 import { pacesFromVdot } from './vdot.js';
-import { hrZonesFrom } from './hrzones.js';
+import { hrZonesFrom, zoneName } from './hrzones.js';
 import { encodePolyline, simplifyRoute, ascentOf, haversineSum } from './gpx.js';
+import { t, tList } from './i18n.js';
 
-const TITLE = { easy: 'Lockerer Lauf', tempo: 'Tempolauf', long: 'Long Run', interval: 'Intervalle', recovery: 'Regeneration' };
+const TITLE = {
+  get easy() { return t('demo.titleEasy'); },
+  get tempo() { return t('demo.titleTempo'); },
+  get long() { return t('demo.titleLong'); },
+  get interval() { return t('demo.titleInterval'); },
+  get recovery() { return t('demo.titleRecovery'); },
+};
 // Session-Durchschnitts-Paces (s/km). Wichtig: konsistent mit den Plan-Zielpaces (DEMO_PACE_ZONES
 // ≈ VDOT 39–40, passend zum 1:55-HM-Ziel). Die Intervalle sind als VO₂max-Schlüsselreiz der schnellste
 // Wert und ergeben eine „aktuelle Form“ von ~VDOT 42 – ein realistischer, sichtbarer Vorsprung von
@@ -49,20 +56,20 @@ export function demoHealthSeries(today, opts = {}) {
   const out = [];
   for (let k = n; k >= 0; k--) {
     const date = addDays(today, -k * step);
-    const t = 1 - k / n; // 0 = ältester Punkt … 1 = heute (Fortschritt)
+    const progress = 1 - k / n; // 0 = ältester Punkt … 1 = heute (Fortschritt)
     const s = seed;
     out.push({
       id: `demo-h-${s}-${date}`, date, source: 'demo', notes: '',
-      weight: R1(w0 - dw * t + NZ(k + s, 0.35)),
-      bodyFat: R1(bf0 - 3.2 * t + NZ(k + s + 7, 0.4)),
-      muscleMass: R1(mm0 + 0.9 * t + NZ(k + s + 3, 0.15)),
-      visceralFat: Math.round(CLAMP(8 - 2 * t + NZ(k + s + 11, 0.5), 4, 12)),
-      restingHr: Math.round(CLAMP(rhr0 - 6 * t + NZ(k + s + 5, 1.6), 40, 68)),
-      hrv: Math.round(CLAMP(52 + 11 * t + NZ(k + s + 2, 3.5), 40, 90)), hrvMethod: 'rmssd',   // Uhr (nicht Apple)
+      weight: R1(w0 - dw * progress + NZ(k + s, 0.35)),
+      bodyFat: R1(bf0 - 3.2 * progress + NZ(k + s + 7, 0.4)),
+      muscleMass: R1(mm0 + 0.9 * progress + NZ(k + s + 3, 0.15)),
+      visceralFat: Math.round(CLAMP(8 - 2 * progress + NZ(k + s + 11, 0.5), 4, 12)),
+      restingHr: Math.round(CLAMP(rhr0 - 6 * progress + NZ(k + s + 5, 1.6), 40, 68)),
+      hrv: Math.round(CLAMP(52 + 11 * progress + NZ(k + s + 2, 3.5), 40, 90)), hrvMethod: 'rmssd',   // Uhr (nicht Apple)
       sleepHours: R1(CLAMP(7.2 + 0.25 * Math.sin(k / 3) + NZ(k + s + 4, 0.9), 5, 9)),
-      energy: CLAMP(Math.round(6.3 + 1.3 * t + NZ(k + s + 6, 1.6)), 1, 10),
-      mood: CLAMP(Math.round(6.4 + 1.1 * t + NZ(k + s + 8, 1.5)), 1, 10),
-      vo2max: (k % 3 === 0) ? R1(44 + 4 * t + NZ(k + s + 9, 0.4)) : null, // wird seltener gemessen
+      energy: CLAMP(Math.round(6.3 + 1.3 * progress + NZ(k + s + 6, 1.6)), 1, 10),
+      mood: CLAMP(Math.round(6.4 + 1.1 * progress + NZ(k + s + 8, 1.5)), 1, 10),
+      vo2max: (k % 3 === 0) ? R1(44 + 4 * progress + NZ(k + s + 9, 0.4)) : null, // wird seltener gemessen
     });
   }
   return out;
@@ -96,8 +103,8 @@ function demoMemberProfile(spec, today) {
     birthYear: (+today.slice(0, 4)) - spec.age, sex: spec.sex,
     maxHr, restHr, thresholdPaceSecPerKm: pz.threshold.min,
     hrZones: memberHrZones(maxHr), paceZones: pz,
-    goals: minor ? ['Spaß an Bewegung', 'Fit für den Vereinssport']
-      : female ? ['Regelmäßig laufen', 'Fit & gesund bleiben'] : ['Ausdauer aufbauen', 'Gewicht halten'],
+    goals: minor ? [t('demo.goalEnjoyMoving'), t('demo.goalClubSport')]
+      : female ? [t('demo.goalRunRegularly'), t('demo.goalFitHealthy')] : [t('demo.goalEndurance'), t('demo.goalKeepWeight')],
     settings: {
       theme: 'system', accent: spec.color, weekStart: 1, units: 'metric', weather: true,
       location: { name: spec.city, country: 'DE', ...loc },
@@ -136,11 +143,11 @@ export function demoMemberData(prefix, today, { w0 = 78, seed = 1, level = 'mid'
     ? demoHealthSeries(today, { days: 60, step: 3, w0, dw: -0.8, seed, rhr0: 66, bf0: 18, mm0: 17 })
     : demoHealthSeries(today, { days: 60, step: 3, w0, seed, rhr0: 54 + (seed % 5), bf0: sex === 'w' ? 27 : 19 });
   const events = raceOffset
-    ? [{ id: `${prefix}-e1`, name: level === 'high' ? '10-km-Wettkampf' : 'Volkslauf', kind: 'race', date: D(raceOffset), distanceType: '10k', distanceKm: 10, targetTime: '00:50:00', priority: 'B', status: 'geplant' }]
+    ? [{ id: `${prefix}-e1`, name: level === 'high' ? t('demo.raceTenK') : t('demo.raceFun'), kind: 'race', date: D(raceOffset), distanceType: '10k', distanceKm: 10, targetTime: '00:50:00', priority: 'B', status: 'geplant' }]
     : [];
   const nutrition = [
-    { id: `${prefix}-n1`, category: 'mittag', title: 'Protein-Bowl', kcal: 560, protein: 38, tags: ['proteinreich', 'meal-prep'], ingredients: ['150 g Hähnchen', '80 g Reis', '200 g Gemüse'], plannedServings: 2 },
-    { id: `${prefix}-n2`, category: 'snack', title: 'Skyr & Beeren', kcal: 180, protein: 18, tags: ['proteinreich', 'schnell'], ingredients: ['150 g Skyr', '100 g Beeren'], plannedServings: 3 },
+    { id: `${prefix}-n1`, category: 'mittag', title: t('demo.mealProteinBowl'), kcal: 560, protein: 38, tags: ['proteinreich', 'meal-prep'], ingredients: tList('demo.mealProteinBowlIngredients') || [], plannedServings: 2 },
+    { id: `${prefix}-n2`, category: 'snack', title: t('demo.mealSkyrBerries'), kcal: 180, protein: 18, tags: ['proteinreich', 'schnell'], ingredients: tList('demo.mealSkyrIngredients') || [], plannedServings: 3 },
   ];
   return { sessions, health, events, nutrition, plans: [] };
 }
@@ -169,7 +176,7 @@ export function demoLabs(today) {
     date: D(off), note, source: 'demo',
   });
   at.forEach((off, k) => {
-    add('ferritin', ferritin[k], off, k === 3 ? 'Kontrolle nach der Aufbauphase' : null);
+    add('ferritin', ferritin[k], off, k === 3 ? t('demo.labFollowUp') : null);
     add('vitaminD', vitD[k], off);
     add('hb', hb[k], off);
     add('crp', k === 3 ? 1.8 : 2.4, off);          // unauffällig -> Ferritin beurteilbar
@@ -186,8 +193,8 @@ export function demoLabs(today) {
 export function demoSupplements(today) {
   const D = (n) => addDays(today, n);
   const plans = [
-    { id: 'demo-sup-vd', _kind: 'plan', supplementKey: 'vitaminD', name: 'Vitamin D', dose: '800 IE (20 µg)/Tag', timing: 'Zum Frühstück', active: true, from: D(-45), to: null, source: 'demo' },
-    { id: 'demo-sup-mg', _kind: 'plan', supplementKey: 'magnesium', name: 'Magnesium', dose: '250 mg/Tag', timing: 'Abends', active: true, from: D(-30), to: null, source: 'demo' },
+    { id: 'demo-sup-vd', _kind: 'plan', supplementKey: 'vitaminD', name: t('demo.supVitaminD'), dose: t('demo.supVitaminDDose'), timing: t('demo.supWithBreakfast'), active: true, from: D(-45), to: null, source: 'demo' },
+    { id: 'demo-sup-mg', _kind: 'plan', supplementKey: 'magnesium', name: t('demo.supMagnesium'), dose: t('demo.supMagnesiumDose'), timing: t('demo.supEvening'), active: true, from: D(-30), to: null, source: 'demo' },
   ];
   const intakes = [];
   // Realistische Einnahmetreue: Vitamin D fast täglich, Magnesium mit Lücken.
@@ -232,23 +239,23 @@ export function demoCycle(today, n = 6) {
 }
 
 /** HF-Zonen (aus Max-/Ruhepuls) – realistische Demo-Werte. */
-const DEMO_HR_ZONES = [
-  { zone: 1, name: 'Regeneration', minPct: 50, maxPct: 60, min: 95, max: 114, color: '#7fb8ff' },
-  { zone: 2, name: 'Grundlage (GA1)', minPct: 60, maxPct: 70, min: 114, max: 133, color: '#43c59e' },
-  { zone: 3, name: 'Tempo (GA2)', minPct: 70, maxPct: 80, min: 133, max: 152, color: '#f5c451' },
-  { zone: 4, name: 'Schwelle', minPct: 80, maxPct: 90, min: 152, max: 171, color: '#f59145' },
-  { zone: 5, name: 'VO2max', minPct: 90, maxPct: 100, min: 171, max: 190, color: '#ef5d6c' },
+const demoHrZones = () => [
+  { zone: 1, name: zoneName(1), minPct: 50, maxPct: 60, min: 95, max: 114, color: '#7fb8ff' },
+  { zone: 2, name: zoneName(2), minPct: 60, maxPct: 70, min: 114, max: 133, color: '#43c59e' },
+  { zone: 3, name: zoneName(3), minPct: 70, maxPct: 80, min: 133, max: 152, color: '#f5c451' },
+  { zone: 4, name: zoneName(4), minPct: 80, maxPct: 90, min: 152, max: 171, color: '#f59145' },
+  { zone: 5, name: zoneName(5), minPct: 90, maxPct: 100, min: 171, max: 190, color: '#ef5d6c' },
 ];
-const DEMO_PACE_ZONES = {
-  recovery:   { label: 'Regeneration', min: 390, max: 410, hrZone: 1 },
-  easy:       { label: 'Locker / Easy', min: 360, max: 385, hrZone: 2 },
-  long:       { label: 'Long Run', min: 350, max: 375, hrZone: 2 },
-  marathon:   { label: 'Marathon-Pace', min: 335, max: 345, hrZone: 3 },
-  race_hm:    { label: 'HM-Wettkampf', min: 324, max: 330, hrZone: 3 },
-  threshold:  { label: 'Schwelle / Tempo', min: 305, max: 318, hrZone: 4 },
-  vo2:        { label: 'Intervalle (VO2max)', min: 282, max: 300, hrZone: 5 },
-  repetition: { label: 'Wiederholungen', min: 268, max: 282, hrZone: 5 },
-};
+const demoPaceZones = () => ({
+  recovery:   { label: t('vdot.zoneRecovery'), min: 390, max: 410, hrZone: 1 },
+  easy:       { label: t('vdot.zoneEasy'), min: 360, max: 385, hrZone: 2 },
+  long:       { label: t('vdot.zoneLong'), min: 350, max: 375, hrZone: 2 },
+  marathon:   { label: t('demo.zoneMarathon'), min: 335, max: 345, hrZone: 3 },
+  race_hm:    { label: t('demo.zoneHalfRace'), min: 324, max: 330, hrZone: 3 },
+  threshold:  { label: t('vdot.zoneThreshold'), min: 305, max: 318, hrZone: 4 },
+  vo2:        { label: t('vdot.zoneVo2'), min: 282, max: 300, hrZone: 5 },
+  repetition: { label: t('demo.zoneRepetition'), min: 268, max: 282, hrZone: 5 },
+});
 
 /**
  * Trainings der Demo-Historie im Planzeitraum [planStart, today): Die alte Lauf-Routine
@@ -287,13 +294,13 @@ export function demoRoute(km) {
   const lat0 = 51.0375, lon0 = 13.763, N = 240;
   const cosLat = Math.cos((lat0 * Math.PI) / 180);
   const shape = (r) => Array.from({ length: N + 1 }, (_, i) => {
-    const t = (2 * Math.PI * i) / N;
-    const rr = r * (1 + 0.12 * Math.sin(3 * t) + 0.05 * Math.sin(7 * t + 1));
-    return [lat0 + (rr * 0.8 * Math.sin(t)) / 111.32, lon0 + (rr * 1.25 * Math.cos(t)) / (111.32 * cosLat)];
+    const angle = (2 * Math.PI * i) / N;
+    const rr = r * (1 + 0.12 * Math.sin(3 * angle) + 0.05 * Math.sin(7 * angle + 1));
+    return [lat0 + (rr * 0.8 * Math.sin(angle)) / 111.32, lon0 + (rr * 1.25 * Math.cos(angle)) / (111.32 * cosLat)];
   });
   const perKm = haversineSum(shape(1)) / 1000;           // Länge der Form bei r = 1 km
   const coords = shape(km / perKm);
-  const eles = coords.map((_, i) => { const t = (2 * Math.PI * i) / N; return 116 + 9 * Math.sin(2 * t) + 3 * Math.sin(9 * t); });
+  const eles = coords.map((_, i) => { const angle = (2 * Math.PI * i) / N; return 116 + 9 * Math.sin(2 * angle) + 3 * Math.sin(9 * angle); });
   const ele = Array.from({ length: 60 }, (_, k) => Math.round(eles[Math.round((k * N) / 59)]));
   return { route: { poly: encodePolyline(simplifyRoute(coords)), ele }, ascentM: ascentOf(eles) };
 }
@@ -373,7 +380,7 @@ export function buildDemo(today) {
     const date = D(-off);
     if (![1, 3].includes(isoDow(date))) continue;
     sessions.push({
-      id: 'demo-fb' + off, date, type: 'cross_football', title: 'Fußballtraining', intensity: 'normal',
+      id: 'demo-fb' + off, date, type: 'cross_football', title: t('commitments.footballTraining'), intensity: 'normal',
       durationSec: 90 * 60, rpe: 7, status: 'erledigt', source: 'demo',
     });
   }
@@ -383,7 +390,7 @@ export function buildDemo(today) {
 
   /* ---- Wettkampf (mit Stadt für das Wetter) ---- */
   const events = [{
-    id: 'demo-e1', name: 'Stadtlauf Halbmarathon', kind: 'race', date: D(70),
+    id: 'demo-e1', name: t('demo.raceCityHalf'), kind: 'race', date: D(70),
     distanceType: 'HM', distanceKm: 21.0975, targetTime: '01:55:00',
     priority: 'A', location: 'Dresden, Altstadt', status: 'geplant', createdAt: D(-42),
   }];
@@ -394,8 +401,8 @@ export function buildDemo(today) {
   const profile = {
     heightCm: 179, weightKg: 72, targetWeightKg: 69, targetWeightStartKg: 75, birthYear: 1990, sex: 'w',
     maxHr: 190, restHr: 52, thresholdPaceSecPerKm: 312,
-    goals: ['Körperfett reduzieren', 'Muskelmasse erhöhen', 'Halbmarathon unter 1:55 h'],
-    hrZones: DEMO_HR_ZONES, paceZones: DEMO_PACE_ZONES,
+    goals: [t('demo.goalBodyFat'), t('demo.goalMuscle'), t('demo.goalHalf')],
+    hrZones: demoHrZones(), paceZones: demoPaceZones(),
   };
   // Standort (Dresden) für die Wettervorhersage, aktive Module (inkl. Zyklus!),
   // sichtbare Metriken und Gesundheitsziele (Fortschritt auf „Heute“).
@@ -430,12 +437,12 @@ export function buildDemo(today) {
   const nutrition = [
     // Nährwerte wie im Rezeptkatalog (aus den Zutaten geschätzt) – Katalog, Speiseplan
     // und Tagebuch zeigen für dasselbe Gericht dieselben Zahlen.
-    { id: 'demo-n1', category: 'fruehstueck', title: 'Overnight Oats mit Beeren', kcal: 520, protein: 30, tags: ['proteinreich', 'vegetarisch', 'meal-prep'], ingredients: ['60 g Haferflocken', '150 g Skyr', '150 ml Milch', '100 g Beeren', '1 EL Honig'], plannedServings: 3 },
-    { id: 'demo-n2', category: 'fruehstueck', title: 'Protein-Porridge mit Banane', kcal: 600, protein: 39, tags: ['proteinreich', 'vegetarisch'], ingredients: ['60 g Haferflocken', '30 g Proteinpulver', '250 ml Milch', '1 Banane'], plannedServings: 2 },
-    { id: 'demo-n3', category: 'mittag', title: 'Hähnchen-Reis-Bowl mit Brokkoli', kcal: 600, protein: 46, tags: ['proteinreich', 'meal-prep'], ingredients: ['150 g Hähnchen', '80 g Reis', '200 g Brokkoli', '1 EL Öl'], plannedServings: 4 },
-    { id: 'demo-n4', category: 'mittag', title: 'Lachs mit Süßkartoffel & Spinat', kcal: 620, protein: 35, tags: ['proteinreich', 'omega-3'], ingredients: ['150 g Lachs', '250 g Süßkartoffel', 'Spinat', '1 EL Öl'], plannedServings: 2 },
-    { id: 'demo-n5', category: 'abend', title: 'Omelett mit Feta & Tomaten', kcal: 440, protein: 30, tags: ['proteinreich', 'vegetarisch', 'low-carb'], ingredients: ['3 Eier', '50 g Feta', '200 g Tomaten', 'Spinat'], plannedServings: 3 },
-    { id: 'demo-n6', category: 'snack', title: 'Skyr mit Beeren', kcal: 140, protein: 18, tags: ['proteinreich', 'vegetarisch', 'schnell'], ingredients: ['150 g Skyr', '100 g Beeren'], plannedServings: 4 },
+    { id: 'demo-n1', suggestionId: 'overnight-oats-mit-beeren', category: 'fruehstueck', title: t('demo.mealOvernightOats'), kcal: 520, protein: 30, tags: ['proteinreich', 'vegetarisch', 'meal-prep'], ingredients: tList('demo.mealOvernightOatsIngredients') || [], plannedServings: 3 },
+    { id: 'demo-n2', suggestionId: 'protein-porridge-mit-banane', category: 'fruehstueck', title: t('demo.mealProteinPorridge'), kcal: 600, protein: 39, tags: ['proteinreich', 'vegetarisch'], ingredients: tList('demo.mealProteinPorridgeIngredients') || [], plannedServings: 2 },
+    { id: 'demo-n3', suggestionId: 'haehnchen-reis-bowl-mit-brokkoli', category: 'mittag', title: t('demo.mealChickenRiceBowl'), kcal: 600, protein: 46, tags: ['proteinreich', 'meal-prep'], ingredients: tList('demo.mealChickenRiceBowlIngredients') || [], plannedServings: 4 },
+    { id: 'demo-n4', suggestionId: 'lachs-mit-suesskartoffel-spinat', category: 'mittag', title: t('demo.mealSalmon'), kcal: 620, protein: 35, tags: ['proteinreich', 'omega-3'], ingredients: tList('demo.mealSalmonIngredients') || [], plannedServings: 2 },
+    { id: 'demo-n5', suggestionId: 'omelett-mit-feta-tomaten', category: 'abend', title: t('demo.mealOmelette'), kcal: 440, protein: 30, tags: ['proteinreich', 'vegetarisch', 'low-carb'], ingredients: tList('demo.mealOmeletteIngredients') || [], plannedServings: 3 },
+    { id: 'demo-n6', suggestionId: 'skyr-mit-beeren', category: 'snack', title: t('demo.mealSkyr'), kcal: 140, protein: 18, tags: ['proteinreich', 'vegetarisch', 'schnell'], ingredients: tList('demo.mealSkyrIngredients') || [], plannedServings: 4 },
   ];
 
   /* ---- Ess-Tagebuch: acht Wochen (Kalorienbilanz + Verlauf der Energieversorgung) ----
@@ -445,12 +452,12 @@ export function buildDemo(today) {
      nur solche Tage zählen für die Energieversorgung; heute ist noch offen. */
   const diary = [];
   const dayMeals = [
-    { title: 'Overnight Oats mit Beeren', kcal: 520, protein: 30 },
-    { title: 'Hähnchen-Reis-Bowl mit Brokkoli', kcal: 600, protein: 46 },
-    { title: 'Omelett mit Feta & Tomaten', kcal: 440, protein: 30 },
-    { title: 'Skyr mit Beeren & Nüssen', kcal: 320, protein: 24 },
-    { title: 'Banane & Haferriegel', kcal: 300, protein: 8 },
-    { title: 'Vollkornbrot mit Käse', kcal: 220, protein: 12 },
+    { title: t('demo.mealOvernightOats'), kcal: 520, protein: 30 },
+    { title: t('demo.mealChickenRiceBowl'), kcal: 600, protein: 46 },
+    { title: t('demo.mealOmelette'), kcal: 440, protein: 30 },
+    { title: t('demo.mealSkyrNuts'), kcal: 320, protein: 24 },
+    { title: t('demo.mealBananaBar'), kcal: 300, protein: 8 },
+    { title: t('demo.mealCheeseBread'), kcal: 220, protein: 12 },
   ];
   for (let off = 0; off >= -55; off--) {
     // Leichte Tagesschwankung (deterministisch) – kein Wert ist jeden Tag gleich.
@@ -464,22 +471,22 @@ export function buildDemo(today) {
 
   /* ---- Gemeinsames Familien-Lager (Vorräte) – reduziert den Einkaufsbedarf ---- */
   const pantry = [
-    { id: 'demo-p1', name: 'Haferflocken', unit: 'g', amount: 500, category: 'Trockenwaren' },
-    { id: 'demo-p2', name: 'Reis', unit: 'g', amount: 1000, category: 'Trockenwaren' },
-    { id: 'demo-p3', name: 'Milch', unit: 'ml', amount: 1000, category: 'Milchprodukte' },
-    { id: 'demo-p4', name: 'Eier', unit: 'Stück', amount: 10, category: 'Milchprodukte' },
-    { id: 'demo-p5', name: 'Skyr', unit: 'g', amount: 500, category: 'Milchprodukte' },
-    { id: 'demo-p6', name: 'Olivenöl', unit: 'ml', amount: 500, category: 'Sonstiges' },
+    { id: 'demo-p1', name: t('demo.pantryOats'), unit: 'g', amount: 500, category: 'Trockenwaren' },
+    { id: 'demo-p2', name: t('demo.pantryRice'), unit: 'g', amount: 1000, category: 'Trockenwaren' },
+    { id: 'demo-p3', name: t('demo.pantryMilk'), unit: 'ml', amount: 1000, category: 'Milchprodukte' },
+    { id: 'demo-p4', name: t('demo.pantryEggs'), unit: 'Stück', amount: 10, category: 'Milchprodukte' },
+    { id: 'demo-p5', name: t('demo.pantrySkyr'), unit: 'g', amount: 500, category: 'Milchprodukte' },
+    { id: 'demo-p6', name: t('demo.pantryOliveOil'), unit: 'ml', amount: 500, category: 'Sonstiges' },
   ];
 
   /* ---- Einkaufsliste (manuelle Positionen; die App ergänzt Zutaten aus dem Plan) ---- */
   const shopping = [
-    { id: 'demo-sh1', name: 'Bananen', category: 'Obst & Gemüse', qty: '6 Stück', checked: false },
-    { id: 'demo-sh2', name: 'Beeren (TK)', category: 'Obst & Gemüse', qty: '500 g', checked: false },
-    { id: 'demo-sh3', name: 'Hähnchenbrust', category: 'Fleisch & Fisch', qty: '600 g', checked: false },
-    { id: 'demo-sh4', name: 'Lachsfilet', category: 'Fleisch & Fisch', qty: '300 g', checked: false },
-    { id: 'demo-sh5', name: 'Kaffee', category: 'Getränke', qty: '500 g', checked: true },
-    { id: 'demo-sh6', name: 'Proteinpulver', category: 'Sonstiges', qty: '1 Dose', checked: false },
+    { id: 'demo-sh1', name: t('demo.shopBananas'), category: 'Obst & Gemüse', qty: t('demo.shopBananasQty'), checked: false },
+    { id: 'demo-sh2', name: t('demo.shopBerries'), category: 'Obst & Gemüse', qty: '500 g', checked: false },
+    { id: 'demo-sh3', name: t('demo.shopChicken'), category: 'Fleisch & Fisch', qty: '600 g', checked: false },
+    { id: 'demo-sh4', name: t('demo.shopSalmon'), category: 'Fleisch & Fisch', qty: '300 g', checked: false },
+    { id: 'demo-sh5', name: t('demo.shopCoffee'), category: 'Getränke', qty: '500 g', checked: true },
+    { id: 'demo-sh6', name: t('demo.shopProteinPowder'), category: 'Sonstiges', qty: t('demo.shopProteinPowderQty'), checked: false },
   ];
 
   /* ---- Zyklusdaten des Admins (eigene, strikt private Daten) ---- */
@@ -491,11 +498,11 @@ export function buildDemo(today) {
 
   /* ---- Checkliste & Erinnerungen (Routinen + Termine) ---- */
   const checklist = [
-    { id: 'demo-cl1', text: 'Dehnen & Faszienrolle nach dem Lauf', recurring: true, category: 'training', checked: false },
-    { id: 'demo-cl2', text: '2 Liter Wasser trinken', recurring: true, category: 'health', checked: true },
-    { id: 'demo-cl3', text: 'Mind. 7 Stunden Schlaf', recurring: true, category: 'health', checked: false },
-    { id: 'demo-cl4', text: 'Neue Laufschuhe einlaufen', dueDate: D(4), category: 'training' },
-    { id: 'demo-cl5', text: 'Startunterlagen Halbmarathon abholen', dueDate: D(68), time: '17:00', category: 'appointment' },
+    { id: 'demo-cl1', text: t('demo.checkStretch'), recurring: true, category: 'training', checked: false },
+    { id: 'demo-cl2', text: t('demo.checkWater'), recurring: true, category: 'health', checked: true },
+    { id: 'demo-cl3', text: t('demo.checkSleep'), recurring: true, category: 'health', checked: false },
+    { id: 'demo-cl4', text: t('demo.checkShoes'), dueDate: D(4), category: 'training' },
+    { id: 'demo-cl5', text: t('demo.checkRacePack'), dueDate: D(68), time: '17:00', category: 'appointment' },
   ];
 
   /* ---- 9 Demo-Mitglieder mit voller Datenfülle (Läufe, lange Werte-Reihe, Wettkämpfe) ---- */
@@ -525,9 +532,9 @@ export function buildDemo(today) {
   // Horst bleibt ohne Team. '__self__' = die angemeldete Admin-Person (in der Demo: Nora).
   // Admins insgesamt: Nora + Max + Henriette + Deniz = 4.
   const teams = [
-    { name: 'Team Rot', emoji: '🔴', color: '#ff5d5d', memberNames: ['__self__', 'Max', 'Bjarne', 'Jonas'] },
-    { name: 'Team Blau', emoji: '🔵', color: '#3d8bff', memberNames: ['Lea', 'Carla', 'Deniz', 'Henriette'] },
-    { name: 'Team Grün', emoji: '🟢', color: '#43c59e', memberNames: ['Henriette', 'Elif', 'Frido'] },
+    { name: t('demo.teamRed'), emoji: '🔴', color: '#ff5d5d', memberNames: ['__self__', 'Max', 'Bjarne', 'Jonas'] },
+    { name: t('demo.teamBlue'), emoji: '🔵', color: '#3d8bff', memberNames: ['Lea', 'Carla', 'Deniz', 'Henriette'] },
+    { name: t('demo.teamGreen'), emoji: '🟢', color: '#43c59e', memberNames: ['Henriette', 'Elif', 'Frido'] },
   ];
 
   return { profile, settings, pantry, teams, self: { events, sessions, health, nutrition, diary, cycle, checklist, shopping, labs, supplements }, members };

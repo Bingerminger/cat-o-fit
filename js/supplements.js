@@ -21,11 +21,15 @@
    ========================================================================= */
 
 import { latest, freshLatest, assess, trend } from './labs.js';
-import { fmtDec } from './ui.js';
+import { fmtDec, parseDate } from './ui.js';
+import { locale, t, tp } from './i18n.js';
 
-/** Zahl mit Komma, Datum als TT.MM.JJJJ – die Begründungen erscheinen wörtlich in der App. */
+/** Number with the language's decimal separator, date in the language's own order (05.03.2026 / 05/03/2026) – the reasons appear verbatim in the app. */
 const num = fmtDec;
-const de = (d) => (d ? `${String(d).slice(8, 10)}.${String(d).slice(5, 7)}.${String(d).slice(0, 4)}` : '');
+const dateIn = (d, opts) => {
+  try { return new Intl.DateTimeFormat(locale() === 'en' ? 'en-GB' : locale(), opts).format(parseDate(d)); } catch { return String(d); }
+};
+const dmy = (d) => (d ? dateIn(d, { day: '2-digit', month: '2-digit', year: 'numeric' }) : '');
 
 /* ------------------------------- Katalog --------------------------------- */
 
@@ -38,106 +42,106 @@ const de = (d) => (d ? `${String(d).slice(8, 10)}.${String(d).slice(5, 7)}.${Str
  */
 export const SUPPLEMENTS = {
   vitaminD: {
-    label: 'Vitamin D', unit: 'IE', typical: '800 IE (20 µg) pro Tag', evidence: 'stark',
-    food: 'Fetter Fisch (Lachs, Hering), Eigelb, Pilze – und im Sommer 15 Minuten Sonne auf Armen und Gesicht.',
-    timing: 'Zu einer fetthaltigen Mahlzeit (fettlöslich).',
-    ul: 'Obergrenze der EFSA: 4000 IE (100 µg) pro Tag – darüber nur ärztlich begleitet.',
-    note: 'Bei bekanntem Mangel den Wert nach 3 Monaten kontrollieren.',
-    source: 'DGE-Referenzwert, BfR, EFSA',
+    get label() { return t('supplements.vitaminD.label'); }, unit: 'IE', get typical() { return t('supplements.vitaminD.typical'); }, evidence: 'stark',
+    get food() { return t('supplements.vitaminD.food'); },
+    get timing() { return t('supplements.vitaminD.timing'); },
+    get ul() { return t('supplements.vitaminD.ul'); },
+    get note() { return t('supplements.vitaminD.note'); },
+    get source() { return t('supplements.vitaminD.source'); },
   },
   magnesium: {
-    label: 'Magnesium', unit: 'mg', typical: 'bis 250 mg pro Tag aus Präparaten, auf zwei Portionen verteilt', evidence: 'mittel',
-    food: 'Haferflocken, Nüsse, Hülsenfrüchte, Vollkorn, dunkle Schokolade, magnesiumreiches Mineralwasser.',
-    timing: 'Wird oft abends genommen – mit Abstand zu Eisen und Zink.',
-    ul: 'Mehr als 250 mg pro Tag aus Präparaten führt häufig zu weichem Stuhl (Obergrenze der EFSA).',
-    note: 'Citrat oder Glycinat werden besser vertragen als Oxid.',
-    source: 'BfR-Höchstmengenvorschlag, EFSA',
+    get label() { return t('supplements.magnesium.label'); }, unit: 'mg', get typical() { return t('supplements.magnesium.typical'); }, evidence: 'mittel',
+    get food() { return t('supplements.magnesium.food'); },
+    get timing() { return t('supplements.magnesium.timing'); },
+    get ul() { return t('supplements.magnesium.ul'); },
+    get note() { return t('supplements.magnesium.note'); },
+    get source() { return t('supplements.sourceBfrEfsa'); },
   },
   iron: {
-    label: 'Eisen', unit: 'mg', typical: 'nur nach ärztlicher Rücksprache', evidence: 'stark',
-    food: 'Rotes Fleisch, Hülsenfrüchte, Haferflocken, Hirse – zusammen mit Vitamin C (Paprika, Zitrus) aufnehmen.',
-    timing: 'Nüchtern oder mit Vitamin C; mindestens 2 Stunden Abstand zu Kaffee, Tee, Milch und Kalzium.',
-    ul: 'Nie ohne Laborwert einnehmen – bei vollen Speichern ist Eisen schädlich.',
-    note: 'Jede Eisensupplementierung gehört ärztlich begleitet und kontrolliert.',
+    get label() { return t('supplements.iron.label'); }, unit: 'mg', get typical() { return t('supplements.iron.typical'); }, evidence: 'stark',
+    get food() { return t('supplements.iron.food'); },
+    get timing() { return t('supplements.iron.timing'); },
+    get ul() { return t('supplements.iron.ul'); },
+    get note() { return t('supplements.iron.note'); },
     requiresLab: true,
-    source: 'BfR, IOC 2018',
+    get source() { return t('supplements.iron.source'); },
   },
   b12: {
-    label: 'Vitamin B12', unit: 'µg', typical: 'bis 25 µg pro Tag als Nahrungsergänzung; bei rein pflanzlicher Ernährung sind höhere Mengen nach ärztlicher Rücksprache üblich', evidence: 'stark',
-    food: 'Fleisch, Fisch, Eier, Milchprodukte. Rein pflanzliche Ernährung erreicht den Bedarf nicht – hier ist ein Präparat der Normalfall.',
-    timing: 'Unabhängig von den Mahlzeiten.',
-    ul: 'Keine Obergrenze festgelegt; höhere Mengen nur mit Grund.',
-    source: 'BfR-Höchstmengenvorschlag',
+    get label() { return t('supplements.b12.label'); }, unit: 'µg', get typical() { return t('supplements.b12.typical'); }, evidence: 'stark',
+    get food() { return t('supplements.b12.food'); },
+    get timing() { return t('supplements.b12.timing'); },
+    get ul() { return t('supplements.b12.ul'); },
+    get source() { return t('supplements.b12.source'); },
   },
   creatine: {
-    label: 'Kreatin (Monohydrat)', unit: 'g', typical: '3–5 g pro Tag', evidence: 'stark',
-    food: 'Rotes Fleisch und Fisch – die wirksame Menge ist über Nahrung kaum erreichbar.',
-    timing: 'Täglich zur gleichen Zeit, Tageszeit egal. Die Wirkung baut sich über etwa 3–4 Wochen auf.',
-    ul: 'Gut untersucht; bei gesunden Nieren gilt die übliche Menge als unbedenklich. Ausreichend trinken.',
-    note: 'Anfangs 1–2 kg mehr auf der Waage durch Wasser im Muskel – das ist kein Fett.',
+    get label() { return t('supplements.creatine.label'); }, unit: 'g', get typical() { return t('supplements.creatine.typical'); }, evidence: 'stark',
+    get food() { return t('supplements.creatine.food'); },
+    get timing() { return t('supplements.creatine.timing'); },
+    get ul() { return t('supplements.creatine.ul'); },
+    get note() { return t('supplements.creatine.note'); },
     performance: true,
-    source: 'IOC-Konsens 2018',
+    get source() { return t('supplements.sourceIoc2018'); },
   },
   protein: {
-    label: 'Eiweißpulver', unit: 'g', typical: 'nur zum Auffüllen der Tagesmenge', evidence: 'stark',
-    food: 'Quark, Skyr, Hüttenkäse, Eier, Fisch, Hülsenfrüchte – Pulver ist reine Bequemlichkeit, kein Zaubermittel.',
-    timing: 'Über den Tag verteilt, üblich sind 20–40 g je Portion.',
-    ul: 'Kein Grenzwert; Eiweiß aus echten Lebensmitteln bevorzugen.',
-    source: 'ACSM 2016 (1,2–2,0 g je kg Körpergewicht)',
+    get label() { return t('supplements.protein.label'); }, unit: 'g', get typical() { return t('supplements.protein.typical'); }, evidence: 'stark',
+    get food() { return t('supplements.protein.food'); },
+    get timing() { return t('supplements.protein.timing'); },
+    get ul() { return t('supplements.protein.ul'); },
+    get source() { return t('supplements.protein.source'); },
   },
   caffeine: {
-    label: 'Koffein', unit: 'mg', typical: 'etwa 3 mg je kg Körpergewicht; ohne Erfahrung nicht mehr als 200 mg auf einmal', evidence: 'stark',
-    food: 'Kaffee, Espresso, grüner Tee.',
-    timing: '45–60 Minuten vor der Belastung. Mindestens 8 Stunden vor dem Schlafengehen die letzte Dosis.',
-    ul: 'Mehr als 400 mg pro Tag (Erwachsene) erhöht Unruhe, Herzklopfen und Schlafstörungen.',
-    note: 'Vorher im Training ausprobieren – nie zum ersten Mal im Wettkampf.',
+    get label() { return t('supplements.caffeine.label'); }, unit: 'mg', get typical() { return t('supplements.caffeine.typical'); }, evidence: 'stark',
+    get food() { return t('supplements.caffeine.food'); },
+    get timing() { return t('supplements.caffeine.timing'); },
+    get ul() { return t('supplements.caffeine.ul'); },
+    get note() { return t('supplements.caffeine.note'); },
     performance: true,
-    source: 'EFSA 2015, IOC-Konsens 2018',
+    get source() { return t('supplements.caffeine.source'); },
   },
   beetroot: {
-    label: 'Rote-Bete-Konzentrat (Nitrat)', unit: 'ml', typical: '~70 ml Shot', evidence: 'mittel',
-    food: 'Rote Bete, Rucola, Spinat, Mangold.',
-    timing: '2–3 Stunden vor der Belastung; in den Tagen davor testen.',
-    ul: 'Keine Dauereinnahme nötig – wird situativ vor Wettkämpfen genommen.',
-    note: 'Untersucht vor allem bei Belastungen von 5–30 Minuten Dauer.',
+    get label() { return t('supplements.beetroot.label'); }, unit: 'ml', get typical() { return t('supplements.beetroot.typical'); }, evidence: 'mittel',
+    get food() { return t('supplements.beetroot.food'); },
+    get timing() { return t('supplements.beetroot.timing'); },
+    get ul() { return t('supplements.beetroot.ul'); },
+    get note() { return t('supplements.beetroot.note'); },
     performance: true,
-    source: 'IOC-Konsens 2018',
+    get source() { return t('supplements.sourceIoc2018'); },
   },
   betaAlanine: {
-    label: 'Beta-Alanin', unit: 'g', typical: '3–6 g pro Tag über 10–12 Wochen', evidence: 'mittel',
-    food: 'Fleisch und Fisch (geringe Mengen).',
-    timing: 'Auf mehrere kleine Portionen verteilen – das mindert das Kribbeln auf der Haut.',
-    ul: 'Größere Einzelportionen lösen Hautkribbeln aus – daher aufteilen.',
-    note: 'Untersucht vor allem bei harten Belastungen von 30 Sekunden bis 10 Minuten.',
+    get label() { return t('supplements.betaAlanine.label'); }, unit: 'g', get typical() { return t('supplements.betaAlanine.typical'); }, evidence: 'mittel',
+    get food() { return t('supplements.betaAlanine.food'); },
+    get timing() { return t('supplements.betaAlanine.timing'); },
+    get ul() { return t('supplements.betaAlanine.ul'); },
+    get note() { return t('supplements.betaAlanine.note'); },
     performance: true,
-    source: 'IOC-Konsens 2018',
+    get source() { return t('supplements.sourceIoc2018'); },
   },
   electrolytes: {
-    label: 'Elektrolyte (Natrium)', unit: 'mg', typical: '300–700 mg Natrium je Stunde bei langer Belastung', evidence: 'situativ',
-    food: 'Salzige Snacks, Brühe, Sportgetränk.',
-    timing: 'Während langer Einheiten über 90 Minuten, besonders bei Hitze.',
-    ul: 'Nur bei entsprechender Belastung – nicht als Dauerbeigabe.',
-    note: 'Bei sehr langen Belastungen schützt Natrium vor gefährlich niedrigen Blutwerten.',
-    source: 'ACSM 2016',
+    get label() { return t('supplements.electrolytes.label'); }, unit: 'mg', get typical() { return t('supplements.electrolytes.typical'); }, evidence: 'situativ',
+    get food() { return t('supplements.electrolytes.food'); },
+    get timing() { return t('supplements.electrolytes.timing'); },
+    get ul() { return t('supplements.electrolytes.ul'); },
+    get note() { return t('supplements.electrolytes.note'); },
+    get source() { return t('supplements.electrolytes.source'); },
   },
   omega3: {
-    label: 'Omega-3 (EPA/DHA)', unit: 'mg', typical: '1000–2000 mg pro Tag', evidence: 'mittel',
-    food: 'Lachs, Hering, Makrele zweimal pro Woche; pflanzlich Leinöl und Walnüsse.',
-    timing: 'Zu einer Mahlzeit.',
-    ul: 'Mehr als 3000 mg pro Tag nur nach Rücksprache (Blutgerinnung); die EFSA hält bis 5 g für unbedenklich.',
-    source: 'EFSA 2012',
+    get label() { return t('supplements.omega3.label'); }, unit: 'mg', get typical() { return t('supplements.omega3.typical'); }, evidence: 'mittel',
+    get food() { return t('supplements.omega3.food'); },
+    get timing() { return t('supplements.omega3.timing'); },
+    get ul() { return t('supplements.omega3.ul'); },
+    get source() { return t('supplements.omega3.source'); },
   },
   zinc: {
-    label: 'Zink', unit: 'mg', typical: 'bis 6,5 mg pro Tag aus Präparaten', evidence: 'situativ',
-    food: 'Fleisch, Käse, Haferflocken, Kürbiskerne, Linsen.',
-    timing: 'Nicht gleichzeitig mit Eisen oder Kalzium.',
-    ul: 'Dauerhaft mehr als 25 mg pro Tag stört die Kupferaufnahme (Obergrenze der EFSA).',
-    source: 'BfR-Höchstmengenvorschlag, EFSA',
+    get label() { return t('supplements.zinc.label'); }, unit: 'mg', get typical() { return t('supplements.zinc.typical'); }, evidence: 'situativ',
+    get food() { return t('supplements.zinc.food'); },
+    get timing() { return t('supplements.zinc.timing'); },
+    get ul() { return t('supplements.zinc.ul'); },
+    get source() { return t('supplements.sourceBfrEfsa'); },
   },
 };
 
 /** Hinweis zu Leistungspräparaten (Kontaminations- und Dopingrisiko, IOC-Konsens 2018). */
-export const DOPING_NOTE = 'Für Wettkämpfe mit Dopingkontrollen nur chargengeprüfte Produkte verwenden (z. B. aus der Kölner Liste) – Nahrungsergänzungsmittel sind häufiger verunreinigt, als man denkt.';
+export const dopingNote = () => t('supplements.dopingNote');
 
 /** Katalog-Schlüssel, die für diese Person infrage kommen (Minderjährige: keine Leistungspräparate). */
 export function catalogFor(elig = null) {
@@ -146,10 +150,10 @@ export function catalogFor(elig = null) {
 
 /** Bekannte Wechselwirkungen/Timing-Konflikte zwischen empfohlenen Mitteln. */
 const INTERACTIONS = [
-  { a: 'iron', b: 'zinc', text: 'Eisen und Zink konkurrieren um dieselben Aufnahmewege – mit mehreren Stunden Abstand einnehmen.' },
-  { a: 'iron', b: 'magnesium', text: 'Magnesium (und Kalzium) bremsen die Eisenaufnahme – Eisen morgens, Magnesium abends.' },
-  { a: 'caffeine', b: 'iron', text: 'Kaffee und Tee hemmen die Eisenaufnahme deutlich – mindestens zwei Stunden Abstand halten.' },
-  { a: 'zinc', b: 'magnesium', text: 'Zink und Magnesium besser zeitversetzt nehmen, sonst behindern sie sich gegenseitig.' },
+  { a: 'iron', b: 'zinc', get text() { return t('supplements.interaction.ironZinc'); } },
+  { a: 'iron', b: 'magnesium', get text() { return t('supplements.interaction.ironMagnesium'); } },
+  { a: 'caffeine', b: 'iron', get text() { return t('supplements.interaction.caffeineIron'); } },
+  { a: 'zinc', b: 'magnesium', get text() { return t('supplements.interaction.zincMagnesium'); } },
 ];
 
 /* ------------------------------ Regelwerk -------------------------------- */
@@ -180,8 +184,8 @@ export function recommend({
   const judge = (key, rec) => assess(key, rec.value, { sex, labs, today, record: rec, pregnant });
   // Ein zu HOHER Wert führt nie zu „ergänzen“, sondern zum Hinweis, die Einnahme zu prüfen.
   const tooHigh = (key, label, rec, unit) => mk(key, 1,
-    `${label} ${num(rec.value)} ${unit} (${de(rec.date)}) – über dem Bereich.`,
-    'Nicht (weiter) ergänzen. Falls du ein Präparat nimmst, die Einnahme überprüfen und den Wert ärztlich einordnen lassen.',
+    t('supplements.tooHighReason', { label, value: num(rec.value), unit, date: dmy(rec.date) }),
+    t('supplements.tooHighAction'),
     { holdOnly: true, high: true });
 
   /* --- Eisen: ausschließlich laborgestützt ------------------------------- */
@@ -191,30 +195,30 @@ export function recommend({
     // Blutentnahme gelten – sonst bewertet die Empfehlung anders als die Werte-Liste.
     const a = judge('ferritin', ferritin);
     if (a.status === 'unbeurteilbar') {
-      items.push(mk('iron', 2, a.blocked, 'Ferritin nach Abklingen der Entzündung erneut bestimmen lassen – vorher keine Eisengabe.', { holdOnly: true }));
+      items.push(mk('iron', 2, a.blocked, t('supplements.ironInflamedWait'), { holdOnly: true }));
     } else if (a.side === 'low' && a.inflamed) {
       // Niedrig trotz Entzündung: auffällig, aber Eisen wird bei Entzündung schlecht aufgenommen –
       // das gehört ärztlich entschieden, nicht in den eigenen Plan.
       items.push(mk('iron', 1,
-        `Ferritin ${num(ferritin.value)} µg/l (${de(ferritin.date)}) – ${a.label}. Das CRP derselben Blutentnahme ist erhöht.`,
-        'Ärztlich abklären lassen: Bei einer Entzündung wird Eisen schlecht aufgenommen – ob und wann eine Eisengabe sinnvoll ist, entscheidet die Ärztin oder der Arzt.',
+        t('supplements.ironInflamedReason', { value: num(ferritin.value), date: dmy(ferritin.date), assessment: a.label }),
+        t('supplements.ironInflamedAction'),
         { holdOnly: true, labBased: true }));
     } else if (a.side === 'low') {
       items.push(mk('iron', 1,
-        `Ferritin ${num(ferritin.value)} µg/l (${de(ferritin.date)}) – ${a.status === 'grenzwertig' ? 'im Normbereich, für Ausdauersport aber knapp' : a.label}.`,
-        'Ärztlich abklären lassen: Erst mit Befund entscheiden, ob und wie viel Eisen sinnvoll ist. Bis dahin über die Ernährung nachlegen.',
+        t('supplements.ferritinReason', { value: num(ferritin.value), date: dmy(ferritin.date), assessment: a.status === 'grenzwertig' ? t('supplements.ironBorderline') : a.label }),
+        t('supplements.ironLowAction'),
         { labBased: true }));
     } else if (a.side === 'high') {
       items.push(mk('iron', 1,
-        `Ferritin ${num(ferritin.value)} µg/l (${de(ferritin.date)}) – ${a.status === 'hoch' ? 'über dem Referenzbereich' : 'für Sport ungewöhnlich hoch'}.`,
-        'Kein Eisen einnehmen. Hohe Speicherwerte ärztlich einordnen lassen (z. B. mit der Transferrin-Sättigung).',
+        t('supplements.ferritinReason', { value: num(ferritin.value), date: dmy(ferritin.date), assessment: a.status === 'hoch' ? t('labs.aboveRange') : t('supplements.ferritinUnusuallyHigh') }),
+        t('supplements.ironHighAction'),
         { holdOnly: true, high: true }));
     } else if (a.status === 'gut') {
-      const t = trend(labs, 'ferritin', { sex });
-      if (t && t.dir === 'down' && t.daysToLimit != null && t.daysToLimit < 180) {
+      const slope = trend(labs, 'ferritin', { sex });
+      if (slope && slope.dir === 'down' && slope.daysToLimit != null && slope.daysToLimit < 180) {
         items.push(mk('iron', 2,
-          `Ferritin fällt seit mehreren Messungen deutlicher als die übliche Schwankung (etwa ${num(Math.abs(t.perMonth))} µg/l pro Monat) und erreicht bei diesem Verlauf ${t.daysToLimit < 45 ? 'in wenigen Wochen' : `in rund ${Math.round(t.daysToLimit / 30)} Monaten`} den knappen Bereich.`,
-          'Noch kein Präparat nötig – eisenreicher essen und in etwa drei Monaten erneut messen lassen.',
+          t('supplements.ferritinFalling', { rate: num(Math.abs(slope.perMonth)), when: slope.daysToLimit < 45 ? t('supplements.inFewWeeks') : tp('supplements.inAboutMonths', Math.round(slope.daysToLimit / 30)) }),
+          t('supplements.ironFallingAction'),
           { holdOnly: true }));
       }
     }
@@ -226,20 +230,20 @@ export function recommend({
     const a = judge('vitaminD', vd);
     if (a.side === 'low') {
       items.push(mk('vitaminD', 1,
-        `Vitamin D ${num(vd.value)} nmol/l (${de(vd.date)}) – ${a.label}.`,
+        t('supplements.vitaminDReason', { value: num(vd.value), date: dmy(vd.date), assessment: a.label }),
         a.deficient
-          ? 'Ein Mangel gehört ärztlich begleitet – Menge und Kontrolle mit der Ärztin oder dem Arzt festlegen.'
-          : 'Eine Ergänzung über die dunklen Monate ist in diesem Fall üblich – den Wert nach etwa drei Monaten kontrollieren lassen.'));
+          ? t('supplements.vitaminDDeficientAction')
+          : t('supplements.vitaminDLowAction')));
     } else if (a.side === 'high') {
-      items.push(tooHigh('vitaminD', 'Vitamin D', vd, 'nmol/l'));
+      items.push(tooHigh('vitaminD', SUPPLEMENTS.vitaminD.label, vd, 'nmol/l'));
     }
   } else if (month >= 10 || month <= 3) {
     const old = latest(labs, 'vitaminD', today);
     items.push(mk('vitaminD', 3,
       old
-        ? `Dein letzter Vitamin-D-Wert (${de(old.date)}) stammt aus einer anderen Jahreszeit oder ist älter als vier Monate. Zwischen Oktober und März reicht die Sonne in unseren Breiten nicht aus, um Vitamin D selbst zu bilden.`
-        : 'Zwischen Oktober und März reicht die Sonne in unseren Breiten nicht aus, um Vitamin D selbst zu bilden.',
-      'Wert einmal bestimmen lassen – das ist die verlässlichste Grundlage. Ohne Wert empfiehlt die DGE bei fehlender Sonne 20 µg (800 IE) am Tag.'));
+        ? `${t('supplements.vitaminDOld', { date: dmy(old.date) })} ${t('supplements.vitaminDWinter')}`
+        : t('supplements.vitaminDWinter'),
+      t('supplements.vitaminDMeasureAction')));
   }
 
   /* --- B12: Laborwert (Holo-TC oder gesamt) oder pflanzliche Ernährung ---- */
@@ -248,11 +252,11 @@ export function recommend({
   if (b12) {
     const a = judge('b12', b12);
     if (a.status === 'niedrig') {
-      items.push(mk('b12', 1, `Holo-TC ${num(b12.value)} pmol/l (${de(b12.date)}) – ${a.label}.`,
-        'Eine Ergänzung ist in diesem Fall üblich – den Wert nach etwa drei Monaten kontrollieren lassen.'));
+      items.push(mk('b12', 1, t('supplements.holoTcReason', { value: num(b12.value), date: dmy(b12.date), assessment: a.label }),
+        t('supplements.b12LowAction')));
     } else if (a.side === 'low') {
-      items.push(mk('b12', 2, `Holo-TC ${num(b12.value)} pmol/l (${de(b12.date)}) – ${a.label}.`,
-        'Im Graubereich klärt eine Bestimmung von Methylmalonsäure oder Homocystein, ob wirklich ein Mangel besteht.',
+      items.push(mk('b12', 2, t('supplements.holoTcReason', { value: num(b12.value), date: dmy(b12.date), assessment: a.label }),
+        t('supplements.b12GreyAction'),
         { holdOnly: diet !== 'vegan' }));
     } else if (a.side === 'high') {
       items.push(tooHigh('b12', 'Holo-TC', b12, 'pmol/l'));
@@ -260,14 +264,14 @@ export function recommend({
   } else if (b12t) {
     const a = judge('b12total', b12t);
     if (a.side === 'low') {
-      items.push(mk('b12', a.status === 'niedrig' ? 1 : 2, `Vitamin B12 (gesamt) ${num(b12t.value)} pmol/l (${de(b12t.date)}) – ${a.label}.`,
-        'Das Gesamt-B12 ist wenig spezifisch: Holo-TC oder Methylmalonsäure bestimmen lassen und das Ergebnis ärztlich einordnen.',
+      items.push(mk('b12', a.status === 'niedrig' ? 1 : 2, t('supplements.b12TotalReason', { value: num(b12t.value), date: dmy(b12t.date), assessment: a.label }),
+        t('supplements.b12TotalAction'),
         { holdOnly: diet !== 'vegan' }));
     }
   }
   if (!b12 && diet === 'vegan' && !items.some((i) => i.key === 'b12' && !i.holdOnly)) {
-    items.push(mk('b12', 1, 'Rein pflanzliche Ernährung deckt den B12-Bedarf nicht.',
-      'Hier ist ein Präparat kein Extra, sondern notwendig – dauerhaft, mit gelegentlicher Kontrolle des Werts.'));
+    items.push(mk('b12', 1, t('supplements.veganReason'),
+      t('supplements.veganAction')));
   }
 
   /* --- Magnesium: nur mit Laborwert (Vollblut oder Serum) -----------------
@@ -279,10 +283,10 @@ export function recommend({
   if (mg) {
     const key = mg === mgVb ? 'magnesium' : 'magnesiumSerum';
     const a = judge(key, mg);
-    const label = key === 'magnesium' ? 'Magnesium (Vollblut)' : 'Magnesium (Serum)';
+    const label = key === 'magnesium' ? t('labs.analyte.magnesium.label') : t('labs.analyte.magnesiumSerum.label');
     if (a.side === 'low') {
-      items.push(mk('magnesium', 2, `${label} ${num(mg.value)} mmol/l (${de(mg.date)}) – ${a.label}.`,
-        'Zuerst magnesiumreich essen; eine Ergänzung ist möglich (wird oft abends genommen).'));
+      items.push(mk('magnesium', 2, t('supplements.magnesiumReason', { label, value: num(mg.value), date: dmy(mg.date), assessment: a.label }),
+        t('supplements.magnesiumAction')));
     } else if (a.side === 'high') {
       items.push(tooHigh('magnesium', label, mg, 'mmol/l'));
     }
@@ -301,8 +305,8 @@ export function recommend({
       const perKg = [...byDay.values()].reduce((a, b) => a + b, 0) / byDay.size / kg;
       if (perKg < 1.2) {
         items.push(mk('protein', 3,
-          `Laut Ess-Tagebuch im Schnitt ${fmtDec(Math.round(perKg * 10) / 10)} g Eiweiß je kg Körpergewicht (${byDay.size} Tage) – für Training sind 1,2–2,0 g je kg üblich.`,
-          'Zuerst über echte Lebensmittel abdecken; Pulver nur, wenn die Tagesmenge sonst nicht zusammenkommt.'));
+          t('supplements.proteinReason', { value: fmtDec(Math.round(perKg * 10) / 10), days: byDay.size }),
+          t('supplements.proteinAction')));
       }
     }
   }
@@ -313,8 +317,8 @@ export function recommend({
     const strength = (sessions || []).filter((s) => s && !s.deleted && s.type === 'strength' && s.date >= since && s.date <= today).length;
     if (strength >= 6) {
       items.push(mk('creatine', 3,
-        `${strength} Krafteinheiten in den letzten vier Wochen – für Kraft- und Muskelaufbau ist Kreatin das am besten untersuchte Nahrungsergänzungsmittel.`,
-        'Nur bei Bedarf und dauerhaftem Krafttraining sinnvoll; die übliche Menge steht unten.'));
+        tp('supplements.creatineReason', strength),
+        t('supplements.creatineAction')));
     }
   }
 
@@ -322,8 +326,8 @@ export function recommend({
   const hasCycle = (cycle || []).some((c) => c && !c.deleted && !c._kind && c.startDate);
   if (hasCycle && !ferritin) {
     items.push(mk('iron', 2,
-      'Menstruierende Ausdauersportlerinnen verlieren regelmäßig Eisen – ohne Laborwert lässt sich der Speicher aber nicht einschätzen.',
-      'Ferritin (zusammen mit CRP) bestimmen lassen, bevor über ein Eisenpräparat nachgedacht wird.', { holdOnly: true }));
+      t('supplements.cycleIronReason'),
+      t('supplements.cycleIronAction'), { holdOnly: true }));
   }
 
   // „Nie ohne Befund“ technisch absichern: Mittel mit `requiresLab` erscheinen nur als
@@ -350,7 +354,7 @@ export function recommend({
   return {
     items: list,
     interactions,
-    foodFirst: 'Erst die Ernährung, dann das Präparat: Was auf dem Teller landet, wirkt zuverlässiger als jede Kapsel – und ist billiger.',
+    foodFirst: t('supplements.foodFirst'),
   };
 }
 
@@ -396,7 +400,7 @@ export function adherenceSeries(supplements = [], today, days = 21) {
     const taken = due.filter((p) => takenOn(supplements, p.id, d)).length;
     return {
       date: d,
-      label: `${d.slice(8, 10)}.${d.slice(5, 7)}.`,
+      label: dateIn(d, { day: '2-digit', month: '2-digit' }),
       value: due.length ? Math.round((taken / due.length) * 100) : null,
     };
   });

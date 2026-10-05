@@ -12,6 +12,8 @@
    ========================================================================= */
 
 import { parseIngredient } from './food.js';
+import { fmtInt } from './format.js';
+import { t } from './i18n.js';
 
 /** MET-Richtwerte je Einheiten-Typ (Intensität als Vielfaches des Ruheumsatzes; übrige
     Sportarten nach dem Compendium of Physical Activities – vorher zählten sie pauschal 6). */
@@ -126,23 +128,23 @@ export function weightNow(health = [], profile = {}, today = null) {
  */
 export function weightGoalStatus({ current = null, target = null, start = null } = {}) {
   if (current == null || target == null || current === '' || target === '') return null;
-  const c = Number(current), t = Number(target);
-  if (!Number.isFinite(c) || !Number.isFinite(t)) return null;
+  const c = Number(current), tgt = Number(target);
+  if (!Number.isFinite(c) || !Number.isFinite(tgt)) return null;
   const s = start != null && start !== '' && Number.isFinite(Number(start)) ? Number(start) : null;
   const from = s != null ? s : c;
-  const direction = from > t ? 'down' : from < t ? 'up' : 'hold';
-  const gap = Math.round((c - t) * 10) / 10;              // > 0: über dem Ziel
+  const direction = from > tgt ? 'down' : from < tgt ? 'up' : 'hold';
+  const gap = Math.round((c - tgt) * 10) / 10;              // > 0: über dem Ziel
   const near = Math.abs(gap) <= WEIGHT_TOLERANCE_KG;
   let reached;
-  if (direction === 'down') reached = c <= t;
-  else if (direction === 'up') reached = c >= t;
+  if (direction === 'down') reached = c <= tgt;
+  else if (direction === 'up') reached = c >= tgt;
   else reached = near;
   let status;
   if (reached || near) status = 'halten';
   else if (direction === 'hold') status = gap > 0 ? 'abnehmen' : 'zunehmen';
   else status = direction === 'down' ? 'abnehmen' : 'zunehmen';
   return {
-    current: c, target: t, start: s, direction, reached, status,
+    current: c, target: tgt, start: s, direction, reached, status,
     remaining: reached ? 0 : Math.abs(gap), gap, beyond: reached && !near,
   };
 }
@@ -216,19 +218,19 @@ export function energyBalance({ profile = {}, sessions = [], diary = [], today, 
 
   const balance = intake - out;
   const diff = intake - targetIntake; // >0 zu viel, <0 zu wenig
-  let status = 'unklar', hint = 'Noch keine Mahlzeit für heute erfasst.';
+  let status = 'unklar', hint = t('nutrition.qualNone');
   if (hasIntake) {
-    if (Math.abs(diff) <= 200) { status = 'passt'; hint = goal === 'halten' ? 'Du hältst dein Gewicht gut.' : `Im Zielkorridor zum ${goal === 'abnehmen' ? 'Abnehmen' : 'Zunehmen'}.`; }
-    else if (diff > 200) { status = 'hoch'; hint = `Rund ${round10(diff)} kcal über dem Tagesziel.`; }
-    else { status = 'niedrig'; hint = `Rund ${round10(-diff)} kcal unter dem Tagesziel – genug essen.`; }
+    if (Math.abs(diff) <= 200) { status = 'passt'; hint = goal === 'halten' ? t('energy.holdingWell') : goal === 'abnehmen' ? t('energy.onTrackLose') : t('energy.onTrackGain'); }
+    else if (diff > 200) { status = 'hoch'; hint = t('energy.overTarget', { kcal: fmtInt(round10(diff)) }); }
+    else { status = 'niedrig'; hint = t('energy.underTarget', { kcal: fmtInt(round10(-diff)) }); }
   }
 
   if (floorReason === 'bmr') {
-    hint += ' Hinweis: Das Tagesziel liegt bereits auf deinem Grundumsatz – weniger zu essen wäre bei diesem Trainingsumfang kontraproduktiv.';
+    hint += ` ${t('energy.floorBmr')}`;
   } else if (floorReason === 'ea') {
-    hint += ' Hinweis: Das Defizit ist begrenzt, damit dir nach dem Training genug Energie bleibt (mindestens 30 kcal je kg fettfreier Masse).';
+    hint += ` ${t('energy.floorEa')}`;
   } else if (floorReason === 'share') {
-    hint += ' Hinweis: Das Defizit ist auf 15 % deines Tagesumsatzes begrenzt.';
+    hint += ` ${t('energy.floorShare')}`;
   }
   return { bmr: base, tdeeBase, trainingOut, trainingGross, out, intake, hasIntake, balance, goal, delta, targetIntake, status, hint, floored, floorReason };
 }

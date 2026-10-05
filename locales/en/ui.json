@@ -3807,5 +3807,635 @@
     "oneRep": "one rep",
     "reps": "{n} reps",
     "seconds": "{s} seconds"
+  },
+  "energy": {
+    "holdingWell": "You’re holding your weight well.",
+    "overTarget": "About {kcal} kcal over your daily target.",
+    "underTarget": "About {kcal} kcal under your daily target – make sure you eat enough.",
+    "floorBmr": "Note: your daily target is already at your resting metabolism – eating less would be counterproductive with this much training.",
+    "floorEa": "Note: the deficit is capped so you still have enough energy after training (at least 30 kcal per kg of lean mass).",
+    "floorShare": "Note: the deficit is capped at 15% of your total daily burn.",
+    "onTrackLose": "Within your target range for losing weight.",
+    "onTrackGain": "Within your target range for gaining weight."
+  },
+  "labSources": {
+    "sportsMedicine": {
+      "title": "Sports medicine check-up",
+      "what": "The route that really fits: a doctor with the additional qualification in sports medicine, often at sports-medicine institutes, university hospitals or larger practices. Usually a blood count, iron status, liver and kidney values – often together with performance testing.",
+      "cost": "about €100–300",
+      "tip": "Many statutory health insurers subsidise the sports check-up as a voluntary extra benefit – roughly €60–200 depending on the insurer, usually every two years. Few people know this: just ask your insurer beforehand."
+    },
+    "gp": {
+      "title": "GP or specialist practice",
+      "what": "Paid for by statutory insurance only with a medical reason – symptoms or a specific suspicion. “Ferritin, because I run a lot” is not a medical reason; it is then a self-pay service (IGeL) billed under the German fee schedule for doctors.",
+      "cost": "covered by insurance with a medical reason, otherwise about €20–60",
+      "tip": "If you have to give blood for something else anyway: ask whether the values you care about can be measured from the same sample."
+    },
+    "checkup": {
+      "title": "Check-up 35 (statutory preventive care)",
+      "what": "Once between 18 and 34, then every three years. Includes cholesterol, blood sugar and a urine test – but neither ferritin nor vitamin D.",
+      "cost": "covered by statutory insurance",
+      "tip": "A good baseline check, but it covers only some of the values that matter for sport."
+    },
+    "mailInLab": {
+      "title": "Mail-in and self-pay labs",
+      "what": "Home test kits (capillary blood from a fingertip) or self-pay offers from conventional labs with a venous blood draw.",
+      "cost": "about €30–150",
+      "tip": "Capillary blood is more sensitive to how it is taken than a venous blood draw. To compare values over time, stick to the same method and lab where you can."
+    },
+    "bloodDonation": {
+      "title": "Blood donation",
+      "what": "Haemoglobin is measured at every donation; some donation services also measure ferritin in regular donors.",
+      "cost": "free",
+      "tip": "Donating regularly noticeably lowers your iron stores – if you do endurance sport, keeping an eye on your ferritin is especially worthwhile."
+    },
+    "standards": {
+      "rilibaek": "The **RiliBÄK** (guideline of the German Medical Association) is binding for all German labs and regulates quality assurance, including external proficiency testing.",
+      "isoAccreditation": "Many labs are also accredited to **DIN EN ISO 15189**.",
+      "dataExchange": "For sending results to practices, **LDT** is the German standard and **HL7 FHIR** the international one. Through the **electronic patient record (ePA)**, results increasingly reach insured people digitally.",
+      "referenceRanges": "**Reference ranges are not uniform across Germany.** Every lab gives its own – depending on measurement method, device and reference population. For ferritin, fT3 or vitamin B12 they differ noticeably. That is why the range is always printed on the report: it belongs to the value.",
+      "sportRanges": "**There are no official sport-specific reference values.** What Cat-O-Fit shows as a sport target range comes from sports-medicine literature and international position statements – not from a German standard. The source for each value is in the detail view under “Basis of the ranges”."
+    },
+    "teaser": "You can get most values through a sports-medicine check-up (subsidised by many insurers), through your GP’s practice or through a mail-in lab."
+  },
+  "labs": {
+    "analyte": {
+      "ferritin": {
+        "label": "Ferritin",
+        "source": "Usual lab range; sport range after GSSI (Peeling, Sim, McKay); inflammation: WHO 2020; biological variation: Scand J Clin Lab Invest 2023",
+        "hint": "Iron stores. For endurance sport, values well above the lower lab limit are favourable – low stores can affect performance before anaemia shows up."
+      },
+      "transferrinSat": {
+        "label": "Transferrin saturation",
+        "source": "GSSI (Peeling, Sim, McKay: below 16% stage 2 iron deficiency); EASL 2022 (above 45% with high ferritin: investigate)",
+        "hint": "How much iron is actually being transported – complements ferritin."
+      },
+      "hb": {
+        "label": "Haemoglobin",
+        "source": "WHO 2024 (anaemia limits 12.0 g/dl women, 13.0 g/dl men, 11.0 g/dl in pregnancy); biological variation: EFLM 2019",
+        "hint": "Oxygen transport. With endurance sport often slightly low because of the larger blood plasma volume (“pseudo-anaemia”) – that is not a deficiency."
+      },
+      "crp": {
+        "label": "CRP",
+        "source": "IQWiG, gesundheitsinformation.de (up to 5 mg/l or 0.5 mg/dl); raised after endurance exercise: Thomas, Labor und Diagnose, ch. 51",
+        "hint": "Inflammation marker. Briefly raised after hard sessions; persistently high values suggest your body is not coping well with the load."
+      },
+      "vitaminD": {
+        "label": "Vitamin D (25-OH)",
+        "source": "DGE 2012 (sufficient from 50 nmol/l); IOC 2018 and Endocrine Society 2024 (no consensus on higher targets)",
+        "hint": "Contributes to the normal function of muscles, bones and the immune system. At our latitudes the level regularly drops from October to March. Some sports doctors aim for 75 nmol/l – there is no consensus on that, so the DGE value applies here."
+      },
+      "b12": {
+        "label": "Vitamin B12 (holo-TC)",
+        "source": "LADR laboratory group (below 35 deficiency likely, 35–50 grey area, above 50 unlikely; no upper limit)",
+        "hint": "Holotranscobalamin shows the actively available form – more informative than total B12. Particularly relevant on a vegetarian or vegan diet.",
+        "grey": "grey area – deficiency possible (35–50)"
+      },
+      "b12total": {
+        "label": "Vitamin B12 (total)",
+        "source": "Usual lab classification (below 150 pmol/l or 200 pg/ml deficiency likely; in the grey area holo-TC or methylmalonic acid)",
+        "hint": "Total B12, which is measured more often, is less informative than holo-TC. Don’t mix them up: the numbers are much higher than for holo-TC.",
+        "grey": "grey area – have holo-TC or MMA measured"
+      },
+      "folate": {
+        "label": "Folate",
+        "source": "Usual lab range (depends on the lab – enter your own range)",
+        "hint": "Important for blood formation and cell division."
+      },
+      "magnesium": {
+        "label": "Magnesium (whole blood)",
+        "source": "Whole-blood lab ranges: Medizinische Laboratorien Düsseldorf 1.28–1.69; Medics Labor 1.28–1.83; Labor Mustafa 1.2–1.72 mmol/l (method-dependent)",
+        "hint": "Measured in whole blood (heparin or EDTA tube). The ranges depend heavily on the method – enter your lab’s range. The more commonly measured serum value goes under “Magnesium (serum)”."
+      },
+      "magnesiumSerum": {
+        "label": "Magnesium (serum)",
+        "source": "Usual serum range (e.g. 0.70–1.10 mmol/l, Medizinische Laboratorien Düsseldorf)",
+        "hint": "Serum magnesium is the most common lab value for magnesium. It reflects the stores only roughly."
+      },
+      "zinc": {
+        "label": "Zinc",
+        "hint": "Immune function and recovery; losses through sweat matter at high training volume."
+      },
+      "selenium": {
+        "label": "Selenium",
+        "hint": "Antioxidant protection and thyroid metabolism. Overdosing is harmful – don’t exceed the target range."
+      },
+      "sodium": {
+        "label": "Sodium",
+        "source": "Usual lab range",
+        "hint": "During very long efforts with a lot of drinking, sodium can drop dangerously (hyponatraemia)."
+      },
+      "tsh": {
+        "label": "TSH",
+        "source": "Usual lab range; biotin interference: BfR",
+        "hint": "The thyroid’s control hormone."
+      },
+      "ft3": {
+        "label": "fT3",
+        "source": "Usual lab range; low fT3 as a sign of low energy availability: IOC 2023 (REDs)",
+        "hint": "Often drops early when energy is low for a long time – a warning sign of too little energy relative to training."
+      },
+      "testosterone": {
+        "label": "Testosterone (total)",
+        "source": "Usual lab ranges by sex; low values as a sign of low energy availability: IOC 2023 (REDs)",
+        "hint": "Falls with a lasting energy deficit and overtraining."
+      },
+      "estradiol": {
+        "label": "Oestradiol",
+        "source": "Usual lab range for men; for women by cycle phase according to your own lab (IOC 2023: cycle status cannot be assessed under hormonal contraception)",
+        "hint": "Varies strongly with the cycle – for women it can only be assessed together with the cycle day and your lab’s range for that phase. Persistently low values plus a missing period are a warning sign."
+      },
+      "ck": {
+        "label": "Creatine kinase (CK)",
+        "source": "Usual lab ranges by sex; female athletes 47–513 and male athletes 82–1083 U/l: Thomas, Labor und Diagnose, ch. 51",
+        "hint": "Marker of muscle strain. Strongly raised after hard sessions – only meaningful after at least one rest day."
+      },
+      "urea": {
+        "label": "Urea",
+        "source": "Usual lab range; raised up to 24 h after a marathon: Thomas, Labor und Diagnose, ch. 51",
+        "hint": "Rises with a high training load and a high-protein diet; persistently high values suggest incomplete recovery."
+      }
+    },
+    "sourceLabDependent": "Usual lab range (depends on the lab)",
+    "statusUnknown": "unknown",
+    "blockedNeedsSex": "The ranges for {label} differ by sex. Enter your sex in your profile, or your lab’s range with the value.",
+    "cycleDayNoted": "Cycle day {day} is noted.",
+    "blockedCycle": "{label} varies a lot across the cycle.{day} The value can only be assessed using the range your lab gives for this phase of the cycle – enter it with the value.",
+    "blockedExercise": "You trained hard before the blood draw – {label} is often temporarily raised then. Have it measured again at rest (after at least one day without training).",
+    "caveatCrp": "CRP from the same blood draw: {crp} mg/l. Ferritin rises with inflammation – a value below 70 µg/l then still points to iron deficiency (WHO 2020).",
+    "blockedCrp": "CRP from the same blood draw is {crp} mg/l – {label} rises with inflammation and can’t be meaningfully assessed then. Measure again once it has settled.",
+    "unrated": "not assessed (under 18)",
+    "errorInvalidValue": "{label}: not a valid value",
+    "errorBothLimits": "{label}: please enter both limits of the reference range – or neither",
+    "errorUpperLimit": "{label}: the upper limit must be greater than the lower one",
+    "notAssessable": "can’t be assessed",
+    "blockedNoRange": "There is no range stored for this value.",
+    "caveatBiotin": "Biotin (also in skin, hair and combination supplements) can distort this test – after checking with your doctor, pause it for a few days before your next blood draw.",
+    "inflamedLow": "low despite inflammation – points to iron deficiency",
+    "inflamedSuspicious": "suspiciously low with inflammation (below 70)",
+    "caveatNoCrp": "Without a CRP from the same blood draw, the assessment comes with a reservation – ferritin rises with inflammation.",
+    "highForAthletes": "above the lab range, common in people who train – recheck at rest",
+    "belowRangeDeficient": "well below the reference range (deficiency)",
+    "belowRange": "below the reference range",
+    "aboveRange": "above the reference range",
+    "normalButTight": "within the normal range, but on the low side for sport",
+    "normalButHigh": "within the normal range, but high",
+    "favourable": "in the favourable range",
+    "group": {
+      "iron": "Iron status",
+      "vitamins": "Vitamins",
+      "minerals": "Minerals",
+      "hormones": "Hormones & metabolism",
+      "loadRecovery": "Load & recovery",
+      "inflammation": "Inflammation"
+    }
+  },
+  "supplements": {
+    "vitaminD": {
+      "label": "Vitamin D",
+      "typical": "800 IU (20 µg) per day",
+      "food": "Oily fish (salmon, herring), egg yolk, mushrooms – and in summer 15 minutes of sun on your arms and face.",
+      "timing": "With a meal that contains fat (it is fat-soluble).",
+      "ul": "EFSA upper limit: 4,000 IU (100 µg) per day – above that only under medical supervision.",
+      "note": "If you have a known deficiency, recheck your level after 3 months.",
+      "source": "DGE reference value, BfR, EFSA"
+    },
+    "magnesium": {
+      "label": "Magnesium",
+      "typical": "up to 250 mg per day from supplements, split into two portions",
+      "food": "Oats, nuts, pulses, wholegrain, dark chocolate, magnesium-rich mineral water.",
+      "timing": "Often taken in the evening – spaced apart from iron and zinc.",
+      "ul": "More than 250 mg per day from supplements often causes loose stools (EFSA upper limit).",
+      "note": "Citrate or glycinate are better tolerated than oxide."
+    },
+    "sourceBfrEfsa": "BfR maximum-level proposal, EFSA",
+    "iron": {
+      "label": "Iron",
+      "typical": "only after talking to a doctor",
+      "food": "Red meat, pulses, oats, millet – eaten together with vitamin C (peppers, citrus).",
+      "timing": "On an empty stomach or with vitamin C; at least 2 hours apart from coffee, tea, milk and calcium.",
+      "ul": "Never take it without a lab value – with full stores, iron is harmful.",
+      "note": "Any iron supplementation should be supervised and monitored by a doctor.",
+      "source": "BfR, IOC 2018"
+    },
+    "b12": {
+      "label": "Vitamin B12",
+      "typical": "up to 25 µg per day as a supplement; on a purely plant-based diet, higher amounts are usual after talking to a doctor",
+      "food": "Meat, fish, eggs, dairy. A purely plant-based diet doesn’t meet the need – here a supplement is the norm.",
+      "timing": "Independent of meals.",
+      "ul": "No upper limit set; higher amounts only with a reason.",
+      "source": "BfR maximum-level proposal"
+    },
+    "creatine": {
+      "label": "Creatine (monohydrate)",
+      "typical": "3–5 g per day",
+      "food": "Red meat and fish – the effective amount is hardly reachable through food.",
+      "timing": "Every day at the same time; the time of day doesn’t matter. The effect builds up over about 3–4 weeks.",
+      "ul": "Well studied; with healthy kidneys the usual amount is considered safe. Drink enough.",
+      "note": "At first 1–2 kg more on the scales from water in the muscle – that isn’t fat."
+    },
+    "sourceIoc2018": "IOC consensus 2018",
+    "protein": {
+      "label": "Protein powder",
+      "typical": "only to top up your daily amount",
+      "food": "Quark, skyr, cottage cheese, eggs, fish, pulses – powder is pure convenience, not a magic potion.",
+      "timing": "Spread across the day; 20–40 g per portion is usual.",
+      "ul": "No limit set; prefer protein from real food.",
+      "source": "ACSM 2016 (1.2–2.0 g per kg body weight)"
+    },
+    "caffeine": {
+      "label": "Caffeine",
+      "typical": "about 3 mg per kg body weight; if you have no experience with it, no more than 200 mg at once",
+      "food": "Coffee, espresso, green tea.",
+      "timing": "45–60 minutes before the effort. Take the last dose at least 8 hours before bedtime.",
+      "ul": "More than 400 mg per day (adults) increases restlessness, palpitations and sleep problems.",
+      "note": "Try it in training first – never for the first time in a race.",
+      "source": "EFSA 2015, IOC consensus 2018"
+    },
+    "beetroot": {
+      "label": "Beetroot concentrate (nitrate)",
+      "typical": "~70 ml shot",
+      "food": "Beetroot, rocket, spinach, chard.",
+      "timing": "2–3 hours before the effort; try it in the days before.",
+      "ul": "No need to take it continuously – used as needed before races.",
+      "note": "Studied mainly for efforts lasting 5–30 minutes."
+    },
+    "betaAlanine": {
+      "label": "Beta-alanine",
+      "typical": "3–6 g per day over 10–12 weeks",
+      "food": "Meat and fish (small amounts).",
+      "timing": "Split into several small portions – that reduces the tingling on the skin.",
+      "ul": "Larger single portions cause skin tingling – so split them.",
+      "note": "Studied mainly for hard efforts of 30 seconds to 10 minutes."
+    },
+    "electrolytes": {
+      "label": "Electrolytes (sodium)",
+      "typical": "300–700 mg sodium per hour during long efforts",
+      "food": "Salty snacks, broth, sports drink.",
+      "timing": "During long sessions over 90 minutes, especially in the heat.",
+      "ul": "Only with matching effort – not as a permanent addition.",
+      "note": "In very long efforts, sodium protects against dangerously low blood levels.",
+      "source": "ACSM 2016"
+    },
+    "omega3": {
+      "label": "Omega-3 (EPA/DHA)",
+      "typical": "1,000–2,000 mg per day",
+      "food": "Salmon, herring, mackerel twice a week; plant-based: linseed oil and walnuts.",
+      "timing": "With a meal.",
+      "ul": "More than 3,000 mg per day only after talking to a doctor (blood clotting); EFSA considers up to 5 g safe.",
+      "source": "EFSA 2012"
+    },
+    "zinc": {
+      "label": "Zinc",
+      "typical": "up to 6.5 mg per day from supplements",
+      "food": "Meat, cheese, oats, pumpkin seeds, lentils.",
+      "timing": "Not at the same time as iron or calcium.",
+      "ul": "Permanently more than 25 mg per day interferes with copper absorption (EFSA upper limit)."
+    },
+    "interaction": {
+      "ironZinc": "Iron and zinc compete for the same absorption routes – take them several hours apart.",
+      "ironMagnesium": "Magnesium (and calcium) slow iron absorption – iron in the morning, magnesium in the evening.",
+      "caffeineIron": "Coffee and tea clearly inhibit iron absorption – keep at least two hours apart.",
+      "zincMagnesium": "Take zinc and magnesium at different times, otherwise they get in each other’s way."
+    },
+    "tooHighReason": "{label} {value} {unit} ({date}) – above the range.",
+    "ironInflamedReason": "Ferritin {value} µg/l ({date}) – {assessment}. The CRP from the same blood draw is raised.",
+    "ferritinReason": "Ferritin {value} µg/l ({date}) – {assessment}.",
+    "ferritinFalling": "Over several measurements, ferritin has been falling by more than the usual variation (about {rate} µg/l per month) and, at this pace, will reach the tight range {when}.",
+    "vitaminDReason": "Vitamin D {value} nmol/l ({date}) – {assessment}.",
+    "vitaminDOld": "Your last vitamin D value ({date}) is from a different season or is more than four months old.",
+    "holoTcReason": "Holo-TC {value} pmol/l ({date}) – {assessment}.",
+    "b12TotalReason": "Vitamin B12 (total) {value} pmol/l ({date}) – {assessment}.",
+    "magnesiumReason": "{label} {value} mmol/l ({date}) – {assessment}.",
+    "proteinReason": "According to your food diary you average {value} g of protein per kg body weight ({days} days) – 1.2–2.0 g per kg is usual for training.",
+    "creatineReason": {
+      "one": "{count} strength session in the last four weeks – for building strength and muscle, creatine is the best-studied supplement.",
+      "other": "{count} strength sessions in the last four weeks – for building strength and muscle, creatine is the best-studied supplement."
+    },
+    "dopingNote": "For races with doping controls, only use batch-tested products (e.g. from the Cologne List) – supplements are contaminated more often than you would think.",
+    "tooHighAction": "Don’t supplement (any further). If you take a supplement, review your intake and have the value assessed by a doctor.",
+    "ironInflamedWait": "Have ferritin measured again once the inflammation has settled – no iron before then.",
+    "ironInflamedAction": "Get it checked by a doctor: with inflammation, iron is absorbed poorly – whether and when iron makes sense is for the doctor to decide.",
+    "ironLowAction": "Get it checked by a doctor: only with a lab report can you decide whether – and how much – iron makes sense. Until then, boost your iron through food.",
+    "ironHighAction": "Don’t take iron. Have high stores assessed by a doctor (e.g. with the transferrin saturation).",
+    "ironFallingAction": "No supplement needed yet – eat more iron-rich food and have it measured again in about three months.",
+    "vitaminDDeficientAction": "A deficiency should be managed by a doctor – agree the amount and follow-up checks with them.",
+    "vitaminDLowAction": "Supplementing through the dark months is usual in this case – have your level rechecked after about three months.",
+    "vitaminDWinter": "Between October and March, the sun at our latitudes isn’t strong enough for your body to make vitamin D itself.",
+    "vitaminDMeasureAction": "Have your level measured once – it’s the most reliable basis. Without a value, the DGE recommends 20 µg (800 IU) a day when there is no sun.",
+    "b12LowAction": "Supplementing is usual in this case – have your level rechecked after about three months.",
+    "b12GreyAction": "In the grey area, measuring methylmalonic acid or homocysteine shows whether there is really a deficiency.",
+    "b12TotalAction": "Total B12 is not very specific: have holo-TC or methylmalonic acid measured and the result assessed by a doctor.",
+    "veganReason": "A purely plant-based diet doesn’t cover your B12 needs.",
+    "veganAction": "Here a supplement isn’t an extra but a necessity – long term, with an occasional check of your level.",
+    "magnesiumAction": "Eat magnesium-rich foods first; a supplement is possible (often taken in the evening).",
+    "proteinAction": "Cover it with real food first; use powder only if you can’t reach your daily amount otherwise.",
+    "creatineAction": "Only worthwhile if you need it and train strength long term; the usual amount is listed below.",
+    "cycleIronReason": "People who menstruate and do endurance sport regularly lose iron – but without a lab value the stores can’t be judged.",
+    "cycleIronAction": "Have ferritin (together with CRP) measured before considering an iron supplement.",
+    "foodFirst": "Food first, then the supplement: what ends up on your plate works more reliably than any capsule – and it’s cheaper.",
+    "ironBorderline": "within the normal range, but tight for endurance sport",
+    "ferritinUnusuallyHigh": "unusually high for sport",
+    "inFewWeeks": "in a few weeks",
+    "inAboutMonths": {
+      "one": "in around {count} month",
+      "other": "in around {count} months"
+    }
+  },
+  "labsView": {
+    "privateNote": "Lab values and supplements are private health data – only {name} can see them, not even admins.",
+    "docModeMinor": "Reason: {reasons}. Cat-O-Fit gives children and teens no intake recommendations – supplements belong in a doctor’s hands here. You can still log everything and view the trend.",
+    "docModeAdult": "Reason: {reasons}. Cat-O-Fit is for healthy adults and deliberately gives no intake recommendations in this case. You can still log everything and view the trend – talk your values through with your doctor.",
+    "percent": "{pct}%",
+    "adherenceCaption": {
+      "one": "{taken} of {count} dose in 14 days · bars = last 21 days (full height = 100%){extra}",
+      "other": "{taken} of {count} doses in 14 days · bars = last 21 days (full height = 100%){extra}"
+    },
+    "eaRange": "kcal per kg fat-free mass (range {low}–{high}) · guideline value {target}",
+    "eaBasis": "From {days} fully logged days: avg. {intake} kcal eaten, avg. {training} kcal for training ({trainingSource}), {ffm} kg fat-free mass ({ffmSource}).",
+    "eaPlainUnclear": "Too few fully logged days to assess ({days} of {total}). In Nutrition, confirm “Day complete” once you have logged everything.",
+    "cost": "Cost: {cost}",
+    "counts": "{measurements} on {dates} · latest {last}",
+    "valuesDocumented": {
+      "one": "value recorded",
+      "other": "values recorded"
+    },
+    "rangeFrom": "from {value}",
+    "months": {
+      "one": "{count} month",
+      "other": "{count} months"
+    },
+    "perMonth": "{arrow} {value} {unit}/month",
+    "eaChartCaption": "Trend over the last weeks (fully logged days only) · line = guideline value {target}, critical below {critical}",
+    "chartLabel": "{label} over time",
+    "onReport": "On the report: {entered} {enteredUnit} = {value} {unit}",
+    "drawContext": "Blood draw: {items}",
+    "staleLong": "This value is older than {age}{season} – it no longer counts for suggestions. Have it measured again.",
+    "inAboutMonths": {
+      "one": "in about {count} month",
+      "other": "in about {count} months"
+    },
+    "trendAbove": "Outlook: if the trend continues, you will go above the favourable range {when} – a good reason for your next check.",
+    "noteLine": "Note: {note}",
+    "rangesBasis": "Basis of the ranges: {source}",
+    "editMeasurement": "Edit the measurement from {date}",
+    "deleteMeasurement": "Delete the measurement from {date}",
+    "deleteBody": "{label} from {date} ({value}) will be removed.",
+    "usualAmount": "Usual amount: {amount} · {timing} · {limit}",
+    "basis": "Basis: {source}",
+    "removeTitle": "Remove “{name}”?",
+    "valuePlaceholder": "Value",
+    "ariaUnit": "{label}: unit",
+    "ariaRefFrom": "{label}: reference from",
+    "ariaRefTo": "{label}: reference to",
+    "implausibleReport": "Please check: {items} – far outside the usual range. Is the unit right? On many reports, CRP is given in mg/dl instead of mg/l, for example.",
+    "valuesSaved": {
+      "one": "{count} value saved",
+      "other": "{count} values saved"
+    },
+    "exampleValue": "e.g. {value}",
+    "implausibleValue": "{value} {unit} is far outside the usual range for {label}. Is the unit right? On many reports, CRP is given in mg/dl instead of mg/l, or vitamin D in ng/ml instead of nmol/l, for example.",
+    "analyte": "Lab value",
+    "private": "Private",
+    "setUp": "Set up",
+    "ffmMissing": "To assess your energy availability, your fat-free mass is missing. Enter your body fat percentage or fat-free mass under body stats (e.g. from your scales or Apple Health) – a value from the last four months is enough.",
+    "toBodyStats": "Go to body stats",
+    "yourValues": "Your values",
+    "logValue": "+ Log a value",
+    "minorNote": "Child and teen profile: Cat-O-Fit only records your values and doesn’t assess them – the stored ranges are for adults. The right ranges for your age are on your lab report; talk it through with your paediatrician.",
+    "noValuesYet": "No values yet",
+    "emptyEvaluate": "Enter values from your lab report – Cat-O-Fit puts them in a sport context and shows you the trend.",
+    "emptyPlain": "Enter values from your lab report – Cat-O-Fit shows you the trend.",
+    "tapHintEvaluate": "Tap a value to open its trend with the reference and sport target ranges.",
+    "tapHint": "Tap a value to open its trend.",
+    "logReport": "Log a lab report with several values",
+    "supplements": "Supplements",
+    "docMode": "Documentation mode",
+    "changeAnswers": "Change answers",
+    "holdBack": "While a value needs medical follow-up, Cat-O-Fit gives no supplement recommendations.",
+    "noSuggestion": "Your values currently give no reason to supplement. That’s good news.",
+    "yourPlan": "Your plan",
+    "add": "+ Add",
+    "planEmpty": "Nothing planned yet. Add what you take regularly here and tick it off every day.",
+    "adherence": "Adherence",
+    "adherencePerDay": "Adherence per day",
+    "disclaimer": "Documentation and general information for healthy adults – no diagnosis, no therapy, not a medical device. If you have symptoms or unusual values, a doctor should assess them. Your values are private: not visible in the app even to admins, and the server only hands them out after you sign in with your PIN. Whoever runs the server can, however, read the stored files.",
+    "introWhat": "Log values from your lab report, see their trend and get a sport-specific assessment – for example, that a ferritin of 25 is “normal” but on the low side for endurance training.",
+    "introGate": "First, a quick boundary: Cat-O-Fit is meant for healthy adults. If you are under medical treatment, take medication, are pregnant or breastfeeding, or have an eating disorder, use this module only for documenting – the app deliberately gives no recommendations then. Your answers apply to the whole app.",
+    "energyAvailability": "Energy availability",
+    "toFoodDiaryConfirm": "Confirm days in the food diary",
+    "toFoodDiary": "Go to food diary",
+    "eaPlainCritical": "By the numbers, there isn’t enough energy left for your training. Eat more instead of looking for a supplement – and talk to a doctor.",
+    "eaPlainLossBand": "Your energy availability is low – acceptable for a while when losing weight. Watch your sleep and recovery.",
+    "eaPlainLow": "Your energy availability is on the low side. In hard training phases, eat more on purpose.",
+    "eaPlainGood": "Your energy availability suits your training.",
+    "bestFit": "best fit",
+    "tip": "Tip: ",
+    "whereToGet": "Where do I get lab values?",
+    "referenceNote": "Important: reference ranges aren’t uniform in Germany – every lab has its own. When you log a value, enter the range from your report as well, and Cat-O-Fit will assess against your lab.",
+    "inTarget": "in target range",
+    "attention": "needs attention",
+    "notAssessed": "not assessed",
+    "valuesCenter": "values",
+    "donutLabel": "Lab values by assessment",
+    "inSportTarget": "in sport target range",
+    "toWatch": "to keep an eye on",
+    "staleShort": "out of date – have it measured again",
+    "eaPerWeek": "Energy availability per week",
+    "guideline": "Guideline value",
+    "sportRange": "Sport target range",
+    "refOwnLab": "Your lab’s reference",
+    "reference": "Reference",
+    "refTypical": "Reference (typical)",
+    "eachLabOwn": "Every lab has its own reference ranges – enter the one from your report with the value, and Cat-O-Fit will assess against your lab.",
+    "seasonalNote": "Vitamin D varies with the season – part of the trend may be down to that.",
+    "noTrend": "The measurements vary within the usual range – no trend can be read from them.",
+    "deleteTitle": "Delete measurement?",
+    "delete": "Delete",
+    "deleted": "Measurement deleted",
+    "evidenceStrong": "strong evidence",
+    "evidenceSome": "some evidence",
+    "evidenceSituational": "situational",
+    "generalInfo": "General information",
+    "why": "Why: ",
+    "foodFirst": "First through food: ",
+    "howTo": "What to do: ",
+    "addToPlan": "Add to my plan",
+    "undoIntake": "Undo intake",
+    "markTaken": "Mark as taken",
+    "asNeeded": "as needed",
+    "daily": "daily",
+    "remove": "Remove",
+    "labOrOccasion": "Lab or occasion (optional)",
+    "exampleCycleDay": "e.g. 12",
+    "from": "from",
+    "to": "to",
+    "saveReport": "Save report",
+    "enterOneValue": "Please enter at least one value",
+    "saveAnyway": "Save anyway",
+    "saveFailed": "Saving failed – is the device storage full?",
+    "reportTitle": "Log a lab report",
+    "drawDate": "Date of blood draw",
+    "note": "Note",
+    "reportIntro": "Enter only what is on your report – empty rows don’t count. You’ll find your lab’s reference range next to the value; it takes priority over the standard ranges.",
+    "drawCircumstancesAll": "Circumstances of the blood draw (apply to all values)",
+    "hardExercise48h": "Hard exercise in the 48 hours before",
+    "fasting": "Fasting",
+    "biotinTaken": "Took biotin (also in hair or skin supplements)",
+    "cycleDayOptional": "Cycle day (optional)",
+    "noteOptional": "Note (optional), e.g. lab or occasion",
+    "referenceFrom": "Reference from",
+    "referenceTo": "Reference to",
+    "unit": "Unit",
+    "circumstancesOptional": "Circumstances of the blood draw (optional)",
+    "save": "Save",
+    "enterValidValue": "Please enter a valid value",
+    "enterBothLimits": "Please enter both limits of the reference range – or neither.",
+    "upperLimit": "The upper limit must be greater than the lower one.",
+    "valueChanged": "Value updated",
+    "valueSaved": "Value saved",
+    "editTitle": "Edit lab value",
+    "addTitle": "Log a lab value",
+    "date": "Date",
+    "measuredValue": "Result",
+    "refRangeLab": "Your lab’s reference range (optional)",
+    "refHintAdult": "It’s printed on your report next to the value – copy it, and Cat-O-Fit will assess against YOUR lab. If you leave it empty, a usual range applies (shown in grey).",
+    "refHintMinor": "It’s printed on your report next to the value – there it applies to your age. Copy it so you can find it again in the trend.",
+    "amount": "Amount",
+    "when": "When",
+    "timing": "Timing",
+    "frequency": "Frequency",
+    "supplement": "Supplement",
+    "asNeededExample": "as needed (e.g. before races)",
+    "addToPlanTitle": "Add to plan",
+    "planSheetHint": "Only what you really take – the plan lets you tick things off and shows your adherence. Supplements taken “as needed” don’t count there.",
+    "addedToPlan": "Added to your plan",
+    "apply": "Add",
+    "thisMember": "this member",
+    "labValue": "Lab value",
+    "ariaResult": "{label}: result",
+    "adherenceAsNeeded": "supplements taken “as needed” don’t count",
+    "eaTrainingMeasured": "measured by your watch",
+    "eaTrainingMixed": "partly measured, partly estimated",
+    "eaTrainingEstimated": "estimated",
+    "eaFfmMeasured": "measured",
+    "eaFfmEstimated": "estimated from weight and body fat",
+    "ctxAfterExercise": "after hard exercise",
+    "ctxFasting": "fasting",
+    "ctxCycleDay": "cycle day {day}",
+    "ctxBiotin": "biotin taken",
+    "staleSeason": "or comes from a different season",
+    "inFewWeeks": "in a few weeks",
+    "trendBelow": "Outlook: if the trend continues, you will fall below the favourable range {when} – a good reason for your next check.",
+    "measurements": {
+      "one": "{count} measurement",
+      "other": "{count} measurements"
+    },
+    "dates": {
+      "one": "{count} date",
+      "other": "{count} dates"
+    }
+  },
+  "demo": {
+    "zoneMarathon": "Marathon pace",
+    "zoneHalfRace": "Half marathon race",
+    "zoneRepetition": "Repetitions",
+    "mealProteinBowlIngredients": [
+      "150 g chicken",
+      "80 g rice",
+      "200 g vegetables"
+    ],
+    "mealSkyrIngredients": [
+      "150 g skyr",
+      "100 g berries"
+    ],
+    "mealOvernightOatsIngredients": [
+      "60 g rolled oats",
+      "150 g skyr",
+      "150 ml milk",
+      "100 g berries",
+      "1 tbsp honey"
+    ],
+    "mealProteinPorridgeIngredients": [
+      "60 g rolled oats",
+      "30 g protein powder",
+      "250 ml milk",
+      "1 banana"
+    ],
+    "mealChickenRiceBowlIngredients": [
+      "150 g chicken",
+      "80 g rice",
+      "200 g broccoli",
+      "1 tbsp oil"
+    ],
+    "mealSalmonIngredients": [
+      "150 g salmon",
+      "250 g sweet potato",
+      "spinach",
+      "1 tbsp oil"
+    ],
+    "mealOmeletteIngredients": [
+      "3 eggs",
+      "50 g feta",
+      "200 g tomatoes",
+      "spinach"
+    ],
+    "goalEnjoyMoving": "Enjoy being active",
+    "goalClubSport": "Fit for club sport",
+    "goalRunRegularly": "Run regularly",
+    "goalFitHealthy": "Stay fit & healthy",
+    "goalEndurance": "Build endurance",
+    "goalKeepWeight": "Maintain weight",
+    "goalBodyFat": "Reduce body fat",
+    "goalMuscle": "Build muscle mass",
+    "goalHalf": "Half marathon in under 1:55 h",
+    "raceTenK": "10 km race",
+    "raceFun": "Fun run",
+    "raceCityHalf": "City Half Marathon",
+    "labFollowUp": "Check-up after the build phase",
+    "supVitaminD": "Vitamin D",
+    "supVitaminDDose": "800 IU (20 µg)/day",
+    "supWithBreakfast": "With breakfast",
+    "supMagnesium": "Magnesium",
+    "supMagnesiumDose": "250 mg/day",
+    "supEvening": "In the evening",
+    "mealProteinBowl": "Protein bowl",
+    "mealSkyrBerries": "Skyr & berries",
+    "mealOvernightOats": "Overnight oats with berries",
+    "mealProteinPorridge": "Protein porridge with banana",
+    "mealChickenRiceBowl": "Chicken & rice bowl with broccoli",
+    "mealSalmon": "Salmon with sweet potato & spinach",
+    "mealOmelette": "Omelette with feta & tomatoes",
+    "mealSkyr": "Skyr with berries",
+    "mealSkyrNuts": "Skyr with berries & nuts",
+    "mealBananaBar": "Banana & oat bar",
+    "mealCheeseBread": "Wholemeal bread with cheese",
+    "pantryOats": "Rolled oats",
+    "pantryRice": "Rice",
+    "pantryMilk": "Milk",
+    "pantryEggs": "Eggs",
+    "pantrySkyr": "Skyr",
+    "pantryOliveOil": "Olive oil",
+    "shopBananas": "Bananas",
+    "shopBananasQty": "6",
+    "shopBerries": "Frozen berries",
+    "shopChicken": "Chicken breast",
+    "shopSalmon": "Salmon fillet",
+    "shopCoffee": "Coffee",
+    "shopProteinPowder": "Protein powder",
+    "shopProteinPowderQty": "1 tub",
+    "checkStretch": "Stretch & foam-roll after your run",
+    "checkWater": "Drink 2 litres of water",
+    "checkSleep": "At least 7 hours of sleep",
+    "checkShoes": "Break in new running shoes",
+    "checkRacePack": "Pick up the half marathon race pack",
+    "teamRed": "Team Red",
+    "teamBlue": "Team Blue",
+    "teamGreen": "Team Green",
+    "titleEasy": "Easy run",
+    "titleTempo": "Tempo run",
+    "titleLong": "Long run",
+    "titleInterval": "Intervals",
+    "titleRecovery": "Recovery run"
   }
 }

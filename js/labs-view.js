@@ -24,18 +24,20 @@ import { setHeader } from './router.js';
 import { lineChart, barChart, sparkline, donut } from './charts.js';
 import { moduleOff } from './nutrition.js';
 import {
-  ANALYTES, ANALYTE_GROUPS, unitsFor, unitFactor, toCanonical, fromCanonical, overview, series,
+  ANALYTES, ANALYTE_GROUPS, groupLabel, unitsFor, unitFactor, toCanonical, fromCanonical, overview, series,
   refRange, hasOwnRef, latest, migrateLabRecord, implausible, LAB_SCHEMA, labRecordsFromReport,
 } from './labs.js';
-import { LAB_SOURCES, LAB_SOURCES_TEASER } from './labsources.js';
+import { LAB_SOURCES, labSourcesTeaser } from './labsources.js';
 import {
-  recommend, activePlans, takenOn, adherence, adherenceSeries, SUPPLEMENTS, DOPING_NOTE, catalogFor, isDaily,
+  recommend, activePlans, takenOn, adherence, adherenceSeries, SUPPLEMENTS, dopingNote, catalogFor, isDaily,
 } from './supplements.js';
 import {
   redFlags, energyAvailability, energyAvailabilitySeries, leanMassNow, EA_OPTIMAL, eaLowFor,
 } from './redflags.js';
 import { currentEligibility, currentEnergyTargets, openGateSheet } from './wellness.js';
 import { cycleCheck, avgCycleLength } from './cycle.js';
+
+import { t, tp } from './i18n.js';
 
 const TONE_COLOR = { good: 'var(--good)', warn: 'var(--warn)', bad: 'var(--bad)', neutral: 'var(--text-3)' };
 /** Dieselben Töne als lesbare Textfarbe (≥ 4,5:1) – die Flächenfarben sind für Schrift zu hell (UI-12). */
@@ -50,19 +52,19 @@ export function labsEnabled() {
 /* --------------------------------- View ---------------------------------- */
 
 export function render(view) {
-  setHeader({ title: 'Labor & Ergänzung' });
+  setHeader({ title: t('nav.labs') });
 
   // Datenschutz: wie Zyklusdaten ausschließlich für die Person selbst sichtbar.
   if (store.isManaging()) {
     const who = store.activeMember();
     view.appendChild(el('div', { class: 'empty', style: { paddingTop: '48px' } }, [
       el('div', { class: 'empty__icon', html: iconSvg('heart') }),
-      el('div', { class: 'empty__title', text: 'Privat' }),
-      el('div', { class: 'muted', style: { maxWidth: '340px', margin: '0 auto' }, text: `Laborwerte und Ergänzungen sind private Gesundheitsdaten – nur für ${who ? who.name : 'das Mitglied'} selbst sichtbar, auch für Admins.` }),
+      el('div', { class: 'empty__title', text: t('labsView.private') }),
+      el('div', { class: 'muted', style: { maxWidth: '340px', margin: '0 auto' }, text: t('labsView.privateNote', { name: who ? who.name : t('labsView.thisMember') }) }),
     ]));
     return;
   }
-  if (!labsEnabled()) { view.appendChild(moduleOff('Labor & Ergänzung')); return; }
+  if (!labsEnabled()) { view.appendChild(moduleOff(t('nav.labs'))); return; }
 
   const today = todayStr();
   const profile = store.profile();
@@ -75,7 +77,7 @@ export function render(view) {
   /* --- Ersteinrichtung: Abgrenzung klären ------------------------------- */
   if (!elig.answered) {
     view.appendChild(introCard());
-    view.appendChild(el('button', { class: 'btn btn--primary btn--block mt-3', onclick: () => openGateSheet({ onSaved: rerender }) }, [icon('check'), 'Einrichten']));
+    view.appendChild(el('button', { class: 'btn btn--primary btn--block mt-3', onclick: () => openGateSheet({ onSaved: rerender }) }, [icon('check'), t('labsView.setUp')]));
     return;
   }
 
@@ -110,51 +112,51 @@ export function render(view) {
       view.appendChild(el('div', { class: 'card card--flat mt-2 row gap-2', style: { alignItems: 'flex-start' } }, [
         el('span', { html: iconSvg('info'), style: { color: 'var(--accent-text)', width: '18px', flex: '0 0 auto' } }),
         el('div', {}, [
-          el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: 'Für die Einschätzung deiner Energieversorgung fehlt die fettfreie Masse. Trag bei den Körperwerten den Körperfettanteil oder die fettfreie Masse ein (z. B. von der Waage oder aus Apple Health) – ein Wert aus den letzten vier Monaten genügt.' }),
-          el('button', { class: 'btn btn--soft mt-2', style: { fontSize: '.8rem' }, onclick: () => { location.hash = '#/health'; } }, [icon('heart'), 'Zu den Körperwerten']),
+          el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('labsView.ffmMissing') }),
+          el('button', { class: 'btn btn--soft mt-2', style: { fontSize: '.8rem' }, onclick: () => { location.hash = '#/health'; } }, [icon('heart'), t('labsView.toBodyStats')]),
         ]),
       ]));
     }
   }
 
   /* --- 3. Laborwerte ----------------------------------------------------- */
-  view.appendChild(sectionHead('Deine Werte', { label: '+ Wert erfassen', onClick: () => openValueSheet(elig) }, { help: 'labor' }));
+  view.appendChild(sectionHead(t('labsView.yourValues'), { label: t('labsView.logValue'), onClick: () => openValueSheet(elig) }, { help: 'labor' }));
 
   if (!elig.labsEvaluate) {
-    view.appendChild(noteCard('Kinder- und Jugendprofil: Cat-O-Fit dokumentiert deine Werte nur und bewertet sie nicht – die hinterlegten Bereiche gelten für Erwachsene. Die passenden Bereiche für dein Alter stehen auf dem Befund; besprich ihn mit deiner Kinder- und Jugendärztin oder deinem Kinder- und Jugendarzt.'));
+    view.appendChild(noteCard(t('labsView.minorNote')));
   }
   const rows = overview(labs, { sex: profile.sex, today, evaluate: elig.labsEvaluate, pregnant: elig.pregnancy });
   if (!rows.length) {
-    view.appendChild(emptyState('flask', 'Noch keine Werte',
+    view.appendChild(emptyState('flask', t('labsView.noValuesYet'),
       elig.labsEvaluate
-        ? 'Trage Werte aus deinem Laborbefund ein – Cat-O-Fit ordnet sie sportbezogen ein und zeigt dir den Verlauf.'
-        : 'Trage Werte aus deinem Laborbefund ein – Cat-O-Fit zeigt dir den Verlauf.'));
+        ? t('labsView.emptyEvaluate')
+        : t('labsView.emptyPlain')));
     view.appendChild(sourcesCard());
   } else {
     view.appendChild(labStats(rows, labs, elig.labsEvaluate));
     const list = el('div', { class: 'list-card' });
     rows.forEach((r, i) => list.appendChild(valueRow(r, i, labs)));
     view.appendChild(list);
-    view.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: elig.labsEvaluate ? 'Antippen öffnet den Verlauf mit Referenz- und Sport-Zielbereich.' : 'Antippen öffnet den Verlauf.' }));
+    view.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: elig.labsEvaluate ? t('labsView.tapHintEvaluate') : t('labsView.tapHint') }));
   }
   // Ganzer Befund auf einmal statt Wert für Wert (MKT-09).
-  view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => openReportSheet() }, [icon('flask'), 'Befund mit mehreren Werten erfassen']));
+  view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => openReportSheet() }, [icon('flask'), t('labsView.logReport')]));
 
   /* --- 4. Vorschläge ----------------------------------------------------- */
-  view.appendChild(sectionHead('Ergänzung'));
+  view.appendChild(sectionHead(t('labsView.supplements')));
   if (elig.mode === 'documentation') {
     view.appendChild(el('div', { class: 'card card--flat row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('info'), style: { color: 'var(--accent-text)', width: '18px', flex: '0 0 auto' } }),
       el('div', {}, [
-        el('div', { style: { fontWeight: '650', fontSize: '.86rem' }, text: 'Dokumentationsmodus' }),
+        el('div', { style: { fontWeight: '650', fontSize: '.86rem' }, text: t('labsView.docMode') }),
         el('div', { class: 'muted', style: { fontSize: '.82rem', marginTop: '2px' }, text: elig.minor
-          ? `Grund: ${elig.reasons.join(' · ')}. Für Kinder und Jugendliche gibt Cat-O-Fit keine Einnahme-Empfehlungen – Nahrungsergänzung gehört hier in ärztliche Hände. Erfassen und Verlauf ansehen kannst du weiterhin alles.`
-          : `Grund: ${elig.reasons.join(' · ')}. Cat-O-Fit richtet sich an gesunde Erwachsene und gibt in diesem Fall bewusst keine Einnahme-Empfehlungen. Erfassen und Verlauf ansehen kannst du weiterhin alles – besprich die Werte mit deiner Ärztin oder deinem Arzt.` }),
-        el('button', { class: 'btn btn--ghost mt-2', style: { fontSize: '.8rem' }, onclick: () => openGateSheet({ onSaved: rerender }) }, 'Angaben ändern'),
+          ? t('labsView.docModeMinor', { reasons: elig.reasons.join(' · ') })
+          : t('labsView.docModeAdult', { reasons: elig.reasons.join(' · ') }) }),
+        el('button', { class: 'btn btn--ghost mt-2', style: { fontSize: '.8rem' }, onclick: () => openGateSheet({ onSaved: rerender }) }, t('labsView.changeAnswers')),
       ]),
     ]));
   } else if (flags.length) {
-    view.appendChild(el('div', { class: 'card card--flat', text: 'Solange ein Wert ärztlich abzuklären ist, gibt Cat-O-Fit keine Empfehlungen zur Ergänzung.' }));
+    view.appendChild(el('div', { class: 'card card--flat', text: t('labsView.holdBack') }));
   } else {
     const rec = recommend({
       labs, profile, sessions: store.get('sessions'), today, diet: s.diet || null,
@@ -165,20 +167,20 @@ export function render(view) {
       el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: rec.foodFirst }),
     ]));
     if (!rec.items.length) {
-      view.appendChild(el('div', { class: 'card card--flat mt-2', text: 'Aus deinen Werten ergibt sich derzeit kein Anlass für eine Ergänzung. Das ist eine gute Nachricht.' }));
+      view.appendChild(el('div', { class: 'card card--flat mt-2', text: t('labsView.noSuggestion') }));
     }
     rec.items.forEach((it) => view.appendChild(suggestionCard(it)));
-    rec.interactions.forEach((t) => view.appendChild(el('div', { class: 'card card--flat mt-2 row gap-2', style: { alignItems: 'flex-start' } }, [
+    rec.interactions.forEach((interaction) => view.appendChild(el('div', { class: 'card card--flat mt-2 row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('info'), style: { color: 'var(--warn-text)', width: '18px', flex: '0 0 auto' } }),
-      el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t }),
+      el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: interaction }),
     ])));
   }
 
   /* --- 5. Eigener Einnahmeplan ------------------------------------------ */
-  view.appendChild(sectionHead('Dein Plan', { label: '+ Hinzufügen', onClick: () => openPlanSheet(null, elig) }));
+  view.appendChild(sectionHead(t('labsView.yourPlan'), { label: t('labsView.add'), onClick: () => openPlanSheet(null, elig) }));
   const plans = activePlans(supps, today);
   if (!plans.length) {
-    view.appendChild(el('div', { class: 'card card--flat', text: 'Noch nichts eingeplant. Was du regelmäßig nimmst, kannst du hier eintragen und täglich abhaken.' }));
+    view.appendChild(el('div', { class: 'card card--flat', text: t('labsView.planEmpty') }));
   } else {
     const list = el('div', { class: 'list-card' });
     plans.forEach((p, i) => list.appendChild(planRow(p, today, i)));
@@ -188,19 +190,19 @@ export function render(view) {
       const ser = adherenceSeries(supps, today, 21);
       view.appendChild(el('div', { class: 'card mt-2' }, [
         el('div', { class: 'row row--between', style: { alignItems: 'baseline' } }, [
-          el('div', { class: 'card__title', style: { fontSize: '.9rem' }, text: 'Einnahmetreue' }),
-          el('div', { class: 'num', style: { fontWeight: '800', color: ad.pct >= 80 ? 'var(--good)' : ad.pct >= 50 ? 'var(--warn)' : 'var(--bad)' }, text: `${ad.pct} %` }),
+          el('div', { class: 'card__title', style: { fontSize: '.9rem' }, text: t('labsView.adherence') }),
+          el('div', { class: 'num', style: { fontWeight: '800', color: ad.pct >= 80 ? 'var(--good)' : ad.pct >= 50 ? 'var(--warn)' : 'var(--bad)' }, text: t('labsView.percent', { pct: ad.pct }) }),
         ]),
-        el('div', { class: 'dim', style: { fontSize: '.76rem' }, text: `${ad.taken} von ${ad.expected} Einnahmen in 14 Tagen · Balken = letzte 21 Tage (volle Höhe = 100 %)${plans.some((p) => !isDaily(p)) ? ' · Mittel „bei Bedarf“ zählen nicht mit' : ''}` }),
+        el('div', { class: 'dim', style: { fontSize: '.76rem' }, text: tp('labsView.adherenceCaption', ad.expected, { taken: ad.taken, extra: plans.some((p) => !isDaily(p)) ? ` · ${t('labsView.adherenceAsNeeded')}` : '' }) }),
         // 100 % als fester Anker: Ohne ihn sah eine durchgehend halbe Einnahme aus wie volle.
-        ser.length ? barChart(ser, { height: 90, min: 100, yUnit: '%', label: 'Einnahmetreue je Tag' }) : null,
+        ser.length ? barChart(ser, { height: 90, min: 100, yUnit: '%', label: t('labsView.adherencePerDay') }) : null,
       ]));
     }
   }
 
   view.appendChild(el('div', { class: 'card card--flat mt-4 row gap-2', style: { alignItems: 'flex-start' } }, [
     el('span', { html: iconSvg('info'), style: { color: 'var(--accent-text)', width: '18px', flex: '0 0 auto' } }),
-    el('div', { class: 'muted', style: { fontSize: '.8rem' }, text: 'Dokumentation und allgemeine Information für gesunde Erwachsene – keine Diagnose, keine Therapie, kein Medizinprodukt. Bei Beschwerden oder auffälligen Werten gehört die Beurteilung in ärztliche Hände. Deine Werte sind privat: in der App auch für Admins nicht sichtbar, und der Server gibt sie nur nach deiner PIN-Anmeldung heraus. Wer den Server betreibt, kann die gespeicherten Dateien allerdings lesen.' }),
+    el('div', { class: 'muted', style: { fontSize: '.8rem' }, text: t('labsView.disclaimer') }),
   ]));
 }
 
@@ -208,9 +210,9 @@ export function render(view) {
 
 function introCard() {
   return el('div', { class: 'card' }, [
-    el('div', { class: 'card__title', text: 'Labor & Ergänzung' }),
-    el('div', { class: 'muted mt-2', style: { fontSize: '.86rem' }, text: 'Erfasse Werte aus deinem Laborbefund, sieh ihren Verlauf und bekomme eine sportbezogene Einordnung – zum Beispiel, dass ein Ferritin von 25 zwar „normal“ ist, für Ausdauertraining aber knapp.' }),
-    el('div', { class: 'muted mt-2', style: { fontSize: '.86rem' }, text: 'Vorher eine kurze Abgrenzung: Cat-O-Fit ist für gesunde Erwachsene gedacht. Wer in ärztlicher Behandlung ist, Medikamente nimmt, schwanger ist oder stillt oder eine Essstörung hat, nutzt das Modul nur zum Dokumentieren – Empfehlungen gibt die App dann bewusst nicht. Die Antworten gelten für die ganze App.' }),
+    el('div', { class: 'card__title', text: t('nav.labs') }),
+    el('div', { class: 'muted mt-2', style: { fontSize: '.86rem' }, text: t('labsView.introWhat') }),
+    el('div', { class: 'muted mt-2', style: { fontSize: '.86rem' }, text: t('labsView.introGate') }),
   ]);
 }
 
@@ -234,21 +236,25 @@ function eaCard(ea, eaArgs) {
   const tone = EA_TONE[ea.level] || 'neutral';
   return el('div', { class: 'card mt-2', style: { borderLeft: `4px solid ${TONE_COLOR[tone]}` } }, [
     el('div', { class: 'row row--between', style: { alignItems: 'center' } }, [
-      el('div', { class: 'card__title', style: { fontSize: '.92rem' }, text: 'Energieversorgung' }),
-      infoButton('energieverfuegbarkeit', 'Energieversorgung'),
+      el('div', { class: 'card__title', style: { fontSize: '.92rem' }, text: t('labsView.energyAvailability') }),
+      infoButton('energieverfuegbarkeit', t('labsView.energyAvailability')),
     ]),
     // Bei unklarer Datenlage keine Zahl in den Vordergrund stellen – sie wäre
     // aus lückenhaften Tagebuch-Einträgen gerechnet und damit irreführend.
     ea.level === 'unklar' ? null : el('div', { class: 'row gap-3 mt-2', style: { alignItems: 'baseline', flexWrap: 'wrap' } }, [
       el('div', { class: 'num', style: { fontSize: '1.6rem', fontWeight: '800', color: TONE_TEXT[tone] }, text: `≈ ${ea.eaRounded}` }),
-      el('div', { class: 'muted', style: { fontSize: '.8rem' }, text: `kcal je kg fettfreier Masse (Spanne ${ea.range[0]}–${ea.range[1]}) · Richtwert ${EA_OPTIMAL}` }),
+      el('div', { class: 'muted', style: { fontSize: '.8rem' }, text: t('labsView.eaRange', { low: ea.range[0], high: ea.range[1], target: EA_OPTIMAL }) }),
     ]),
     el('div', { class: 'muted mt-2', style: { fontSize: '.84rem' }, text: ea.hint }),
-    ea.level === 'unklar' ? null : el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: `Aus ${ea.confirmedDays} vollständig erfassten Tagen: Ø ${ea.intakeAvg} kcal gegessen, Ø ${ea.trainingAvg} kcal fürs Training (${{ gemessen: 'von der Uhr gemessen', teils: 'teils gemessen, teils geschätzt' }[ea.trainingSource] || 'geschätzt'}), ${fmtDec(ea.ffm)} kg fettfreie Masse (${ea.ffmMeasured ? 'gemessen' : 'aus Gewicht und Körperfett geschätzt'}).` }),
+    ea.level === 'unklar' ? null : el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: t('labsView.eaBasis', {
+    days: ea.confirmedDays, intake: ea.intakeAvg, training: ea.trainingAvg,
+    trainingSource: ea.trainingSource === 'gemessen' ? t('labsView.eaTrainingMeasured') : ea.trainingSource === 'teils' ? t('labsView.eaTrainingMixed') : t('labsView.eaTrainingEstimated'),
+    ffm: fmtDec(ea.ffm), ffmSource: ea.ffmMeasured ? t('labsView.eaFfmMeasured') : t('labsView.eaFfmEstimated'),
+  }) }),
     el('button', {
       class: 'btn btn--soft mt-2', style: { fontSize: '.8rem' },
       onclick: () => { location.hash = '#/nutrition'; },
-    }, [icon('utensils'), ea.level === 'unklar' ? 'Tage im Ess-Tagebuch bestätigen' : 'Zum Ess-Tagebuch']),
+    }, [icon('utensils'), ea.level === 'unklar' ? t('labsView.toFoodDiaryConfirm') : t('labsView.toFoodDiary')]),
     ea.level === 'unklar' ? null : eaChart(eaArgs),
   ]);
 }
@@ -257,23 +263,23 @@ function eaCard(ea, eaArgs) {
 function eaCardPlain(ea) {
   const tone = EA_TONE[ea.level] || 'neutral';
   const text = {
-    kritisch: 'Rechnerisch bleibt für dein Training zu wenig Energie übrig. Iss mehr, statt ein Präparat zu suchen – und sprich mit einer Ärztin oder einem Arzt.',
+    kritisch: t('labsView.eaPlainCritical'),
     niedrig: ea.lossBand
-      ? 'Deine Energieversorgung ist knapp – beim Abnehmen vorübergehend vertretbar. Achte auf Schlaf und Regeneration.'
-      : 'Deine Energieversorgung ist eher knapp. In harten Trainingsphasen solltest du bewusst mehr essen.',
-    gut: 'Deine Energieversorgung passt zum Training.',
-    unklar: `Noch zu wenige vollständig erfasste Tage für eine Einschätzung (${ea.confirmedDays} von ${ea.days}). Bestätige in der Ernährung „Tag vollständig“, wenn du alles erfasst hast.`,
+      ? t('labsView.eaPlainLossBand')
+      : t('labsView.eaPlainLow'),
+    gut: t('labsView.eaPlainGood'),
+    unklar: t('labsView.eaPlainUnclear', { days: ea.confirmedDays, total: ea.days }),
   }[ea.level];
   return el('div', { class: 'card mt-2', style: { borderLeft: `4px solid ${TONE_COLOR[tone]}` } }, [
     el('div', { class: 'row row--between', style: { alignItems: 'center' } }, [
-      el('div', { class: 'card__title', style: { fontSize: '.92rem' }, text: 'Energieversorgung' }),
-      infoButton('energieverfuegbarkeit', 'Energieversorgung'),
+      el('div', { class: 'card__title', style: { fontSize: '.92rem' }, text: t('labsView.energyAvailability') }),
+      infoButton('energieverfuegbarkeit', t('labsView.energyAvailability')),
     ]),
     el('div', { class: 'muted mt-2', style: { fontSize: '.84rem' }, text }),
     ea.level === 'unklar' ? el('button', {
       class: 'btn btn--soft mt-2', style: { fontSize: '.8rem' },
       onclick: () => { location.hash = '#/nutrition'; },
-    }, [icon('utensils'), 'Zum Ess-Tagebuch']) : null,
+    }, [icon('utensils'), t('labsView.toFoodDiary')]) : null,
   ]);
 }
 
@@ -283,22 +289,22 @@ function sourcesCard() {
     LAB_SOURCES.map((src, i) => el('div', { style: { padding: '8px 0', borderTop: i ? '1px solid var(--border)' : 'none' } }, [
       el('div', { class: 'row gap-2', style: { alignItems: 'baseline' } }, [
         el('div', { style: { fontWeight: '650', fontSize: '.86rem' }, text: src.title }),
-        src.best ? el('span', { class: 'chip chip--accent', style: { fontSize: '.62rem' }, text: 'passt am besten' }) : null,
+        src.best ? el('span', { class: 'chip chip--accent', style: { fontSize: '.62rem' }, text: t('labsView.bestFit') }) : null,
       ]),
       el('div', { class: 'muted', style: { fontSize: '.82rem', marginTop: '2px' }, text: src.what }),
-      el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '2px' }, text: `Kosten: ${src.cost}` }),
+      el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '2px' }, text: t('labsView.cost', { cost: src.cost }) }),
       el('div', { class: 'muted', style: { fontSize: '.8rem', marginTop: '4px' } }, [
-        el('strong', { text: 'Tipp: ' }), src.tip,
+        el('strong', { text: t('labsView.tip') }), src.tip,
       ]),
     ])));
   const head = el('button', {
     class: 'btn btn--soft btn--block', style: { fontSize: '.84rem' },
     onclick: () => { body.hidden = !body.hidden; },
-  }, [icon('info'), 'Woher bekomme ich Laborwerte?']);
+  }, [icon('info'), t('labsView.whereToGet')]);
   return el('div', { class: 'card mt-3' }, [
-    el('div', { class: 'muted', style: { fontSize: '.84rem', marginBottom: '8px' }, text: LAB_SOURCES_TEASER }),
+    el('div', { class: 'muted', style: { fontSize: '.84rem', marginBottom: '8px' }, text: labSourcesTeaser() }),
     head, body,
-    el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '8px' }, text: 'Wichtig: Referenzbereiche sind in Deutschland nicht einheitlich – jedes Labor hat eigene. Trag beim Erfassen den Bereich von deinem Befund mit ein, dann bewertet Cat-O-Fit gegen dein Labor.' }),
+    el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '8px' }, text: t('labsView.referenceNote') }),
   ]);
 }
 
@@ -309,35 +315,35 @@ function labStats(rows, labs, evaluate = true) {
   const measured = (labs || []).filter((l) => l && !l.deleted).length;
   const dates = [...new Set((labs || []).filter((l) => l && !l.deleted).map((l) => l.date))].sort();
   const last = dates.at(-1);
-  const counts = `${measured} Messungen an ${dates.length} Terminen · zuletzt ${last ? fmtDate(last) : '–'}`;
+  const counts = t('labsView.counts', { measurements: tp('labsView.measurements', measured), dates: tp('labsView.dates', dates.length), last: last ? fmtDate(last) : '–' });
   // Nur dokumentierend (Kinder- und Jugendprofil): keine Ampel, nur der Überblick.
   if (!evaluate) {
     return el('div', { class: 'card' }, [
       el('div', { class: 'row gap-2', style: { alignItems: 'baseline' } }, [
         el('span', { class: 'num', style: { fontWeight: '800' }, text: String(rows.length) }),
-        el('span', { class: 'muted', style: { fontSize: '.82rem' }, text: rows.length === 1 ? 'Wert dokumentiert' : 'Werte dokumentiert' }),
+        el('span', { class: 'muted', style: { fontSize: '.82rem' }, text: tp('labsView.valuesDocumented', rows.length) }),
       ]),
       el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '6px' }, text: counts }),
     ]);
   }
 
   const seg = [
-    { value: good, color: 'var(--good)', label: 'im Zielbereich' },
-    { value: attention, color: 'var(--warn)', label: 'beachten' },
-    { value: rows.length - good - attention, color: 'var(--text-3)', label: 'ohne Bewertung' },
+    { value: good, color: 'var(--good)', label: t('labsView.inTarget') },
+    { value: attention, color: 'var(--warn)', label: t('labsView.attention') },
+    { value: rows.length - good - attention, color: 'var(--text-3)', label: t('labsView.notAssessed') },
   ].filter((s) => s.value > 0);
 
   return el('div', { class: 'card' }, [
     el('div', { class: 'row gap-3', style: { alignItems: 'center' } }, [
-      el('div', { style: { flex: '0 0 auto', width: '96px' } }, [donut(seg, { size: 96, centerValue: String(rows.length), centerLabel: 'Werte', label: 'Laborwerte nach Bewertung' })]),
+      el('div', { style: { flex: '0 0 auto', width: '96px' } }, [donut(seg, { size: 96, centerValue: String(rows.length), centerLabel: t('labsView.valuesCenter'), label: t('labsView.donutLabel') })]),
       el('div', { class: 'grow' }, [
         el('div', { class: 'row gap-2', style: { alignItems: 'baseline' } }, [
           el('span', { class: 'num', style: { fontWeight: '800', color: 'var(--good-text)' }, text: String(good) }),
-          el('span', { class: 'muted', style: { fontSize: '.82rem' }, text: 'im Sport-Zielbereich' }),
+          el('span', { class: 'muted', style: { fontSize: '.82rem' }, text: t('labsView.inSportTarget') }),
         ]),
         el('div', { class: 'row gap-2', style: { alignItems: 'baseline', marginTop: '2px' } }, [
           el('span', { class: 'num', style: { fontWeight: '800', color: attention ? 'var(--warn)' : 'var(--text-3)' }, text: String(attention) }),
-          el('span', { class: 'muted', style: { fontSize: '.82rem' }, text: 'zum Beobachten' }),
+          el('span', { class: 'muted', style: { fontSize: '.82rem' }, text: t('labsView.toWatch') }),
         ]),
         el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '6px' }, text: counts }),
       ]),
@@ -347,21 +353,21 @@ function labStats(rows, labs, evaluate = true) {
 
 const num = fmtDec;
 /** Bereich als Text: „15–300“ oder „ab 35“ (ohne Obergrenze). */
-const fmtRange = (r) => (r[1] == null ? `ab ${num(r[0])}` : `${num(r[0])}–${num(r[1])}`);
+const fmtRange = (r) => (r[1] == null ? t('labsView.rangeFrom', { value: num(r[0]) }) : `${num(r[0])}–${num(r[1])}`);
 /** Wert so, wie er auf dem Befund stand (Einheit des Befunds), sonst kanonisch. */
 function valueText(rec, unit) {
   if (rec && rec.enteredUnit && rec.enteredValue != null) return `${num(rec.enteredValue)} ${rec.enteredUnit}`;
   return `${num(rec ? rec.value : '')} ${unit}`;
 }
-const monthsText = (days) => `${Math.round(days / 30)} Monate`;
+const monthsText = (days) => tp('labsView.months', Math.round(days / 30));
 
 function valueRow(r, i, labs) {
   const a = r.assessment;
-  const t = r.trend;
-  const arrow = t ? (t.dir === 'up' ? '↑' : t.dir === 'down' ? '↓' : '→') : '';
+  const trd = r.trend;
+  const arrow = trd ? (trd.dir === 'up' ? '↑' : trd.dir === 'down' ? '↓' : '→') : '';
   const sub = [fmtDate(r.date), a.label];
-  if (r.stale) sub.push('älter – neu bestimmen lassen');
-  if (t && t.dir !== 'flat') sub.push(`${arrow} ${num(Math.abs(t.perMonth))} ${r.unit}/Monat`);
+  if (r.stale) sub.push(t('labsView.staleShort'));
+  if (trd && trd.dir !== 'flat') sub.push(t('labsView.perMonth', { arrow, value: num(Math.abs(trd.perMonth)), unit: r.unit }));
 
   // Mini-Verlauf direkt in der Zeile: Trend erkennen, ohne aufzuklappen.
   const pts = series(labs, r.key).map((l) => Number(l.value));
@@ -390,8 +396,8 @@ function eaChart(args) {
   const ser = energyAvailabilitySeries(args, { weeks: 10 });
   if (ser.filter((p) => p.value != null).length < 3) return null;
   return el('div', { class: 'mt-2' }, [
-    el('div', { class: 'dim', style: { fontSize: '.74rem', marginBottom: '2px' }, text: `Verlauf der letzten Wochen (nur vollständig erfasste Tage) · Linie = Richtwert ${EA_OPTIMAL}, kritisch unter ${eaLowFor(args.profile && args.profile.sex)}` }),
-    lineChart(ser, { label: 'Energieversorgung je Woche', height: 120, unit: 'kcal/kg', target: EA_OPTIMAL, targetLabel: 'Richtwert', fmt: (v) => String(Math.round(v)) }),
+    el('div', { class: 'dim', style: { fontSize: '.74rem', marginBottom: '2px' }, text: t('labsView.eaChartCaption', { target: EA_OPTIMAL, critical: eaLowFor(args.profile && args.profile.sex) }) }),
+    lineChart(ser, { label: t('labsView.eaPerWeek'), height: 120, unit: 'kcal/kg', target: EA_OPTIMAL, targetLabel: t('labsView.guideline'), fmt: (v) => String(Math.round(v)) }),
   ]);
 }
 
@@ -408,48 +414,48 @@ function fillDetail(box, r) {
   if (pts.length >= 2) {
     // Beide Korridore: Referenz als gestrichelter Rahmen, Sport-Zielbereich als Fläche.
     const bands = [];
-    if (sportDiffers) bands.push({ lo: a.sport[0], hi: a.sport[1], kind: 'fill', label: 'Sport-Zielbereich' });
-    if (ref) bands.push({ lo: ref[0], hi: ref[1], kind: 'frame', label: a.ownRef || ownOnly ? 'Referenz deines Labors' : 'Referenz' });
-    box.appendChild(lineChart(pts, { label: `${r.label || 'Laborwert'} im Verlauf`, unit: r.unit, height: 130, bands, color: TONE_COLOR[a.tone] }));
+    if (sportDiffers) bands.push({ lo: a.sport[0], hi: a.sport[1], kind: 'fill', label: t('labsView.sportRange') });
+    if (ref) bands.push({ lo: ref[0], hi: ref[1], kind: 'frame', label: a.ownRef || ownOnly ? t('labsView.refOwnLab') : t('labsView.reference') });
+    box.appendChild(lineChart(pts, { label: t('labsView.chartLabel', { label: r.label || t('labsView.labValue') }), unit: r.unit, height: 130, bands, color: TONE_COLOR[a.tone] }));
   }
   const ranges = [];
-  if (ref) ranges.push(`${a.ownRef || ownOnly ? 'Referenz deines Labors' : 'Referenz (üblich)'} ${fmtRange(ref)} ${r.unit}`);
-  if (sportDiffers) ranges.push(`Sport-Zielbereich ${fmtRange(a.sport)} ${r.unit}`);
+  if (ref) ranges.push(`${a.ownRef || ownOnly ? t('labsView.refOwnLab') : t('labsView.refTypical')} ${fmtRange(ref)} ${r.unit}`);
+  if (sportDiffers) ranges.push(`${t('labsView.sportRange')} ${fmtRange(a.sport)} ${r.unit}`);
   if (ranges.length) box.appendChild(el('div', { class: 'dim', style: { fontSize: '.76rem' }, text: ranges.join(' · ') }));
   if (a.ref && !a.ownRef) {
-    box.appendChild(el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '2px' }, text: 'Jedes Labor hat eigene Referenzbereiche – trag beim Wert den von deinem Befund ein, dann bewertet Cat-O-Fit gegen dein Labor.' }));
+    box.appendChild(el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '2px' }, text: t('labsView.eachLabOwn') }));
   }
-  if (rec && rec.enteredUnit) box.appendChild(el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '2px' }, text: `Auf dem Befund: ${num(rec.enteredValue)} ${rec.enteredUnit} = ${num(rec.value)} ${r.unit}` }));
-  const ctx = rec ? [rec.exercise48h && 'nach harter Belastung', rec.fasting && 'nüchtern', rec.cycleDay && `Zyklustag ${rec.cycleDay}`, rec.biotin && 'Biotin eingenommen'].filter(Boolean) : [];
-  if (ctx.length) box.appendChild(el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '2px' }, text: `Blutentnahme: ${ctx.join(' · ')}` }));
+  if (rec && rec.enteredUnit) box.appendChild(el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '2px' }, text: t('labsView.onReport', { entered: num(rec.enteredValue), enteredUnit: rec.enteredUnit, value: num(rec.value), unit: r.unit }) }));
+  const ctx = rec ? [rec.exercise48h && t('labsView.ctxAfterExercise'), rec.fasting && t('labsView.ctxFasting'), rec.cycleDay && t('labsView.ctxCycleDay', { day: rec.cycleDay }), rec.biotin && t('labsView.ctxBiotin')].filter(Boolean) : [];
+  if (ctx.length) box.appendChild(el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '2px' }, text: t('labsView.drawContext', { items: ctx.join(' · ') }) }));
   if (a.blocked) box.appendChild(el('div', { class: 'muted mt-2', style: { fontSize: '.82rem' }, text: a.blocked }));
   (a.caveats || []).forEach((c) => box.appendChild(el('div', { class: 'muted mt-2', style: { fontSize: '.8rem', borderLeft: '3px solid var(--warn)', paddingLeft: '8px' }, text: c })));
   if (r.stale) {
     const valid = (ANALYTES[r.key] && ANALYTES[r.key].validDays) || 365;
-    box.appendChild(el('div', { class: 'muted mt-2', style: { fontSize: '.82rem' }, text: `Dieser Wert ist älter als ${monthsText(valid)}${ANALYTES[r.key] && ANALYTES[r.key].seasonal ? ' oder stammt aus einer anderen Jahreszeit' : ''} – für Vorschläge zählt er nicht mehr. Neu bestimmen lassen.` }));
+    box.appendChild(el('div', { class: 'muted mt-2', style: { fontSize: '.82rem' }, text: t('labsView.staleLong', { age: monthsText(valid), season: ANALYTES[r.key] && ANALYTES[r.key].seasonal ? ` ${t('labsView.staleSeason')}` : '' }) }));
   }
   if (r.hint) box.appendChild(el('div', { class: 'muted mt-2', style: { fontSize: '.82rem' }, text: r.hint }));
-  const t = r.trend;
-  if (t && t.daysToLimit != null) {
-    const when = t.daysToLimit < 45 ? 'in wenigen Wochen' : `in etwa ${Math.round(t.daysToLimit / 30)} Monaten`;
-    box.appendChild(el('div', { class: 'muted mt-2', style: { fontSize: '.82rem', color: 'var(--warn-text)' }, text: `Tendenz: Bei gleichbleibendem Verlauf wird der günstige Bereich ${when} ${t.limitSide === 'high' ? 'überschritten' : 'unterschritten'} – ein guter Anlass für die nächste Kontrolle.` }));
+  const trd = r.trend;
+  if (trd && trd.daysToLimit != null) {
+    const when = trd.daysToLimit < 45 ? t('labsView.inFewWeeks') : tp('labsView.inAboutMonths', Math.round(trd.daysToLimit / 30));
+    box.appendChild(el('div', { class: 'muted mt-2', style: { fontSize: '.82rem', color: 'var(--warn-text)' }, text: trd.limitSide === 'high' ? t('labsView.trendAbove', { when }) : t('labsView.trendBelow', { when }) }));
   }
-  if (t && t.dir !== 'flat' && t.seasonal) box.appendChild(el('div', { class: 'dim mt-1', style: { fontSize: '.74rem' }, text: 'Vitamin D schwankt mit der Jahreszeit – ein Teil des Verlaufs kann daran liegen.' }));
-  if (t && t.dir === 'flat' && all.length >= 3) box.appendChild(el('div', { class: 'dim mt-1', style: { fontSize: '.74rem' }, text: 'Die Messungen schwanken im üblichen Rahmen – daraus lässt sich kein Trend ablesen.' }));
-  if (r.note) box.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: `Notiz: ${r.note}` }));
+  if (trd && trd.dir !== 'flat' && trd.seasonal) box.appendChild(el('div', { class: 'dim mt-1', style: { fontSize: '.74rem' }, text: t('labsView.seasonalNote') }));
+  if (trd && trd.dir === 'flat' && all.length >= 3) box.appendChild(el('div', { class: 'dim mt-1', style: { fontSize: '.74rem' }, text: t('labsView.noTrend') }));
+  if (r.note) box.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: t('labsView.noteLine', { note: r.note }) }));
   const src = ANALYTES[r.key] && ANALYTES[r.key].source;
-  if (src) box.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.72rem' }, text: `Grundlage der Bereiche: ${src}` }));
+  if (src) box.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.72rem' }, text: t('labsView.rangesBasis', { source: src }) }));
 
   // Messungen: bearbeiten (Tippfehler, falsche Einheit) und löschen.
   const list = el('div', { class: 'mt-2', style: { borderTop: '1px solid var(--border)' } });
   all.slice().reverse().forEach((m) => list.appendChild(el('div', { class: 'row row--between', style: { alignItems: 'center', padding: '6px 0', gap: '8px' } }, [
     el('span', { style: { fontSize: '.82rem' }, text: `${fmtDate(m.date)} · ${valueText(m, r.unit)}` }),
     el('span', { class: 'row gap-1' }, [
-      el('button', { class: 'icon-btn', 'aria-label': `Messung vom ${fmtDate(m.date)} bearbeiten`, onclick: (e) => { e.stopPropagation(); openValueSheet(currentEligibility(), m); } }, icon('edit')),
-      el('button', { class: 'icon-btn', 'aria-label': `Messung vom ${fmtDate(m.date)} löschen`, onclick: async (e) => {
+      el('button', { class: 'icon-btn', 'aria-label': t('labsView.editMeasurement', { date: fmtDate(m.date) }), onclick: (e) => { e.stopPropagation(); openValueSheet(currentEligibility(), m); } }, icon('edit')),
+      el('button', { class: 'icon-btn', 'aria-label': t('labsView.deleteMeasurement', { date: fmtDate(m.date) }), onclick: async (e) => {
         e.stopPropagation();
-        if (await confirmDialog({ title: 'Messung löschen?', message: `${ANALYTES[r.key].label} vom ${fmtDate(m.date)} (${valueText(m, r.unit)}) wird entfernt.`, confirmLabel: 'Löschen', danger: true })) {
-          store.remove('labs', m.id); toast('Messung gelöscht', 'good'); rerender();
+        if (await confirmDialog({ title: t('labsView.deleteTitle'), message: t('labsView.deleteBody', { label: ANALYTES[r.key].label, date: fmtDate(m.date), value: valueText(m, r.unit) }), confirmLabel: t('labsView.delete'), danger: true })) {
+          store.remove('labs', m.id); toast(t('labsView.deleted'), 'good'); rerender();
         }
       } }, icon('trash')),
     ]),
@@ -458,47 +464,48 @@ function fillDetail(box, r) {
 }
 
 function suggestionCard(it) {
-  const badge = { stark: 'gut belegt', mittel: 'belegt', situativ: 'situativ' }[it.evidence] || '';
+  const badge = { stark: t('labsView.evidenceStrong'), mittel: t('labsView.evidenceSome'), situativ: t('labsView.evidenceSituational') }[it.evidence] || '';
   return el('div', { class: 'card mt-2' }, [
     el('div', { class: 'row row--between', style: { alignItems: 'center' } }, [
       el('div', { style: { fontWeight: '700' }, text: it.label }),
       badge ? el('span', { class: 'chip', style: { fontSize: '.66rem' }, text: badge }) : null,
     ]),
-    el('div', { class: 'dim', style: { fontSize: '.7rem', textTransform: 'uppercase', letterSpacing: '.04em', marginTop: '2px' }, text: 'Allgemeine Information' }),
+    el('div', { class: 'dim', style: { fontSize: '.7rem', textTransform: 'uppercase', letterSpacing: '.04em', marginTop: '2px' }, text: t('labsView.generalInfo') }),
     el('div', { class: 'muted mt-2', style: { fontSize: '.82rem' } }, [
-      el('strong', { text: 'Warum: ' }), it.reason,
+      el('strong', { text: t('labsView.why') }), it.reason,
     ]),
     el('div', { class: 'muted mt-2', style: { fontSize: '.82rem' } }, [
-      el('strong', { text: 'Zuerst über das Essen: ' }), it.food,
+      el('strong', { text: t('labsView.foodFirst') }), it.food,
     ]),
     el('div', { class: 'muted mt-2', style: { fontSize: '.82rem' } }, [
-      el('strong', { text: 'Vorgehen: ' }), it.action,
+      el('strong', { text: t('labsView.howTo') }), it.action,
     ]),
-    it.holdOnly ? null : el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: `Übliche Menge: ${it.typical} · ${it.timing} · ${it.ul}` }),
+    it.holdOnly ? null : el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: t('labsView.usualAmount', { amount: it.typical, timing: it.timing, limit: it.ul }) }),
     it.note ? el('div', { class: 'dim mt-1', style: { fontSize: '.76rem' }, text: it.note }) : null,
-    !it.holdOnly && it.performance ? el('div', { class: 'dim mt-1', style: { fontSize: '.76rem' }, text: DOPING_NOTE }) : null,
-    it.source ? el('div', { class: 'dim mt-1', style: { fontSize: '.72rem' }, text: `Grundlage: ${it.source}` }) : null,
+    !it.holdOnly && it.performance ? el('div', { class: 'dim mt-1', style: { fontSize: '.76rem' }, text: dopingNote() }) : null,
+    it.source ? el('div', { class: 'dim mt-1', style: { fontSize: '.72rem' }, text: t('labsView.basis', { source: it.source }) }) : null,
     it.holdOnly ? null : el('button', {
       class: 'btn btn--soft mt-2', style: { fontSize: '.8rem' },
       onclick: () => openPlanSheet(it.key, currentEligibility()),
-    }, [icon('plus'), 'In meinen Plan']),
+    }, [icon('plus'), t('labsView.addToPlan')]),
   ]);
 }
 
 function planRow(p, today, i) {
   const done = takenOn(store.get('supplements'), p.id, today);
+  const name = p.supplementKey && SUPPLEMENTS[p.supplementKey] ? SUPPLEMENTS[p.supplementKey].label : p.name;
   return el('div', { class: 'list-item', style: { borderTop: i ? '1px solid var(--border)' : 'none' } }, [
     el('button', {
-      class: 'icon-btn', 'aria-label': done ? 'Einnahme zurücknehmen' : 'Als eingenommen markieren',
+      class: 'icon-btn', 'aria-label': done ? t('labsView.undoIntake') : t('labsView.markTaken'),
       style: { color: done ? 'var(--good)' : 'var(--text-3)' },
       onclick: () => { toggleIntake(p, today, done); },
     }, icon(done ? 'check' : 'circle')),
     el('div', { class: 'list-item__body' }, [
-      el('div', { class: 'list-item__title', text: p.name }),
-      el('div', { class: 'list-item__sub', text: [p.dose, p.timing, isDaily(p) ? null : 'bei Bedarf'].filter(Boolean).join(' · ') || 'täglich' }),
+      el('div', { class: 'list-item__title', text: name }),
+      el('div', { class: 'list-item__sub', text: [p.dose, p.timing, isDaily(p) ? null : t('labsView.asNeeded')].filter(Boolean).join(' · ') || t('labsView.daily') }),
     ]),
-    el('button', { class: 'icon-btn', 'aria-label': 'Entfernen', onclick: async () => {
-      if (await confirmDialog({ title: `„${p.name}“ entfernen?`, confirmLabel: 'Entfernen', danger: true })) {
+    el('button', { class: 'icon-btn', 'aria-label': t('labsView.remove'), onclick: async () => {
+      if (await confirmDialog({ title: t('labsView.removeTitle', { name }), confirmLabel: t('labsView.remove'), danger: true })) {
         store.remove('supplements', p.id); rerender();
       }
     } }, icon('trash')),
@@ -540,27 +547,27 @@ export function openLabEntry() {
 function openReportSheet() {
   const profile = store.profile();
   const dateI = input({ type: 'date', value: todayStr(), max: todayStr() });
-  const noteI = input({ type: 'text', placeholder: 'Labor oder Anlass (optional)' });
+  const noteI = input({ type: 'text', placeholder: t('labsView.labOrOccasion') });
   const ctx = { exercise48h: false, fasting: false, biotin: false };
-  const cycleI = input({ type: 'number', min: '1', max: '60', step: '1', inputmode: 'numeric', placeholder: 'z. B. 12' });
+  const cycleI = input({ type: 'number', min: '1', max: '60', step: '1', inputmode: 'numeric', placeholder: t('labsView.exampleCycleDay') });
   const rows = [];
   const list = el('div', { class: 'lab-report' });
   ANALYTE_GROUPS.forEach((g) => {
     const items = Object.entries(ANALYTES).filter(([, a]) => a.group === g);
     if (!items.length) return;
-    list.appendChild(el('div', { class: 'field__label mt-3', text: g }));
+    list.appendChild(el('div', { class: 'field__label mt-3', text: groupLabel(g) }));
     items.forEach(([key, a]) => {
       const units = unitsFor(key);
-      const valueI = input({ type: 'number', step: 'any', inputmode: 'decimal', placeholder: 'Wert', 'aria-label': `${a.label}: Messwert` });
-      const unitSel = select(units.map((u) => ({ value: u, label: u })), units[0], { 'aria-label': `${a.label}: Einheit` });
+      const valueI = input({ type: 'number', step: 'any', inputmode: 'decimal', placeholder: t('labsView.valuePlaceholder'), 'aria-label': t('labsView.ariaResult', { label: a.label }) });
+      const unitSel = select(units.map((u) => ({ value: u, label: u })), units[0], { 'aria-label': t('labsView.ariaUnit', { label: a.label }) });
       if (units.length < 2) unitSel.disabled = true;
-      const loI = input({ type: 'number', step: 'any', inputmode: 'decimal', placeholder: 'von', 'aria-label': `${a.label}: Referenz von` });
-      const hiI = input({ type: 'number', step: 'any', inputmode: 'decimal', placeholder: 'bis', 'aria-label': `${a.label}: Referenz bis` });
+      const loI = input({ type: 'number', step: 'any', inputmode: 'decimal', placeholder: t('labsView.from'), 'aria-label': t('labsView.ariaRefFrom', { label: a.label }) });
+      const hiI = input({ type: 'number', step: 'any', inputmode: 'decimal', placeholder: t('labsView.to'), 'aria-label': t('labsView.ariaRefTo', { label: a.label }) });
       rows.push({ key, valueI, unitSel, loI, hiI });
       list.appendChild(el('div', { class: 'lab-report__row' }, [
         el('div', { class: 'lab-report__name', text: a.label }),
         el('div', { class: 'lab-report__value' }, [valueI, unitSel]),
-        el('div', { class: 'lab-report__ref' }, [el('span', { class: 'dim', text: 'Referenz' }), loI, el('span', { class: 'dim', text: '–' }), hiI]),
+        el('div', { class: 'lab-report__ref' }, [el('span', { class: 'dim', text: t('labsView.reference') }), loI, el('span', { class: 'dim', text: '–' }), hiI]),
       ]));
     });
   });
@@ -568,9 +575,9 @@ function openReportSheet() {
     el('span', { style: { fontSize: '.84rem' }, text: label }), toggle(false, (v) => { ctx[k] = v; }, label),
   ]);
   const errBox = el('div', { class: 'card card--flat mt-2', role: 'alert', hidden: true, style: { borderLeft: '3px solid var(--warn)', fontSize: '.82rem' } });
-  const saveBtn = el('button', { class: 'btn btn--primary btn--block' }, [icon('check'), 'Befund speichern']);
+  const saveBtn = el('button', { class: 'btn btn--primary btn--block' }, [icon('check'), t('labsView.saveReport')]);
   let confirmed = null;
-  list.addEventListener('input', () => { confirmed = null; errBox.hidden = true; saveBtn.lastChild.textContent = 'Befund speichern'; });
+  list.addEventListener('input', () => { confirmed = null; errBox.hidden = true; saveBtn.lastChild.textContent = t('labsView.saveReport'); });
   saveBtn.addEventListener('click', () => {
     const res = labRecordsFromReport({
       date: dateI.value || todayStr(), note: noteI.value,
@@ -578,25 +585,25 @@ function openReportSheet() {
       rows: rows.map((r) => ({ key: r.key, value: r.valueI.value, unit: r.unitSel.value, refLow: r.loI.value, refHigh: r.hiI.value })),
     }, { sex: profile.sex });
     if (res.errors.length) { errBox.textContent = res.errors.join(' · '); errBox.hidden = false; return; }
-    if (!res.records.length) { toast('Bitte mindestens einen Wert eintragen', 'bad'); return; }
-    const msg = res.implausible.length ? `Bitte prüfen: ${res.implausible.join(', ')} – weit außerhalb des Üblichen. Stimmt die Einheit? Auf vielen Befunden steht z. B. CRP in mg/dl statt mg/l.` : null;
-    if (msg && confirmed !== msg) { confirmed = msg; errBox.textContent = msg; errBox.hidden = false; saveBtn.lastChild.textContent = 'Trotzdem speichern'; return; }
+    if (!res.records.length) { toast(t('labsView.enterOneValue'), 'bad'); return; }
+    const msg = res.implausible.length ? t('labsView.implausibleReport', { items: res.implausible.join(', ') }) : null;
+    if (msg && confirmed !== msg) { confirmed = msg; errBox.textContent = msg; errBox.hidden = false; saveBtn.lastChild.textContent = t('labsView.saveAnyway'); return; }
     const now = nowIso();
     const saved = store.upsertMany('labs', res.records.map((r) => ({ ...r, id: uid('lab'), createdAt: now, updatedAt: now })));
-    if (!saved.length) { toast('Speichern fehlgeschlagen – Gerätespeicher voll?', 'bad'); return; }
-    closeSheet(); toast(`${saved.length} ${saved.length === 1 ? 'Wert' : 'Werte'} gespeichert`, 'good'); refreshView();
+    if (!saved.length) { toast(t('labsView.saveFailed'), 'bad'); return; }
+    closeSheet(); toast(tp('labsView.valuesSaved', saved.length), 'good'); refreshView();
   });
   openSheet({
-    title: 'Befund erfassen',
+    title: t('labsView.reportTitle'),
     body: el('div', {}, [
-      el('div', { class: 'field__row' }, [field('Datum der Blutentnahme', dateI), field('Notiz', noteI)]),
-      el('p', { class: 'muted', style: { fontSize: '.82rem' }, text: 'Trag nur ein, was auf deinem Befund steht – leere Zeilen zählen nicht. Den Referenzbereich deines Labors findest du neben dem Wert; er hat Vorrang vor den Standardbereichen.' }),
+      el('div', { class: 'field__row' }, [field(t('labsView.drawDate'), dateI), field(t('labsView.note'), noteI)]),
+      el('p', { class: 'muted', style: { fontSize: '.82rem' }, text: t('labsView.reportIntro') }),
       list,
-      el('div', { class: 'field__label mt-3', text: 'Umstände der Blutentnahme (gelten für alle Werte)' }),
-      ctxRow('Harte Belastung in den 48 Stunden davor', 'exercise48h'),
-      ctxRow('Nüchtern', 'fasting'),
-      ctxRow('Biotin genommen (auch in Haar- oder Hautpräparaten)', 'biotin'),
-      profile.sex === 'm' ? null : field('Zyklustag (optional)', cycleI),
+      el('div', { class: 'field__label mt-3', text: t('labsView.drawCircumstancesAll') }),
+      ctxRow(t('labsView.hardExercise48h'), 'exercise48h'),
+      ctxRow(t('labsView.fasting'), 'fasting'),
+      ctxRow(t('labsView.biotinTaken'), 'biotin'),
+      profile.sex === 'm' ? null : field(t('labsView.cycleDayOptional'), cycleI),
       errBox,
     ]),
     footer: [saveBtn],
@@ -612,12 +619,12 @@ function openValueSheet(elig = currentEligibility(), existing = null) {
   const suggest = elig.labsEvaluate;
   const inUnit = (v) => (v == null ? '' : String(fromCanonical(key, v, unit)));
   const dateI = input({ type: 'date', value: ex ? ex.date : todayStr() });
-  const valueI = input({ type: 'number', step: 'any', inputmode: 'decimal', placeholder: 'Wert', 'aria-label': 'Messwert',
+  const valueI = input({ type: 'number', step: 'any', inputmode: 'decimal', placeholder: t('labsView.valuePlaceholder'), 'aria-label': t('labsView.measuredValue'),
     value: ex ? (ex.enteredUnit === unit && ex.enteredValue != null ? String(ex.enteredValue) : inUnit(ex.value)) : '' });
-  const noteI = input({ type: 'text', placeholder: 'Notiz (optional), z. B. Labor oder Anlass', value: ex && ex.note ? ex.note : '' });
+  const noteI = input({ type: 'text', placeholder: t('labsView.noteOptional'), value: ex && ex.note ? ex.note : '' });
   const ownRef = ex && hasOwnRef(ex);
-  const refLoI = input({ type: 'number', step: 'any', inputmode: 'decimal', 'aria-label': 'Referenz von', value: ownRef ? inUnit(ex.refLow) : '' });
-  const refHiI = input({ type: 'number', step: 'any', inputmode: 'decimal', 'aria-label': 'Referenz bis', value: ownRef ? inUnit(ex.refHigh) : '' });
+  const refLoI = input({ type: 'number', step: 'any', inputmode: 'decimal', 'aria-label': t('labsView.referenceFrom'), value: ownRef ? inUnit(ex.refLow) : '' });
+  const refHiI = input({ type: 'number', step: 'any', inputmode: 'decimal', 'aria-label': t('labsView.referenceTo'), value: ownRef ? inUnit(ex.refHigh) : '' });
   const refUnitLbl = el('span', { class: 'muted', style: { alignSelf: 'center', fontSize: '.8rem', whiteSpace: 'nowrap' } });
   // Platzhalter mit sinnvoller Genauigkeit (20 statt 20,032).
   const nice = (v) => {
@@ -627,12 +634,12 @@ function openValueSheet(elig = currentEligibility(), existing = null) {
   };
   const fillPlaceholders = () => {
     const r = suggest ? refRange(key, profile.sex) : null;
-    refLoI.placeholder = r ? `z. B. ${nice(fromCanonical(key, r[0], unit))}` : 'von';
-    refHiI.placeholder = r && r[1] != null ? `z. B. ${nice(fromCanonical(key, r[1], unit))}` : 'bis';
+    refLoI.placeholder = r ? t('labsView.exampleValue', { value: nice(fromCanonical(key, r[0], unit)) }) : t('labsView.from');
+    refHiI.placeholder = r && r[1] != null ? t('labsView.exampleValue', { value: nice(fromCanonical(key, r[1], unit)) }) : t('labsView.to');
     refUnitLbl.textContent = unit;
   };
 
-  const unitSel = el('select', { class: 'select', 'aria-label': 'Einheit' });
+  const unitSel = el('select', { class: 'select', 'aria-label': t('labsView.unit') });
   const drawUnits = (keep = false) => {
     unitSel.innerHTML = '';
     const opts = unitsFor(key);
@@ -669,28 +676,28 @@ function openValueSheet(elig = currentEligibility(), existing = null) {
   const sameDay = !ex && store.get('labs').find((l) => l.date === dateI.value && (l.exercise48h || l.fasting || l.biotin || l.cycleDay));
   const ctxSrc = ex || sameDay || {};
   const ctx = { exercise48h: !!ctxSrc.exercise48h, fasting: !!ctxSrc.fasting, biotin: !!ctxSrc.biotin };
-  const cycleI = input({ type: 'number', min: '1', max: '60', step: '1', inputmode: 'numeric', placeholder: 'z. B. 12', value: ctxSrc.cycleDay ? String(ctxSrc.cycleDay) : '' });
+  const cycleI = input({ type: 'number', min: '1', max: '60', step: '1', inputmode: 'numeric', placeholder: t('labsView.exampleCycleDay'), value: ctxSrc.cycleDay ? String(ctxSrc.cycleDay) : '' });
   const ctxRow = (label, k) => el('div', { class: 'row row--between', style: { padding: '6px 0', gap: '12px', alignItems: 'center' } }, [
     el('span', { style: { fontSize: '.84rem' }, text: label }), toggle(ctx[k], (v) => { ctx[k] = v; }, label),
   ]);
   const ctxBody = el('div', { hidden: !(ctxSrc.exercise48h || ctxSrc.fasting || ctxSrc.biotin || ctxSrc.cycleDay) }, [
-    ctxRow('Harte Belastung in den 48 Stunden davor', 'exercise48h'),
-    ctxRow('Nüchtern', 'fasting'),
-    ctxRow('Biotin genommen (auch in Haar- oder Hautpräparaten)', 'biotin'),
-    profile.sex === 'm' ? null : field('Zyklustag (optional)', cycleI),
+    ctxRow(t('labsView.hardExercise48h'), 'exercise48h'),
+    ctxRow(t('labsView.fasting'), 'fasting'),
+    ctxRow(t('labsView.biotinTaken'), 'biotin'),
+    profile.sex === 'm' ? null : field(t('labsView.cycleDayOptional'), cycleI),
   ]);
   const ctxToggle = el('button', { type: 'button', class: 'btn btn--ghost btn--block mt-2', style: { fontSize: '.8rem' },
-    onclick: () => { ctxBody.hidden = !ctxBody.hidden; } }, 'Umstände der Blutentnahme (optional)');
+    onclick: () => { ctxBody.hidden = !ctxBody.hidden; } }, t('labsView.circumstancesOptional'));
 
   // Unplausible Größenordnung: erst Hinweis „Einheit prüfen?“, der zweite Tipp speichert.
   const warnBox = el('div', { class: 'card card--flat mt-2', role: 'alert', hidden: true, style: { borderLeft: '3px solid var(--warn)', fontSize: '.82rem' } });
-  const saveBtn = el('button', { class: 'btn btn--primary btn--block' }, [icon('check'), 'Speichern']);
+  const saveBtn = el('button', { class: 'btn btn--primary btn--block' }, [icon('check'), t('labsView.save')]);
   const confirm = {
     shown: null,
-    reset() { this.shown = null; warnBox.hidden = true; saveBtn.lastChild.textContent = 'Speichern'; },
+    reset() { this.shown = null; warnBox.hidden = true; saveBtn.lastChild.textContent = t('labsView.save'); },
     ok(msg) {
       if (!msg || this.shown === msg) return true;
-      this.shown = msg; warnBox.textContent = msg; warnBox.hidden = false; saveBtn.lastChild.textContent = 'Trotzdem speichern';
+      this.shown = msg; warnBox.textContent = msg; warnBox.hidden = false; saveBtn.lastChild.textContent = t('labsView.saveAnyway');
       return false;
     },
   };
@@ -698,14 +705,14 @@ function openValueSheet(elig = currentEligibility(), existing = null) {
 
   saveBtn.onclick = () => {
     const v = toCanonical(key, valueI.value, unit);
-    if (v == null) { toast('Bitte einen gültigen Wert eingeben', 'bad'); return; }
+    if (v == null) { toast(t('labsView.enterValidValue'), 'bad'); return; }
     const hasLo = refLoI.value !== '', hasHi = refHiI.value !== '';
-    if (hasLo !== hasHi) { toast('Bitte beide Grenzen des Referenzbereichs eintragen – oder keine.', 'bad'); return; }
+    if (hasLo !== hasHi) { toast(t('labsView.enterBothLimits'), 'bad'); return; }
     const rLo = hasLo ? toCanonical(key, refLoI.value, unit) : null;
     const rHi = hasHi ? toCanonical(key, refHiI.value, unit) : null;
-    if (hasLo && !(rHi > rLo)) { toast('Die obere Grenze muss größer als die untere sein.', 'bad'); return; }
+    if (hasLo && !(rHi > rLo)) { toast(t('labsView.upperLimit'), 'bad'); return; }
     if (!confirm.ok(implausible(key, v, profile.sex)
-      ? `${num(valueI.value)} ${unit} liegt weit außerhalb des Üblichen für ${ANALYTES[key].label}. Stimmt die Einheit? Auf vielen Befunden steht z. B. CRP in mg/dl statt mg/l oder Vitamin D in ng/ml statt nmol/l.`
+      ? t('labsView.implausibleValue', { value: num(valueI.value), unit, label: ANALYTES[key].label })
       : null)) return;
     const cycleDay = parseInt(cycleI.value, 10);
     const rec = {
@@ -721,28 +728,28 @@ function openValueSheet(elig = currentEligibility(), existing = null) {
     };
     delete rec.migratedFrom;
     store.upsert('labs', rec);
-    closeSheet(); toast(ex ? 'Wert geändert' : 'Wert gespeichert', 'good'); rerender();
+    closeSheet(); toast(ex ? t('labsView.valueChanged') : t('labsView.valueSaved'), 'good'); rerender();
   };
 
   openSheet({
-    title: ex ? 'Laborwert bearbeiten' : 'Laborwert erfassen',
+    title: ex ? t('labsView.editTitle') : t('labsView.addTitle'),
     body: el('div', {}, [
-      field('Wert', analyteSel), hintBox,
-      field('Datum', dateI),
-      el('div', { class: 'field__row' }, [field('Messwert', valueI), field('Einheit', unitSel)]),
+      field(t('labsView.analyte'), analyteSel), hintBox,
+      field(t('labsView.date'), dateI),
+      el('div', { class: 'field__row' }, [field(t('labsView.measuredValue'), valueI), field(t('labsView.unit'), unitSel)]),
       warnBox,
-      el('div', { class: 'field__label', text: 'Referenzbereich deines Labors (optional)' }),
+      el('div', { class: 'field__label', text: t('labsView.refRangeLab') }),
       el('div', { class: 'row gap-2' }, [
         el('div', { class: 'grow' }, [refLoI]),
-        el('span', { class: 'muted', style: { alignSelf: 'center' }, text: 'bis' }),
+        el('span', { class: 'muted', style: { alignSelf: 'center' }, text: t('labsView.to') }),
         el('div', { class: 'grow' }, [refHiI]),
         refUnitLbl,
       ]),
       el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '4px' }, text: suggest
-        ? 'Steht auf deinem Befund neben dem Wert – trag ihn ab, dann bewertet Cat-O-Fit gegen DEIN Labor. Leer gelassen gilt ein üblicher Bereich (grau angedeutet).'
-        : 'Steht auf deinem Befund neben dem Wert – dort gilt er für dein Alter. Trag ihn ab, damit du ihn im Verlauf wiederfindest.' }),
+        ? t('labsView.refHintAdult')
+        : t('labsView.refHintMinor') }),
       ctxToggle, ctxBody,
-      field('Notiz', noteI),
+      field(t('labsView.note'), noteI),
     ]),
     footer: saveBtn,
   });
@@ -754,12 +761,12 @@ function openPlanSheet(presetKey = null, elig = currentEligibility()) {
   const opts = keys.map((k) => ({ value: k, label: SUPPLEMENTS[k].label }));
   let key = presetKey && keys.includes(presetKey) ? presetKey : opts[0].value;
   const sel = select(opts, key);
-  const doseI = input({ type: 'text', value: SUPPLEMENTS[key].typical, placeholder: 'Menge' });
-  const timingI = input({ type: 'text', value: SUPPLEMENTS[key].timing || '', placeholder: 'Wann' });
-  const doping = el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '4px' }, text: DOPING_NOTE, hidden: !SUPPLEMENTS[key].performance });
+  const doseI = input({ type: 'text', value: SUPPLEMENTS[key].typical, placeholder: t('labsView.amount') });
+  const timingI = input({ type: 'text', value: SUPPLEMENTS[key].timing || '', placeholder: t('labsView.when') });
+  const doping = el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '4px' }, text: dopingNote(), hidden: !SUPPLEMENTS[key].performance });
   // Häufigkeit: Situative Mittel (z. B. vor Wettkämpfen) sind keine tägliche Pflicht.
   const freqFor = (k) => (AS_NEEDED.includes(k) ? 'bedarf' : 'taeglich');
-  const freqSel = select([{ value: 'taeglich', label: 'täglich' }, { value: 'bedarf', label: 'bei Bedarf (z. B. vor Wettkämpfen)' }], freqFor(key));
+  const freqSel = select([{ value: 'taeglich', label: t('labsView.daily') }, { value: 'bedarf', label: t('labsView.asNeededExample') }], freqFor(key));
   sel.addEventListener('change', () => {
     key = sel.value;
     doseI.value = SUPPLEMENTS[key].typical;
@@ -768,13 +775,13 @@ function openPlanSheet(presetKey = null, elig = currentEligibility()) {
     freqSel.value = freqFor(key);
   });
   openSheet({
-    title: 'In den Plan aufnehmen',
+    title: t('labsView.addToPlanTitle'),
     body: el('div', {}, [
-      field('Mittel', sel),
-      field('Menge', doseI),
-      field('Zeitpunkt', timingI),
-      field('Häufigkeit', freqSel),
-      el('div', { class: 'dim', style: { fontSize: '.76rem' }, text: 'Nur was du wirklich nimmst – der Plan dient dir zum Abhaken und zeigt deine Einnahmetreue. Mittel „bei Bedarf“ zählen dort nicht mit.' }),
+      field(t('labsView.supplement'), sel),
+      field(t('labsView.amount'), doseI),
+      field(t('labsView.timing'), timingI),
+      field(t('labsView.frequency'), freqSel),
+      el('div', { class: 'dim', style: { fontSize: '.76rem' }, text: t('labsView.planSheetHint') }),
       doping,
     ]),
     footer: el('button', { class: 'btn btn--primary btn--block', onclick: () => {
@@ -783,8 +790,8 @@ function openPlanSheet(presetKey = null, elig = currentEligibility()) {
         dose: doseI.value.trim(), timing: timingI.value.trim(), active: true, frequency: freqSel.value,
         from: todayStr(), to: null, createdAt: nowIso(), updatedAt: nowIso(),
       });
-      closeSheet(); toast('Zum Plan hinzugefügt', 'good'); rerender();
-    } }, [icon('check'), 'Übernehmen']),
+      closeSheet(); toast(t('labsView.addedToPlan'), 'good'); rerender();
+    } }, [icon('check'), t('labsView.apply')]),
   });
 }
 
