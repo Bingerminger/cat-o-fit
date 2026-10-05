@@ -14,24 +14,11 @@ const LANGS = Object.keys(JSON.parse(read('locales/languages.json')));
 const AREAS = readdirSync(new URL(`locales/${SOURCE_LANGUAGE}/`, ROOT)).filter((f) => f.endsWith('.json')).map((f) => f.replace(/\.json$/, ''));
 const PLURAL = ['zero', 'one', 'two', 'few', 'many', 'other'];
 
-/** Modules whose user-facing text lives in the catalogs; P1 adds every module it converts. */
-const TRANSLATED_MODULES = [
-  'js/i18n.js', 'js/format.js', 'js/language.js',
-  'js/ui.js', 'js/nav.js', 'js/app.js', 'js/login.js', 'js/api-client.js', 'js/session-gate.js', 'js/router.js',
-  'js/calendar.js', 'js/coach.js', 'js/triage.js', 'js/whatif.js', 'js/workout-mode.js', 'js/workout-engine.js',
-  'js/events.js', 'js/session.js', 'js/unit-actions.js', 'js/capture.js', 'js/plans.js', 'js/commitments.js',
-  'js/rolling.js', 'js/dualgoal.js', 'js/vdot.js', 'js/exercises.js',
-  'js/dashboard.js', 'js/dashboard-coach.js', 'js/dashboard-goals.js', 'js/plangen.js', 'js/program.js',
-  'js/show-program.js', 'js/motion-player.js', 'js/workouts.js', 'js/helpcontent.js', 'js/checklist.js', 'js/shopping.js',
-  'js/badges.js', 'js/report.js', 'js/reports.js', 'js/statistics.js', 'js/charts.js',
-  'js/health.js', 'js/health-import.js', 'js/healthdata.js', 'js/cycle.js', 'js/cyclecalc.js', 'js/family.js', 'js/family-admin.js',
-  'js/settings.js', 'js/workout-show.js', 'js/load.js', 'js/fitness.js', 'js/adaptive.js', 'js/redflags.js',
-  'js/weather.js', 'js/ics-export.js', 'js/suggestions.js', 'js/sollist.js', 'js/help.js', 'js/wellness.js',
-  'js/eligibility.js', 'js/strength.js', 'js/hrzones.js', 'js/goals.js', 'js/planflow.js', 'js/formcards.js',
-  'js/storage.js', 'js/motion-rig.js', 'js/zip.js', 'js/csv-export.js', 'js/healthgoals.js',
-  'js/motion-figure.js', 'js/coach-figure.js', 'js/audio.js',
-  'js/labs.js', 'js/labs-view.js', 'js/labsources.js', 'js/supplements.js', 'js/demo.js',
-];
+/** The only modules allowed to contain German literals: matching vocabularies and the German
+    terms of plan texts written before v4.0.0 (energy.js, food.js, exercise-terms-de.js), the German
+    voice's phonetic help (voice.js) and the start-up diagnosis, which cannot rely on the catalogs
+    (boot-check.js). Every other module keeps its user-facing text in the catalogs. */
+const GERMAN_ALLOWED = ['js/energy.js', 'js/food.js', 'js/exercise-terms-de.js', 'js/voice.js', 'js/boot-check.js'];
 /** Internal values (compared in code, never shown) that happen to be German words. */
 const INTERNAL_VALUES = ["'erhöht'", "'Obst & Gemüse'", "'Stück'", "'Rückschlag'", "'geschätzt'", "'Entzündung'", "'Getränke'", "'Meißen'"];
 /** Key prefixes the code builds at run time (e.g. `format.${x}`); listed here so they count as used. */
@@ -199,7 +186,7 @@ test('modules that import t() declare no other variable or parameter called t', 
 });
 
 test('translated modules contain no hard-coded German text', () => {
-  for (const file of TRANSLATED_MODULES) {
+  for (const file of jsFiles().filter((f) => !GERMAN_ALLOWED.includes(f))) {
     const code = read(file).replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"`])\/\/.*$/gm, '$1');
     const literals = [...code.matchAll(/'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"|`(?:[^`\\]|\\.)*`/g)].map((m) => m[0]);
     const german = literals.filter((s) => /[äöüÄÖÜß]/.test(s) && !INTERNAL_VALUES.includes(s));
