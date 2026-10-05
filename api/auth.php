@@ -1,21 +1,21 @@
 <?php
 /**
- * auth.php — Server-Sitzung nach PIN-Prüfung (seit v3.20.0).
+ * auth.php — server session after PIN verification (since v3.20.0).
  *
- * Bewusst schlank und bestandsverträglich:
- *  - Der Server prüft die PIN selbst (dasselbe Hash-Schema wie bisher im Client,
- *    inkl. des alten djb2-Formats) und setzt danach ein HttpOnly-Cookie für diese
- *    Browser-Sitzung. Fehlversuche werden je Mitglied begrenzt.
- *  - Nur die privaten Bereiche (Zyklus, Labor, Ergänzungen) und Admin-Aktionen
- *    verlangen eine Sitzung. Alle anderen Bereiche bleiben im bisherigen
- *    Vertrauensmodell (Heimnetz), damit bestehende Geräte weiter synchronisieren.
- *  - PIN-Hashes verlassen den Server nicht mehr: Familien-Antworten tragen nur
- *    `hasPin` (plus einen Platzhalter, an dem ältere App-Versionen scheitern,
- *    statt ein Profil ohne PIN zu öffnen).
+ * Deliberately lean and compatible with existing data:
+ *  - The server verifies the PIN itself (same hash scheme as before in the client,
+ *    including the old djb2 format) and then sets an HttpOnly cookie for this
+ *    browser session. Failed attempts are limited per member.
+ *  - Only the private areas (cycle, labs, supplements) and admin actions
+ *    require a session. All other areas stay in the previous
+ *    trust model (home network), so that existing devices keep syncing.
+ *  - PIN hashes no longer leave the server: family responses carry only
+ *    `hasPin` (plus a placeholder on which older app versions fail,
+ *    rather than opening a profile without a PIN).
  *
- * Sitzungen liegen als kleine Dateien unter data/auth/sessions/ (Dateiname = Hash des
- * Cookie-Werts), Fehlversuche unter data/auth/fails/. Wird von api.php eingebunden;
- * nutzt DATA_DIR und die Store-Funktionen aus storage.php.
+ * Sessions are stored as small files under data/auth/sessions/ (file name = hash of the
+ * cookie value), failed attempts under data/auth/fails/. Included by api.php;
+ * uses DATA_DIR and the store functions from storage.php.
  */
 
 declare(strict_types=1);
@@ -24,12 +24,12 @@ require_once __DIR__ . '/storage.php';
 
 const PRIVATE_AREAS = ['cycle', 'labs', 'supplements'];
 const SESSION_COOKIE = 'catofit_sid';
-const SESSION_IDLE_TTL = 30 * 86400;     // Sitzung verfällt nach 30 Tagen ohne Nutzung
-const PIN_MAX_FAILS = 5;                 // Fehlversuche je Mitglied …
-const PIN_FAIL_WINDOW = 900;             // … innerhalb von 15 Minuten, danach Pause
-const PIN_PLACEHOLDER = 'server';        // statt des Hashes an Clients (ältere Apps scheitern daran)
+const SESSION_IDLE_TTL = 30 * 86400;     // Session expires after 30 days without use
+const PIN_MAX_FAILS = 5;                 // Failed attempts per member …
+const PIN_FAIL_WINDOW = 900;             // … within 15 minutes, then a pause
+const PIN_PLACEHOLDER = 'server';        // sent to clients instead of the hash (older apps fail on it)
 
-/** Unterverzeichnis von data/auth (wird bei Bedarf angelegt). */
+/** Subdirectory of data/auth (created on demand). */
 function auth_dir(string $sub): string
 {
     $dir = DATA_DIR . '/auth/' . $sub;
@@ -41,13 +41,13 @@ function auth_dir(string $sub): string
 
 /* ================================ PIN ===================================== */
 
-/** PIN-Hash wie im Client (js/storage.js): SHA-256 über „catofit:<id>:<pin>". */
+/** PIN hash as in the client (js/storage.js): SHA-256 over "catofit:<id>:<pin>". */
 function pin_hash(string $userId, string $pin): string
 {
     return hash('sha256', "catofit:{$userId}:{$pin}");
 }
 
-/** Altformat (djb2, vor v3.0.1 in unsicheren Kontexten erzeugt) – nur zum Prüfen. */
+/** Old format (djb2, generated in insecure contexts before v3.0.1) – for verification only. */
 function legacy_pin_hash(string $userId, string $pin): string
 {
     $text = "catofit:{$userId}:{$pin}";
@@ -58,19 +58,19 @@ function legacy_pin_hash(string $userId, string $pin): string
     return 'fb' . dechex($h);
 }
 
-/** Ist ein Wert ein gültiger PIN-Hash (neu oder alt)? Platzhalter und Leeres nicht. */
+/** Is a value a valid PIN hash (new or old)? Placeholder and empty values are not. */
 function is_pin_hash(mixed $h): bool
 {
     return is_string($h) && (preg_match('/^[0-9a-f]{64}$/', $h) === 1 || preg_match('/^fb[0-9a-f]{1,8}$/', $h) === 1);
 }
 
-/** Hat das Mitglied eine PIN? */
+/** Does the member have a PIN? */
 function member_has_pin(array $member): bool
 {
     return is_pin_hash($member['pinHash'] ?? null);
 }
 
-/** Passt die PIN? Mitglieder ohne PIN brauchen keine. */
+/** Does the PIN match? Members without a PIN need none. */
 function pin_matches(array $member, string $userId, string $pin): bool
 {
     if (!member_has_pin($member)) {
@@ -80,15 +80,15 @@ function pin_matches(array $member, string $userId, string $pin): bool
     return hash_equals($stored, pin_hash($userId, $pin)) || hash_equals($stored, legacy_pin_hash($userId, $pin));
 }
 
-/** Neue PIN zulässig? 4 bis 8 Ziffern, nicht die Standard-PIN 0000. */
+/** Is the new PIN acceptable? 4 to 8 digits, not the default PIN 0000. */
 function valid_new_pin(string $pin): bool
 {
     return preg_match('/^\d{4,8}$/', $pin) === 1 && $pin !== '0000';
 }
 
-/* ============================== Familie =================================== */
+/* ============================== Family =================================== */
 
-/** Roh-Store der Familie (unter geteiltem Lock gelesen). */
+/** Raw family store (read under a shared lock). */
 function family_store(): array
 {
     $lock = store_lock('family', 'family', null, false);
@@ -99,7 +99,7 @@ function family_store(): array
     }
 }
 
-/** Aktiver Mitglieds-Datensatz oder null. */
+/** Active member record or null. */
 function family_member(string $userId, ?array $store = null): ?array
 {
     $store ??= family_store();
@@ -110,7 +110,7 @@ function family_member(string $userId, ?array $store = null): ?array
     return $r;
 }
 
-/** Gibt es in diesem Familien-Store mindestens eine aktive Admin-Person? */
+/** Is there at least one active admin person in this family store? */
 function family_has_admin(array $store): bool
 {
     foreach ($store['records'] as $r) {
@@ -121,7 +121,7 @@ function family_has_admin(array $store): bool
     return false;
 }
 
-/** Familien-Datensatz für die Ausgabe: PIN-Hash durch `hasPin` (+ Platzhalter) ersetzen. */
+/** Family record for output: replace the PIN hash with `hasPin` (+ placeholder). */
 function public_family_record(array $r): array
 {
     if (($r['_kind'] ?? 'member') !== 'member' || !empty($r['deleted'])) {
@@ -153,14 +153,14 @@ function family_rejection(array $r): array
 }
 
 /**
- * Prüft eine eingehende Familien-Op und bereinigt Mitglieds-Datensätze. Liefert die
- * anzuwendende Op oder einen Ablehnungscode (string, siehe FAMILY_REJECTIONS). Regeln:
- *  - Neues Mitglied, Rollenwechsel, Mitglied löschen und `replace` brauchen eine
- *    Admin-Sitzung – außer bei der Ersteinrichtung (noch keine Admin-Person).
- *  - Ein PIN-Hash wird nur mit Admin-Sitzung (bzw. bei der Ersteinrichtung)
- *    übernommen; sonst bleibt der gespeicherte. `hasPin` ist abgeleitet und wird
- *    nie gespeichert.
- *  - Teams, Einstellungen und Lager bleiben im bisherigen Vertrauensmodell.
+ * Checks an incoming family op and sanitises member records. Returns the
+ * op to apply or a rejection code (string, see FAMILY_REJECTIONS). Rules:
+ *  - A new member, a role change, deleting a member and `replace` need an
+ *    admin session – except during initial setup (no admin person yet).
+ *  - A PIN hash is only accepted with an admin session (or during
+ *    initial setup); otherwise the stored one remains. `hasPin` is derived and is
+ *    never stored.
+ *  - Teams, settings and pantry stay in the previous trust model.
  */
 function family_guard(array $op, array $store, ?array $session): array|string
 {
@@ -222,7 +222,7 @@ function family_guard(array $op, array $store, ?array $session): array|string
     return $op;
 }
 
-/** PIN-Hash eines Mitglieds serverseitig setzen (rev steigt → Geräte holen `hasPin`). */
+/** Set a member's PIN hash on the server (rev rises → devices fetch `hasPin`). */
 function set_member_pin_hash(string $userId, string $hash): void
 {
     $lock = store_lock('family', 'family', null, true);
@@ -242,14 +242,14 @@ function set_member_pin_hash(string $userId, string $hash): void
     }
 }
 
-/* =========================== Fehlversuche ================================= */
+/* =========================== Failed attempts ================================= */
 
 function fails_path(string $userId): string
 {
     return auth_dir('fails') . '/' . $userId . '.json';
 }
 
-/** Zeitstempel der Fehlversuche im laufenden Fenster. */
+/** Timestamps of failed attempts in the current window. */
 function fails_recent(string $userId): array
 {
     $raw = @file_get_contents(fails_path($userId));
@@ -258,7 +258,7 @@ function fails_recent(string $userId): array
     return array_values(array_filter((array) ($data['t'] ?? []), static fn($t) => is_int($t) && $t > $since));
 }
 
-/** Sekunden bis zum nächsten erlaubten Versuch (0 = frei). */
+/** Seconds until the next permitted attempt (0 = free). */
 function fails_locked(string $userId): int
 {
     $recent = fails_recent($userId);
@@ -270,7 +270,7 @@ function fails_locked(string $userId): int
     return max(1, $oldest + PIN_FAIL_WINDOW - time());
 }
 
-/** Fehlversuch zählen; liefert die verbleibenden Versuche. */
+/** Count a failed attempt; returns the remaining attempts. */
 function fails_register(string $userId): int
 {
     $recent = fails_recent($userId);
@@ -285,14 +285,14 @@ function fails_reset(string $userId): void
     @unlink(fails_path($userId));
 }
 
-/* ============================== Sitzungen ================================= */
+/* ============================== Sessions ================================= */
 
 function session_path(string $token): string
 {
     return auth_dir('sessions') . '/' . hash('sha256', $token) . '.json';
 }
 
-/** Cookie-Pfad = API-Verzeichnis: Mehrere Installationen auf derselben Origin (z. B. Produktion und Testumgebung) teilen sich nichts. */
+/** Cookie path = API directory: several installations on the same origin (e.g. production and test environment) share nothing. */
 function cookie_path(): string
 {
     $dir = str_replace('\\', '/', dirname((string) ($_SERVER['SCRIPT_NAME'] ?? '/api/api.php')));
@@ -311,7 +311,7 @@ function send_session_cookie(string $value, bool $expire = false): void
         return;
     }
     setcookie(SESSION_COOKIE, $value, [
-        'expires' => $expire ? 1 : 0,          // 0 = Cookie der Browser-Sitzung
+        'expires' => $expire ? 1 : 0,          // 0 = cookie of the browser session
         'path' => cookie_path(),
         'secure' => request_is_https(),
         'httponly' => true,
@@ -319,7 +319,7 @@ function send_session_cookie(string $value, bool $expire = false): void
     ]);
 }
 
-/** Legt eine Sitzung für ein Mitglied an und setzt das Cookie. Liefert das Token. */
+/** Creates a session for a member and sets the cookie. Returns the token. */
 function session_create(string $userId): string
 {
     $token = bin2hex(random_bytes(32));
@@ -330,7 +330,7 @@ function session_create(string $userId): string
     return $token;
 }
 
-/** Cookie-Wert dieser Anfrage (oder ''). */
+/** Cookie value of this request (or ''). */
 function session_token(): string
 {
     $t = $_COOKIE[SESSION_COOKIE] ?? '';
@@ -338,8 +338,8 @@ function session_token(): string
 }
 
 /**
- * Gültige Sitzung dieser Anfrage: ['user', 'role', 'token'] oder null. Abgelaufene
- * Sitzungen und solche entfernter Mitglieder werden dabei gelöscht.
+ * Valid session of this request: ['user', 'role', 'token'] or null. Expired
+ * sessions and those of removed members are deleted in the process.
  */
 function current_session(): ?array
 {
@@ -359,14 +359,14 @@ function current_session(): ?array
         @unlink($path);
         return null;
     }
-    if (time() - (int) $s['seen'] > 3600) {        // „zuletzt gesehen" höchstens stündlich schreiben
+    if (time() - (int) $s['seen'] > 3600) {        // write "last seen" at most once an hour
         $s['seen'] = time();
         @file_put_contents($path, json_encode($s), LOCK_EX);
     }
     return ['user' => $s['user'], 'role' => ($member['role'] ?? 'user') === 'admin' ? 'admin' : 'user', 'token' => $token];
 }
 
-/** Sitzung dieser Anfrage beenden (Datei + Cookie). */
+/** End this request's session (file + cookie). */
 function session_end(): void
 {
     $token = session_token();
@@ -376,7 +376,7 @@ function session_end(): void
     send_session_cookie('', true);
 }
 
-/** Alle Sitzungen eines Mitglieds beenden (optional bis auf eine). */
+/** End all sessions of a member (optionally except one). */
 function sessions_delete_user(string $userId, ?string $keepToken = null): void
 {
     $keep = $keepToken !== null ? session_path($keepToken) : null;
@@ -391,7 +391,7 @@ function sessions_delete_user(string $userId, ?string $keepToken = null): void
     }
 }
 
-/** Abgelaufene Sitzungen gelegentlich wegräumen. */
+/** Clear out expired sessions now and then. */
 function sessions_cleanup(): void
 {
     if (random_int(1, 20) !== 1) {
@@ -405,9 +405,9 @@ function sessions_cleanup(): void
     }
 }
 
-/* ========================= Kalender-Schlüssel ============================= */
-// Kalender-Links (.ics) öffnen sich außerhalb der App (Safari, Kalender) und tragen
-// deshalb keinen Sitzungs-Cookie, sondern einen Schlüssel je Mitglied.
+/* ========================= Calendar key ============================= */
+// Calendar links (.ics) open outside the app (Safari, Calendar) and therefore
+// carry no session cookie, but a key per member.
 
 function ics_token_path(string $userId): string
 {
@@ -421,7 +421,7 @@ function ics_token_read(string $userId): ?string
     return preg_match('/^[0-9a-f]{48}$/', $t) === 1 ? $t : null;
 }
 
-/** Schlüssel eines Mitglieds (wird beim ersten Abruf bzw. mit $rotate neu erzeugt). */
+/** Key of a member (generated on first retrieval or anew with $rotate). */
 function ics_token(string $userId, bool $rotate = false): string
 {
     $t = $rotate ? null : ics_token_read($userId);
@@ -438,23 +438,23 @@ function ics_token(string $userId, bool $rotate = false): string
     return $t;
 }
 
-/* ============================ Anfrage-Schutz ============================== */
+/* ============================ Request protection ============================== */
 
-/** Kommt der Body als JSON? Formulare fremder Seiten können das nicht senden. */
+/** Does the body arrive as JSON? Forms on other sites cannot send that. */
 function request_is_json(): bool
 {
     $ct = strtolower(trim((string) ($_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_CONTENT_TYPE'] ?? '')));
     return str_starts_with($ct, 'application/json');
 }
 
-/** Meldet der Browser eine fremde Herkunft? (Ohne Header – z. B. curl – gilt: nein.) */
+/** Does the browser report a foreign origin? (Without the header – e.g. curl – the answer is: no.) */
 function request_cross_site(): bool
 {
     $site = strtolower((string) ($_SERVER['HTTP_SEC_FETCH_SITE'] ?? ''));
     return $site !== '' && $site !== 'same-origin' && $site !== 'none';
 }
 
-/** JSON-Body einer POST-Anfrage als Array (leer bei Fehlern). */
+/** JSON body of a POST request as an array (empty on errors). */
 function request_json(): array
 {
     $raw = file_get_contents('php://input');

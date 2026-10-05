@@ -1,17 +1,17 @@
 /* =========================================================================
-   responsive.css — iPad-/Desktop-Layout (Sidebar), große Screens, Landscape.
-   Mobile-first: alles davor gilt fürs iPhone.
+   responsive.css — iPad/desktop layout (sidebar), large screens, landscape.
+   Mobile-first: everything before it applies to the iPhone.
    ========================================================================= */
 
-/* ---------- Tablet / Desktop: Sidebar statt Bottom-Nav ---------- */
+/* ---------- Tablet / desktop: sidebar instead of bottom nav ---------- */
 @media (min-width: 820px) {
   :root { --maxw: 760px; }
 
   #app {
     display: grid;
-    /* minmax(0, …): der Inhaltsbereich darf NICHT auf die intrinsische Breite
-       breiter Kinder (z. B. die Jahres-Heatmap) wachsen – sonst scrollt die
-       ganze Seite seitlich statt nur das jeweilige Scroll-Element. */
+    /* minmax(0, …): the content area must NOT grow to the intrinsic width
+       of wide children (e.g. the year heatmap) – otherwise the whole page
+       scrolls sideways instead of just the respective scroll element. */
     grid-template-columns: 248px minmax(0, 1fr);
     grid-template-rows: auto 1fr;
     grid-template-areas:
@@ -23,7 +23,7 @@
 
   .bottom-nav { display: none; }
 
-  /* Abgemeldet: keine Sidebar, Layout einspaltig (kein leerer Sidebar-Spalt). */
+  /* Signed out: no sidebar, single-column layout (no empty sidebar gap). */
   body.is-anon .sidebar { display: none; }
   body.is-anon #app {
     grid-template-columns: minmax(0, 1fr);
@@ -68,13 +68,13 @@
     color: var(--text-2);
     font-weight: 650; font-size: 0.92rem;
   }
-  /* Finger (iPad): größere Ziele – dort ist genug Höhe. */
+  /* Finger (iPad): larger targets – there is enough height. */
   @media (pointer: coarse) { .sidebar__item { min-height: 44px; } }
   .sidebar__item svg { width: 20px; height: 20px; flex: 0 0 auto; }
   .sidebar__item:hover { background: var(--surface-2); color: var(--text); }
   .sidebar__item.is-active { background: var(--accent-soft); color: var(--accent-strong); }
-  /* Fuß klebt unten – wer angemeldet ist und „Abmelden" sind auch am 800 px hohen
-     Laptop ohne Scrollen sichtbar (UI-16); bei kurzer Liste sitzt er am unteren Rand. */
+  /* The footer sticks to the bottom – who is signed in and "Sign out" are visible even on an
+     800 px tall laptop without scrolling (UI-16); with a short list it sits at the bottom edge. */
   .sidebar__foot {
     position: sticky; bottom: 0; z-index: 1;
     margin-top: auto;
@@ -103,39 +103,39 @@
     padding-bottom: calc(var(--sp-8));
   }
 
-  /* Hinweis: .target-grid und .week-stats passen sich über ihre eigenen
-     (inhaltsabhängigen) Grids an – kein fixes Spaltenraster auf großen Screens,
-     sonst rutschen wenige Kacheln in die linke Hälfte (unausgewogen). */
+  /* Note: .target-grid and .week-stats adapt via their own
+     (content-dependent) grids – no fixed column grid on large screens,
+     otherwise a few tiles slide into the left half (unbalanced). */
   .ex-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* ---------- Breiter iPad / Desktop ---------- */
+/* ---------- Wider iPad / desktop ---------- */
 @media (min-width: 1180px) {
   :root { --maxw: 920px; }
   #app { grid-template-columns: 280px minmax(0, 1fr); }
 }
 
-/* ---------- Kleine Smartphones ---------- */
+/* ---------- Small smartphones ---------- */
 @media (max-width: 360px) {
   :root { --sp-4: 14px; }
   .app-header__title { font-size: 1.2rem; }
   .hero__title { font-size: 1.3rem; }
 }
 
-/* ---------- Querformat: Workout-Timer kompakter ---------- */
+/* ---------- Landscape: more compact workout timer ---------- */
 @media (orientation: landscape) and (max-height: 480px) {
   .workout__time { font-size: clamp(2.6rem, 14vh, 4rem); }
   .workout__counters { padding: var(--sp-2) var(--sp-4); }
   .workout__controls .btn { min-height: 52px; }
 }
 
-/* ---------- Zeiger vs. Touch ---------- */
+/* ---------- Pointer vs. touch ---------- */
 @media (hover: none) {
   .icon-btn:hover { background: transparent; }
 }
 
-/* ---------- iPad/Mac: Breite nutzen (UI-17) ---------- */
-/* Kurztitel im Monatskalender erst ab 820 px (auf dem iPhone reichen die Punkte). */
+/* ---------- iPad/Mac: use the width (UI-17) ---------- */
+/* Short titles in the month calendar only from 820 px (on the iPhone the dots suffice). */
 .cal-cell__titles { display: none; }
 @media (min-width: 820px) {
   .cal-cell { min-height: 76px; }
@@ -145,7 +145,7 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
 
-  /* Formulare als zentrierter Dialog statt als 920 px breites Bottom-Sheet. */
+  /* Forms as a centred dialog instead of a 920 px wide bottom sheet. */
   .modal-root { align-items: center; padding: var(--sp-6); }
   .sheet {
     max-width: 560px; max-height: 86dvh;
@@ -157,7 +157,7 @@
 }
 @keyframes dialog-in { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }
 
-/* „Heute" zweispaltig ab 1180 px: links der Tag, rechts Belastung, Woche, Ziele. */
+/* "Today" in two columns from 1180 px: the day on the left, load, week and goals on the right. */
 .dash-col { min-width: 0; }
 @media (min-width: 1180px) {
   .view:has(> .dash-cols) { max-width: 1080px; }

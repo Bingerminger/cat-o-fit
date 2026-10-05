@@ -1,30 +1,30 @@
 <?php
 /**
- * api.php — schlanke REST-artige API für Cat-O-Fit.
+ * api.php — lean REST-style API for Cat-O-Fit.
  *
- * Endpunkte (alle relativ zu /api/api.php):
- *   GET  ?action=changes&area=<a>&user=<u>&since=<rev>  -> geänderte Datensätze
- *   POST ?action=ops&area=<a>&user=<u>   (Body {ops:[…]}) -> Operationen anwenden
- *   GET  ?area=<bereich>            -> logische Sicht (Liste/Objekt) – Debug/Kompat
- *   GET  ?action=ping              -> Health-Check der API (mit apiVersion)
- *   GET  ?action=ics&...           -> .ics-Kalenderexport (siehe ics.php)
- *   POST ?action=health-import     -> Apple-Health-Export importieren (siehe health-import.php)
- *   POST ?action=health-ingest     -> automatischer Health-Eingang (Token, siehe health-ingest.php)
- *   GET  ?action=changes-all&user=<u>&since=<a>:<rev>,… -> Änderungen mehrerer Bereiche auf einmal
- *   GET  ?action=read&user=<u>     -> Lesezugang für eigene Werkzeuge (Token, siehe read-access.php)
- *   POST ?action=delete-user&user= -> Datenverzeichnis eines Nutzers löschen (Admin-Sitzung)
- *   POST ?action=login   {user,pin}       -> Server-Sitzung nach PIN-Prüfung (Cookie)
- *   POST ?action=logout                   -> Sitzung beenden
- *   GET  ?action=session                  -> {user, role} der laufenden Sitzung
- *   POST ?action=set-pin {user,pin,old?}  -> PIN ändern (eigene mit alter PIN, fremde als Admin)
- *   POST ?action=ics-token {user,rotate?} -> Schlüssel für Kalender-Links
+ * Endpoints (all relative to /api/api.php):
+ *   GET  ?action=changes&area=<a>&user=<u>&since=<rev>  -> changed records
+ *   POST ?action=ops&area=<a>&user=<u>   (body {ops:[…]}) -> apply operations
+ *   GET  ?area=<area>               -> logical view (list/object) – debug/compat
+ *   GET  ?action=ping              -> API health check (with apiVersion)
+ *   GET  ?action=ics&...           -> .ics calendar export (see ics.php)
+ *   POST ?action=health-import     -> import an Apple Health export (see health-import.php)
+ *   POST ?action=health-ingest     -> automatic health intake (token, see health-ingest.php)
+ *   GET  ?action=changes-all&user=<u>&since=<a>:<rev>,… -> changes of several areas at once
+ *   GET  ?action=read&user=<u>     -> read access for own tools (token, see read-access.php)
+ *   POST ?action=delete-user&user= -> delete a user's data directory (admin session)
+ *   POST ?action=login   {user,pin}       -> server session after PIN verification (cookie)
+ *   POST ?action=logout                   -> end the session
+ *   GET  ?action=session                  -> {user, role} of the current session
+ *   POST ?action=set-pin {user,pin,old?}  -> change PIN (own with the old PIN, someone else's as admin)
+ *   POST ?action=ics-token {user,rotate?} -> key for calendar links
  *
- * Die App ist "local-first": Das Frontend speichert sofort lokal und
- * synchronisiert im Hintergrund. Seit v3.0.0 ist der SERVER die Merge-Autorität:
- * Clients schicken Operationen, der Server vergibt eine monotone `rev` je
- * Datensatz (siehe storage.php). Seit v3.20.0 gibt der Server die privaten
- * Bereiche (Zyklus, Labor, Ergänzungen) nur an die angemeldete Person selbst
- * heraus (siehe auth.php); alle anderen Bereiche bleiben im Heimnetz-Modell.
+ * The app is "local-first": the frontend saves locally straight away and
+ * syncs in the background. Since v3.0.0 the SERVER is the merge authority:
+ * clients send operations, the server assigns a monotonic `rev` per
+ * record (see storage.php). Since v3.20.0 the server hands out the private
+ * areas (cycle, labs, supplements) only to the signed-in person themselves
+ * (see auth.php); all other areas stay in the home-network model.
  */
 
 declare(strict_types=1);
@@ -32,14 +32,14 @@ declare(strict_types=1);
 require __DIR__ . '/storage.php';
 require __DIR__ . '/auth.php';
 
-/** Version der Schnittstelle (docs/SCHNITTSTELLEN.md). Nur bei inkompatiblen Änderungen erhöhen. */
+/** Version of the interface (docs/SCHNITTSTELLEN.md). Only raise on incompatible changes. */
 const API_VERSION = 1;
-/** Additive Fähigkeiten (ältere Clients ignorieren sie): Sammelabruf, „since“ in der ops-Antwort. */
+/** Additive capabilities (older clients ignore them): bulk fetch, "since" in the ops response. */
 const API_FEATURES = ['changes-all', 'ops-since'];
 
 // ---------------------------------------------------------------------------
-// Header: JSON-Antworten, kein Caching der dynamischen Daten.
-// (Gleicher Origin: Die App liegt auf derselben Synology -> kein CORS nötig.)
+// Headers: JSON responses, no caching of the dynamic data.
+// (Same origin: the app lives on the same Synology -> no CORS needed.)
 // ---------------------------------------------------------------------------
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
@@ -47,7 +47,7 @@ header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
 header('Referrer-Policy: no-referrer');
 
-/** Einheitliche JSON-Antwort + sauberer Abbruch. */
+/** Uniform JSON response + clean abort. */
 function respond(mixed $payload, int $status = 200): never
 {
     http_response_code($status);
@@ -66,8 +66,8 @@ function fail(string $message, int $status = 400, ?string $code = null, array $e
 }
 
 // ---------------------------------------------------------------------------
-// Optionale Host-Prüfung gegen DNS-Rebinding: CATOFIT_ALLOWED_HOSTS="nas.local,fit.example.org"
-// (ohne Variable wie bisher jeder Host). Loopback bleibt immer erlaubt (Healthcheck).
+// Optional host check against DNS rebinding: CATOFIT_ALLOWED_HOSTS="nas.local,fit.example.org"
+// (without the variable, any host is accepted as before). Loopback is always allowed (health check).
 // ---------------------------------------------------------------------------
 $allowedHosts = trim((string) (getenv('CATOFIT_ALLOWED_HOSTS') ?: ($_SERVER['CATOFIT_ALLOWED_HOSTS'] ?? '')));
 if ($allowedHosts !== '') {
@@ -86,7 +86,7 @@ $area   = isset($_GET['area']) ? (string) $_GET['area'] : '';
 $scope  = (isset($_GET['scope']) && $_GET['scope'] === 'family') ? 'family' : 'user';
 $user   = isset($_GET['user']) ? (string) $_GET['user'] : null;
 
-/** Zustandsändernde Aufrufe: nur als JSON und nicht von fremden Seiten (CSRF). */
+/** State-changing calls: JSON only and not from foreign sites (CSRF). */
 function require_write_request(): void
 {
     if (request_cross_site()) {
@@ -104,7 +104,7 @@ function require_post(string $action, string $method): void
     }
 }
 
-/** Gültige Sitzung oder 401. */
+/** Valid session or 401. */
 function require_session(): array
 {
     $s = current_session();
@@ -115,7 +115,7 @@ function require_session(): array
 }
 
 // ---------------------------------------------------------------------------
-// Sonderaktionen vor der generischen Bereichs-API.
+// Special actions ahead of the generic area API.
 // ---------------------------------------------------------------------------
 if ($action === 'ping') {
     respond(['ok' => true, 'pong' => true, 'apiVersion' => API_VERSION, 'features' => API_FEATURES, 'time' => date('c'), 'php' => (string) PHP_MAJOR_VERSION]);
@@ -156,7 +156,7 @@ if ($action === 'login') {
     }
     $previous = session_token();
     if ($previous !== '') {
-        @unlink(session_path($previous));   // Wechsel der Person im selben Browser
+        @unlink(session_path($previous));   // switching person in the same browser
     }
     session_create($uid);
     respond([
@@ -189,7 +189,7 @@ if ($action === 'set-pin') {
     }
     $self = $session['user'] === $uid;
     if ($self) {
-        // Die eigene PIN nur mit der bisherigen ändern (fremde, offene Sitzung am geteilten Gerät).
+        // Change one's own PIN only with the current one (guards against someone else's open session on a shared device).
         if (member_has_pin($member)) {
             $wait = fails_locked($uid);
             if ($wait > 0) {
@@ -208,7 +208,7 @@ if ($action === 'set-pin') {
     }
     set_member_pin_hash($uid, pin_hash($uid, $pin));
     fails_reset($uid);
-    // Andere Sitzungen dieser Person beenden (die eigene laufende bleibt).
+    // End the other sessions of this person (the current one stays).
     sessions_delete_user($uid, $self ? $session['token'] : null);
     respond(['ok' => true]);
 }
@@ -233,20 +233,20 @@ if ($action === 'ics-token') {
 }
 
 if ($action === 'ics') {
-    // Kalenderexport übernimmt eigene Header (text/calendar) -> hier abgeben.
+    // The calendar export sets its own headers (text/calendar) -> hand over here.
     require __DIR__ . '/ics.php';
     exit;
 }
 
 if ($action === 'foodfacts') {
-    // Open-Food-Facts-Nährwert-Proxy mit lokalem Cache (siehe foodfacts.php).
+    // Open Food Facts nutrition proxy with local cache (see foodfacts.php).
     require __DIR__ . '/foodfacts.php';
     exit;
 }
 
 if ($action === 'health-import') {
     require_post('health-import', $method);
-    // Datei-Upload (multipart) – nur aus der eigenen App mit gültiger Anmeldung.
+    // File upload (multipart) – only from the app itself with a valid login.
     if (request_cross_site()) {
         fail('Request from another site rejected.', 403, 'origin');
     }
@@ -256,14 +256,14 @@ if ($action === 'health-import') {
 }
 
 if ($action === 'health-ingest') {
-    // Automatischer, inkrementeller Health-Eingang (App „Health Auto Export", per Token).
+    // Automatic, incremental health intake (app "Health Auto Export", via token).
     require_post('health-ingest', $method);
     require __DIR__ . '/health-ingest.php';
     exit;
 }
 
 if ($action === 'read') {
-    // Lesezugang für eigene Werkzeuge (per Schlüssel, standardmäßig aus; siehe read-access.php).
+    // Read access for own tools (via key, off by default; see read-access.php).
     if ($method !== 'GET') {
         fail('read expects GET.', 405, 'method_not_allowed', ['action' => 'read', 'expected' => 'GET']);
     }
@@ -292,13 +292,13 @@ if ($action === 'delete-user') {
 }
 
 // ---------------------------------------------------------------------------
-// Sammelabruf: Änderungen mehrerer Bereiche einer Person in EINER Antwort (statt je
-// Bereich eine Anfrage – unterwegs zählt jede Latenz 13-mal).
+// Bulk fetch: changes of several areas of one person in ONE response (instead of one
+// request per area – when on the move every latency counts 13 times).
 //   GET ?action=changes-all&user=<id>&since=sessions:120,health:55,plans:0
-// Nur die genannten Bereiche; dieselben Regeln wie beim Einzelabruf: Private Bereiche
-// gibt es nur mit der eigenen Sitzung – sonst stehen sie unter „locked“. Antwort:
-//   { ok, revs: {bereich: rev}, changes: {bereich: [datensätze]}, locked: [bereiche] }
-// Der Einzelabruf (?area=…&action=changes) bleibt unverändert; „ping“ meldet die Fähigkeit.
+// Only the named areas; same rules as the single fetch: private areas
+// exist only with the person's own session – otherwise they appear under "locked". Response:
+//   { ok, revs: {area: rev}, changes: {area: [records]}, locked: [areas] }
+// The single fetch (?area=…&action=changes) stays unchanged; "ping" reports the capability.
 // ---------------------------------------------------------------------------
 if ($action === 'changes-all') {
     if ($method !== 'GET') {
@@ -336,9 +336,9 @@ if ($action === 'changes-all') {
 }
 
 // ---------------------------------------------------------------------------
-// Bereichs-API (Operationen/Änderungen, nutzerbezogen oder familienweit).
+// Area API (operations/changes, per user or family-wide).
 // ---------------------------------------------------------------------------
-// Einmalige Migration alter Single-User-Daten zur ersten Familie sicherstellen.
+// Ensure the one-off migration of old single-user data to the first family.
 ensure_bootstrap();
 
 if ($area === '') {
@@ -348,7 +348,7 @@ if (!is_valid_area($area, $scope)) {
     fail("Unknown area: {$area}", 404, 'unknown_area', ['area' => $area]);
 }
 
-// Private Bereiche: lesen und schreiben nur die angemeldete Person selbst.
+// Private areas: only the signed-in person may read and write them.
 if ($scope === 'user' && in_array($area, PRIVATE_AREAS, true)) {
     $session = require_session();
     if ($user === null || $session['user'] !== $user) {
@@ -357,7 +357,7 @@ if ($scope === 'user' && in_array($area, PRIVATE_AREAS, true)) {
 }
 
 try {
-    // Inkrementelle Änderungen holen: ?action=changes&since=<rev>
+    // Fetch incremental changes: ?action=changes&since=<rev>
     if ($action === 'changes') {
         if ($method !== 'GET') {
             fail('changes expects GET.', 405, 'method_not_allowed', ['action' => 'changes', 'expected' => 'GET']);
@@ -368,7 +368,7 @@ try {
         respond(['ok' => true, 'area' => $area, 'rev' => $res['rev'], 'records' => $records]);
     }
 
-    // Operationen anwenden: ?action=ops  (Body {ops:[…]})
+    // Apply operations: ?action=ops  (body {ops:[…]})
     if ($action === 'ops') {
         require_post('ops', $method);
         require_write_request();
@@ -394,8 +394,8 @@ try {
         if (!empty($res['rejected'])) {
             $out['rejected'] = array_map('family_rejection', $res['rejected']);
         }
-        // Optional (additiv): Mit {"since": <rev>} kommen alle Änderungen seit dieser rev mit –
-        // eigene und fremde. Der anschließende Abruf entfällt dann.
+        // Optional (additive): with {"since": <rev>} all changes since that rev come back as well –
+        // own and others'. The follow-up fetch is then unnecessary.
         if (isset($decoded['since']) && is_int($decoded['since']) && $decoded['since'] >= 0) {
             $ch = changes_since($area, $scope, $user, $decoded['since']);
             $out['changes'] = ['rev' => $ch['rev'], 'records' => $scope === 'family' ? array_map('public_family_record', $ch['records']) : $ch['records']];
@@ -403,7 +403,7 @@ try {
         respond($out);
     }
 
-    // Debug/Kompatibilität: logische Sicht eines Bereichs.
+    // Debug/compatibility: logical view of an area.
     if ($method === 'GET') {
         $data = load_area($area, $scope, $user);
         if ($scope === 'family' && is_object($data) && isset($data->members) && is_array($data->members)) {

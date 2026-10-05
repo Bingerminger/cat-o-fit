@@ -1,9 +1,9 @@
-/* Prüfbogen der Übungsanimationen: je Übung das Standbild (Start blass, Ziel kräftig)
-   und Einzelbilder an jedem Abschnittsbeginn und in der Mitte jedes Übergangs.
+/* Check sheet for the exercise animations: per exercise the still image (start pale, target bold)
+   and individual frames at the start of each section and in the middle of each transition.
 
    node tools/motion-sheet.mjs [--only id,id] [--out <dir>] [--per 8] [--size 150] [--dark]
-   Mit PLAYWRIGHT_MODULE=<…/playwright/index.mjs> entstehen zusätzlich PNG-Bögen
-   (je `--per` Übungen ein Bild) – zum Gegenlesen jeder Pose, bevor sie in die App geht. */
+   With PLAYWRIGHT_MODULE=<…/playwright/index.mjs>, PNG sheets are produced in addition
+   (one image per `--per` exercises) – for proofreading every pose before it goes into the app. */
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -23,7 +23,7 @@ mkdirSync(out, { recursive: true });
 
 const ids = Object.keys(MOTIONS).filter((id) => !only || only.includes(id));
 
-/** Bilder an jedem Abschnittsbeginn und in der Mitte jedes Übergangs – Einstieg, Durchgang, bei „je Seite“ auch Seite 2. */
+/** Frames at the start of each section and in the middle of each transition – entry, pass-through, and for "per side" exercises also side 2. */
 function frames(m) {
   const out = [];
   const sides = m.sides === 'each' ? ['a', 'b'] : ['a'];

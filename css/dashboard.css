@@ -1,5 +1,5 @@
 /* =========================================================================
-   dashboard.css — Tages-/Wochenübersicht, Hero-Countdown, Schnellaktionen.
+   dashboard.css — daily/weekly overview, hero countdown, quick actions.
    ========================================================================= */
 
 .hero {
@@ -28,13 +28,13 @@
 .greeting__hi { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; }
 .greeting__sub { color: var(--text-2); font-size: 0.9rem; }
 
-/* Heutiges Training */
+/* Today's training */
 .today-card__none {
   display: flex; align-items: center; gap: var(--sp-3);
   color: var(--text-2);
 }
 
-/* Wochenstreifen (7 Tage Mini-Übersicht) */
+/* Week strip (7-day mini overview) */
 .week-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
 .week-strip__day {
   display: flex; flex-direction: column; align-items: center; gap: 5px;
@@ -56,28 +56,28 @@
   background: var(--good); border: 1.5px solid var(--surface);
 }
 
-/* Wochen-Kennzahlen-Block */
-/* minmax(0,1fr) statt 1fr: garantiert exakt gleich breite Spalten – sonst können
-   die Boxen in Safari je nach Inhalt unterschiedlich breit werden. */
+/* Weekly metrics block */
+/* minmax(0,1fr) instead of 1fr: guarantees columns of exactly equal width – otherwise the
+   boxes in Safari can end up with different widths depending on their content. */
 .week-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); align-items: stretch; }
-/* Im Grid darf die globale „.card + .card"-Regel keinen Versatz erzeugen. */
+/* Within the grid the global ".card + .card" rule must not create an offset. */
 .week-stats > .card + .card { margin-top: 0; }
 
 /* Streak */
 .streak { display: inline-flex; align-items: center; gap: 6px; font-weight: 750; }
 .streak svg { width: 18px; height: 18px; color: var(--warn-text); }
 
-/* Die eine Tagesempfehlung des Coaches: „Warum diese Empfehlung?" dezent aufklappbar. */
+/* The coach's single daily recommendation: "Why this recommendation?" discreetly expandable. */
 .coach-why summary { font-size: .78rem; color: var(--text-2); cursor: pointer; font-weight: 600; }
 .coach-why summary::marker { color: var(--text-3); }
 
-/* Heutige Einheit: Karte führt zur Einheit, ▶ startet direkt (UI-09). */
+/* Today's session: the card leads to the session, ▶ starts it directly (UI-09). */
 .today-unit { display: flex; align-items: center; gap: var(--sp-3); }
 .today-unit__link { display: flex; align-items: center; gap: var(--sp-3); flex: 1 1 auto; min-width: 0; }
 .today-unit__link:active { opacity: 0.7; }
 .today-unit__play { flex: 0 0 auto; min-height: 44px; min-width: 48px; padding: 0 14px; }
 
-/* Einstieg nach „Leer starten" (UI-13) */
+/* Entry after "Start empty" (UI-13) */
 .start-steps { display: flex; flex-direction: column; gap: var(--sp-2); }
 .start-step {
   display: flex; align-items: center; gap: var(--sp-3);
@@ -94,7 +94,7 @@
 .start-step.is-done .start-step__label { color: var(--text-2); }
 .start-step__hint { display: block; font-size: .78rem; color: var(--text-2); }
 
-/* Weitere Coach-Hinweise gebündelt (UI-15) */
+/* Further coach hints bundled (UI-15) */
 .coach-more > summary {
   cursor: pointer; font-size: .86rem; font-weight: 650; color: var(--accent-text);
   min-height: 40px; display: flex; align-items: center; gap: 6px; padding: 0 var(--sp-1);

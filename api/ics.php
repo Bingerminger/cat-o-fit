@@ -1,25 +1,25 @@
 <?php
 /**
- * ics.php — serverseitige Generierung von iCalendar-Dateien (RFC 5545).
+ * ics.php — server-side generation of iCalendar files (RFC 5545).
  *
- * Wird von api.php bei ?action=ics eingebunden. Liefert eine .ics-Datei
- * zum Download, die im iOS-Kalender importiert werden kann (inkl. VALARM
- * als zuverlässige Erinnerung auf iPhone/iPad).
+ * Included by api.php for ?action=ics. Delivers an .ics file
+ * for download that can be imported into the iOS Calendar (incl. VALARM
+ * as a reliable reminder on iPhone/iPad).
  *
- * Aufrufe (der Parameter user=<id> ist im Mehrbenutzer-Betrieb verpflichtend,
- * `token` ist der Kalender-Schlüssel des Mitglieds, siehe ?action=ics-token):
- *   ?action=ics&scope=event&id=<eventId>&user=<id>&token=<t>   -> kompletter Plan (alle Einheiten + Wettkampf)
- *   ?action=ics&scope=session&id=<unitId>&user=<id>&token=<t>  -> einzelne geplante Einheit
- *   ?action=ics&scope=race&id=<eventId>&user=<id>&token=<t>    -> nur der Wettkampf selbst
+ * Calls (the user=<id> parameter is mandatory in multi-user operation,
+ * `token` is the member's calendar key, see ?action=ics-token):
+ *   ?action=ics&scope=event&id=<eventId>&user=<id>&token=<t>   -> complete plan (all sessions + race)
+ *   ?action=ics&scope=session&id=<unitId>&user=<id>&token=<t>  -> a single planned session
+ *   ?action=ics&scope=race&id=<eventId>&user=<id>&token=<t>    -> the race itself only
  *
- * Quelle der Daten: data/users/<id>/plans.json und .../events.json (pro Mitglied),
- * geladen über load_area('…','user',$user). Der Client (ics-export.js) übergibt
- * dafür store.activeUserId().
+ * Source of the data: data/users/<id>/plans.json and .../events.json (per member),
+ * loaded via load_area('…','user',$user). The client (ics-export.js) passes
+ * store.activeUserId() for this.
  */
 
 declare(strict_types=1);
 
-// storage.php/auth.php sind bereits via api.php geladen; defensiv erneut sicherstellen.
+// storage.php/auth.php are already loaded via api.php; ensure it again, defensively.
 require_once __DIR__ . '/storage.php';
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/icstz.php';
@@ -46,11 +46,11 @@ if ($user === null || !is_valid_user($user)) {
     $icsError(400, 'ics.error.invalidUser');
 }
 
-// Zugriff (seit v3.20.0): Kalender-Links tragen einen Schlüssel je Mitglied
-// (`token`, siehe ?action=ics-token) – sie öffnen sich außerhalb der App ohne
-// Sitzungs-Cookie. Innerhalb der App genügt auch die eigene Sitzung (oder die einer
-// Admin-Person). Links ohne Schlüssel aus älteren Versionen gelten noch bis
-// ICS_LEGACY_UNTIL; danach muss der Termin einmal neu aus der App exportiert werden.
+// Access (since v3.20.0): calendar links carry a key per member
+// (`token`, see ?action=ics-token) – they open outside the app without a
+// session cookie. Inside the app the person's own session (or that of an
+// admin person) is enough as well. Links without a key from older versions remain valid until
+// ICS_LEGACY_UNTIL; after that the appointment has to be exported from the app once more.
 const ICS_LEGACY_UNTIL = '2026-11-30';
 $token = isset($_GET['token']) ? (string) $_GET['token'] : '';
 if ($token !== '') {
@@ -69,7 +69,7 @@ if ($token !== '') {
 $events = load_area('events', 'user', $user);
 $plans  = load_area('plans', 'user', $user);
 
-/** Findet ein Event-Objekt anhand der ID. */
+/** Finds an event object by its ID. */
 function find_event(array $events, string $id): ?object
 {
     foreach ($events as $e) {
@@ -81,10 +81,10 @@ function find_event(array $events, string $id): ?object
 }
 
 // ---------------------------------------------------------------------------
-// App-Basis-URL für Deep-Links zurück in die Session-View ableiten.
+// Derive the app base URL for deep links back into the session view.
 // ---------------------------------------------------------------------------
 $scheme  = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-// Host nur in plausibler Form übernehmen (fließt in Deep-Links und die UID).
+// Accept the host only in a plausible form (it flows into deep links and the UID).
 $host    = (string) ($_SERVER['HTTP_HOST'] ?? 'localhost');
 if (preg_match('/^(\[[0-9a-fA-F:.]+\]|[A-Za-z0-9.-]+)(:\d{1,5})?$/', $host) !== 1) {
     $host = 'localhost';
@@ -94,10 +94,10 @@ $appBase = preg_replace('#/api/?$#', '', $scriptDir);   // .../lauf-app
 $appUrl  = $scheme . '://' . $host . rtrim($appBase, '/');
 
 // ---------------------------------------------------------------------------
-// Hilfsfunktionen für RFC-5545-konforme Ausgabe.
+// Helper functions for RFC 5545-compliant output.
 // ---------------------------------------------------------------------------
 
-/** Escaped Sonderzeichen in TEXT-Werten (Backslash, Komma, Semikolon, Newline). */
+/** Escapes special characters in TEXT values (backslash, comma, semicolon, newline). */
 function ics_escape(string $text): string
 {
     $text = str_replace('\\', '\\\\', $text);
@@ -108,9 +108,9 @@ function ics_escape(string $text): string
 }
 
 /**
- * Line-Folding nach RFC 5545: Zeilen dürfen max. 75 Oktette lang sein.
- * Wir falten konservativ bei ~73 Bytes und brechen nie innerhalb eines
- * UTF-8-Mehrbyte-Zeichens um.
+ * Line folding per RFC 5545: lines may be at most 75 octets long.
+ * We fold conservatively at ~73 bytes and never break inside a
+ * multi-byte UTF-8 character.
  */
 function ics_fold(string $line): string
 {
@@ -119,10 +119,10 @@ function ics_fold(string $line): string
     $count = 0;
     for ($i = 0; $i < $len; $i++) {
         $byte = $line[$i];
-        // Anfang eines UTF-8-Zeichens erkennen (kein Continuation-Byte 10xxxxxx).
+        // Detect the start of a UTF-8 character (no continuation byte 10xxxxxx).
         $isCharStart = (ord($byte) & 0xC0) !== 0x80;
         if ($count >= 73 && $isCharStart) {
-            $out .= "\r\n ";   // Fortsetzungszeile beginnt mit einem Space.
+            $out .= "\r\n ";   // The continuation line starts with a space.
             $count = 1;
         }
         $out .= $byte;
@@ -131,7 +131,7 @@ function ics_fold(string $line): string
     return $out;
 }
 
-/** Lokale Zeit (Zone laut ics_timezone()) als YYYYMMDDTHHMMSS für DTSTART;TZID=... */
+/** Local time (zone per ics_timezone()) as YYYYMMDDTHHMMSS for DTSTART;TZID=... */
 function dt_local(string $date, string $time): string
 {
     [$h, $m] = array_pad(explode(':', $time), 2, '00');
@@ -139,13 +139,13 @@ function dt_local(string $date, string $time): string
     return sprintf('%sT%02d%02d00', $d, (int) $h, (int) $m);
 }
 
-/** UTC-Zeitstempel als YYYYMMDDTHHMMSSZ (für DTSTAMP). */
+/** UTC timestamp as YYYYMMDDTHHMMSSZ (for DTSTAMP). */
 function dt_utc_now(): string
 {
     return gmdate('Ymd\THis\Z');
 }
 
-/** Default-Startzeit je Trainingstyp (HH:MM, lokale Zeit). */
+/** Default start time per training type (HH:MM, local time). */
 function default_time(string $type): string
 {
     return match ($type) {
@@ -160,13 +160,13 @@ function default_time(string $type): string
     };
 }
 
-/** Geschätzte Dauer (Minuten) einer Einheit aus Distanz/Pace bzw. Default. */
+/** Estimated duration (minutes) of a session from distance/pace, or the default. */
 function estimate_minutes(object $u): int
 {
     if (!empty($u->targetDurationMin)) {
         return (int) round((float) $u->targetDurationMin);
     }
-    // Programmeinheiten aus früheren Versionen: Dauer im Feld `dur`.
+    // Programme sessions from earlier versions: duration in the field `dur`.
     if (!empty($u->dur)) {
         return (int) round((float) $u->dur);
     }
@@ -184,7 +184,7 @@ function estimate_minutes(object $u): int
     return 60;
 }
 
-/** Zielzeit "HH:MM:SS" -> Minuten. */
+/** Target time "HH:MM:SS" -> minutes. */
 function targettime_minutes(?string $t): int
 {
     if (!$t) {
@@ -196,10 +196,10 @@ function targettime_minutes(?string $t): int
 }
 
 // ---------------------------------------------------------------------------
-// VEVENT-Bausteine erzeugen.
+// Create the VEVENT building blocks.
 // ---------------------------------------------------------------------------
 
-/** Baut ein VEVENT für eine geplante Trainingseinheit. */
+/** Builds a VEVENT for a planned training session. */
 function vevent_unit(object $u, ?object $event, string $appUrl, string $host, string $lang): array
 {
     $type = $u->type ?? 'easy';
@@ -209,12 +209,12 @@ function vevent_unit(object $u, ?object $event, string $appUrl, string $host, st
     $title = $u->title ?? server_text($lang, 'ics.training');
     $summary = $title;
 
-    // DESCRIPTION mit Zielwerten + Deep-Link in die App.
+    // DESCRIPTION with target values + deep link into the app.
     $descParts = [];
     if (!empty($u->description)) {
         $descParts[] = (string) $u->description;
     } elseif (!empty($u->desc)) {
-        $descParts[] = (string) $u->desc;   // Programmeinheit aus früheren Versionen
+        $descParts[] = (string) $u->desc;   // programme session from earlier versions
     }
     if (!empty($u->targetDistanceKm)) {
         $descParts[] = server_text($lang, 'ics.distance', ['km' => server_number((float) $u->targetDistanceKm, 1, $lang)]);
@@ -245,19 +245,19 @@ function vevent_unit(object $u, ?object $event, string $appUrl, string $host, st
         $lines[] = 'LOCATION:' . ics_escape($location);
     }
     $lines[] = 'CATEGORIES:' . ics_escape(server_text($lang, 'ics.training'));
-    // Erinnerung 1 Stunde vorher.
+    // Reminder 1 hour before.
     $lines = array_merge($lines, valarm('-PT1H', server_text($lang, 'ics.alarmHour', ['title' => $summary])));
-    // Erinnerung am Vorabend (gleiche Uhrzeit, ein Tag vorher).
+    // Reminder the evening before (same time of day, one day earlier).
     $lines = array_merge($lines, valarm('-P1D', server_text($lang, 'ics.alarmTomorrow', ['title' => $summary])));
     $lines[] = 'END:VEVENT';
     return $lines;
 }
 
-/** Baut ein VEVENT für den Wettkampf selbst. */
+/** Builds a VEVENT for the race itself. */
 function vevent_race(object $event, string $appUrl, string $host, string $lang): array
 {
     $time = '10:00';
-    $mins = targettime_minutes($event->targetTime ?? null) + 30; // Puffer
+    $mins = targettime_minutes($event->targetTime ?? null) + 30; // buffer
     $summary = '🏁 ' . ($event->name ?? server_text($lang, 'ics.race'));
 
     $desc = [];
@@ -292,7 +292,7 @@ function vevent_race(object $event, string $appUrl, string $host, string $lang):
     return $lines;
 }
 
-/** Erzeugt einen VALARM-Block (Anzeige-Erinnerung). */
+/** Creates a VALARM block (display reminder). */
 function valarm(string $trigger, string $text): array
 {
     return [
@@ -304,7 +304,7 @@ function valarm(string $trigger, string $text): array
     ];
 }
 
-/** Sekunden/km -> "m:ss". */
+/** Seconds/km -> "m:ss". */
 function sec_to_pace(int $sec): string
 {
     $m = intdiv($sec, 60);
@@ -313,7 +313,7 @@ function sec_to_pace(int $sec): string
 }
 
 // ---------------------------------------------------------------------------
-// Einheiten je nach Scope sammeln.
+// Collect the sessions depending on the scope.
 // ---------------------------------------------------------------------------
 $body = [];
 $filename = 'training.ics';
@@ -322,7 +322,7 @@ $fileName = static fn(string $kind): string =>
     (trim((string) preg_replace('/[^A-Za-z0-9_-]+/', '-', server_text($lang, 'ics.file.' . $kind)), '-') ?: $kind) . '-' . $id . '.ics';
 
 if ($scope === 'session') {
-    // Einzelne geplante Einheit in allen Plänen suchen.
+    // Look up a single planned session across all plans.
     $unit = null;
     $event = null;
     foreach ($plans as $p) {
@@ -347,12 +347,12 @@ if ($scope === 'session') {
     $body = vevent_race($event, $appUrl, $host, $lang);
     $filename = $fileName('race');
 } else {
-    // scope=event: kompletter Plan + Wettkampf.
+    // scope=event: complete plan + race.
     $event = find_event($events, $id);
     foreach ($plans as $p) {
         if (($p->eventId ?? '') === $id) {
             foreach (($p->units ?? []) as $u) {
-                // Ruhetage nicht in den Kalender exportieren.
+                // Do not export rest days to the calendar.
                 if (($u->type ?? '') === 'rest') {
                     continue;
                 }
@@ -367,7 +367,7 @@ if ($scope === 'session') {
 }
 
 // ---------------------------------------------------------------------------
-// VCALENDAR zusammensetzen und ausgeben.
+// Assemble the VCALENDAR and output it.
 // ---------------------------------------------------------------------------
 $cal = [];
 $cal[] = 'BEGIN:VCALENDAR';
@@ -376,13 +376,13 @@ $cal[] = 'PRODID:-//Cat-O-Fit//Lauftraining//DE';
 $cal[] = 'CALSCALE:GREGORIAN';
 $cal[] = 'METHOD:PUBLISH';
 $cal[] = 'X-WR-CALNAME:' . ics_escape(server_text($lang, 'ics.calendarName'));
-// VTIMEZONE der Kalender-Zone (Europe/Berlin byte-gleich wie bisher, andere Zonen je
-// Umstellung im Zeitraum vom Vorjahr bis zwei Jahre voraus).
+// VTIMEZONE of the calendar zone (Europe/Berlin byte-identical to before, other zones per
+// transition in the period from the previous year to two years ahead).
 $cal = array_merge($cal, vtimezone_lines(ics_timezone(), (int) gmdate('Y') - 1, (int) gmdate('Y') + 2));
 $cal = array_merge($cal, $body);
 $cal[] = 'END:VCALENDAR';
 
-// Jede Zeile falten und mit CRLF verbinden (RFC 5545).
+// Fold every line and join with CRLF (RFC 5545).
 $output = '';
 foreach ($cal as $line) {
     $output .= ics_fold($line) . "\r\n";

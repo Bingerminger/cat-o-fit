@@ -1,5 +1,5 @@
 /* =========================================================================
-   cards.css — wiederverwendbare Karten, Listen, Kennzahlen, Trainingstyp-Icons.
+   cards.css — reusable cards, lists, metrics, training-type icons.
    ========================================================================= */
 
 .card {
@@ -24,7 +24,7 @@
 .card__head { display: flex; align-items: center; gap: var(--sp-3); margin-bottom: var(--sp-3); }
 .card__title { font-size: 1rem; font-weight: 700; flex: 1; }
 
-/* ---------- Trainingstyp-Icon (farbiger Kreis) ---------- */
+/* ---------- Training-type icon (coloured circle) ---------- */
 .type-icon {
   flex: 0 0 auto;
   width: 42px; height: 42px;
@@ -39,7 +39,7 @@
 .type-icon--lg { width: 56px; height: 56px; border-radius: var(--r-md); }
 .type-icon--lg svg { width: 28px; height: 28px; }
 
-/* ---------- Liste ---------- */
+/* ---------- List ---------- */
 .list { display: flex; flex-direction: column; }
 .list-item {
   display: flex; align-items: center; gap: var(--sp-3);
@@ -56,14 +56,14 @@
 .list-item__chev svg { width: 18px; height: 18px; }
 .list-card { background: var(--surface); border-radius: var(--r-lg); padding: 0 var(--sp-4); box-shadow: var(--shadow-1); border: 1px solid var(--border); }
 
-/* ---------- Kennzahlen ---------- */
+/* ---------- Metrics ---------- */
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
   gap: var(--sp-3);
 }
-/* Zwei Kacheln je Zeile, sobald vier nebeneinander zu eng würden (iPhone: „Muskelmasse“
-   und „72,3 kg“ passten nicht mehr in ein Viertel der Breite). */
+/* Two tiles per row as soon as four side by side would be too tight (iPhone: "Muscle mass"
+   and "72.3 kg" no longer fit in a quarter of the width). */
 .stat-grid--pairs { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
 .stat {
   background: var(--surface);
@@ -72,12 +72,12 @@
   border: 1px solid var(--border);
   min-width: 0;
 }
-/* Lange Wörter („Belastungspunkte“) trennen statt über den Kachelrand zu laufen. */
+/* Hyphenate long words (e.g. long German compound labels) instead of running over the tile edge. */
 .stat__val { font-family: var(--font-num); font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; overflow-wrap: break-word; }
 .stat__label { font-size: 0.74rem; color: var(--text-2); font-weight: 600; margin-top: 2px; overflow-wrap: break-word; -webkit-hyphens: auto; hyphens: auto; }
 .stat__unit { font-size: 0.7em; color: var(--text-2); font-weight: 600; margin-left: 2px; }
 
-/* ---------- Metrik-Kachel (Health) ---------- */
+/* ---------- Metric tile (health) ---------- */
 .metric-tile {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -90,7 +90,7 @@
 .metric-tile__val { font-family: var(--font-num); font-size: 1.4rem; font-weight: 800; }
 .metric-tile__delta { font-size: 0.74rem; font-weight: 700; }
 
-/* ---------- Fortschrittsbalken ---------- */
+/* ---------- Progress bar ---------- */
 .progress {
   height: 8px;
   background: var(--surface-3);
@@ -106,7 +106,7 @@
 .progress--good .progress__fill { background: var(--good); }
 .progress--warn .progress__fill { background: var(--warn); }
 
-/* ---------- Fortschrittsring (für SVG-Charts) ---------- */
+/* ---------- Progress ring (for SVG charts) ---------- */
 .ring-wrap { position: relative; display: inline-grid; place-items: center; }
 .ring-wrap__center {
   position: absolute; inset: 0;
@@ -122,13 +122,13 @@
 .countdown__num { font-family: var(--font-num); font-size: 1.7rem; font-weight: 800; line-height: 1; }
 .countdown__cap { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.8; }
 
-/* ---------- Priorität / Phase Tags ---------- */
+/* ---------- Priority / phase tags ---------- */
 .tag-prio {
   width: 24px; height: 24px; border-radius: var(--r-xs);
   display: inline-flex; align-items: center; justify-content: center;
   font-size: 0.78rem; font-weight: 800; color: #fff;
 }
-/* Kräftige Töne: die weiße Schrift erreicht 4,5:1 (vorher Orange 2,0:1). */
+/* Strong tones: the white text reaches 4.5:1 (previously orange 2.0:1). */
 .tag-prio--A { background: var(--bad-strong); }
 .tag-prio--B { background: #9a5b00; }
 .tag-prio--C { background: #5b6570; }
@@ -140,7 +140,7 @@
   color: #fff;
 }
 
-/* ---------- Soll-Ist Vergleichszeile ---------- */
+/* ---------- Target-vs-actual comparison row ---------- */
 .compare {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -156,7 +156,7 @@
 .compare__real { text-align: right; font-weight: 750; }
 .compare__val { font-family: var(--font-num); font-size: 1.05rem; }
 
-/* ---------- Hilfe / Wissensbasis ---------- */
+/* ---------- Help / knowledge base ---------- */
 .help-container { display: flex; flex-direction: column; gap: var(--sp-2); }
 .help-article { overflow: hidden; }
 .help-article__head {
@@ -193,7 +193,7 @@
 }
 .help-tip svg { color: var(--accent-text); width: 16px; flex: 0 0 auto; margin-top: 1px; }
 
-/* ---------- Erfolge / Badges ---------- */
+/* ---------- Achievements / badges ---------- */
 .badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }
 .badge-card {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md);
@@ -208,8 +208,8 @@
   box-shadow: var(--shadow-1);
 }
 .badge-card__emoji { font-size: 2rem; line-height: 1; }
-/* `hyphens: manual` (nicht `none`): Nur so trennt der Browser an den weichen Trennstrichen
-   aus softWrap() – `none` schaltet auch die ab, und „Tausendsass|a“ brach mitten im Wort. */
+/* `hyphens: manual` (not `none`): only then does the browser break at the soft hyphens
+   from softWrap() – `none` switches those off too, and a long German badge name broke in the middle of the word. */
 .badge-card__name { font-weight: 700; font-size: 0.82rem; max-width: 100%; overflow-wrap: break-word; -webkit-hyphens: manual; hyphens: manual; }
 .badge-card__desc { font-size: 0.7rem; color: var(--text-2); line-height: 1.25; max-width: 100%; overflow-wrap: break-word; -webkit-hyphens: manual; hyphens: manual; }
 .badge-card__check { font-size: 0.68rem; font-weight: 800; color: var(--good-text); margin-top: 2px; }
@@ -224,7 +224,7 @@
 .badge-tier-label { flex: 1 1 auto; letter-spacing: .01em; }
 .badge-tier-count { font-size: 0.74rem; color: var(--text-3); font-family: var(--font-num); font-weight: 700; }
 
-/* Obere Aufwand-Stufen als prächtige Banner mit Verlauf & Glanzkante */
+/* Upper effort tiers as splendid banners with a gradient & shiny edge */
 .badge-tier-head--t4, .badge-tier-head--t3 {
   padding: 9px 13px; border-radius: 14px; margin-top: 20px;
   position: relative; overflow: hidden; color: #fff;
@@ -239,13 +239,13 @@
   background: linear-gradient(110deg, #7c5cff 0%, #9a6bff 55%, #6a5cff 100%);
   box-shadow: 0 6px 16px rgba(124, 92, 255, .32);
 }
-/* dezenter Lichtschimmer oben */
+/* subtle light shimmer at the top */
 .badge-tier-head--t4::after, .badge-tier-head--t3::after {
   content: ''; position: absolute; inset: 0 0 auto 0; height: 50%;
   background: linear-gradient(180deg, rgba(255,255,255,.28), transparent); pointer-events: none;
 }
 
-/* Freigeschaltete Karten der oberen Stufen glänzen */
+/* Unlocked cards of the upper tiers shine */
 .badge-card--t4.is-unlocked {
   background: linear-gradient(165deg, color-mix(in srgb, #f5b300 14%, var(--surface)), color-mix(in srgb, #ff8a3d 10%, var(--surface)));
   border-color: color-mix(in srgb, #f5a623 55%, var(--border));
@@ -260,7 +260,7 @@
 }
 .badge-card--t3.is-unlocked .badge-card__check { color: #7c5cff; }
 
-/* ---------- Übungs-Bibliothek ---------- */
+/* ---------- Exercise library ---------- */
 .ex-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-3); }
 .ex-card {
   display: flex; flex-direction: column; align-items: center; gap: 6px;
@@ -282,7 +282,7 @@
 .ex-steps { margin: var(--sp-2) 0 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 6px; }
 .ex-steps li { font-size: .9rem; line-height: 1.45; }
 
-/* ---------- Interaktive Liniencharts: Wrapper + Scrubber-Tooltip ---------- */
+/* ---------- Interactive line charts: wrapper + scrubber tooltip ---------- */
 .chart-wrap { position: relative; touch-action: pan-y; -webkit-tap-highlight-color: transparent; }
 .chart-wrap:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--r-sm); }
 .chart-tip {
@@ -303,14 +303,14 @@
 .chart-tip__name { color: var(--text-2); }
 .chart-tip__key { width: 10px; height: 2.5px; border-radius: var(--r-pill); flex: 0 0 auto; }
 
-/* Listeneintrag als Knopf (Checkliste: per Tastatur bearbeitbar, UI-41) */
+/* List entry as a button (checklist: editable by keyboard, UI-41) */
 .list-item__btn {
   flex: 1 1 auto; min-width: 0; text-align: left;
   background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer;
 }
 .check-toggle svg { width: 26px; height: 26px; }
 
-/* Diagrammfarben über Variablen (FE-14): Hell/Dunkel wechselt ohne Neuzeichnen. */
+/* Chart colours via variables (FE-14): light/dark switches without redrawing. */
 .chart-grid { stroke: var(--border-2); }
 .chart-axis { fill: var(--text-3); }
 .chart-label { fill: var(--text-2); }
@@ -325,21 +325,21 @@
 .chart-bartip__text { fill: var(--bg); font-weight: 700; }
 .chart--bars { display: block; touch-action: pan-y; }
 
-/* Direkt adressierter Hilfeartikel (#/hilfe/<id>) und Kurzansicht als Sheet */
+/* Directly addressed help article (#/hilfe/<id>) and short view as a sheet */
 .help-article--focus { box-shadow: 0 0 0 2px var(--accent); }
 .help-sheet .help-steps { margin-bottom: var(--sp-2); }
 
-/* ---------- Strecke (ohne Karte) ---------- */
+/* ---------- Route (without a map) ---------- */
 .route-map { display: grid; gap: var(--sp-2); }
 .route-map svg { display: block; width: 100%; height: auto; }
 .route-map__track { max-height: 260px; }
 
-/* ---------- Laborbefund (mehrere Werte) ---------- */
+/* ---------- Lab report (several values) ---------- */
 .lab-report__row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; align-items: center; padding: 8px 0; border-top: 1px solid var(--border); }
 .lab-report__name { font-weight: 650; font-size: .88rem; }
 .lab-report__value { display: grid; grid-template-columns: 96px minmax(84px, auto); gap: 6px; }
 .lab-report__ref { grid-column: 1 / -1; display: grid; grid-template-columns: auto 1fr auto 1fr; gap: 6px; align-items: center; font-size: .78rem; }
 .lab-report__ref .input, .lab-report__value .input, .lab-report__value .select { min-height: 38px; padding-top: 6px; padding-bottom: 6px; }
 
-/* ---------- Strichcode per Kamera ---------- */
+/* ---------- Barcode via camera ---------- */
 .barcode__video { width: 100%; max-height: 220px; border-radius: var(--r-md); background: #000; object-fit: cover; margin-top: var(--sp-2); }

@@ -1,8 +1,8 @@
 /* =========================================================================
-   show.css — durchgehend mitmachen (workout-show.js).
-   Eigenes, dunkles „Bühnen“-Design unabhängig vom Farbschema: die Vorturnerin
-   auf heller Bühne, daneben (Querformat) bzw. darunter (Hochformat) große
-   Schrift, die man aus zwei, drei Metern Abstand liest.
+   show.css — follow along non-stop (workout-show.js).
+   Own dark "stage" design independent of the colour scheme: the demonstrator
+   on a bright stage, beside it (landscape) or below it (portrait) large
+   type that can be read from two or three metres away.
    ========================================================================= */
 
 html.show-open, html.show-open body { overflow: hidden; }
@@ -22,7 +22,7 @@ html.show-open, html.show-open body { overflow: hidden; }
 .show button { color: inherit; font: inherit; }
 .show svg.mf { width: 100%; height: 100%; }
 
-/* ------------------------------ Übersicht ------------------------------ */
+/* ------------------------------ Overview ------------------------------ */
 .show-ov { display: flex; flex-direction: column; gap: 14px; height: 100%; max-width: 1100px; width: 100%; margin: 0 auto; min-height: 0; }
 .show-ov__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .show-ov__kicker { font-size: .78rem; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; color: var(--show-ready); }
@@ -58,7 +58,7 @@ html.show-open, html.show-open body { overflow: hidden; }
 .show__close { width: 48px; height: 48px; flex: none; border-radius: 50%; border: 0; background: rgba(255, 255, 255, .1); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
 .show__close svg { width: 22px; height: 22px; }
 
-/* ------------------------------ Ablauf ------------------------------ */
+/* ------------------------------ Flow ------------------------------ */
 .show__run {
   position: relative; flex: 1; min-height: 0;
   display: grid; gap: 14px 22px;
@@ -129,7 +129,7 @@ html.show-open, html.show-open body { overflow: hidden; }
 .show__paused svg { width: 44px; height: 44px; }
 .show__run.is-paused .show__paused { display: flex; }
 
-/* ------------------------------ Geschafft ------------------------------ */
+/* ------------------------------ Done ------------------------------ */
 .show-done { margin: auto; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 20px; }
 .show-done__kicker { color: var(--show-ready); font-weight: 750; letter-spacing: .1em; text-transform: uppercase; font-size: .82rem; }
 .show-done__title { margin: 0; font-size: clamp(2.6rem, 8vw, 5rem); font-weight: 900; letter-spacing: -.03em; background: linear-gradient(135deg, #ffd36e, #ff6f61 55%, #ff4f7b); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -139,7 +139,7 @@ html.show-open, html.show-open body { overflow: hidden; }
 .show-done__btn { display: inline-flex; align-items: center; gap: 8px; min-height: 64px; padding: 0 20px; border-radius: 20px; border: 1px solid var(--show-line); background: rgba(255, 255, 255, .07); cursor: pointer; font-weight: 700; }
 .show-done__btn svg { width: 20px; height: 20px; }
 
-/* ------------------------------ Hochformat ------------------------------ */
+/* ------------------------------ Portrait ------------------------------ */
 @media (max-aspect-ratio: 1/1) {
   .show-ov__body { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
   .show__run {
@@ -163,11 +163,11 @@ html.show-open, html.show-open body { overflow: hidden; }
   .show-ov__art { width: 60px; height: 40px; }
 }
 
-/* ------------------------------ Einstiege ------------------------------ */
+/* ------------------------------ Entry points ------------------------------ */
 .show-cta { margin: 4px 0 10px; min-height: 52px; font-size: 1.02rem; gap: 10px; }
 .show-cta svg { width: 18px; height: 18px; }
 
-/* Workouts in der Übungs-Bibliothek: wischbare Karten. */
+/* Workouts in the exercise library: swipeable cards. */
 .wo-row { display: flex; gap: 12px; overflow-x: auto; padding: 2px 2px 10px; margin-bottom: 6px; scroll-snap-type: x proximity; }
 .wo-card {
   flex: 0 0 auto; width: 230px; scroll-snap-align: start;

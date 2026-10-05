@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Cat-O-Fit Dauerlast (Soak): DURATION s bei CONCURRENCY parallel, gemischter Workload,
-   Write-Cap je Nutzer. Misst Latenz je 10-s-Fenster (Degradation durch wachsende JSON-
-   Dateien) + Datenintegrität. stdlib only.
-   Aufruf: loadtest_soak.py <BASE> <DATA_DIR> [NUSERS MAXW CONCURRENCY DURATION IMPORT_RECS]"""
+"""Cat-O-Fit sustained load (soak): DURATION s at CONCURRENCY in parallel, mixed workload,
+   write cap per user. Measures latency per 10 s window (degradation through growing JSON
+   files) + data integrity. stdlib only.
+   Call: loadtest_soak.py <BASE> <DATA_DIR> [NUSERS MAXW CONCURRENCY DURATION IMPORT_RECS]"""
 import urllib.request, json, time, threading, statistics, sys, os, glob, random
 from concurrent.futures import ThreadPoolExecutor
 
@@ -40,8 +40,8 @@ metrics={}; mlk=threading.Lock()
 def rec(t,ok,ms,b):
     with mlk: metrics.setdefault(t,[]).append((ok,ms,b))
 succ={u:0 for u in users}; sl=threading.Lock()
-# Geschriebene IDs statt einer Zählersumme: Eine Anfrage, die clientseitig scheitert
-# (Timeout), kann am Server trotzdem angekommen sein – sie gehört dann zu „gesendet".
+# Written IDs instead of a counter sum: a request that fails on the client side
+# (timeout) may still have arrived at the server – it then counts as "sent".
 sent={u:set() for u in users}; okids={u:set() for u in users}
 revs={u:set() for u in users}; rl=threading.Lock()
 start=time.perf_counter(); deadline=start+DURATION
@@ -82,14 +82,14 @@ with ThreadPoolExecutor(max_workers=CONCURRENCY) as ex:
     for f in [ex.submit(worker) for _ in range(CONCURRENCY)]: f.result()
 wall=time.perf_counter()-start
 
-# Integrität
+# Integrity
 integ=[]
 cok=0
 for u in users:
     ok,ms,pl=req("GET", f"{BASE}?area=sessions&user={u}")
     d=pl.get("data") if ok and isinstance(pl,dict) else None
     ids={r.get("id") for r in d} if isinstance(d,list) else None
-    # Jede bestätigte ID liegt am Server, und dort liegt nichts, was nie gesendet wurde.
+    # Every confirmed ID is on the server, and nothing is there that was never sent.
     if ids is not None and okids[u] <= ids <= sent[u]: cok+=1
 integ.append(("Schreib-Integrität – bestätigt ⊆ Server ⊆ gesendet", f"{cok}/{NUSERS} Nutzer exakt", cok==NUSERS))
 rok=sum(1 for u in users if len(revs[u])==succ[u])
@@ -126,7 +126,7 @@ for t,lab in [("write","Write (upsert)"),("read","Read (changes)"),("backup","Ba
 L()
 print(f"\nGesamt: {tot} Anfragen · {totw} Writes in {wall:.1f}s · {tot/wall:.0f} req/s · {terr} Fehler")
 
-# Write-Latenz je Zeitfenster (Degradation durch Dateiwachstum?)
+# Write latency per time window (degradation through file growth?)
 print("\n=== WRITE-LATENZ JE 10-s-FENSTER (p95) ===")
 wrows=metrics.get("write",[]); nb=int(DURATION//BUCKET)+1
 print("+"+"-"*9+"+"+"-"*9+"+"+"-"*10+"+")

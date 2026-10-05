@@ -1,10 +1,10 @@
-/* Hörproben der Trainingsmusik (js/music.js): rechnet je Stil die Schleifen für Pause,
-   Anlauf und Übung (je vier Takte, wie in der Session) und schreibt sie hintereinander
-   als WAV – samt Pegel (Spitze/RMS) und Rechenzeit je Schleife. Zum Anhören, um
-   Übersteuern zu erkennen und um abzuschätzen, wie schnell ein Gerät die Schleifen rechnet.
+/* Listening samples of the training music (js/music.js): computes the loops for rest,
+   build-up and exercise per style (four bars each, as in the session) and writes them one after another
+   as WAV – with level (peak/RMS) and computation time per loop. For listening, to
+   detect clipping and to estimate how fast a device computes the loops.
 
    PLAYWRIGHT_MODULE=<…/playwright/index.mjs> node tools/music-preview.mjs [--out <dir>] [--style power,flow]
-   Braucht PHP (wie render-screenshots.mjs) für einen kurzen lokalen Server. */
+   Needs PHP (like render-screenshots.mjs) for a short-lived local server. */
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -38,7 +38,7 @@ for (const style of styles) {
     }
     const level = (d) => { let peak = 0; let sum = 0; for (const v of d) { const a = Math.abs(v); peak = Math.max(peak, a); sum += v * v; } return { peak: Math.round(peak * 1000) / 1000, rms: Math.round(Math.sqrt(sum / d.length) * 1000) / 1000 }; };
     const L = new Float32Array(parts.reduce((a, d) => a + d.length * 2, 0));
-    let o = 0; for (const d of parts) { L.set(d, o); o += d.length; L.set(d, o); o += d.length; }   // jede Schleife zweimal (Naht hörbar)
+    let o = 0; for (const d of parts) { L.set(d, o); o += d.length; L.set(d, o); o += d.length; }   // each loop twice (seam audible)
     const pcm = new Int16Array(L.length);
     for (let i = 0; i < L.length; i++) pcm[i] = Math.max(-1, Math.min(1, L[i])) * 32767;
     let bin = ''; const bytes = new Uint8Array(pcm.buffer);

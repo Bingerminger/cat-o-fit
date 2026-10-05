@@ -1,5 +1,5 @@
 /* =========================================================================
-   family.css — Familiendashboard (Einstiegs- und Login-Seite).
+   family.css — family dashboard (entry and login page).
    ========================================================================= */
 
 .family-hero {
@@ -52,7 +52,7 @@
   max-width: 100%; overflow: hidden; text-overflow: ellipsis;
 }
 
-/* PIN-Dialog */
+/* PIN dialog */
 .pin-dialog { display: flex; flex-direction: column; gap: var(--sp-3); align-items: stretch; }
 .pin-dialog__who { display: flex; align-items: center; gap: var(--sp-2); justify-content: center; }
 .pin-dialog__who .member-card__avatar { width: 44px; height: 44px; font-size: 1.4rem; }
@@ -66,7 +66,7 @@
 .pin-input:focus { outline: none; border-color: var(--accent); }
 .pin-err { color: var(--bad-text); font-size: 0.84rem; text-align: center; }
 
-/* Mitglied-Editor: Emoji-/Farb-Picker */
+/* Member editor: emoji/colour picker */
 .picker-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .picker-chip {
   width: 40px; height: 40px; border-radius: var(--r-md);
@@ -81,7 +81,7 @@
 }
 .picker-dot.is-sel { border-color: var(--text); }
 
-/* Banner: ein Admin verwaltet gerade ein anderes Mitglied */
+/* Banner: an admin is currently managing another member */
 .manage-banner {
   display: flex; align-items: center; gap: var(--sp-2);
   flex-wrap: wrap; row-gap: 4px;
@@ -98,7 +98,7 @@
   padding: 4px 12px; font-size: 0.8rem; font-weight: 700;
 }
 
-/* Familiendashboard: Kennzahlen pro Mitglied */
+/* Family dashboard: metrics per member */
 .member-card__metrics {
   display: flex; gap: 12px; margin-top: 6px; flex-wrap: wrap; justify-content: center;
 }
@@ -109,12 +109,12 @@
   text-transform: uppercase; letter-spacing: 0.03em;
 }
 
-/* Familien-Wochenzusammenfassung */
+/* Family weekly summary */
 .family-summary {
   background: linear-gradient(135deg, var(--accent), var(--accent-hero-end));
   color: var(--accent-contrast);
   border-radius: var(--r-lg); padding: var(--sp-4);
-  margin: 0 0 var(--sp-4);   /* volle Inhaltsbreite – wie die Karten darunter (kein eigener max-width-Deckel) */
+  margin: 0 0 var(--sp-4);   /* full content width – like the cards below (no max-width cap of its own) */
 }
 .family-summary__title {
   font-size: 0.76rem; font-weight: 650; opacity: 0.92;
@@ -125,13 +125,13 @@
 .family-summary__num { font-size: 1.5rem; font-weight: 820; line-height: 1.1; }
 .family-summary__lbl { font-size: 0.74rem; opacity: 0.9; }
 
-/* ---------- Team-Dashboard: Intro, Badges, Aktivität, Wettkämpfe ---------- */
+/* ---------- Team dashboard: intro, badges, activity, races ---------- */
 .team-intro {
   display: flex; align-items: center; gap: var(--sp-2);
   color: var(--text-2); font-size: 0.9rem; font-weight: 600;
   padding: var(--sp-1) 0 var(--sp-2);
 }
-/* Kacheln auf dem Team-Dashboard sind reine Anzeige (kein Login mehr). */
+/* Tiles on the team dashboard are display only (no login any more). */
 .member-card--static { cursor: default; }
 .member-card--static:hover, .member-card--static:focus-visible {
   transform: none; border-color: var(--border); box-shadow: var(--shadow-1);
@@ -160,6 +160,6 @@
 .race-row__name { font-weight: 700; font-size: 0.92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .race-row__cd { text-align: center; min-width: 40px; flex: 0 0 auto; }
 
-/* ---------- Ersteinrichtung (Assistent) ---------- */
+/* ---------- First-run setup (wizard) ---------- */
 .setup-card { max-width: 440px; margin: 0 auto; }
 .setup-choice { width: 100%; text-align: left; }

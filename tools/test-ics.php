@@ -1,13 +1,13 @@
 <?php
 /**
- * test-ics.php — Zeitzone der Kalender-Dateien (api/icstz.php).
+ * test-ics.php — time zone of the calendar files (api/icstz.php).
  *
  *   php tools/test-ics.php
  *
- * Vor v3.21.0 schrieb ics.php fest TZID=Europe/Berlin, auch wenn der Container mit einer
- * anderen TZ lief – Termine landeten außerhalb Mitteleuropas um Stunden verschoben im
- * Kalender. Bestehende Abos in Europe/Berlin dürfen sich dabei nicht ändern.
- * Exit-Code 0 = alle grün, 1 = mind. ein Fehler. Läuft in der CI mit.
+ * Before v3.21.0 ics.php hard-coded TZID=Europe/Berlin, even when the container ran with a
+ * different TZ – outside Central Europe, appointments ended up shifted by hours in the
+ * calendar. Existing subscriptions in Europe/Berlin must not change as a result.
+ * Exit code 0 = all green, 1 = at least one failure. Also runs in CI.
  */
 declare(strict_types=1);
 
@@ -32,13 +32,13 @@ function withEnv(array $vars, callable $fn)
     }
 }
 
-// --- Welche Zone? ---------------------------------------------------------
+// --- Which zone? ---------------------------------------------------------
 check('ohne Angabe: Europe/Berlin wie bisher', withEnv(['CATOFIT_TZ' => null, 'TZ' => null], 'ics_timezone') === 'Europe/Berlin');
 check('TZ aus der Umgebung (Docker)', withEnv(['CATOFIT_TZ' => null, 'TZ' => 'America/New_York'], 'ics_timezone') === 'America/New_York');
 check('CATOFIT_TZ hat Vorrang', withEnv(['CATOFIT_TZ' => 'Europe/Vienna', 'TZ' => 'UTC'], 'ics_timezone') === 'Europe/Vienna');
 check('unsinnige Angabe → Europe/Berlin', withEnv(['CATOFIT_TZ' => null, 'TZ' => ':/etc/localtime'], 'ics_timezone') === 'Europe/Berlin');
 
-// --- Versatz ---------------------------------------------------------------
+// --- Offset ---------------------------------------------------------------
 check('ics_offset(+1 h)', ics_offset(3600) === '+0100');
 check('ics_offset(−4:30 h)', ics_offset(-16200) === '-0430', ics_offset(-16200));
 
@@ -60,24 +60,24 @@ $tokyo = implode("\n", vtimezone_lines('Asia/Tokyo', 2026, 2027));
 check('Tokyo (keine Umstellung): eine STANDARD-Komponente +0900',
     substr_count($tokyo, 'BEGIN:STANDARD') === 1 && str_contains($tokyo, 'TZOFFSETTO:+0900') && !str_contains($tokyo, 'DAYLIGHT'), $tokyo);
 check('unbekannte Zone → kein Block', vtimezone_lines('Mars/Olympus', 2026, 2026) === []);
-// Mit Xdebug (CI) schlug die Ausnahme einer unbekannten Zone als Error durch, den kein
-// catch (Exception) fängt – deshalb prüft vtimezone_lines die Zone VOR dem Konstruieren.
+// With Xdebug (CI) the exception of an unknown zone came through as an Error that no
+// catch (Exception) catches – so vtimezone_lines checks the zone BEFORE constructing.
 check('unbekannte Zone wird vor dem Konstruieren abgewiesen', preg_match(
     '/function vtimezone_lines.*?timezone_identifiers_list\(\).*?new DateTimeZone\(\$name\)/s',
     (string) file_get_contents(__DIR__ . '/../api/icstz.php')) === 1);
 
-// --- Einbindung in ics.php ---------------------------------------------------
+// --- Integration in ics.php ---------------------------------------------------
 $src = file_get_contents(__DIR__ . '/../api/ics.php');
 check('ics.php nutzt die Zone für DTSTART', substr_count($src, "'DTSTART;TZID=' . ics_timezone() . ':'") === 2);
 check('ics.php schreibt keine feste Zone mehr', !str_contains($src, 'TZID=Europe/Berlin:'));
 
-// --- Texte und Zahlen je Sprache (api/i18n.php) ------------------------------
+// --- Texts and numbers per language (api/i18n.php) ------------------------------
 check('Sprache: genau, über die Grundsprache oder keine', server_match_language('de-AT') === 'de' && server_match_language('pt') === 'pt-BR'
     && server_match_language('PT_br') === 'pt-BR' && server_match_language('xx') === null && server_match_language(null) === null);
 check('Text: Platzhalter, deutsch wie bisher', server_text('de', 'ics.distance', ['km' => '10,5']) === 'Distanz: 10,5 km');
 check('Text: englisch', server_text('en', 'ics.alarmTomorrow', ['title' => 'Long run']) === 'Tomorrow: Long run');
-check('Text: Sprache ohne Katalog → englisch, unbekannter Schlüssel → der Schlüssel', server_text('fr', 'ics.race') === 'Race'
-    && server_text('de', 'ics.nope') === 'ics.nope');
+check('Text: French catalogue, unsupported language → English, unknown key → the key', server_text('fr', 'ics.race') === 'Course'
+    && server_text('xx', 'ics.race') === 'Race' && server_text('de', 'ics.nope') === 'ics.nope');
 check('Zahl: Dezimalkomma (de, fr), Dezimalpunkt (en), ohne Nullen am Ende', server_number(21.0975, 2, 'de') === '21,1'
     && server_number(21.0975, 2, 'en') === '21.1' && server_number(10.0, 1, 'fr') === '10' && server_number(8.25, 2, 'nl') === '8,25',
     [server_number(21.0975, 2, 'de'), server_number(21.0975, 2, 'en'), server_number(10.0, 1, 'fr')]);

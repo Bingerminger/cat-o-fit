@@ -1,6 +1,6 @@
 /* =========================================================================
-   style.css — Design-Fundament: Variablen, Themes, Layout, Basis-Komponenten.
-   Anmutung: ruhig, modern, hochwertig (Richtung Apple Fitness / Premium Health).
+   style.css — design foundation: variables, themes, layout, base components.
+   Feel: calm, modern, high-quality (towards Apple Fitness / Premium Health).
    ========================================================================= */
 
 /* ---------- Reset ---------- */
@@ -11,16 +11,16 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 input, select, textarea { font: inherit; color: inherit; }
 a { color: inherit; text-decoration: none; }
 img, svg { display: block; max-width: 100%; }
-/* Fokusrahmen zweifarbig: innen Textfarbe (auf jedem Hintergrund ≥ 3:1), außen ein
-   Akzent-Schein – die Akzentfarbe allein erreichte auf hellem Grund nur ≈ 2,3:1 (UI-20). */
+/* Two-tone focus ring: text colour inside (≥ 3:1 on any background), an outer
+   accent glow – the accent colour alone reached only ≈ 2.3:1 on a light background (UI-20). */
 :focus-visible {
   outline: 2px solid var(--text); outline-offset: 2px;
   box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 45%, transparent);
 }
-/* hidden-Attribut muss display-Regeln mit Klassenspezifität schlagen. */
+/* The hidden attribute must beat display rules with class specificity. */
 [hidden] { display: none !important; }
 
-/* Sprunglink: erster Tab-Halt, nur bei Tastaturfokus sichtbar. */
+/* Skip link: first tab stop, visible only on keyboard focus. */
 .skip-link {
   position: fixed; left: var(--sp-3); top: calc(env(safe-area-inset-top) + var(--sp-2));
   z-index: 100; padding: var(--sp-2) var(--sp-4);
@@ -30,25 +30,25 @@ img, svg { display: block; max-width: 100%; }
 }
 .skip-link:focus, .skip-link:focus-visible { transform: none; }
 
-/* ---------- Theme-Variablen ---------- */
+/* ---------- Theme variables ---------- */
 :root {
   --accent: #18b48a;
   --accent-contrast: #ffffff;
   --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
   --accent-softer: color-mix(in srgb, var(--accent) 8%, transparent);
   --accent-strong: color-mix(in srgb, var(--accent) 78%, #000 22%);
-  /* Akzent als TEXT auf hellem Grund (≥ 4,5:1); Flächen nutzen weiter --accent (UI-12). */
+  /* Accent as TEXT on a light background (≥ 4.5:1); surfaces keep using --accent (UI-12). */
   --accent-text: color-mix(in srgb, var(--accent) 55%, #000);
 
   --good: #2bb673;
   --warn: #f5a623;
   --bad:  #ef5d6c;
   --info: #3d8bff;
-  /* Kräftige Flächen für WEISSE Schrift (Toasts) – ≥ 4,5:1 in beiden Themes (UI-12). */
+  /* Strong surfaces for WHITE text (toasts) – ≥ 4.5:1 in both themes (UI-12). */
   --good-strong: #1b7a4b;
   --bad-strong: #b3263a;
   --info-strong: #1f5fcc;
-  /* Zweite Farbe der Hero-Verläufe – weg von der Schriftfarbe; app.js errechnet sie je Akzent. */
+  /* Second colour of the hero gradients – away from the text colour; app.js computes it per accent. */
   --accent-hero-end: color-mix(in srgb, var(--accent) 78%, #fff);
 
   --r-xs: 8px;
@@ -69,7 +69,7 @@ img, svg { display: block; max-width: 100%; }
   --maxw: 720px;
 }
 
-/* Hell (Standard) */
+/* Light (default) */
 :root, [data-theme="light"] {
   --bg: #eef1f5;
   --bg-elev: #f6f8fb;
@@ -78,8 +78,8 @@ img, svg { display: block; max-width: 100%; }
   --surface-3: #e7ecf1;
   --text: #161b21;
   --text-2: #58646f;
-  --text-3: #626c78;   /* vorher #8893a0: 2,75:1 – jetzt ≥ 4,5:1 (UI-12) */
-  /* Statusfarben als TEXT (≥ 4,5:1 auf Seite und Karten); die Flächen bleiben --good usw. */
+  --text-3: #626c78;   /* previously #8893a0: 2.75:1 – now ≥ 4.5:1 (UI-12) */
+  /* Status colours as TEXT (≥ 4.5:1 on page and cards); the surfaces stay --good etc. */
   --good-text: #1b7a4b;
   --warn-text: #9a5b00;
   --bad-text: #b3263a;
@@ -94,7 +94,7 @@ img, svg { display: block; max-width: 100%; }
   color-scheme: light;
 }
 
-/* Dunkel */
+/* Dark */
 [data-theme="dark"] {
   --bg: #0c0f13;
   --bg-elev: #11151b;
@@ -103,7 +103,7 @@ img, svg { display: block; max-width: 100%; }
   --surface-3: #262f39;
   --text: #eef2f6;
   --text-2: #9aa7b4;
-  --text-3: #8a96a1;   /* vorher #69757f: 3,6:1 auf Karten */
+  --text-3: #8a96a1;   /* previously #69757f: 3.6:1 on cards */
   --good-text: #2bb673;
   --warn-text: #f5a623;
   --bad-text: #ff7a87;
@@ -115,13 +115,13 @@ img, svg { display: block; max-width: 100%; }
   --shadow-2: 0 6px 20px rgba(0, 0, 0, 0.4);
   --shadow-3: 0 18px 44px rgba(0, 0, 0, 0.55);
   --scrim: rgba(0, 0, 0, 0.6);
-  /* Dunkel: Akzenttext und Soft-Knöpfe AUFHELLEN statt abdunkeln (UI-12, UI-32). */
+  /* Dark: LIGHTEN accent text and soft buttons instead of darkening them (UI-12, UI-32). */
   --accent-text: color-mix(in srgb, var(--accent) 70%, #fff);
   --accent-strong: color-mix(in srgb, var(--accent) 70%, #fff 30%);
   color-scheme: dark;
 }
 
-/* ---------- Basis ---------- */
+/* ---------- Base ---------- */
 html { -webkit-text-size-adjust: 100%; }
 body {
   font-family: var(--font);
@@ -136,7 +136,7 @@ h1, h2, h3 { line-height: 1.2; font-weight: 700; letter-spacing: -0.01em; }
 small { font-size: 0.82em; }
 .num { font-family: var(--font-num); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
 
-/* ---------- App-Gerüst ---------- */
+/* ---------- App shell ---------- */
 #app {
   display: flex;
   flex-direction: column;
@@ -174,7 +174,7 @@ small { font-size: 0.82em; }
 }
 .app-header__titles { flex: 1 1 auto; min-width: 0; }
 .app-header__title {
-  width: fit-content; max-width: 100%;   /* Fokusrahmen (nach Seitenwechsel) liegt eng am Text */
+  width: fit-content; max-width: 100%;   /* focus ring (after a page change) sits tight against the text */
   font-size: 1.32rem;
   font-weight: 800;
   letter-spacing: -0.02em;
@@ -235,7 +235,7 @@ small { font-size: 0.82em; }
 .icon-btn:hover { background: var(--surface-2); }
 .icon-btn svg { width: 22px; height: 22px; }
 
-/* ---------- Bottom-Navigation ---------- */
+/* ---------- Bottom navigation ---------- */
 .bottom-nav {
   position: sticky;
   bottom: 0;
@@ -266,7 +266,7 @@ small { font-size: 0.82em; }
 .bottom-nav__item svg { width: 24px; height: 24px; }
 .bottom-nav__item.is-active { color: var(--accent-text); }
 .bottom-nav__item:active { opacity: 0.6; }
-/* ＋ Erfassen: runder Akzentknopf in der Mitte der Tab-Leiste. */
+/* ＋ Log: round accent button in the middle of the tab bar. */
 .bottom-nav__plus {
   display: grid; place-items: center;
   width: 40px; height: 40px; border-radius: var(--r-pill);
@@ -276,16 +276,16 @@ small { font-size: 0.82em; }
 .bottom-nav__plus svg { width: 22px; height: 22px; }
 .bottom-nav__item--capture { color: var(--text-2); gap: 2px; }
 
-/* ---------- Sidebar (iPad / Desktop, per Media Query aktiviert) ---------- */
+/* ---------- Sidebar (iPad / desktop, activated via media query) ---------- */
 .sidebar { display: none; }
 
-/* ---------- Abgemeldet: keine Menüs (nur Login-Dashboard sichtbar) ---------- */
+/* ---------- Signed out: no menus (only the login dashboard visible) ---------- */
 body.is-anon .bottom-nav { display: none; }
 body.is-anon #manage-banner { display: none; }
-/* Ohne Bottom-Nav unten kein Platzhalter für deren Höhe nötig. */
+/* Without a bottom nav, no placeholder for its height is needed at the bottom. */
 body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp-6)); }
 
-/* ---------- Konto-Kopf (Mehr-Sheet, Seitenleisten-Fuß) ---------- */
+/* ---------- Account header (More sheet, sidebar footer) ---------- */
 .account { display: flex; flex-direction: column; gap: var(--sp-2); }
 .account__row { display: flex; align-items: center; gap: var(--sp-3); min-width: 0; }
 .account__avatar {
@@ -306,7 +306,7 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
 .account__managing-text { flex: 1 1 auto; min-width: 0; }
 .account__back { min-height: 40px; padding: 0 var(--sp-3); font-size: 0.86rem; }
 
-/* ---------- „Mehr": Gruppen und aktueller Eintrag ---------- */
+/* ---------- "More": groups and current entry ---------- */
 .more-sheet > .account {
   padding: var(--sp-3); margin-bottom: var(--sp-2);
   background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r-lg);
@@ -335,7 +335,7 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
   border-color: color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
-/* ---------- ＋ Erfassen ---------- */
+/* ---------- ＋ Log ---------- */
 .capture-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-2); }
 .capture-tile {
   display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
@@ -352,7 +352,7 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
 .capture-tile__label { font-weight: 700; }
 .capture-tile__hint { font-size: 0.78rem; color: var(--text-2); line-height: 1.3; }
 
-/* ---------- Reiter „Fortschritt" (Training · Körper · Erfolge · Berichte) ---------- */
+/* ---------- "Progress" tab (Training · Body · Badges · Reports) ---------- */
 .progress-tabs {
   display: flex; width: 100%; margin-bottom: var(--sp-4);
   overflow-x: auto; scrollbar-width: none;
@@ -363,7 +363,7 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
   display: flex; align-items: center; justify-content: center;
 }
 
-/* ---------- Formularfelder ---------- */
+/* ---------- Form fields ---------- */
 .field { display: block; margin-bottom: var(--sp-4); }
 .field__label {
   display: block;
@@ -420,7 +420,7 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
   box-shadow: var(--shadow-1);
 }
 
-/* Stepper (+/- für Workout-Erfassung) */
+/* Stepper (+/- for workout logging) */
 .stepper { display: inline-flex; align-items: center; gap: var(--sp-3); }
 .stepper__btn {
   width: 44px; height: 44px;
@@ -434,9 +434,9 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
 .stepper__val { min-width: 56px; text-align: center; font-size: 1.3rem; font-weight: 700; }
 
 /* Switch */
-/* inline-flex statt des Default-`inline` eines <label>: so gelten width/height
-   IMMER – auch außerhalb eines Flex-Containers. Sonst kollabiert der Schalter
-   auf 0×0 und der Knopf überdeckt das Label (z. B. in einem block-`field`). */
+/* inline-flex instead of the default `inline` of a <label>: this way width/height
+   ALWAYS apply – even outside a flex container. Otherwise the switch collapses
+   to 0×0 and the knob covers the label (e.g. in a block `field`). */
 .switch { display: inline-flex; position: relative; width: 50px; height: 30px; flex: 0 0 auto; vertical-align: middle; }
 .switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
 .switch__track {
@@ -486,7 +486,7 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
 .section-head__title { font-size: 1.04rem; font-weight: 750; }
 .section-head__action { font-size: 0.84rem; font-weight: 650; color: var(--accent-text); }
 
-/* ---------- Modal / Bottom-Sheet ---------- */
+/* ---------- Modal / bottom sheet ---------- */
 .modal-root {
   position: fixed; inset: 0; z-index: 60;
   display: none;
@@ -522,7 +522,7 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
   display: flex; align-items: center; gap: var(--sp-3);
   padding: var(--sp-3) var(--sp-4) var(--sp-2);
 }
-/* Der Dialog selbst bekommt beim Öffnen den Fokus (Ansage des Titels) – ohne Rahmen. */
+/* The dialog itself receives focus when opened (announces the title) – without an outline. */
 .sheet:focus, .sheet:focus-visible { outline: none; box-shadow: var(--shadow-3); }
 .sheet__title { flex: 1; font-size: 1.1rem; font-weight: 750; }
 .sheet__body { padding: var(--sp-2) var(--sp-4) var(--sp-5); overflow-y: auto; }
@@ -555,10 +555,10 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
 }
 .toast--good { background: var(--good-strong); color: #fff; }
 .toast--bad  { background: var(--bad-strong); color: #fff; }
-/* Symbol im Toast: feste Größe – ohne sie war es mal 0 px, mal 105 px groß (UI-27). */
+/* Icon in the toast: fixed size – without it, it was sometimes 0 px, sometimes 105 px (UI-27). */
 .toast svg { width: 18px; height: 18px; flex: 0 0 auto; }
 
-/* ---------- Sync-Indikator ---------- */
+/* ---------- Sync indicator ---------- */
 .sync-indicator {
   position: fixed;
   top: calc(env(safe-area-inset-top) + 8px);
@@ -605,8 +605,8 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
 .dim { color: var(--text-3); }
 .center { text-align: center; }
 .hidden { display: none !important; }
-/* Vollständige Spacing-Skala (1–6): fehlende Stufen führten sonst zu „toten" Klassen
-   (z. B. `mt-3`/`gap-4` ohne Wirkung) und damit zu ungleichen Abständen. */
+/* Complete spacing scale (1–6): missing steps otherwise led to "dead" classes
+   (e.g. `mt-3`/`gap-4` without effect) and thus to uneven spacing. */
 .mt-1 { margin-top: var(--sp-1); } .mt-2 { margin-top: var(--sp-2); } .mt-3 { margin-top: var(--sp-3); }
 .mt-4 { margin-top: var(--sp-4); } .mt-5 { margin-top: var(--sp-5); } .mt-6 { margin-top: var(--sp-6); }
 .mb-1 { margin-bottom: var(--sp-1); } .mb-2 { margin-bottom: var(--sp-2); } .mb-3 { margin-bottom: var(--sp-3); } .mb-4 { margin-bottom: var(--sp-4); }
@@ -614,7 +614,7 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
 .text-accent { color: var(--accent-text); }
 .fade-in { animation: fade-in 0.3s ease; }
 
-/* ---------- Animationen ---------- */
+/* ---------- Animations ---------- */
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes sheet-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
 @keyframes toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -626,7 +626,7 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
 
-/* ---------- „…"-Menü (Aktionsliste mit Text) ---------- */
+/* ---------- "…" menu (action list with text) ---------- */
 .action-list { display: flex; flex-direction: column; gap: 2px; }
 .action-item {
   display: flex; align-items: center; gap: var(--sp-3);
@@ -646,20 +646,20 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
 .action-item--danger .action-item__icon { background: color-mix(in srgb, var(--bad) 14%, transparent); color: var(--bad-text); }
 .action-item--danger .action-item__label { color: var(--bad-text); }
 
-/* Toast-Aktion („Rückgängig") – großes Ziel, deutlich als Knopf erkennbar */
+/* Toast action ("Undo") – large target, clearly recognisable as a button */
 .toast__action {
   margin-left: var(--sp-2); min-height: 36px; padding: 0 var(--sp-3);
   border-radius: var(--r-pill); font-weight: 750; font-size: 0.86rem;
   background: color-mix(in srgb, currentColor 18%, transparent); color: inherit;
 }
-/* Chip als Knopf (Schnellwahl): Ziel ≥ 36 px hoch */
+/* Chip as a button (quick pick): target ≥ 36 px tall */
 .chip--btn { min-height: 36px; padding: 6px 14px; font-size: 0.84rem; cursor: pointer; }
 
-/* Sprungleiste (Einstellungen) und Abschnittsköpfe unter dem klebenden Kopf (UI-15) */
+/* Jump bar (settings) and section headers below the sticky header (UI-15) */
 .jump-nav { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin-bottom: var(--sp-2); }
 .section-head { scroll-margin-top: calc(var(--header-h) + env(safe-area-inset-top) + 48px); }
 
-/* Fehler direkt am Feld (UI-35) */
+/* Error right at the field (UI-35) */
 .field__error {
   display: block;
   margin-top: var(--sp-1);
@@ -672,7 +672,7 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--bad) 18%, transparent);
 }
 
-/* ⓘ an Kennzahlen (DOC-19/UI-21): gedämpft, volle Trefferfläche */
+/* ⓘ on metrics (DOC-19/UI-21): muted, full hit area */
 .info-btn { color: var(--text-3); flex: 0 0 auto; }
 .info-btn svg { width: 18px; height: 18px; }
 .info-btn:hover, .info-btn:focus-visible { color: var(--accent-text); }

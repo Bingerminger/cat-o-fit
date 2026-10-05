@@ -1,36 +1,36 @@
 <?php
 /**
- * health-import.php — Import eines Apple-Health-Exports.
+ * health-import.php — import of an Apple Health export.
  *
- * Eingebunden von api.php bei POST ?action=health-import.
+ * Included by api.php for POST ?action=health-import.
  *
- * Ablauf:
- *   1. Datei-Upload entgegennehmen (export.xml ODER das Health-Export-ZIP).
- *   2. Bei ZIP: export.xml herausstreamen (ZipArchive, falls verfügbar).
- *   3. export.xml mit XMLReader streamen (NICHT SimpleXML – die Datei kann
- *      hunderte MB groß sein).
- *   4. Relevante Daten extrahieren:
- *        - Lauf-Workouts            -> Kandidaten für durchgeführte Sessions
- *        - Gewicht/Körperfett/...   -> Kandidaten für den Health-Log (pro Tag)
- *        - Schlafanalyse            -> Schlafstunden pro Nacht (aggregiert)
- *   5. Normalisierte Kandidaten als JSON zurückgeben. Das De-Duplizieren gegen
- *      den lokalen Bestand und das Übernehmen passiert "local-first" im Client
- *      (health-import.js), damit der LocalStorage die führende Quelle bleibt.
+ * Flow:
+ *   1. Accept the file upload (export.xml OR the Health export ZIP).
+ *   2. For a ZIP: stream export.xml out (ZipArchive, if available).
+ *   3. Stream export.xml with XMLReader (NOT SimpleXML – the file can
+ *      be hundreds of MB).
+ *   4. Extract the relevant data:
+ *        - running workouts         -> candidates for completed sessions
+ *        - weight/body fat/...      -> candidates for the health log (per day)
+ *        - sleep analysis           -> sleep hours per night (aggregated)
+ *   5. Return normalised candidates as JSON. De-duplicating against
+ *      the local data and adopting them happens "local-first" in the client
+ *      (health-import.js), so that LocalStorage remains the leading source.
  *
- * Die Funktionen respond()/fail() und $session stammen aus api.php (bereits geladen).
+ * The functions respond()/fail() and $session come from api.php (already loaded).
  */
 
 declare(strict_types=1);
 
 @set_time_limit(0);
 
-// Obergrenzen gegen „ZIP-Bomben" (winzige Datei, riesiger Inhalt): Ein echter
-// export.xml aus vielen Jahren ist einige GB groß und packt sich etwa 10- bis 30-fach.
-const HX_MAX_XML_BYTES = 6 * 1024 * 1024 * 1024;   // 6 GiB entpackt
-const HX_MAX_RATIO = 200;                          // entpackt / gepackt
-const HX_DISK_RESERVE = 256 * 1024 * 1024;         // so viel muss danach frei bleiben
+// Upper limits against "ZIP bombs" (tiny file, huge content): a genuine
+// export.xml from many years is several GB and compresses by roughly 10 to 30 times.
+const HX_MAX_XML_BYTES = 6 * 1024 * 1024 * 1024;   // 6 GiB unpacked
+const HX_MAX_RATIO = 200;                          // unpacked / packed
+const HX_DISK_RESERVE = 256 * 1024 * 1024;         // this much must remain free afterwards
 
-// Externe Entitäten nie laden (XXE), auch auf älteren libxml-Versionen.
+// Never load external entities (XXE), even on older libxml versions.
 libxml_set_external_entity_loader(static fn() => null);
 
 if (!class_exists('XMLReader')) {
@@ -38,7 +38,7 @@ if (!class_exists('XMLReader')) {
 }
 
 // ---------------------------------------------------------------------------
-// 1) Upload ermitteln.
+// 1) Determine the upload.
 // ---------------------------------------------------------------------------
 if (empty($_FILES['file']['tmp_name']) || !is_uploaded_file($_FILES['file']['tmp_name'])) {
     fail('No file received (expected field "file").', 400, 'no_file');
@@ -50,11 +50,11 @@ $xmlPath    = $uploadTmp;
 $cleanup    = [];
 
 // ---------------------------------------------------------------------------
-// 2) ZIP-Erkennung und Entpacken von export.xml.
+// 2) ZIP detection and unpacking of export.xml.
 // ---------------------------------------------------------------------------
 $isZip = preg_match('/\.zip$/i', $uploadName) === 1;
 if (!$isZip) {
-    // Magic Bytes prüfen ("PK\x03\x04").
+    // Check magic bytes ("PK\x03\x04").
     $fh = fopen($uploadTmp, 'rb');
     if ($fh) {
         $sig = fread($fh, 4);
@@ -74,7 +74,7 @@ if ($isZip) {
     if ($zip->open($uploadTmp) !== true) {
         fail('The ZIP could not be opened.', 400, 'zip_unreadable');
     }
-    // export.xml im Archiv finden (liegt meist unter apple_health_export/export.xml).
+    // Find export.xml in the archive (usually under apple_health_export/export.xml).
     $entry = null;
     for ($i = 0; $i < $zip->numFiles; $i++) {
         $name = $zip->getNameIndex($i);
@@ -87,8 +87,8 @@ if ($isZip) {
         $zip->close();
         fail('No export.xml found in the ZIP.', 400, 'zip_no_export');
     }
-    // Angegebene Größe vorab prüfen (Grenze und Packverhältnis) – beim Entpacken zählt
-    // zusätzlich der tatsächliche Inhalt, falls die Angaben im Archiv nicht stimmen.
+    // Check the declared size up front (limit and compression ratio) – while unpacking, the
+    // actual content counts as well, in case the archive's figures are wrong.
     $stat = $zip->statName($entry);
     $declared = is_array($stat) ? (int) ($stat['size'] ?? 0) : 0;
     $packed = is_array($stat) ? max(1, (int) ($stat['comp_size'] ?? 0)) : 1;
@@ -136,8 +136,8 @@ if ($isZip) {
 
 
 // ---------------------------------------------------------------------------
-// 3) Auswerten (reine Logik in health-xml.php, dort auch Einheiten, Schlaf und Datum)
-//    und Kandidaten zurückgeben. Das De-Duplizieren passiert im Client.
+// 3) Evaluate (pure logic in health-xml.php, which also handles units, sleep and dates)
+//    and return candidates. De-duplication happens in the client.
 // ---------------------------------------------------------------------------
 require_once __DIR__ . '/health-xml.php';
 
@@ -160,6 +160,6 @@ respond([
     ],
     'workouts' => $parsed['workouts'],
     'health'   => $parsed['health'],
-    // Zyklus nur zur Übernahme in den eigenen, privaten Bereich – die App fragt vorher.
+    // Cycle only for adoption into the person's own private area – the app asks first.
     'periods'  => $parsed['periods'] ?? [],
 ]);

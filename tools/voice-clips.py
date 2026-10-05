@@ -1,17 +1,17 @@
-"""Sprachbausteine der Session erzeugen (assets/voice/<schlüssel>.m4a).
+"""Generate the session's voice building blocks (assets/voice/<key>.m4a).
 
-Stimme: Piper (https://github.com/OHF-Voice/piper1-gpl) mit „Thorsten“ (de_DE,
-Datensatz CC0, https://github.com/thorstenMueller/Thorsten-Voice). Die Texte kommen
-aus js/voice.js (voiceTexts) über tools/voice-texts.mjs.
+Voice: Piper (https://github.com/OHF-Voice/piper1-gpl) with "Thorsten" (de_DE,
+CC0 dataset, https://github.com/thorstenMueller/Thorsten-Voice). The texts come
+from js/voice.js (voiceTexts) via tools/voice-texts.mjs.
 
     python3 -m venv /tmp/piper && /tmp/piper/bin/pip install piper-tts
-    # Modell: de_DE-thorsten-medium.onnx (+ .onnx.json) von huggingface.co/rhasspy/piper-voices
+    # Model: de_DE-thorsten-medium.onnx (+ .onnx.json) from huggingface.co/rhasspy/piper-voices
     node --import ./test-setup.js tools/voice-texts.mjs > /tmp/voice.json
-    /tmp/piper/bin/python tools/voice-clips.py /tmp/voice.json <modell.onnx> assets/voice [--only key,key]
+    /tmp/piper/bin/python tools/voice-clips.py /tmp/voice.json <model.onnx> assets/voice [--only key,key]
 
-Stille am Anfang und Ende wird gekürzt, die Lautstärke angeglichen (Spitze 0,9), dann
-mit macOS-afconvert nach AAC (32 kbit/s, mono) gewandelt. Vorhandene Dateien bleiben,
-außer sie stehen in --only.
+Silence at the start and end is trimmed, the volume levelled (peak 0.9), then
+converted to AAC (32 kbit/s, mono) with macOS afconvert. Existing files are kept,
+unless they are listed in --only.
 """
 import array
 import json
@@ -51,8 +51,8 @@ def main() -> None:
     out = Path(sys.argv[3]).resolve()
     only = set(sys.argv[sys.argv.index('--only') + 1].split(',')) if '--only' in sys.argv else None
     out.mkdir(parents=True, exist_ok=True)
-    # eSpeak verkraftet nur kurze Pfade (sonst fällt es auf den Pfad der Build-Maschine
-    # zurück): aus dem Piper-Ordner heraus mit relativem Pfad laden.
+    # eSpeak copes only with short paths (otherwise it falls back to the build machine's
+    # path): load from within the Piper folder using a relative path.
     import os
     import piper
     os.chdir(Path(piper.__file__).parent)

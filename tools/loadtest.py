@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
-"""Cat-O-Fit Lasttest: paralleler Mix aus Write/Read/Backup/Import gegen die PHP-API,
-   plus Datenintegritäts-Prüfungen. Reine stdlib. Gibt eine Auswertungstabelle aus.
-   Aufruf: loadtest.py <BASE_URL> <DATA_DIR> [NUSERS WRITES READS BACKUPS IMPORTS IMPORT_RECS CONCURRENCY]"""
+"""Cat-O-Fit load test: parallel mix of write/read/backup/import against the PHP API,
+   plus data-integrity checks. Pure stdlib. Prints an evaluation table.
+   Call: loadtest.py <BASE_URL> <DATA_DIR> [NUSERS WRITES READS BACKUPS IMPORTS IMPORT_RECS CONCURRENCY]"""
 import urllib.request, json, time, threading, statistics, sys, os, glob, random
 from concurrent.futures import ThreadPoolExecutor
 
 BASE        = sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:8078/api/api.php"
 DATA_DIR    = sys.argv[2] if len(sys.argv) > 2 else "scratch/lt-app/data"
 NUSERS      = int(sys.argv[3]) if len(sys.argv) > 3 else 10
-WRITES      = int(sys.argv[4]) if len(sys.argv) > 4 else 60    # einzelne Upserts/Nutzer (sessions)
-READS       = int(sys.argv[5]) if len(sys.argv) > 5 else 25    # changes-Lesungen/Nutzer
-BACKUPS     = int(sys.argv[6]) if len(sys.argv) > 6 else 3     # Voll-Backups/Nutzer (alle Areas)
-IMPORTS     = int(sys.argv[7]) if len(sys.argv) > 7 else 2     # Importe/Nutzer (health replace)
-IMPORT_RECS = int(sys.argv[8]) if len(sys.argv) > 8 else 50    # Datensätze pro Import
-CONCURRENCY = int(sys.argv[9]) if len(sys.argv) > 9 else 40    # parallele Anfragen
+WRITES      = int(sys.argv[4]) if len(sys.argv) > 4 else 60    # single upserts/user (sessions)
+READS       = int(sys.argv[5]) if len(sys.argv) > 5 else 25    # changes reads/user
+BACKUPS     = int(sys.argv[6]) if len(sys.argv) > 6 else 3     # full backups/user (all areas)
+IMPORTS     = int(sys.argv[7]) if len(sys.argv) > 7 else 2     # imports/user (health replace)
+IMPORT_RECS = int(sys.argv[8]) if len(sys.argv) > 8 else 50    # records per import
+CONCURRENCY = int(sys.argv[9]) if len(sys.argv) > 9 else 40    # parallel requests
 
 USER_AREAS = ['profile','events','plans','sessions','health','nutrition','diary','shopping','checklist','cycle','reports','labs','supplements']
 
@@ -35,7 +35,7 @@ def record(typ, ok, ms):
 
 users = [f"u-load-{i:02d}" for i in range(1, NUSERS+1)]
 
-# ---- Phase 0: Familie mit NUSERS Mitgliedern anlegen ----
+# ---- Phase 0: create the family with NUSERS members ----
 member_ops = [{"op":"upsert","record":{"id":u,"_kind":"member","name":f"User{i:02d}",
                "role":"user","emoji":"🏃","color":"#3d8bff","createdAt":"2026-06-30T00:00:00Z"}}
               for i,u in enumerate(users,1)]
@@ -43,7 +43,7 @@ ok, ms, pl = req("POST", f"{BASE}?area=family&scope=family&action=ops", {"ops": 
 if not (ok and isinstance(pl,dict) and pl.get("ok")):
     print("FEHLER: Mitglieder anlegen fehlgeschlagen:", pl); sys.exit(1)
 
-# ---- Workload-Tasks ----
+# ---- Workload tasks ----
 write_revs = {u: [] for u in users}; wr_lock = threading.Lock()
 def do_write(u, n):
     rid = f"s-{u}-{n:04d}"
@@ -81,7 +81,7 @@ with ThreadPoolExecutor(max_workers=CONCURRENCY) as ex:
     for f in [ex.submit(fn,*a) for fn,a in tasks]: f.result()
 wall = time.perf_counter() - t_start
 
-# ---- Phase 2: Integrität ----
+# ---- Phase 2: integrity ----
 integ = []
 counts_ok = 0
 for u in users:
@@ -115,7 +115,7 @@ for u in users:
     if isinstance(d,list) and len(d)==IMPORT_RECS: imp_ok+=1
 integ.append((f"Import-Integrität – health == {IMPORT_RECS}", f"{imp_ok}/{NUSERS} korrekt", imp_ok==NUSERS))
 
-# ---- Phase 3: Auswertung ----
+# ---- Phase 3: evaluation ----
 def st(typ):
     rows = metrics.get(typ, []); n=len(rows); okc=sum(1 for ok,_ in rows if ok)
     lat=sorted(ms for _,ms in rows); pct=lambda q: lat[min(len(lat)-1,int(q*len(lat)))] if lat else 0
@@ -141,8 +141,8 @@ for name,res,ok in integ:
     print(f"| {name:46} | {res:24} | {('✓ OK' if ok else '✗ FAIL'):6} |")
 print("+"+"-"*48+"+"+"-"*26+"+"+"-"*8+"+")
 
-# Maschinenlesbares Fazit (letzte Zeile)
-usable = (total_err==0) and allpass and (st('write')[5] < 1000)  # p95 write < 1s als „benutzbar"
+# Machine-readable conclusion (last line)
+usable = (total_err==0) and allpass and (st('write')[5] < 1000)  # p95 write < 1s counts as "usable"
 print(f"\nFAZIT: Integrität {'BESTANDEN' if allpass else 'FEHLGESCHLAGEN'} · "
       f"Fehlerquote {100*total_err/max(total,1):.2f}% · "
       f"Write-p95 {st('write')[5]:.0f}ms · "

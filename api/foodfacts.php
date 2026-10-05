@@ -1,24 +1,24 @@
 <?php
 /* =========================================================================
-   foodfacts.php — Open-Food-Facts-Nährwert-Proxy mit lokalem Cache.
+   foodfacts.php — Open Food Facts nutrition proxy with local cache.
 
-   GET ?action=foodfacts&q=<Zutat>     ->  { found, name, kcal100, protein100 }
-   GET ?action=foodfacts&code=<EAN>    ->  dasselbe für ein Produkt (Strichcode, 8–14 Ziffern)
-   Optional: &lc=<Sprache> (ISO 639-1; die App schickt ihre Sprache) und &cc=<Land> (ISO 3166-1
-   Alpha-2) – Namen in dieser Sprache, Produkte aus diesem Land. Ohne lc gilt die Sprache der
-   Instanz (ältere App-Versionen waren deutsch).
+   GET ?action=foodfacts&q=<ingredient>  ->  { found, name, kcal100, protein100 }
+   GET ?action=foodfacts&code=<EAN>      ->  the same for a product (barcode, 8–14 digits)
+   Optional: &lc=<language> (ISO 639-1; the app sends its language) and &cc=<country> (ISO 3166-1
+   alpha-2) – names in that language, products from that country. Without lc the language of
+   the instance applies (older app versions were German).
 
-   Liefert grobe Nährwerte je 100 g/ml zu einem Zutatennamen. Die Anfrage geht
-   ausschließlich vom Server (Synology) an Open Food Facts – nie von den Clients –
-   und ohne API-Key. Treffer werden in data/foodfacts.json gecacht, daher sind
-   Wiederholungen schnell und funktionieren offline. Wird von api.php eingebunden;
-   respond() stammt von dort, DATA_DIR aus storage.php, person_language() aus i18n.php.
+   Returns rough nutritional values per 100 g/ml for an ingredient name. The request goes
+   exclusively from the server (Synology) to Open Food Facts – never from the clients –
+   and without an API key. Hits are cached in data/foodfacts.json, so
+   repeats are fast and work offline. Included by api.php;
+   respond() comes from there, DATA_DIR from storage.php, person_language() from i18n.php.
 
-   Open Food Facts ist eine offene, gemeinnützige Datenbank (ODbL). Wir schicken
-   nur den generischen Zutatennamen (z. B. „Haferflocken“) – keinerlei Nutzerdaten.
+   Open Food Facts is an open, non-profit database (ODbL). We send
+   only the generic ingredient name (e.g. "rolled oats") – no user data whatsoever.
    ========================================================================= */
 
-/** Strichcode gültig? 8, 12, 13 oder 14 Ziffern mit stimmender GS1-Prüfziffer. */
+/** Is the barcode valid? 8, 12, 13 or 14 digits with a correct GS1 check digit. */
 function ff_valid_gtin(string $code): bool
 {
     if (!preg_match('/^\d{8,14}$/', $code) || !in_array(strlen($code), [8, 12, 13, 14], true)) return false;
@@ -32,7 +32,7 @@ function ff_valid_gtin(string $code): bool
 $code = isset($_GET['code']) ? preg_replace('/\s+/', '', (string) $_GET['code']) : '';
 $q = isset($_GET['q']) ? trim((string) $_GET['q']) : '';
 if ($code !== '') {
-    // Nur echte Strichcodes gehen nach außen – keine beliebigen Zeichenketten in der Adresse.
+    // Only genuine barcodes go out – no arbitrary strings in the address.
     if (!ff_valid_gtin($code)) {
         respond(['found' => false, 'error' => 'Invalid barcode']);
     }
@@ -55,11 +55,11 @@ if ($lc !== 'de' || $cc !== '') {
 }
 
 $cacheFile = DATA_DIR . '/foodfacts.json';
-$ttlHit  = 60 * 60 * 24 * 90;   // Treffer 90 Tage gültig
-$ttlMiss = 60 * 60 * 24 * 7;    // Fehltreffer nur 7 Tage (OFF wächst stetig)
-const FF_CACHE_MAX = 600;       // Obergrenze: älteste Einträge fallen heraus (sonst wächst die Datei ohne Ende)
+$ttlHit  = 60 * 60 * 24 * 90;   // hits stay valid for 90 days
+$ttlMiss = 60 * 60 * 24 * 7;    // misses only 7 days (OFF keeps growing)
+const FF_CACHE_MAX = 600;       // upper limit: the oldest entries drop out (otherwise the file grows without end)
 
-/** Cache lesen (kaputt oder fehlend = leer). */
+/** Read the cache (broken or missing = empty). */
 function ff_cache_read(string $file): array
 {
     $c = is_file($file) ? json_decode((string) @file_get_contents($file), true) : [];
@@ -71,11 +71,11 @@ if (isset($cache[$key])) {
     $age   = time() - (int) ($cache[$key]['ts'] ?? 0);
     $found = !empty($cache[$key]['data']['found']);
     if ($age < ($found ? $ttlHit : $ttlMiss)) {
-        respond($cache[$key]['data']);   // Cache-Treffer -> offline + schnell
+        respond($cache[$key]['data']);   // cache hit -> offline + fast
     }
 }
 
-/** Holt eine URL (curl bevorzugt, sonst file_get_contents). null bei Fehler. */
+/** Fetches a URL (curl preferred, otherwise file_get_contents). null on error. */
 function ff_fetch(string $url): ?string
 {
     $ua = 'Cat-O-Fit/1.0 (self-hosted family fitness app; Open Food Facts nutrition lookup)';
@@ -86,15 +86,15 @@ function ff_fetch(string $url): ?string
             CURLOPT_TIMEOUT        => 5,
             CURLOPT_CONNECTTIMEOUT => 4,
             CURLOPT_USERAGENT      => $ua,
-            // Keinen Umleitungen folgen und nur HTTPS sprechen: Die Antwort kommt
-            // ausschließlich von der fest eingestellten Open-Food-Facts-Adresse.
+            // Follow no redirects and speak HTTPS only: the response comes
+            // exclusively from the hard-coded Open Food Facts address.
             CURLOPT_FOLLOWLOCATION => false,
             CURLOPT_PROTOCOLS      => CURLPROTO_HTTPS,
         ]);
         $body = curl_exec($ch);
         $ok   = $body !== false && curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200;
-        // curl_close() ist seit PHP 8.0 wirkungslos und ab 8.5 deprecated (würde
-        // sonst die JSON-Antwort verschmutzen) – der Handle wird automatisch frei.
+        // curl_close() has had no effect since PHP 8.0 and is deprecated from 8.5 (it would
+        // otherwise pollute the JSON response) – the handle is freed automatically.
         return $ok ? (string) $body : null;
     }
     if (ini_get('allow_url_fopen')) {
@@ -107,14 +107,14 @@ function ff_fetch(string $url): ?string
         $body = @file_get_contents($url, false, $ctx);
         return $body === false ? null : (string) $body;
     }
-    return null;   // Kein ausgehender HTTP-Weg verfügbar -> Client nutzt Heuristik
+    return null;   // No outgoing HTTP route available -> client uses a heuristic
 }
 
 $result = ['found' => false];
-// Nach Beliebtheit sortiert mehrere Treffer holen und den ERSTEN mit plausiblen
-// Nährwerten nehmen – das Top-1-Produkt hat oft keine energy-kcal_100g.
-// Nach Beliebtheit sortiert mehrere Treffer holen -> repräsentiert das echte
-// generische Lebensmittel besser als ein zufälliges Marken­produkt.
+// Fetch several hits sorted by popularity and take the FIRST one with plausible
+// nutritional values – the top-1 product often has no energy-kcal_100g.
+// Fetch several hits sorted by popularity -> represents the real
+// generic food better than a random branded product.
 $url = 'https://world.openfoodfacts.org/cgi/search.pl?' . http_build_query([
     'search_terms'  => $q,
     'lc'            => $lc,
@@ -126,7 +126,7 @@ $url = 'https://world.openfoodfacts.org/cgi/search.pl?' . http_build_query([
     'fields'        => 'product_name,nutriments',
 ] + ($cc !== '' ? ['cc' => $cc] : []));
 
-/** kcal je 100 g aus den Nährwerten – nutzt notfalls kJ (÷ 4,184). null wenn unplausibel. */
+/** kcal per 100 g from the nutritional values – falls back to kJ (÷ 4.184) if need be. null if implausible. */
 function ff_kcal100(array $nut): ?float
 {
     if (isset($nut['energy-kcal_100g']) && is_numeric($nut['energy-kcal_100g'])) {
@@ -134,13 +134,13 @@ function ff_kcal100(array $nut): ?float
     } elseif (isset($nut['energy-kj_100g']) && is_numeric($nut['energy-kj_100g'])) {
         $k = (float) $nut['energy-kj_100g'] / 4.184;
     } elseif (isset($nut['energy_100g']) && is_numeric($nut['energy_100g'])) {
-        $k = (float) $nut['energy_100g'] / 4.184;   // energy_100g ist üblicherweise kJ
+        $k = (float) $nut['energy_100g'] / 4.184;   // energy_100g is usually kJ
     } else {
         return null;
     }
-    return ($k > 0 && $k < 1000) ? $k : null;        // nur plausible Werte je 100 g
+    return ($k > 0 && $k < 1000) ? $k : null;        // plausible values per 100 g only
 }
-/** Median einer Zahlenliste (robuster gegen Ausreißer als der erste/mittlere Treffer). */
+/** Median of a list of numbers (more robust against outliers than the first/middle hit). */
 function ff_median(array $xs): float
 {
     sort($xs);
@@ -149,7 +149,7 @@ function ff_median(array $xs): float
 }
 
 if ($code !== '') {
-    // Ein bestimmtes Produkt: Name (in der Sprache lc bevorzugt), Marke, Nährwerte je 100 g.
+    // A specific product: name (preferably in the language lc), brand, nutritional values per 100 g.
     $raw = ff_fetch('https://world.openfoodfacts.org/api/v2/product/' . $code . '.json?' . http_build_query([
         'fields' => "product_name,product_name_{$lc},brands,nutriments",
         'lc'     => $lc,
@@ -175,7 +175,7 @@ if ($code !== '') {
             ];
         }
     }
-    $raw = null;   // die Textsuche unten entfällt
+    $raw = null;   // the text search below is skipped
 } else {
     $raw = ff_fetch($url);
 }
@@ -200,7 +200,7 @@ if ($raw !== null) {
             }
         }
     }
-    // Mindestens 2 Stichproben -> ein einzelnes „komisches“ Produkt zählt nicht.
+    // At least 2 samples -> a single "odd" product does not count.
     if (count($kcals) >= 2) {
         $result = [
             'found'      => true,
@@ -213,8 +213,8 @@ if ($raw !== null) {
     }
 }
 
-// Ergebnis (auch Fehltreffer) cachen, damit man nicht wiederholt online geht.
-// Unter Lock frisch lesen (parallele Anfragen), begrenzen und atomar ersetzen.
+// Cache the result (misses too) so that we do not go online repeatedly.
+// Read fresh under lock (parallel requests), limit and replace atomically.
 $lock = @fopen($cacheFile . '.lock', 'c');
 if ($lock !== false) {
     flock($lock, LOCK_EX);

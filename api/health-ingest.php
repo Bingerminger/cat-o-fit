@@ -1,35 +1,35 @@
 <?php
 /**
- * health-ingest.php — Automatischer, INKREMENTELLER Health-Eingang.
+ * health-ingest.php — automatic, INCREMENTAL health intake.
  *
- * Empfängt kleine JSON-Payloads der iOS-App „Health Auto Export" (REST-API-
- * Automation, JSON v2), das schlanke Tagesformat einer Kurzbefehl-Vorlage
- * ({ "date": …, "weight": …, … }, siehe hi_parse_simple) oder die Arrays einer
- * Android-Brücke für Health Connect (hi_parse_hcw) – und schreibt daraus
- * SERVER-SEITIG in die Bereiche des Nutzers:
- *   - health  : ein Eintrag pro Tag, feldweise gemergt (Gewicht, Ruhepuls, HRV,
- *               VO₂max, Schlaf, Körperfett, fettfreie Masse, Schritte, aktive Energie)
- *   - sessions: Workout-Zusammenfassungen, dedupliziert per HealthKit-UUID bzw. Startzeit
- *   - cycle   : Periodenbeginne, falls die Quelle sie schickt (privater Bereich)
- * Der Client zieht die neuen Werte beim nächsten Sync – kein Upload, kein
- * Client-Umbau. Statt eines 300-MB-Vollexports fließen nur KB-große Tagesdaten.
+ * Receives small JSON payloads from the iOS app "Health Auto Export" (REST API
+ * automation, JSON v2), the lean daily format of a Shortcuts template
+ * ({ "date": …, "weight": …, … }, see hi_parse_simple) or the arrays of an
+ * Android bridge for Health Connect (hi_parse_hcw) – and writes from them
+ * SERVER-SIDE into the user's areas:
+ *   - health  : one entry per day, merged field by field (weight, resting HR, HRV,
+ *               VO₂max, sleep, body fat, lean mass, steps, active energy)
+ *   - sessions: workout summaries, deduplicated by HealthKit UUID or start time
+ *   - cycle   : period starts, if the source sends them (private area)
+ * The client pulls the new values on the next sync – no upload, no
+ * client rework. Instead of a 300 MB full export only KB-sized daily data flows.
  *
- * Die REINE Mapping-Logik liegt in health-map.php (`hi_parse`, ohne DB – testbar,
- * siehe tools/test-health-ingest.php). Hier: Auth + Merge/Dedup + Schreiben.
+ * The PURE mapping logic lives in health-map.php (`hi_parse`, no DB – testable,
+ * see tools/test-health-ingest.php). Here: auth + merge/dedup + writing.
  *
- * Auth: Der Endpunkt liegt hinter dem .htpasswd der Seite; ZUSÄTZLICH ein
- * per-Nutzer-Token (profile.healthToken). Aufruf:
- *   POST api/api.php?action=health-ingest&user=<id>   mit Header  X-Catofit-Token: <secret>
- * (empfohlen, der Schlüssel landet so in keinem Zugriffsprotokoll) oder – wie bisher –
+ * Auth: the endpoint sits behind the site's .htpasswd; IN ADDITION a
+ * per-user token (profile.healthToken). Call:
+ *   POST api/api.php?action=health-ingest&user=<id>   with header  X-Catofit-Token: <secret>
+ * (recommended, the key then ends up in no access log) or – as before –
  *   POST api/api.php?action=health-ingest&user=<id>&token=<secret>
  *
- * Eingebunden von api.php (respond()/fail() stehen dort bereit).
+ * Included by api.php (respond()/fail() are available there).
  */
 declare(strict_types=1);
 
 require_once __DIR__ . '/health-map.php';
 
-// --- Nutzer + Token -------------------------------------------------------
+// --- User + token -------------------------------------------------------
 $user  = isset($_GET['user']) ? (string) $_GET['user'] : '';
 $token = isset($_GET['token']) ? (string) $_GET['token']
        : (string) ($_SERVER['HTTP_X_CATOFIT_TOKEN'] ?? '');
@@ -46,24 +46,24 @@ if ($token === '' || !hash_equals($expected, $token)) {
     fail('Invalid token.', 401, 'invalid_token');
 }
 
-// --- Body lesen -----------------------------------------------------------
+// --- Read body -----------------------------------------------------------
 $raw = file_get_contents('php://input');
 if ($raw === false || $raw === '') {
     fail('Empty request body.', 400, 'empty_body');
 }
-if (strlen($raw) > 24 * 1024 * 1024) {   // Sicherheitslimit; Aggregat-Payloads sind KB-groß (Batches nutzen).
+if (strlen($raw) > 24 * 1024 * 1024) {   // Safety limit; aggregate payloads are KB-sized (use batches).
     fail('Payload too large – turn on "Batch requests" or send shorter periods.', 413, 'payload_too_large');
 }
 $in = json_decode($raw, true);
 if (!is_array($in)) {
     fail('Expected JSON.', 400, 'invalid_json');
 }
-// Health Auto Export kapselt unter "data"; tolerant bleiben.
+// Health Auto Export wraps its content under "data"; stay tolerant.
 $data = is_array($in['data'] ?? null) ? $in['data'] : $in;
 
-// --- Reine Umwandlung (health-map.php) ------------------------------------
-// Health Connect (Android-Brücke), schlankes Tagesformat (Kurzbefehl, eigene Skripte)
-// oder Health-Auto-Export-Paket.
+// --- Pure conversion (health-map.php) ------------------------------------
+// Health Connect (Android bridge), lean daily format (Shortcuts, own scripts)
+// or Health Auto Export payload.
 // Session titles in the person's language.
 require_once __DIR__ . '/icstz.php';
 $lang = person_language($user);
@@ -71,7 +71,7 @@ $parsed = hi_is_hcw($data) ? hi_parse_hcw($data, ics_timezone(), $lang)
     : (hi_is_simple($data) ? hi_parse_simple($data, $lang) : hi_parse($data, $lang));
 $ingestSource = $parsed['source'] ?? 'apple-health';
 
-// --- health: nach Datum mergen (ein Eintrag/Tag; Nutzerfelder erhalten) ---
+// --- health: merge by date (one entry/day; keep user fields) ---
 $now = date('c');
 $healthOps = [];
 if ($parsed['healthByDate']) {
@@ -83,17 +83,17 @@ if ($parsed['healthByDate']) {
     foreach ($parsed['healthByDate'] as $date => $fields) {
         $base = $byDate[$date] ?? ['id' => 'h-' . $date, 'date' => $date, 'createdAt' => $now];
         unset($base['rev'], $base['updatedAt']);
-        $merged = array_merge($base, $fields);        // Gerätewerte überschreiben; mood/energy/notes bleiben
-        // Herkunft nur bei neuen oder schon automatisch importierten Tagen setzen. Ein Tag mit
-        // anderer Herkunft (von Hand, Demo) behält sie – sonst läse die App dessen Waagen-
-        // Muskelmasse als alte Apple-„Lean Body Mass“, also als fettfreie Masse.
+        $merged = array_merge($base, $fields);        // device values overwrite; mood/energy/notes stay
+        // Set the origin only for new days or days already imported automatically. A day with
+        // a different origin (by hand, demo) keeps it – otherwise the app would read its smart-scale
+        // muscle mass as an old Apple "Lean Body Mass", i.e. as lean mass.
         $src = (string) ($base['source'] ?? '');
         $merged['source'] = in_array($src, ['', 'apple-health', 'health', 'health-connect'], true) ? $ingestSource : $src;
         $healthOps[] = ['op' => 'upsert', 'record' => $merged];
     }
 }
 
-// --- sessions: dedup per hk-UUID + gegen manuell geloggte Einheiten -------
+// --- sessions: dedup per hk UUID + against manually logged sessions -------
 $sessionOps = [];
 $skippedDup = 0;
 if ($parsed['newSessions']) {
@@ -107,7 +107,7 @@ if ($parsed['newSessions']) {
                 if (strncmp((string) ($ex['id'] ?? ''), 'hk-', 3) === 0) continue;
                 $dd = abs((float) ($ex['distanceKm'] ?? 0) - (float) ($s['distanceKm'] ?? 0));
                 $dt = abs((int) ($ex['durationSec'] ?? 0) - (int) ($s['durationSec'] ?? 0));
-                if ($dd < 0.4 && $dt < 120) { $skippedDup++; continue 2; }   // manuelle Einheit gewinnt
+                if ($dd < 0.4 && $dt < 120) { $skippedDup++; continue 2; }   // the manual session wins
             }
         }
         $s['createdAt'] = $store['records'][$id]['createdAt'] ?? $now;
@@ -115,7 +115,7 @@ if ($parsed['newSessions']) {
     }
 }
 
-// --- cycle: Periodenbeginne (privater Bereich der Person; nur, was die Quelle schickt) ---
+// --- cycle: period starts (private area of the person; only what the source sends) ---
 $cycleOps = [];
 if (!empty($parsed['periods'])) {
     $store = read_store('cycle', 'user', $user);
@@ -125,7 +125,7 @@ if (!empty($parsed['periods'])) {
     }
     foreach ($parsed['periods'] as $p) {
         $ts = strtotime($p['start']);
-        // Schon erfasst (auch von Hand, ± 3 Tage)? Dann bleibt der vorhandene Eintrag.
+        // Already recorded (also by hand, ± 3 days)? Then the existing entry stays.
         $dup = false;
         foreach ($known as $k) if ($k !== false && abs($k - $ts) <= 3 * 86400) { $dup = true; break; }
         if ($dup) continue;
@@ -137,7 +137,7 @@ if (!empty($parsed['periods'])) {
     }
 }
 
-// --- Schreiben (atomar, mit rev) ------------------------------------------
+// --- Write (atomic, with rev) ------------------------------------------
 if ($healthOps)  apply_ops('health',   'user', $user, $healthOps);
 if ($sessionOps) apply_ops('sessions', 'user', $user, $sessionOps);
 if ($cycleOps)   apply_ops('cycle',    'user', $user, $cycleOps);
@@ -148,6 +148,6 @@ respond([
     'health'         => ['days' => count($healthOps), 'dates' => array_slice(array_keys($parsed['healthByDate']), 0, 10)],
     'sessions'       => ['imported' => count($sessionOps), 'skippedDuplicate' => $skippedDup, 'skippedUnmappedType' => $parsed['skippedUnmappedType']],
     'cycle'          => ['periods' => count($cycleOps)],
-    'ignoredMetrics' => $parsed['ignoredMetrics'],   // welche Metrik-Namen (noch) nicht gemappt werden
+    'ignoredMetrics' => $parsed['ignoredMetrics'],   // which metric names are not (yet) mapped
     'warnings'       => $parsed['warnings'],
 ]);

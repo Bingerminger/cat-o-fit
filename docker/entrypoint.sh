@@ -1,12 +1,12 @@
 #!/bin/sh
 # =============================================================================
-# Cat-O-Fit-Entrypoint: macht das data/-Volume startklar.
-# - data/.htaccess-Schutz sicherstellen (auch bei frischen Bind-Mounts).
-# - Schreibrechte für den Apache-Nutzer (www-data) setzen.
-# - Optional (CATOFIT_BASIC_AUTH=1): Anmeldung vor der ganzen App per Basic-Auth,
-#   Zugangsdaten aus CATOFIT_AUTH_USER / CATOFIT_AUTH_PASSWORD. Ohne die Variable
-#   verhält sich der Container wie bisher.
-# Danach übernimmt der normale Apache-Start des Basis-Images.
+# Cat-O-Fit entrypoint: gets the data/ volume ready.
+# - Make sure the data/.htaccess protection is in place (also on fresh bind mounts).
+# - Set write permissions for the Apache user (www-data).
+# - Optional (CATOFIT_BASIC_AUTH=1): sign-in in front of the whole app via Basic Auth,
+#   credentials from CATOFIT_AUTH_USER / CATOFIT_AUTH_PASSWORD. Without the variable
+#   the container behaves as before.
+# After that the normal Apache start of the base image takes over.
 # =============================================================================
 set -e
 
@@ -24,12 +24,12 @@ case "${CATOFIT_BASIC_AUTH:-}" in
       echo "CATOFIT_BASIC_AUTH is set, but CATOFIT_AUTH_USER/CATOFIT_AUTH_PASSWORD are missing – start aborted." >&2
       exit 1
     fi
-    # bcrypt-Hash über PHP (kein zusätzliches Paket nötig); Apache 2.4 versteht $2y$.
+    # bcrypt hash via PHP (no extra package needed); Apache 2.4 understands $2y$.
     php -r 'echo getenv("CATOFIT_AUTH_USER"), ":", password_hash(getenv("CATOFIT_AUTH_PASSWORD"), PASSWORD_BCRYPT), "\n";' > "$PASSWD"
     chown root:www-data "$PASSWD"
     chmod 640 "$PASSWD"
-    # Ausnahmen: der Container-Healthcheck (lokal) und der Health-Eingang, der mit
-    # seinem eigenen Schlüssel geschützt ist (Health Auto Export).
+    # Exceptions: the container health check (local) and the health intake, which is protected
+    # by its own key (Health Auto Export).
     cat > "$AUTH_CONF" <<'EOF'
 <Location />
     AuthType Basic
@@ -50,8 +50,8 @@ EOF
     ;;
 esac
 
-# Zeitzone: TZ (z. B. -e TZ=America/New_York) gilt auch für PHP – vorher blieb PHP fest
-# auf Europe/Berlin. Die Kalender-Dateien lesen TZ selbst (api/icstz.php).
+# Time zone: TZ (e.g. -e TZ=America/New_York) also applies to PHP – previously PHP stayed fixed
+# on Europe/Berlin. The calendar files read TZ themselves (api/icstz.php).
 TZ_INI=/usr/local/etc/php/conf.d/zz-cat-o-fit-tz.ini
 if [ -n "${TZ:-}" ] && php -r 'exit(in_array(getenv("TZ"), timezone_identifiers_list(), true) ? 0 : 1);'; then
   printf 'date.timezone = %s\n' "$TZ" > "$TZ_INI"

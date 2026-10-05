@@ -1,30 +1,30 @@
 #!/usr/bin/env node
 /* =========================================================================
-   render-screenshots.mjs — rendert die Bilder der Doku (docs/assets) neu,
-   reproduzierbar statt von Hand.
+   render-screenshots.mjs — re-renders the images of the docs (docs/assets),
+   reproducibly rather than by hand.
 
-   Jeder Lauf baut denselben Zustand: frische Instanz (App und API in einem
-   Temp-Verzeichnis mit leerem data/, eigener `php -S`), fester Tag, feste
-   Persona („Alex“, Demodaten), feste Wetterdaten. Die App läuft dabei unter
-   der Beispiel-Domain https://fit.example.org – der Browser schickt jede
-   Anfrage an den lokalen Server, alles andere bleibt blockiert. Nichts
-   verlässt den Rechner, echte Daten werden nie berührt.
+   Every run builds the same state: fresh instance (app and API in a
+   temp directory with an empty data/, its own `php -S`), fixed day, fixed
+   persona ("Alex", demo data), fixed weather data. The app runs under
+   the example domain https://fit.example.org – the browser sends every
+   request to the local server, everything else stays blocked. Nothing
+   leaves the machine, real data is never touched.
 
-     node tools/render-screenshots.mjs                  # alle Bilder nach docs/assets
-     node tools/render-screenshots.mjs --only 05,16     # nur diese Bilder (Präfix)
-     node tools/render-screenshots.mjs --out /tmp/bilder
+     node tools/render-screenshots.mjs                  # all images to docs/assets
+     node tools/render-screenshots.mjs --only 05,16     # only these images (prefix)
+     node tools/render-screenshots.mjs --out /tmp/images
 
-   Voraussetzungen: PHP ab 8.1 und Playwright – einmalig
-   `npm install --no-save playwright`; als Browser dient Google Chrome, sonst
-   `npx playwright install chromium`. Liegt Playwright woanders:
-   PLAYWRIGHT_MODULE=/pfad/zu/node_modules/playwright/index.mjs.
+   Prerequisites: PHP 8.1 or later and Playwright – once
+   `npm install --no-save playwright`; Google Chrome serves as the browser, otherwise
+   `npx playwright install chromium`. If Playwright is installed elsewhere:
+   PLAYWRIGHT_MODULE=/path/to/node_modules/playwright/index.mjs.
 
-   Ändert sich eine Ansicht, hier den Ablauf nachziehen und die betroffenen
-   Bilder neu rendern. Das Promo-Banner (docs/assets/promo) entsteht aus
-   promo.html bzw. social-preview.html und bettet einige der Bilder ein –
-   deshalb zuletzt. Zwei Doku-Stellen zitieren Werte aus den Bildern und
-   gehören danach gegengelesen: „Aktuelle Form“ in
-   docs/nutzung/coach-und-belastung.md und das Ferritin-Beispiel in
+   If a view changes, update the flow here and re-render the affected
+   images. The promo banner (docs/assets/promo) is built from
+   promo.html and social-preview.html and embeds some of the images –
+   hence last. Two places in the docs quote values from the images
+   and have to be proofread afterwards: "Current form" in
+   docs/nutzung/coach-und-belastung.md and the ferritin example in
    docs/nutzung/labor.md.
    ========================================================================= */
 
@@ -37,13 +37,13 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const ORIGIN = 'https://fit.example.org';
-/** Fester Demo-Tag: Samstag, 18. Juli 2026, 9:30 Uhr in Berlin – Long-Run-Tag im Demo-Plan. */
+/** Fixed demo day: Saturday, 18 July 2026, 9:30 in Berlin – long-run day in the demo plan. */
 const DAY = '2026-07-18T09:30:00+02:00';
 const PERSONA = { name: 'Alex', pin: '2468' };
 const PHONE = { width: 390, height: 844 };
 const TABLET = { width: 1024, height: 1366 };
 
-/* ------------------------------ Aufruf ---------------------------------- */
+/* ------------------------------ Usage ---------------------------------- */
 
 function option(args, name, fallback = null) {
   const i = args.indexOf(name);
@@ -70,7 +70,7 @@ async function loadPlaywright() {
   }
 }
 
-/* ------------------------- Frische Instanz ------------------------------ */
+/* ------------------------- Fresh instance ------------------------------ */
 
 function freePort() {
   return new Promise((ok, fail) => {
@@ -80,7 +80,7 @@ function freePort() {
   });
 }
 
-/** App + API in ein Temp-Verzeichnis mit leerem data/ – die Seeds aus dem Repo kommen nie mit. */
+/** App + API into a temp directory with an empty data/ – the seeds from the repo never come along. */
 function copyApp() {
   const dir = mkdtempSync(join(tmpdir(), 'catofit-render-'));
   for (const f of ['index.html', 'manifest.webmanifest', 'service-worker.js']) cpSync(join(ROOT, f), join(dir, f));
@@ -98,7 +98,7 @@ export async function startServer() {
   });
   const base = `http://127.0.0.1:${port}`;
   for (let i = 0; i < 50; i++) {
-    try { if ((await fetch(`${base}/index.html`)).ok) break; } catch { /* startet noch */ }
+    try { if ((await fetch(`${base}/index.html`)).ok) break; } catch { /* still starting */ }
     await new Promise((r) => setTimeout(r, 100));
   }
   return {
@@ -107,9 +107,9 @@ export async function startServer() {
   };
 }
 
-/* ------------------------------ Wetter ---------------------------------- */
+/* ------------------------------ Weather ---------------------------------- */
 
-/** 16 Tage Sommerwetter ab dem Demo-Tag – immer gleich, ohne echten Dienst. */
+/** 16 days of summer weather from the demo day – always the same, without a real service. */
 function forecast() {
   const codes = [1, 2, 3, 61, 2, 0, 1, 80, 2, 3, 1, 0, 2, 61, 1, 0];
   const tMax = [24, 26, 22, 19, 21, 25, 27, 23, 22, 20, 24, 26, 25, 18, 21, 24];
@@ -144,7 +144,7 @@ export async function openBrowser({ base, headed = false }) {
     reducedMotion: 'reduce', serviceWorkers: 'block',
   });
   await context.clock.setFixedTime(new Date(DAY));
-  // Toasts verdecken sonst zufällig Teile des Bildes.
+  // Toasts would otherwise cover parts of the image at random.
   await context.addInitScript(() => {
     document.addEventListener('DOMContentLoaded', () => {
       const s = document.createElement('style');
@@ -165,7 +165,7 @@ export async function openBrowser({ base, headed = false }) {
   return { browser, context, page };
 }
 
-/* ------------------------------ Helfer ---------------------------------- */
+/* ------------------------------ Helpers ---------------------------------- */
 
 export function helpers(page, { out, only }) {
   const wanted = (name) => !only.length || only.some((p) => name.startsWith(p));
@@ -176,9 +176,9 @@ export function helpers(page, { out, only }) {
     await page.waitForTimeout(ms);
   }
 
-  /** In der App navigieren (Hash), ohne neu zu laden. */
+  /** Navigate within the app (hash) without reloading. */
   async function go(hash) {
-    await page.mouse.move(0, 0);   // kein Hover-Schatten aus dem letzten Klick
+    await page.mouse.move(0, 0);   // no hover shadow from the last click
     const current = await page.evaluate(() => location.hash);
     if (current === hash) await page.evaluate(() => { location.hash = '#/hilfe'; });
     await page.evaluate((h) => { location.hash = h; }, hash);
@@ -187,7 +187,7 @@ export function helpers(page, { out, only }) {
     await page.evaluate(() => window.scrollTo(0, 0));
   }
 
-  /** Scrollt so, dass das Element mit diesem Text direkt unter der Kopfzeile steht. */
+  /** Scrolls so that the element with this text sits directly under the header bar. */
   async function scrollToText(text, selector = 'h2, h3, .card__title, .section-head__title', offset = 10) {
     const ok = await page.evaluate(({ text, selector, offset }) => {
       const header = document.getElementById('app-header');
@@ -203,8 +203,8 @@ export function helpers(page, { out, only }) {
 
   async function shot(name, { element = null, clip = null, fullPage = false, keepFocus = false } = {}) {
     if (!wanted(name)) return;
-    // Der Fokus springt nach jedem Wechsel auf die Überschrift (Barrierefreiheit) – nach
-    // einer Taste zeigt der Browser dort den Fokusrahmen. Im Bild stört er.
+    // Focus jumps to the heading after every change (accessibility) – after
+    // a keypress the browser shows the focus ring there. It is distracting in the image.
     if (!keepFocus) await page.evaluate(() => document.activeElement && document.activeElement.blur && document.activeElement.blur());
     await settle(250);
     const path = join(out, `${name}.png`);
@@ -214,8 +214,8 @@ export function helpers(page, { out, only }) {
     console.log(`✓ ${name}`);
   }
 
-  /** Führt fn(store, arg) mit dem echten App-Store aus (gleiche Modul-Instanz wie die App).
-      Als Ausdruck übergeben – die CSP der App verbietet new Function/eval im Seitenskript. */
+  /** Runs fn(store, arg) with the real app store (same module instance as the app).
+      Pass it as an expression – the app's CSP forbids new Function/eval in the page script. */
   function withStore(fn, arg = null) {
     return page.evaluate(`(async () => {
       const store = await import('/js/storage.js');
@@ -226,7 +226,7 @@ export function helpers(page, { out, only }) {
   return { wanted, settle, go, scrollToText, shot, withStore };
 }
 
-/* ------------------------------ Ablauf ---------------------------------- */
+/* ------------------------------ Flow ---------------------------------- */
 
 export async function onboarding(page, h) {
   await page.goto(`${ORIGIN}/`);
@@ -241,7 +241,7 @@ export async function onboarding(page, h) {
   await h.settle(800);
 }
 
-/** ID der Plan-Einheit am Demo-Tag (bzw. der ersten passenden danach). */
+/** ID of the plan session on the demo day (or the first matching one after it). */
 function unitId(h, type) {
   return h.withStore((store, a) => {
     const plan = store.get('plans').find((p) => p.eventId === 'demo-e1');
@@ -250,7 +250,7 @@ function unitId(h, type) {
   }, { day: DAY.slice(0, 10), type });
 }
 
-/** Apple-Health-Daten wie von „Health Auto Export“ an den Endpunkt der Instanz schicken. */
+/** Send Apple Health data to the instance's endpoint the way "Health Auto Export" does. */
 async function ingestAppleHealth(h, base) {
   const { token, user } = await h.withStore((store) => ({ token: store.profile().healthToken, user: store.activeUserId() }));
   const day = (k) => {
@@ -258,8 +258,8 @@ async function ingestAppleHealth(h, base) {
     d.setUTCDate(d.getUTCDate() - k);
     return d.toISOString().slice(0, 10);
   };
-  // Die Demo hat jeden zweiten Tag eigene Waagenwerte – diese Tage behalten ihre Herkunft,
-  // die Übersicht „Zuletzt importiert“ zeigt die übrigen.
+  // The demo has its own scale values every second day – those days keep their origin,
+  // the "Recently imported" overview shows the rest.
   const series = (name, units, values) => ({ name, units, data: values.map((qty, k) => ({ date: `${day(k)} 07:00:00 +0200`, qty })) });
   const payload = {
     data: {
@@ -287,7 +287,7 @@ async function ingestAppleHealth(h, base) {
   await h.withStore((store) => store.syncNow());
 }
 
-/** Promo-Banner und Social Preview aus ihren HTML-Vorlagen – mit den frisch gerenderten Bildern. */
+/** Promo banner and social preview from their HTML templates – with the freshly rendered images. */
 async function renderPromo(browser, { out, only }) {
   const jobs = [
     { name: 'banner', html: 'promo.html', size: { width: 1200, height: 630 } },
@@ -327,7 +327,7 @@ async function renderPromo(browser, { out, only }) {
 async function main() {
   const opts = parseArgs();
   mkdirSync(opts.out, { recursive: true });
-  // Nur das Banner: ohne App-Durchlauf, mit den vorhandenen Bildern.
+  // Banner only: without running through the app, using the existing images.
   if (opts.only.length && opts.only.every((p) => p.startsWith('promo'))) { await renderPromoStandalone(opts); return; }
   const server = await startServer();
   const { browser, page } = await openBrowser({ base: server.base, headed: opts.headed });
@@ -336,7 +336,7 @@ async function main() {
   try {
     await onboarding(page, h);
 
-    // ---- „Heute“ ----
+    // ---- "Today" ----
     await h.go('#/');
     await h.shot('01-dashboard');
     await h.scrollToText('Heute', '.section-head__title');
@@ -350,7 +350,7 @@ async function main() {
     await h.scrollToText('Wochenziele', '.card__title');
     await h.shot('42-gesundheitsziele-coach');
 
-    // ---- Wettkampf, Plan, Einheit, Workout ----
+    // ---- Race, plan, session, workout ----
     await h.go('#/event/demo-e1');
     await h.shot('03-event-detail');
     await h.go('#/plan/demo-e1');
@@ -362,7 +362,7 @@ async function main() {
     await h.settle();
     await h.shot('14-einheit-bearbeiten');
     await page.keyboard.press('Escape');
-    // Workout kurz vor der ersten Trinkpause (Long Run: alle 20 min) fortsetzen lassen.
+    // Let the workout continue shortly before the first drinking break (long run: every 20 min).
     await page.evaluate(async (id) => {
       const { lsSet } = await import('/js/env.js');
       lsSet('workout', JSON.stringify({ id, elapsed: 20 * 60 * 1000 - 1200, phase: 0, phaseElapsed: 0, counters: {}, done: false, drinkCount: 0, ts: Date.now() }));
@@ -373,7 +373,7 @@ async function main() {
     await h.shot('07-workout-trinkpause');
     await page.evaluate(async () => { const { lsRemove } = await import('/js/env.js'); lsRemove('workout'); });
 
-    // ---- Kalender ----
+    // ---- Calendar ----
     await h.go('#/calendar');
     await h.shot('16-kalender-wetter', { clip: await calendarClip(page) });
     await click('Woche');
@@ -381,7 +381,7 @@ async function main() {
     await h.shot('05-kalender');
     await click('Monat');
 
-    // ---- Fortschritt ----
+    // ---- Progress ----
     await h.go('#/stats');
     await h.shot('09-statistik');
     await h.scrollToText('Form & Trainingsbereiche', '.section-head__title');
@@ -396,7 +396,7 @@ async function main() {
     await h.go('#/reports');
     await page.getByRole('button', { name: 'Bericht erstellen' }).first().click();
     await page.getByRole('button', { name: 'Monatsbericht erstellen' }).click();
-    await page.getByRole('button', { name: 'Bericht speichern' }).click();   // nach der Vorschau
+    await page.getByRole('button', { name: 'Bericht speichern' }).click();   // after the preview
     await page.waitForFunction(() => location.hash.startsWith('#/report/'));
     await h.settle();
     await h.shot('26-monatsbericht');
@@ -411,7 +411,7 @@ async function main() {
     await h.settle();
     await h.shot('25-urkunde');
 
-    // ---- Gesundheit, Labor, Apple Health ----
+    // ---- Health, labs, Apple Health ----
     await h.go('#/zyklus');
     await h.shot('18-zyklus');
     await h.go('#/labor');
@@ -430,7 +430,7 @@ async function main() {
     await h.scrollToText('Zuletzt importiert', '.section-head__title');
     await h.shot('apple-health-import');
 
-    // ---- Ernährung, Einkauf, Familie ----
+    // ---- Nutrition, shopping, family ----
     await h.go('#/nutrition');
     await h.scrollToText('Markiere Lieblingsgerichte', 'div', 90);
     await h.shot('15-ernaehrung-lernen');
@@ -441,7 +441,7 @@ async function main() {
     await h.go('#/familie-verwalten');
     await h.shot('31-familie-verwalten');
 
-    // ---- Übungen, Einstellungen, Hilfe ----
+    // ---- Exercises, settings, help ----
     await h.go('#/uebungen');
     await h.shot('40-uebungen');
     await page.getByText('Kniebeuge', { exact: true }).first().click();
@@ -462,7 +462,7 @@ async function main() {
       await h.go(hash);
       await h.shot(name);
     }
-    // Durchgehend mitmachen, quer auf dem iPad: angehalten mitten in der ersten Kniebeuge.
+    // Follow along non-stop, landscape on the iPad: paused in the middle of the first squat.
     await page.setViewportSize({ width: TABLET.height, height: TABLET.width });
     if (h.wanted('ipad-42-durchgehend')) {
       await page.evaluate(`(async () => {
@@ -479,7 +479,7 @@ async function main() {
     }
     await page.setViewportSize(PHONE);
 
-    // ---- Programm zuletzt: es bringt eigene Einheiten in Kalender und „Heute“ ----
+    // ---- Programme last: it brings its own sessions into the calendar and "Today" ----
     await h.go('#/events');
     await page.getByRole('button', { name: 'Neues Ziel' }).click();
     await page.getByText('Trainingsprogramm', { exact: true }).click();
@@ -498,7 +498,7 @@ async function main() {
   await renderPromoStandalone(opts);
 }
 
-/** Ausschnitt Monatskalender: von der Monatszeile bis unter das Raster. */
+/** Detail of the month calendar: from the month row to below the grid. */
 async function calendarClip(page) {
   return page.evaluate(() => {
     const top = Math.max(0, document.querySelector('.cal-toolbar').getBoundingClientRect().top - 8);

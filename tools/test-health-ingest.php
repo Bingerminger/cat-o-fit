@@ -1,11 +1,11 @@
 <?php
 /**
- * test-health-ingest.php — Tests für die reine Apple-Health-Mapping-Logik
- * (api/health-map.php, `hi_parse`). Ohne Server/DB. Ausführen:
+ * test-health-ingest.php — tests for the pure Apple Health mapping logic
+ * (api/health-map.php, `hi_parse`). Without server/DB. Run:
  *
  *   php tools/test-health-ingest.php
  *
- * Exit-Code 0 = alle grün, 1 = mind. ein Fehler. Läuft im commit-git-Prüflauf mit.
+ * Exit code 0 = all green, 1 = at least one failure. Also runs in the commit-git check run.
  */
 declare(strict_types=1);
 require __DIR__ . '/../api/health-map.php';
@@ -17,7 +17,7 @@ function check(string $name, bool $cond, $got = null): void {
     else { $fail++; echo "  FEHLER  $name" . ($got !== null ? "  (got: " . json_encode($got, JSON_UNESCAPED_UNICODE) . ")" : "") . "\n"; }
 }
 
-// --- 1) Metriken: Namen (inkl. weight_&_body_mass), Einheiten, Körperfett ---
+// --- 1) Metrics: names (incl. weight_&_body_mass), units, body fat ---
 $r = hi_parse(['metrics' => [
     ['name' => 'weight_&_body_mass', 'units' => 'kg', 'data' => [['date' => '2026-07-01', 'qty' => 70.2]]],
     ['name' => 'body_fat_percentage', 'units' => '%', 'data' => [['date' => '2026-07-01', 'qty' => 0.185]]],
@@ -39,11 +39,11 @@ check('vo2max (1 Nachkomma)', ($h['vo2max'] ?? null) === 50.1, $h['vo2max'] ?? n
 check('steps (int)', ($h['steps'] ?? null) === 9450, $h['steps'] ?? null);
 check('active_energy -> activeEnergyKcal (int)', ($h['activeEnergyKcal'] ?? null) === 680, $h['activeEnergyKcal'] ?? null);
 
-// --- 2) Gewicht in lb -> kg -------------------------------------------------
+// --- 2) Weight in lb -> kg -------------------------------------------------
 $r = hi_parse(['metrics' => [['name' => 'weight_&_body_mass', 'units' => 'lb', 'data' => [['date' => '2026-07-01', 'qty' => 154.0]]]]]);
 check('Gewicht in lb -> kg', abs(($r['healthByDate']['2026-07-01']['weight'] ?? 0) - 69.85) < 0.05, $r['healthByDate']['2026-07-01']['weight'] ?? null);
 
-// --- 3) Unbekannte Metriken -> ignoredMetrics (nicht fehl-verwertet) -------
+// --- 3) Unknown metrics -> ignoredMetrics (not misused) -------
 $r = hi_parse(['metrics' => [
     ['name' => 'heart_rate', 'units' => 'bpm', 'data' => [['date' => '2026-07-01', 'Min' => 48, 'Avg' => 62, 'Max' => 150]]],
     ['name' => 'blood_oxygen_saturation', 'units' => '%', 'data' => [['date' => '2026-07-01', 'qty' => 97]]],
@@ -51,17 +51,17 @@ $r = hi_parse(['metrics' => [
 check('heart_rate + SpO2 -> ignoredMetrics', in_array('heart_rate', $r['ignoredMetrics'], true) && in_array('blood_oxygen_saturation', $r['ignoredMetrics'], true), $r['ignoredMetrics']);
 check('unbekannte Metrik schreibt keinen Tageswert', empty($r['healthByDate']), array_keys($r['healthByDate']));
 
-// --- 4) Schlaf-Plausibilitätsgrenze + asleep-Fallback ----------------------
+// --- 4) Sleep plausibility limit + asleep fallback ----------------------
 $r = hi_parse(['metrics' => [['name' => 'sleep_analysis', 'data' => [
-    ['date' => '2026-06-28', 'totalSleep' => 36],                 // unmöglich -> verwerfen
+    ['date' => '2026-06-28', 'totalSleep' => 36],                 // impossible -> discard
     ['date' => '2026-06-29', 'totalSleep' => 7.5],                // ok
-    ['date' => '2026-06-30', 'totalSleep' => 36, 'asleep' => 6.8], // totalSleep kaputt -> Fallback asleep
+    ['date' => '2026-06-30', 'totalSleep' => 36, 'asleep' => 6.8], // totalSleep broken -> fall back to asleep
 ]]]]);
 check('Schlaf 36 h verworfen', !isset($r['healthByDate']['2026-06-28']['sleepHours']), $r['healthByDate']['2026-06-28'] ?? null);
 check('Schlaf 7.5 h behalten', ($r['healthByDate']['2026-06-29']['sleepHours'] ?? null) === 7.5);
 check('Schlaf-Fallback auf asleep (6.8)', ($r['healthByDate']['2026-06-30']['sleepHours'] ?? null) === 6.8);
 
-// --- 5) Workout v2: duration=Sekunden, mi->km, Objekte { qty, units } ------
+// --- 5) Workout v2: duration=seconds, mi->km, objects { qty, units } ------
 $r = hi_parse(['workouts' => [[
     'id' => 'UUID-RUN', 'name' => 'Running', 'start' => '2026-07-03 06:00:00 +0200', 'duration' => 1980,
     'distance' => ['qty' => 3.728, 'units' => 'mi'],
@@ -77,12 +77,12 @@ check('kcal aus activeEnergyBurned (v2)', ($s['kcal'] ?? null) === 410, $s['kcal
 check('avgHr/maxHr aus v2-Objekten', ($s['avgHr'] ?? null) === 148 && ($s['maxHr'] ?? null) === 171, [$s['avgHr'] ?? null, $s['maxHr'] ?? null]);
 check('Session-ID = hk-<UUID>', ($s['id'] ?? null) === 'hk-UUID-RUN', $s['id'] ?? null);
 
-// --- 6) Workout v1: activeEnergy + heartRateData-Fallback ------------------
+// --- 6) Workout v1: activeEnergy + heartRateData fallback ------------------
 $r = hi_parse(['workouts' => [[
     'id' => 'UUID-BIKE', 'name' => 'Cycling', 'start' => '2026-07-03 12:00:00 +0200', 'end' => '2026-07-03 12:40:00 +0200',
     'distance' => ['qty' => 18.0, 'units' => 'km'],
-    'activeEnergy' => ['qty' => 300, 'units' => 'kcal'],                 // v1-Name
-    'heartRateData' => [['Avg' => 120], ['Avg' => 140, 'Max' => 165]],  // v1: HF nur als Serie
+    'activeEnergy' => ['qty' => 300, 'units' => 'kcal'],                 // v1 name
+    'heartRateData' => [['Avg' => 120], ['Avg' => 140, 'Max' => 165]],  // v1: HR only as a series
 ]]]);
 $s = $r['newSessions']['hk-UUID-BIKE'] ?? [];
 check('Cycling -> cross_bike', ($s['type'] ?? null) === 'cross_bike', $s['type'] ?? null);
@@ -91,11 +91,11 @@ check('kcal aus v1-activeEnergy', ($s['kcal'] ?? null) === 300, $s['kcal'] ?? nu
 check('avgHr Fallback aus heartRateData (Ø 130)', ($s['avgHr'] ?? null) === 130, $s['avgHr'] ?? null);
 check('maxHr Fallback aus heartRateData (165)', ($s['maxHr'] ?? null) === 165, $s['maxHr'] ?? null);
 
-// --- 7) Unbekannter Workout-Typ -> skippedUnmappedType --------------------
+// --- 7) Unknown workout type -> skippedUnmappedType --------------------
 $r = hi_parse(['workouts' => [['name' => 'Curling', 'start' => '2026-07-03 10:00:00 +0200', 'duration' => 600]]]);
 check('unbekannter Workout-Typ übersprungen', $r['skippedUnmappedType'] === 1 && empty($r['newSessions']), $r);
 
-// --- 8) Schlankes Tagesformat (Kurzbefehl-Vorlage, kostenloser Weg) -------
+// --- 8) Lean daily format (Shortcuts template, free route) -------
 check('Tagesobjekt wird erkannt, Auto-Export-Paket nicht', hi_is_simple(['date' => '2026-09-29', 'weight' => 72]) && !hi_is_simple(['metrics' => []]));
 $r = hi_parse_simple(['date' => '2026-09-29T07:12:00+02:00', 'weight' => '72,4', 'restingHr' => '52', 'hrv' => 48.6,
     'sleepHours' => '7,3 h', 'steps' => 8421, 'bodyFat' => 0.185, 'mood' => 'gut']);
@@ -122,13 +122,13 @@ $r = hi_parse_simple(['days' => [['date' => '2026-09-29', 'weight' => 72]],
 check('Tageswerte und Trainings im selben Paket (Android-Skripte)', ($r['healthByDate']['2026-09-29']['weight'] ?? null) === 72.0
     && count($r['newSessions']) === 1 && (array_values($r['newSessions'])[0]['avgHr'] ?? null) === 151, $r);
 
-// --- 9) Energie in kJ (Health Auto Export rechnet nicht um) -----------------
+// --- 9) Energy in kJ (Health Auto Export does not convert) -----------------
 $r = hi_parse(['metrics' => [['name' => 'active_energy', 'units' => 'kJ', 'data' => [['date' => '2026-07-01', 'qty' => 2100]]]],
     'workouts' => [['id' => 'KJ', 'name' => 'Running', 'start' => '2026-07-01 07:00:00 +0200', 'duration' => 1800, 'activeEnergyBurned' => ['qty' => 1674, 'units' => 'kJ']]]]);
 check('aktive Energie 2100 kJ → 502 kcal', ($r['healthByDate']['2026-07-01']['activeEnergyKcal'] ?? null) === 502, $r['healthByDate']['2026-07-01'] ?? null);
 check('Workout-Energie 1674 kJ → 400 kcal', ($r['newSessions']['hk-KJ']['kcal'] ?? null) === 400, $r['newSessions']['hk-KJ'] ?? null);
 
-// --- 10) Android: Health Connect über eine Brücken-App ---------------------
+// --- 10) Android: Health Connect via a bridge app ---------------------
 $hc = [
     'timestamp' => '2026-09-29T06:00:00Z', 'app_version' => '1.4.0',
     'weight' => [['kilograms' => 72.8, 'time' => '2026-09-28T05:00:00Z'], ['kilograms' => 72.4, 'time' => '2026-09-28T20:00:00Z']],
@@ -174,22 +174,23 @@ $runDe = array_values(array_filter(hi_parse_hcw($hc, 'Europe/Berlin', 'de')['new
 check('HC: Titel für eine deutschsprachige Person wie bisher', ($runDe['title'] ?? null) === 'Lauf (Health Connect)', $runDe['title'] ?? null);
 $aw = ['workouts' => [['name' => 'Outdoor Cycling', 'start' => '2026-07-02 07:00:00 +0200', 'end' => '2026-07-02 08:00:00 +0200']]];
 $t = static fn (array $r) => array_values($r['newSessions'])[0]['title'] ?? null;
-check('Apple: Titel je Sprache (de wie bisher, en, fr ohne Katalog → englisch)', $t(hi_parse($aw, 'de')) === 'Radtour (Apple Health)'
-    && $t(hi_parse($aw, 'en')) === 'Bike ride (Apple Health)' && $t(hi_parse($aw, 'fr')) === 'Bike ride (Apple Health)', [$t(hi_parse($aw, 'de')), $t(hi_parse($aw, 'fr'))]);
+check('Apple: title per language (de as before, en, fr; unsupported → English)', $t(hi_parse($aw, 'de')) === 'Radtour (Apple Health)'
+    && $t(hi_parse($aw, 'en')) === 'Bike ride (Apple Health)' && $t(hi_parse($aw, 'fr')) === 'Sortie à vélo (Apple Health)'
+    && $t(hi_parse($aw, 'xx')) === 'Bike ride (Apple Health)', [$t(hi_parse($aw, 'de')), $t(hi_parse($aw, 'fr')), $t(hi_parse($aw, 'xx'))]);
 check('Kurzbefehl-Format reicht die Sprache an die Trainings weiter', $t(hi_parse_simple(['date' => '2026-07-02'] + $aw, 'de')) === 'Radtour (Apple Health)');
 check('HC: Periode aus dem Zeitraum (Beginn + Länge)', $r['periods'] === [['start' => '2026-09-20', 'length' => 5]], $r['periods']);
 
-// --- 11) Zyklus aus Apple Health (Health Auto Export) -----------------------
+// --- 11) Cycle from Apple Health (Health Auto Export) -----------------------
 $r = hi_parse(['metrics' => [['name' => 'menstrual_flow', 'data' => [
     ['date' => '2026-08-01 00:00:00 +0200', 'value' => 'medium'], ['date' => '2026-08-02 00:00:00 +0200', 'value' => 'light'],
-    ['date' => '2026-08-04 00:00:00 +0200', 'value' => 'light'],   // ein Tag Pause gehört noch dazu
-    ['date' => '2026-08-20 00:00:00 +0200', 'value' => 'none'],    // „keine“ ist keine Blutung
+    ['date' => '2026-08-04 00:00:00 +0200', 'value' => 'light'],   // a one-day gap still belongs to it
+    ['date' => '2026-08-20 00:00:00 +0200', 'value' => 'none'],    // "none" is not bleeding
     ['date' => '2026-08-29 00:00:00 +0200', 'value' => 'heavy'],
 ]]]]);
 check('Apple: Blutungstage werden zu Perioden (Lücke ≤ 1 Tag gehört dazu, „none“ zählt nicht)',
     $r['periods'] === [['start' => '2026-08-01', 'length' => 4], ['start' => '2026-08-29', 'length' => 1]], $r['periods']);
 check('Apple: Zyklus taucht nicht als unbekannte Metrik auf', !in_array('menstrual_flow', $r['ignoredMetrics'], true), $r['ignoredMetrics']);
 
-// --- Ergebnis --------------------------------------------------------------
+// --- Result --------------------------------------------------------------
 echo "\nhealth-ingest mapping: {$pass} ok, {$fail} fehlgeschlagen\n";
 exit($fail === 0 ? 0 : 1);

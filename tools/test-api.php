@@ -1,13 +1,13 @@
 <?php
 /**
- * test-api.php — Prüft die echte API über HTTP gegen einen eigenen PHP-Server mit
- * leerem Temp-Datenverzeichnis (berührt nie echte Daten): Server-Sitzung nach
- * PIN-Prüfung, private Bereiche, Schutz vor fremden Seiten (CSRF), Familienregeln,
- * PIN-Hashes in Antworten, Kalender-Schlüssel, Health-Import-Grenzen, Host-Liste.
+ * test-api.php — tests the real API over HTTP against a PHP server of its own with
+ * an empty temp data directory (never touches real data): server session after
+ * PIN verification, private areas, protection against foreign sites (CSRF), family rules,
+ * PIN hashes in responses, calendar keys, health-import limits, host list.
  *
  *   php tools/test-api.php
  *
- * Exit-Code 0 = alle grün, 1 = mind. ein Fehler. Läuft in der CI mit (.github/workflows/ci.yml).
+ * Exit code 0 = all green, 1 = at least one failure. Also runs in CI (.github/workflows/ci.yml).
  */
 declare(strict_types=1);
 
@@ -34,11 +34,11 @@ function rrmdir(string $dir): void {
     @rmdir($dir);
 }
 
-// Freien Port suchen und Server starten (mit Host-Liste für den DNS-Rebinding-Test).
+// Find a free port and start the server (with host list for the DNS rebinding test).
 $probe = stream_socket_server('tcp://127.0.0.1:0');
 $port = (int) substr(strrchr(stream_socket_get_name($probe, false), ':'), 1);
 fclose($probe);
-// Ohne TZ-Angabe: Kalender in Europe/Berlin wie bisher (DOC-25, siehe test-ics.php).
+// Without a TZ setting: calendar in Europe/Berlin as before (DOC-25, see test-ics.php).
 $env = array_merge(getenv(), ['CATOFIT_ALLOWED_HOSTS' => 'nas.local', 'TZ' => '', 'CATOFIT_TZ' => '']);
 $proc = proc_open([PHP_BINARY, '-S', "127.0.0.1:{$port}", '-t', $tmp], [1 => ['file', '/dev/null', 'w'], 2 => ['file', '/dev/null', 'w']], $pipes, $tmp, $env);
 register_shutdown_function(static function () use ($proc, $tmp) {
@@ -47,7 +47,7 @@ register_shutdown_function(static function () use ($proc, $tmp) {
 });
 $base = "http://127.0.0.1:{$port}/api/api.php";
 
-/** HTTP-Anfrage; $jar = Cookie-Speicher eines simulierten Browsers. */
+/** HTTP request; $jar = cookie store of a simulated browser. */
 function http(string $method, string $query, ?array $json = null, array &$jar = [], array $headers = [], ?string $raw = null, ?string $ctype = null): array {
     global $base;
     $h = $headers;
@@ -77,7 +77,7 @@ function check(string $name, bool $cond, $got = null): void {
 }
 $H = static fn(string $id, string $pin) => hash('sha256', "catofit:{$id}:{$pin}");
 
-// Server bereit?
+// Server ready?
 $ready = false;
 for ($i = 0; $i < 50 && !$ready; $i++) { usleep(100000); $none = []; $ready = (http('GET', '?action=ping', null, $none)['json']['ok'] ?? false) === true; }
 if (!$ready) { echo "Testserver startet nicht.\n"; exit(1); }
@@ -86,7 +86,7 @@ $nobody = [];
 $r = http('GET', '?action=ping', null, $nobody);
 check('ping liefert apiVersion', ($r['json']['apiVersion'] ?? null) === 1, $r['json']);
 
-// --- Ersteinrichtung: erste Admin-Person darf ohne Sitzung angelegt werden ---
+// --- Initial setup: the first admin person may be created without a session ---
 $setup = http('POST', '?action=ops&area=family&scope=family', ['ops' => [
     ['op' => 'upsert', 'record' => ['id' => 'u-a', '_kind' => 'member', 'name' => 'Admin', 'role' => 'admin', 'createdAt' => '2026-01-01T00:00:00Z', 'pinHash' => $H('u-a', '2468')]],
 ]], $nobody);
@@ -105,7 +105,7 @@ $ua = null;
 foreach ($fam['json']['records'] ?? [] as $rec) if (($rec['id'] ?? '') === 'u-a') $ua = $rec;
 check('Familien-Antwort: hasPin + Platzhalter', ($ua['hasPin'] ?? null) === true && ($ua['pinHash'] ?? null) === 'server', $ua);
 
-// --- Anmeldung ---
+// --- Sign-in ---
 $admin = [];
 $bad = http('POST', '?action=login', ['user' => 'u-a', 'pin' => '0000'], $admin);
 check('Falsche PIN → 401 code pin', $bad['status'] === 401 && ($bad['json']['code'] ?? '') === 'pin', $bad['json']);
@@ -124,13 +124,13 @@ check('Cookie: HttpOnly + SameSite=Strict', stripos($cookieLine, 'httponly') !==
 $sess = http('GET', '?action=session', null, $admin);
 check('session nennt die Person', ($sess['json']['user'] ?? null) === 'u-a' && ($sess['json']['role'] ?? null) === 'admin', $sess['json']);
 
-// Admin legt ein Mitglied an (Start-PIN 0000 als Hash) – mit Sitzung erlaubt.
+// Admin creates a member (start PIN 0000 as hash) – allowed with a session.
 $add = http('POST', '?action=ops&area=family&scope=family', ['ops' => [
     ['op' => 'upsert', 'record' => ['id' => 'u-k', '_kind' => 'member', 'name' => 'Kind', 'role' => 'user', 'createdAt' => '2026-01-02T00:00:00Z', 'pinHash' => $H('u-k', '0000')]],
 ]], $admin);
 check('Admin-Sitzung: Mitglied angelegt', $add['status'] === 200 && empty($add['json']['rejected']), $add['json']);
 
-// --- Private Bereiche ---
+// --- Private areas ---
 $w = http('POST', '?action=ops&area=labs&user=u-a', ['ops' => [['op' => 'upsert', 'record' => ['id' => 'l1', 'analyte' => 'ferritin', 'value' => 40]]]], $admin);
 check('Eigener privater Bereich: schreiben', $w['status'] === 200, $w['json']);
 $r = http('GET', '?area=labs&user=u-a', null, $nobody);
@@ -144,7 +144,7 @@ check('Auch die Admin-Person nicht → 403', $r['status'] === 403, $r['json']);
 $r = http('GET', '?action=changes&area=health&user=u-k&since=0', null, $nobody);
 check('Nicht-private Bereiche wie bisher ohne Sitzung', $r['status'] === 200, $r['json']);
 
-// --- Schutz vor fremden Seiten (CSRF) ---
+// --- Protection against foreign sites (CSRF) ---
 $r = http('POST', '?action=ops&area=diary&user=u-a', null, $admin, [], '{"ops":[]}', 'text/plain');
 check('ops mit text/plain → 415', $r['status'] === 415, $r['json']);
 $r = http('POST', '?action=ops&area=diary&user=u-a', ['ops' => []], $admin, ['Sec-Fetch-Site: cross-site']);
@@ -156,7 +156,7 @@ check('delete-user als Mitglied → 403', $r['status'] === 403, $r['json']);
 $r = http('POST', '?action=health-import', null, $nobody, [], 'x', 'multipart/form-data; boundary=zz');
 check('health-import ohne Sitzung → 401', $r['status'] === 401, $r['json']);
 
-// --- Familienregeln ---
+// --- Family rules ---
 $r = http('POST', '?action=ops&area=family&scope=family', ['ops' => [
     ['op' => 'upsert', 'record' => ['id' => 'u-k', '_kind' => 'member', 'name' => 'Kind', 'role' => 'admin', 'pinHash' => $H('u-k', '9999')]],
 ]], $kid);
@@ -169,7 +169,7 @@ $relog = []; $rr = http('POST', '?action=login', ['user' => 'u-k', 'pin' => '000
 check('… die PIN bleibt die alte', $rr['status'] === 200, $rr['json']);
 check('Standard-PIN wird als schwach gemeldet', ($rr['json']['weakPin'] ?? null) === true, $rr['json']);
 
-// --- PIN ändern ---
+// --- Changing the PIN ---
 $r = http('POST', '?action=set-pin', ['user' => 'u-k', 'pin' => '1357', 'old' => '1111'], $kid);
 check('Eigene PIN mit falscher alter → 401', $r['status'] === 401, $r['json']);
 $r = http('POST', '?action=set-pin', ['user' => 'u-k', 'pin' => '0000', 'old' => '0000'], $kid);
@@ -183,7 +183,7 @@ check('Andere Sitzungen der Person beendet', is_array($r['json']) && array_key_e
 $r = http('POST', '?action=set-pin', ['user' => 'u-k', 'pin' => '8642'], $admin);
 check('Admin setzt PIN eines Mitglieds ohne alte → ok', $r['status'] === 200, $r['json']);
 
-// --- Fehlversuchssperre ---
+// --- Failed-attempt lockout ---
 $locker = [];
 for ($i = 0; $i < 4; $i++) http('POST', '?action=login', ['user' => 'u-k', 'pin' => '0001'], $locker);
 $r = http('POST', '?action=login', ['user' => 'u-k', 'pin' => '0001'], $locker);
@@ -191,7 +191,7 @@ check('Fünfter Fehlversuch → 429 locked', $r['status'] === 429 && ($r['json']
 $r = http('POST', '?action=login', ['user' => 'u-k', 'pin' => '8642'], $locker);
 check('Auch die richtige PIN wartet die Pause ab', $r['status'] === 429, $r['json']);
 
-// --- Kalender-Schlüssel ---
+// --- Calendar keys ---
 http('POST', '?action=ops&area=events&user=u-a', ['ops' => [['op' => 'upsert', 'record' => ['id' => 'e1', 'name' => 'Stadtlauf', 'date' => '2026-10-10', 'location' => 'Dresden']]]], $admin);
 $t = http('POST', '?action=ics-token', ['user' => 'u-a'], $admin);
 $token = (string) ($t['json']['token'] ?? '');
@@ -201,7 +201,7 @@ check('Kalender-Link mit Schlüssel → .ics', $r['status'] === 200 && str_conta
 check('Ohne TZ-Angabe bleibt die Kalender-Zone Europe/Berlin (bestehende Abos unverändert)', str_contains($r['body'], "TZID:Europe/Berlin\r\n") && str_contains($r['body'], 'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU'), substr($r['body'], 0, 300));
 $r = http('GET', '?action=ics&scope=race&id=e1&user=u-a&token=' . str_repeat('0', 48), null, $nobody);
 check('Falscher Schlüssel → 403', $r['status'] === 403, $r['status']);
-// Sprache des Kalenders: eigene Wahl → Standard der Instanz → Deutsch für Instanzen von vor v4.0.0 → Englisch.
+// Language of the calendar: own choice → instance default → German for instances from before v4.0.0 → English.
 $icsBody = static function () use ($token, $nobody): string {
     $n = $nobody;
     return http('GET', "?action=ics&scope=race&id=e1&user=u-a&token={$token}", null, $n)['body'];
@@ -228,17 +228,19 @@ check('Kalender: eigene Wahl (Deutsch) vor dem Standard der Instanz (Englisch)',
 $setLang(null, 'en');
 check('Kalender: ohne eigene Wahl gilt der Standard der Instanz', str_contains($icsBody(), "CATEGORIES:Race\r\n"));
 $setLang('fr', 'en');
-check('Kalender: Sprache ohne Katalog (fr) → englische Texte, Dezimalkomma', str_contains($b = $icsBody(), "CATEGORIES:Race\r\n") && str_contains($b, '(21\\,1 km)'), $b);
+check('Calendar: person with French → French labels, decimal comma', str_contains($b = $icsBody(), "CATEGORIES:Course\r\n") && str_contains($b, '(21\\,1 km)'), $b);
+$setLang('xx', 'en');
+check('Calendar: unsupported language → the instance default', str_contains($icsBody(), "CATEGORIES:Race\r\n"));
 $r = http('POST', '?action=ics-token', ['user' => 'u-a'], $kid);
 check('Schlüssel einer anderen Person als Mitglied → 403', $r['status'] === 403 || $r['status'] === 401, $r['json']);
 
-// --- Host-Liste (DNS-Rebinding) ---
+// --- Host list (DNS rebinding) ---
 $r = http('GET', '?action=ping', null, $nobody, ['Host: evil.example']);
 check('Fremder Host → 421', $r['status'] === 421, $r['json']);
 $r = http('GET', '?action=ping', null, $nobody, ['Host: nas.local']);
 check('Erlaubter Host → 200', $r['status'] === 200, $r['json']);
 
-// --- Health-Import: unplausibel stark gepacktes Archiv wird abgelehnt ---
+// --- Health import: an implausibly heavily packed archive is rejected ---
 if (class_exists('ZipArchive')) {
     $zipPath = $tmp . '/bomb.zip';
     $zip = new ZipArchive();
@@ -253,7 +255,7 @@ if (class_exists('ZipArchive')) {
     echo "  --  ZIP-Test übersprungen (ZipArchive fehlt)\n";
 }
 
-// --- Health-Eingang: schlankes Tagesformat einer Kurzbefehl-Vorlage (MKT-01) ---
+// --- Health intake: lean daily format of a Shortcuts template (MKT-01) ---
 $hkToken = str_repeat('ab', 24);
 http('POST', '?action=ops&area=profile&user=u-a', ['ops' => [['op' => 'upsert', 'record' => ['id' => 'profile', 'name' => 'Admin', 'healthToken' => $hkToken]]]], $admin);
 $r = http('POST', '?action=health-ingest&user=u-a', ['date' => '2026-09-29', 'weight' => '72,4', 'restingHr' => 52], $nobody, ["X-Catofit-Token: {$hkToken}"]);
@@ -263,8 +265,8 @@ $day = array_values(array_filter($r['json']['data'] ?? [], fn ($x) => ($x['date'
 check('… und landet als Tageswert (72,4 kg, Ruhepuls 52)', ($day['weight'] ?? null) == 72.4 && ($day['restingHr'] ?? null) == 52, $day);
 $r = http('POST', '?action=health-ingest&user=u-a', ['date' => '2026-09-29', 'weight' => 72], $nobody, ['X-Catofit-Token: falsch']);
 check('… nur mit dem richtigen Schlüssel', $r['status'] === 401, $r['status']);
-// Ein Tag mit anderer Herkunft (hier: Demo-Waage) behält sie – sonst würde seine Muskelmasse
-// in der App als alte Apple-„Lean Body Mass“ und damit als fettfreie Masse gelesen.
+// A day with a different origin (here: demo scale) keeps it – otherwise its muscle mass
+// would be read in the app as an old Apple "Lean Body Mass" and thus as lean mass.
 http('POST', '?action=ops&area=health&user=u-a', ['ops' => [['op' => 'upsert', 'record' => ['id' => 'h-scale', 'date' => '2026-09-27', 'source' => 'demo', 'muscleMass' => 28.2]]]], $admin);
 http('POST', '?action=health-ingest&user=u-a', ['date' => '2026-09-27', 'weight' => 72.1], $nobody, ["X-Catofit-Token: {$hkToken}"]);
 http('POST', '?action=health-ingest&user=u-a', ['date' => '2026-09-26', 'weight' => 72.3], $nobody, ["X-Catofit-Token: {$hkToken}"]);
@@ -274,7 +276,7 @@ foreach ($r['json']['data'] ?? [] as $x) $byDate[$x['date'] ?? ''] = $x;
 check('Auto-Import in einen Tag anderer Herkunft: Herkunft und Muskelmasse bleiben', ($byDate['2026-09-27']['source'] ?? '') === 'demo' && ($byDate['2026-09-27']['muscleMass'] ?? null) == 28.2 && ($byDate['2026-09-27']['weight'] ?? null) == 72.1, $byDate['2026-09-27'] ?? null);
 check('… ein neuer Tag stammt aus Apple Health', ($byDate['2026-09-26']['source'] ?? '') === 'apple-health', $byDate['2026-09-26'] ?? null);
 
-// --- Sammelabruf und „since“ in der ops-Antwort (FE-26) ---
+// --- Bulk fetch and "since" in the ops response (FE-26) ---
 $r = http('GET', '?action=ping', null, $nobody);
 check('ping meldet Sammelabruf und since (API-Version bleibt 1)', ($r['json']['apiVersion'] ?? null) === 1 && in_array('changes-all', $r['json']['features'] ?? [], true) && in_array('ops-since', $r['json']['features'] ?? [], true), $r['json']);
 $r = http('GET', '?action=changes-all&user=u-a&since=' . rawurlencode('sessions:0,health:0,labs:0'), null, $admin);
@@ -293,13 +295,13 @@ check('ops mit since: Antwort enthält auch die fremde Änderung', in_array('fre
 $r = http('POST', '?action=ops&area=sessions&user=u-a', ['ops' => [['op' => 'upsert', 'record' => ['id' => 'eigen-2', 'date' => '2026-09-22']]]], $admin);
 check('ops ohne since: Antwort wie bisher', !isset($r['json']['changes']), array_keys($r['json'] ?? []));
 
-// --- Strichcode-Abfrage (MKT-18): nur gültige GTIN gehen nach außen ---
+// --- Barcode lookup (MKT-18): only valid GTINs go out ---
 $r = http('GET', '?action=foodfacts&code=' . rawurlencode('4006381333932'), null, $nobody);
 check('Strichcode mit falscher Prüfziffer wird ohne Abfrage abgelehnt', ($r['json']['found'] ?? null) === false && ($r['json']['error'] ?? '') === 'Invalid barcode', $r['json']);
 $r = http('GET', '?action=foodfacts&code=' . rawurlencode('../../etc/passwd'), null, $nobody);
 check('… Unsinn im Code-Parameter ebenso', ($r['json']['found'] ?? null) === false && isset($r['json']['error']), $r['json']);
 
-// --- Lesezugang für eigene Werkzeuge (MKT-15): standardmäßig aus, nur lesend, ohne Privates ---
+// --- Read access for own tools (MKT-15): off by default, read-only, nothing private ---
 $r = http('GET', '?action=read&user=u-a', null, $nobody, ['X-Catofit-Token: ' . str_repeat('cd', 24)]);
 check('Lesezugang: ohne eingeschalteten Schlüssel → 401', $r['status'] === 401, $r['json']);
 $readTok = str_repeat('cd', 24);
@@ -319,14 +321,14 @@ http('POST', '?action=ops&area=profile&user=u-a', ['ops' => [['op' => 'upsert', 
 $r = http('GET', '?action=read&user=u-a', null, $nobody, ["X-Catofit-Token: {$readTok}"]);
 check('… ausgeschaltet → der alte Schlüssel gilt sofort nicht mehr', $r['status'] === 401, $r['json']);
 
-// --- Android: Health Connect über eine Brücken-App (MKT-02, MKT-19) ---
+// --- Android: Health Connect via a bridge app (MKT-02, MKT-19) ---
 $hc = ['app_version' => '1.4.0',
     'weight' => [['kilograms' => 71.8, 'time' => '2026-09-25T05:00:00Z']],
     'exercise' => [['type' => 'RUNNING', 'start_time' => '2026-09-25T16:00:00Z', 'end_time' => '2026-09-25T16:45:00Z', 'duration_seconds' => 2700, 'distance_meters' => 8000]],
     'heart_rate' => [['bpm' => 148, 'time' => '2026-09-25T16:20:00Z']],
     'menstruation_period' => [['start_time' => '2026-09-10T06:00:00Z', 'end_time' => '2026-09-13T06:00:00Z']]];
 $r1 = http('POST', '?action=health-ingest&user=u-a', $hc, $nobody, ["X-Catofit-Token: {$hkToken}"]);
-$r2 = http('POST', '?action=health-ingest&user=u-a', $hc, $nobody, ["X-Catofit-Token: {$hkToken}"]);   // Brücke schickt 48 h rollierend
+$r2 = http('POST', '?action=health-ingest&user=u-a', $hc, $nobody, ["X-Catofit-Token: {$hkToken}"]);   // the bridge sends a rolling 48 h
 check('Health Connect: Tageswert, Training und Periode angenommen', $r1['status'] === 200 && ($r1['json']['sessions']['imported'] ?? 0) === 1 && ($r1['json']['cycle']['periods'] ?? 0) === 1, $r1['json']);
 check('… wiederholte Sendung legt nichts doppelt an', ($r2['json']['cycle']['periods'] ?? -1) === 0, $r2['json']);
 $s = http('GET', '?area=sessions&user=u-a', null, $admin);
@@ -337,16 +339,16 @@ $c = http('GET', '?area=cycle&user=u-a', null, $admin);
 $per = array_values(array_filter($c['json']['data'] ?? [], fn ($x) => ($x['startDate'] ?? '') === '2026-09-10'));
 check('… Periode im privaten Zyklus-Bereich (4 Tage)', count($per) === 1 && ($per[0]['periodLength'] ?? null) === 4, $c['json']['data'] ?? null);
 
-// --- Abmelden ---
+// --- Sign out ---
 http('POST', '?action=logout', [], $admin);
 $r = http('GET', '?area=labs&user=u-a', null, $admin);
 check('Nach dem Abmelden kein Zugriff mehr', $r['status'] === 401, $r['json']);
 
-// --- Einzige Admin-Person hat die PIN vergessen: Werkzeug für den Server (DOC-10) ---
+// --- The only admin person has forgotten the PIN: tool for the server (DOC-10) ---
 @mkdir($tmp . '/tools', 0775, true);
 copy($root . '/tools/reset-pin.php', $tmp . '/tools/reset-pin.php');
 $again = [];
-http('POST', '?action=login', ['user' => 'u-a', 'pin' => '2468'], $again);   // offene Sitzung, die enden muss
+http('POST', '?action=login', ['user' => 'u-a', 'pin' => '2468'], $again);   // open session that has to end
 exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($tmp . '/tools/reset-pin.php') . ' Admin 0000 2>&1', $o1, $c1);
 check('reset-pin: 0000 wird abgelehnt', $c1 === 1, implode(' ', $o1));
 exec(escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($tmp . '/tools/reset-pin.php') . ' Admin 1357 2>&1', $o2, $c2);
@@ -362,6 +364,6 @@ $ctx = stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 5
 $webBody = @file_get_contents("http://127.0.0.1:{$port}/tools/reset-pin.php?x=1", false, $ctx);
 check('reset-pin läuft nicht über das Web (403, ohne Ausgabe)', str_contains((string) ($http_response_header[0] ?? ''), ' 403') && $webBody === '', $http_response_header[0] ?? null);
 
-// --- Ergebnis --------------------------------------------------------------
+// --- Result --------------------------------------------------------------
 echo "\napi: {$pass} ok, {$fail} fehlgeschlagen\n";
 exit($fail === 0 ? 0 : 1);

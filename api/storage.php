@@ -1,42 +1,42 @@
 <?php
 /**
- * storage.php — Kern-Persistenzschicht von Cat-O-Fit (Familien-/Mehrbenutzer).
+ * storage.php — core persistence layer of Cat-O-Fit (family / multi-user).
  *
- * Seit v3.0.0 ist der SERVER die Merge-Autorität (Option B):
- *  - Jeder Bereich wird als „Store" gespeichert:  { "rev": <int>, "records": { "<id>": {…} } }
- *  - Clients schicken OPERATIONEN (upsert/delete/replace) statt ganzer Arrays.
- *    Der Server wendet sie unter exklusivem Lock an, vergibt eine streng
- *    monotone, server-autoritative `rev` pro Datensatz und einen Server-
- *    Zeitstempel. Dadurch entfällt jede Abhängigkeit von der Geräte-Uhr und
- *    konkurrierende Edits verschiedener Datensätze gehen nie verloren.
- *  - Clients holen Änderungen inkrementell (`changes since <rev>`).
- *  - Löschungen sind Tombstones (`deleted:true`) – sie tragen ihre eigene rev
- *    und setzen sich so über alle Geräte durch.
+ * Since v3.0.0 the SERVER is the merge authority (option B):
+ *  - Each area is stored as a "store":  { "rev": <int>, "records": { "<id>": {…} } }
+ *  - Clients send OPERATIONS (upsert/delete/replace) instead of whole arrays.
+ *    The server applies them under an exclusive lock and assigns a strictly
+ *    monotonic, server-authoritative `rev` per record plus a server
+ *    timestamp. This removes any dependency on the device clock, and
+ *    concurrent edits to different records are never lost.
+ *  - Clients fetch changes incrementally (`changes since <rev>`).
+ *  - Deletions are tombstones (`deleted:true`) – they carry their own rev
+ *    and thus prevail across all devices.
  *
- *  Speicherorte:
- *      • nutzerbezogen:  data/users/<userId>/<area>.json
- *      • familienweit:   data/family/<area>.json
- *  Die Familie ist eine Sammlung von Datensätzen: je Mitglied ein Record
- *  (_kind=member), plus __settings (_kind=settings) und __pantry (_kind=pantry).
- *  So mischt sich die Mitgliederliste PRO MITGLIED – kein stiller Verlust mehr,
- *  wenn zwei Admins gleichzeitig etwas ändern.
+ *  Storage locations:
+ *      • per user:     data/users/<userId>/<area>.json
+ *      • family-wide:  data/family/<area>.json
+ *  The family is a collection of records: one record per member
+ *  (_kind=member), plus __settings (_kind=settings) and __pantry (_kind=pantry).
+ *  This way the member list merges PER MEMBER – no more silent loss
+ *  when two admins change something at the same time.
  *
- *  Schreibsicherheit: atomar (Temp-Datei -> rename) + flock über eine
- *  Sidecar-Lock-Datei (<area>.json.lock).
+ *  Write safety: atomic (temp file -> rename) + flock on a sidecar lock
+ *  file (<area>.json.lock).
  *
- *  Migration: Alte (flache bzw. v2-) Daten werden beim ersten Lesen
- *  DETERMINISTISCH ins Store-Format überführt (gleiche rev-Vergabe bei Lese-
- *  und Schreibzugriff). Beim ersten Schreiben wird das Store-Format persistiert.
+ *  Migration: old (flat or v2) data is converted to the store format
+ *  DETERMINISTICALLY on first read (same rev assignment for read and
+ *  write access). The store format is persisted on the first write.
  *
- * Zielsystem: Synology Web Station, PHP 8.x (keine Datenbank).
+ * Target system: Synology Web Station, PHP 8.x (no database).
  */
 
 declare(strict_types=1);
 
-// Verzeichnis mit den JSON-Daten (liegt eine Ebene über /api).
+// Directory holding the JSON data (one level above /api).
 const DATA_DIR = __DIR__ . '/../data';
 
-/** Nutzerbezogene Bereiche (pro Person) -> Default-Struktur. */
+/** Per-user areas (one per person) -> default structure. */
 function user_areas(): array
 {
     return [
@@ -51,45 +51,45 @@ function user_areas(): array
         'checklist' => 'array',
         'cycle'     => 'array',
         'reports'   => 'array',
-        'labs'      => 'array',   // Laborwerte (privat, wie cycle)
-        'supplements' => 'array', // Supplement-Plan + Einnahmen (privat)
+        'labs'      => 'array',   // Lab values (private, like cycle)
+        'supplements' => 'array', // Supplement plan + intake log (private)
     ];
 }
 
-/** Familienweite Bereiche (gemeinsam) -> Default-Struktur. */
+/** Family-wide areas (shared) -> default structure. */
 function family_areas(): array
 {
     return [
-        'family' => 'object',   // Mitglieder, Rollen, Familien-Einstellungen, Lager
+        'family' => 'object',   // Members, roles, family settings, pantry
     ];
 }
 
-/** Default-Art eines Bereichs ('array' -> Liste, 'object' -> Einzel-Objekt) oder null. */
+/** Default kind of an area ('array' -> list, 'object' -> single object) or null. */
 function area_kind(string $area, string $scope): ?string
 {
     $map = $scope === 'family' ? family_areas() : user_areas();
     return $map[$area] ?? null;
 }
 
-/** Prüft, ob ein Bereich im jeweiligen Scope zulässig ist. */
+/** Checks whether an area is permitted in the given scope. */
 function is_valid_area(string $area, string $scope): bool
 {
     return area_kind($area, $scope) !== null;
 }
 
-/** userId-Format absichern (kein „..", kein „/", überschaubare Länge). */
+/** Validate the userId format (no "..", no "/", reasonable length). */
 function is_valid_user(string $userId): bool
 {
     return preg_match('/^[A-Za-z0-9_-]{1,64}$/', $userId) === 1;
 }
 
-/** Datensatz-ID absichern (Pfad-/Injektionsschutz, großzügig genug für alle IDs). */
+/** Validate a record ID (path / injection protection, generous enough for all IDs). */
 function valid_record_id(mixed $id): bool
 {
     return is_string($id) && preg_match('/^[A-Za-z0-9_:.-]{1,128}$/', $id) === 1;
 }
 
-/** Verzeichnis eines Bereichs (familienweit oder pro Nutzer). */
+/** Directory of an area (family-wide or per user). */
 function area_dir(string $scope, ?string $userId): string
 {
     return $scope === 'family'
@@ -97,13 +97,13 @@ function area_dir(string $scope, ?string $userId): string
         : DATA_DIR . '/users/' . $userId;
 }
 
-/** Absoluter Pfad zur JSON-Datei eines Bereichs. */
+/** Absolute path to the JSON file of an area. */
 function area_path(string $area, string $scope, ?string $userId): string
 {
     return area_dir($scope, $userId) . '/' . $area . '.json';
 }
 
-/** Wirft, wenn Bereich/Scope/User ungültig sind (gemeinsame Vorprüfung). */
+/** Throws if area/scope/user are invalid (shared pre-check). */
 function assert_area(string $area, string $scope, ?string $userId): void
 {
     if (!is_valid_area($area, $scope)) {
@@ -114,13 +114,13 @@ function assert_area(string $area, string $scope, ?string $userId): void
     }
 }
 
-/* ===================== Store lesen / schreiben / migrieren ================= */
+/* ===================== Read / write / migrate store ================= */
 
 /**
- * Liest den Roh-Store eines Bereichs als ['rev'=>int, 'records'=>[id=>rec]].
- * Erkennt das Store-Format ({rev,records}) und migriert sonst altes Format
- * (flache Liste / Objekt / v2-Familie) DETERMINISTISCH in-memory.
- * Kein eigenes Locking – der Aufrufer hält den Sidecar-Lock.
+ * Reads the raw store of an area as ['rev'=>int, 'records'=>[id=>rec]].
+ * Recognises the store format ({rev,records}); otherwise migrates the old
+ * format (flat list / object / v2 family) DETERMINISTICALLY in memory.
+ * No locking of its own – the caller holds the sidecar lock.
  */
 function read_store(string $area, string $scope, ?string $userId): array
 {
@@ -130,9 +130,9 @@ function read_store(string $area, string $scope, ?string $userId): array
     }
     $raw = @file_get_contents($path);
     if ($raw === false) {
-        // UNLESBAR (Rechte, ACL, I/O-Fehler) ist etwas anderes als „leer": Als leerer
-        // Store weiterzuarbeiten hieße, dass der nächste Schreibvorgang den ganzen
-        // Bestand durch die eine neue Änderung ersetzt. Deshalb laut scheitern.
+        // UNREADABLE (permissions, ACL, I/O error) is not the same as "empty": carrying on
+        // with an empty store would mean the next write replaces the whole data set
+        // with the one new change. So fail loudly.
         throw new RuntimeException(
             "Data store '{$area}' is not readable (file permissions?). Nothing was changed."
         );
@@ -142,9 +142,9 @@ function read_store(string $area, string $scope, ?string $userId): array
     }
     $data = json_decode($raw, true);
     if (!is_array($data)) {
-        // BESCHÄDIGT: Niemals als „leerer Store" weiterarbeiten – der nächste
-        // Schreibvorgang würde den Datenbestand endgültig überschreiben. Statt-
-        // dessen die Datei beiseitelegen (Forensik/Rettung) und laut scheitern.
+        // CORRUPT: never carry on as an "empty store" – the next
+        // write would overwrite the data set for good. Instead,
+        // set the file aside (forensics/rescue) and fail loudly.
         $backup = $path . '.corrupt-' . date('Ymd-His');
         if (!is_file($backup)) {
             @copy($path, $backup);
@@ -154,18 +154,18 @@ function read_store(string $area, string $scope, ?string $userId): array
             . '. Please restore it from a backup.'
         );
     }
-    // Bereits Store-Format?
+    // Already in store format?
     if (array_key_exists('rev', $data) && array_key_exists('records', $data) && is_array($data['records'])) {
         return ['rev' => (int) $data['rev'], 'records' => $data['records']];
     }
-    // Altformat -> migrieren.
+    // Old format -> migrate.
     return migrate_old($area, $scope, $data);
 }
 
 /**
- * Überführt altes Format in einen Store. Deterministisch: die rev-Vergabe
- * folgt der Reihenfolge in der Datei, damit Lese- und spätere Schreib-
- * Migration identische revs erzeugen.
+ * Converts the old format into a store. Deterministic: the rev assignment
+ * follows the order in the file, so that read-time and later write-time
+ * migration produce identical revs.
  */
 function migrate_old(string $area, string $scope, array $data): array
 {
@@ -212,7 +212,7 @@ function migrate_old(string $area, string $scope, array $data): array
         return ['rev' => $rev, 'records' => $records];
     }
 
-    // Objekt-Bereich (profile): genau ein Datensatz „profile".
+    // Object area (profile): exactly one record "profile".
     $rec = $data;
     $rec['id'] = 'profile';
     $rec['updatedAt'] = $rec['updatedAt'] ?? $now;
@@ -220,14 +220,14 @@ function migrate_old(string $area, string $scope, array $data): array
     return ['rev' => 1, 'records' => ['profile' => $rec]];
 }
 
-/** Schreibt den Store atomar (Temp-Datei -> rename). Aufrufer hält den Lock. */
+/** Writes the store atomically (temp file -> rename). The caller holds the lock. */
 function write_store(string $area, array $store, string $scope, ?string $userId): void
 {
     $dir = area_dir($scope, $userId);
     if (!is_dir($dir)) {
         @mkdir($dir, 0775, true);
     }
-    // records IMMER als Objekt kodieren (leere Map sonst als [] statt {}).
+    // ALWAYS encode records as an object (otherwise an empty map becomes [] instead of {}).
     $payload = ['rev' => (int) $store['rev'], 'records' => (object) $store['records']];
     $json = json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     if ($json === false) {
@@ -247,15 +247,15 @@ function write_store(string $area, array $store, string $scope, ?string $userId)
     try {
         $written = fwrite($fp, $json);
         fflush($fp);
-        // Daten vor dem rename wirklich auf die Platte zwingen: sonst kann der
-        // Verzeichnis-Eintrag einen Stromausfall überleben, der Inhalt aber nicht.
+        // Really force the data onto the disk before the rename: otherwise the
+        // directory entry may survive a power cut while the content does not.
         @fsync($fp);
     } finally {
         fclose($fp);
     }
-    // WICHTIG: fwrite meldet bei voller Platte KEIN false, sondern eine zu kleine
-    // Byte-Zahl. Ohne diesen Vergleich landete eine abgeschnittene JSON-Datei
-    // atomar am Ziel – und beim nächsten Lesen wäre der Bereich unbrauchbar.
+    // IMPORTANT: on a full disk fwrite does NOT return false but a too-small
+    // byte count. Without this comparison a truncated JSON file would land
+    // atomically at the target – and the area would be unusable on the next read.
     if ($written === false || $written !== strlen($json)) {
         @unlink($tmp);
         throw new RuntimeException('Writing the temp file was incomplete (disk space?).');
@@ -267,13 +267,13 @@ function write_store(string $area, array $store, string $scope, ?string $userId)
     @chmod($target, 0664);
 }
 
-/** Öffnet den Sidecar-Lock eines Bereichs (oder null, wenn nicht möglich). */
+/** Opens the sidecar lock of an area (or null if not possible). */
 function store_lock(string $area, string $scope, ?string $userId, bool $exclusive)
 {
     $dir = area_dir($scope, $userId);
     if (!is_dir($dir)) {
         if (!$exclusive) {
-            return null; // Lesen ohne existierendes Verzeichnis -> kein Lock nötig
+            return null; // Reading without an existing directory -> no lock needed
         }
         @mkdir($dir, 0775, true);
     }
@@ -293,15 +293,15 @@ function store_unlock($fp): void
     }
 }
 
-/* ============================ Öffentliche API ============================== */
+/* ============================ Public API ============================== */
 
 /**
- * Wendet eine Operationsliste atomar an und liefert die neue Bereichs-rev, die
- * geänderten Datensätze (mit ihrer neuen rev) und abgelehnte Ops.
+ * Applies a list of operations atomically and returns the new area rev, the
+ * changed records (with their new rev) and rejected ops.
  * Ops: {op:'upsert', record:{…,id}} | {op:'delete', id} | {op:'replace', records:[…]}
- * Optionaler `$guard(op, store)`: liefert die (bereinigte) Op oder einen
- * Ablehnungsgrund (string) – so prüft z. B. die Familie Rollen und PINs unter
- * demselben Lock, unter dem geschrieben wird.
+ * Optional `$guard(op, store)`: returns the (sanitised) op or a
+ * rejection reason (string) – this is how the family, for example, checks roles and
+ * PINs under the same lock under which it writes.
  */
 function apply_ops(string $area, string $scope, ?string $userId, array $ops, ?callable $guard = null): array
 {
@@ -351,11 +351,11 @@ function apply_ops(string $area, string $scope, ?string $userId, array $ops, ?ca
                 $store['records'][$id] = $tomb;
                 $applied[] = $tomb;
             } elseif ($type === 'replace') {
-                // Ganzen Bereich autoritativ setzen; fehlende IDs werden getombstoned.
-                // Optional `baseRev`: Stand, auf den sich die Ersetzung bezieht (z. B. eine
-                // Wiederherstellung, die erst Tage später gesendet wird). Datensätze, die
-                // seitdem NEUER geworden sind (rev > baseRev), bleiben dann unangetastet –
-                // eine verspätete Ersetzung überschreibt keine jüngeren Eingaben.
+                // Set the whole area authoritatively; missing IDs are tombstoned.
+                // Optional `baseRev`: the state the replacement refers to (e.g. a
+                // restore that is only sent days later). Records that have
+                // become NEWER since then (rev > baseRev) are then left untouched –
+                // a late replacement does not overwrite more recent input.
                 $newRecs = $op['records'] ?? [];
                 if (!is_array($newRecs)) {
                     continue;
@@ -370,7 +370,7 @@ function apply_ops(string $area, string $scope, ?string $userId, array $ops, ?ca
                         continue;
                     }
                     if (isset($store['records'][$id]) && $newer($store['records'][$id])) {
-                        $keep[$id] = true;   // jüngere Server-Version behalten
+                        $keep[$id] = true;   // keep the newer server version
                         continue;
                     }
                     $rec['id'] = $id;
@@ -401,7 +401,7 @@ function apply_ops(string $area, string $scope, ?string $userId, array $ops, ?ca
     }
 }
 
-/** Liefert alle Datensätze mit rev > $since plus die aktuelle Bereichs-rev. */
+/** Returns all records with rev > $since plus the current area rev. */
 function changes_since(string $area, string $scope, ?string $userId, int $since): array
 {
     assert_area($area, $scope, $userId);
@@ -422,9 +422,9 @@ function changes_since(string $area, string $scope, ?string $userId, int $since)
 }
 
 /**
- * Rekonstruiert die LOGISCHE Sicht eines Bereichs (Liste/Objekt ohne Tombstones)
- * aus dem Store. Für Abwärtskompatibilität (z. B. .ics-Erzeugung in ics.php) und
- * Debug-GETs.
+ * Reconstructs the LOGICAL view of an area (list/object without tombstones)
+ * from the store. For backward compatibility (e.g. .ics generation in ics.php) and
+ * debug GETs.
  */
 function store_to_logical(string $area, string $scope, array $store): mixed
 {
@@ -475,8 +475,8 @@ function store_to_logical(string $area, string $scope, array $store): mixed
 }
 
 /**
- * Lädt die logische Sicht eines Bereichs (Liste/Objekt). ABWÄRTSKOMPATIBEL –
- * wird u. a. von ics.php genutzt.
+ * Loads the logical view of an area (list/object). BACKWARD COMPATIBLE –
+ * used by ics.php, among others.
  */
 function load_area(string $area, string $scope = 'user', ?string $userId = null): mixed
 {
@@ -488,15 +488,15 @@ function load_area(string $area, string $scope = 'user', ?string $userId = null)
         store_unlock($lock);
     }
     $logical = store_to_logical($area, $scope, $store);
-    // WICHTIG: PHP-Konsumenten (z. B. ics.php) greifen per OBJEKT-Syntax zu
-    // (`$e->id`, `$u->type`). `read_store` arbeitet intern mit assoziativen Arrays;
-    // hier tief in Objekte zurückwandeln – wie früher `json_decode(..., false)`.
+    // IMPORTANT: PHP consumers (e.g. ics.php) access via OBJECT syntax
+    // (`$e->id`, `$u->type`). `read_store` works internally with associative arrays;
+    // convert back deeply into objects here – like `json_decode(..., false)` used to.
     return json_decode(json_encode($logical, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 }
 
 /**
- * Löscht das komplette Datenverzeichnis eines Nutzers (data/users/<id>/).
- * Wird beim Entfernen eines Familienmitglieds aufgerufen.
+ * Deletes the complete data directory of a user (data/users/<id>/).
+ * Called when a family member is removed.
  */
 function delete_user(string $userId): bool
 {
@@ -505,14 +505,14 @@ function delete_user(string $userId): bool
     }
     $dir = DATA_DIR . '/users/' . $userId;
     if (!is_dir($dir)) {
-        return true; // schon weg
+        return true; // already gone
     }
     foreach (glob($dir . '/*') ?: [] as $f) {
         if (is_file($f)) {
             @unlink($f);
         }
     }
-    // versteckte Lock-Dateien mitnehmen
+    // take hidden lock files along too
     foreach (glob($dir . '/.*') ?: [] as $f) {
         if (is_file($f)) {
             @unlink($f);
@@ -522,17 +522,17 @@ function delete_user(string $userId): bool
 }
 
 /**
- * Einmalige, idempotente Migration: Existiert noch keine Familie, wird sie im
- * neuen Store-Format angelegt und die bisherigen (flachen) Single-User-Daten
- * dem ersten Admin zugeordnet (als Kopie; Originale bleiben liegen und werden
- * beim ersten Zugriff lazy ins Store-Format migriert).
- * Per Lock gegen Doppelausführung bei gleichzeitigem Erstzugriff geschützt.
+ * One-off, idempotent migration: if no family exists yet, it is created in the
+ * new store format and the previous (flat) single-user data is assigned
+ * to the first admin (as a copy; the originals stay in place and are lazily
+ * migrated to the store format on first access).
+ * Protected by a lock against double execution on simultaneous first access.
  */
 function ensure_bootstrap(): void
 {
     $familyFile = DATA_DIR . '/family/family.json';
     if (is_file($familyFile)) {
-        return; // bereits eingerichtet
+        return; // already set up
     }
     if (!is_dir(DATA_DIR)) {
         @mkdir(DATA_DIR, 0775, true);
@@ -545,13 +545,13 @@ function ensure_bootstrap(): void
     try {
         flock($lock, LOCK_EX);
         if (is_file($familyFile)) {
-            return; // zwischenzeitlich angelegt
+            return; // created in the meantime
         }
         @mkdir(DATA_DIR . '/family', 0775, true);
 
-        // FRISCHE Installation (keine alten Single-User-Daten)? -> LEERE Familie.
-        // Die App-Ersteinrichtung legt dann den ersten Admin an und fragt nach
-        // Demodaten. Bewusst KEIN automatisches Mitglied mehr (ab v3.3.0).
+        // FRESH installation (no old single-user data)? -> EMPTY family.
+        // The app's first-run setup then creates the first admin and asks about
+        // demo data. Deliberately NO automatic member any more (since v3.3.0).
         $hasLegacy = is_file(DATA_DIR . '/profile.json')
             || is_file(DATA_DIR . '/events.json')
             || is_file(DATA_DIR . '/sessions.json');
@@ -560,8 +560,8 @@ function ensure_bootstrap(): void
             return;
         }
 
-        // --- Sonst: Legacy-Migration der alten Single-User-Daten zum ersten Admin ---
-        // Name aus altem Profil übernehmen, falls vorhanden.
+        // --- Otherwise: legacy migration of the old single-user data to the first admin ---
+        // Take over the name from the old profile, if there is one.
         $name = 'Admin';
         $oldProfile = DATA_DIR . '/profile.json';
         if (is_file($oldProfile)) {
@@ -575,8 +575,8 @@ function ensure_bootstrap(): void
         @mkdir(DATA_DIR . '/users/' . $adminId, 0775, true);
         @mkdir(DATA_DIR . '/family', 0775, true);
 
-        // Alte flache Daten zum ersten Admin kopieren (Originale belassen; werden
-        // beim ersten read_store() lazy ins Store-Format migriert).
+        // Copy old flat data to the first admin (leave the originals; they are lazily
+        // migrated to the store format on the first read_store()).
         foreach (array_keys(user_areas()) as $area) {
             $src = DATA_DIR . '/' . $area . '.json';
             if (is_file($src)) {
@@ -584,7 +584,7 @@ function ensure_bootstrap(): void
             }
         }
 
-        // Bestehendes (flaches) Lager übernehmen – ab jetzt familienweit.
+        // Take over the existing (flat) pantry – from now on family-wide.
         $pantry = [];
         $oldPantry = DATA_DIR . '/pantry.json';
         if (is_file($oldPantry)) {

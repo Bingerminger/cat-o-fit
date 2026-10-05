@@ -1,11 +1,11 @@
 <?php
 /**
- * test-health-xml.php — Tests für die Auswertung des Apple-Health-Voll-Exports
- * (api/health-xml.php, `hx_parse_file`). Ohne Server. Ausführen:
+ * test-health-xml.php — tests for the evaluation of the full Apple Health export
+ * (api/health-xml.php, `hx_parse_file`). Without a server. Run:
  *
  *   php tools/test-health-xml.php
  *
- * Exit-Code 0 = alle grün, 1 = mind. ein Fehler.
+ * Exit code 0 = all green, 1 = at least one failure.
  */
 declare(strict_types=1);
 require __DIR__ . '/../api/health-xml.php';
@@ -17,8 +17,8 @@ function check(string $name, bool $cond, $got = null): void {
     else { $fail++; echo "  FEHLER  $name" . ($got !== null ? "  (got: " . json_encode($got, JSON_UNESCAPED_UNICODE) . ")" : "") . "\n"; }
 }
 
-// Kleiner, synthetischer Export: Pfund, Kilojoule, zwei Schlafquellen, Messung kurz nach
-// Mitternacht (Ortszeit), HRV und Lean Body Mass.
+// Small synthetic export: pounds, kilojoules, two sleep sources, a measurement shortly after
+// midnight (local time), HRV and lean body mass.
 $xml = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <HealthData locale="de_DE">
@@ -36,7 +36,7 @@ XML;
 $file = tempnam(sys_get_temp_dir(), 'hxtest_');
 file_put_contents($file, $xml);
 
-// Server-Zeitzone absichtlich weit weg: Das Datum muss trotzdem der Tag der Messung sein.
+// Server time zone deliberately far away: the date must still be the day of the measurement.
 date_default_timezone_set('America/Los_Angeles');
 $r = hx_parse_file($file);
 $rDe = hx_parse_file($file, 'de');
@@ -48,7 +48,7 @@ check('Gewicht in lb -> kg (165 lb ≈ 74,8 kg)', abs(($byDate['2026-09-20']['we
 check('Lean Body Mass -> leanMass in kg (120 lb ≈ 54,4 kg)', abs(($byDate['2026-09-20']['leanMass'] ?? 0) - 54.43) < 0.05 && !isset($byDate['2026-09-20']['muscleMass']), $byDate['2026-09-20'] ?? null);
 check('Messung 00:20 Uhr Ortszeit bleibt am 22.09.', ($byDate['2026-09-22']['weight'] ?? null) === 70.4, array_keys($byDate));
 check('HRV (SDNN) mit Messart', ($byDate['2026-09-21']['hrv'] ?? null) === 49 && ($byDate['2026-09-21']['hrvMethod'] ?? null) === 'sdnn', $byDate['2026-09-21'] ?? null);
-// Uhr: 4 h + 3,5 h = 7,5 h; Schlaf-App: 7 h 20 min. Früher: Summe beider ≈ 14,8 h.
+// Watch: 4 h + 3.5 h = 7.5 h; sleep app: 7 h 20 min. Previously: sum of both ≈ 14.8 h.
 check('Schlaf zweier Quellen nicht addiert (längste Quelle, 7,5 h)', ($byDate['2026-09-21']['sleepHours'] ?? null) === 7.5, $byDate['2026-09-21']['sleepHours'] ?? null);
 check('„InBed" zählt nicht als Schlaf', ($byDate['2026-09-21']['sleepHours'] ?? 0) < 8.0, $byDate['2026-09-21']['sleepHours'] ?? null);
 check('eine Schlafnacht gezählt', $r['sleepNights'] === 1, $r['sleepNights']);
@@ -59,7 +59,7 @@ check('Lauf-Datum aus der Ortszeit', ($w['date'] ?? null) === '2026-09-21', $w['
 check('Titel in der Sprache der Person (ohne: englisch, de wie bisher)', ($w['title'] ?? null) === 'Run (Health import)'
     && ($rDe['workouts'][0]['title'] ?? null) === 'Lauf (Health-Import)', [$w['title'] ?? null, $rDe['workouts'][0]['title'] ?? null]);
 
-// Unmöglicher Schlaf (über 24 h aus einer Quelle) wird verworfen.
+// Impossible sleep (over 24 h from one source) is discarded.
 $xml2 = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <HealthData>
@@ -72,7 +72,7 @@ $r2 = hx_parse_file($file2);
 @unlink($file2);
 check('Schlaf über 24 h verworfen', $r2['health'] === [] && $r2['sleepNights'] === 0, $r2);
 
-// Alle zuordenbaren Sportarten (nicht nur Läufe) und der Zyklus aus dem Export.
+// All sports that can be mapped (not only runs) and the cycle from the export.
 $xml3 = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <HealthData>

@@ -1,19 +1,19 @@
 /* =========================================================================
-   workout-mode.css — Vollbild-Modus während des Trainings.
-   Sehr große Touch-Ziele, einhändig bedienbar, klare Timer.
+   workout-mode.css — full-screen mode during training.
+   Very large touch targets, operable one-handed, clear timers.
    ========================================================================= */
 
 .workout {
-  /* Deckt die App-Chrome (Header/Nav 30, Sync 40), muss aber UNTER dem Modal-Layer
-     (.modal-root 60) und den Toasts (70) bleiben – sonst öffnet das Abschluss-/
-     „Beenden?"-Sheet unsichtbar hinter dem Vollbild-Workout (#2). */
+  /* Covers the app chrome (header/nav 30, sync 40), but must stay BELOW the modal layer
+     (.modal-root 60) and the toasts (70) – otherwise the completion / end-confirmation
+     sheet opens invisibly behind the full-screen workout (#2). */
   position: fixed; inset: 0; z-index: 50;
   background: var(--bg);
   display: flex; flex-direction: column;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  /* Scrollbar, sobald der Inhalt höher als der Schirm ist (z. B. Kraft mit
-     Übungsliste auf dem iPhone). Bei kurzem Inhalt (Läufe) wächst der Timer
-     via flex:1 und füllt den Schirm – dann entsteht kein Scrollen (immersiv). */
+  /* Scrollbar as soon as the content is taller than the screen (e.g. strength with an
+     exercise list on the iPhone). With short content (runs) the timer grows
+     via flex:1 and fills the screen – then there is no scrolling (immersive). */
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
@@ -26,11 +26,11 @@
 .workout__title { flex: 1; font-weight: 750; font-size: 1.05rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .workout__close { color: var(--text-2); }
 
-/* Großer Timer */
+/* Large timer */
 .workout__clock {
-  /* grow:1 zentriert den Timer bei kurzem Inhalt (Läufe); shrink:0 verhindert,
-     dass er bei viel Inhalt (Kraft mit Übungsliste) schrumpft/abschneidet –
-     dann scrollt stattdessen der Container. */
+  /* grow:1 centres the timer when the content is short (runs); shrink:0 prevents it
+     from shrinking/being cut off when there is a lot of content (strength with an exercise list) –
+     the container scrolls instead. */
   flex: 1 0 auto;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: var(--sp-2);
@@ -50,11 +50,11 @@
   font-variant-numeric: tabular-nums;
 }
 .workout__sub { color: var(--text-2); font-size: 1rem; font-weight: 600; }
-/* Zielvorgabe der Phase (Pace-Bereich, HF-Zone) – groß genug für einen Blick im Laufen. */
+/* Target of the phase (pace range, HR zone) – large enough for a glance while running. */
 .workout__target { color: var(--text); font-size: 1.15rem; font-weight: 700; min-height: 1.4em; font-variant-numeric: tabular-nums; }
 .workout__time--rest { color: var(--warn-text); }
 
-/* Interval-/Satz-Fortschritt */
+/* Interval/set progress */
 .workout__steps {
   display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;
   padding: 0 var(--sp-4) var(--sp-3);
@@ -66,7 +66,7 @@
 .workout__step.is-done { background: var(--good); }
 .workout__step.is-current { background: var(--accent); }
 
-/* Erfassungsblock (Stepper für Sätze/Wdh./Runden) */
+/* Logging block (stepper for sets/reps/rounds) */
 .workout__counters {
   display: flex; justify-content: space-around; gap: var(--sp-3);
   padding: var(--sp-3) var(--sp-4);
@@ -76,7 +76,7 @@
 .workout__counter .stepper__val { font-size: 2rem; min-width: 64px; }
 .workout__counter .stepper__btn { width: 56px; height: 56px; font-size: 1.8rem; }
 
-/* Große Steuer-Buttons */
+/* Large control buttons */
 .workout__controls {
   display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3);
   padding: var(--sp-3) var(--sp-4) var(--sp-5);
@@ -91,15 +91,15 @@
 .workout--rest { background: color-mix(in srgb, var(--warn) 8%, var(--bg)); }
 .workout__hint { text-align: center; color: var(--text-3); font-size: 0.8rem; padding: 0 var(--sp-4) var(--sp-3); display: grid; gap: 4px; }
 
-/* Trinkpausen-Banner (blendet sich bei Erinnerungen von oben ein) */
+/* Drinking-break banner (slides in from the top for reminders) */
 .workout__drink {
   position: absolute;
   top: calc(env(safe-area-inset-top) + 54px);
   left: 50%;
   z-index: 5;
   display: flex; align-items: center; gap: 10px;
-  /* Ohne feste Breite schrumpft das Banner ab `left: 50%` auf die halbe Bildschirmbreite
-     und bricht in vier Zeilen um. */
+  /* Without a fixed width the banner shrinks from `left: 50%` to half the screen width
+     and wraps onto four lines. */
   width: max-content;
   max-width: calc(100% - 32px);
   padding: 13px 22px;
@@ -125,14 +125,14 @@
   50%      { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 0 0 14px color-mix(in srgb, var(--info) 0%, transparent); }
 }
 
-/* „Training beenden" klar gefüllt statt ausgegraut (Ghost-Look wirkte deaktiviert, #2) */
+/* "End workout" clearly filled instead of greyed out (the ghost look seemed disabled, #2) */
 .workout__btn-finish {
   background: var(--accent-soft); color: var(--accent-strong); font-weight: 750;
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
 }
 .workout__btn-finish--wide { grid-column: 1 / -1; }
 
-/* Übungen auch während des Workouts erreichbar (#1) */
+/* Exercises also reachable during the workout (#1) */
 .workout__ex-panel { padding: 0 var(--sp-4) var(--sp-4); }
 .workout__ex-head {
   display: flex; align-items: center; gap: var(--sp-2); width: 100%;
@@ -161,7 +161,7 @@
 .workout__ex-toggle.is-on { background: var(--accent); color: var(--accent-contrast); }
 .workout__ex-empty { font-size: 0.82rem; color: var(--text-3); padding: var(--sp-2); }
 
-/* Kraft: Sätze je Übung (Wiederholungen × Gewicht) */
+/* Strength: sets per exercise (repetitions × weight) */
 .workout__sets { display: grid; gap: 6px; padding: 4px 12px 12px 56px; }
 .workout__sets-last { font-size: .8rem; color: var(--text-2); }
 .workout__sets-hint { font-size: .78rem; color: var(--accent-text); }

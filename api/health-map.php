@@ -1,17 +1,17 @@
 <?php
 /**
- * health-map.php — REINE Mapping-Logik für den Apple-Health-Ingest.
+ * health-map.php — PURE mapping logic for the Apple Health ingest.
  *
- * Enthält nur seiteneffektfreie Funktionen (keine DB, kein $_GET, kein Netz),
- * damit sie automatisiert testbar sind (siehe tools/test-health-ingest.php).
- * `health-ingest.php` bindet dies ein und ergänzt Auth + Merge/Dedup + Schreiben.
+ * Contains only side-effect-free functions (no DB, no $_GET, no network),
+ * so that they can be tested automatically (see tools/test-health-ingest.php).
+ * `health-ingest.php` includes this and adds auth + merge/dedup + writing.
  *
- * Datenformat: help.healthyapps.dev (export-format), **JSON v2** empfohlen:
- *   - Metrik-Namen snake_case (Gewicht „weight_&_body_mass"); Datenpunkte „qty",
- *     Herzfrequenz „Min/Avg/Max".
- *   - Schlaf in STUNDEN (totalSleep/asleep …); Workout-`duration` in SEKUNDEN.
- *   - Distanz/Energie/HF sind Objekte { qty, units } (Distanz mi oder km);
- *     Energie heißt in v2 `activeEnergyBurned`, in v1 `activeEnergy` (beide gemappt).
+ * Data format: help.healthyapps.dev (export format), **JSON v2** recommended:
+ *   - Metric names in snake_case (weight "weight_&_body_mass"); data points "qty",
+ *     heart rate "Min/Avg/Max".
+ *   - Sleep in HOURS (totalSleep/asleep …); workout `duration` in SECONDS.
+ *   - Distance/energy/HR are objects { qty, units } (distance mi or km);
+ *     energy is called `activeEnergyBurned` in v2, `activeEnergy` in v1 (both mapped).
  *
  * Titles of imported sessions come in the language passed as $lang (locales/<lang>/server.json).
  */
@@ -19,14 +19,14 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/i18n.php';
 
-/** Datum (YYYY-MM-DD) aus einem Auto-Export-Datumsstring – TZ-sicher über den Datums-Teil. */
+/** Date (YYYY-MM-DD) from an auto-export date string – TZ-safe via the date part. */
 function hi_date($s): ?string {
     $s = (string) $s;
     if (preg_match('/(\d{4})-(\d{2})-(\d{2})/', $s, $m)) return "{$m[1]}-{$m[2]}-{$m[3]}";
     $ts = strtotime($s);
     return $ts ? date('Y-m-d', $ts) : null;
 }
-/** Ersten vorhandenen Zahlenwert aus mehreren möglichen Feldern lesen (auch { qty }-Objekte). */
+/** Read the first available numeric value from several possible fields (also { qty } objects). */
 function hi_num($p, array $keys) {
     if (!is_array($p)) return is_numeric($p) ? (float) $p : null;
     foreach ($keys as $k) {
@@ -37,12 +37,12 @@ function hi_num($p, array $keys) {
     }
     return null;
 }
-/** Einheit eines möglichen { qty, units }-Feldes oder eines <feld>Units-Feldes. */
+/** Unit of a possible { qty, units } field or of a <field>Units field. */
 function hi_units($w, string $field): string {
     if (is_array($w[$field] ?? null) && isset($w[$field]['units'])) return strtolower((string) $w[$field]['units']);
     return strtolower((string) ($w[$field . 'Units'] ?? ''));
 }
-/** Metrik-Name -> [Zielfeld, Typ]. Erst exakt, dann heuristisch (robust gegen App-Versionen). */
+/** Metric name -> [target field, type]. Exact first, then heuristic (robust against app versions). */
 function hi_map_metric(string $name): ?array {
     static $EXACT = [
         'weight_body_mass' => ['weight', 'kg'], 'weight_&_body_mass' => ['weight', 'kg'], 'body_mass' => ['weight', 'kg'],
@@ -56,13 +56,13 @@ function hi_map_metric(string $name): ?array {
     if ($h('variability') || $h('hrv')) return ['hrv', 'int'];
     if ($h('resting') && $h('heart')) return ['restingHr', 'int'];
     if ($h('body_fat')) return ['bodyFat', 'pct'];
-    if ($h('lean_body')) return ['leanMass', 'kg'];                 // fettfreie Masse – vor body_mass prüfen
+    if ($h('lean_body')) return ['leanMass', 'kg'];                 // lean mass – check before body_mass
     if ($h('body_mass') || $name === 'weight' || $h('weight_')) return ['weight', 'kg'];
     if ($h('step')) return ['steps', 'int'];
     if ($h('active_energy')) return ['activeEnergyKcal', 'int'];
     return null;
 }
-/** Wert je nach Typ normalisieren (Einheiten: kg aus lb; Körperfett 0..1 -> %). */
+/** Normalise a value by type (units: kg from lb; body fat 0..1 -> %). */
 function hi_apply(string $tag, float $v, string $units) {
     if ($tag === 'kg' && str_contains($units, 'lb')) $v = $v * 0.453592;
     return match ($tag) {
@@ -72,17 +72,17 @@ function hi_apply(string $tag, float $v, string $units) {
         default => round($v, 2),
     };
 }
-/** Aktivität normalisieren („Trail Running" -> „trail_running", HealthKit- und Health-Connect-
-    Präfixe weg: „HKWorkoutActivityTypeRunning", „EXERCISE_TYPE_RUNNING" -> „running"). */
+/** Normalise an activity ("Trail Running" -> "trail_running", strip HealthKit and Health Connect
+    prefixes: "HKWorkoutActivityTypeRunning", "EXERCISE_TYPE_RUNNING" -> "running"). */
 function hi_norm_activity($s): string {
     return preg_replace('/^(hkworkoutactivitytype|exercise_type_)/', '', preg_replace('/[\s\-]+/', '_', strtolower(trim((string) $s))));
 }
-/** Energie in kcal – Health Auto Export rechnet kJ nicht um (2100 kJ kamen als „2100 kcal“ an). */
+/** Energy in kcal – Health Auto Export does not convert kJ (2100 kJ arrived as "2100 kcal"). */
 function hi_kcal(?float $v, string $units): ?float {
     if ($v === null) return null;
     return str_contains($units, 'kj') ? $v / 4.184 : $v;
 }
-/** Apple/HealthKit-Aktivität -> App-Session-Typ (exakt, dann heuristisch). */
+/** Apple/HealthKit activity -> app session type (exact, then heuristic). */
 function hi_wtype(string $act): ?string {
     static $MAP = [
         'running' => 'easy', 'trail_running' => 'easy', 'treadmill_running' => 'easy',
@@ -113,7 +113,7 @@ function hi_title(string $type, string $source = 'appleHealth', string $lang = S
         'source' => server_text($lang, "import.source.{$source}"),
     ]);
 }
-/** Herzfrequenz aus dem v1-`heartRateData`-Array ableiten (Fallback, wenn avg/max fehlen). */
+/** Derive heart rate from the v1 `heartRateData` array (fallback when avg/max are missing). */
 function hi_hr_from_series(array $w): array {
     $hrd = $w['heartRateData'] ?? null;
     if (!is_array($hrd) || !$hrd) return [null, null];
@@ -126,26 +126,26 @@ function hi_hr_from_series(array $w): array {
 }
 
 /* -------------------------------------------------------------------------
- * Schlankes Tagesformat für eine Kurzbefehl-Vorlage (kostenloser Weg, ohne Dritt-App):
+ * Lean daily format for a Shortcuts template (free route, without a third-party app):
  *   { "date": "2026-09-29", "weight": 72.4, "restingHr": 52, "hrv": 48, "sleepHours": 7.3 }
- * oder mehrere Tage als { "days": [ {…}, {…} ] }. Zahlen dürfen als Text mit Komma kommen
- * („72,4“ – so gibt die Kurzbefehle-App sie auf Deutsch aus). Unplausible Werte werden
- * verworfen und als Warnung gemeldet, unbekannte Felder ignoriert.
+ * or several days as { "days": [ {…}, {…} ] }. Numbers may arrive as text with a comma
+ * ("72,4" – this is how the Shortcuts app outputs them in German). Implausible values are
+ * discarded and reported as a warning, unknown fields ignored.
  * ------------------------------------------------------------------------- */
 const HI_SIMPLE_FIELDS = [
-    // Feld => [Typ, min, max]
+    // Field => [type, min, max]
     'weight' => ['kg', 20, 400], 'bodyFat' => ['pct', 1, 80], 'leanMass' => ['kg', 10, 200],
     'restingHr' => ['int', 25, 150], 'hrv' => ['int', 1, 400], 'vo2max' => ['vo2', 10, 100],
     'sleepHours' => ['sleep', 0.1, 24], 'steps' => ['int', 0, 200000], 'activeEnergyKcal' => ['int', 0, 20000],
 ];
 
-/** Ist das ein Tages-Objekt (bzw. eine Liste davon) statt eines Health-Auto-Export-Pakets? */
+/** Is this a day object (or a list of them) rather than a Health Auto Export payload? */
 function hi_is_simple(array $data): bool {
     if (isset($data['metrics'])) return false;
     return isset($data['date']) || (isset($data['days']) && is_array($data['days']));
 }
 
-/** Zahl aus Zahl oder Text („72,4“, „7.3 h“). */
+/** Number from a number or text ("72,4", "7.3 h"). */
 function hi_simple_num($v): ?float {
     if (is_int($v) || is_float($v)) return (float) $v;
     if (!is_string($v)) return null;
@@ -172,7 +172,7 @@ function hi_parse_simple(array $data, string $lang = SERVER_SOURCE_LANGUAGE): ar
             $v = hi_simple_num($raw);
             if ($v === null) continue;
             if ($key === 'weight' && strtolower((string) ($day['weightUnit'] ?? '')) === 'lb') $v *= 0.453592;
-            if ($key === 'bodyFat' && $v > 0 && $v <= 1) $v *= 100;            // 0,185 → 18,5 %
+            if ($key === 'bodyFat' && $v > 0 && $v <= 1) $v *= 100;            // 0.185 → 18.5 %
             if ($v < $min || $v > $max) {
                 if (count($warnings) < 8) $warnings[] = "{$key} on {$date} implausible ({$v}) – discarded";
                 continue;
@@ -185,11 +185,11 @@ function hi_parse_simple(array $data, string $lang = SERVER_SOURCE_LANGUAGE): ar
         }
         if (isset($healthByDate[$date]['hrv'])) {
             $method = strtolower((string) ($day['hrvMethod'] ?? 'sdnn'));
-            $healthByDate[$date]['hrvMethod'] = $method === 'rmssd' ? 'rmssd' : 'sdnn';   // Apple Health speichert SDNN
+            $healthByDate[$date]['hrvMethod'] = $method === 'rmssd' ? 'rmssd' : 'sdnn';   // Apple Health stores SDNN
         }
     }
-    // Trainings dürfen im selben Paket mitkommen (Felder wie bei Health Auto Export:
-    // name, start, end oder duration in Sekunden, distance in km, avgHeartRate …).
+    // Workouts may come in the same payload (fields as with Health Auto Export:
+    // name, start, end or duration in seconds, distance in km, avgHeartRate …).
     $w = is_array($data['workouts'] ?? null) ? hi_parse(['workouts' => $data['workouts']], $lang) : null;
     return [
         'healthByDate'        => $healthByDate,
@@ -203,9 +203,9 @@ function hi_parse_simple(array $data, string $lang = SERVER_SOURCE_LANGUAGE): ar
 }
 
 /* -------------------------------------------------------------------------
- * Perioden aus Blutungstagen (Zyklus aus Apple Health bzw. Health Connect):
- * aufeinanderfolgende Tage – ein fehlender Tag dazwischen zählt mit – bilden eine Periode.
- * Rückgabe [['start' => 'YYYY-MM-DD', 'length' => Tage], …], älteste zuerst.
+ * Periods from bleeding days (cycle from Apple Health or Health Connect):
+ * consecutive days – one missing day in between still counts – form a period.
+ * Returns [['start' => 'YYYY-MM-DD', 'length' => days], …], oldest first.
  * ------------------------------------------------------------------------- */
 function hi_periods(array $dates): array {
     $dates = array_values(array_unique(array_filter($dates, fn ($d) => is_string($d) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $d))));
@@ -223,7 +223,7 @@ function hi_periods(array $dates): array {
     }
     return $out;
 }
-/** Blutung laut Apple/HealthKit-Wert? („none“ bzw. 5 heißt: keine). */
+/** Bleeding according to the Apple/HealthKit value? ("none" or 5 means: none). */
 function hi_is_flow($v): bool {
     if ($v === null || $v === '' || $v === false) return false;
     $s = strtolower(trim((string) $v));
@@ -231,15 +231,15 @@ function hi_is_flow($v): bool {
 }
 
 /* -------------------------------------------------------------------------
- * Android: Health Connect über eine Brücken-App (z. B. „HC Webhook“, quelloffen). Sie
- * schickt je Datentyp ein Array mit ISO-Zeitstempeln in UTC, etwa
+ * Android: Health Connect via a bridge app (e.g. "HC Webhook", open source). It
+ * sends one array per data type with ISO timestamps in UTC, for example
  *   { "app_version": "…", "weight": [{ "kilograms": 72.3, "time": "2026-09-29T05:10:00Z" }],
  *     "resting_heart_rate": [{ "bpm": 52, "time": … }], "heart_rate_variability": [{ "rmssd_millis": 48, "time": … }],
  *     "sleep": [{ "session_end_time": …, "duration_seconds": 26100, "stages": [ … ] }],
  *     "exercise": [{ "type": "RUNNING", "start_time": …, "end_time": …, "duration_seconds": 3300, "distance_meters": 9200 }],
  *     "heart_rate": [{ "bpm": 142, "time": … }], "steps": [{ "count": 5400, "start_time": …, "end_time": … }] }
- * Tageswerte gehören zum Kalendertag in der Zeitzone der Instanz; die Ø-HF eines Trainings
- * kommt aus den Herzfrequenz-Werten in seinem Zeitfenster. Health Connect misst HRV als RMSSD.
+ * Daily values belong to the calendar day in the instance's time zone; the avg HR of a workout
+ * comes from the heart-rate values in its time window. Health Connect measures HRV as RMSSD.
  * ------------------------------------------------------------------------- */
 const HI_HCW_KEYS = ['exercise', 'weight', 'body_fat', 'lean_body_mass', 'resting_heart_rate', 'heart_rate_variability',
     'sleep', 'steps', 'active_calories', 'vo2_max', 'heart_rate', 'menstruation_period', 'menstruation_flow'];
@@ -251,30 +251,30 @@ function hi_is_hcw(array $data): bool {
     return false;
 }
 
-/** ISO-Zeitpunkt → Unix-Zeit (null bei Unsinn). */
+/** ISO timestamp → Unix time (null for nonsense). */
 function hi_ts($s): ?int {
     if (!is_string($s) || $s === '') return null;
     $t = strtotime($s);
     return $t === false ? null : $t;
 }
-/** Unix-Zeit → Kalendertag in der Zeitzone der Instanz. */
+/** Unix time → calendar day in the instance's time zone. */
 function hi_day(int $ts, string $tz): string {
     return (new DateTimeImmutable('@' . $ts))->setTimezone(new DateTimeZone($tz))->format('Y-m-d');
 }
 
 function hi_parse_hcw(array $data, string $tz = 'Europe/Berlin', string $lang = SERVER_SOURCE_LANGUAGE): array {
-    // Nur bekannte Zonen – eine unbekannte ließe DateTimeZone mitten im Import scheitern.
+    // Known zones only – an unknown one would make DateTimeZone fail in the middle of the import.
     if (!in_array($tz, timezone_identifiers_list(), true)) $tz = 'Europe/Berlin';
     $list =fn (string $k) => array_values(array_filter(is_array($data[$k] ?? null) ? $data[$k] : [], 'is_array'));
-    $health = [];      // date => [feld => wert]
-    $at = [];          // date => [feld => Zeitpunkt des Wertes] (jüngster gewinnt)
+    $health = [];      // date => [field => value]
+    $at = [];          // date => [field => time of the value] (most recent wins)
     $warnings = [];
     $put = function (string $date, string $field, $v, int $ts) use (&$health, &$at) {
         if (isset($at[$date][$field]) && $at[$date][$field] > $ts) return;
         $health[$date][$field] = $v;
         $at[$date][$field] = $ts;
     };
-    // Einzelwerte je Tag (jüngster Wert zählt), mit Plausibilitätsgrenzen wie im Tagesformat.
+    // Single values per day (most recent value counts), with plausibility limits as in the daily format.
     $single = [
         ['weight', ['kilograms', 'weight', 'value'], 'weight', 20, 400, 2],
         ['body_fat', ['percentage', 'percent', 'value'], 'bodyFat', 1, 80, 1],
@@ -291,7 +291,7 @@ function hi_parse_hcw(array $data, string $tz = 'Europe/Berlin', string $lang = 
             $put(hi_day($ts, $tz), $target, $dec ? round($v, $dec) : (int) round($v), $ts);
         }
     }
-    // HRV: Tagesmittel der RMSSD-Werte.
+    // HRV: daily mean of the RMSSD values.
     $hrv = [];
     foreach ($list('heart_rate_variability') as $r) {
         $ts = hi_ts($r['time'] ?? null);
@@ -303,7 +303,7 @@ function hi_parse_hcw(array $data, string $tz = 'Europe/Berlin', string $lang = 
         $health[$date]['hrv'] = (int) round(array_sum($vals) / count($vals));
         $health[$date]['hrvMethod'] = 'rmssd';
     }
-    // Summen je Tag: Schritte, aktive Energie.
+    // Sums per day: steps, active energy.
     foreach ([['steps', ['count', 'value'], 'steps', 200000], ['active_calories', ['calories', 'kilocalories', 'value'], 'activeEnergyKcal', 20000]] as [$key, $fields, $target, $max]) {
         $sum = [];
         foreach ($list($key) as $r) {
@@ -315,7 +315,7 @@ function hi_parse_hcw(array $data, string $tz = 'Europe/Berlin', string $lang = 
         }
         foreach ($sum as $d => $v) if ($v <= $max) $health[$d][$target] = (int) round($v);
     }
-    // Schlaf: Stunden der Nacht am Tag des Aufwachens – Wach- und Außer-Bett-Phasen zählen nicht.
+    // Sleep: hours of the night, attributed to the day of waking – awake and out-of-bed phases do not count.
     $sleep = [];
     foreach ($list('sleep') as $r) {
         $end = hi_ts($r['session_end_time'] ?? ($r['end_time'] ?? null));
@@ -335,7 +335,7 @@ function hi_parse_hcw(array $data, string $tz = 'Europe/Berlin', string $lang = 
     }
     foreach ($sleep as $d => $sec) { $h = $sec / 3600; if ($h > 0 && $h <= 24) $health[$d]['sleepHours'] = round($h, 1); }
 
-    // Trainings, Ø-/Max-HF aus den Herzfrequenz-Werten im Zeitfenster.
+    // Workouts, avg/max HR from the heart-rate values in the time window.
     $hr = [];
     foreach ($list('heart_rate') as $r) {
         $ts = hi_ts($r['time'] ?? null);
@@ -370,7 +370,7 @@ function hi_parse_hcw(array $data, string $tz = 'Europe/Berlin', string $lang = 
         ];
     }
 
-    // Zyklus: Periodenzeiträume, sonst einzelne Blutungstage.
+    // Cycle: period date ranges, otherwise single bleeding days.
     $flowDays = [];
     foreach ($list('menstruation_period') as $r) {
         $a = hi_ts($r['start_time'] ?? null); $b = hi_ts($r['end_time'] ?? null);
@@ -398,10 +398,10 @@ function hi_parse_hcw(array $data, string $tz = 'Europe/Berlin', string $lang = 
 }
 
 /**
- * REINE Umwandlung eines Auto-Export-`data`-Objekts in Tageswerte + Workouts.
- * Kein DB-Zugriff. Rückgabe:
- *   healthByDate: [ 'YYYY-MM-DD' => [feld=>wert] ]  (inkl. Schlaf-Plausibilitätsgrenze)
- *   newSessions:  [ 'hk-…' => record ]              (vor Dedup gegen bestehende Daten)
+ * PURE conversion of an auto-export `data` object into daily values + workouts.
+ * No DB access. Returns:
+ *   healthByDate: [ 'YYYY-MM-DD' => [field=>value] ]  (incl. sleep plausibility limit)
+ *   newSessions:  [ 'hk-…' => record ]              (before dedup against existing data)
  *   ignoredMetrics, skippedUnmappedType, warnings, received
  */
 function hi_parse(array $data, string $lang = SERVER_SOURCE_LANGUAGE): array {
@@ -409,10 +409,10 @@ function hi_parse(array $data, string $lang = SERVER_SOURCE_LANGUAGE): array {
     $workouts = is_array($data['workouts'] ?? null) ? $data['workouts'] : [];
 
     $healthByDate = [];
-    $sleepAgg = [];    // date => Stunden (aggregiert)
-    $sleepSum = [];    // date => Stunden (Summe der Segmente, falls nicht aggregiert)
+    $sleepAgg = [];    // date => hours (aggregated)
+    $sleepSum = [];    // date => hours (sum of the segments, if not aggregated)
     $ignoredMetrics = [];
-    $flowDays = [];    // Tage mit Blutung (Zyklus, privat)
+    $flowDays = [];    // days with bleeding (cycle, private)
 
     foreach ($metrics as $metric) {
         if (!is_array($metric)) continue;
@@ -434,8 +434,8 @@ function hi_parse(array $data, string $lang = SERVER_SOURCE_LANGUAGE): array {
                 if (!is_array($p)) continue;
                 $date = hi_date($p['date'] ?? ($p['sleepEnd'] ?? ''));
                 if ($date === null) continue;
-                // Aggregiert (Stunden): totalSleep bevorzugt, sonst asleep – nur PLAUSIBLE Werte
-                // (0 < h ≤ 24). So verfälscht ein Müllwert wie „36" nicht den Schlaf-Trend.
+                // Aggregated (hours): totalSleep preferred, otherwise asleep – only PLAUSIBLE values
+                // (0 < h ≤ 24). That way a junk value such as "36" does not distort the sleep trend.
                 $ts = hi_num($p, ['totalSleep']);
                 $as = hi_num($p, ['asleep']);
                 $cand = ($ts !== null && $ts > 0 && $ts <= 24) ? $ts
@@ -459,13 +459,13 @@ function hi_parse(array $data, string $lang = SERVER_SOURCE_LANGUAGE): array {
             if ($date === null || $v === null) continue;
             if ($field === 'activeEnergyKcal') $v = hi_kcal($v, $units);
             $healthByDate[$date][$field] = hi_apply($tag, $v, $units);
-            // Apple speichert HRV als SDNN – viele Uhren zeigen RMSSD; die Messart gehört zum Wert.
+            // Apple stores HRV as SDNN – many watches show RMSSD; the measurement method belongs to the value.
             if ($field === 'hrv') $healthByDate[$date]['hrvMethod'] = 'sdnn';
         }
     }
     foreach (array_keys($sleepAgg + $sleepSum) as $date) {
         $hrs = $sleepAgg[$date] ?? $sleepSum[$date] ?? null;
-        // Plausibilitätsgrenze: mehr als 24 h Schlaf/Tag ist unmöglich -> verwerfen (kaputte Quelle).
+        // Plausibility limit: more than 24 h of sleep per day is impossible -> discard (broken source).
         if ($hrs !== null && $hrs > 0 && $hrs <= 24) $healthByDate[$date]['sleepHours'] = round($hrs, 1);
     }
 
@@ -483,18 +483,18 @@ function hi_parse(array $data, string $lang = SERVER_SOURCE_LANGUAGE): array {
         $date = hi_date($startStr);
         if ($date === null) { $skippedWorkouts++; continue; }
 
-        // Dauer: primär aus start/end, sonst „duration" (laut Doku SEKUNDEN).
+        // Duration: primarily from start/end, otherwise "duration" (SECONDS according to the docs).
         $tsA = strtotime($startStr); $tsB = strtotime($endStr);
         $durSec = ($tsA && $tsB && $tsB > $tsA) ? ($tsB - $tsA) : null;
         if ($durSec === null) { $d = hi_num($w, ['duration', 'activeDuration']); if ($d !== null) $durSec = (int) round($d); }
 
-        // Distanz (Objekt { qty, units }; mi -> km) + Pace.
+        // Distance (object { qty, units }; mi -> km) + pace.
         $distKm = hi_num($w, ['distance', 'totalDistance', 'distanceKm']);
         if ($distKm !== null && str_contains(hi_units($w, 'distance'), 'mi')) $distKm = $distKm * 1.60934;
         if ($distKm !== null) $distKm = round($distKm, 3);
         $paceSec = ($distKm && $durSec && $distKm > 0) ? (int) round($durSec / $distKm) : null;
 
-        // HF: v2-Objekte avgHeartRate/maxHeartRate, sonst Fallback aus v1-heartRateData.
+        // HR: v2 objects avgHeartRate/maxHeartRate, otherwise fallback from the v1 heartRateData.
         $avgHr = hi_num($w, ['avgHeartRate', 'averageHeartRate']);
         $maxHr = hi_num($w, ['maxHeartRate']);
         if ($avgHr === null || $maxHr === null) {

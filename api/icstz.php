@@ -1,19 +1,19 @@
 <?php
 /**
- * icstz.php — Zeitzone der Kalender-Dateien (reine Funktionen, testbar).
+ * icstz.php — time zone of the calendar files (pure functions, testable).
  *
- * Die Zeiten der Einheiten sind Ortszeit („Lauf um 18:00“). ics.php schreibt sie mit
- * TZID und liefert die passende VTIMEZONE mit. Welche Zone das ist, bestimmt die
- * Umgebungsvariable CATOFIT_TZ oder TZ (Docker); ohne gültige Angabe bleibt es wie
- * bisher bei Europe/Berlin – bewusst nicht die php.ini-Voreinstellung, die auf manchen
- * Hosts UTC ist und bestehende Kalender-Abos um Stunden verschieben würde.
+ * The times of the sessions are local times ("run at 18:00"). ics.php writes them with
+ * TZID and supplies the matching VTIMEZONE. Which zone that is is determined by the
+ * environment variable CATOFIT_TZ or TZ (Docker); without a valid value it stays at
+ * Europe/Berlin as before – deliberately not the php.ini default, which is UTC on
+ * some hosts and would shift existing calendar subscriptions by hours.
  *
- *   php tools/test-ics.php   (Test)
+ *   php tools/test-ics.php   (test)
  */
 
 declare(strict_types=1);
 
-/** Zeitzone für DTSTART;TZID=… und die VTIMEZONE. */
+/** Time zone for DTSTART;TZID=… and the VTIMEZONE. */
 function ics_timezone(): string
 {
     foreach (['CATOFIT_TZ', 'TZ'] as $var) {
@@ -25,7 +25,7 @@ function ics_timezone(): string
     return 'Europe/Berlin';
 }
 
-/** Versatz in Sekunden → „+0100“ / „-0430“. */
+/** Offset in seconds → "+0100" / "-0430". */
 function ics_offset(int $seconds): string
 {
     $sign = $seconds < 0 ? '-' : '+';
@@ -34,10 +34,10 @@ function ics_offset(int $seconds): string
 }
 
 /**
- * VTIMEZONE-Block für eine Zone. Europe/Berlin bleibt byte-gleich zur bisherigen
- * Ausgabe (keine Änderung für bestehende Abos); andere Zonen bekommen je Umstellung
- * im Zeitraum eine eigene STANDARD/DAYLIGHT-Komponente (RFC 5545, ohne RRULE),
- * Zonen ohne Umstellung eine einzige STANDARD-Komponente.
+ * VTIMEZONE block for a zone. Europe/Berlin stays byte-identical to the previous
+ * output (no change for existing subscriptions); other zones get a STANDARD/DAYLIGHT
+ * component of their own per transition in the period, zones without a transition
+ * a single STANDARD component.
  *
  * @return string[]
  */
@@ -64,9 +64,9 @@ function vtimezone_lines(string $name, int $fromYear, int $toYear): array
             'END:VTIMEZONE',
         ];
     }
-    // Unbekannte Zone gar nicht erst konstruieren: PHP ab 8.3 wirft dann eine
-    // DateInvalidTimeZoneException, und mit aktivem Xdebug schlägt daraus ein Error
-    // durch, den kein catch (Exception) mehr fängt (so geschehen in der CI).
+    // Do not even construct an unknown zone: PHP from 8.3 then throws a
+    // DateInvalidTimeZoneException, and with Xdebug active that turns into an Error
+    // that no catch (Exception) catches any more (this happened in CI).
     if (!in_array($name, timezone_identifiers_list(), true)) {
         return [];
     }
@@ -88,7 +88,7 @@ function vtimezone_lines(string $name, int $fromYear, int $toYear): array
     $changes = 0;
     foreach (array_slice($transitions, 1) as $t) {
         $kind = $t['isdst'] ? 'DAYLIGHT' : 'STANDARD';
-        // DTSTART ist die Ortszeit VOR der Umstellung (z. B. 02:00 am Umstellungstag).
+        // DTSTART is the local time BEFORE the transition (e.g. 02:00 on the transition day).
         array_push(
             $out,
             'BEGIN:' . $kind,

@@ -1,24 +1,24 @@
 <?php
 /**
- * read-access.php — Lesezugang für eigene Werkzeuge (z. B. einen KI-Assistenten, den die
- * Person selbst betreibt). Standardmäßig AUS: Erst wenn die Person in der App einen
- * Schlüssel erzeugt (profile.readToken), antwortet dieser Endpunkt – nur lesend, nur mit
- * ihren eigenen Daten.
+ * read-access.php — read access for own tools (e.g. an AI assistant that the
+ * person runs themselves). OFF by default: only once the person generates a
+ * key in the app (profile.readToken) does this endpoint respond – read-only, and only with
+ * their own data.
  *
- *   GET api/api.php?action=read&user=<id>   Header  X-Catofit-Token: <schlüssel>
+ *   GET api/api.php?action=read&user=<id>   Header  X-Catofit-Token: <key>
  *   optional: &areas=sessions,health   &from=2026-06-01
  *
- * Bewusst NICHT enthalten: Zyklus, Labor und Ergänzungen (Gesundheitsdaten nach Art. 9
- * DSGVO – und Laborbewertungen gehören nicht in fremde Auswertungen) sowie alle Schlüssel
- * aus dem Profil. Cat-O-Fit betreibt selbst keine KI; es liefert nur Daten.
+ * Deliberately NOT included: cycle, labs and supplements (health data under Art. 9
+ * GDPR – and lab evaluations do not belong in third-party analyses) as well as all keys
+ * from the profile. Cat-O-Fit runs no AI itself; it only supplies data.
  *
- * Eingebunden von api.php (respond()/fail() stehen dort bereit).
+ * Included by api.php (respond()/fail() are available there).
  */
 declare(strict_types=1);
 
-/** Bereiche, die der Lesezugang herausgeben darf. */
+/** Areas that the read access may hand out. */
 const READ_AREAS = ['events', 'plans', 'sessions', 'health', 'nutrition', 'diary', 'checklist', 'reports'];
-/** Profilfelder, die für eine Auswertung nützlich sind – keine Schlüssel, keine Einstellungen. */
+/** Profile fields that are useful for an analysis – no keys, no settings. */
 const READ_PROFILE_FIELDS = ['name', 'sex', 'birthYear', 'heightCm', 'weightKg', 'targetWeightKg', 'maxHr', 'restHr',
     'hrZones', 'paceZones', 'thresholdPaceSecPerKm', 'level', 'goals', 'activityFactor'];
 
@@ -31,8 +31,8 @@ if ($user === '' || !is_valid_user($user)) {
 $profileStore = read_store('profile', 'user', $user);
 $profile = $profileStore['records']['profile'] ?? [];
 $expected = is_array($profile) ? (string) ($profile['readToken'] ?? '') : '';
-// Ohne eingeschalteten Zugang dieselbe Antwort wie bei falschem Schlüssel: Von außen soll
-// nicht erkennbar sein, wer den Zugang nutzt.
+// Without access switched on, the same response as for a wrong key: from the outside it
+// must not be possible to tell who uses the access.
 if ($expected === '' || $token === '' || !hash_equals($expected, $token)) {
     fail('Invalid or disabled access.', 401, 'invalid_access');
 }
