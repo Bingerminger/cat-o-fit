@@ -36,7 +36,7 @@ const UNIT_CANON = {
   cda: 'EL', cdas: 'EL', cucharada: 'EL', cucharadas: 'EL', cdta: 'TL', cdtas: 'TL', cucharadita: 'TL', cucharaditas: 'TL',
   pizca: 'Prise', pizcas: 'Prise', manojo: 'Bund', manojos: 'Bund', diente: 'Zehe', dientes: 'Zehe',
   pieza: 'Stück', piezas: 'Stück', ud: 'Stück', uds: 'Stück', unidad: 'Stück', unidades: 'Stück',
-  rebanada: 'Scheibe', rebanadas: 'Scheibe', loncha: 'Scheibe', lonchas: 'Scheibe', lata: 'Dose', latas: 'Dose',
+  rebanada: 'Scheibe', rebanadas: 'Scheibe', loncha: 'Scheibe', lonchas: 'Scheibe', rodaja: 'Scheibe', rodajas: 'Scheibe', lata: 'Dose', latas: 'Dose',
   paquete: 'Packung', paquetes: 'Packung', tarrina: 'Becher', tarrinas: 'Becher', bote: 'Glas', botes: 'Glas',
   frasco: 'Glas', frascos: 'Glas', gramo: 'g', gramos: 'g',
   // Italian
@@ -55,7 +55,7 @@ const UNIT_CANON = {
   mespunt: 'Prise', mespuntje: 'Prise', bos: 'Bund', bossen: 'Bund', bosje: 'Bund', bosjes: 'Bund',
   teen: 'Zehe', tenen: 'Zehe', teentje: 'Zehe', teentjes: 'Zehe', stuk: 'Stück', stuks: 'Stück', stukje: 'Stück', stukjes: 'Stück',
   snee: 'Scheibe', sneden: 'Scheibe', sneetje: 'Scheibe', sneetjes: 'Scheibe', plak: 'Scheibe', plakken: 'Scheibe',
-  plakje: 'Scheibe', plakjes: 'Scheibe', blik: 'Dose', blikken: 'Dose', blikje: 'Dose', blikjes: 'Dose',
+  plakje: 'Scheibe', plakjes: 'Scheibe', schijf: 'Scheibe', schijven: 'Scheibe', schijfje: 'Scheibe', schijfjes: 'Scheibe', blik: 'Dose', blikken: 'Dose', blikje: 'Dose', blikjes: 'Dose',
   pak: 'Packung', pakken: 'Packung', pakje: 'Packung', pakjes: 'Packung', verpakking: 'Packung', verpakkingen: 'Packung',
   bakje: 'Becher', bakjes: 'Becher', potje: 'Glas', potjes: 'Glas',
   // Metric words of the new languages (the stored unit stays g / ml)
@@ -112,7 +112,7 @@ export function parseIngredient(raw) {
   let unit = null;
   let amt = amount;
 
-  // Mehrwort-Einheiten („c. à s.“, „colher de sopa“) vor dem Ein-Wort-Token.
+  // Multi-word units (“c. à s.”, “colher de sopa”) come before the one-word token.
   const rest = s.slice(m[1].length).trimStart();
   const phrase = UNIT_PHRASES.find(([re]) => re.test(rest));
   const known = tok ? unitWord(tok) : null;
@@ -125,7 +125,8 @@ export function parseIngredient(raw) {
     name = name.replace(PARTICLE, '');
   } else if (tok) {
     // Kein bekanntes Einheitenwort -> gehört zum Namen (z. B. „Eier“, „Avocado“).
-    name = (m[2] + (name ? ' ' + name : '')).trim();
+    // A hyphen or apostrophe right behind the first word belongs to the name (“batata-doce”, “pomme-de-terre”).
+    name = (m[2] + (name ? (/^[-'’]/.test(rest.slice(m[2].length)) ? '' : ' ') + name : '')).trim();
     unit = amount != null ? 'Stück' : null;
   } else {
     unit = amount != null ? 'Stück' : null;
@@ -136,32 +137,117 @@ export function parseIngredient(raw) {
 
 /** Name as the keyword tables see it: lower case, typographic apostrophe, œ/æ spelled out. */
 export const fold = (s) => String(s).toLowerCase().replace(/'/g, '’').replace(/œ/g, 'oe').replace(/æ/g, 'ae');
-// Ganzes Wort (Zusammensetzungen am Wortanfang/-ende zählen nicht): „Ei“ ist nicht „Reiswaffel“. JS-\b kennt keine
-// Umlaute, daher eigene Grenzen.
+// Whole word (compounds do not count): “Ei” is not in “Reiswaffel”. JS \b knows no umlauts or accents, hence our own
+// boundaries.
 const wordRes = new Map();
-export function wordRe(k) {
+function wordRe(k) {
   let re = wordRes.get(k);
-  if (!re) wordRes.set(k, re = new RegExp(`(^|[^\\p{L}])${k}($|[^\\p{L}])`, 'u'));
+  if (!re) wordRes.set(k, re = new RegExp(`(^|[^\\p{L}])${k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}($|[^\\p{L}])`, 'u'));
   return re;
 }
-/** Kommt das Stichwort im (gefalteten) Namen vor? Gewöhnliche Stichwörter zählen auch mitten im Wort („hähnchen“ in
-    „Hähnchenbrust“); ein vorangestelltes „=“ verlangt ein ganzes Wort („=riz“ steckt nicht in „chorizo“). */
+/** Is `w` a whole word of the (folded) name? The cheap includes() runs first, the regex only when it passes. */
+export const wordIn = (name, w) => name.includes(w) && wordRe(w).test(name);
+/** Does the (folded) name contain the keyword? A plain keyword also counts inside a longer word (“hähnchen” in
+    “Hähnchenbrust”); a leading “=” demands a whole word (“=riz” is not in “chorizo”). */
 export function keywordIn(name, k) {
-  return k.charCodeAt(0) === 61 ? wordRe(k.slice(1)).test(name) : name.includes(k);
+  return k.charCodeAt(0) === 61 ? wordIn(name, k.slice(1)) : name.includes(k);
 }
 
 // Category values stay German (stored in the pantry). The other languages' keywords follow the German and English ones
 // (one line per language: fr, es, it, pt-BR, nl); a keyword with a leading "=" must stand alone as a word, like “=ei”.
 // 'eggplant'/'veggie' come first so the dairy keyword 'egg' does not catch them.
 const CAT_KW = [
-  ['Obst & Gemüse', ['tomate', 'avocado', 'brokkoli', 'paprika', 'spinat', 'beere', 'banane', 'süßkartoffel', 'bohne', 'zitrone', 'salat', 'apfel', 'zwiebel', 'knoblauch', 'gemüse', 'obst', 'kartoffel',
-    'tomato', 'broccoli', 'pepper', 'spinach', 'berry', 'berries', 'banana', 'sweet potato', 'bean', 'lemon', 'salad', 'lettuce', 'apple', 'onion', 'garlic', 'vegetable', 'veggie', 'eggplant', 'fruit', 'potato']],
-  ['Milchprodukte', ['skyr', 'quark', 'joghurt', 'milch', 'feta', 'käse', 'butter', 'sahne', '=ei', 'eier', 'eigelb', 'eiklar', '=eiweiß', 'rührei', 'spiegelei', 'hühnerei', 'wachtelei',
-    'yoghurt', 'yogurt', 'milk', 'cheese', 'cream', 'egg']],
+  // Exceptions first: names that contain a keyword of a later row but are not that kind of food (like German “Cashews”).
+  ['Sonstiges', [
+    /* fr */ '=noix de cajou', '=noix de coco', '=noix de muscade', '=noix de pécan',
+    /* es */ '=nuez moscada', '=nuez de coco',
+    /* it */ '=noce moscata', '=noce di cocco',
+    /* pt-BR */ '=noz-moscada', '=noz moscada', '=noz de coco', '=massa de pizza', '=massa para pizza',
+    /* nl */ '=griesmeel', '=gries',
+  ]],
+  ['Obst & Gemüse', ['tomate', 'avocado', 'brokkoli', 'paprika', 'spinat', 'beere', 'banane', 'süßkartoffel', 'bohne', 'zitrone', 'salat', 'apfel', 'zwiebel', 'knoblauch', 'gemüse', 'obst', 'kartoffel', 'ananas',
+    'pineapple', 'tomato', 'broccoli', 'pepper', 'spinach', 'berry', 'berries', 'banana', 'sweet potato', 'bean', 'lemon', 'salad', 'lettuce', 'apple', 'onion', 'garlic', 'vegetable', 'veggie', 'eggplant', 'fruit', 'potato',
+    /* fr */ '=avocat', '=avocats', '=brocoli', '=brocolis', '=poivron', '=poivrons', '=épinard', '=épinards', '=baie', '=baies', '=fraise',
+    '=fraises', '=framboise', '=framboises', '=myrtille', '=myrtilles', '=mûre', '=mûres', '=patate douce', '=patates douces', '=haricot',
+    '=haricots', '=citron', '=citrons', '=laitue', '=laitues', '=pomme', '=oignon', '=oignons', '=ail', '=légume', '=légumes',
+    '=pomme de terre', '=pommes de terre', '=patate', '=patates',
+    /* es */ '=aguacate', '=aguacates', '=palta', '=paltas', '=brócoli', '=brocoli', '=brécol', '=pimiento', '=pimientos', '=espinaca',
+    '=espinacas', '=fruto rojo', '=frutos rojos', '=baya', '=bayas', '=frutos del bosque', '=fresa', '=fresas', '=frambuesa', '=frambuesas',
+    '=arándano', '=arándanos', '=mora', '=moras', '=plátano', '=plátanos', '=platano', '=platanos', '=banano', '=boniato', '=boniatos',
+    '=camote', '=camotes', '=judía', '=judías', '=alubia', '=alubias', '=frijol', '=frijoles', '=limón', '=limon', '=limones', '=lechuga',
+    '=lechugas', '=manzana', '=manzanas', '=cebolla', '=cebollas', '=ajo', '=ajos', '=verdura', '=verduras', '=hortaliza', '=hortalizas',
+    '=vegetal', '=vegetales', '=fruta', '=frutas', '=patata', '=patatas', '=papa', '=papas', '=piña', '=piñas',
+    /* it */ '=pomodoro', '=pomodori', '=broccolo', '=broccoletti', '=peperone', '=peperoni', '=spinaci', '=frutti di bosco',
+    '=frutto di bosco', '=bacca', '=bacche', '=fragola', '=fragole', '=lampone', '=lamponi', '=mirtillo', '=mirtilli', '=patata dolce',
+    '=patate dolci', '=patata americana', '=patate americane', '=fagiolo', '=fagioli', '=limone', '=limoni', '=lattuga', '=mela', '=mele',
+    '=cipolla', '=cipolle', '=aglio', '=verdura', '=verdure', '=ortaggi', '=ortaggio', '=frutta', '=patata', '=patate',
+    /* pt-BR */ '=abacate', '=abacates', '=brócolis', '=brócoli', '=brocolis', '=pimentão', '=pimentao', '=pimentões', '=pimentoes',
+    '=pimento', '=pimentos', '=espinafre', '=espinafres', '=fruta vermelha', '=frutas vermelhas', '=frutos vermelhos', '=frutas silvestres',
+    '=frutos silvestres', '=morango', '=morangos', '=framboesa', '=framboesas', '=mirtilo', '=mirtilos', '=amora', '=amoras', '=batata-doce',
+    '=batatas-doces', '=batata doce', '=batatas doces', '=feijão', '=feijao', '=feijões', '=feijoes', '=limão', '=limao', '=limões',
+    '=alface', '=alfaces', '=maçã', '=maçãs', '=maca', '=macas', '=cebola', '=cebolas', '=alho', '=alhos', '=legume', '=legumes', '=verdura',
+    '=verduras', '=hortaliça', '=hortaliças', '=fruta', '=frutas', '=batata', '=batatas', '=abacaxi', '=abacaxis',
+    /* nl */ '=tomaat', 'spinazie', '=bes', '=bessen', '=bosvruchten', '=bosvrucht', '=rode vruchten', '=aardbei', '=aardbeien', '=framboos',
+    '=frambozen', '=braam', '=bramen', '=blauwe bes', '=blauwe bessen', '=banaan', '=bataat', '=bataten', '=boon', '=boontjes', 'bonen',
+    '=citroen', '=citroenen', '=sla', '=kropsla', '=ijsbergsla', '=appel', '=appels', '=ui', '=uien', 'knoflook', 'groente', 'aardappel',
+  ]],
+  ['Milchprodukte', ['skyr', 'quark', 'joghurt', 'milch', 'feta', 'käse', 'butter', 'sahne', '=ei', 'eier', 'eigelb', 'eiklar', '=eiweiß', 'rührei', 'spiegelei', 'hühnerei', 'wachtelei', 'eipulver', 'eiscreme',
+    'yoghurt', 'yogurt', 'milk', 'cheese', 'cream', 'egg',
+    /* fr */ '=fromage blanc', '=yaourt', '=yaourts', '=yogourt', '=yogourts', '=lait', '=laits', '=fromage', '=fromages', '=beurre',
+    '=crème', '=crèmes', '=creme', '=oeuf', '=oeufs', '=beurre de cacahuète', '=beurre de cacahuete', '=beurre d’amande',
+    '=beurre d’arachide', '=purée d’amande', '=purée de cacahuète', '=lait d’avoine', '=boisson à l’avoine', '=boisson d’avoine',
+    '=boisson végétale à l’avoine', '=lait d’amande', '=boisson à l’amande', '=boisson d’amande', '=lait de coco', '=babeurre',
+    /* es */ '=queso batido', '=queso fresco batido', '=yogur', '=yogures', '=leche', '=queso', '=quesos', '=mantequilla', '=nata',
+    '=crema de leche', '=crema fresca', '=nata para cocinar', '=nata líquida', '=nata montada', '=huevo', '=huevos', '=crema de cacahuete',
+    '=mantequilla de cacahuete', '=mantequilla de almendra', '=crema de almendras', '=crema de cacahuate', '=mantequilla de cacahuate',
+    '=bebida de avena', '=leche de avena', '=leche de almendra', '=leche de almendras', '=bebida de almendra', '=bebida de almendras',
+    '=leche de coco', '=suero de mantequilla', '=suero de leche', '=mazada',
+    /* it */ '=latte', '=formaggio', '=formaggi', '=burro', '=panna', '=uovo', '=uova', '=burro di arachidi', '=burro di mandorle',
+    '=crema di arachidi', '=burro di noci', '=latte d’avena', '=bevanda all’avena', '=bevanda di avena', '=latte di mandorla',
+    '=latte di mandorle', '=bevanda alla mandorla', '=latte di cocco', '=latticello',
+    /* pt-BR */ '=iogurte', '=iogurtes', '=leite', '=queijo', '=queijos', '=manteiga', '=creme de leite', '=nata', '=creme culinário', '=ovo',
+    '=ovos', '=pasta de amendoim', '=manteiga de amendoim', '=pasta de amêndoa', '=manteiga de amêndoa', '=pasta de castanha',
+    '=bebida de aveia', '=leite de aveia', '=leite de amêndoa', '=leite de amêndoas', '=bebida de amêndoa', '=leite de coco', '=leitelho',
+    '=soro de leite',
+    /* nl */ 'kwark', '=melk', 'kaas', '=boter', 'roomboter', 'slagroom', 'kookroom', '=eitje', '=eitjes', '=pindaboter', '=notenpasta',
+    '=amandelpasta', '=amandelboter', '=havermelk', '=haverdrink', '=amandelmelk', '=amandeldrink', '=kokosmelk', '=karnemelk',
+  ]],
   ['Fleisch & Fisch', ['hähnchen', 'lachs', 'fisch', 'rind', 'pute', 'thunfisch', 'hack',
-    'chicken', 'salmon', 'fish', 'beef', 'turkey', 'tuna', 'mince']],
+    'chicken', 'salmon', 'fish', 'beef', 'turkey', 'tuna', 'mince',
+    /* fr */ '=poulet', '=poulets', '=volaille', '=volailles', '=poule', '=saumon', '=saumons', '=poisson', '=poissons', '=boeuf', '=bovin',
+    '=veau', '=dinde', '=dindes', '=thon', '=thons', '=viande hachée', '=hachis', '=steak haché', '=boeuf haché',
+    /* es */ '=pollo', '=pollos', '=gallina', '=salmón', '=pescado', '=pescados', '=ternera', '=vacuno', '=buey', '=carne de res', '=pavo',
+    '=atún', '=atun', '=carne picada', '=carne molida', '=carne de res picada',
+    /* it */ '=pollo', '=petto di pollo', '=pesce', '=pesci', '=manzo', '=bovino', '=vitello', '=carne di manzo', '=tacchino',
+    '=petto di tacchino', '=tonno', '=carne macinata', '=macinato', '=carne tritata',
+    /* pt-BR */ '=frango', '=frangos', '=galinha', '=salmão', '=salmao', '=peixe', '=peixes', '=carne bovina', '=bovino', '=carne de boi',
+    '=carne de vaca', '=peru', '=atum', '=carne moída', '=carne moida', '=carne picada', '=patinho moído',
+    /* nl */ '=kip', 'kipfilet', 'kippenborst', 'kippendij', 'kippenvlees', 'zalm', '=vis', '=vissen', 'rundvlees', '=runderlappen',
+    '=biefstuk', '=ossenhaas', 'kalkoen', 'tonijn', '=gehakt', 'rundergehakt', 'varkensgehakt', 'kipgehakt', 'gehaktbal',
+  ]],
   ['Trockenwaren', ['haferflocken', 'quinoa', 'reis', 'linse', 'nudel', 'mehl', 'honig', 'kakao', 'protein', 'brot', 'mandel', 'walnuss', 'eiweißpulver',
-    'oats', 'rice', 'lentil', 'noodle', 'pasta', 'flour', 'honey', 'cocoa', 'bread', 'almond', 'walnut']],
+    'oats', 'rice', 'lentil', 'noodle', 'pasta', 'flour', 'honey', 'cocoa', 'bread', 'almond', 'walnut',
+    /* fr */ '=flocons d’avoine', '=riz', '=pâtes', '=nouilles', '=farine', '=farines', '=miel', '=cacao', '=protéine', '=protéines', '=pain',
+    '=pains', '=amande', '=amandes', '=noix', '=poudre de protéines', '=poudre de protéine', '=protéines en poudre', '=protéine en poudre',
+    '=poudre protéinée', '=pain suédois', '=pain croustillant', '=pain scandinave', '=cracotte', '=cracottes', '=biscotte', '=biscottes',
+    '=pain pita', '=pains pita', '=pita', '=pitas', '=pain plat', '=pains plats', '=naan', '=naans', '=pain complet', '=pain intégral',
+    '=pain integral', '=pain aux céréales',
+    /* es */ '=copos de avena', '=quinua', '=arroz', '=lenteja', '=lentejas', '=fideos', '=espaguetis', '=espagueti', '=macarrones',
+    '=tallarines', '=harina', '=harinas', '=miel', '=cacao', '=proteína', '=proteínas', '=pan', '=panes', '=almendra', '=almendras', '=nuez',
+    '=nueces', '=proteína en polvo', '=proteínas en polvo', '=polvo de proteína', '=polvo de proteínas', '=pan crujiente', '=pan sueco',
+    '=pan plano', '=panes planos', '=pan de pita', '=pan pita', '=pita', '=pitas', '=naan', '=pan integral', '=pan de cereales',
+    /* it */ '=fiocchi d’avena', '=riso', '=lenticchie', '=tagliatelle', '=penne', '=fusilli', '=maccheroni', '=tagliolini', '=vermicelli',
+    '=farina', '=farine', '=miele', '=cacao', '=pane', '=pani', '=mandorla', '=mandorle', '=noce', '=noci', '=polvere proteica',
+    '=pane croccante', '=pane svedese', '=pane pita', '=pita', '=pane arabo', '=naan', '=pane integrale', '=pane ai cereali',
+    /* pt-BR */ '=flocos de aveia', '=aveia em flocos', '=arroz', '=macarrão', '=massa', '=massas', '=espaguete', '=macarrões', '=farinha',
+    '=farinhas', '=mel', '=cacau', '=cacau em pó', '=proteína', '=proteínas', '=pão', '=pães', '=pao', '=amêndoa', '=amêndoas', '=amendoa',
+    '=amendoas', '=noz', '=nozes', '=proteína em pó', '=proteínas em pó', '=pão crocante', '=pão sueco', '=pão sírio', '=pão sirio',
+    '=pão árabe', '=pão pita', '=pita', '=naan', '=pão integral', '=pão de grãos',
+    /* nl */ '=havermout', '=havervlokken', '=haver', 'rijst', '=linze', '=linzen', '=noedels', '=macaroni', '=penne', '=vermicelli',
+    '=tagliatelle', '=bloem', 'meel', '=tarwebloem', 'honing', '=cacao', '=cacaopoeder', '=eiwit', '=eiwitten', '=proteïne', '=proteïnen',
+    'brood', '=walnoot', '=walnoten', '=eiwitpoeder', '=proteïnepoeder', '=wei-eiwit', '=knäckebröd', '=knackebrod', '=beschuit',
+    '=beschuiten', '=pita', '=naan',
+  ]],
 ];
 export function guessCategory(name) {
   const n = fold(name);
