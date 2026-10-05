@@ -1,1 +1,418 @@
-{}
+{
+  "overnight-oats-mit-beeren": {
+    "title": "Overnight oats ai frutti di bosco",
+    "ingredients": [
+      "60 g fiocchi d’avena",
+      "150 g skyr",
+      "150 ml latte",
+      "100 g frutti di bosco",
+      "1 cucchiaio miele"
+    ]
+  },
+  "ruehrei-mit-vollkornbrot-avocado": {
+    "title": "Uova strapazzate con pane integrale e avocado",
+    "ingredients": [
+      "3 uova",
+      "2 fette pane integrale",
+      "1/2 avocado",
+      "spinaci"
+    ]
+  },
+  "protein-porridge-mit-banane": {
+    "title": "Porridge proteico alla banana",
+    "ingredients": [
+      "60 g fiocchi d’avena",
+      "30 g proteine in polvere",
+      "250 ml latte",
+      "1 banana"
+    ]
+  },
+  "quark-mit-nuessen-apfel": {
+    "title": "Quark con noci e mela",
+    "ingredients": [
+      "250 g quark magro",
+      "20 g noci",
+      "1 mela",
+      "1 cucchiaino miele"
+    ]
+  },
+  "vollkorn-pancakes-mit-quark": {
+    "title": "Pancake integrali al quark",
+    "ingredients": [
+      "60 g fiocchi d’avena",
+      "2 uova",
+      "150 g quark magro",
+      "1 banana",
+      "1 cucchiaino lievito in polvere"
+    ]
+  },
+  "chia-pudding-mit-mango": {
+    "title": "Budino di chia al mango",
+    "ingredients": [
+      "30 g semi di chia",
+      "200 ml latte d’avena",
+      "100 g mango",
+      "1 cucchiaino sciroppo d’agave"
+    ]
+  },
+  "bircher-muesli": {
+    "title": "Bircher muesli",
+    "ingredients": [
+      "50 g fiocchi d’avena",
+      "150 g yogurt",
+      "1 mela",
+      "20 g mandorle",
+      "100 ml latte"
+    ]
+  },
+  "avocado-brot-mit-ei": {
+    "title": "Toast all’avocado con uovo",
+    "ingredients": [
+      "2 fette pane integrale",
+      "1/2 avocado",
+      "2 uova"
+    ]
+  },
+  "griessbrei-mit-beeren": {
+    "title": "Semolino ai frutti di bosco",
+    "ingredients": [
+      "50 g semolino",
+      "300 ml latte",
+      "100 g frutti di bosco",
+      "1 cucchiaino miele"
+    ]
+  },
+  "skyr-bowl-mit-granola": {
+    "title": "Bowl di skyr con granola",
+    "ingredients": [
+      "200 g skyr",
+      "40 g granola",
+      "1 banana",
+      "10 g noci"
+    ]
+  },
+  "tofu-ruehrei-mit-brot": {
+    "title": "Tofu strapazzato con pane",
+    "ingredients": [
+      "200 g tofu",
+      "2 fette pane integrale",
+      "1 pomodoro"
+    ]
+  },
+  "erdnussbutter-toast-mit-banane": {
+    "title": "Toast al burro di arachidi con banana",
+    "ingredients": [
+      "2 fette pane integrale",
+      "20 g burro di arachidi",
+      "1 banana"
+    ]
+  },
+  "haehnchen-reis-bowl-mit-brokkoli": {
+    "title": "Bowl di pollo e riso con broccoli",
+    "ingredients": [
+      "150 g pollo",
+      "80 g riso",
+      "200 g broccoli",
+      "1 cucchiaio olio"
+    ]
+  },
+  "lachs-mit-suesskartoffel-spinat": {
+    "title": "Salmone con patata dolce e spinaci",
+    "ingredients": [
+      "150 g salmone",
+      "250 g patata dolce",
+      "spinaci",
+      "1 cucchiaio olio"
+    ]
+  },
+  "linsen-dal-mit-reis": {
+    "title": "Dal di lenticchie con riso",
+    "ingredients": [
+      "120 g lenticchie",
+      "80 g riso",
+      "1 cipolla",
+      "200 g pomodori"
+    ]
+  },
+  "pute-quinoa-pfanne": {
+    "title": "Padellata di tacchino e quinoa",
+    "ingredients": [
+      "150 g tacchino",
+      "80 g quinoa",
+      "1 peperone",
+      "1 zucchina"
+    ]
+  },
+  "rindergeschnetzeltes-mit-reis": {
+    "title": "Straccetti di manzo con riso",
+    "ingredients": [
+      "150 g manzo",
+      "80 g riso",
+      "1 peperone",
+      "1 cipolla"
+    ]
+  },
+  "kichererbsen-bowl-mit-quinoa": {
+    "title": "Bowl di ceci e quinoa",
+    "ingredients": [
+      "150 g ceci",
+      "80 g quinoa",
+      "100 g broccoli",
+      "1 carota"
+    ]
+  },
+  "vollkorn-spaghetti-bolognese": {
+    "title": "Spaghetti integrali al ragù",
+    "ingredients": [
+      "100 g pasta integrale",
+      "150 g carne macinata",
+      "200 g pomodori",
+      "1 cipolla"
+    ]
+  },
+  "gefuellte-suesskartoffel-mit-huettenkaese": {
+    "title": "Patata dolce ripiena di fiocchi di latte",
+    "ingredients": [
+      "250 g patata dolce",
+      "150 g fiocchi di latte",
+      "100 g spinaci"
+    ]
+  },
+  "couscous-salat-mit-feta": {
+    "title": "Insalata di couscous con feta",
+    "ingredients": [
+      "80 g couscous",
+      "50 g feta",
+      "1 peperone",
+      "1 cetriolo",
+      "1 cucchiaio olio"
+    ]
+  },
+  "haehnchen-wrap-mit-gemuese": {
+    "title": "Wrap di pollo con verdure",
+    "ingredients": [
+      "1 wrap",
+      "150 g pollo",
+      "lattuga",
+      "1 pomodoro",
+      "50 g yogurt"
+    ]
+  },
+  "kabeljau-mit-kartoffeln-brokkoli": {
+    "title": "Merluzzo con patate e broccoli",
+    "ingredients": [
+      "180 g merluzzo",
+      "250 g patate",
+      "150 g broccoli",
+      "1 cucchiaio olio"
+    ]
+  },
+  "gemuesecurry-mit-kichererbsen": {
+    "title": "Curry di verdure con ceci",
+    "ingredients": [
+      "150 g ceci",
+      "80 g riso",
+      "200 ml latte di cocco",
+      "1 peperone"
+    ]
+  },
+  "magerquark-mit-gemuesesticks": {
+    "title": "Quark magro con bastoncini di verdura",
+    "ingredients": [
+      "250 g quark magro",
+      "1 peperone",
+      "1 cetriolo"
+    ]
+  },
+  "omelett-mit-feta-tomaten": {
+    "title": "Omelette con feta e pomodori",
+    "ingredients": [
+      "3 uova",
+      "50 g feta",
+      "200 g pomodori",
+      "spinaci"
+    ]
+  },
+  "thunfisch-vollkornwrap": {
+    "title": "Wrap integrale al tonno",
+    "ingredients": [
+      "1 wrap",
+      "150 g tonno",
+      "lattuga",
+      "50 g yogurt"
+    ]
+  },
+  "ofengemuese-mit-haehnchen": {
+    "title": "Verdure al forno con pollo",
+    "ingredients": [
+      "150 g pollo",
+      "1 zucchina",
+      "1 peperone",
+      "1 patata dolce",
+      "1 cucchiaio olio"
+    ]
+  },
+  "gebratener-tofu-mit-gemuese": {
+    "title": "Tofu saltato con verdure",
+    "ingredients": [
+      "200 g tofu",
+      "1 peperone",
+      "100 g broccoli",
+      "1 cucchiaio salsa di soia"
+    ]
+  },
+  "haehnchensalat-mit-avocado": {
+    "title": "Insalata di pollo e avocado",
+    "ingredients": [
+      "150 g pollo",
+      "1/2 avocado",
+      "lattuga",
+      "1 pomodoro",
+      "1 cucchiaio olio"
+    ]
+  },
+  "linsensuppe": {
+    "title": "Zuppa di lenticchie",
+    "ingredients": [
+      "200 g lenticchie",
+      "1 carota",
+      "1 cipolla",
+      "1 patata"
+    ]
+  },
+  "caprese-mit-mozzarella": {
+    "title": "Caprese con mozzarella",
+    "ingredients": [
+      "125 g mozzarella",
+      "200 g pomodori",
+      "basilico",
+      "1 cucchiaio olio"
+    ]
+  },
+  "garnelen-zucchini-pfanne": {
+    "title": "Padellata di gamberi e zucchine",
+    "ingredients": [
+      "150 g gamberi",
+      "1 zucchina",
+      "1 spicchio aglio",
+      "1 cucchiaio olio"
+    ]
+  },
+  "putenbrust-mit-ofengemuese": {
+    "title": "Petto di tacchino con verdure al forno",
+    "ingredients": [
+      "150 g tacchino",
+      "1 zucchina",
+      "1 peperone",
+      "100 g funghi",
+      "1 cucchiaio olio"
+    ]
+  },
+  "vollkorn-pizza-mit-gemuese": {
+    "title": "Pizza integrale con verdure",
+    "ingredients": [
+      "1/2 impasto per pizza",
+      "100 g pomodori",
+      "80 g mozzarella",
+      "1 peperone"
+    ]
+  },
+  "joghurt-bowl-mit-gurke-fladenbrot": {
+    "title": "Bowl di yogurt con cetriolo e pane pita",
+    "ingredients": [
+      "200 g yogurt",
+      "1 cetriolo",
+      "1 spicchio aglio",
+      "1/2 pane pita"
+    ]
+  },
+  "skyr-mit-beeren": {
+    "title": "Skyr con frutti di bosco",
+    "ingredients": [
+      "150 g skyr",
+      "100 g frutti di bosco"
+    ]
+  },
+  "handvoll-mandeln-apfel": {
+    "title": "Una manciata di mandorle e una mela",
+    "ingredients": [
+      "30 g mandorle",
+      "1 mela"
+    ]
+  },
+  "protein-shake-mit-banane": {
+    "title": "Frullato proteico alla banana",
+    "ingredients": [
+      "30 g proteine in polvere",
+      "250 ml latte",
+      "1 banana"
+    ]
+  },
+  "huettenkaese-auf-knaeckebrot": {
+    "title": "Fiocchi di latte su pane croccante",
+    "ingredients": [
+      "150 g fiocchi di latte",
+      "2 fette pane croccante"
+    ]
+  },
+  "energy-balls": {
+    "title": "Palline energetiche",
+    "ingredients": [
+      "40 g datteri",
+      "30 g fiocchi d’avena",
+      "15 g mandorle",
+      "1 cucchiaino cacao"
+    ]
+  },
+  "gemuesesticks-mit-hummus": {
+    "title": "Bastoncini di verdura con hummus",
+    "ingredients": [
+      "100 g hummus",
+      "1 carota",
+      "1 peperone"
+    ]
+  },
+  "reiswaffeln-mit-frischkaese": {
+    "title": "Gallette di riso con formaggio spalmabile",
+    "ingredients": [
+      "2 gallette di riso",
+      "50 g formaggio spalmabile"
+    ]
+  },
+  "beeren-quark": {
+    "title": "Quark ai frutti di bosco",
+    "ingredients": [
+      "200 g quark magro",
+      "100 g frutti di bosco"
+    ]
+  },
+  "studentenfutter": {
+    "title": "Mix di frutta secca",
+    "ingredients": [
+      "25 g mandorle",
+      "15 g anacardi",
+      "20 g uvetta"
+    ]
+  },
+  "banane-mit-erdnussbutter": {
+    "title": "Banana con burro di arachidi",
+    "ingredients": [
+      "1 banana",
+      "20 g burro di arachidi"
+    ]
+  },
+  "edamame-mit-meersalz": {
+    "title": "Edamame al sale marino",
+    "ingredients": [
+      "150 g edamame",
+      "1 pizzico sale marino"
+    ]
+  },
+  "huettenkaese-mit-ananas": {
+    "title": "Fiocchi di latte con ananas",
+    "ingredients": [
+      "150 g fiocchi di latte",
+      "100 g ananas"
+    ]
+  }
+}
