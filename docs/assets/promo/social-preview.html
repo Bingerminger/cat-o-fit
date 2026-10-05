@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
-<!-- Social-Preview-Variante des Promo-Banners: exakt 1280×640 (GitHub
-     Settings → Social preview). Gerendert von tools/render-screenshots.mjs
-     (--only promo) – mit den dort frisch erzeugten App-Bildern. -->
+<!-- Social-preview variant of the promo banner: exactly 1280×640 (GitHub
+     Settings → Social preview). Rendered by tools/render-screenshots.mjs
+     (--only promo) – with the app images rendered there. English by default, ?lang=de for German. -->
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { width: 1280px; height: 640px; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; }
@@ -18,7 +18,7 @@
       linear-gradient(135deg, #0a1722 0%, #0c1b2b 45%, #0a1320 100%);
     display: flex; align-items: center;
   }
-  /* energetische Lichtstrahlen */
+  /* rays of light */
   .rays { position: absolute; inset: 0; z-index: 1; opacity: .5;
     background: repeating-conic-gradient(from 210deg at 86% 26%,
       rgba(255,255,255,.05) 0deg 2deg, transparent 2deg 13deg); mix-blend-mode: screen; }
@@ -56,7 +56,7 @@
   .badge.b3 { border-color: rgba(255,93,143,.5);  box-shadow: 0 0 0 1px rgba(255,93,143,.15), 0 8px 20px rgba(255,93,143,.2); }
 
   .phones { position: absolute; right: 0; top: 0; bottom: 0; width: 690px; z-index: 3; }
-  /* farbige Glow-Halos hinter den Phones */
+  /* coloured glow halos behind the phones */
   .halo { position: absolute; border-radius: 50%; filter: blur(46px); z-index: 1; }
   .halo.h1 { width: 380px; height: 380px; right: 264px; top: 155px; background: rgba(43,212,155,.5); }
   .halo.h2 { width: 340px; height: 340px; right: 70px;  top: 75px;  background: rgba(124,92,255,.5); }
@@ -81,25 +81,52 @@
         <span class="ic"><img src="../../../assets/icons/icon.svg" alt="" /></span>
         <span class="name">Cat-O-Fit</span>
       </div>
-      <h1><span class="g1">Trainingsplanung</span><br>für die <span class="accent">ganze Familie</span></h1>
-      <p class="tag">Pläne, Belastung, Gesundheit, Labor &amp; Ernährung – auf deinem eigenen Server, ohne Abo.</p>
+      <h1><span class="g1" data-t="h1a">Training planning</span><br><span data-t="h1b">for the</span> <span class="accent" data-t="h1c">whole family</span></h1>
+      <p class="tag" data-t="tag">Plans, load, health, labs &amp; nutrition – on your own server, no subscription.</p>
       <ul>
-        <li class="c1"><span class="dot">🏃</span> Pläne vom 5-km-Lauf bis Hyrox – auch ohne Wettkampf</li>
-        <li class="c2"><span class="dot">📊</span> Belastung, Zyklus &amp; Laborwerte im Trainingskontext</li>
-        <li class="c3"><span class="dot">🔒</span> Bis zu 32 Personen · Teams · Privates bleibt privat</li>
+        <li class="c1"><span class="dot">🏃</span> <span data-t="li1">Plans from 5 km to Hyrox – with or without a race</span></li>
+        <li class="c2"><span class="dot">📊</span> <span data-t="li2">Load, cycle &amp; lab values in training context</span></li>
+        <li class="c3"><span class="dot">🔒</span> <span data-t="li3">Up to 32 people · teams · private stays private</span></li>
       </ul>
       <div class="badges">
-        <span class="badge b1">PWA · iPhone &amp; iPad</span>
-        <span class="badge b2">0 Abhängigkeiten</span>
-        <span class="badge b3">AGPL-Lizenz</span>
+        <span class="badge b1" data-t="b1">PWA · iPhone &amp; iPad</span>
+        <span class="badge b2" data-t="b2">0 dependencies</span>
+        <span class="badge b3" data-t="b3">AGPL licence</span>
       </div>
     </div>
     <div class="phones">
       <div class="halo h1"></div><div class="halo h2"></div><div class="halo h3"></div>
-      <div class="phone p1"><img src="../60-labor.png" alt="" /></div>
-      <div class="phone p2"><img src="../01-dashboard.png" alt="" /></div>
-      <div class="phone p3"><img src="../51-team-dashboard.png" alt="" /></div>
+      <div class="phone p1"><img src="../en/60-labs.png" alt="" /></div>
+      <div class="phone p2"><img src="../en/01-dashboard.png" alt="" /></div>
+      <div class="phone p3"><img src="../en/51-team-dashboard.png" alt="" /></div>
     </div>
   </div>
+  <script>
+    /* English is the default; ?lang=de switches the texts (and the screenshots) to German. */
+    const TEXT = {
+      en: {
+        h1a: 'Training planning', h1b: 'for the', h1c: 'whole family',
+        tag: 'Plans, load, health, labs & nutrition – on your own server, no subscription.',
+        li1: 'Plans from 5 km to Hyrox – with or without a race',
+        li2: 'Load, cycle & lab values in training context',
+        li3: 'Up to 32 people · teams · private stays private',
+        b1: 'PWA · iPhone & iPad', b2: '0 dependencies', b3: 'AGPL licence',
+      },
+      de: {
+        h1a: 'Trainingsplanung', h1b: 'für die', h1c: 'ganze Familie',
+        tag: 'Pläne, Belastung, Gesundheit, Labor & Ernährung – auf deinem eigenen Server, ohne Abo.',
+        li1: 'Pläne vom 5-km-Lauf bis Hyrox – auch ohne Wettkampf',
+        li2: 'Belastung, Zyklus & Laborwerte im Trainingskontext',
+        li3: 'Bis zu 32 Personen · Teams · Privates bleibt privat',
+        b1: 'PWA · iPhone & iPad', b2: '0 Abhängigkeiten', b3: 'AGPL-Lizenz',
+      },
+    };
+    const lang = new URLSearchParams(location.search).get('lang') === 'de' ? 'de' : 'en';
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-t]').forEach((n) => { n.textContent = TEXT[lang][n.dataset.t]; });
+    if (lang === 'de') {   // standalone view: the screenshots live in ../de/ (the renderer links them directly)
+      document.querySelectorAll('.phone img').forEach((i) => { i.src = i.getAttribute('src').replace(/^\.\.\/en\//, '../de/'); });
+    }
+  </script>
 </body>
 </html>

@@ -1,31 +1,41 @@
 #!/usr/bin/env node
 /* =========================================================================
    render-screenshots.mjs — re-renders the images of the docs (docs/assets),
-   reproducibly rather than by hand.
+   reproducibly rather than by hand, once per language.
 
-   Every run builds the same state: fresh instance (app and API in a
-   temp directory with an empty data/, its own `php -S`), fixed day, fixed
-   persona ("Alex", demo data), fixed weather data. The app runs under
-   the example domain https://fit.example.org – the browser sends every
-   request to the local server, everything else stays blocked. Nothing
-   leaves the machine, real data is never touched.
+   Every run builds the same state per language: fresh instance (app and API
+   in a temp directory with an empty data/, its own `php -S`), fixed day,
+   fixed persona ("Alex", demo data), fixed weather data. The browser runs
+   with the language's locale (en-GB, de-DE); the first start of a fresh
+   instance takes the browser language, so the app really runs in that
+   language. The app lives under the example domain https://fit.example.org –
+   the browser sends every request to the local server, everything else
+   stays blocked. Nothing leaves the machine, real data is never touched.
 
-     node tools/render-screenshots.mjs                  # all images to docs/assets
+     node tools/render-screenshots.mjs                  # all languages to docs/assets/<lang>/
+     node tools/render-screenshots.mjs --lang en        # one language (en | de | all)
      node tools/render-screenshots.mjs --only 05,16     # only these images (prefix)
-     node tools/render-screenshots.mjs --out /tmp/images
+     node tools/render-screenshots.mjs --only promo     # only the banners (from existing images)
+     node tools/render-screenshots.mjs --out /tmp/images   # -> /tmp/images/<lang>/
 
    Prerequisites: PHP 8.1 or later and Playwright – once
    `npm install --no-save playwright`; Google Chrome serves as the browser, otherwise
    `npx playwright install chromium`. If Playwright is installed elsewhere:
    PLAYWRIGHT_MODULE=/path/to/node_modules/playwright/index.mjs.
 
+   Every label the flow clicks or fills comes from the catalogs
+   (locales/<lang>/ui.json) via L('key'); only the texts typed into the
+   certificate are a small table per language (TYPED). The routes
+   (#/hilfe, #/uebungen …) are language-independent. Image names are the same
+   in every language.
+
    If a view changes, update the flow here and re-render the affected
    images. The promo banner (docs/assets/promo) is built from
-   promo.html and social-preview.html and embeds some of the images –
-   hence last. Two places in the docs quote values from the images
-   and have to be proofread afterwards: "Current form" in
-   docs/nutzung/coach-und-belastung.md and the ferritin example in
-   docs/nutzung/labor.md.
+   promo.html and social-preview.html (?lang=de switches the texts) and
+   embeds some of the images – hence last. Two places in the docs quote
+   values from the images and have to be proofread afterwards: "Current form"
+   in docs/usage/coach-and-load.md and docs/de/usage/coach-and-load.md, and
+   the ferritin example in docs/usage/labs.md and docs/de/usage/labs.md.
    ========================================================================= */
 
 import { spawn } from 'node:child_process';
@@ -42,6 +52,19 @@ const DAY = '2026-07-18T09:30:00+02:00';
 const PERSONA = { name: 'Alex', pin: '2468' };
 const PHONE = { width: 390, height: 844 };
 const TABLET = { width: 1024, height: 1366 };
+/** Languages the docs carry images for, and the browser locale that selects each one. */
+const LOCALES = { en: 'en-GB', de: 'de-DE' };
+/** Texts the flow types into fields (everything else is read from the catalogs). */
+const TYPED = {
+  en: {
+    certGoal: '14 weeks in a row',
+    certDetail: 'trained every week – strong consistency on the way to the half marathon',
+  },
+  de: {
+    certGoal: '14 Wochen am Stück dabei',
+    certDetail: 'jede Woche trainiert – starke Konstanz auf dem Weg zum Halbmarathon',
+  },
+};
 
 /* ------------------------------ Usage ---------------------------------- */
 
@@ -52,8 +75,14 @@ function option(args, name, fallback = null) {
 
 export function parseArgs(args = process.argv.slice(2)) {
   const only = (option(args, '--only', '') || '').split(',').map((s) => s.trim()).filter(Boolean);
+  const lang = option(args, '--lang', 'all');
+  if (lang !== 'all' && !LOCALES[lang]) {
+    console.error(`Unknown language "${lang}". Use --lang ${Object.keys(LOCALES).join('|')}|all`);
+    process.exit(2);
+  }
   return {
     out: resolve(option(args, '--out', join(ROOT, 'docs/assets'))),
+    langs: lang === 'all' ? Object.keys(LOCALES) : [lang],
     only,
     headed: args.includes('--headed'),
   };
@@ -64,11 +93,34 @@ async function loadPlaywright() {
   try {
     return await import(spec.startsWith('/') ? pathToFileURL(spec).href : spec);
   } catch {
-    console.error('Playwright fehlt. Einmalig: npm install --no-save playwright\n'
-      + '(oder PLAYWRIGHT_MODULE=/pfad/zu/node_modules/playwright/index.mjs setzen)');
+    console.error('Playwright is missing. Once: npm install --no-save playwright\n'
+      + '(or set PLAYWRIGHT_MODULE=/path/to/node_modules/playwright/index.mjs)');
     process.exit(2);
   }
 }
+
+/* ------------------------------ Labels ---------------------------------- */
+
+/**
+ * Label lookup in the catalogs of one language: 'section.key' reads locales/<lang>/ui.json,
+ * 'area:key' another area (help, exercises, …). {placeholders} are filled from params.
+ * A missing key is an error – a label the flow cannot find would only fail later, less clearly.
+ */
+export function labels(lang) {
+  const cache = {};
+  const area = (a) => (cache[a] ||= JSON.parse(readFileSync(join(ROOT, 'locales', lang, `${a}.json`), 'utf8')));
+  return (key, params = {}) => {
+    const [a, k] = key.includes(':') ? key.split(':') : ['ui', key];
+    let v = area(a);
+    for (const part of k.split('.')) v = v && v[part];
+    if (typeof v !== 'string') throw new Error(`Label "${key}" is missing in locales/${lang}/${a}.json`);
+    return v.replace(/\{(\w+)\}/g, (m, n) => (n in params ? String(params[n]) : m));
+  };
+}
+
+const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+/** The part of a label before its first placeholder or marker – the stable start of a longer text. */
+const lead = (text, marker = '{') => text.split(marker)[0].trim();
 
 /* ------------------------- Fresh instance ------------------------------ */
 
@@ -84,7 +136,7 @@ function freePort() {
 function copyApp() {
   const dir = mkdtempSync(join(tmpdir(), 'catofit-render-'));
   for (const f of ['index.html', 'manifest.webmanifest', 'service-worker.js']) cpSync(join(ROOT, f), join(dir, f));
-  for (const d of ['api', 'assets', 'css', 'js']) cpSync(join(ROOT, d), join(dir, d), { recursive: true });
+  for (const d of ['api', 'assets', 'css', 'js', 'locales']) cpSync(join(ROOT, d), join(dir, d), { recursive: true });
   mkdirSync(join(dir, 'data'));
   return dir;
 }
@@ -133,14 +185,15 @@ function forecast() {
 
 /* ------------------------------ Browser --------------------------------- */
 
-export async function openBrowser({ base, headed = false }) {
+/** A fresh browser context whose locale selects the app language (first start uses the browser language). */
+export async function openBrowser({ base, headed = false, lang = 'de' }) {
   const { chromium } = await loadPlaywright();
   let browser;
   try { browser = await chromium.launch({ channel: 'chrome', headless: !headed }); }
   catch { browser = await chromium.launch({ headless: !headed }); }
   const context = await browser.newContext({
     viewport: PHONE, deviceScaleFactor: 1, isMobile: true, hasTouch: true,
-    locale: 'de-DE', timezoneId: 'Europe/Berlin', colorScheme: 'light',
+    locale: LOCALES[lang], timezoneId: 'Europe/Berlin', colorScheme: 'light',
     reducedMotion: 'reduce', serviceWorkers: 'block',
   });
   await context.clock.setFixedTime(new Date(DAY));
@@ -197,7 +250,7 @@ export function helpers(page, { out, only }) {
       window.scrollTo(0, node.getBoundingClientRect().top + window.scrollY - hh - offset);
       return true;
     }, { text, selector, offset });
-    if (!ok) throw new Error(`„${text}“ nicht gefunden`);
+    if (!ok) throw new Error(`"${text}" not found`);
     await page.waitForTimeout(250);
   }
 
@@ -228,15 +281,17 @@ export function helpers(page, { out, only }) {
 
 /* ------------------------------ Flow ---------------------------------- */
 
-export async function onboarding(page, h) {
+export async function onboarding(page, h, L) {
   await page.goto(`${ORIGIN}/`);
-  await page.getByPlaceholder('Dein Name').waitFor();
-  await page.getByPlaceholder('Dein Name').fill(PERSONA.name);
-  await page.getByPlaceholder('4 bis 8 Ziffern').fill(PERSONA.pin);
-  await page.getByPlaceholder('PIN wiederholen').fill(PERSONA.pin);
-  await h.shot('50-ersteinrichtung', { keepFocus: true });
-  await page.getByRole('button', { name: 'Weiter' }).click();
-  await page.getByText('Mit Demodaten starten').click();
+  await page.getByPlaceholder(L('setup.yourName')).waitFor();
+  await page.getByPlaceholder(L('setup.yourName')).fill(PERSONA.name);
+  // The PIN placeholder is not translated yet (js/login.js), so the two PIN fields are found by type.
+  const pins = page.locator('input[type="password"]');
+  await pins.nth(0).fill(PERSONA.pin);
+  await pins.nth(1).fill(PERSONA.pin);
+  await h.shot('50-first-setup', { keepFocus: true });
+  await page.getByRole('button', { name: L('common.next'), exact: true }).click();
+  await page.getByText(L('setup.startDemo'), { exact: true }).click();
   await page.waitForSelector('.section-head__title', { timeout: 30000 });
   await h.settle(800);
 }
@@ -252,6 +307,7 @@ function unitId(h, type) {
 
 /** Send Apple Health data to the instance's endpoint the way "Health Auto Export" does. */
 async function ingestAppleHealth(h, base) {
+  await h.withStore((store) => store.syncNow());   // the new token has to reach the server first
   const { token, user } = await h.withStore((store) => ({ token: store.profile().healthToken, user: store.activeUserId() }));
   const day = (k) => {
     const d = new Date(`${DAY.slice(0, 10)}T12:00:00Z`);
@@ -283,40 +339,216 @@ async function ingestAppleHealth(h, base) {
     headers: { 'Content-Type': 'application/json', 'X-Catofit-Token': token },
     body: JSON.stringify(payload),
   });
-  if (!r.ok) throw new Error(`Health-Import: HTTP ${r.status} ${await r.text()}`);
+  if (!r.ok) throw new Error(`Health import: HTTP ${r.status} ${await r.text()}`);
   await h.withStore((store) => store.syncNow());
 }
 
-/** Promo banner and social preview from their HTML templates – with the freshly rendered images. */
-async function renderPromo(browser, { out, only }) {
-  const jobs = [
-    { name: 'banner', html: 'promo.html', size: { width: 1200, height: 630 } },
-    { name: 'social-preview', html: 'social-preview.html', size: { width: 1280, height: 640 } },
-  ].filter((j) => !only.length || only.some((p) => `promo/${j.name}`.startsWith(p) || p === 'promo'));
+/** All images of one language, in one run through a fresh instance. */
+async function renderFlow({ page, h, server, lang }) {
+  const L = labels(lang);
+  const typed = TYPED[lang];
+  const click = (text) => page.getByText(text, { exact: true }).first().click();
+
+  await onboarding(page, h, L);
+
+  // ---- "Today" ----
+  await h.go('#/');
+  await h.shot('01-dashboard');
+  await h.scrollToText(L('nav.today'), '.section-head__title');
+  await h.shot('13-dashboard-coach');
+  await page.getByText(new RegExp(`^${escapeRe(lead(L('dashboard.moreHints')))}`)).first().click();
+  await h.scrollToText(L('dashboard.yourCoach'), '.section-head__title');
+  await h.shot('43-coach-rpe');
+  await h.go('#/');
+  await h.scrollToText(L('dashboard.loadForm'), '.section-head__title');
+  await h.shot('45-load-form');
+  await h.scrollToText(L('dashboardGoals.weekGoals'), '.card__title');
+  await h.shot('42-health-goals-coach');
+
+  // ---- Race, plan, session, workout ----
+  await h.go('#/event/demo-e1');
+  await h.shot('03-event-detail');
+  await h.go('#/plan/demo-e1');
+  await h.shot('04-plan');
+  const longRun = await unitId(h, 'long');
+  await h.go(`#/session/${longRun}`);
+  await h.shot('06-session');
+  await page.getByRole('button', { name: L('session.edit'), exact: true }).first().click();
+  await h.settle();
+  await h.shot('14-edit-session');
+  await page.keyboard.press('Escape');
+  // Let the workout continue shortly before the first drinking break (long run: every 20 min).
+  await page.evaluate(async (id) => {
+    const { lsSet } = await import('/js/env.js');
+    lsSet('workout', JSON.stringify({ id, elapsed: 20 * 60 * 1000 - 1200, phase: 0, phaseElapsed: 0, counters: {}, done: false, drinkCount: 0, ts: Date.now() }));
+  }, longRun);
+  await h.go(`#/workout/${longRun}`);
+  await page.getByRole('button', { name: new RegExp(`${escapeRe(L('workoutMode.start'))}|${escapeRe(L('workoutMode.resume'))}`) }).first().click();
+  await page.locator('.workout__drink.is-visible').waitFor({ timeout: 10000 });
+  await h.shot('07-workout-drink-break');
+  await page.evaluate(async () => { const { lsRemove } = await import('/js/env.js'); lsRemove('workout'); });
+
+  // ---- Calendar ----
+  await h.go('#/calendar');
+  await h.shot('16-calendar-weather', { clip: await calendarClip(page) });
+  await click(L('calendar.week'));
+  await h.settle();
+  await h.shot('05-calendar');
+  await click(L('calendar.month'));
+
+  // ---- Progress ----
+  await h.go('#/stats');
+  await h.shot('09-statistics');
+  await h.scrollToText(L('statistics.formHeading'), '.section-head__title');
+  await h.shot('44-current-form');
+  await h.go('#/health');
+  const chart = page.locator('.chart-wrap').first();
+  const box = await chart.boundingBox();
+  if (box) await page.mouse.move(box.x + box.width * 0.62, box.y + box.height * 0.5);
+  await h.shot('08-body-values');
+  await h.go('#/badges');
+  await h.shot('12-achievements');
+  await h.go('#/reports');
+  await page.getByRole('button', { name: L('reports.create'), exact: true }).first().click();
+  await page.getByRole('button', { name: L('reports.createMonth'), exact: true }).click();
+  await page.getByRole('button', { name: L('reports.saveReport'), exact: true }).click();   // after the preview
+  await page.waitForFunction(() => location.hash.startsWith('#/report/'));
+  await h.settle();
+  await h.shot('26-monthly-report');
+  await h.go('#/reports');
+  await page.getByRole('button', { name: L('reports.create'), exact: true }).first().click();
+  await click(L('reports.typeGoal'));
+  await page.getByPlaceholder(L('reports.goalPlaceholder')).fill(typed.certGoal);
+  await page.getByPlaceholder(L('reports.detailPlaceholder')).fill(typed.certDetail);
+  await page.getByRole('button', { name: L('reports.createGoal'), exact: true }).click();
+  await page.getByRole('button', { name: L('reports.saveCertificate'), exact: true }).click();
+  await page.waitForFunction(() => location.hash.startsWith('#/report/'));
+  await h.settle();
+  await h.shot('25-certificate');
+
+  // ---- Health, labs, Apple Health ----
+  await h.go('#/zyklus');
+  await h.shot('18-cycle');
+  await h.go('#/labor');
+  await h.shot('60-labs');
+  const ferritin = L('labs.analyte.ferritin.label');
+  await page.getByText(ferritin, { exact: true }).first().click();
+  await h.settle();
+  await h.scrollToText(ferritin, '.list-item__title, .lab-row__name, div');
+  await h.shot('61-lab-detail');
+  await h.go('#/import');
+  await page.getByRole('button', { name: L('healthImport.enable'), exact: true }).click();
+  await h.settle();
+  const ingestCard = page.locator('.card', { hasText: L('healthImport.active') }).first();
+  await h.shot('apple-health-settings', { element: ingestCard });
+  await ingestAppleHealth(h, server.base);
+  await h.go('#/import');
+  await h.scrollToText(L('healthImport.recentHeading'), '.section-head__title');
+  await h.shot('apple-health-import');
+
+  // ---- Nutrition, shopping, family ----
+  await h.go('#/nutrition');
+  await h.scrollToText(lead(L('nutrition.learnHint'), '♥'), 'div', 90);
+  await h.shot('15-nutrition-learning');
+  await h.go('#/shopping');
+  await h.shot('32-family-shopping');
+  await h.go('#/family');
+  await h.shot('51-team-dashboard');
+  await h.go('#/familie-verwalten');
+  await h.shot('31-manage-family');
+
+  // ---- Exercises, settings, help ----
+  await h.go('#/uebungen');
+  await h.shot('40-exercises');
+  await click(L('exerciseNames.squat'));
+  await h.settle();
+  await h.shot('41-exercise-detail');
+  await page.keyboard.press('Escape');
+  await h.go('#/settings');
+  await h.shot('10-settings');
+  await h.scrollToText(L('settings.sections.data'), '.section-head__title');
+  await h.shot('35-backup-recovery');
+  await h.go('#/hilfe');
+  await h.shot('11-help');
+
+  // ---- iPad ----
+  await page.setViewportSize(TABLET);
+  for (const [name, hash] of [['ipad-01-dashboard', '#/'], ['ipad-40-exercises', '#/uebungen'],
+    ['ipad-45-sidebar-sign-out', '#/settings'], ['ipad-50-team-dashboard', '#/family'], ['ipad-60-labs', '#/labor']]) {
+    await h.go(hash);
+    await h.shot(name);
+  }
+  // Follow along non-stop, landscape on the iPad: paused in the middle of the first squat.
+  await page.setViewportSize({ width: TABLET.height, height: TABLET.width });
+  if (h.wanted('ipad-42-non-stop')) {
+    await page.evaluate(`(async () => {
+      const [{ openShow }, { programForWorkout }, { findWorkout }] = await Promise.all([import('/js/workout-show.js'), import('/js/show-program.js'), import('/js/workouts.js')]);
+      const s = document.createElement('style'); s.textContent = '.show__paused { display: none !important; }'; document.head.appendChild(s);
+      const run = openShow(programForWorkout(findWorkout('ganzkoerper'))).start();
+      run.toggle();
+      const work = run.show.segs.find((x) => x.kind === 'work');
+      run.seek(work.t0 + 2.6);
+    })()`);
+    await h.settle(500);
+    await h.shot('ipad-42-non-stop');
+    await page.evaluate((label) => document.querySelector(`.show__ctl[aria-label="${label}"]`).click(), L('workoutShow.end'));
+  }
+  await page.setViewportSize(PHONE);
+
+  // ---- Programme last: it brings its own sessions into the calendar and "Today" ----
+  await h.go('#/events');
+  await page.getByRole('button', { name: L('events.newGoal'), exact: true }).click();
+  await page.getByText(L('events.programme'), { exact: true }).click();
+  await page.locator('select').first().selectOption('strength');
+  await page.getByRole('button', { name: L('events.saveAndCreate'), exact: true }).click();
+  await page.waitForFunction(() => location.hash.startsWith('#/plan/'));
+  const programId = await page.evaluate(() => location.hash.split('/').pop());
+  await h.go('#/events');
+  await h.shot('02-events');
+  await h.go(`#/event/${programId}`);
+  await h.shot('34-programme');
+}
+
+/* ------------------------------ Promo ---------------------------------- */
+
+/** Banner jobs: size, the template and the languages it exists in (English has no suffix: banner.png, banner.de.png). */
+const PROMO_JOBS = [
+  { name: 'banner', html: 'promo.html', size: { width: 1200, height: 630 }, langs: ['en', 'de'] },
+  { name: 'social-preview', html: 'social-preview.html', size: { width: 1280, height: 640 }, langs: ['en'] },
+];
+
+/** Promo banner and social preview from their HTML templates – with the freshly rendered images of that language. */
+async function renderPromo(browser, { out, only, langs }) {
+  const wantedJob = (j) => !only.length || only.some((p) => `promo/${j.name}`.startsWith(p) || p === 'promo');
+  const jobs = PROMO_JOBS.filter(wantedJob);
   if (!jobs.length) return;
   const src = join(ROOT, 'docs/assets/promo');
   const tmp = mkdtempSync(join(tmpdir(), 'catofit-promo-'));
-  const pick = (file) => {
-    const fresh = join(out, file);
-    return existsSync(fresh) ? fresh : join(ROOT, 'docs/assets', file);
+  const pick = (lang, file) => {
+    const fresh = join(out, lang, file);
+    return existsSync(fresh) ? fresh : join(ROOT, 'docs/assets', lang, file);
   };
   const context = await browser.newContext({ deviceScaleFactor: 1, colorScheme: 'dark' });
   try {
-    for (const j of jobs) {
-      const html = readFileSync(join(src, j.html), 'utf8')
-        .replace(/src="\.\.\/([\w-]+\.png)"/g, (_, f) => `src="${pathToFileURL(pick(f)).href}"`)
-        .replace(/src="\.\.\/\.\.\/\.\.\/(assets\/[^"]+)"/g, (_, f) => `src="${pathToFileURL(join(ROOT, f)).href}"`);
-      const file = join(tmp, j.html);
-      writeFileSync(file, html);
-      const page = await context.newPage();
-      await page.setViewportSize(j.size);
-      await page.goto(pathToFileURL(file).href);
-      await page.evaluate(() => document.fonts.ready);
-      await page.waitForTimeout(300);
-      mkdirSync(join(out, 'promo'), { recursive: true });
-      await page.screenshot({ path: join(out, 'promo', `${j.name}.png`), scale: 'css' });
-      await page.close();
-      console.log(`✓ promo/${j.name}`);
+    for (const lang of langs) {
+      for (const j of jobs.filter((x) => x.langs.includes(lang))) {
+        const html = readFileSync(join(src, j.html), 'utf8')
+          .replace(/src="\.\.\/(?:en|de)\/([\w-]+\.png)"/g, (_, f) => `src="${pathToFileURL(pick(lang, f)).href}"`)
+          .replace(/src="\.\.\/\.\.\/\.\.\/(assets\/[^"]+)"/g, (_, f) => `src="${pathToFileURL(join(ROOT, f)).href}"`);
+        const file = join(tmp, j.html);
+        writeFileSync(file, html);
+        const page = await context.newPage();
+        await page.setViewportSize(j.size);
+        await page.goto(`${pathToFileURL(file).href}?lang=${lang}`);
+        await page.evaluate(() => document.fonts.ready);
+        await page.waitForFunction(() => [...document.images].every((i) => i.complete && i.naturalWidth > 0));
+        await page.waitForTimeout(300);
+        mkdirSync(join(out, 'promo'), { recursive: true });
+        const name = lang === 'en' ? j.name : `${j.name}.${lang}`;
+        await page.screenshot({ path: join(out, 'promo', `${name}.png`), scale: 'css' });
+        await page.close();
+        console.log(`✓ promo/${name}`);
+      }
     }
   } finally {
     await context.close();
@@ -324,176 +556,32 @@ async function renderPromo(browser, { out, only }) {
   }
 }
 
+async function renderPromoStandalone(opts) {
+  const { chromium } = await loadPlaywright();
+  let browser;
+  try { browser = await chromium.launch({ channel: 'chrome' }); } catch { browser = await chromium.launch(); }
+  try { await renderPromo(browser, opts); } finally { await browser.close(); }
+}
+
+/* ------------------------------ Main ---------------------------------- */
+
 async function main() {
   const opts = parseArgs();
-  mkdirSync(opts.out, { recursive: true });
   // Banner only: without running through the app, using the existing images.
   if (opts.only.length && opts.only.every((p) => p.startsWith('promo'))) { await renderPromoStandalone(opts); return; }
-  const server = await startServer();
-  const { browser, page } = await openBrowser({ base: server.base, headed: opts.headed });
-  const h = helpers(page, opts);
-  const click = (text) => page.getByText(text, { exact: true }).first().click();
-  try {
-    await onboarding(page, h);
-
-    // ---- "Today" ----
-    await h.go('#/');
-    await h.shot('01-dashboard');
-    await h.scrollToText('Heute', '.section-head__title');
-    await h.shot('13-dashboard-coach');
-    await page.getByText(/^Weitere Hinweise/).first().click();
-    await h.scrollToText('Dein Coach', '.section-head__title');
-    await h.shot('43-coach-rpe');
-    await h.go('#/');
-    await h.scrollToText('Belastung & Form', '.section-head__title');
-    await h.shot('45-belastung-form');
-    await h.scrollToText('Wochenziele', '.card__title');
-    await h.shot('42-gesundheitsziele-coach');
-
-    // ---- Race, plan, session, workout ----
-    await h.go('#/event/demo-e1');
-    await h.shot('03-event-detail');
-    await h.go('#/plan/demo-e1');
-    await h.shot('04-plan');
-    const longRun = await unitId(h, 'long');
-    await h.go(`#/session/${longRun}`);
-    await h.shot('06-session');
-    await page.getByRole('button', { name: 'Bearbeiten' }).first().click();
-    await h.settle();
-    await h.shot('14-einheit-bearbeiten');
-    await page.keyboard.press('Escape');
-    // Let the workout continue shortly before the first drinking break (long run: every 20 min).
-    await page.evaluate(async (id) => {
-      const { lsSet } = await import('/js/env.js');
-      lsSet('workout', JSON.stringify({ id, elapsed: 20 * 60 * 1000 - 1200, phase: 0, phaseElapsed: 0, counters: {}, done: false, drinkCount: 0, ts: Date.now() }));
-    }, longRun);
-    await h.go(`#/workout/${longRun}`);
-    await page.getByRole('button', { name: /Start|Weiter/ }).first().click();
-    await page.locator('.workout__drink.is-visible').waitFor({ timeout: 10000 });
-    await h.shot('07-workout-trinkpause');
-    await page.evaluate(async () => { const { lsRemove } = await import('/js/env.js'); lsRemove('workout'); });
-
-    // ---- Calendar ----
-    await h.go('#/calendar');
-    await h.shot('16-kalender-wetter', { clip: await calendarClip(page) });
-    await click('Woche');
-    await h.settle();
-    await h.shot('05-kalender');
-    await click('Monat');
-
-    // ---- Progress ----
-    await h.go('#/stats');
-    await h.shot('09-statistik');
-    await h.scrollToText('Form & Trainingsbereiche', '.section-head__title');
-    await h.shot('44-aktuelle-form');
-    await h.go('#/health');
-    const chart = page.locator('.chart-wrap').first();
-    const box = await chart.boundingBox();
-    if (box) await page.mouse.move(box.x + box.width * 0.62, box.y + box.height * 0.5);
-    await h.shot('08-koerperwerte');
-    await h.go('#/badges');
-    await h.shot('12-erfolge');
-    await h.go('#/reports');
-    await page.getByRole('button', { name: 'Bericht erstellen' }).first().click();
-    await page.getByRole('button', { name: 'Monatsbericht erstellen' }).click();
-    await page.getByRole('button', { name: 'Bericht speichern' }).click();   // after the preview
-    await page.waitForFunction(() => location.hash.startsWith('#/report/'));
-    await h.settle();
-    await h.shot('26-monatsbericht');
-    await h.go('#/reports');
-    await page.getByRole('button', { name: 'Bericht erstellen' }).first().click();
-    await click('Urkunde');
-    await page.getByPlaceholder('z. B. Zielgewicht erreicht').fill('14 Wochen am Stück dabei');
-    await page.getByPlaceholder('z. B. von 72 auf 65 kg (optional)').fill('jede Woche trainiert – starke Konstanz auf dem Weg zum Halbmarathon');
-    await page.getByRole('button', { name: 'Urkunde erstellen' }).click();
-    await page.getByRole('button', { name: 'Urkunde speichern' }).click();
-    await page.waitForFunction(() => location.hash.startsWith('#/report/'));
-    await h.settle();
-    await h.shot('25-urkunde');
-
-    // ---- Health, labs, Apple Health ----
-    await h.go('#/zyklus');
-    await h.shot('18-zyklus');
-    await h.go('#/labor');
-    await h.shot('60-labor');
-    await page.getByText('Ferritin', { exact: true }).first().click();
-    await h.settle();
-    await h.scrollToText('Ferritin', '.list-item__title, .lab-row__name, div');
-    await h.shot('61-labor-detail');
-    await h.go('#/import');
-    await page.getByRole('button', { name: 'Auto-Import aktivieren' }).click();
-    await h.settle();
-    const ingestCard = page.locator('.card', { hasText: 'Auto-Import aktiv' }).first();
-    await h.shot('apple-health-settings', { element: ingestCard });
-    await ingestAppleHealth(h, server.base);
-    await h.go('#/import');
-    await h.scrollToText('Zuletzt importiert', '.section-head__title');
-    await h.shot('apple-health-import');
-
-    // ---- Nutrition, shopping, family ----
-    await h.go('#/nutrition');
-    await h.scrollToText('Markiere Lieblingsgerichte', 'div', 90);
-    await h.shot('15-ernaehrung-lernen');
-    await h.go('#/shopping');
-    await h.shot('32-einkauf-familie');
-    await h.go('#/family');
-    await h.shot('51-team-dashboard');
-    await h.go('#/familie-verwalten');
-    await h.shot('31-familie-verwalten');
-
-    // ---- Exercises, settings, help ----
-    await h.go('#/uebungen');
-    await h.shot('40-uebungen');
-    await page.getByText('Kniebeuge', { exact: true }).first().click();
-    await h.settle();
-    await h.shot('41-uebung-detail');
-    await page.keyboard.press('Escape');
-    await h.go('#/settings');
-    await h.shot('10-einstellungen');
-    await h.scrollToText('Daten & Sicherung', '.section-head__title');
-    await h.shot('35-backup-recovery');
-    await h.go('#/hilfe');
-    await h.shot('11-hilfe');
-
-    // ---- iPad ----
-    await page.setViewportSize(TABLET);
-    for (const [name, hash] of [['ipad-01-dashboard', '#/'], ['ipad-40-uebungen', '#/uebungen'],
-      ['ipad-45-sidebar-abmelden', '#/settings'], ['ipad-50-team-dashboard', '#/family'], ['ipad-60-labor', '#/labor']]) {
-      await h.go(hash);
-      await h.shot(name);
+  for (const lang of opts.langs) {
+    const out = join(opts.out, lang);
+    mkdirSync(out, { recursive: true });
+    console.log(`--- ${lang} (${LOCALES[lang]}) → ${out}`);
+    const server = await startServer();   // a fresh instance per language
+    const { browser, page } = await openBrowser({ base: server.base, headed: opts.headed, lang });
+    const h = helpers(page, { out, only: opts.only });
+    try {
+      await renderFlow({ page, h, server, lang });
+    } finally {
+      await browser.close();
+      server.stop();
     }
-    // Follow along non-stop, landscape on the iPad: paused in the middle of the first squat.
-    await page.setViewportSize({ width: TABLET.height, height: TABLET.width });
-    if (h.wanted('ipad-42-durchgehend')) {
-      await page.evaluate(`(async () => {
-        const [{ openShow }, { programForWorkout }, { findWorkout }] = await Promise.all([import('/js/workout-show.js'), import('/js/show-program.js'), import('/js/workouts.js')]);
-        const s = document.createElement('style'); s.textContent = '.show__paused { display: none !important; }'; document.head.appendChild(s);
-        const run = openShow(programForWorkout(findWorkout('ganzkoerper'))).start();
-        run.toggle();
-        const work = run.show.segs.find((x) => x.kind === 'work');
-        run.seek(work.t0 + 2.6);
-      })()`);
-      await h.settle(500);
-      await h.shot('ipad-42-durchgehend');
-      await page.evaluate(() => document.querySelector('.show__ctl[aria-label="Beenden"]').click());
-    }
-    await page.setViewportSize(PHONE);
-
-    // ---- Programme last: it brings its own sessions into the calendar and "Today" ----
-    await h.go('#/events');
-    await page.getByRole('button', { name: 'Neues Ziel' }).click();
-    await page.getByText('Trainingsprogramm', { exact: true }).click();
-    await page.locator('select').first().selectOption('strength');
-    await page.getByRole('button', { name: 'Speichern & Plan erstellen' }).click();
-    await page.waitForFunction(() => location.hash.startsWith('#/plan/'));
-    const programId = await page.evaluate(() => location.hash.split('/').pop());
-    await h.go('#/events');
-    await h.shot('02-events');
-    await h.go(`#/event/${programId}`);
-    await h.shot('34-programm');
-  } finally {
-    await browser.close();
-    server.stop();
   }
   await renderPromoStandalone(opts);
 }
@@ -505,13 +593,6 @@ async function calendarClip(page) {
     const bottom = document.querySelector('.cal-grid').getBoundingClientRect().bottom + 12;
     return { x: 0, y: top, width: window.innerWidth, height: bottom - top };
   });
-}
-
-async function renderPromoStandalone(opts) {
-  const { chromium } = await loadPlaywright();
-  let browser;
-  try { browser = await chromium.launch({ channel: 'chrome' }); } catch { browser = await chromium.launch(); }
-  try { await renderPromo(browser, opts); } finally { await browser.close(); }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
