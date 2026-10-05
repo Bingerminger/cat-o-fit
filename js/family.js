@@ -10,14 +10,20 @@ import * as store from './storage.js';
 import {
   el, icon, iconSvg, navigate, diffDays, todayStr, fmtDate,
   weekStartMonday, addDays, fmtKm, sectionHead,
-  fmtDec,
+  fmtDec, fmtInt,
   safeAccent, colorTint,
 } from './ui.js';
 import { setHeader } from './router.js';
 import { momentum, computeStats } from './badges.js';
 import { teamStats, filterTeamMembers, teamlessMembers, teamLoad } from './teamstats.js';
 
-const METRIC_DEFS = { momentum: 'Momentum', weekKm: 'Woche', streak: 'Serie' };
+import { t, tp } from './i18n.js';
+
+const METRIC_DEFS = {
+  get momentum() { return t('family.metricMomentum'); },
+  get weekKm() { return t('family.metricWeek'); },
+  get streak() { return t('family.metricStreak'); },
+};
 const DEFAULT_METRICS = ['momentum', 'weekKm'];
 let teamFilter = null; // null = alle Mitglieder, teamId = ein Team, '__none__' = ohne Team
 
@@ -25,8 +31,8 @@ let teamFilter = null; // null = alle Mitglieder, teamId = ein Team, '__none__' 
 function filterMembersByTeam(members, teamList, filter) {
   if (!filter) return members;
   if (filter === '__none__') return teamlessMembers(members, teamList);
-  const t = teamList.find((x) => x.id === filter);
-  return t ? filterTeamMembers(members, t) : members;
+  const found = teamList.find((x) => x.id === filter);
+  return found ? filterTeamMembers(members, found) : members;
 }
 
 /** Auswahlleiste: Alle · je Team · Ohne Team. Wechsel rendert die Ansicht neu. */
@@ -36,9 +42,9 @@ function teamFilterBar(view, teamList, allMembers) {
     class: `chip ${teamFilter === id ? 'chip--accent' : ''}`, style: { cursor: 'pointer' }, text: label,
     onclick: () => { teamFilter = id; view.innerHTML = ''; render(view); },
   });
-  bar.appendChild(chip(null, 'Alle'));
-  teamList.forEach((t) => bar.appendChild(chip(t.id, `${t.emoji || '👥'} ${t.name}`)));
-  if (teamlessMembers(allMembers, teamList).length) bar.appendChild(chip('__none__', 'Ohne Team'));
+  bar.appendChild(chip(null, t('common.all')));
+  teamList.forEach((tm) => bar.appendChild(chip(tm.id, `${tm.emoji || '👥'} ${tm.name}`)));
+  if (teamlessMembers(allMembers, teamList).length) bar.appendChild(chip('__none__', t('family.noTeam')));
   return bar;
 }
 
@@ -53,11 +59,11 @@ function nextGoal(events) {
 export function render(view) {
   const allMembers = store.members();
   const teamList = store.teams();
-  if (teamFilter && teamFilter !== '__none__' && !teamList.some((t) => t.id === teamFilter)) teamFilter = null;
+  if (teamFilter && teamFilter !== '__none__' && !teamList.some((tm) => tm.id === teamFilter)) teamFilter = null;
   if (teamFilter === '__none__' && !teamlessMembers(allMembers, teamList).length) teamFilter = null;
   const members = filterMembersByTeam(allMembers, teamList, teamFilter);
-  const filterName = teamFilter === '__none__' ? 'Ohne Team' : (teamList.find((t) => t.id === teamFilter)?.name || null);
-  setHeader({ title: 'Team/Familie', subtitle: filterName ? `Team „${filterName}“` : (allMembers.length > 1 ? 'Eure gemeinsame Übersicht' : 'Deine Übersicht') });
+  const filterName = teamFilter === '__none__' ? t('family.noTeam') : (teamList.find((tm) => tm.id === teamFilter)?.name || null);
+  setHeader({ title: t('nav.family'), subtitle: filterName ? t('family.teamSubtitle', { name: filterName }) : (allMembers.length > 1 ? t('family.sharedOverview') : t('family.yourOverview')) });
 
   view.appendChild(el('div', { class: 'team-intro' }, [
     el('span', { html: iconSvg('activity'), style: { width: '22px', color: 'var(--accent-text)' } }),
@@ -69,7 +75,7 @@ export function render(view) {
   const summarySlot = el('div'); view.appendChild(summarySlot);
   const badgesSlot = el('div', { class: 'col gap-3' }); view.appendChild(badgesSlot);
 
-  view.appendChild(sectionHead('Mitglieder'));
+  view.appendChild(sectionHead(t('family.members')));
   const metrics = store.familySettings().dashboardMetrics || DEFAULT_METRICS;
   const grid = el('div', { class: 'member-grid' });
   const refs = {};
@@ -78,9 +84,9 @@ export function render(view) {
     const metricSlot = el('div', { class: 'member-card__metrics' });
     grid.appendChild(el('div', { class: 'member-card member-card--static' }, [
       el('span', { class: 'member-card__avatar', style: { background: colorTint(m.color), color: safeAccent(m.color) }, text: m.emoji || '🏃' }),
-      el('div', { class: 'member-card__name', text: m.name || 'Mitglied' }),
+      el('div', { class: 'member-card__name', text: m.name || t('family.roleMember') }),
       el('div', { class: 'member-card__meta' }, [
-        el('span', { class: `chip ${m.role === 'admin' ? 'chip--accent' : ''}`, text: m.role === 'admin' ? 'Admin' : 'Mitglied' }),
+        el('span', { class: `chip ${m.role === 'admin' ? 'chip--accent' : ''}`, text: m.role === 'admin' ? t('family.roleAdmin') : t('family.roleMember') }),
       ]),
       goalSlot, metricSlot,
     ]));
@@ -138,7 +144,7 @@ async function loadAll(members) {
     const g = nextGoal(events);
     byId[m.id] = {
       momentum: mom.score, flames: mom.flames, streak: stats.streak, weekKm, weekSessions, shareMetrics,
-      goalText: !shareGoal ? '🔒 privat' : (g ? `🎯 ${g.name} · in ${diffDays(today, g.date)} ${diffDays(today, g.date) === 1 ? 'Tag' : 'Tagen'}` : 'kein Wettkampf geplant'),
+      goalText: !shareGoal ? t('family.goalPrivate') : (g ? tp('family.goalIn', diffDays(today, g.date), { name: g.name }) : t('family.noRace')),
     };
     buckets.push({ id: m.id, name: m.name, color: m.color, emoji: m.emoji, role: m.role, shareMetrics, shareGoal, shareLoad, maxHr: profile && profile.maxHr, health, sessions, plans, events });
   }));
@@ -152,7 +158,7 @@ function fillMetrics(slot, s, metrics) {
     let val;
     if (key === 'momentum') val = `${s.flames} ${s.momentum}`;
     else if (key === 'weekKm') val = fmtKm(s.weekKm, 0);
-    else if (key === 'streak') val = `${s.streak} ${s.streak === 1 ? 'Woche' : 'Wochen'}`;
+    else if (key === 'streak') val = tp('family.weeks', s.streak);
     else return;
     slot.appendChild(el('div', { class: 'member-metric' }, [
       el('div', { class: 'member-metric__val', text: val }),
@@ -164,11 +170,11 @@ function fillMetrics(slot, s, metrics) {
 /* ------------------------------- Team-Badges ---------------------------- */
 function familySummary(totalKm, totalSessions, count) {
   return el('div', { class: 'family-summary' }, [
-    el('div', { class: 'family-summary__title', text: 'Diese Woche zusammen' }),
+    el('div', { class: 'family-summary__title', text: t('family.summaryTitle') }),
     el('div', { class: 'family-summary__stats' }, [
-      summaryStat(fmtKm(totalKm, 0), 'in Bewegung'),
-      summaryStat(String(totalSessions), totalSessions === 1 ? 'Training' : 'Trainings'),
-      summaryStat(String(count), count === 1 ? 'Mitglied' : 'Mitglieder'),
+      summaryStat(fmtKm(totalKm, 0), t('family.summaryMoving')),
+      summaryStat(String(totalSessions), tp('family.sessionNoun', totalSessions)),
+      summaryStat(String(count), tp('family.memberNoun', count)),
     ]),
   ]);
 }
@@ -192,13 +198,13 @@ function badgeCard(title, emoji, children) {
 /** Monats-km zusammen + Fortschritt zum nächsten Meilenstein. */
 function monthKmCard(mk) {
   const remaining = Math.max(0, Math.round((mk.milestone - mk.km) * 10) / 10);
-  return badgeCard('Diesen Monat zusammen unterwegs', '🛣️', [
+  return badgeCard(t('family.monthTitle'), '🛣️', [
     el('div', { class: 'row row--between', style: { alignItems: 'baseline' } }, [
       el('div', { class: 'num', style: { fontSize: '1.6rem', fontWeight: '820' }, text: fmtKm(mk.km, 0) }),
-      el('div', { class: 'muted', style: { fontSize: '.8rem' }, text: `Ziel ${fmtKm(mk.milestone, 0)}` }),
+      el('div', { class: 'muted', style: { fontSize: '.8rem' }, text: t('family.milestoneGoal', { km: fmtKm(mk.milestone, 0) }) }),
     ]),
     el('div', { class: 'milestone-bar' }, [el('div', { class: 'milestone-bar__fill', style: { width: Math.round(mk.pct * 100) + '%' } })]),
-    el('div', { class: 'dim', style: { fontSize: '.78rem', marginTop: '4px' }, text: `${remaining > 0 ? `Noch ${fmtKm(remaining, 0)} bis zum nächsten Team-Meilenstein.` : 'Meilenstein erreicht – stark!'} Alle Sportarten mit Strecke zählen (Laufen, Rad, Gehen, Schwimmen).` }),
+    el('div', { class: 'dim', style: { fontSize: '.78rem', marginTop: '4px' }, text: `${remaining > 0 ? t('family.milestoneRemaining', { km: fmtKm(remaining, 0) }) : t('family.milestoneReached')} ${t('family.milestoneNote')}` }),
   ]);
 }
 
@@ -214,25 +220,32 @@ function weekActivityCard(wa) {
     ]));
   });
   const top = wa.rows.find((r) => r.id === wa.mostActiveId);
-  return badgeCard('Diese Woche aktiv', '✅', [
+  return badgeCard(t('family.weekActive'), '✅', [
     chips,
-    el('div', { class: 'dim', style: { fontSize: '.78rem', marginTop: '6px' }, text: top ? `🔥 Aktivste:r diese Woche: ${top.name} (${top.sessions} ${top.sessions === 1 ? 'Training' : 'Trainings'}).` : 'Noch keine Trainings diese Woche – los geht’s!' }),
+    el('div', { class: 'dim', style: { fontSize: '.78rem', marginTop: '6px' }, text: top ? tp('family.mostActive', top.sessions, { name: top.name }) : t('family.noSessionsYet') }),
   ]);
 }
 
 /** Anstehende Wettkämpfe aller Mitglieder. */
 /** Belastung im Team (Trainer-Sicht): Wochenlast, Lastverhältnis und das jüngste Befinden. */
-const LOAD_ZONE_TEXT = { optimal: 'im üblichen Rahmen', niedrig: 'unter dem Schnitt', 'erhöht': 'erhöht', hoch: 'deutlich erhöht', aufbau: 'Datenbasis wächst noch', unklar: '–' };
+const LOAD_ZONE_TEXT = {
+  get optimal() { return t('family.zoneOptimal'); },
+  get niedrig() { return t('family.zoneLow'); },
+  get 'erhöht'() { return t('family.zoneRaised'); },
+  get hoch() { return t('family.zoneHigh'); },
+  get aufbau() { return t('family.zoneBuilding'); },
+  unklar: '–',
+};
 const TONE_VAR = { good: 'var(--good-text)', warn: 'var(--warn-text)', bad: 'var(--bad-text)', neutral: 'var(--text-2)' };
 function teamLoadCard(rows) {
   return el('div', { class: 'card' }, [
-    el('div', { class: 'card__title', text: '📋 Belastung im Team' }),
-    el('div', { class: 'muted', style: { fontSize: '.78rem', margin: '2px 0 6px' }, text: 'Nur wer es in den Einstellungen freigibt. Belastungspunkte der letzten 7 Tage und das Verhältnis zum eigenen Schnitt – eine Orientierung, keine Diagnose.' }),
+    el('div', { class: 'card__title', text: t('family.loadTitle') }),
+    el('div', { class: 'muted', style: { fontSize: '.78rem', margin: '2px 0 6px' }, text: t('family.loadHint') }),
     ...rows.map((r) => el('div', { class: 'row gap-2', style: { padding: '6px 0', borderTop: '1px solid var(--border)', alignItems: 'center' } }, [
       el('span', { class: 'member-card__avatar', style: { width: '28px', height: '28px', fontSize: '.9rem' }, text: r.emoji || '🏃' }),
       el('div', { class: 'grow', style: { minWidth: '0' } }, [
         el('div', { style: { fontWeight: '650', fontSize: '.86rem' }, text: r.name }),
-        el('div', { class: 'muted', style: { fontSize: '.76rem' }, text: [`${r.load7.toLocaleString('de-DE')} Punkte in 7 Tagen`, r.energy != null ? `Energie ${r.energy}/10` : null, r.mood != null ? `Stimmung ${r.mood}/10` : null].filter(Boolean).join(' · ') }),
+        el('div', { class: 'muted', style: { fontSize: '.76rem' }, text: [t('family.loadPoints', { points: fmtInt(r.load7) }), r.energy != null ? t('family.energyOf10', { value: r.energy }) : null, r.mood != null ? t('family.moodOf10', { value: r.mood }) : null].filter(Boolean).join(' · ') }),
       ]),
       el('span', { style: { fontSize: '.78rem', fontWeight: '650', color: TONE_VAR[r.tone] || 'var(--text-2)', textAlign: 'right' }, text: r.ratio != null && !r.sparse ? `${fmtDec(Math.round(r.ratio * 100) / 100)} · ${LOAD_ZONE_TEXT[r.zone] || r.zone}` : LOAD_ZONE_TEXT[r.zone] || '–' }),
     ])),
@@ -252,26 +265,26 @@ function upcomingRacesCard(races) {
       ]),
       el('div', { class: 'race-row__cd' }, [
         el('div', { class: 'num', style: { fontWeight: '800', lineHeight: '1' }, text: String(d) }),
-        el('div', { class: 'dim', style: { fontSize: '.62rem' }, text: d === 1 ? 'Tag' : 'Tage' }),
+        el('div', { class: 'dim', style: { fontSize: '.62rem' }, text: tp('family.dayNoun', d) }),
       ]),
     ]));
   });
-  return badgeCard('Anstehende Wettkämpfe', '🏁', [list]);
+  return badgeCard(t('family.upcomingRaces'), '🏁', [list]);
 }
 
 /** Gesammelte Trainings-Abzeichen des Teams + längste aktuelle Wochen-Serie. */
 function achievementsCard(a) {
-  return badgeCard('Team-Erfolge', '🏆', [
+  return badgeCard(t('family.achievements'), '🏆', [
     el('div', { class: 'row gap-4', style: { marginTop: '6px' } }, [
       el('div', { class: 'grow' }, [
         el('div', { class: 'num', style: { fontSize: '1.4rem', fontWeight: '820' }, text: String(a.badges) }),
-        el('div', { class: 'dim', style: { fontSize: '.72rem' }, text: 'Trainings-Abzeichen zusammen' }),
+        el('div', { class: 'dim', style: { fontSize: '.72rem' }, text: t('family.badgesTogether') }),
       ]),
       el('div', { class: 'grow' }, [
-        el('div', { class: 'num', style: { fontSize: '1.4rem', fontWeight: '820' }, text: `${a.longestStreak} ${a.longestStreak === 1 ? 'Woche' : 'Wochen'}` }),
-        el('div', { class: 'dim', style: { fontSize: '.72rem' }, text: a.streakHolder ? `längste Wochen-Serie (${a.streakHolder})` : 'längste Wochen-Serie' }),
+        el('div', { class: 'num', style: { fontSize: '1.4rem', fontWeight: '820' }, text: tp('family.weeks', a.longestStreak) }),
+        el('div', { class: 'dim', style: { fontSize: '.72rem' }, text: a.streakHolder ? t('family.longestStreakBy', { name: a.streakHolder }) : t('family.longestStreak') }),
       ]),
     ]),
-    el('div', { class: 'dim', style: { fontSize: '.72rem', marginTop: '6px' }, text: 'Gezählt werden nur Abzeichen aus dem Training – Gesundheitsdaten bleiben privat.' }),
+    el('div', { class: 'dim', style: { fontSize: '.72rem', marginTop: '6px' }, text: t('family.achievementsNote') }),
   ]);
 }

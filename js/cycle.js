@@ -27,13 +27,15 @@ import { applyAdapt } from './adapt.js';
 import { periodStarts, typicalCycleLength, longCycleCount, periodSignal, PERIOD_ANSWERS } from './cyclecalc.js';
 import { periodFlag } from './redflags.js';
 
+import { t, tp } from './i18n.js';
+
 export const PHASE_META = {
-  menstruation: { label: 'Menstruation', color: '#ef5d6c', emoji: '🩸' },
-  follikel:     { label: 'Follikelphase', color: '#43c59e', emoji: '🌱' },
-  ovulation:    { label: 'Ovulation', color: '#f5a623', emoji: '⭐' },
-  luteal:       { label: 'Lutealphase', color: '#7c5cff', emoji: '🌙' },
+  menstruation: { get label() { return t('cycle.phaseMenstruation'); }, color: '#ef5d6c', emoji: '🩸' },
+  follikel:     { get label() { return t('cycle.phaseFollicular'); }, color: '#43c59e', emoji: '🌱' },
+  ovulation:    { get label() { return t('cycle.phaseOvulation'); }, color: '#f5a623', emoji: '⭐' },
+  luteal:       { get label() { return t('cycle.phaseLuteal'); }, color: '#7c5cff', emoji: '🌙' },
   // Unter hormoneller Verhütung: keine natürlichen Phasen, nur „zwischen den Blutungen“.
-  neutral:      { label: 'Zwischen den Blutungen', color: '#9aa7b4', emoji: '○' },
+  neutral:      { get label() { return t('cycle.phaseNeutral'); }, color: '#9aa7b4', emoji: '○' },
 };
 
 /** Ist das Zyklus-Modul aktiv? (Standard an; in den Einstellungen abschaltbar) */
@@ -41,7 +43,11 @@ export const PHASE_META = {
 // privat (kein Phasen-Einfluss auf Dashboard/Badges). In der eigenen Sicht normal.
 // Konsistent mit allen Modulen: aktiv, solange nicht ausdrücklich abgewählt.
 /** Herkunft importierter Perioden (sonst von Hand erfasst). */
-const PERIOD_SOURCE = { 'apple-health': 'aus Apple Health', health: 'aus Apple Health', 'health-connect': 'aus Health Connect' };
+const PERIOD_SOURCE = {
+  get 'apple-health'() { return t('cycle.fromAppleHealth'); },
+  get health() { return t('cycle.fromAppleHealth'); },
+  get 'health-connect'() { return t('cycle.fromHealthConnect'); },
+};
 
 export function cycleEnabled() { return !store.isManaging() && store.settings().modules?.cycle !== false; }
 
@@ -196,8 +202,8 @@ export function cycleSoftenTargets(units = [], startDate) {
 export function cycleEaseVariant(unit) {
   return {
     ...gentleVariant(unit, {
-      title: 'Ruhiger Zyklus-Tag',
-      description: 'Auf deinen Wunsch entschärft: 1. Tag deiner Periode. Bewusst locker – trainiere nur, wenn es sich gut anfühlt, sonst ohne Wertung auslassen. Rückgängig über „Zuletzt automatisch angepasst“ auf „Heute“.',
+      title: t('cycle.easeTitle'),
+      description: t('cycle.easeDescription'),
     }),
     cycleEased: true,
   };
@@ -220,8 +226,8 @@ function applyCycleEasing(startDate) {
     const targets = cycleSoftenTargets(plan.units || [], startDate);
     if (!targets.length) return;
     applyAdapt(plan.id, targets.map((u) => u.id), (u) => cycleEaseVariant(u), {
-      kind: 'cycle', title: 'Zyklus: 1. Tag lockerer',
-      reason: `Periodenbeginn am ${fmtDate(startDate)} – auf deinen Wunsch ruhiger trainieren.`,
+      kind: 'cycle', title: t('cycle.easeLogTitle'),
+      reason: t('cycle.easeReason', { date: fmtDate(startDate) }),
     });
     n += targets.length;
   });
@@ -230,22 +236,22 @@ function applyCycleEasing(startDate) {
 
 /* ------------------------------- Ansicht -------------------------------- */
 export function render(view) {
-  setHeader({ title: 'Zyklus' });
+  setHeader({ title: t('nav.cycle') });
 
   // Datenschutz: Zyklusdaten sind ausschließlich für die Person selbst sichtbar.
   if (store.isManaging()) {
     const who = store.activeMember();
     view.appendChild(el('div', { class: 'empty', style: { paddingTop: '48px' } }, [
       el('div', { class: 'empty__icon', html: iconSvg('heart') }),
-      el('div', { class: 'empty__title', text: 'Privat' }),
-      el('div', { class: 'muted', style: { maxWidth: '320px', margin: '0 auto' }, text: `Zyklusdaten sind privat und nur für ${who ? who.name : 'das Mitglied'} selbst sichtbar – auch für Admins.` }),
+      el('div', { class: 'empty__title', text: t('cycle.privateTitle') }),
+      el('div', { class: 'muted', style: { maxWidth: '320px', margin: '0 auto' }, text: who ? t('cycle.privateFor', { name: who.name }) : t('cycle.privateForMember') }),
     ]));
     return;
   }
 
   // Modul abgewählt (Einstellungen → Module): wie alle Module deaktiviert anzeigen.
   if (!cycleEnabled()) {
-    view.appendChild(moduleOff('Zykluskalender'));
+    view.appendChild(moduleOff(t('cycle.moduleName')));
     return;
   }
 
@@ -264,10 +270,10 @@ export function render(view) {
   const ps = periodState(today);
   if (ps && ps.flag) view.appendChild(periodFlagCard(periodFlag(ps)));
   if (ps && ps.state === 'ask') view.appendChild(periodQuestionCard(ps));
-  if (ps && ps.state === 'contraception' && !hormonal) view.appendChild(noteCard('Unter hormoneller Verhütung sind Zyklusphasen und Prognose nicht aussagekräftig – sie dienen hier nur der Orientierung.'));
-  if (ps && ps.state === 'untracked') view.appendChild(noteCard('Trag den letzten Periodenbeginn nach, dann stimmen Phasen und Prognose wieder.'));
+  if (ps && ps.state === 'contraception' && !hormonal) view.appendChild(noteCard(t('cycle.noteContraception')));
+  if (ps && ps.state === 'untracked') view.appendChild(noteCard(t('cycle.noteUntracked')));
   if (!hormonal && longCycleCount(periodStarts(store.get('cycle'))) >= 2) {
-    view.appendChild(noteCard('Mehrere deiner letzten Zyklen waren länger als 35 Tage. Das kann mit der Energieversorgung zusammenhängen – lass es ärztlich abklären, wenn es neu für dich ist.'));
+    view.appendChild(noteCard(t('cycle.noteLongCycles')));
   }
 
   // Aktuelle Phase
@@ -277,19 +283,19 @@ export function render(view) {
     const ink = onAccent(pm.color);
     const end = luminance(ink) < 0.5 ? mix(pm.color, '#ffffff', 0.22) : mix(pm.color, '#000000', 0.22);
     view.appendChild(el('div', { class: 'hero', style: { background: `linear-gradient(140deg, ${pm.color}, ${end})`, color: ink } }, [
-      el('div', { class: 'hero__eyebrow', text: `Zyklustag ${phase.cycleDay} · Ø ${phase.cycleLength} Tage${phase.predicted ? ' · Prognose' : ''}` }),
+      el('div', { class: 'hero__eyebrow', text: `${t('cycle.dayAverage', { day: phase.cycleDay, length: phase.cycleLength })}${phase.predicted ? ` · ${t('cycle.forecast')}` : ''}` }),
       el('div', { class: 'hero__title', text: `${pm.emoji} ${pm.label}` }),
       el('div', { style: { opacity: '.92', fontSize: '.9rem', position: 'relative' }, text: phaseTip(phase.phase) }),
     ]));
   } else if (hasData && stale) {
     view.appendChild(el('div', { class: 'card', style: { borderLeft: '4px solid var(--warn)' } }, [
-      el('div', { style: { fontWeight: '700' }, text: 'Prognose pausiert' }),
-      el('div', { class: 'muted', style: { fontSize: '.84rem', marginTop: '2px' }, text: `Dein letzter Eintrag liegt ${diffDays(last, today)} Tage zurück. Ohne neue Einträge rechnet Cat-O-Fit keine Phasen und keine nächste Periode mehr – und schützt auch keine Tage mehr. Trag den letzten Periodenbeginn nach, dann geht es weiter.` }),
+      el('div', { style: { fontWeight: '700' }, text: t('cycle.stalePaused') }),
+      el('div', { class: 'muted', style: { fontSize: '.84rem', marginTop: '2px' }, text: t('cycle.staleText', { days: diffDays(last, today) }) }),
     ]));
   } else if (!hasData) {
     view.appendChild(el('div', { class: 'card card--flat', text: hormonal
-      ? 'Noch keine Blutung erfasst. Trag den Beginn deiner nächsten Blutung ein, dann markiert Cat-O-Fit die Tage.'
-      : 'Noch keine Periode erfasst. Markiere deinen letzten Periodenbeginn, dann berechnet Cat-O-Fit deine Phasen.' }));
+      ? t('cycle.noBleedYet')
+      : t('cycle.noPeriodYet') }));
   }
   const np = nextPredictedStart();
   if (np) {
@@ -297,29 +303,29 @@ export function render(view) {
     view.appendChild(el('div', { class: 'card mt-4 row gap-3', style: { alignItems: 'center' } }, [
       el('span', { style: { fontSize: '1.6rem' }, text: '🩸' }),
       el('div', { class: 'grow' }, [
-        el('div', { style: { fontWeight: '700' }, text: `${hormonal ? 'Nächste Blutung' : 'Nächste Periode'} ${inDays > 0 ? `in ${inDays} Tagen` : 'könnte heute beginnen'}` }),
-        el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: `voraussichtlich ${fmtDate(np)} (Prognose)` }),
+        el('div', { style: { fontWeight: '700' }, text: inDays > 0 ? (hormonal ? tp('cycle.nextBleedIn', inDays) : tp('cycle.nextPeriodIn', inDays)) : (hormonal ? t('cycle.nextBleedToday') : t('cycle.nextPeriodToday')) }),
+        el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: t('cycle.expectedOn', { date: fmtDate(np) }) }),
       ]),
     ]));
   }
 
   // Eingabe
-  view.appendChild(el('button', { class: 'btn btn--primary btn--block mt-4', onclick: () => openPeriodSheet(), }, [icon('plus'), 'Periodenbeginn eintragen']));
+  view.appendChild(el('button', { class: 'btn btn--primary btn--block mt-4', onclick: () => openPeriodSheet(), }, [icon('plus'), t('cycle.logPeriodStart')]));
 
   // Phasen-Vorschau der nächsten 28 Tage
   if (hasData) {
-    view.appendChild(sectionHead('Nächste 4 Wochen'));
+    view.appendChild(sectionHead(t('cycle.next4Weeks')));
     // Mit Tageszahl, Wochentagszeile und Beschreibung je Tag – vorher 28 Farbfelder, die
     // Phase nur über die Farbe kodiert (UI-37, WCAG 1.4.1). Prognose-Tage gestrichelt.
     const head = el('div', { class: 'cycle-strip cycle-strip__head', 'aria-hidden': 'true' });
     for (let i = 0; i < 7; i++) head.appendChild(el('span', { text: fmtWeekday(addDays(today, i)) }));
     view.appendChild(head);
-    const strip = el('div', { class: 'cycle-strip', role: 'list', 'aria-label': 'Zyklus-Vorschau der nächsten 4 Wochen' });
+    const strip = el('div', { class: 'cycle-strip', role: 'list', 'aria-label': t('cycle.stripLabel') });
     for (let i = 0; i < 28; i++) {
       const d = addDays(today, i);
       const p = cyclePhase(d);
       const meta = p ? PHASE_META[p.phase] : null;
-      const desc = `${fmtDate(d)}${i === 0 ? ' (heute)' : ''}: ${meta ? meta.label : 'keine Angabe'}${p && p.predicted ? ', Prognose' : ''}`;
+      const desc = `${fmtDate(d)}${i === 0 ? ` (${t('common.today')})` : ''}: ${meta ? meta.label : t('cycle.noInfo')}${p && p.predicted ? `, ${t('cycle.forecast')}` : ''}`;
       strip.appendChild(el('span', {
         class: `cycle-strip__day ${i === 0 ? 'is-today' : ''} ${p && p.predicted ? 'is-predicted' : ''}`,
         role: 'listitem', 'aria-label': desc, title: desc,
@@ -333,35 +339,35 @@ export function render(view) {
 
   // Einträge
   if (hasData) {
-    view.appendChild(sectionHead('Erfasste Perioden'));
+    view.appendChild(sectionHead(t('cycle.loggedPeriods')));
     const list = el('div', { class: 'list-card' });
     entries().slice().reverse().forEach((e) => list.appendChild(el('div', { class: 'list-item' }, [
       el('span', { style: { fontSize: '1.1rem' }, text: '🩸' }),
       el('div', { class: 'list-item__body' }, [
         el('div', { class: 'list-item__title', text: fmtDate(e.startDate) }),
-        el('div', { class: 'list-item__sub', text: `${e.periodLength || avgPeriodLength()} Tage${PERIOD_SOURCE[e.source] ? ' · ' + PERIOD_SOURCE[e.source] : ''}` }),
+        el('div', { class: 'list-item__sub', text: `${tp('cycle.periodDays', e.periodLength || avgPeriodLength())}${PERIOD_SOURCE[e.source] ? ' · ' + PERIOD_SOURCE[e.source] : ''}` }),
       ]),
-      el('button', { class: 'icon-btn', 'aria-label': 'Löschen', onclick: async () => { if (await confirmDialog({ title: 'Eintrag löschen?', confirmLabel: 'Löschen', danger: true })) { store.remove('cycle', e.id); rerender(); } } }, icon('trash')),
+      el('button', { class: 'icon-btn', 'aria-label': t('cycle.delete'), onclick: async () => { if (await confirmDialog({ title: t('cycle.deleteEntryTitle'), confirmLabel: t('cycle.delete'), danger: true })) { store.remove('cycle', e.id); rerender(); } } }, icon('trash')),
     ])));
     view.appendChild(list);
   }
 
   // Hormonelle Verhütung: blendet die Phasen aus, behält die Blutungstage (HEALTH-32).
-  view.appendChild(sectionHead('Verhütung'));
+  view.appendChild(sectionHead(t('cycle.contraceptionHeading')));
   view.appendChild(el('div', { class: 'card' }, [
     el('div', { class: 'row row--between', style: { alignItems: 'center', gap: '12px' } }, [
       el('div', { class: 'grow' }, [
-        el('div', { style: { fontWeight: '650', fontSize: '.92rem' }, text: 'Hormonelle Verhütung' }),
-        el('div', { class: 'muted', style: { fontSize: '.8rem', marginTop: '2px' }, text: 'Pille, Hormonspirale, Implantat, Ring … Dann gibt es keine natürlichen Zyklusphasen – Cat-O-Fit zeigt nur deine Blutungstage und fragt bei einer ausbleibenden Blutung nicht nach.' }),
+        el('div', { style: { fontWeight: '650', fontSize: '.92rem' }, text: t('cycle.hormonalContraception') }),
+        el('div', { class: 'muted', style: { fontSize: '.8rem', marginTop: '2px' }, text: t('cycle.hormonalHint') }),
       ]),
-      toggle(hormonal, (on) => { store.setSetting('cycleHormonal', !!on); rerender(); }, 'Hormonelle Verhütung'),
+      toggle(hormonal, (on) => { store.setSetting('cycleHormonal', !!on); rerender(); }, t('cycle.hormonalContraception')),
     ]),
   ]));
 
   // Info
   view.appendChild(el('div', { class: 'card card--flat mt-4 row gap-2', style: { alignItems: 'flex-start' } }, [
     el('span', { html: iconSvg('info'), style: { color: 'var(--accent-text)', width: '18px', flex: '0 0 auto' } }),
-    el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: 'An deinen Menstruationstagen kannst du Einheiten ohne Wertung verschieben oder auslassen – sie zählen nicht als verpasst. Wie du dich im Zyklus fühlst, ist sehr individuell; die Studienlage zu Leistungsunterschieden je Phase ist schwach – richte dich nach deinem Befinden. Deine Zyklusdaten sieht nur du – auch Admins nicht; der Server gibt sie nur nach deiner Anmeldung heraus. Das Modul ist in den Einstellungen abschaltbar.' }),
+    el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('cycle.infoText') }),
   ]));
 }
 
@@ -389,16 +395,16 @@ function noteCard(text) {
 function periodQuestionCard(ps) {
   const pick = (key) => {
     answerPeriodCheck(key);
-    toast(key === 'schwanger' ? 'Gespeichert – Abnehmziele sind jetzt ausgesetzt' : 'Gespeichert', 'good');
+    toast(key === 'schwanger' ? t('cycle.savedPaused') : t('cycle.saved'), 'good');
     rerender();
   };
   return el('div', { class: 'card mt-2', style: { borderLeft: '4px solid var(--warn)' } }, [
-    el('div', { style: { fontWeight: '700', fontSize: '.9rem' }, text: 'Periode überfällig?' }),
-    el('div', { class: 'muted', style: { fontSize: '.82rem', marginTop: '2px' }, text: `Dein letzter Periodenbeginn liegt ${ps.days} Tage zurück – länger als bei dir üblich. Was trifft zu?` }),
+    el('div', { style: { fontWeight: '700', fontSize: '.9rem' }, text: t('cycle.overdueTitle') }),
+    el('div', { class: 'muted', style: { fontSize: '.82rem', marginTop: '2px' }, text: t('cycle.overdueText', { days: ps.days }) }),
     el('div', { class: 'col gap-2 mt-2' }, PERIOD_ANSWERS.map((a) => el('button', {
       class: 'btn btn--ghost btn--block', style: { justifyContent: 'flex-start', fontSize: '.84rem' }, onclick: () => pick(a.key),
     }, a.label))),
-    el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: 'Deine Antwort bleibt privat im Zyklusbereich. Neue Periodenstarts trägst du wie gewohnt unten ein.' }),
+    el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: t('cycle.answerPrivate') }),
   ]);
 }
 
@@ -408,11 +414,11 @@ function periodQuestionCard(ps) {
     phasenbasierte Empfehlungen für nicht ableitbar. */
 export function phaseTip(phase) {
   return {
-    menstruation: 'Manche fühlen sich an diesen Tagen schlapper, andere trainieren wie gewohnt – beides ist okay. Richte dich nach deinem Befinden.',
-    follikel: 'Viele fühlen sich in dieser Phase fit – ob und wie stark, ist sehr individuell. Trainiere nach Plan und nach Gefühl.',
-    ovulation: 'Um den Eisprung herum merken manche kaum etwas, andere ein Ziehen. Trainiere nach Gefühl.',
-    luteal: 'Vor der Periode berichten manche von mehr Müdigkeit oder Wassereinlagerungen. Merkst du das, achte besonders auf Schlaf und Erholung.',
-    neutral: 'Unter hormoneller Verhütung gibt es keine natürlichen Zyklusphasen – Cat-O-Fit zeigt nur deine Blutungstage.',
+    menstruation: t('cycle.tipMenstruation'),
+    follikel: t('cycle.tipFollicular'),
+    ovulation: t('cycle.tipOvulation'),
+    luteal: t('cycle.tipLuteal'),
+    neutral: t('cycle.tipNeutral'),
   }[phase] || '';
 }
 
@@ -422,7 +428,7 @@ function legend() {
     ...keys.map((k) => PHASE_META[k]).map((m) => el('span', { class: 'zones-legend__item' }, [
       el('span', { class: 'zones-legend__sw', style: { background: m.color } }), m.label,
     ])),
-    el('span', { class: 'zones-legend__item dim', text: 'gestrichelt = Prognose' }),
+    el('span', { class: 'zones-legend__item dim', text: t('cycle.legendForecast') }),
   ]);
 }
 
@@ -436,12 +442,12 @@ async function askAboutFirstDay(startDate) {
   if (startDate < today || diffDays(today, startDate) > 1) return 0;
   const targets = easeTargets(startDate);
   if (!targets.length) return 0;
-  const names = [...new Set(targets.map((u) => `„${u.title}“`))].join(', ');
+  const names = [...new Set(targets.map((u) => t('cycle.quotedTitle', { title: u.title })))].join(', ');
   const ease = await confirmDialog({
-    title: 'Wie geht es dir?',
-    message: `${startDate === today ? 'Heute' : 'Morgen'} steht ${names} an. Viele trainieren am ersten Tag ganz normal, manche fühlen sich schlapp – beides ist okay. Möchtest du es lockerer angehen?`,
-    confirmLabel: 'Lockerer machen',
-    cancelLabel: 'Wie geplant',
+    title: t('cycle.askTitle'),
+    message: startDate === today ? t('cycle.easeToday', { names }) : t('cycle.easeTomorrow', { names }),
+    confirmLabel: t('cycle.easeConfirm'),
+    cancelLabel: t('cycle.easeDecline'),
   });
   return ease ? applyCycleEasing(startDate) : 0;
 }
@@ -450,21 +456,21 @@ export function openPeriodSheet() {
   const dateI = input({ type: 'date', value: todayStr() });
   const lenI = input({ type: 'number', inputmode: 'numeric', value: avgPeriodLength(), min: '1', max: '10' });
   openSheet({
-    title: 'Periodenbeginn eintragen',
+    title: t('cycle.logPeriodStart'),
     body: el('div', {}, [
-      field('Erster Tag der Periode', dateI),
-      field('Dauer (Tage)', lenI),
+      field(t('cycle.sheetFirstDay'), dateI),
+      field(t('cycle.sheetLength'), lenI),
     ]),
     footer: [
-      el('button', { class: 'btn btn--ghost grow', text: 'Abbrechen', onclick: () => closeSheet() }),
-      el('button', { class: 'btn btn--primary grow', text: 'Speichern', onclick: async () => {
+      el('button', { class: 'btn btn--ghost grow', text: t('common.cancel'), onclick: () => closeSheet() }),
+      el('button', { class: 'btn btn--primary grow', text: t('cycle.save'), onclick: async () => {
         const start = dateI.value;
         addPeriodStart(start, parseInt(lenI.value) || 5);
         closeSheet();
         rerender();
         // Training am 1. Tag nur auf Wunsch lockerer (#3/TRAIN-30) – protokolliert & rückgängig.
         const eased = await askAboutFirstDay(start);
-        toast(eased ? `Gespeichert · Training am 1. Tag lockerer (${eased})` : 'Gespeichert', 'good', eased ? 3600 : undefined);
+        toast(eased ? t('cycle.savedEased', { n: eased }) : t('cycle.saved'), 'good', eased ? 3600 : undefined);
         if (eased) rerender();
       } }),
     ],

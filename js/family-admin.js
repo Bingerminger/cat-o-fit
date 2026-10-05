@@ -9,68 +9,70 @@ import {
   safeAccent, colorTint,
 } from './ui.js';
 import { setHeader, refresh } from './router.js';
+import { weekdayNames } from './format.js';
+
+import { t } from './i18n.js';
 
 const EMOJIS = ['🏃', '🏃‍♀️', '🧔', '👩', '🧒', '👦', '👧', '👵', '👴', '🐱', '🐶', '🦊', '⚡', '🔥', '🌟', '🚴'];
 const COLORS = ['#18b48a', '#3d8bff', '#ff8a3d', '#f5b300', '#7c5cff', '#ff5d8f', '#19b9c9', '#43c59e'];
-const WD = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
 const TEAM_EMOJIS = ['👥', '🔴', '🔵', '🟢', '🟡', '🟣', '🟠', '⚽', '🏃', '🚴', '💪', '🔥'];
 
 export function render(view) {
-  setHeader({ title: 'Team/Familie verwalten', back: '#/settings' });
+  setHeader({ title: t('familyAdmin.title'), back: '#/settings' });
 
   if (!store.isAdmin()) {
     view.appendChild(el('div', { class: 'empty', style: { paddingTop: '48px' } }, [
       el('div', { class: 'empty__icon', html: iconSvg('user') }),
-      el('div', { class: 'empty__title', text: 'Nur für Admins' }),
-      el('div', { class: 'muted', text: 'Die Team-/Familienverwaltung ist Administrator:innen vorbehalten.' }),
+      el('div', { class: 'empty__title', text: t('familyAdmin.adminsOnly') }),
+      el('div', { class: 'muted', text: t('familyAdmin.adminsOnlyHint') }),
     ]));
     return;
   }
 
   /* ----- Mitglieder ----- */
   const canAdd = store.members().length < store.MAX_MEMBERS;
-  view.appendChild(sectionHead('Mitglieder', canAdd ? { label: 'Hinzufügen', onClick: () => openMemberSheet(null) } : null));
+  view.appendChild(sectionHead(t('family.members'), canAdd ? { label: t('familyAdmin.add'), onClick: () => openMemberSheet(null) } : null));
   const list = el('div', { class: 'col gap-2' });
   store.members().forEach((m) => list.appendChild(memberRow(m)));
   view.appendChild(list);
-  view.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: `${store.members().length} von ${store.MAX_MEMBERS} Mitgliedern` }));
+  view.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: t('familyAdmin.memberCount', { n: store.members().length, max: store.MAX_MEMBERS }) }));
 
   /* ----- Teams ----- */
-  view.appendChild(sectionHead('Teams', { label: 'Team anlegen', onClick: () => openTeamSheet(null) }));
+  view.appendChild(sectionHead(t('familyAdmin.teams'), { label: t('familyAdmin.createTeam'), onClick: () => openTeamSheet(null) }));
   const teamList = store.teams();
   if (!teamList.length) {
-    view.appendChild(el('div', { class: 'card card--flat muted', style: { fontSize: '.84rem' }, text: 'Noch keine Teams. Lege Teams an, um Mitglieder zu gruppieren – ein Mitglied kann in mehreren Teams sein. Das Team/Familie-Dashboard lässt sich dann je Team auswerten.' }));
+    view.appendChild(el('div', { class: 'card card--flat muted', style: { fontSize: '.84rem' }, text: t('familyAdmin.noTeams') }));
   } else {
     const tl = el('div', { class: 'col gap-2' });
-    teamList.forEach((t) => tl.appendChild(teamRow(t)));
+    teamList.forEach((team) => tl.appendChild(teamRow(team)));
     view.appendChild(tl);
   }
 
   /* ----- Gemeinsame Einstellungen ----- */
-  view.appendChild(sectionHead('Gemeinsame Einstellungen'));
+  view.appendChild(sectionHead(t('familyAdmin.sharedSettings')));
   const sd = store.familySettings().shoppingDay ?? 2;
   view.appendChild(el('div', { class: 'card' }, [
-    field('Gemeinsamer Einkaufstag', select(
-      WD.map((w, i) => ({ value: String(i), label: w })),
+    field(t('familyAdmin.shoppingDay'), select(
+      weekdayNames(true).map((w, i) => ({ value: String(i), label: w })),
       String(sd),
-      { onchange: (e) => { store.setFamilySetting('shoppingDay', parseInt(e.target.value, 10)); toast('Einkaufstag gespeichert', 'good'); } },
+      { onchange: (e) => { store.setFamilySetting('shoppingDay', parseInt(e.target.value, 10)); toast(t('familyAdmin.shoppingDaySaved'), 'good'); } },
     )),
-    el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: 'Gilt künftig für die gemeinsame Einkaufsliste.' }),
+    el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: t('familyAdmin.shoppingDayHint') }),
   ]));
 
   /* ----- Team/Familie-Dashboard ----- */
-  view.appendChild(sectionHead('Team/Familie-Dashboard'));
+  view.appendChild(sectionHead(t('familyAdmin.dashboardTitle')));
   view.appendChild(metricsCard());
 }
 
-const DASH_METRICS = [['momentum', 'Momentum'], ['weekKm', 'Wochen-km (alle Sportarten)'], ['streak', 'Wochen-Serie']];
+const dashMetrics = () => [['momentum', t('family.metricMomentum')], ['weekKm', t('familyAdmin.metricWeekKm')], ['streak', t('familyAdmin.metricStreak')]];
 const DEFAULT_DASH = ['momentum', 'weekKm'];
 
 /** Auswahl, welche Kennzahlen pro Mitglied im Familiendashboard erscheinen. */
 function metricsCard() {
   const card = el('div', { class: 'card' });
-  card.appendChild(el('div', { class: 'muted mb-2', style: { fontSize: '.8rem' }, text: 'Welche Kennzahlen pro Mitglied im Team/Familie-Dashboard erscheinen:' }));
-  DASH_METRICS.forEach(([key, label]) => {
+  card.appendChild(el('div', { class: 'muted mb-2', style: { fontSize: '.8rem' }, text: t('familyAdmin.dashboardHint') }));
+  dashMetrics().forEach(([key, label]) => {
     const on = (store.familySettings().dashboardMetrics || DEFAULT_DASH).includes(key);
     card.appendChild(el('div', { class: 'row row--between', style: { padding: '8px 0', borderTop: '1px solid var(--border)' } }, [
       el('span', { text: label }),
@@ -78,33 +80,33 @@ function metricsCard() {
         const set = new Set(store.familySettings().dashboardMetrics || DEFAULT_DASH);
         if (v) set.add(key); else set.delete(key);
         store.setFamilySetting('dashboardMetrics', [...set]);
-        toast('Gespeichert', 'good');
-      }, `${label} im Dashboard zeigen`),
+        toast(t('familyAdmin.saved'), 'good');
+      }, t('familyAdmin.showOnDashboard', { label })),
     ]));
   });
   return card;
 }
 
-function teamRow(t) {
-  const mem = store.teamMembers(t.id);
+function teamRow(team) {
+  const mem = store.teamMembers(team.id);
   return el('div', { class: 'card' }, [
     el('div', { class: 'row gap-3', style: { alignItems: 'center' } }, [
-      el('span', { class: 'member-card__avatar', style: { width: '40px', height: '40px', fontSize: '1.3rem', background: colorTint(t.color), color: safeAccent(t.color) }, text: t.emoji || '👥' }),
+      el('span', { class: 'member-card__avatar', style: { width: '40px', height: '40px', fontSize: '1.3rem', background: colorTint(team.color), color: safeAccent(team.color) }, text: team.emoji || '👥' }),
       el('div', { class: 'grow' }, [
-        el('div', { class: 'card__title', text: t.name }),
-        el('div', { class: 'muted', style: { fontSize: '.8rem' }, text: mem.length ? mem.map((m) => m.name).join(', ') : 'Noch keine Mitglieder' }),
+        el('div', { class: 'card__title', text: team.name }),
+        el('div', { class: 'muted', style: { fontSize: '.8rem' }, text: mem.length ? mem.map((m) => m.name).join(', ') : t('familyAdmin.noMembers') }),
       ]),
       el('span', { class: 'chip', text: `${mem.length}` }),
     ]),
-    el('button', { class: 'btn btn--ghost btn--block mt-3', onclick: () => openTeamSheet(t) }, [icon('edit'), 'Bearbeiten']),
+    el('button', { class: 'btn btn--ghost btn--block mt-3', onclick: () => openTeamSheet(team) }, [icon('edit'), t('familyAdmin.edit')]),
   ]);
 }
 
-function openTeamSheet(t) {
-  const editing = !!t;
-  const st = { name: t?.name || '', emoji: t?.emoji || '👥', color: t?.color || COLORS[1], memberIds: new Set(t?.memberIds || []) };
+function openTeamSheet(team) {
+  const editing = !!team;
+  const st = { name: team?.name || '', emoji: team?.emoji || '👥', color: team?.color || COLORS[1], memberIds: new Set(team?.memberIds || []) };
 
-  const nameInp = input({ value: st.name, placeholder: 'z. B. Team Rot', maxlength: '24', oninput: (e) => { st.name = e.target.value; } });
+  const nameInp = input({ value: st.name, placeholder: t('familyAdmin.teamNamePlaceholder'), maxlength: '24', oninput: (e) => { st.name = e.target.value; } });
 
   const emojiWrap = el('div', { class: 'picker-row' });
   TEAM_EMOJIS.forEach((e) => {
@@ -130,7 +132,7 @@ function openTeamSheet(t) {
       el('span', { class: 'row gap-2', style: { alignItems: 'center' } }, [
         el('span', { text: m.emoji || '🙂' }),
         el('span', { text: m.name }),
-        m.role === 'admin' ? el('span', { class: 'chip chip--accent', style: { fontSize: '.62rem' }, text: 'Admin' }) : null,
+        m.role === 'admin' ? el('span', { class: 'chip chip--accent', style: { fontSize: '.62rem' }, text: t('family.roleAdmin') }) : null,
       ]),
       cb,
     ]);
@@ -138,30 +140,30 @@ function openTeamSheet(t) {
   });
 
   const save = () => {
-    if (!st.name.trim()) { toast('Bitte einen Teamnamen eingeben', 'bad'); return; }
+    if (!st.name.trim()) { toast(t('familyAdmin.teamNameRequired'), 'bad'); return; }
     const fields = { name: st.name.trim(), emoji: st.emoji, color: st.color, memberIds: [...st.memberIds] };
-    if (editing) store.updateTeam(t.id, fields); else store.addTeam(fields);
+    if (editing) store.updateTeam(team.id, fields); else store.addTeam(fields);
     closeSheet();
-    toast(editing ? 'Team gespeichert' : 'Team angelegt', 'good');
+    toast(editing ? t('familyAdmin.teamSaved') : t('familyAdmin.teamCreated'), 'good');
     refresh();
   };
 
   const body = el('div', { class: 'col gap-3' }, [
-    field('Teamname', nameInp),
-    field('Symbol', emojiWrap),
-    field('Farbe', colorWrap),
-    el('label', { class: 'field__label', text: 'Mitglieder (Mehrfach-Mitgliedschaft möglich)' }), memWrap,
-    el('button', { class: 'btn btn--primary btn--block', onclick: save }, [icon('check'), editing ? 'Speichern' : 'Team anlegen']),
+    field(t('familyAdmin.teamName'), nameInp),
+    field(t('familyAdmin.symbol'), emojiWrap),
+    field(t('familyAdmin.colour'), colorWrap),
+    el('label', { class: 'field__label', text: t('familyAdmin.teamMembersLabel') }), memWrap,
+    el('button', { class: 'btn btn--primary btn--block', onclick: save }, [icon('check'), editing ? t('familyAdmin.save') : t('familyAdmin.createTeam')]),
     editing ? el('button', {
       class: 'btn btn--ghost btn--block', style: { color: 'var(--bad-text)' },
       onclick: async () => {
-        const ok = await confirmDialog({ title: 'Team löschen?', message: `„${t.name}“ wird gelöscht. Die Mitglieder selbst bleiben erhalten.`, confirmLabel: 'Team löschen', danger: true });
+        const ok = await confirmDialog({ title: t('familyAdmin.deleteTeamTitle'), message: t('familyAdmin.deleteTeamText', { name: team.name }), confirmLabel: t('familyAdmin.deleteTeam'), danger: true });
         if (!ok) return;
-        store.removeTeam(t.id); closeSheet(); toast('Team gelöscht'); refresh();
+        store.removeTeam(team.id); closeSheet(); toast(t('familyAdmin.teamDeleted')); refresh();
       },
-    }, [icon('trash'), 'Team löschen']) : null,
+    }, [icon('trash'), t('familyAdmin.deleteTeam')]) : null,
   ]);
-  openSheet({ title: editing ? 'Team bearbeiten' : 'Neues Team', body });
+  openSheet({ title: editing ? t('familyAdmin.editTeam') : t('familyAdmin.newTeam'), body });
   setTimeout(() => nameInp.focus(), 120);
 }
 
@@ -171,14 +173,14 @@ function memberRow(m) {
     el('div', { class: 'row gap-3', style: { alignItems: 'center' } }, [
       el('span', { class: 'member-card__avatar', style: { width: '40px', height: '40px', fontSize: '1.3rem', background: colorTint(m.color), color: safeAccent(m.color) }, text: m.emoji || '🙂' }),
       el('div', { class: 'grow' }, [
-        el('div', { class: 'card__title', text: m.name + (isMe ? ' (du)' : '') }),
-        el('div', { class: 'muted', style: { fontSize: '.8rem' }, text: m.role === 'admin' ? 'Administrator:in' : 'Mitglied' }),
+        el('div', { class: 'card__title', text: m.name + (isMe ? ` (${t('familyAdmin.you')})` : '') }),
+        el('div', { class: 'muted', style: { fontSize: '.8rem' }, text: m.role === 'admin' ? t('familyAdmin.roleAdminLong') : t('family.roleMember') }),
       ]),
-      m.role === 'admin' ? el('span', { class: 'chip chip--accent', text: 'Admin' }) : null,
+      m.role === 'admin' ? el('span', { class: 'chip chip--accent', text: t('family.roleAdmin') }) : null,
     ]),
     el('div', { class: 'row gap-2 mt-3' }, [
-      el('button', { class: 'btn btn--ghost grow', onclick: () => openMemberSheet(m) }, [icon('edit'), 'Bearbeiten']),
-      isMe ? null : el('button', { class: 'btn btn--ghost grow', onclick: async () => { await store.enterMember(m.id); navigate('#/'); } }, [icon('arrowRight'), 'Öffnen']),
+      el('button', { class: 'btn btn--ghost grow', onclick: () => openMemberSheet(m) }, [icon('edit'), t('familyAdmin.edit')]),
+      isMe ? null : el('button', { class: 'btn btn--ghost grow', onclick: async () => { await store.enterMember(m.id); navigate('#/'); } }, [icon('arrowRight'), t('familyAdmin.open')]),
     ]),
   ]);
 }
@@ -187,7 +189,7 @@ function openMemberSheet(m) {
   const editing = !!m;
   const st = { name: m?.name || '', role: m?.role || 'user', emoji: m?.emoji || '🙂', color: m?.color || COLORS[1] };
 
-  const nameInp = input({ value: st.name, placeholder: 'Vorname', maxlength: '24', oninput: (e) => { st.name = e.target.value; } });
+  const nameInp = input({ value: st.name, placeholder: t('familyAdmin.firstName'), maxlength: '24', oninput: (e) => { st.name = e.target.value; } });
 
   const emojiWrap = el('div', { class: 'picker-row' });
   EMOJIS.forEach((e) => {
@@ -203,7 +205,7 @@ function openMemberSheet(m) {
     colorWrap.appendChild(b);
   });
 
-  const roleCtl = segmented([{ value: 'user', label: 'Mitglied' }, { value: 'admin', label: 'Admin' }], st.role, (v) => { st.role = v; });
+  const roleCtl = segmented([{ value: 'user', label: t('family.roleMember') }, { value: 'admin', label: t('family.roleAdmin') }], st.role, (v) => { st.role = v; });
 
   // Anlegen, Rollen ändern und Entfernen prüft der Server – dafür braucht es die
   // Admin-Anmeldung mit Serververbindung (sonst lehnt er die Änderung ab).
@@ -213,37 +215,37 @@ function openMemberSheet(m) {
     return true;
   };
   const save = async () => {
-    if (!st.name.trim()) { toast('Bitte einen Namen eingeben', 'bad'); return; }
-    if (!editing && needsServer('Neue Mitglieder lassen sich nur mit Verbindung zum Server anlegen.')) return;
-    if (editing && st.role !== m.role && needsServer('Rollen lassen sich nur mit Verbindung zum Server ändern.')) return;
+    if (!st.name.trim()) { toast(t('familyAdmin.nameRequired'), 'bad'); return; }
+    if (!editing && needsServer(t('familyAdmin.needsServerAdd'))) return;
+    if (editing && st.role !== m.role && needsServer(t('familyAdmin.needsServerRole'))) return;
     if (editing) { store.updateMember(m.id, st); } else { await store.addMember(st); }
     closeSheet();
-    toast(editing ? 'Gespeichert' : 'Mitglied hinzugefügt – Start-PIN ist 0000, beim Anmelden erinnert die App an eine eigene', 'good', editing ? 2200 : 4800);
+    toast(editing ? t('familyAdmin.saved') : t('familyAdmin.memberAdded'), 'good', editing ? 2200 : 4800);
     refresh();
   };
 
   const body = el('div', { class: 'col gap-3' }, [
-    field('Name', nameInp),
-    field('Symbol', emojiWrap),
-    field('Farbe', colorWrap),
-    field('Rolle', roleCtl),
-    editing ? null : el('div', { class: 'dim', style: { fontSize: '.78rem', marginTop: '-4px' }, text: '🔒 Start-PIN ist 0000. Das Mitglied wählt beim Anmelden eine eigene (Einstellungen → PIN ändern).' }),
-    el('button', { class: 'btn btn--primary btn--block', onclick: save }, [icon('check'), editing ? 'Speichern' : 'Hinzufügen']),
+    field(t('familyAdmin.name'), nameInp),
+    field(t('familyAdmin.symbol'), emojiWrap),
+    field(t('familyAdmin.colour'), colorWrap),
+    field(t('familyAdmin.role'), roleCtl),
+    editing ? null : el('div', { class: 'dim', style: { fontSize: '.78rem', marginTop: '-4px' }, text: t('familyAdmin.pinHint') }),
+    el('button', { class: 'btn btn--primary btn--block', onclick: save }, [icon('check'), editing ? t('familyAdmin.save') : t('familyAdmin.add')]),
     editing ? el('button', {
       class: 'btn btn--ghost btn--block', style: { color: 'var(--bad-text)' },
       onclick: async () => {
         const ok = await confirmDialog({
-          title: 'Mitglied entfernen?',
-          message: `„${m.name}“ wird mit allen Daten (Plänen, Trainings, Werten, Ernährung …) unwiderruflich gelöscht.`,
-          confirmLabel: 'Endgültig entfernen', danger: true,
+          title: t('familyAdmin.removeMemberTitle'),
+          message: t('familyAdmin.removeMemberText', { name: m.name }),
+          confirmLabel: t('familyAdmin.removeConfirm'), danger: true,
         });
         if (!ok) return;
-        if (needsServer('Mitglieder lassen sich nur mit Verbindung zum Server entfernen.')) return;
-        if (store.removeMember(m.id)) { closeSheet(); toast('Mitglied entfernt'); refresh(); }
-        else toast('Die letzte Admin-Person kann nicht entfernt werden', 'bad');
+        if (needsServer(t('familyAdmin.needsServerRemove'))) return;
+        if (store.removeMember(m.id)) { closeSheet(); toast(t('familyAdmin.memberRemoved')); refresh(); }
+        else toast(t('familyAdmin.lastAdmin'), 'bad');
       },
-    }, [icon('trash'), 'Entfernen']) : null,
+    }, [icon('trash'), t('familyAdmin.remove')]) : null,
   ]);
-  openSheet({ title: editing ? 'Mitglied bearbeiten' : 'Neues Mitglied', body });
+  openSheet({ title: editing ? t('familyAdmin.editMember') : t('familyAdmin.newMember'), body });
   setTimeout(() => nameInp.focus(), 120);
 }

@@ -10,6 +10,8 @@
      hormoneller Verhütung oder beendeter Erfassung.
    ========================================================================= */
 
+import { t } from './i18n.js';
+
 const DAY = 86400000;
 const dayNum = (d) => Math.round(Date.parse(`${String(d).slice(0, 10)}T00:00:00Z`) / DAY);
 const gap = (a, b) => dayNum(b) - dayNum(a);
@@ -53,10 +55,10 @@ export function longCycleCount(starts = [], lastN = 6) {
 
 /** Antworten auf „Periode ausgeblieben?“. */
 export const PERIOD_ANSWERS = [
-  { key: 'ausgeblieben', label: 'Ja, sie ist ausgeblieben' },
-  { key: 'schwanger', label: 'Ich bin schwanger oder stille' },
-  { key: 'verhuetung', label: 'Hormonelle Verhütung (z. B. Hormonspirale, Langzyklus)' },
-  { key: 'nicht-eingetragen', label: 'Nein, nur nicht eingetragen' },
+  { key: 'ausgeblieben', get label() { return t('cycle.answerMissed'); } },
+  { key: 'schwanger', get label() { return t('cycle.answerPregnant'); } },
+  { key: 'verhuetung', get label() { return t('cycle.answerContraception'); } },
+  { key: 'nicht-eingetragen', get label() { return t('cycle.answerUntracked'); } },
 ];
 
 /**

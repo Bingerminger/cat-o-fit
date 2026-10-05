@@ -8,7 +8,7 @@ import * as store from './storage.js';
 import {
   el, icon, iconSvg, uid, nowIso, fmtNum, fmtDayMonth, todayStr, sectionHead,
   emptyState, toast, openSheet, closeSheet, field, input, textarea, navigate, toggle,
-  refreshView, segmented, addDays, weekStartMonday,
+  refreshView, segmented, addDays, weekStartMonday, fmtDec,
 } from './ui.js';
 import { setHeader } from './router.js';
 import { progressTabs } from './nav.js';
@@ -18,6 +18,8 @@ import { smoothedChange } from './fitness.js';
 import { weightNow, weightGoalStatus } from './energy.js';
 import { currentEligibility } from './wellness.js';
 import { currentHrvMethod, withHrvMethod, hrvLabel, HRV_METHODS } from './healthdata.js';
+
+import { t, tp } from './i18n.js';
 
 function metricsDef() {
   const p = store.profile();
@@ -32,17 +34,17 @@ function metricsDef() {
   // HRV: Beschriftung nach der Messart des jüngsten Werts (SDNN von Apple, RMSSD von vielen Uhren).
   const hrvMethod = currentHrvMethod(store.get('health'));
   return {
-    weight: { label: 'Gewicht', unit: 'kg', icon: 'scale', digits: 1, target, toward: weightToward },
-    bodyFat: { label: 'Körperfett', unit: '%', icon: 'drop', digits: 1, toward: null },
-    muscleMass: { label: 'Muskelmasse', unit: 'kg', icon: 'dumbbell', digits: 1, toward: 'up' },
-    leanMass: { label: 'Fettfreie Masse', unit: 'kg', icon: 'dumbbell', digits: 1, toward: null },
-    visceralFat: { label: 'Viszeralfett', unit: '', icon: 'info', digits: 0, toward: 'down' },
-    restingHr: { label: 'Ruhepuls', unit: 'bpm', icon: 'heart', digits: 0, toward: 'down' },
+    weight: { label: t('healthView.metricWeight'), unit: 'kg', icon: 'scale', digits: 1, target, toward: weightToward },
+    bodyFat: { label: t('healthView.metricBodyFat'), unit: '%', icon: 'drop', digits: 1, toward: null },
+    muscleMass: { label: t('healthView.metricMuscleMass'), unit: 'kg', icon: 'dumbbell', digits: 1, toward: 'up' },
+    leanMass: { label: t('healthView.metricLeanMass'), unit: 'kg', icon: 'dumbbell', digits: 1, toward: null },
+    visceralFat: { label: t('healthView.metricVisceralFat'), unit: '', icon: 'info', digits: 0, toward: 'down' },
+    restingHr: { label: t('healthView.metricRestingHr'), unit: 'bpm', icon: 'heart', digits: 0, toward: 'down' },
     hrv: { label: hrvLabel(hrvMethod), unit: 'ms', icon: 'activity', digits: 0, toward: 'up', method: hrvMethod },
     vo2max: { label: 'VO₂max', unit: '', icon: 'gauge', digits: 1, toward: 'up' },
-    sleepHours: { label: 'Schlaf', unit: 'h', icon: 'bed', digits: 1, toward: 'up' },
-    energy: { label: 'Energie', unit: '/10', icon: 'sun', digits: 0, toward: 'up' },
-    mood: { label: 'Stimmung', unit: '/10', icon: 'sparkles', digits: 0, toward: 'up' },
+    sleepHours: { label: t('healthView.metricSleep'), unit: 'h', icon: 'bed', digits: 1, toward: 'up' },
+    energy: { label: t('healthView.metricEnergy'), unit: '/10', icon: 'sun', digits: 0, toward: 'up' },
+    mood: { label: t('healthView.metricMood'), unit: '/10', icon: 'sparkles', digits: 0, toward: 'up' },
   };
 }
 
@@ -51,7 +53,11 @@ function sortedHealth() {
 }
 
 /** Zeitraum der Verläufe; bleibt über das Neuzeichnen hinweg erhalten. */
-const RANGES = [{ value: '3m', label: '3 Monate', days: 92 }, { value: '1y', label: '1 Jahr', days: 366 }, { value: 'all', label: 'Alles', days: null }];
+const RANGES = [
+  { value: '3m', get label() { return t('healthView.range3m'); }, days: 92 },
+  { value: '1y', get label() { return t('healthView.range1y'); }, days: 366 },
+  { value: 'all', get label() { return t('healthView.rangeAll'); }, days: null },
+];
 const uiState = { range: '1y' };
 
 /** Median je Kalenderwoche (Montag als Datum) – für lange Verläufe (FE-09). */
@@ -71,10 +77,10 @@ export function weeklyMedian(points) {
 
 export function render(view) {
   setHeader({
-    title: 'Fortschritt',
+    title: t('nav.progress'),
     actions: [
-      { icon: 'upload', label: 'Health-Import', onClick: () => navigate('#/import') },
-      { icon: 'plus', label: 'Körperwerte erfassen', onClick: () => openHealthEntry({}) },
+      { icon: 'upload', label: t('healthView.import'), onClick: () => navigate('#/import') },
+      { icon: 'plus', label: t('healthView.logValues'), onClick: () => openHealthEntry({}) },
     ],
   });
   view.appendChild(progressTabs('#/health'));
@@ -84,8 +90,8 @@ export function render(view) {
   const defs = metricsDef();
 
   if (!data.length) {
-    view.appendChild(emptyState('heart', 'Noch keine Werte', 'Erfasse deine ersten Körperwerte oder importiere sie aus Apple Health.'));
-    view.appendChild(el('button', { class: 'btn btn--primary btn--block mt-4', onclick: () => openHealthEntry({}) }, [icon('plus'), 'Werte erfassen']));
+    view.appendChild(emptyState('heart', t('healthView.emptyTitle'), t('healthView.emptyText')));
+    view.appendChild(el('button', { class: 'btn btn--primary btn--block mt-4', onclick: () => openHealthEntry({}) }, [icon('plus'), t('healthView.logButton')]));
     return;
   }
 
@@ -116,20 +122,20 @@ export function render(view) {
       ]),
       el('div', { class: 'metric-tile__val num', text: `${fmtNum(last, d.digits)}${d.unit ? ' ' + d.unit : ''}` }),
       delta != null
-        ? el('div', { class: 'metric-tile__delta', title: `Wochenmittel gegenüber ${fmtDayMonth(ch.since)}`, style: { color: deltaColor(d, delta) }, text: `${delta > 0 ? '▲' : delta < 0 ? '▼' : '■'} ${fmtNum(Math.abs(delta), d.digits)}` })
+        ? el('div', { class: 'metric-tile__delta', title: t('healthView.weekAverageSince', { date: fmtDayMonth(ch.since) }), style: { color: deltaColor(d, delta) }, text: `${delta > 0 ? '▲' : delta < 0 ? '▼' : '■'} ${fmtNum(Math.abs(delta), d.digits)}` })
         : el('div', { class: 'metric-tile__delta dim', text: '—' }),
     ]));
   });
   view.appendChild(grid);
-  if (anyDelta) view.appendChild(el('div', { class: 'dim mt-1', style: { fontSize: '.72rem' }, text: '▲▼ = Veränderung des Wochenmittels (Median) gegenüber einer Messung mindestens eine Woche davor – so fallen Tagesschwankungen heraus.' }));
+  if (anyDelta) view.appendChild(el('div', { class: 'dim mt-1', style: { fontSize: '.72rem' }, text: t('healthView.deltaNote') }));
 
   // Zeitraum der Verläufe (bleibt beim Neuzeichnen stehen): 10 Jahre Apple-Health-Gewicht
   // waren sonst ein einziges Band ohne ablesbaren Zeitraum (FE-09).
   const range = RANGES.find((r) => r.value === uiState.range) || RANGES[1];
   const from = range.days ? addDays(todayStr(), -range.days) : null;
   view.appendChild(el('div', { class: 'row row--between mt-4', style: { flexWrap: 'wrap', gap: '8px' } }, [
-    el('h2', { class: 'section-head__title', text: 'Verläufe' }),
-    segmented(RANGES, range.value, (v) => { uiState.range = v; refreshView(); }, { label: 'Zeitraum der Verläufe' }),
+    el('h2', { class: 'section-head__title', text: t('healthView.trends') }),
+    segmented(RANGES, range.value, (v) => { uiState.range = v; refreshView(); }, { label: t('healthView.rangeLabel') }),
   ]));
 
   // Charts je aktivierter Metrik mit Verlauf (HRV nur innerhalb einer Messart – SDNN und
@@ -149,7 +155,7 @@ export function render(view) {
     card.appendChild(lineChart(points, {
       label: head,
       target: key === 'weight' && d.target != null ? d.target : null,
-      targetLabel: key === 'weight' && d.target != null ? `Ziel ${d.target} kg` : '',
+      targetLabel: key === 'weight' && d.target != null ? t('healthView.targetKg', { target: fmtDec(d.target) }) : '',
       unit: d.unit,
       fmt: (v) => fmtNum(v, d.digits),
     }));
@@ -157,7 +163,7 @@ export function render(view) {
   });
 
   // Letzte Einträge
-  view.appendChild(sectionHead('Einträge'));
+  view.appendChild(sectionHead(t('healthView.entries')));
   const list = el('div', { class: 'list-card' });
   data.slice().reverse().slice(0, 12).forEach((entry) => {
     const parts = [];
@@ -168,7 +174,7 @@ export function render(view) {
       el('span', { class: 'type-icon type-icon--sm', style: { background: 'var(--accent-soft)', color: 'var(--accent-strong)' }, html: iconSvg('heart') }),
       el('div', { class: 'list-item__body' }, [
         el('div', { class: 'list-item__title', text: fmtDayMonth(entry.date) }),
-        el('div', { class: 'list-item__sub', text: parts.join(' · ') || 'Eintrag' }),
+        el('div', { class: 'list-item__sub', text: parts.join(' · ') || t('healthView.entry') }),
       ]),
       el('span', { class: 'list-item__chev', html: iconSvg('edit') }),
     ]));
@@ -186,12 +192,12 @@ function deltaColor(d, delta) {
 /* ----------------------------- Erfassung -------------------------------- */
 function soberCard(streak) {
   const medal = streak >= 100 ? '🏆' : streak >= 30 ? '💎' : streak >= 7 ? '🌿' : '🫧';
-  const msg = streak >= 30 ? 'Stark – das tut Schlaf und Regeneration gut!' : streak >= 7 ? 'Schöne klare Woche!' : 'Weiter so – jeder Tag zählt.';
+  const msg = streak >= 30 ? t('healthView.soberStrong') : streak >= 7 ? t('healthView.soberWeek') : t('healthView.soberKeepGoing');
   return el('div', { class: 'card mb-3', style: { borderLeft: '3px solid var(--good)' } }, [
     el('div', { class: 'row gap-3', style: { alignItems: 'center' } }, [
       el('span', { style: { fontSize: '1.9rem', lineHeight: '1' }, text: medal }),
       el('div', { class: 'grow' }, [
-        el('div', { style: { fontWeight: '750' }, text: `${streak} ${streak === 1 ? 'Tag' : 'Tage'} alkoholfrei` }),
+        el('div', { style: { fontWeight: '750' }, text: tp('healthView.alcoholFreeDays', streak) }),
         el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: msg }),
       ]),
     ]),
@@ -211,10 +217,10 @@ export function openHealthEntry(existing = {}) {
 
   const dateI = input({ type: 'date', value: date });
   const inputs = {};
-  const fields = [field('Datum', dateI)];
+  const fields = [field(t('healthView.date'), dateI)];
   // HRV-Messart: Apple liefert SDNN, viele Uhren und Ringe RMSSD – beides nicht vergleichbar.
-  const methodSel = el('select', { class: 'select', 'aria-label': 'HRV-Messart' },
-    Object.entries(HRV_METHODS).map(([v, l]) => el('option', { value: v, text: v === 'sdnn' ? `${l} (Apple)` : `${l} (z. B. Garmin, Polar, Oura)` })));
+  const methodSel = el('select', { class: 'select', 'aria-label': t('healthView.hrvMethodLabel') },
+    Object.entries(HRV_METHODS).map(([v, l]) => el('option', { value: v, text: v === 'sdnn' ? t('healthView.methodApple', { method: l }) : t('healthView.methodWatch', { method: l }) })));
   const defaultMethod = () => current.hrvMethod || (defs.hrv.method && defs.hrv.method !== 'unbekannt' ? defs.hrv.method : 'rmssd');
   methodSel.value = defaultMethod();
   Object.entries(defs).forEach(([key, d]) => {
@@ -222,22 +228,22 @@ export function openHealthEntry(existing = {}) {
     const inp = input({ type: 'number', step: d.digits ? '0.1' : '1', inputmode: 'decimal', value: current[key] ?? '', placeholder: d.unit || '' });
     inputs[key] = inp;
     if (key === 'hrv') {
-      fields.push(el('div', { class: 'field__row' }, [field('HRV (ms)', inp), field('Messart', methodSel)]));
+      fields.push(el('div', { class: 'field__row' }, [field('HRV (ms)', inp), field(t('healthView.method'), methodSel)]));
     } else {
       fields.push(field(`${d.label}${d.unit ? ' (' + d.unit + ')' : ''}`, inp));
     }
   });
-  const notesI = textarea({ value: current.notes ?? '', placeholder: 'Bemerkungen …' });
+  const notesI = textarea({ value: current.notes ?? '', placeholder: t('healthView.notesPlaceholder') });
   let alcohol = !!current.alcohol;
-  const alcoholToggle = toggle(alcohol, (v) => { alcohol = v; }, 'Alkohol getrunken');
+  const alcoholToggle = toggle(alcohol, (v) => { alcohol = v; }, t('healthView.alcohol'));
   const alcoholInput = alcoholToggle.querySelector('input');
   // Toggle gehört in eine eigene Zeile (Label links, Schalter rechts) – nicht in
   // ein block-`field`, sonst überdeckt der Schalter das Label.
   fields.push(el('div', { class: 'row row--between', style: { marginBottom: 'var(--sp-4)' } }, [
-    el('span', { class: 'field__label', style: { marginBottom: '0' }, text: 'Alkohol getrunken' }),
+    el('span', { class: 'field__label', style: { marginBottom: '0' }, text: t('healthView.alcohol') }),
     alcoholToggle,
   ]));
-  fields.push(field('Bemerkungen', notesI));
+  fields.push(field(t('healthView.notes'), notesI));
 
   // Datum gewechselt -> Werte dieses Tages laden (oder leeren, wenn es noch keine gibt).
   const loadDay = () => {
@@ -252,12 +258,12 @@ export function openHealthEntry(existing = {}) {
   dateI.addEventListener('input', loadDay);
 
   openSheet({
-    title: 'Körperwerte erfassen',
+    title: t('healthView.logValues'),
     body: el('div', {}, fields),
     footer: [
-      el('button', { class: 'btn btn--ghost grow', text: 'Abbrechen', onclick: () => closeSheet() }),
+      el('button', { class: 'btn btn--ghost grow', text: t('common.cancel'), onclick: () => closeSheet() }),
       el('button', {
-        class: 'btn btn--primary grow', text: 'Speichern',
+        class: 'btn btn--primary grow', text: t('healthView.save'),
         onclick: () => {
           const d = dateI.value || date;
           // Immer den Datensatz des GEWÄHLTEN Tages schreiben (oder neu anlegen) –
@@ -275,7 +281,7 @@ export function openHealthEntry(existing = {}) {
           rec.alcohol = alcohol;
           store.upsert('health', rec);
           closeSheet();
-          toast('Werte gespeichert', 'good');
+          toast(t('healthView.saved'), 'good');
           refreshView();
         },
       }),

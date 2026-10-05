@@ -18,6 +18,8 @@ import { activitiesFrom, parseActivityBytes, sameActivity, guessType, ROUTE_DAYS
 import { isZip, isGzip } from './zip.js';
 import { findPlannedMatch } from './planflow.js';
 
+import { t, tp } from './i18n.js';
+
 /** Herkunft automatisch empfangener Werte: Apple Health bzw. Health Connect (Android). */
 const AUTO_SOURCES = ['apple-health', 'health-connect'];
 
@@ -26,18 +28,21 @@ export function routesWanted() { return store.settings().activityRoutes !== fals
 
 /** Sportarten zur Auswahl beim Datei-Import. */
 const FILE_SPORTS = [
-  { value: 'run', label: 'Lauf' }, { value: 'cross_bike', label: 'Radfahren' },
-  { value: 'walk', label: 'Gehen' }, { value: 'hike', label: 'Wandern' },
-  { value: 'swim', label: 'Schwimmen' }, { value: 'other', label: 'Sonstiges' },
+  { value: 'run', get label() { return t('sessionTypes.run.label'); } },
+  { value: 'cross_bike', get label() { return t('healthImport.sportBike'); } },
+  { value: 'walk', get label() { return t('healthImport.sportWalk'); } },
+  { value: 'hike', get label() { return t('sessionTypes.hike.label'); } },
+  { value: 'swim', get label() { return t('sessionTypes.swim.label'); } },
+  { value: 'other', get label() { return t('healthImport.sportOther'); } },
 ];
 
 export function render(view) {
-  setHeader({ title: 'Health-Import', back: '#/health' });
+  setHeader({ title: t('healthImport.title'), back: '#/health' });
 
   // Automatischer, inkrementeller Import (empfohlen) – über „Health Auto Export“.
-  view.appendChild(sectionHead('Automatisch aus Apple Health', null, { help: 'apple-health' }));
+  view.appendChild(sectionHead(t('healthImport.autoHeading'), null, { help: 'apple-health' }));
   // Kosten offen nennen (MKT-01/DOC-06): Die REST-Automation ist Premium; der Kurzbefehl ist gratis.
-  view.appendChild(el('div', { class: 'muted mb-2', style: { fontSize: '.84rem' }, text: 'Lass dein iPhone täglich Gewicht, Puls, HRV, VO₂max, Schlaf und Workouts automatisch schicken. Zwei Wege: die App „Health Auto Export“ (automatische Übertragung nur mit Premium, laut App Store etwa 8 € im Jahr oder 30 € einmalig) oder kostenlos ein Kurzbefehl der Apple-App „Kurzbefehle“ (Tageswerte ohne Workouts). Beide nutzen die Adresse unten.' }));
+  view.appendChild(el('div', { class: 'muted mb-2', style: { fontSize: '.84rem' }, text: t('healthImport.autoIntro') }));
   view.appendChild(healthIngestCard());
   // Android: Health Connect hat keine Web-Schnittstelle – eine Brücken-App schickt die Werte
   // an dieselbe Adresse (MKT-02).
@@ -45,27 +50,27 @@ export function render(view) {
     el('span', { html: iconSvg('info'), style: { color: 'var(--accent-text)', width: '20px', flex: '0 0 auto' } }),
     el('div', { class: 'grow' }, [
       el('div', { style: { fontWeight: '650', fontSize: '.88rem' }, text: 'Android (Health Connect)' }),
-      el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: 'Eine Brücken-App wie das quelloffene „HC Webhook“ schickt Gewicht, Ruhepuls, HRV, Schlaf, Schritte und Trainings aus Health Connect an dieselbe Adresse – mit demselben Schlüssel.' }),
-      el('button', { class: 'btn btn--ghost mt-1', style: { fontSize: '.84rem', padding: '6px 10px' }, onclick: () => openHealthConnectHelp() }, [icon('info'), 'So einrichten']),
+      el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('healthImport.androidText') }),
+      el('button', { class: 'btn btn--ghost mt-1', style: { fontSize: '.84rem', padding: '6px 10px' }, onclick: () => openHealthConnectHelp() }, [icon('info'), t('healthImport.setUp')]),
     ]),
   ]));
   view.appendChild(healthIngestRecent());
 
   // Manueller Voll-Import (Fallback)
-  view.appendChild(sectionHead('Manueller Voll-Import'));
+  view.appendChild(sectionHead(t('healthImport.fullHeading')));
   view.appendChild(el('div', { class: 'card card--flat row gap-2', style: { alignItems: 'flex-start' } }, [
     el('span', { html: iconSvg('info'), style: { color: 'var(--accent-text)', width: '20px', flex: '0 0 auto' } }),
     el('div', { class: 'muted', style: { fontSize: '.86rem' } },
-      'Alternativ den kompletten Verlauf als Datei: am iPhone exportieren und hier hochladen – so oft du möchtest. Doppelte Einträge werden automatisch erkannt.'),
+      t('healthImport.fullText')),
   ]));
 
   // Anleitung
-  view.appendChild(sectionHead('So geht\'s'));
+  view.appendChild(sectionHead(t('healthImport.howItWorks')));
   const steps = [
-    'iPhone: Health-App öffnen → oben aufs Profilbild tippen.',
-    '„Alle Gesundheitsdaten exportieren“ wählen – es entsteht eine ZIP-Datei.',
-    'ZIP per AirDrop/Dateien auf iPad/Rechner legen oder direkt hier hochladen.',
-    'Unten Datei auswählen (ZIP oder die enthaltene export.xml).',
+    t('healthImport.step1'),
+    t('healthImport.step2'),
+    t('healthImport.step3'),
+    t('healthImport.step4'),
   ];
   const ol = el('div', { class: 'list-card' });
   steps.forEach((s, i) => ol.appendChild(el('div', { class: 'list-item' }, [
@@ -75,10 +80,10 @@ export function render(view) {
   view.appendChild(ol);
 
   // Upload-Bereich
-  view.appendChild(sectionHead('Datei hochladen'));
+  view.appendChild(sectionHead(t('healthImport.uploadHeading')));
   const status = el('div', { class: 'card', hidden: true });
   const fileInput = el('input', { type: 'file', accept: '.zip,.xml,application/zip,text/xml', style: { display: 'none' } });
-  const pickBtn = el('button', { class: 'btn btn--primary btn--block', onclick: () => fileInput.click() }, [icon('upload'), 'Health-Export auswählen']);
+  const pickBtn = el('button', { class: 'btn btn--primary btn--block', onclick: () => fileInput.click() }, [icon('upload'), t('healthImport.pickExport')]);
 
   fileInput.addEventListener('change', () => {
     const f = fileInput.files[0];
@@ -91,18 +96,18 @@ export function render(view) {
   view.appendChild(status);
 
   // Einzelne Aktivität aus GPX/TCX (clientseitig, ohne Server)
-  view.appendChild(sectionHead('Aktivitäten aus Dateien'));
-  view.appendChild(el('div', { class: 'muted mb-2', style: { fontSize: '.84rem' }, text: 'Aufzeichnungen deiner Uhr als GPX, TCX oder FIT – einzeln oder als ganzer Export im ZIP (Garmin-Datenexport, Strava-Archiv mit .fit.gz). Alles wird auf deinem Gerät gelesen; Sportart, Strecke, Höhenmeter und Herzfrequenz kommen mit. Strecken speichert der Massenimport für die letzten ' + ROUTE_DAYS + ' Tage.' }));
+  view.appendChild(sectionHead(t('healthImport.activitiesHeading')));
+  view.appendChild(el('div', { class: 'muted mb-2', style: { fontSize: '.84rem' }, text: t('healthImport.activitiesIntro', { days: ROUTE_DAYS }) }));
   view.appendChild(el('div', { class: 'row row--between mb-2', style: { alignItems: 'center', gap: '12px' } }, [
     el('div', { class: 'grow' }, [
-      el('div', { style: { fontWeight: '650', fontSize: '.88rem' }, text: 'Strecke mitspeichern' }),
-      el('div', { class: 'muted', style: { fontSize: '.78rem' }, text: 'Die Linie zeigt, wo du unterwegs warst – oft auch, wo du startest. Sie liegt bei deinen Trainings, die Admins beim Verwalten sehen.' }),
+      el('div', { style: { fontWeight: '650', fontSize: '.88rem' }, text: t('healthImport.saveRoute') }),
+      el('div', { class: 'muted', style: { fontSize: '.78rem' }, text: t('healthImport.saveRouteHint') }),
     ]),
-    toggle(routesWanted(), (v) => store.setSetting('activityRoutes', v), 'Strecke mitspeichern'),
+    toggle(routesWanted(), (v) => store.setSetting('activityRoutes', v), t('healthImport.saveRoute')),
   ]));
   const actStatus = el('div', { class: 'card', hidden: true });
   const actInput = el('input', { type: 'file', multiple: '', accept: '.gpx,.tcx,.fit,.zip,.gz,application/gpx+xml,application/xml,text/xml,application/zip,application/gzip', style: { display: 'none' } });
-  const actBtn = el('button', { class: 'btn btn--soft btn--block', onclick: () => actInput.click() }, [icon('upload'), 'Dateien auswählen (GPX, TCX, FIT, ZIP)']);
+  const actBtn = el('button', { class: 'btn btn--soft btn--block', onclick: () => actInput.click() }, [icon('upload'), t('healthImport.pickActivities')]);
   actInput.addEventListener('change', () => {
     const files = [...(actInput.files || [])];
     actInput.value = '';
@@ -115,7 +120,7 @@ export function render(view) {
   view.appendChild(actStatus);
 
   // Hinweis
-  view.appendChild(el('div', { class: 'dim mt-6', style: { fontSize: '.78rem' }, text: 'Der automatische Weg oben nutzt „Health Auto Export“ oder einen Kurzbefehl (täglich, nur Neues). Eine direkte HealthKit-Anbindung ohne Zusatz-App bräuchte eine native App – bewusst nicht umgesetzt. Anleitung für beide Wege: Doku „Apple Health“.' }));
+  view.appendChild(el('div', { class: 'dim mt-6', style: { fontSize: '.78rem' }, text: t('healthImport.bottomNote') }));
 }
 
 /** Zufalls-Token (hex) für den per-Nutzer-Health-Ingest-Endpunkt. */
@@ -133,8 +138,8 @@ function healthIngestCard() {
     const token = store.profile().healthToken;
     if (!token) {
       wrap.appendChild(el('div', { class: 'card' }, [
-        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: 'Gewicht, Ruhepuls, HRV, VO₂max, Schlaf & Workouts automatisch aus Apple Health – täglich und inkrementell über die App „Health Auto Export“. Kein 300-MB-Upload. Zum Aktivieren wird ein persönlicher Zugangs-Token erzeugt.' }),
-        el('button', { class: 'btn btn--primary btn--block mt-3', onclick: () => { store.setProfile({ healthToken: genToken() }); toast('Auto-Import aktiviert', 'good'); draw(); } }, [icon('plus'), 'Auto-Import aktivieren']),
+        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('healthImport.ingestIntro') }),
+        el('button', { class: 'btn btn--primary btn--block mt-3', onclick: () => { store.setProfile({ healthToken: genToken() }); toast(t('healthImport.enabledToast'), 'good'); draw(); } }, [icon('plus'), t('healthImport.enable')]),
       ]));
       return;
     }
@@ -146,27 +151,27 @@ function healthIngestCard() {
     const last = recs.reduce((m, x) => ((x.updatedAt || '') > m ? (x.updatedAt || '') : m), '');
     const urlI = input({ value: url }); urlI.readOnly = true; urlI.onclick = (e) => e.target.select();
     const tokI = input({ value: token, type: 'password' }); tokI.readOnly = true; tokI.onclick = (e) => e.target.select();
-    const copy = async (text, field, what) => {
-      try { await navigator.clipboard.writeText(text); toast(`${what} kopiert`, 'good'); } catch { field.type = 'text'; field.select(); toast('Manuell kopieren (⌘/Strg+C)'); }
+    const copy = async (text, field, done) => {
+      try { await navigator.clipboard.writeText(text); toast(done, 'good'); } catch { field.type = 'text'; field.select(); toast(t('healthImport.copyManually')); }
     };
     wrap.appendChild(el('div', { class: 'card' }, [
       el('div', { class: 'row row--between', style: { alignItems: 'center' } }, [
-        el('div', { class: 'card__title', text: 'Auto-Import aktiv' }),
-        el('span', { class: 'chip chip--accent', text: last ? 'Empfängt Daten' : 'Wartet auf Daten' }),
+        el('div', { class: 'card__title', text: t('healthImport.active') }),
+        el('span', { class: 'chip chip--accent', text: last ? t('healthImport.receiving') : t('healthImport.waiting') }),
       ]),
-      el('div', { class: 'dim mt-1', style: { fontSize: '.74rem' }, text: last ? `Zuletzt empfangen: ${fmtDate(last.slice(0, 10))}` : 'Noch keine Daten empfangen – richte „Health Auto Export“ ein.' }),
-      el('div', { class: 'field__label mt-3', text: 'Endpunkt-URL (in „Health Auto Export“ einfügen)' }),
+      el('div', { class: 'dim mt-1', style: { fontSize: '.74rem' }, text: last ? t('healthImport.lastReceived', { date: fmtDate(last.slice(0, 10)) }) : t('healthImport.noneReceived') }),
+      el('div', { class: 'field__label mt-3', text: t('healthImport.endpointLabel') }),
       el('div', { class: 'row gap-2' }, [urlI,
-        el('button', { class: 'btn btn--soft', 'aria-label': 'URL kopieren', onclick: () => copy(url, urlI, 'URL') }, icon('link')),
+        el('button', { class: 'btn btn--soft', 'aria-label': t('healthImport.copyUrl'), onclick: () => copy(url, urlI, t('healthImport.urlCopied')) }, icon('link')),
       ]),
-      el('div', { class: 'field__label mt-3', text: 'Schlüssel (als Header „X-Catofit-Token“)' }),
+      el('div', { class: 'field__label mt-3', text: t('healthImport.keyLabel') }),
       el('div', { class: 'row gap-2' }, [tokI,
-        el('button', { class: 'btn btn--soft', 'aria-label': 'Schlüssel kopieren', onclick: () => copy(token, tokI, 'Schlüssel') }, icon('link')),
+        el('button', { class: 'btn btn--soft', 'aria-label': t('healthImport.copyKey'), onclick: () => copy(token, tokI, t('healthImport.keyCopied')) }, icon('link')),
       ]),
-      el('div', { class: 'dim mt-1', style: { fontSize: '.74rem' }, text: 'Schlüssel und URL gehören zusammen – nicht weitergeben. Bereits eingerichtete Automationen mit „&token=“ in der URL funktionieren weiter.' }),
+      el('div', { class: 'dim mt-1', style: { fontSize: '.74rem' }, text: t('healthImport.keyNote') }),
       el('div', { class: 'row gap-2 mt-3' }, [
-        el('button', { class: 'btn btn--ghost grow', onclick: () => openHealthAutoExportHelp() }, [icon('info'), 'So einrichten']),
-        el('button', { class: 'btn btn--ghost', 'aria-label': 'Token neu erzeugen', onclick: async () => { if (await confirmDialog({ title: 'Token neu erzeugen?', message: 'Der bisherige Schlüssel wird ungültig – du musst ihn in „Health Auto Export“ ersetzen.', confirmLabel: 'Neu erzeugen', danger: true })) { store.setProfile({ healthToken: genToken() }); toast('Neues Token erzeugt', 'good'); draw(); } } }, icon('refresh')),
+        el('button', { class: 'btn btn--ghost grow', onclick: () => openHealthAutoExportHelp() }, [icon('info'), t('healthImport.setUp')]),
+        el('button', { class: 'btn btn--ghost', 'aria-label': t('healthImport.newToken'), onclick: async () => { if (await confirmDialog({ title: t('healthImport.newTokenTitle'), message: t('healthImport.newTokenText'), confirmLabel: t('healthImport.newTokenConfirm'), danger: true })) { store.setProfile({ healthToken: genToken() }); toast(t('healthImport.newTokenDone'), 'good'); draw(); } } }, icon('refresh')),
       ]),
     ]));
   };
@@ -182,20 +187,20 @@ function healthIngestRecent() {
   const sess = store.get('sessions').filter((s) => AUTO_SOURCES.includes(s.source)).sort(byDateDesc).slice(0, 6);
   if (!health.length && !sess.length) return wrap;   // noch nichts importiert -> nichts zeigen
 
-  wrap.appendChild(sectionHead('Zuletzt importiert (automatisch)'));
+  wrap.appendChild(sectionHead(t('healthImport.recentHeading')));
 
   if (health.length) {
     const list = el('div', { class: 'list-card' });
     health.forEach((h) => {
       const parts = [];
       if (h.weight != null) parts.push(`${fmtNum(h.weight, 1)} kg`);
-      if (h.bodyFat != null) parts.push(`${fmtNum(h.bodyFat, 1)} % KF`);
-      if (h.restingHr != null) parts.push(`Ruhe ${h.restingHr}`);
-      if (h.leanMass != null) parts.push(`FFM ${fmtNum(h.leanMass, 1)} kg`);
+      if (h.bodyFat != null) parts.push(t('healthImport.recentBodyFat', { value: fmtNum(h.bodyFat, 1) }));
+      if (h.restingHr != null) parts.push(t('healthImport.recentResting', { value: h.restingHr }));
+      if (h.leanMass != null) parts.push(t('healthImport.recentLean', { value: fmtNum(h.leanMass, 1) }));
       if (h.hrv != null) parts.push(`HRV ${h.hrv}`);
       if (h.vo2max != null) parts.push(`VO₂ ${fmtNum(h.vo2max, 1)}`);
-      if (h.sleepHours != null) parts.push(`${fmtNum(h.sleepHours, 1)} h Schlaf`);
-      if (h.steps != null) parts.push(`${h.steps} Schr.`);
+      if (h.sleepHours != null) parts.push(t('healthImport.recentSleep', { value: fmtNum(h.sleepHours, 1) }));
+      if (h.steps != null) parts.push(t('healthImport.recentSteps', { value: h.steps }));
       list.appendChild(el('div', { class: 'list-item' }, [
         el('div', { class: 'list-item__body' }, [
           el('div', { class: 'list-item__title', text: fmtDate(h.date) }),
@@ -207,7 +212,7 @@ function healthIngestRecent() {
   }
 
   if (sess.length) {
-    wrap.appendChild(el('div', { class: 'field__label mt-3', text: 'Workouts' }));
+    wrap.appendChild(el('div', { class: 'field__label mt-3', text: t('healthImport.workouts') }));
     const list = el('div', { class: 'list-card' });
     sess.forEach((s) => {
       const parts = [];
@@ -228,43 +233,43 @@ function healthIngestRecent() {
 
 function openHealthConnectHelp() {
   const steps = [
-    'Auf dem Android-Gerät eine Brücken-App installieren, die Health Connect per Webhook als JSON sendet – etwa „HC Webhook“ (quelloffen).',
-    'Oben „Auto-Import aktivieren“ tippen, dann die Endpunkt-URL als Webhook-Adresse eintragen.',
-    'Den Schlüssel als Header „X-Catofit-Token“ mitschicken. Kann die App keine Header setzen, hänge ihn an die Adresse an: …&token=<Schlüssel>.',
-    'In der App die Datentypen freigeben: Gewicht, Körperfett, fettfreie Masse, Ruhepuls, HRV, Schlaf, Schritte, aktive Kalorien, Trainings und Herzfrequenz (für die Ø-HF der Trainings). Den Zyklus nur, wenn du ihn übernehmen möchtest – er bleibt privat.',
-    'Synchronisation einschalten. Die Werte erscheinen beim nächsten Abgleich; doppelt geschickte Tage und Trainings erkennt Cat-O-Fit.',
+    t('healthImport.hcStep1'),
+    t('healthImport.hcStep2'),
+    t('healthImport.hcStep3'),
+    t('healthImport.hcStep4'),
+    t('healthImport.hcStep5'),
   ];
   openSheet({
     title: 'Android: Health Connect',
     body: el('div', {}, [
-      el('p', { class: 'muted', style: { fontSize: '.86rem' }, text: 'Health Connect ist nur für Apps auf dem Gerät erreichbar, nicht für Webseiten. Deshalb übernimmt eine kleine Brücken-App die Übertragung:' }),
-      el('ol', { class: 'mt-2', style: { paddingLeft: '18px', display: 'grid', gap: '8px', fontSize: '.86rem' } }, steps.map((t) => el('li', { text: t }))),
-      el('div', { class: 'dim mt-3', style: { fontSize: '.74rem' }, text: 'Tageswerte gehören zum Kalendertag in der Zeitzone deines Servers; die HRV aus Health Connect ist RMSSD und wird getrennt von Apple-Werten (SDNN) ausgewertet.' }),
+      el('p', { class: 'muted', style: { fontSize: '.86rem' }, text: t('healthImport.hcIntro') }),
+      el('ol', { class: 'mt-2', style: { paddingLeft: '18px', display: 'grid', gap: '8px', fontSize: '.86rem' } }, steps.map((step) => el('li', { text: step }))),
+      el('div', { class: 'dim mt-3', style: { fontSize: '.74rem' }, text: t('healthImport.hcNote') }),
     ]),
-    footer: [el('button', { class: 'btn btn--primary btn--block', text: 'Alles klar', onclick: () => closeSheet() })],
+    footer: [el('button', { class: 'btn btn--primary btn--block', text: t('healthImport.gotIt'), onclick: () => closeSheet() })],
   });
 }
 
 function openHealthAutoExportHelp() {
   const steps = [
-    'App „Health Auto Export – JSON+CSV“ aus dem App Store installieren und öffnen. Die automatische Übertragung braucht Premium (laut App Store etwa 8 € im Jahr oder 30 € einmalig).',
-    'Unten „Automations“ → „+“ → als Typ „REST API“ wählen.',
-    'Bei „URL“ die kopierte Endpunkt-URL einfügen; Methode „POST“, Format „JSON“ (Export-Version 2).',
-    'Unter „Headers“ hinzufügen: Schlüssel „X-Catofit-Token“, Wert = dein kopierter Schlüssel. (So taucht er in keinem Server-Protokoll auf.)',
-    'Nur falls vor eurer Seite zusätzlich eine Anmeldung liegt (Reverse-Proxy mit Basic Auth): unter „Headers“ außerdem „Authorization: Basic …“. Ohne solche Anmeldung – etwa mit der eingebauten Basic-Auth des Containers – entfällt das.',
-    'Metriken wählen: Gewicht, Körperfett, fettfreie Masse (Lean Body Mass), Ruhepuls, HRV, VO₂max, Schlaf, Schritte, aktive Energie – dazu „Workouts“.',
-    'Aggregation „täglich“, Zeitplan „täglich“, Zeitraum „Since last sync“ (schickt nur Neues) – bei großen Backfills „Batch requests“ aktivieren.',
-    'Speichern → „Run now“ zum Testen. Die Werte erscheinen nach dem nächsten Sync in Cat-O-Fit.',
+    t('healthImport.aeStep1'),
+    t('healthImport.aeStep2'),
+    t('healthImport.aeStep3'),
+    t('healthImport.aeStep4'),
+    t('healthImport.aeStep5'),
+    t('healthImport.aeStep6'),
+    t('healthImport.aeStep7'),
+    t('healthImport.aeStep8'),
   ];
   openSheet({
-    title: 'Apple Health automatisch importieren',
+    title: t('healthImport.aeTitle'),
     body: el('div', {}, [
-      el('p', { class: 'muted', style: { fontSize: '.86rem' }, text: 'Dein iPhone schickt damit täglich die wichtigsten Werte an Cat-O-Fit – klein und automatisch. Einmal einrichten:' }),
-      el('ol', { class: 'mt-2', style: { paddingLeft: '18px', display: 'grid', gap: '8px', fontSize: '.86rem' } }, steps.map((t) => el('li', { text: t }))),
-      el('div', { class: 'dim mt-3', style: { fontSize: '.74rem' }, text: 'Für die 10-Jahre-Historie einmalig größere Zeiträume senden (z. B. je Monat) – Gewicht kann komplett rein, dichtere Werte 1–2 Jahre.' }),
-      el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: 'Kostenlos geht es mit einem Kurzbefehl („Health-Samples suchen“ → „Inhalte von URL abrufen“, JSON wie { "date": "2026-09-29", "weight": "72,4" }) an dieselbe Adresse mit demselben Header – Schritt für Schritt in der Doku „Apple Health“.' }),
+      el('p', { class: 'muted', style: { fontSize: '.86rem' }, text: t('healthImport.aeIntro') }),
+      el('ol', { class: 'mt-2', style: { paddingLeft: '18px', display: 'grid', gap: '8px', fontSize: '.86rem' } }, steps.map((step) => el('li', { text: step }))),
+      el('div', { class: 'dim mt-3', style: { fontSize: '.74rem' }, text: t('healthImport.aeHistory') }),
+      el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: t('healthImport.aeShortcut') }),
     ]),
-    footer: [el('button', { class: 'btn btn--primary btn--block', text: 'Alles klar', onclick: () => closeSheet() })],
+    footer: [el('button', { class: 'btn btn--primary btn--block', text: t('healthImport.gotIt'), onclick: () => closeSheet() })],
   });
 }
 
@@ -306,7 +311,7 @@ export function importActivities(items = [], today = todayStr()) {
     const fields = activityData(act, type, { route: withRoute && act.date >= routeFrom });
     const m = findPlannedMatch(store.get('plans'), { date: act.date, type });
     if (m) { completeUnit(m.plan, m.unit, fields); matched++; added++; continue; }
-    fresh.push({ id: uid('ses'), plannedId: null, eventId: null, date: act.date, type, title: `${typeMeta(type).label} (Datei-Import)`, rpe: null, feeling: null, notes: '', ...fields });
+    fresh.push({ id: uid('ses'), plannedId: null, eventId: null, date: act.date, type, title: t('healthImport.fileImportTitle', { type: typeMeta(type).label }), rpe: null, feeling: null, notes: '', ...fields });
   }
   if (fresh.length && store.upsertMany('sessions', fresh).length) added += fresh.length;
   return { added, matched, dup };
@@ -319,25 +324,25 @@ const MAX_ARCHIVE = 800 * 1024 * 1024;
 async function batchImport(files, status) {
   status.hidden = false; status.innerHTML = '';
   if (files.some((f) => f.size > MAX_ARCHIVE)) {
-    status.appendChild(el('div', { class: 'muted', style: { fontSize: '.86rem' }, text: 'Das Archiv ist sehr groß. Entpacke es und wähle die Dateien mit den Aktivitäten direkt aus – beim Garmin-Export liegen sie in „DI_CONNECT/DI-Connect-Uploaded-Files“, beim Strava-Archiv im Ordner „activities“.' }));
+    status.appendChild(el('div', { class: 'muted', style: { fontSize: '.86rem' }, text: t('healthImport.archiveTooBig') }));
     return;
   }
-  const line = el('div', { class: 'row gap-2' }, [el('span', { class: 'spin', html: iconSvg('refresh'), style: { width: '18px' } }), el('span', { text: `Lese ${files.length === 1 ? files[0].name : files.length + ' Dateien'} …` })]);
+  const line = el('div', { class: 'row gap-2' }, [el('span', { class: 'spin', html: iconSvg('refresh'), style: { width: '18px' } }), el('span', { text: files.length === 1 ? t('healthImport.reading', { name: files[0].name }) : t('healthImport.readingMany', { n: files.length }) })]);
   status.appendChild(line);
   let result;
   try {
     const inputs = [];
     for (const f of files) inputs.push({ name: f.name, data: new Uint8Array(await f.arrayBuffer()) });
-    result = await activitiesFrom(inputs, { hrZones: store.profile().hrZones || null, onProgress: (n) => { line.lastChild.textContent = `${n} Dateien gelesen …`; } });
+    result = await activitiesFrom(inputs, { hrZones: store.profile().hrZones || null, onProgress: (n) => { line.lastChild.textContent = tp('healthImport.filesRead', n); } });
   } catch {
     status.innerHTML = '';
-    status.appendChild(el('div', { class: 'muted', text: 'Die Dateien konnten nicht gelesen werden.' }));
+    status.appendChild(el('div', { class: 'muted', text: t('healthImport.filesUnreadable') }));
     return;
   }
   status.innerHTML = '';
   const acts = result.activities;
   if (!acts.length) {
-    status.appendChild(el('div', { class: 'muted', style: { fontSize: '.86rem' }, text: `Keine Aktivitäten erkannt${result.skipped ? ` (${result.skipped} Dateien ohne Aufzeichnung)` : ''}.` }));
+    status.appendChild(el('div', { class: 'muted', style: { fontSize: '.86rem' }, text: result.skipped ? tp('healthImport.noneRecognisedSkipped', result.skipped) : t('healthImport.noneRecognised') }));
     return;
   }
   const sessions = store.get('sessions');
@@ -346,19 +351,19 @@ async function batchImport(files, status) {
   acts.forEach(({ act }) => { const l = typeMeta(guessType(act)).label; byType.set(l, (byType.get(l) || 0) + 1); });
   const first = acts[0].act.date, last = acts[acts.length - 1].act.date;
   status.appendChild(el('div', { class: 'col gap-2' }, [
-    el('div', { style: { fontWeight: '700' }, text: `${acts.length} Aktivitäten erkannt` }),
-    el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: `${first === last ? fmtDate(first) : fmtDate(first) + ' bis ' + fmtDate(last)} · ${[...byType].map(([l, n]) => n + '× ' + l).join(', ')}` }),
-    dups || result.skipped ? el('div', { class: 'dim', style: { fontSize: '.8rem' }, text: [dups ? `${dups} schon vorhanden – werden übersprungen` : null, result.skipped ? `${result.skipped} Dateien ohne Aufzeichnung` : null].filter(Boolean).join(' · ') }) : null,
-    el('div', { class: 'dim', style: { fontSize: '.78rem' }, text: 'Passt eine Aktivität zu einer geplanten Einheit desselben Tages, gilt diese als erledigt. Ohne Angabe in der Datei wird die Sportart nach dem Tempo geschätzt (ab 18 km/h Rad).' }),
+    el('div', { style: { fontWeight: '700' }, text: tp('healthImport.activitiesFound', acts.length) }),
+    el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: `${first === last ? fmtDate(first) : t('healthImport.dateRange', { from: fmtDate(first), to: fmtDate(last) })} · ${[...byType].map(([l, n]) => n + '× ' + l).join(', ')}` }),
+    dups || result.skipped ? el('div', { class: 'dim', style: { fontSize: '.8rem' }, text: [dups ? tp('healthImport.alreadyThere', dups) : null, result.skipped ? tp('healthImport.filesWithoutRecording', result.skipped) : null].filter(Boolean).join(' · ') }) : null,
+    el('div', { class: 'dim', style: { fontSize: '.78rem' }, text: t('healthImport.matchHint') }),
     el('button', { class: 'btn btn--primary btn--block', onclick: () => {
       const r = importActivities(acts);
       status.innerHTML = '';
       status.appendChild(el('div', {}, [
-        el('div', { style: { fontWeight: '700' }, text: `${r.added} Aktivitäten übernommen ✓` }),
-        el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: [r.matched ? `${r.matched} geplanten Einheiten zugeordnet` : null, r.dup ? `${r.dup} Doppelte übersprungen` : null].filter(Boolean).join(' · ') || 'Du findest sie im Kalender.' }),
+        el('div', { style: { fontWeight: '700' }, text: `${tp('healthImport.imported', r.added)} ✓` }),
+        el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: [r.matched ? tp('healthImport.matchedToPlanned', r.matched) : null, r.dup ? tp('healthImport.duplicatesSkipped', r.dup) : null].filter(Boolean).join(' · ') || t('healthImport.seeCalendar') }),
       ]));
-      toast(`${r.added} Aktivitäten übernommen`, r.added ? 'good' : '');
-    } }, [icon('check'), acts.length - dups > 0 ? `${acts.length - dups} übernehmen` : 'Übernehmen']),
+      toast(tp('healthImport.imported', r.added), r.added ? 'good' : '');
+    } }, [icon('check'), acts.length - dups > 0 ? t('healthImport.importN', { n: acts.length - dups }) : t('healthImport.takeOver')]),
   ]));
 }
 
@@ -373,7 +378,7 @@ export function saveImportedActivity(data, type, { link = true } = {}) {
   if (match) return { session: completeUnit(match.plan, match.unit, fields), matched: match.unit };
   const session = {
     id: uid('ses'), plannedId: null, eventId: null, date: data.date, type,
-    title: `${typeMeta(type).label} (Datei-Import)`, rpe: null, feeling: null, notes: '', ...fields,
+    title: t('healthImport.fileImportTitle', { type: typeMeta(type).label }), rpe: null, feeling: null, notes: '', ...fields,
   };
   store.upsert('sessions', session);
   return { session, matched: null };
@@ -384,48 +389,48 @@ export function saveImportedActivity(data, type, { link = true } = {}) {
 async function importActivity(file, status) {
   status.hidden = false; status.innerHTML = '';
   let bytes;
-  try { bytes = new Uint8Array(await file.arrayBuffer()); } catch { status.textContent = 'Datei konnte nicht gelesen werden.'; return; }
+  try { bytes = new Uint8Array(await file.arrayBuffer()); } catch { status.textContent = t('healthImport.fileUnreadable'); return; }
   if (isZip(bytes) || isGzip(bytes)) { batchImport([file], status); return; }
   const data = parseActivityBytes(file.name, bytes, { hrZones: store.profile().hrZones || null });
   if (!data || !data.durationSec) {
-    status.appendChild(el('div', { class: 'muted', style: { fontSize: '.86rem' }, text: 'Keine gültige Aktivität erkannt (GPX, TCX oder FIT mit Datum und Zeit).' }));
+    status.appendChild(el('div', { class: 'muted', style: { fontSize: '.86rem' }, text: t('healthImport.notRecognised') }));
     return;
   }
   if (store.get('sessions').some((sx) => sameActivity(sx, data))) {
-    status.appendChild(el('div', { class: 'muted', style: { fontSize: '.86rem' }, text: 'Diese Aktivität ist bereits erfasst – Duplikat übersprungen.' }));
+    status.appendChild(el('div', { class: 'muted', style: { fontSize: '.86rem' }, text: t('healthImport.alreadyLogged') }));
     return;
   }
   // Sportart: aus der Datei; unbekannt → nach dem Tempo vorschlagen (ab 18 km/h eher Rad).
   let type = guessType(data);
   const options = FILE_SPORTS.some((o) => o.value === type) ? FILE_SPORTS : [{ value: type, label: typeMeta(type).label }, ...FILE_SPORTS];
-  const sportSel = select(options, type, { 'aria-label': 'Sportart' });
+  const sportSel = select(options, type, { 'aria-label': t('healthImport.sportLabel') });
   const matchLine = el('div', { class: 'muted', style: { fontSize: '.82rem' } });
   const showMatch = () => {
     const m = findPlannedMatch(store.get('plans'), { date: data.date, type });
-    matchLine.textContent = m ? `Wird der geplanten Einheit „${m.unit.title}“ zugeordnet.` : 'Keine passende geplante Einheit an diesem Tag – wird als freies Training gespeichert.';
+    matchLine.textContent = m ? t('healthImport.willMatch', { title: m.unit.title }) : t('healthImport.noMatch');
   };
   sportSel.addEventListener('change', () => { type = sportSel.value; showMatch(); });
   showMatch();
   const extras = [
-    data.splits && data.splits.length ? `${data.splits.length} km-Splits` : null,
-    data.timeInZones ? 'Zeit in HF-Zonen' : null,
-    data.ascentM ? `${data.ascentM} Hm` : null,
-    data.route ? 'Strecke' : null,
+    data.splits && data.splits.length ? t('healthImport.kmSplits', { n: data.splits.length }) : null,
+    data.timeInZones ? t('healthImport.timeInZones') : null,
+    data.ascentM ? t('healthImport.ascent', { m: data.ascentM }) : null,
+    data.route ? t('healthImport.route') : null,
   ].filter(Boolean);
   status.appendChild(el('div', { class: 'col gap-2' }, [
-    el('div', { style: { fontWeight: '700' }, text: 'Aktivität erkannt' }),
-    el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: `${fmtDate(data.date)} · ${data.distanceKm ? fmtKm(data.distanceKm, 1) + ' · ' : ''}${fmtDuration(data.durationSec)} in Bewegung${data.elapsedSec > data.durationSec + 60 ? ` (gesamt ${fmtDuration(data.elapsedSec)})` : ''}${data.avgHr ? ' · Ø ' + data.avgHr + ' bpm' : ''}${extras.length ? ' · ' + extras.join(', ') : ''}` }),
-    el('label', { class: 'field' }, [el('span', { class: 'field__label', text: data.sportKnown ? 'Sportart (aus der Datei)' : 'Sportart (bitte prüfen)' }), sportSel]),
+    el('div', { style: { fontWeight: '700' }, text: t('healthImport.activityRecognised') }),
+    el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: `${fmtDate(data.date)} · ${data.distanceKm ? fmtKm(data.distanceKm, 1) + ' · ' : ''}${t('healthImport.movingTime', { time: fmtDuration(data.durationSec) })}${data.elapsedSec > data.durationSec + 60 ? ` (${t('healthImport.totalTime', { time: fmtDuration(data.elapsedSec) })})` : ''}${data.avgHr ? ' · Ø ' + data.avgHr + ' bpm' : ''}${extras.length ? ' · ' + extras.join(', ') : ''}` }),
+    el('label', { class: 'field' }, [el('span', { class: 'field__label', text: data.sportKnown ? t('healthImport.sportFromFile') : t('healthImport.sportCheck') }), sportSel]),
     matchLine,
     el('button', { class: 'btn btn--primary btn--block', onclick: () => {
       const r = saveImportedActivity(data, type);
       status.innerHTML = '';
       status.appendChild(el('div', {}, [
-        el('div', { style: { fontWeight: '700' }, text: 'Aktivität importiert ✓' }),
-        el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: r.matched ? `Der geplanten Einheit „${r.matched.title}“ zugeordnet.` : 'Als freies Training gespeichert – du findest es im Kalender.' }),
+        el('div', { style: { fontWeight: '700' }, text: t('healthImport.activityImportedCheck') }),
+        el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: r.matched ? t('healthImport.matchedTo', { title: r.matched.title }) : t('healthImport.savedFree') }),
       ]));
-      toast('Aktivität importiert', 'good');
-    } }, [icon('check'), 'Übernehmen']),
+      toast(t('healthImport.activityImported'), 'good');
+    } }, [icon('check'), t('healthImport.takeOver')]),
   ]));
 }
 
@@ -433,7 +438,7 @@ async function runUpload(file, status) {
   status.hidden = false;
   status.innerHTML = '';
   const bar = el('div', { class: 'progress mt-2' }, el('div', { class: 'progress__fill', style: { width: '8%' } }));
-  status.appendChild(el('div', { class: 'row gap-2' }, [el('span', { class: 'spin', html: iconSvg('refresh'), style: { width: '18px' } }), el('span', { text: `Verarbeite ${file.name} …` })]));
+  status.appendChild(el('div', { class: 'row gap-2' }, [el('span', { class: 'spin', html: iconSvg('refresh'), style: { width: '18px' } }), el('span', { text: t('healthImport.processing', { name: file.name }) })]));
   status.appendChild(bar);
 
   try {
@@ -442,7 +447,7 @@ async function runUpload(file, status) {
     showPreview(status, result);
   } catch (e) {
     status.innerHTML = '';
-    status.appendChild(el('div', { class: 'row gap-2', style: { color: 'var(--bad-text)' } }, [icon('info'), el('span', { text: e.message || 'Import fehlgeschlagen' })]));
+    status.appendChild(el('div', { class: 'row gap-2', style: { color: 'var(--bad-text)' } }, [icon('info'), el('span', { text: e.message || t('errors.importFailed') })]));
   }
 }
 
@@ -451,11 +456,11 @@ function showPreview(status, result) {
   const s = result.summary || {};
   status.appendChild(el('div', { class: 'row gap-3 mb-3' }, [
     el('span', { class: 'type-icon', style: { background: 'var(--good)' }, html: iconSvg('check') }),
-    el('div', {}, [el('div', { style: { fontWeight: '750' }, text: 'Datei gelesen' }), el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: `${s.workouts || 0} Trainings · ${s.healthDays || 0} Tage mit Körperwerten${s.periods ? ` · ${s.periods} Perioden` : ''}` })]),
+    el('div', {}, [el('div', { style: { fontWeight: '750' }, text: t('healthImport.fileRead') }), el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: [tp('healthImport.nWorkouts', s.workouts || 0), tp('healthImport.nHealthDays', s.healthDays || 0), s.periods ? tp('healthImport.nPeriods', s.periods) : null].filter(Boolean).join(' · ') })]),
   ]));
 
   if (!(result.workouts?.length) && !(result.health?.length) && !(result.periods?.length)) {
-    status.appendChild(el('div', { class: 'muted', text: 'Keine übernehmbaren Trainings oder Körperdaten gefunden.' }));
+    status.appendChild(el('div', { class: 'muted', text: t('healthImport.nothingToImport') }));
     return;
   }
 
@@ -465,22 +470,22 @@ function showPreview(status, result) {
     withCycle = store.settings().modules?.cycle !== false;
     status.appendChild(el('div', { class: 'row row--between mt-2', style: { alignItems: 'center', gap: '12px' } }, [
       el('div', { class: 'grow' }, [
-        el('div', { style: { fontWeight: '650', fontSize: '.88rem' }, text: `Zyklus übernehmen (${result.periods.length} Perioden)` }),
-        el('div', { class: 'muted', style: { fontSize: '.78rem' }, text: 'Bleibt privat: nur du siehst ihn, auch am Server.' }),
+        el('div', { style: { fontWeight: '650', fontSize: '.88rem' }, text: tp('healthImport.takeCycleCount', result.periods.length) }),
+        el('div', { class: 'muted', style: { fontSize: '.78rem' }, text: t('healthImport.cyclePrivate') }),
       ]),
-      toggle(withCycle, (v) => { withCycle = v; }, 'Zyklus übernehmen'),
+      toggle(withCycle, (v) => { withCycle = v; }, t('healthImport.takeCycle')),
     ]));
   }
 
   status.appendChild(el('button', {
-    class: 'btn btn--primary btn--block mt-2', text: 'Daten übernehmen',
+    class: 'btn btn--primary btn--block mt-2', text: t('healthImport.takeData'),
     onclick: () => {
       const r = importResult(result, { cycle: withCycle });
-      toast(`${r.wImp} Trainings (${r.matched} zugeordnet), ${r.hImp} Körperwert-Tage${r.pImp ? `, ${r.pImp} Perioden` : ''} übernommen`, 'good', 4000);
+      toast(r.pImp ? t('healthImport.doneWithCycle', { w: r.wImp, m: r.matched, h: r.hImp, p: r.pImp }) : t('healthImport.done', { w: r.wImp, m: r.matched, h: r.hImp }), 'good', 4000);
       setTimeout(() => navigate('#/health'), 400);
     },
   }));
-  status.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.78rem' }, text: 'Bereits vorhandene Einträge werden übersprungen oder ergänzt – nichts wird doppelt angelegt.' }));
+  status.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.78rem' }, text: t('healthImport.skipNote') }));
 }
 
 export function importResult(result, { cycle = false } = {}) {
@@ -531,7 +536,7 @@ export function importResult(result, { cycle = false } = {}) {
     // Auch zugeordnete Trainings merken, damit ein doppelt exportiertes übersprungen wird.
     if (match) { remember(completeUnit(match.plan, match.unit, data)); matched++; wImp++; }
     else {
-      const rec = { id: uid('ses'), plannedId: null, eventId: null, date: w.date, type, title: w.title || `${typeMeta(type).label} (Import)`, splits: [], ...data };
+      const rec = { id: uid('ses'), plannedId: null, eventId: null, date: w.date, type, title: w.title || t('healthImport.importTitle', { type: typeMeta(type).label }), splits: [], ...data };
       newSessions.push(rec);
       remember(rec);
       wImp++;
