@@ -451,8 +451,9 @@ Vor dem Start siehst du alle Übungen mit Menge und Dauer und stellst **Runden**
 - **„Eigene Musik“** lässt z. B. Spotify weiterlaufen; Ansagen und Zähltöne kommen dazu. Dafür darf das
   Gerät nicht auf lautlos stehen.
 - **Ansagen** kommen in den Pausen: die nächste Übung samt Menge, der Seitenwechsel, die nächste Runde.
-  Sie sind eingesprochen und laufen über denselben Weg wie die Musik – auch auf lautlos und ohne dass
-  die Musik abreißt. **In der Übung führen Töne:** drei Töne zählen jeden Einsatz herunter,
+  Auf Deutsch sind sie eingesprochen und laufen über denselben Weg wie die Musik – auch auf lautlos
+  und ohne dass die Musik abreißt. In den anderen Sprachen liest die Sprachausgabe deines Geräts sie
+  vor; die Musik wird dabei leiser. **In der Übung führen Töne:** drei Töne zählen jeden Einsatz herunter,
   die letzten drei Wiederholungen bzw. Sekunden ticken, ein Doppelton sagt „noch 10 Sekunden“, ein tiefer
   Ton beendet die Übung.
 - Antippen blendet die Bedienleiste ein: **Pause**, **zurück**, **weiter**, Musik und Ansagen an/aus,

@@ -112,8 +112,9 @@ Umwege zusammenklicken lässt.
 | `activeEnergyKcal` | aktive Energie in kcal | bis 20 000 |
 
 Zahlen dürfen auch als Text mit Komma kommen („72,4“) – so gibt die Kurzbefehle-App sie auf Deutsch
-aus. Werte außerhalb des Bereichs verwirft der Server und meldet sie in `warnings`; unbekannte Felder
-stehen in `ignoredMetrics`. Mehrere Tage auf einmal: `{ "days": [ { "date": … }, { "date": … } ] }`.
+und in mehreren weiteren Sprachen aus. Werte außerhalb des Bereichs verwirft der Server und meldet
+sie in `warnings`; unbekannte Felder stehen in `ignoredMetrics`. Mehrere Tage auf einmal:
+`{ "days": [ { "date": … }, { "date": … } ] }`.
 
 ---
 
@@ -213,13 +214,14 @@ Verlauf, Ziele und Bereitschaft nur innerhalb einer Messart.
   hinter einer Anmeldung, gilt beides.
 - **Mehrere Instanzen?** Schlüssel und Daten sind pro Person **und** pro Instanz getrennt; die in der
   App angezeigte URL gehört immer zur gerade genutzten Instanz.
-- **Schlüssel neu erzeugen** (Health-Import → Apple Health → ⟳) macht den alten ungültig – dann den
+- **Schlüssel neu erzeugen** (Health-Import → Apple Health → ⟳, „Token neu erzeugen“) macht den alten ungültig – dann den
   Header-Wert (bzw. bei alten Einrichtungen die URL) ersetzen.
 
 ## Fehlersuche
 
 - **401 „Invalid token“** (`code: invalid_token`) – der Schlüssel passt nicht (nach „neu erzeugen“ den Header-Wert ersetzen).
-- **403 „kein Token“** – in Cat-O-Fit erst unter **Health-Import** „Auto-Import aktivieren“.
+- **403 „No health token has been set up for this user yet“** (`code: no_health_token`) – in Cat-O-Fit
+  erst unter **Health-Import** „Auto-Import aktivieren“.
 - **Es kommt gar nichts an** – URL exakt kopiert? Server von unterwegs erreichbar? Kommt ein 401 von
   einer vorgeschalteten Anmeldung (nicht von Cat-O-Fit), fehlt der `Authorization`-Header.
 - **Kurzbefehl liefert leere Werte** – im Kurzbefehl einmal von Hand prüfen, ob „Health-Samples suchen“

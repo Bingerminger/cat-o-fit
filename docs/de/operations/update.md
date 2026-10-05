@@ -37,8 +37,8 @@ bzw. ohne Compose: `docker pull ghcr.io/bingerminger/cat-o-fit:latest`, Containe
 denselben Optionen (vor allem demselben Volume) neu starten. Das Volume bzw. der gebundene Ordner
 `/var/www/html/data` bleibt dabei erhalten.
 
-Wer Updates bewusst steuern will, nimmt statt `latest` ein Versions-Tag: `3.21` (alle Korrekturen der
-Version 3.21) oder `3.21.0` (genau diese Version).
+Wer Updates bewusst steuern will, nimmt statt `latest` ein Versions-Tag: `4.0` (alle Korrekturen der
+Version 4.0) oder `4.0.0` (genau diese Version).
 
 ---
 
@@ -75,7 +75,7 @@ liegen im gebundenen Ordner (z. B. `/volume1/docker/cat-o-fit/data`) und bleiben
 
 ## Zurück zur Vorversion
 
-- **Docker:** das vorige Versions-Tag starten (z. B. `ghcr.io/bingerminger/cat-o-fit:3.20.0`).
+- **Docker:** das vorige Versions-Tag starten (z. B. `ghcr.io/bingerminger/cat-o-fit:4.0.0`).
 - **Web Station:** die Dateien der vorigen Version zurückkopieren – wieder ohne `data/`.
 - Neuere Versionen können Felder anlegen, die eine ältere nicht kennt; sie bleiben dann ungenutzt liegen.
   Wurde nach dem Update schon viel geändert und verhält sich die ältere Version seltsam, hilft das

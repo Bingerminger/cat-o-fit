@@ -23,7 +23,7 @@ Seite hilft, das richtig einzuschätzen.
 | Ort | Inhalt |
 |---|---|
 | **Gerät** (Browser-Speicher) | eine Kopie der Daten der angemeldeten Person, damit die App offline läuft, dazu noch nicht gesendete Änderungen. Mit „Gemeinsames Gerät“ (Einstellungen → Konto) räumt das Abmelden die persönlichen Daten wieder ab. |
-| **Server, Ordner `data/`** | alle Daten aller Personen als unverschlüsselte JSON-Dateien: `family/` (Mitglieder, Rollen, Teams, Prüfwerte der PINs), `users/<id>/` (Pläne, Trainings, Körperwerte, Ernährung, Zyklus, Labor, Ergänzungen …), `auth/` (Anmelde-Sitzungen, Fehlversuche, Kalender-Schlüssel), `foodfacts.json` (Zwischenspeicher der Nährwertsuche). |
+| **Server, Ordner `data/`** | alle Daten aller Personen als unverschlüsselte JSON-Dateien: `family/` (Mitglieder, Rollen, Teams, Prüfwerte der PINs, gemeinsame Einstellungen wie die Standardsprache der Instanz), `users/<id>/` (Pläne, Trainings, Körperwerte, Ernährung, Zyklus, Labor, Ergänzungen …; die eigene Sprachwahl einer Person gehört zu ihrem Profil), `auth/` (Anmelde-Sitzungen, Fehlversuche, Kalender-Schlüssel), `foodfacts.json` (Zwischenspeicher der Nährwertsuche). |
 | **Sicherungen** | Vollbackups enthalten die Daten aller Mitglieder außer den privaten Bereichen, „Mein Backup“ die einer Person inklusive Zyklus, Labor und Ergänzungen. |
 
 ---

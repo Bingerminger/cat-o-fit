@@ -98,10 +98,13 @@ Eignung** (Abgrenzung und „Kalorienzahlen ausblenden“, siehe
 [Gesundheit & Eignung](health.md#gesundheit--eignung)), **Wochen- und Gesundheitsziele**,
 **Herzfrequenz-Zonen** (aus deiner Max-HF – oder als markierte Schätzung aus dem Alter; wahlweise über
 die HF-Reserve mit Ruhepuls oder aus deiner **Schwellen-HF** aus Leistungsdiagnostik oder
-30-Minuten-Feldtest), **Trainingsbereiche (Pace)**, **Darstellung** (Theme & Akzentfarbe),
-**Module**, sichtbare **Körperwerte**, **Standort & Wetter**, **Ernährung** und **Daten & Sicherung**.
-Die Leiste ganz oben springt direkt zu Konto, Profil, Zielen, Training, Darstellung, Modulen und
-Daten & Backup. Ganz unten steht – nur für Admins – **„App zurücksetzen“**.
+30-Minuten-Feldtest), **Trainingsbereiche (Pace)**, **Darstellung** (Theme, Akzentfarbe und
+**Sprache** – jede Person wählt ihre eigene), **Module**, sichtbare **Körperwerte**,
+**Standort & Wetter**, **Ernährung** und **Daten & Sicherung**. Die Leiste ganz oben springt direkt
+zu Konto, Profil, Zielen, Training, Darstellung, Modulen und Daten & Backup. Admins sehen außerdem
+den Abschnitt **Verwaltung (Admin)** mit der Team-Verwaltung und der **Standardsprache** der Instanz
+(für die Anmeldeseite und neue Personen). Ganz unten steht – nur für Admins – **„App
+zurücksetzen“**.
 
 <br clear="all" />
 
@@ -154,8 +157,9 @@ Unter **Einstellungen → Daten & Sicherung** sicherst du deine Daten – ganz o
 
 **Als Tabelle exportieren (CSV):** Trainings, Körperwerte, Laborwerte oder das Ess-Tagebuch als Tabelle
 für Excel, Numbers, deine Ärztin oder eine andere App – im Format, das Tabellenprogramme für die
-Sprache der App erwarten: auf Deutsch mit Semikolon und Dezimalkomma, auf Englisch mit Komma und
-Dezimalpunkt. Wiederherstellen lässt sich nur das Backup; die Tabellen sind zum Weiterarbeiten.
+Sprache der App erwarten: auf Englisch mit Komma und Dezimalpunkt, in Sprachen mit Dezimalkomma
+(Deutsch, Französisch, …) mit Semikolon. Wiederherstellen lässt sich nur das Backup; die Tabellen
+sind zum Weiterarbeiten.
 
 **Lesezugang für eigene Werkzeuge** (standardmäßig aus): Betreibst du selbst einen KI-Assistenten oder
 ein Auswertungsskript, bekommt es mit diesem Schlüssel **nur lesend** deine Trainings, Pläne,

@@ -32,12 +32,21 @@ auch mitten im Lauf.
 > 💡 **Tipp:** Lege die App über das Teilen-Symbol in Safari „Zum Home-Bildschirm“. Dann
 > startet sie wie eine echte App im Vollbild.
 
+> 🌍 **Sieben Sprachen:** Cat-O-Fit spricht Deutsch, Englisch, Französisch, Spanisch, Italienisch,
+> brasilianisches Portugiesisch und Niederländisch. Auf einer neuen Instanz startet die App in der
+> Sprache deines Browsers (Englisch, wenn sie keine der sieben ist). Jede Person kann ihre eigene
+> Sprache unter **Einstellungen → Darstellung → Sprache** wählen – sie gilt für dich auf allen
+> Geräten. Admins legen außerdem die **Standardsprache** der Instanz fest (im Abschnitt
+> „Verwaltung (Admin)“ der Einstellungen, den nur sie sehen) – für die Anmeldeseite und für neue
+> Personen. Einheiten sind metrisch (Kilometer, Kilogramm); imperiale Einheiten sind für Version 4.1
+> geplant.
+
 ---
 
 ## Die ersten fünf Minuten
 
-1. **Ersteinrichtung:** Beim allerersten Öffnen legt ein Assistent die Admin-Person an – Name
-   und eigene PIN (4 bis 8 Ziffern, nicht `0000`). Danach wählst du **„Mit Demodaten starten“**
+1. **Ersteinrichtung:** Beim allerersten Öffnen legt ein Assistent (in der Sprache deines
+   Browsers) die Admin-Person an – Name und eigene PIN (4 bis 8 Ziffern, nicht `0000`). Danach wählst du **„Mit Demodaten starten“**
    (eine Beispiel-Familie zum Ausprobieren) oder **„Leer starten“**.
 2. **Anmelden:** Kachel antippen, PIN eingeben. Mehr dazu unter
    [Team & Familie](family.md#teamfamilie--anmeldung).

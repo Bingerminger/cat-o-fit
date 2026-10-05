@@ -38,6 +38,20 @@ geschlossener App.
 in den Vordergrund holt sie die neueste Version. Mehr unter
 [Fehlersuche](../operations/troubleshooting.md).
 
+**In welcher Sprache läuft die App, und kann ich sie ändern?** Cat-O-Fit spricht sieben Sprachen:
+Deutsch, Englisch, Französisch, Spanisch, Italienisch, brasilianisches Portugiesisch und
+Niederländisch. Jede Person wählt ihre eigene unter **Einstellungen → Darstellung → Sprache** (gilt
+für dich auf allen Geräten); der Eintrag „Wie die Instanz (…)“ folgt stattdessen der Standardsprache
+der Instanz. Diese Standardsprache legen Admins in den Einstellungen unter „Verwaltung (Admin)“ fest;
+sie gilt für die Anmeldeseite und für neue Personen. Eine neue Instanz startet in der Sprache deines
+Browsers (Englisch, wenn es keine der sieben ist); Instanzen, die schon vor Version 4.0 liefen,
+bleiben auf Deutsch, bis jemand es ändert. Verwaltet ein Admin gerade ein anderes Mitglied, bleibt
+die Sprache des Admins. Deutsch und Englisch schreibt das Projekt selbst; die anderen fünf sind
+maschinell mit festem Glossar übersetzt und noch nicht von Muttersprachlerinnen und Muttersprachlern
+geprüft – Korrekturen sind sehr willkommen (siehe
+[Stand der Übersetzungsprüfung](../../../locales/REVIEW.md)). Einheiten sind metrisch (Kilometer,
+Kilogramm); imperiale Einheiten sind für Version 4.1 geplant.
+
 **Kostet Cat-O-Fit etwas?** Nein – die App ist quelloffen (AGPL-Lizenz) und läuft auf eurer eigenen
 Hardware. Kosten kann nur ein optionaler Zusatzdienst verursachen, etwa die Premium-Stufe von
 „Health Auto Export“ für den automatischen Apple-Health-Import; es gibt aber auch kostenlose Wege

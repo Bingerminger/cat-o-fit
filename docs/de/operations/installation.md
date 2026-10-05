@@ -136,9 +136,12 @@ Anwendungsportal → Reverse-Proxy mit Let's-Encrypt-Zertifikat). Im Heimnetz l�
 ## Betrieb außerhalb des Heimnetzes
 
 Cat-O-Fit ist für das eigene, vertrauenswürdige Netz gebaut: Die PIN schützt die Profile und die
-privaten Bereiche (Zyklus, Labor, Ergänzungen), aber **nicht** Trainings, Pläne oder Körperwerte. Soll
-die App aus dem Internet erreichbar sein (QuickConnect, Portfreigabe, VPS), ist eine **Anmeldung davor
-Pflicht** – sonst kann jede Person mit der Adresse diese Daten lesen und ändern.
+privaten Bereiche (Zyklus, Labor, Ergänzungen) – auch auf dem Server, der sie erst nach der
+PIN-Anmeldung der jeweiligen Person herausgibt –, aber **nicht** Trainings, Pläne, Körperwerte oder
+Ernährung. Soll die App aus dem Internet erreichbar sein (QuickConnect, Portfreigabe, VPS), ist eine
+**Anmeldung davor Pflicht** – sonst kann jede Person mit der Adresse diese Daten lesen und ändern. Wer
+den Server betreibt, kann alle Dateien lesen; sie liegen unverschlüsselt (siehe
+[Datenschutz](privacy.md)).
 
 - **Am einfachsten:** VPN ins Heimnetz (WireGuard, Tailscale, Synology VPN Server) – die App bleibt dann
   gar nicht öffentlich.
@@ -157,6 +160,23 @@ Pflicht** – sonst kann jede Person mit der Adresse diese Daten lesen und ände
 - `https://<adresse>/cat-o-fit/api/api.php?action=ping` muss ein JSON `{"ok":true,…}` liefern.
 - Beim ersten Öffnen startet die **Ersteinrichtung**: Admin-Person mit eigener PIN anlegen, dann
   **„Mit Demodaten starten“** oder **„Leer starten“**.
+- **Sprache:** Die App spricht Englisch, Deutsch, Französisch, Spanisch, Italienisch, brasilianisches
+  Portugiesisch und Niederländisch. Die Sprache, die der Browser der ersten Admin-Person bei der
+  Ersteinrichtung verwendet, wird zur **Standardsprache der Instanz** – sie gilt für die Anmeldeseite
+  und für jede neue Person. Jede Person kann unter Einstellungen → Darstellung → Sprache ihre eigene
+  wählen; Admins ändern die Standardsprache im Abschnitt „Verwaltung (Admin)“ der Einstellungen
+  („Standardsprache“). Instanzen, die vor Version 4.0.0 eingerichtet wurden, bleiben auf Deutsch, bis
+  jemand das ändert. Texte, die der Server selbst schreibt (zum Beispiel Kalender-Dateien), folgen der
+  Sprache der jeweiligen Person.
+- **Gleich sichern:** Den Ordner `data/` in die reguläre Serversicherung aufnehmen (3-2-1-Regel); das
+  Vollbackup in der App lässt die privaten Bereiche bewusst aus und ersetzt sie **nicht** – siehe
+  [Backup](backup.md).
+- **Updates:** `docker compose pull && docker compose up -d` – das Daten-Volume bleibt. Auf einem
+  reinen PHP-Host kopierst du die neuen Dateien über die alten, **außer `data/`** – siehe
+  [Update](update.md).
+- **PIN der einzigen Admin-Person vergessen:**
+  `docker exec -it -u www-data cat-o-fit php tools/reset-pin.php "Name" 2468` (ohne Argumente listet das
+  Werkzeug die Mitglieder auf) – siehe [Fehlersuche](troubleshooting.md#pin-vergessen).
 - Zurück zum Anfang: In der App ganz unten in den Einstellungen **„App zurücksetzen“** (nur Admins).
 
 Weiter: [Update](update.md) · [Backup](backup.md) · [Datenschutz](privacy.md) ·
