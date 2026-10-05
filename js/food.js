@@ -1,18 +1,18 @@
 /* =========================================================================
-   food.js — Mengen-Engine für die wochenbasierte Einkaufsliste mit Lager.
+   food.js — quantity engine for the week-based shopping list with pantry stock.
 
-   Bewusst OHNE Store-/DOM-Abhängigkeit (reine Funktionen) – dadurch in Node
-   leicht unit-testbar. Die Aufrufer (shopping.js, nutrition.js) reichen die
-   Daten herein.
+   Deliberately WITHOUT any store/DOM dependency (pure functions), which makes
+   it easy to unit-test in Node. The callers (shopping.js, nutrition.js) pass
+   the data in.
 
-   Ablauf: Wochen-Speiseplan (geplante Gerichte × Portionen) -> Zutaten parsen
-   und aggregieren (Bedarf) -> Einkaufsliste = Bedarf − Lagerbestand.
+   Flow: weekly meal plan (planned dishes × servings) -> parse and aggregate
+   the ingredients (demand) -> shopping list = demand − pantry stock.
    ========================================================================= */
 
 import { has, locale, t, tp } from './i18n.js';
 import { fmtDec } from './format.js';
 
-/** Bekannte Einheiten -> kanonische Form (de/en; weitere Sprachen siehe unten). */
+/** Known units -> canonical form (de/en; further languages see below). */
 const UNIT_CANON = {
   g: 'g', gramm: 'g', gr: 'g', kg: 'g',
   ml: 'ml', l: 'ml', liter: 'ml',
@@ -87,7 +87,7 @@ const UNIT_PHRASES = [
 // “200 g de poulet”, “1 cucchiaio d’olio”, “1 lata de atum”: the little word after a unit is not part of the name.
 const PARTICLE = /^(?:de\s+(?:la\s+|l['’]\s*|los\s+|las\s+)?|d['’]\s*|di\s+|dell['’]\s*|do\s+|da\s+)(?=\p{L})/iu;
 
-/** "1/2", "1 1/2", "250", "1,5" -> Zahl (oder null). */
+/** "1/2", "1 1/2", "250", "1,5" -> number (or null). */
 export function parseAmount(str) {
   if (str == null) return null;
   str = String(str).trim().replace(',', '.');
@@ -124,7 +124,7 @@ export function parseIngredient(raw) {
     if (Object.hasOwn(UNIT_FACTOR, tok)) amt = amount * UNIT_FACTOR[tok];
     name = name.replace(PARTICLE, '');
   } else if (tok) {
-    // Kein bekanntes Einheitenwort -> gehört zum Namen (z. B. „Eier“, „Avocado“).
+    // Not a known unit word -> it belongs to the name (e.g. “Eier”, “Avocado”).
     // A hyphen or apostrophe right behind the first word belongs to the name (“batata-doce”, “pomme-de-terre”).
     name = (m[2] + (name ? (/^[-'’]/.test(rest.slice(m[2].length)) ? '' : ' ') + name : '')).trim();
     unit = amount != null ? 'Stück' : null;
@@ -256,7 +256,7 @@ export function guessCategory(name) {
 }
 
 /**
- * Aggregiert den Wochenbedarf aus geplanten Gerichten.
+ * Aggregates the weekly demand from planned dishes.
  * @param {Array<{ingredients:string[], servings:number}>} plannedMeals
  */
 export function aggregateNeeds(plannedMeals) {
@@ -277,12 +277,12 @@ export function aggregateNeeds(plannedMeals) {
 
 const sameItem = (a, b) => a.name.toLowerCase() === b.name.toLowerCase() && (a.unit || '?') === (b.unit || '?');
 
-/** Deterministische, mergebare ID eines Lager-/Zutat-Eintrags. */
+/** Deterministic, mergeable ID of a pantry/ingredient entry. */
 export function itemKey(name, unit) {
   return 'pty-' + String(name).toLowerCase().replace(/[^a-z0-9äöü]+/g, '-').replace(/^-|-$/g, '') + '-' + (unit || 'x');
 }
 
-/** Einkaufsliste = Bedarf − Lagerbestand. */
+/** Shopping list = demand − pantry stock. */
 export function computeShoppingList(needs, pantry) {
   const list = [];
   (needs || []).forEach((n) => {
@@ -298,11 +298,11 @@ export function computeShoppingList(needs, pantry) {
   return list;
 }
 
-/** Lagerbestand nach einem Einkauf (gekaufte Mengen zubuchen). */
+/** Pantry stock after a purchase (adds the bought quantities). */
 export function applyPurchase(pantry, bought) {
   const next = (pantry || []).map((p) => ({ ...p }));
   (bought || []).forEach((b) => {
-    if (b.buy == null) return; // „nach Bedarf“ wird nicht mengenmäßig gebucht
+    if (b.buy == null) return; // “as needed” items are not booked by quantity
     const ex = next.find((p) => sameItem(p, b));
     if (ex) ex.amount = (ex.amount || 0) + b.buy;
     else next.push({ id: itemKey(b.name, b.unit), name: b.name, unit: b.unit, amount: b.buy, category: b.category });
@@ -310,7 +310,7 @@ export function applyPurchase(pantry, bought) {
   return next;
 }
 
-/** Lagerbestand nach dem Kochen (Zutaten verbrauchen, nicht unter 0). */
+/** Pantry stock after cooking (consumes the ingredients, never below 0). */
 export function applyConsumption(pantry, ingredients, servings) {
   const next = (pantry || []).map((p) => ({ ...p }));
   const f = servings || 1;
@@ -323,7 +323,7 @@ export function applyConsumption(pantry, ingredients, servings) {
   return next.filter((p) => p.amount == null || p.amount > 0);
 }
 
-/** Nächster Einkaufstag (weekday: 0=So..6=Sa) ab fromDate (Default heute). */
+/** Next shopping day (weekday: 0=Sun..6=Sat) from fromDate on (default today). */
 export function nextShoppingDay(weekday, fromDateStr) {
   const from = fromDateStr ? new Date(fromDateStr + 'T12:00:00') : new Date();
   const add = ((weekday - from.getDay()) % 7 + 7) % 7;
@@ -333,7 +333,7 @@ export function nextShoppingDay(weekday, fromDateStr) {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
 }
 
-/** Menge + Einheit als Text: „500 g“, „3 Stück“, „nach Bedarf“. */
+/** Quantity + unit as text: “500 g”, “3×”, “as needed”. */
 export function fmtAmount(amount, unit) {
   if (amount == null) return t('food.asNeeded');
   const a = Math.round(amount * 100) / 100;
@@ -341,7 +341,7 @@ export function fmtAmount(amount, unit) {
   return `${fmtDec(a)}${unit ? ' ' + unitLabel(unit, a) : ''}`;
 }
 
-/** Anzeigename einer Einheit; gespeichert bleibt der kanonische (deutsche) Wert. Unbekannte Einheiten bleiben, wie sie sind. */
+/** Display name of a unit; the stored value stays the canonical (German) one. Unknown units are left as they are. */
 const UNIT_ID = { g: 'g', ml: 'ml', EL: 'tbsp', TL: 'tsp', Prise: 'pinch', Bund: 'bunch', Zehe: 'clove', Stück: 'piece', Scheibe: 'slice', Dose: 'can', Packung: 'pack', Becher: 'pot', Glas: 'jar' };
 export function unitLabel(unit, amount = 1) {
   const id = Object.hasOwn(UNIT_ID, unit) ? UNIT_ID[unit] : null;

@@ -1,76 +1,76 @@
 /* =========================================================================
-   energy.js — Kalorien & Energiebilanz (aus dem Praxis-Feedback).
-   Reine Funktionen ohne Store/DOM, damit alles unit-testbar bleibt.
+   energy.js — calories & energy balance (from the practical feedback).
+   Pure functions without store/DOM, so everything stays unit-testable.
 
-   - bmr():            Grundumsatz nach Mifflin-St-Jeor
-   - trainingKcal():   Verbrauch einer Einheit (gemessen, sonst geschätzt)
-   - energyBalance():  Tagesbilanz „verbraucht vs. eingenommen“ + Empfehlung
-   - estimateKcal():   grobe kcal-Schätzung eines Rezepts aus den Zutaten
-   - portionKcal():    pauschale Schätzung für auswärts gegessene Portionen
+   - bmr():            basal metabolic rate (Mifflin-St Jeor)
+   - trainingKcal():   energy spent in a session (measured, otherwise estimated)
+   - energyBalance():  daily balance “burned vs. eaten” + recommendation
+   - estimateKcal():   rough kcal estimate of a recipe from its ingredients
+   - portionKcal():    flat estimate for portions eaten out
 
-   Alles ist als Orientierung gedacht – bewusst grob, keine Diät-Beratung.
+   Everything is meant as a guide – deliberately rough, not dietary advice.
    ========================================================================= */
 
 import { parseIngredient, fold, keywordIn, wordIn } from './food.js';
 import { fmtInt } from './format.js';
 import { t } from './i18n.js';
 
-/** MET-Richtwerte je Einheiten-Typ (Intensität als Vielfaches des Ruheumsatzes; übrige
-    Sportarten nach dem Compendium of Physical Activities – vorher zählten sie pauschal 6). */
+/** MET reference values per session type (intensity as a multiple of the resting metabolic rate; the
+    remaining sports follow the Compendium of Physical Activities – they used to count a flat 6). */
 const MET = {
   recovery: 8, easy: 9, long: 9.5, tempo: 11, interval: 12.5, race: 12, run: 9,
   strength: 5, mobility: 2.5, cross: 7, cross_bike: 7.5, cross_football: 8, walk: 3.5, other: 6,
   swim: 8, rowing: 7, hike: 6, tennis: 7, badminton: 5.5, squash: 9, tabletennis: 4, spinning: 8, elliptical: 5, gym: 5,
 };
 
-/** Quellen, deren `kcal` die gemessene AKTIVE Energie einer Einheit ist (Apple Health:
-    Auto-Export und Voll-Import) – ohne Ruheumsatz, von der Uhr aus Herzfrequenz und Bewegung. */
+/** Sources whose `kcal` is the measured ACTIVE energy of a session (Apple Health:
+    auto export and full import) – without resting metabolism, derived by the watch from heart rate and movement. */
 export const MEASURED_KCAL_SOURCES = ['apple-health', 'health'];
-/** Gemessene aktive Energie einer Einheit (kcal) oder null. */
+/** Measured active energy of a session (kcal) or null. */
 export function measuredActiveKcal(s) {
   const k = Number(s && s.kcal);
   return s && MEASURED_KCAL_SOURCES.includes(s.source) && Number.isFinite(k) && k > 0 && k < 10000 ? k : null;
 }
 
-/** Grundumsatz (kcal/Tag) nach Mifflin-St-Jeor. null, wenn Angaben fehlen. */
+/** Basal metabolic rate (kcal/day) by Mifflin-St Jeor. null if inputs are missing. */
 export function bmr(profile = {}, today) {
   const kg = profile.weightKg, cm = profile.heightCm, by = profile.birthYear;
   if (!kg || !cm || !by) return null;
   const year = parseInt(String(today || '').slice(0, 4)) || new Date().getFullYear();
   const age = Math.max(10, year - by);
-  const s = profile.sex === 'm' ? 5 : (profile.sex === 'w' || profile.sex === 'f') ? -161 : -78; // neutral, wenn unbekannt
+  const s = profile.sex === 'm' ? 5 : (profile.sex === 'w' || profile.sex === 'f') ? -161 : -78; // neutral if unknown
   return Math.round(10 * kg + 6.25 * cm - 5 * age + s);
 }
 
-/** Lauf-Einheiten (Energieaufwand hängt hier an der Strecke, nicht am MET-Mittel). */
+/** Running sessions (their energy cost is tied to the distance here, not to the MET average). */
 const RUN_TYPES = ['easy', 'long', 'tempo', 'interval', 'race', 'run', 'recovery'];
 
 /**
- * Geschätzter Energieverbrauch einer Einheit (kcal).
+ * Estimated energy expenditure of a session (kcal).
  *
  * @param {object} session
  * @param {number} weightKg
  * @param {{net?: boolean, activityFactor?: number}} [opts]
- *   `net: true` zieht den Ruhe-/Alltagsumsatz ab, der für dieselbe Zeit ohnehin
- *   im Tagesumsatz steckt – nur so darf der Wert auf den TDEE addiert werden
- *   (sonst zählt der Grundumsatz der Trainingsstunde doppelt, ~100 kcal/h).
- *   Für die reine Anzeige („verbrannt“) bleibt der Brutto-Wert der Standard,
- *   weil Uhren und Tracker ihn ebenfalls brutto ausweisen.
+ *   `net: true` subtracts the resting/everyday metabolism that is already part of the
+ *   daily expenditure for the same time – only then may the value be added to the TDEE
+ *   (otherwise the basal metabolism of the training hour counts twice, ~100 kcal/h).
+ *   For plain display (“burned”) the gross value remains the default,
+ *   because watches and trackers report it gross as well.
  */
 export function trainingKcal(session = {}, weightKg, { net = false, activityFactor = 1.35 } = {}) {
   const kg = weightKg || 70;
   const hours = session.durationSec ? session.durationSec / 3600 : null;
-  const baseline = net ? activityFactor : 0;   // in MET-Einheiten
+  const baseline = net ? activityFactor : 0;   // in MET units
 
-  // Gemessen schlägt geschätzt: Die aktive Energie der Uhr enthält keinen Ruheumsatz.
-  // Brutto (Anzeige) = aktiv + Ruheumsatz der Trainingszeit (~1 kcal je kg und Stunde);
-  // netto zieht davon wie unten den ohnehin im Tagesumsatz steckenden Alltagsumsatz ab.
+  // Measured beats estimated: the watch's active energy contains no resting metabolism.
+  // Gross (display) = active + resting metabolism of the training time (~1 kcal per kg and hour);
+  // net subtracts from that, as below, the everyday metabolism already included in the daily expenditure.
   const active = measuredActiveKcal(session);
   if (active != null) return Math.max(0, Math.round(active + (hours ? (1 - baseline) * kg * hours : 0)));
 
-  // Laufen mit bekannter Strecke: ~1 kcal/kg/km brutto – geschwindigkeitsunabhängig
-  // und deutlich näher an der Realität als ein pauschaler MET-Wert. (Vorher nur
-  // als Fallback ohne Dauer genutzt, was 10 km in 50 min um ~33 % auseinanderlaufen ließ.)
+  // Running with a known distance: ~1 kcal/kg/km gross – independent of speed
+  // and much closer to reality than a flat MET value. (It used to be only a fallback
+  // when there was no duration, which made 10 km in 50 min diverge by ~33 %.)
   if (session.distanceKm && RUN_TYPES.includes(session.type)) {
     const gross = kg * session.distanceKm;
     const rest = hours ? baseline * kg * hours : 0;
@@ -86,18 +86,18 @@ export function trainingKcal(session = {}, weightKg, { net = false, activityFact
 const round10 = (v) => Math.round(v / 10) * 10;
 const dayNum = (d) => Math.round(Date.parse(`${String(d).slice(0, 10)}T00:00:00Z`) / 86400000);
 
-/** Standard-Tagesdefizit ohne laufenden Plan (kcal). */
+/** Default daily deficit without a running plan (kcal). */
 export const DEFAULT_DEFICIT = -400;
-/** Höchstens so viel Defizit (Anteil am Tagesumsatz), solange keine fettfreie Masse bekannt ist. */
+/** Maximum deficit (share of daily expenditure) as long as no fat-free mass is known. */
 export const MAX_DEFICIT_SHARE = 0.15;
-/** Untergrenze der Energieverfügbarkeit fürs Tagesziel beim Abnehmen (kcal je kg fettfreier Masse). */
+/** Lower limit of energy availability for the daily target when losing weight (kcal per kg fat-free mass). */
 export const EA_FLOOR = 30;
-/** Toleranzband ums Zielgewicht (kg): innerhalb gilt „halten“. */
+/** Tolerance band around the target weight (kg): within it the status is “hold”. */
 export const WEIGHT_TOLERANCE_KG = 0.5;
 
 /**
- * Aktuelles Körpergewicht: Median der Messungen der letzten 7 Tage bis zur jüngsten
- * Messung (glättet Tagesschwankungen von ±1–2 kg), sonst das Profilgewicht.
+ * Current body weight: median of the measurements in the 7 days up to the latest
+ * measurement (smooths daily fluctuations of ±1–2 kg), otherwise the profile weight.
  */
 export function weightNow(health = [], profile = {}, today = null) {
   const vals = (health || []).filter((h) => h && !h.deleted && h.date && (!today || h.date <= today)
@@ -105,7 +105,7 @@ export function weightNow(health = [], profile = {}, today = null) {
   if (vals.length) {
     const latest = vals.reduce((a, b) => (String(b.date) > String(a.date) ? b : a));
     const lastDay = dayNum(latest.date);
-    // Unlesbares Datum (Fremdimport): ohne Glättung den jüngsten Wert nehmen statt NaN.
+    // Unreadable date (foreign import): take the latest value without smoothing instead of NaN.
     const win = Number.isFinite(lastDay)
       ? vals.filter((v) => lastDay - dayNum(v.date) < 7).map((v) => Number(v.weight)).sort((a, b) => a - b)
       : [];
@@ -118,11 +118,11 @@ export function weightNow(health = [], profile = {}, today = null) {
 }
 
 /**
- * Zielgewicht-Status – EINE Definition für alle Ansichten (Ernährung, Cockpit,
- * Wochenziele, Gesundheitsziele, Statistik). Die Richtung kommt vom Startwert
- * (`start`, sonst dem aktuellen Wert); ± 0,5 kg um das Ziel heißt „halten“.
- * Wer ein Abnehmziel unterschreitet, bekommt „halten – Ziel prüfen“, nie
- * automatisch „zunehmen“ (das gibt es nur bei einem echten Zunahmeziel).
+ * Target-weight status – ONE definition for all views (nutrition, cockpit,
+ * weekly goals, health goals, statistics). The direction comes from the starting value
+ * (`start`, otherwise the current value); ± 0.5 kg around the target means “hold”.
+ * Anyone who falls below a weight-loss target gets “hold – check the goal”, never
+ * automatically “gain” (that only exists for a genuine weight-gain target).
  * @returns {null|{current, target, start, direction:'down'|'up'|'hold', reached:boolean,
  *   status:'abnehmen'|'zunehmen'|'halten', remaining:number, gap:number, beyond:boolean}}
  */
@@ -133,7 +133,7 @@ export function weightGoalStatus({ current = null, target = null, start = null }
   const s = start != null && start !== '' && Number.isFinite(Number(start)) ? Number(start) : null;
   const from = s != null ? s : c;
   const direction = from > tgt ? 'down' : from < tgt ? 'up' : 'hold';
-  const gap = Math.round((c - tgt) * 10) / 10;              // > 0: über dem Ziel
+  const gap = Math.round((c - tgt) * 10) / 10;              // > 0: above the target
   const near = Math.abs(gap) <= WEIGHT_TOLERANCE_KG;
   let reached;
   if (direction === 'down') reached = c <= tgt;
@@ -149,7 +149,7 @@ export function weightGoalStatus({ current = null, target = null, start = null }
   };
 }
 
-/** BMI eines Gewichts bei der Profilgröße (oder null). */
+/** BMI of a weight at the profile height (or null). */
 export function bmiFor(kg, profile = {}) {
   const m = Number(profile.heightCm) / 100;
   const w = Number(kg);
@@ -158,25 +158,25 @@ export function bmiFor(kg, profile = {}) {
 }
 
 /**
- * Tagesbilanz: Grundumsatz + Alltag + Training gegen die eingenommenen kcal.
- * `diary` = Ess-Tagebuch-Einträge ({ date, kcal }); die von heute zählen als gegessen.
+ * Daily balance: basal metabolism + everyday activity + training against the kcal eaten.
+ * `diary` = food diary entries ({ date, kcal }); today's entries count as eaten.
  *
- * Optionen (seit v3.20.0, über `energyTargets` gesetzt):
- *   `goal`  – Ziel vorgeben ('abnehmen'|'zunehmen'|'halten'); sonst aus Profil-/Zielgewicht
- *   `ffm`   – fettfreie Masse: Das Tagesziel beim Abnehmen bleibt dann über
- *             Trainingsverbrauch + 30 kcal je kg FFM (Energieverfügbarkeit ≥ 30).
- *             Ohne FFM ist das Defizit auf 15 % des Tagesumsatzes begrenzt.
- * @returns {object|null} null, wenn der Grundumsatz mangels Profilangaben fehlt.
+ * Options (since v3.20.0, set via `energyTargets`):
+ *   `goal`  – force the goal ('abnehmen'|'zunehmen'|'halten'); otherwise derived from profile/target weight
+ *   `ffm`   – fat-free mass: the daily target when losing weight then stays above
+ *             training expenditure + 30 kcal per kg FFM (energy availability ≥ 30).
+ *             Without FFM the deficit is capped at 15 % of the daily expenditure.
+ * @returns {object|null} null if the basal metabolic rate is missing for lack of profile data.
  */
 export function energyBalance({ profile = {}, sessions = [], diary = [], today, deficitKcal = null, goal: goalIn = null, ffm = null } = {}) {
   const base = bmr(profile, today);
   if (base == null) return null;
   const kg = profile.weightKg;
   const af = profile.activityFactor || 1.35;
-  const tdeeBase = Math.round(base * af); // Alltag ohne Sport
+  const tdeeBase = Math.round(base * af); // everyday activity without sport
 
-  // NETTO-Trainingsverbrauch: der Ruheumsatz der Trainingsstunde steckt bereits
-  // in tdeeBase und darf nicht doppelt zählen.
+  // NET training expenditure: the resting metabolism of the training hour is already
+  // part of tdeeBase and must not count twice.
   const todays = sessions.filter((s) => s.date === today);
   const trainingOut = todays.reduce((a, s) => a + trainingKcal(s, kg, { net: true, activityFactor: af }), 0);
   const trainingGross = todays.reduce((a, s) => a + trainingKcal(s, kg), 0);
@@ -186,9 +186,9 @@ export function energyBalance({ profile = {}, sessions = [], diary = [], today, 
   const intake = eaten.reduce((a, m) => a + (m.kcal || 0), 0);
   const hasIntake = eaten.length > 0;
 
-  // Empfehlung Richtung Zielgewicht. `deficitKcal` kommt – wenn ein Plan läuft –
-  // aus dualgoal.js (phasenabhängig: Grundlage −450 … Tapering 0). Ohne Plan
-  // gilt der moderate Standardwert.
+  // Recommendation towards the target weight. `deficitKcal` comes – when a plan is running –
+  // from dualgoal.js (phase-dependent: base phase −450 … taper 0). Without a plan
+  // the moderate default applies.
   let goal = goalIn;
   if (!goal) {
     const gap = (profile.targetWeightKg != null && kg != null) ? kg - profile.targetWeightKg : 0;
@@ -197,10 +197,10 @@ export function energyBalance({ profile = {}, sessions = [], diary = [], today, 
   let delta = goal === 'abnehmen' ? (deficitKcal != null ? deficitKcal : DEFAULT_DEFICIT)
     : goal === 'zunehmen' ? 300 : 0;
 
-  // SICHERHEITSUNTERGRENZEN beim Abnehmen (RED-S): nie unter den Grundumsatz und –
-  // wenn die fettfreie Masse bekannt ist – nie unter Trainingsverbrauch + 30 kcal je
-  // kg FFM (darunter beginnt die niedrige Energieverfügbarkeit). Ohne FFM höchstens
-  // 15 % Defizit. Die strengste Grenze gewinnt.
+  // SAFETY FLOORS when losing weight (RED-S): never below the basal metabolic rate and –
+  // if the fat-free mass is known – never below training expenditure + 30 kcal per
+  // kg FFM (below that, low energy availability begins). Without FFM at most
+  // a 15 % deficit. The strictest limit wins.
   let floorReason = null;
   let target = out + delta;
   if (delta < 0) {
@@ -210,14 +210,14 @@ export function energyBalance({ profile = {}, sessions = [], diary = [], today, 
     for (const [reason, min] of floors) {
       if (target < min) { target = min; floorReason = reason; }
     }
-    // Auf 10 kcal Richtung „weniger Defizit“ gerundet – nie tiefer als die Untergrenze.
+    // Rounded to 10 kcal towards “less deficit” – never lower than the floor.
     if (floorReason) delta = Math.min(0, Math.ceil((target - out) / 10) * 10);
   }
   const floored = floorReason != null;
   const targetIntake = round10(target);
 
   const balance = intake - out;
-  const diff = intake - targetIntake; // >0 zu viel, <0 zu wenig
+  const diff = intake - targetIntake; // >0 too much, <0 too little
   let status = 'unklar', hint = t('nutrition.qualNone');
   if (hasIntake) {
     if (Math.abs(diff) <= 200) { status = 'passt'; hint = goal === 'halten' ? t('energy.holdingWell') : goal === 'abnehmen' ? t('energy.onTrackLose') : t('energy.onTrackGain'); }
@@ -236,8 +236,8 @@ export function energyBalance({ profile = {}, sessions = [], diary = [], today, 
 }
 
 /**
- * Ziel-Plan für die Energieempfehlung: der Plan zum nächsten anstehenden Wettkampf
- * (wie im Ziel-Cockpit). Programme ohne Wettkampf zählen nicht.
+ * Goal plan for the energy recommendation: the plan for the next upcoming race
+ * (as in the goal cockpit). Programmes without a race do not count.
  */
 export function goalPlanFor(plans = [], events = [], today = null) {
   let best = null;
@@ -251,11 +251,11 @@ export function goalPlanFor(plans = [], events = [], today = null) {
 }
 
 /**
- * EINE Quelle für Ernährungskarte und Ziel-Cockpit: aktuelles (geglättetes) Gewicht,
- * Zielgewicht-Status, Phasen-Defizit aus dem Wettkampfplan, Eignung (Kinder,
- * Schwangerschaft, Essstörung → keine Abnehmziele), Ziel-BMI unter 18,5 → halten,
- * Sicherheitsuntergrenzen. `phaseDeficit(plan, today)` liefert das Phasen-Defizit
- * (dualgoal.js) – als Parameter, damit dieses Modul ohne Plan-Abhängigkeiten bleibt.
+ * ONE source for the nutrition card and the goal cockpit: current (smoothed) weight,
+ * target-weight status, phase deficit from the race plan, eligibility (children,
+ * pregnancy, eating disorder → no weight-loss goals), target BMI below 18.5 → hold,
+ * safety floors. `phaseDeficit(plan, today)` supplies the phase deficit
+ * (dualgoal.js) – as a parameter, so that this module stays free of plan dependencies.
  */
 export function energyTargets({
   profile = {}, health = [], sessions = [], diary = [], plans = [], events = [], today,
@@ -279,7 +279,7 @@ export function energyTargets({
   const goal = block ? 'halten' : (status ? status.status : 'halten');
   const deficitKcal = phaseKcal != null ? phaseKcal : DEFAULT_DEFICIT;
   const bal = block === 'minor'
-    ? null   // Kinder- und Jugendprofil: keine Grundumsatz-/Zielrechnung (Mifflin gilt ab 19)
+    ? null   // child/teen profile: no basal-metabolism/target calculation (Mifflin applies from age 19)
     : energyBalance({ profile: kgNow != null ? { ...profile, weightKg: kgNow } : profile, sessions, diary, today, deficitKcal, goal, ffm });
   return {
     balance: bal, goalStatus: status, weightNow: kgNow, block, goal,
@@ -288,9 +288,9 @@ export function energyTargets({
   };
 }
 
-/* ---- kcal-Schätzung aus Zutaten (#26) ---- */
+/* ---- kcal estimate from ingredients (#26) ---- */
 
-// Grobe Energiedichte je 1 g (bzw. je Stück) nach Stichwort im Zutatennamen.
+// Rough energy density per 1 g (or per piece) by keyword in the ingredient name.
 // English keywords follow the German ones in each row (substring match: 'nuts', not 'nut',
 // so “butternut”/“coconut” stay out).
 // The other languages (fr, es, it, pt-BR, nl) follow in every table of this file, one tagged line per language. A keyword with a
@@ -498,8 +498,8 @@ const matchWord = (name, table, fallback) => {
   return fallback;
 };
 
-/* Grammäquivalente für Küchenmaße – früher zählte alles außer g/ml/Stück pauschal
-   45 kcal (ein Esslöffel Öl wie eine Prise Salz). [Stichwörter, Gramm]. */
+/* Gram equivalents for kitchen measures – everything except g/ml/piece used to count a flat
+   45 kcal (a tablespoon of oil like a pinch of salt). [keywords, grams]. */
 const EL_G = [
   [['öl', 'butter', 'margarine', 'chiasamen', 'leinsamen', 'oil', 'chia', 'linseed', 'flaxseed',
     /* fr */ '=huile', '=huiles', '=beurre', '=graines de lin',
@@ -591,8 +591,8 @@ const DOSE_G = [
     /* nl */ 'tonijn',
   ], 150],
 ];
-// Stück-Gewichte für Zutaten, die in der Nährwerttabelle stehen (dann rechnet die
-// App über die Gramm-Werte statt über eine Pauschale).
+// Piece weights for ingredients that appear in the nutrition table (the app then
+// calculates from the gram values instead of a flat rate).
 // Whole-word match: the sweet-potato row comes before the potato row, otherwise
 // “sweet potato” would count as “potato”.
 const PIECE_G = [
@@ -711,7 +711,7 @@ const PIECE_G = [
     /* nl */ 'komkommer', 'komkommers',
   ], 400],
 ];
-// Gewürze & Co. zählen nicht.
+// Spices & co. do not count.
 const NEGLIGIBLE = ['salz', 'pfeffer', 'gewürz', 'zimt', 'kräuter', 'petersilie', 'basilikum', 'knoblauch', 'chili', 'curry', 'paprikapulver', 'oregano', 'muskat', 'vanille', 'backpulver', 'natron', 'essig', 'zitronensaft',
   'salt', 'black pepper', 'peppercorns', 'spice', 'spices', 'cinnamon', 'herbs', 'parsley', 'basil', 'garlic', 'chilli', 'paprika powder', 'nutmeg', 'vanilla', 'baking powder', 'baking soda', 'bicarbonate of soda', 'vinegar', 'lemon juice',
   /* fr */ 'sel', 'sels', 'poivre', 'poivre noir', 'épice', 'épices', 'assaisonnement', 'cannelle', 'herbes', 'herbes aromatiques',
@@ -736,7 +736,7 @@ const NEGLIGIBLE = ['salz', 'pfeffer', 'gewürz', 'zimt', 'kräuter', 'petersili
   'rode peper', 'pepertjes', 'kerrie', 'currypoeder', 'paprikapoeder', 'nootmuskaat', 'bakpoeder', 'zuiveringszout', 'natriumbicarbonaat',
   'azijn', 'citroensap'];
 
-/** Menge einer Zutat in Gramm/Milliliter (oder null, wenn nicht ableitbar). */
+/** Quantity of an ingredient in grams/millilitres (or null if it cannot be derived). */
 function gramsOf(p) {
   const n = fold(p.name);
   if (p.amount == null) return null;
@@ -754,7 +754,7 @@ function gramsOf(p) {
   }
 }
 
-// Grober Proteingehalt je 1 g (bzw. je Stück) – analog zu KCAL_*, für die Schätzhilfe.
+// Rough protein content per 1 g (or per piece) – analogous to KCAL_*, for the estimation helper.
 const PROT_G = [
   [['proteinpulver', 'eiweißpulver', 'protein powder', 'whey',
     /* fr */ '=poudre de protéines', '=poudre de proteines', '=poudre de protéine', '=protéines en poudre', '=protéine en poudre',
@@ -866,13 +866,13 @@ const PROT_STK = [
   ], 7],
 ];
 
-/* Kuratierte Nährwerttabelle für häufige (deutsche) Zutaten – Standardwerte je
-   100 g/ml, [Stichwörter, kcal, Protein-g]. Spezifisches vor Allgemeinem (erstes
-   Treffer-Stichwort gewinnt). Genauer & rauschfrei -> wird VOR Open Food Facts
-   und der groben Heuristik genutzt. Mengenangaben in Rezepten meist roh/trocken
-   (Reis/Nudeln) bzw. gekocht/Konserve (Hülsenfrüchte). */
+/* Curated nutrition table for common (German) ingredients – default values per
+   100 g/ml, [keywords, kcal, protein g]. Specific before general (the first
+   matching keyword wins). More accurate & noise-free -> used BEFORE Open Food Facts
+   and the rough heuristic. Quantities in recipes are usually raw/dry
+   (rice/pasta) or cooked/tinned (legumes). */
 const NUTRI_100 = [
-  // Fette, Nüsse, Süßes (energiedicht)
+  // Fats, nuts, sweets (energy-dense)
   // English: only named oils here; plain 'oil' is the last row, so “boiled potatoes” finds
   // the potato row first.
   [['olivenöl', 'rapsöl', 'öl', 'olive oil', 'rapeseed oil', 'sunflower oil', 'vegetable oil', 'coconut oil',
@@ -892,8 +892,8 @@ const NUTRI_100 = [
     /* pt-BR */ '=pasta de amendoim', '=manteiga de amendoim', '=pasta de amêndoa', '=manteiga de amêndoa', '=pasta de castanha',
     /* nl */ 'pindakaas', '=pindaboter', '=notenpasta', '=amandelpasta', '=amandelboter',
   ], 600, 25],
-  // Substring-Fallen: „Buttermilch“/„Mandelmilch“ müssen VOR „butter“/„mandel“
-  // stehen, sonst würden sie als Butter (740 kcal) bzw. Mandeln (580) gewertet.
+  // Substring traps: “Buttermilch”/“Mandelmilch” must come BEFORE “butter”/“mandel”,
+  // otherwise they would be rated as butter (740 kcal) or almonds (580).
   [['buttermilch', 'buttermilk',
     /* fr */ '=babeurre',
     /* es */ '=suero de mantequilla', '=suero de leche', '=mazada',
@@ -1009,7 +1009,7 @@ const NUTRI_100 = [
     /* pt-BR */ '=cacau', '=cacau em pó',
     /* nl */ '=cacao', '=cacaopoeder',
   ], 350, 20],
-  // Getreide / Backwaren (trocken)
+  // Grains / baked goods (dry)
   [['proteinpulver', 'eiweißpulver', 'protein powder', 'whey',
     /* fr */ '=poudre de protéines', '=poudre de proteines', '=poudre de protéine', '=protéines en poudre', '=protéine en poudre',
     '=poudre protéinée',
@@ -1110,7 +1110,7 @@ const NUTRI_100 = [
     '=massa para pizza',
     /* nl */ 'platbrood', '=turks brood', '=pitabrood', '=pita', '=naan', '=pizzadeeg', '=pizzabodem', '=pizzabodems',
   ], 290, 8],
-  // Hülsenfrüchte (gekocht/Konserve)
+  // Legumes (cooked/tinned)
   [['linsen', 'lentil',
     /* es */ '=lenteja', '=lentejas',
     /* it */ '=lenticchie',
@@ -1131,7 +1131,7 @@ const NUTRI_100 = [
     /* nl */ '=boon', '=boontjes', 'bonen',
   ], 95, 7],
   [['edamame'], 120, 11],
-  // Fleisch / Fisch (roh)
+  // Meat / fish (raw)
   [['hähnchen', 'hühnchen', 'huhn', 'chicken',
     /* fr */ '=poulet', '=poulets', '=volaille', '=volailles', '=poule',
     /* es */ '=pollo', '=pollos', '=gallina',
@@ -1194,7 +1194,7 @@ const NUTRI_100 = [
     /* pt-BR */ '=salame', '=salsicha', '=salsichas', '=linguiça', '=linguiças', '=chouriço',
     /* nl */ '=worst', '=worsten', '=worstje', '=worstjes', 'rookworst', 'leverworst', 'braadworst',
   ], 350, 18],
-  // Milchprodukte / vegetarische Eiweißquellen
+  // Dairy / vegetarian protein sources
   [['skyr'], 63, 11],
   [['magerquark', 'low-fat quark', 'low fat quark',
     /* fr */ '=fromage blanc maigre', '=fromage blanc 0 %', '=fromage blanc 0%', '=fromage blanc allégé',
@@ -1273,7 +1273,7 @@ const NUTRI_100 = [
     /* it */ '=humus',
     /* pt-BR */ '=homus',
   ], 230, 7],
-  // Obst / Gemüse (roh)
+  // Fruit / vegetables (raw)
   [['avocado',
     /* fr */ '=avocat', '=avocats',
     /* es */ '=aguacate', '=aguacates', '=palta', '=paltas',
@@ -1391,7 +1391,7 @@ const NUTRI_100 = [
   // Plain English 'oil' last: as a substring it also sits in “boiled”.
   [['oil'], 880, 0],
 ];
-/** Standard-Nährwerte je 100 g/ml zu einem Zutatennamen aus der kuratierten Tabelle – oder null. */
+/** Default nutrition values per 100 g/ml for an ingredient name from the curated table – or null. */
 function curatedNutrition(name) {
   const n = fold(name);
   for (const [kws, kcal, prot] of NUTRI_100) if (kws.some((k) => keywordIn(n, k))) return { kcal100: kcal, protein100: prot };
@@ -1399,19 +1399,19 @@ function curatedNutrition(name) {
 }
 
 /**
- * Grobe Nährwert-Schätzung eines Rezepts (eine Portion) aus den Zutaten.
- * Mit optionalem `lookup(name) -> {kcal100, protein100}` (z. B. Open Food Facts)
- * werden echte Werte je 100 g/ml bevorzugt; sonst greifen die lokalen Tabellen.
- * @returns {{kcal:number, protein:number|null}|null}  null bei leerer Liste.
+ * Rough nutrition estimate of a recipe (one serving) from its ingredients.
+ * With an optional `lookup(name) -> {kcal100, protein100}` (e.g. Open Food Facts),
+ * real values per 100 g/ml are preferred; otherwise the local tables apply.
+ * @returns {{kcal:number, protein:number|null}|null}  null for an empty list.
  */
-// OFF-Wert nur übernehmen, wenn er grob (Faktor 0,5–2) zur lokalen Erwartung
-// passt – schützt vor kontaminierten Marken-Medianen aus Open Food Facts
-// (z. B. „Öl“-Dressings, „Hähnchen“-Fertiggerichte).
+// Only accept an OFF value if it roughly (factor 0.5–2) matches the local expectation
+// – protects against contaminated brand medians from Open Food Facts
+// (e.g. “oil” dressings, “chicken” ready meals).
 const plausible = (offPerG, heurPerG) => {
   if (offPerG == null) return null;
-  if (heurPerG <= 0) return offPerG;            // keine Erwartung -> OFF nehmen
+  if (heurPerG <= 0) return offPerG;            // no expectation -> take OFF
   const r = offPerG / heurPerG;
-  return (r >= 0.5 && r <= 2) ? offPerG : null; // sonst verwerfen
+  return (r >= 0.5 && r <= 2) ? offPerG : null; // otherwise discard
 };
 
 export function estimateNutrition(ingredients = [], lookup = null) {
@@ -1421,17 +1421,17 @@ export function estimateNutrition(ingredients = [], lookup = null) {
     if (!p.name) return;
     counted++;
     const lname = fold(p.name);
-    if (NEGLIGIBLE.some((k) => wordIn(lname, k) || lname === k)) return;   // Gewürze
+    if (NEGLIGIBLE.some((k) => wordIn(lname, k) || lname === k)) return;   // spices
     const grams = gramsOf(p);
     if (grams != null) {
       if (grams <= 0) return;
       const cur = curatedNutrition(p.name);
       if (cur) {
-        // 1) Kuratierte Tabelle: genau & rauschfrei -> direkt nutzen.
+        // 1) Curated table: accurate & noise-free -> use directly.
         kcal += (cur.kcal100 / 100) * grams;
         if (cur.protein100 > 0) { protein += (cur.protein100 / 100) * grams; hadProtein = true; }
       } else {
-        // 2) Open Food Facts (sanity-gegatet), sonst 3) grobe Heuristik.
+        // 2) Open Food Facts (sanity-gated), otherwise 3) rough heuristic.
         const off = lookup ? lookup(p.name) : null;
         const heurK = matchKcal(p.name, KCAL_G, 1.2);
         const heurP = matchKcal(p.name, PROT_G, 0);
@@ -1444,19 +1444,19 @@ export function estimateNutrition(ingredients = [], lookup = null) {
       kcal += matchWord(p.name, KCAL_STK, 60) * p.amount;
       const pr = matchWord(p.name, PROT_STK, 0) * p.amount; if (pr) { protein += pr; hadProtein = true; }
     } else {
-      kcal += 45; // unbestimmte Zutat pauschal
+      kcal += 45; // unspecified ingredient: flat rate
     }
   });
   if (!counted) return null;
   return { kcal: round10(kcal), protein: hadProtein ? Math.round(protein) : null };
 }
 
-/** Nur die kcal-Schätzung (Rückwärtskompatibilität; akzeptiert denselben optionalen lookup). */
+/** Just the kcal estimate (backward compatibility; accepts the same optional lookup). */
 export function estimateKcal(ingredients = [], lookup = null) {
   const r = estimateNutrition(ingredients, lookup);
   return r ? r.kcal : null;
 }
 
-/** Pauschale kcal nach Portionsgröße – für schnell nachgepflegte Auswärts-Mahlzeiten. */
+/** Flat kcal by portion size – for quickly logged meals eaten out. */
 export const PORTION_KCAL = { klein: 350, mittel: 550, gross: 800, restaurant: 1000 };
 export function portionKcal(size) { return PORTION_KCAL[size] ?? PORTION_KCAL.mittel; }
