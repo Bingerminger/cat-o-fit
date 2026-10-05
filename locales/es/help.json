@@ -415,6 +415,444 @@
       "blocks": {
         "0": "Ideas de comidas ricas en proteínas con sugerencias de recetas, un balance de calorías de hoy, una lista de la compra automática con despensa (a partir del plan semanal de comidas) y la “Checklist” con recordatorios: rutinas diarias o citas con fecha/hora. Las citas también aparecen automáticamente en el calendario (vista semanal y mensual) y además se pueden exportar como .ics; también hay plantillas, como la preparación de una carrera. Se puede desactivar en Ajustes."
       }
+    },
+    "einstellungen": {
+      "q": "Ajustes",
+      "blocks": {
+        "0": "Perfil, zonas de frecuencia cardíaca, rangos de ritmo, tema y color de acento, módulos, valores visibles y “Datos y copia de seguridad” (copia personal para todos; copia completa de la familia y restauración para admins).",
+        "1": "Abrir"
+      }
+    },
+    "periodisierung": {
+      "q": "Las fases del entrenamiento (periodización)",
+      "blocks": {
+        "0": "Un buen plan se construye por fases: así cuidas tu cuerpo y, a la vez, ganas forma:",
+        "1": [
+          "Base: mucho volumen suave, base aeróbica.",
+          "Construcción: carreras a umbral, resistencia a la velocidad.",
+          "Pico: estímulos cortos y rápidos (VO₂max) y ritmo de carrera.",
+          "Puesta a punto: menos volumen sin perder agudeza, para llegar con frescura a la salida."
+        ]
+      }
+    },
+    "hf-zonen": {
+      "q": "Zonas de frecuencia cardíaca",
+      "blocks": {
+        "0": "Cat-O-Fit usa cinco zonas, calculadas a partir de tu frecuencia cardíaca máxima; si quieres, también con la frecuencia en reposo mediante la reserva de frecuencia cardíaca (Karvonen) o a partir de tu FC de umbral (“Umbral”), obtenida en una prueba de esfuerzo o en una prueba de campo de 30 minutos (FC media de los últimos 20 minutos), con zonas según Friel. Si no conoces tu FC máx., la app la estima en Ajustes a partir de tu edad (Tanaka: 208 − 0,7 × edad); un valor medido siempre es mejor.",
+        "1": [
+          "Z1 Recuperación: muy suave.",
+          "Z2 Resistencia de base: ritmo “de conversación”, aquí se construye la resistencia.",
+          "Z3 Ritmo constante: ágil, pero controlado.",
+          "Z4 Umbral: rápido, “cómodamente duro”.",
+          "Z5 VO₂max: muy duro, solo durante poco tiempo."
+        ],
+        "2": "Puedes ajustar la FC máx. y la frecuencia cardíaca en reposo en Ajustes: las zonas se recalculan."
+      }
+    },
+    "pace-bereiche": {
+      "q": "Rangos de ritmo (velocidad)",
+      "blocks": {
+        "0": "Cada tipo de sesión tiene un rango de ritmo en min/km, derivado de tu tiempo objetivo. Son una sugerencia, no una obligación: lo que cuenta es cómo te sientes ese día."
+      }
+    },
+    "rpe": {
+      "q": "RPE: ¿cuánto te costó?",
+      "aliases": "esfuerzo|esfuerzo percibido|percepción del esfuerzo|percepcion del esfuerzo|escala de Borg|Borg|cuánto te costó|cuanto te costo|qué tan duro|que tan duro|cómo de duro|como de duro",
+      "blocks": {
+        "0": "El RPE (1–10) es tu esfuerzo percibido, subjetivo. Complementa la frecuencia cardíaca y el ritmo, sobre todo en los días en que los números “se sienten distintos”.",
+        "1": [
+          "1–2 muy ligero a ligero: caminar, una vuelta a la calma suave.",
+          "3–4 suave a moderado: podrías charlar todo el rato.",
+          "5–6 algo duro a exigente: aún puedes hablar en frases cortas.",
+          "7–8 duro a muy duro: tempo, series, competir en distancias más largas.",
+          "9–10 extremadamente duro a máximo: solo se aguanta un momento, un sprint final."
+        ],
+        "2": "Multiplicado por la duración, el esfuerzo da tus puntos de carga (minutos × RPE)."
+      }
+    },
+    "trainingslast": {
+      "q": "Carga de entrenamiento y recuperación",
+      "blocks": {
+        "0": "Las estadísticas muestran tus kilómetros de carrera de los últimos 7 y 28 días: solo carreras; el ciclismo, caminar y la natación no cuentan ahí. Si la carga sube muy deprisa, planifica la recuperación a propósito. Cat-O-Fit no promete protección frente a lesiones: solo da orientaciones.",
+        "1": "La cifra “Puntos de carga · 7 días” calcula minutos × esfuerzo en todos los deportes, así que la fuerza, el fútbol, el ciclismo o un partido de entrenamiento también cuentan, no solo los km corridos. Si no hay duración registrada, cuenta la duración planificada, y solo después 30 minutos.",
+        "2": "El coach se adapta en ambas direcciones: si tus sesiones llevan semanas siendo muy duras, el panel de inicio te sugiere una semana más ligera (menos volumen; las citas fijas se quedan); si fueron más bien suaves y nada lo desaconseja, puedes subir un poco la semana que viene."
+      }
+    },
+    "vdot": {
+      "q": "Forma actual y ritmos objetivo (VDOT): cómo usarlos",
+      "blocks": {
+        "0": "En “Hoy”, la tarjeta “Forma actual” estima un VDOT (una cifra de forma y rendimiento según Jack Daniels) a partir de tus carreras recientes y deduce de ahí zonas de entrenamiento adecuadas. Justo encima está la tarjeta “Tus zonas de entrenamiento”, con los ritmos objetivo actuales del plan: así puedes compararlos directamente.",
+        "1": "Cómo leer la tarjeta:",
+        "2": [
+          "El chip de VDOT (p. ej. “VDOT 41,9”) es tu rendimiento actual estimado.",
+          "“suavizado sobre 7 semanas · último: 8,0 km en 38:00 el mié 1 jul” significa que la forma NO sale de una sola carrera, sino de un valor suavizado de tus últimas semanas: cada semana cuenta tu mejor sesión dura de carrera (una competición, un tempo, series o un esfuerzo de 7 o más), las semanas más recientes pesan más y los valores atípicos aislados se limitan. “último: …” indica tu sesión de calidad más reciente. Las carreras suaves subestiman tu forma: si solo corres suave, la tarjeta lo dice y no aconseja ritmos más lentos.",
+          "Así, la forma NO da un salto tras un solo día muy rápido (o muy lento): refleja tu tendencia estable.",
+          "Suave / Umbral / Series son los ritmos que corresponden a esta forma.",
+          "La línea de abajo compara forma y plan, p. ej. “Tu forma es unos 7 s/km más rápida que tus ritmos objetivo planificados: toca afinarlos.” Si coinciden, dice “encajan bien con tu forma actual”."
+        ],
+        "3": "Adáptalo con un toque:",
+        "4": [
+          "Toca “Ajustar las zonas de entrenamiento a tu forma”.",
+          "Cat-O-Fit aplica al instante los ritmos de tu forma a tus zonas de entrenamiento Y a todas las sesiones de carrera futuras y abiertas de tu plan: cada sesión recibe la zona de su tipo (tirada larga → tirada larga, umbral → umbral). Con un tiempo objetivo, el ritmo de carrera sigue siendo tu meta.",
+          "Después la tarjeta dice “encajan bien”: forma y plan vuelven a coincidir."
+        ],
+        "5": "Un día atípico aislado no mueve la forma: se suaviza a lo largo de varias semanas. No sustituye a una prueba de esfuerzo: si allí has determinado tu frecuencia cardíaca máxima, introdúcela en Ajustes."
+      }
+    },
+    "trinkpausen": {
+      "q": "Pausas para beber en la tirada larga",
+      "blocks": {
+        "0": "En las tiradas largas, el modo de entrenamiento muestra un recordatorio para beber a intervalos regulares (con sonido y, si es posible, vibración), para que no se te olvide beber en distancias largas. Consejo: mejor sorbos pequeños y a menudo que mucho de vez en cuando.",
+        "1": "El intervalo lo puedes fijar tú en cada sesión: en el cuadro de edición, en “Pausa para beber cada (min)”. Vacío = automático según el tipo, 0 = desactivado."
+      }
+    },
+    "coach": {
+      "q": "¿Qué me muestra el coach?",
+      "blocks": {
+        "0": "El coach te da exactamente una recomendación en “Hoy”{hi}, en un orden fijo para que dos tarjetas nunca se contradigan:",
+        "1": [
+          "Primero, las señales de aviso: una vuelta gradual tras una enfermedad o lesión, un día de recuperación cuando la carga es claramente mayor que la planificada, algo más suave hoy si la disposición es baja, más suave tras el fútbol si el partido fue intenso, una semana más ligera tras semanas de sesiones muy duras.",
+          "Después, tu plan: repartir el día (dos sesiones el mismo día), recuperar la sesión clave que te saltaste, equilibrar el volumen semanal (recuperar con suavidad los km de carrera que quedaron pendientes); nunca tras una enfermedad o lesión.",
+          "Al final, la progresión (“Aún tienes margen”): solo sin señal de aviso, con la carga en el rango habitual y no en los 14 días posteriores a un parón.",
+          "Debajo, información sin veredicto propio: disposición (HRV, frecuencia cardíaca en reposo, sueño), previsión de forma, frecuencia cardíaca en las carreras suaves, esfuerzo de las sesiones recientes (RPE medio)."
+        ],
+        "2": "“¿Por qué esta recomendación?”, bajo la tarjeta, muestra qué más habría encajado. Entrenar según el plan no es una señal de aviso, y el coach nunca toca las citas fijas. Los cambios en el plan solo se producen cuando tú los activas."
+      }
+    },
+    "belastung-form": {
+      "q": "Entender la carga y la forma (ACWR, forma y frescura)",
+      "blocks": {
+        "0": "La tarjeta “Carga y forma” de “Hoy” resume tu carga de entrenamiento en todos los deportes (carrera, fuerza, fútbol …), calculada como puntos de carga (AU): minutos × esfuerzo (RPE 1–10).",
+        "1": [
+          "Ratio de carga (ACWR): tus últimos 7 días en relación con la media de los 21 días anteriores (desacoplado: los días agudos no entran en su propio valor de referencia). 0,8–1,3 significa: cerca de tu media.",
+          "Forma / fatiga / frescura: la forma a largo plazo (CTL) menos la fatiga a corto plazo (ATL) da tu frescura (TSB), valorada en relación con la forma: fresco (por encima de +10 %), equilibrado, en entrenamiento (hasta −30 %), claramente cansado. Durante los tres primeros meses más o menos, la curva de forma aún se está asentando: hasta entonces no hay valoración.",
+          "Monotonía y tensión: solo aparece un aviso cuando los días de entrenamiento uniformes coinciden con una semana claramente por encima de tu media; la actividad muy ligera no cuenta."
+        ],
+        "2": "Límites de la métrica: los valores 0,8/1,3/1,5 proceden de datos observacionales del deporte de equipo. No está demostrado que entrenar según este semáforo evite lesiones: tómalo como una orientación de cuánto ha subido tu carga frente a tu propia media. Estos valores también alimentan el día de recuperación automático."
+      }
+    },
+    "belastungspunkte": {
+      "q": "Puntos de carga: minutos × esfuerzo",
+      "aliases": "sRPE|RPE de sesión|RPE de la sesión|session RPE|AU|unidades arbitrarias|carga de entrenamiento|puntos de carga|carga|Foster",
+      "blocks": {
+        "0": "Cat-O-Fit mide la carga de todos los deportes con un solo número: puntos de carga (AU) = duración en minutos × esfuerzo (RPE 1–10). El método se llama RPE de sesión (session RPE) y viene de Carl Foster.",
+        "1": [
+          "Ejemplo: 45 minutos suaves (RPE 4) dan 180 puntos; 60 minutos de series (RPE 8) dan 480 puntos.",
+          "Si falta la duración, la app la calcula a partir de la distancia (según el deporte), luego a partir de la duración planificada y, por último, usa 30 minutos.",
+          "Si falta el esfuerzo, la app lo estima a partir de tu frecuencia cardíaca media en relación con tu FC máx. (Ajustes → “Zonas de frecuencia cardíaca”); en series, tempo y competiciones, nunca por debajo del valor típico, porque los descansos bajan la media. Sin frecuencia cardíaca usa un valor típico para el tipo de sesión.",
+          "En los entrenamientos importados sin valoración de esfuerzo, “Hoy” pregunta brevemente (“¿Qué tan dura fue?”): tu propia sensación es más precisa que cualquier estimación."
+        ],
+        "2": "El ratio de carga (ACWR), la forma/fatiga/frescura y la monotonía salen todos de los puntos de carga: toda valoración de la carga tiene la misma fuente."
+      }
+    },
+    "monotonie": {
+      "q": "Monotonía y tensión",
+      "aliases": "tensión|tension|uniformidad|monotonía|monotonia|variedad|monotonía del entrenamiento|monotonia del entrenamiento|Foster",
+      "blocks": {
+        "0": "La monotonía describe lo uniformes que son tus días de entrenamiento: la media semanal de los puntos de carga dividida entre su variación (según Foster). La tensión es la carga semanal multiplicada por la monotonía.",
+        "1": [
+          "Solo aparece un aviso cuando coinciden ambas cosas: una monotonía de 2 o más Y una semana al menos un 10 % por encima de tu carga semanal habitual.",
+          "La actividad muy ligera (esfuerzo hasta 3, como caminar o la movilidad) no cuenta aquí."
+        ],
+        "2": "La variedad entre días duros y suaves reduce la monotonía: un día de descanso de verdad tiene más efecto que otra sesión suave."
+      }
+    },
+    "bereitschaft": {
+      "q": "Disposición: frecuencia cardíaca en reposo, HRV y sueño",
+      "aliases": "disposición|disposicion|preparación|preparacion|recuperación|recuperacion|HRV|variabilidad de la frecuencia cardíaca|variabilidad de la frecuencia cardiaca|frecuencia cardíaca en reposo|frecuencia cardiaca en reposo|pulso en reposo|FC en reposo|sueño|sueno|descansado|cansado",
+      "blocks": {
+        "0": "La disposición (0–100) compara tus datos de recuperación más recientes con tu propio rango normal: una frecuencia cardíaca en reposo por encima de tu media la baja, unas buenas siete horas de sueño o más ayudan, y menos de seis horas y media te restan. En la HRV no cuenta un solo día, sino la media de los últimos siete días comparada con las cuatro semanas anteriores: si queda por debajo, la disposición baja; una mala mañana no inclina la balanza.",
+        "1": [
+          "75 o más: alta · 55–74: sólida · 40–54: moderada · por debajo: baja.",
+          "La HRV cuenta a partir de tres mediciones en siete días y diez en cuatro semanas, y solo dentro de un mismo tipo de medición (SDNN o RMSSD).",
+          "Si las últimas mediciones tienen más de cuatro días, la app no muestra disposición."
+        ],
+        "2": "Cuando la disposición es baja, el coach te sugiere entrenar con más suavidad hoy: una recomendación, no un diagnóstico."
+      }
+    },
+    "feste-termine": {
+      "q": "Planificar en torno a compromisos fijos (fútbol y partidos)",
+      "blocks": {
+        "0": "Introduces una sola vez tus compromisos fijos recurrentes y el plan de entrenamiento se organiza en torno a ellos. Los planes nuevos no tienen compromisos por defecto; la app te pregunta por ellos al crear uno. Si el mismo compromiso está en dos planes, solo aparece una vez al día.",
+        "1": [
+          "Elige tus días de entrenamiento de fútbol (p. ej. lun y mié) e indica la duración y la intensidad (ligera/normal/intensa).",
+          "Añade partidos recurrentes con una fecha de inicio (p. ej. “desde el 19/08, todos los domingos, 2 h”): cuentan como carga dura.",
+          "En un día de partido, la sesión planificada se cae; la semana se planifica en torno a los compromisos fijos."
+        ],
+        "2": "El fútbol se parece al HIIT y gasta mucha energía: a partir de “normal”, un día de fútbol cuenta como día exigente (entra por completo en la carga y la forma). El plan nunca pone una sesión de calidad ni una tirada larga justo al lado de un compromiso exigente; si no hay un día tranquilo, la sesión de calidad pasa a ser “Suave con progresivos”. Si el partido fue intenso y después aún te espera una sesión dura, el coach te sugiere tomártela con más calma."
+      }
+    },
+    "erholungstag": {
+      "q": "Día de recuperación automático y planificación continua",
+      "blocks": {
+        "0": "Cat-O-Fit planifica de forma continua: en lugar de un bloque rígido, la semana que viene se adapta a lo que has hecho de verdad.",
+        "1": [
+          "Si tu carga está muy por encima de lo planificado, o se acumulan días duros que no estaban en el plan, el coach te sugiere un día de recuperación para la próxima sesión dura de los dos días siguientes. Entrenar según el plan no es una señal de aviso.",
+          "Si ese día caen dos sesiones (por ejemplo, de dos objetivos), todo el día se baja a suave, o mueves una a un día libre (repartir el día).",
+          "Si introduces el inicio de tu regla para hoy o mañana, la app te pregunta si quieres tomártelo con más calma: solo entonces se ajusta algo.",
+          "Cada ajuste automático aparece de forma transparente en el registro de “Últimos ajustes automáticos” y se puede deshacer mientras la sesión siga abierta."
+        ],
+        "2": "Nada cambia a tus espaldas: los ajustes son visibles y reversibles. “Hoy” solo muestra una recomendación; “¿Por qué esta recomendación?” muestra lo que se ha dejado de lado."
+      }
+    },
+    "wochen-check": {
+      "q": "Revisión de la semana: choques y prioridades",
+      "blocks": {
+        "0": "La revisión de la semana, en el plan, muestra cuándo se solapa demasiado en una semana y el orden en que Cat-O-Fit da prioridad.",
+        "1": [
+          "Primero, los compromisos fijos (fútbol/partidos).",
+          "Después, las carreras clave (tempo/series, tirada larga).",
+          "Luego, la fuerza y, por último, el volumen extra.",
+          "Vista previa (¿y si…?): antes de añadir o mover una sesión, la app te muestra el efecto en la carga semanal."
+        ]
+      }
+    },
+    "ziel-cockpit": {
+      "q": "Cockpit de objetivos: media maratón y adelgazar a la vez",
+      "blocks": {
+        "0": "¿Dos objetivos a la vez? El cockpit de objetivos reúne de un vistazo un objetivo de rendimiento (p. ej. una media maratón) y la pérdida de peso.",
+        "1": [
+          "El énfasis se mueve con la fase de entrenamiento: en la fase de base el déficit es mayor (unas 450 kcal), en la de construcción es menor (unas 300 kcal), en la de pico es pequeño y en la puesta a punto es cero: entonces se repone.",
+          "La recomendación de déficit va ligada a tu balance de calorías, con límites inferiores: nunca por debajo de tu metabolismo basal y nunca tan bajo que, tras el entrenamiento, queden menos de 30 kcal por kg de masa libre de grasa. Sin un valor de grasa corporal, el déficit se limita al 15 %.",
+          "Una comprobación honesta del estímulo te avisa si el estímulo de entrenamiento previsto es demasiado pequeño para progresar."
+        ],
+        "2": "Así adelgazas sin estropear las sesiones clave."
+      }
+    },
+    "gesundheitsziel": {
+      "q": "¿Cómo fijo un objetivo de salud?",
+      "links": {
+        "2": "Ir a Ajustes"
+      },
+      "blocks": {
+        "0": "Además de los objetivos semanales (minutos activos y días de entrenamiento), puedes fijar valores objetivo propios para los valores corporales.",
+        "1": [
+          "Ajustes → Objetivos de salud → “+ Objetivo”.",
+          "Elige una métrica (peso, grasa corporal, frecuencia cardíaca en reposo, HRV o VO₂max), introduce un valor objetivo y, si quieres, una fecha objetivo.",
+          "Tu valor actual se guarda como punto de partida; el progreso se cuenta desde ahí hacia el objetivo.",
+          "En “Hoy” aparece la tarjeta “Objetivos de salud” con una barra de progreso por cada objetivo."
+        ],
+        "2": "El progreso se actualiza con cada nuevo valor corporal (＋ Registrar → Valores corporales) o con la importación de Apple Health."
+      }
+    },
+    "momentum": {
+      "q": "¿Cómo funcionan los logros y el impulso?",
+      "blocks": {
+        "0": "Desbloqueas logros por entrenamientos completados y objetivos alcanzados, automáticamente y con una pequeña celebración.",
+        "1": "El impulso es tu “llama de motivación”: crece cuando sigues adelante y baja con suavidad cuando hay huecos. Está pensado como un empujón, nunca como un castigo.",
+        "2": [
+          "Las rachas se cuentan en semanas: una semana natural con al menos tres días de entrenamiento continúa la racha; los días de descanso forman parte de ella.",
+          "El impulso sube con hasta cinco días de entrenamiento por semana; más no aporta impulso extra.",
+          "¿Enfermedad o lesión? Registra la ausencia con un motivo: el impulso se pausa y la racha no se rompe."
+        ],
+        "3": "Ir a Logros e impulso"
+      }
+    },
+    "vorlieben": {
+      "q": "¿Cómo aprende Cat-O-Fit mis preferencias?",
+      "blocks": {
+        "0": "En Nutrición marcas tus platos favoritos con ♥ y tocas “Cocinado” después de cocinar. Con eso, Cat-O-Fit aprende qué etiquetas (p. ej. rico en proteínas, vegetariano) prefieres y te sugiere platos acordes en “Recomendado para ti”.",
+        "1": "La checklist diaria también recuerda lo que usas a menudo y lo ofrece como adición rápida."
+      }
+    },
+    "kalorienbilanz": {
+      "q": "¿Cómo funciona el balance de calorías?",
+      "blocks": {
+        "0": "Arriba del todo de Nutrición ves tu balance diario: la energía que gastas frente a la que ingieres.",
+        "1": [
+          "Gasto = metabolismo basal (según estatura, peso, año de nacimiento y sexo) + actividad cotidiana + el entrenamiento de hoy.",
+          "Ingesta = las entradas de tu diario de comidas de hoy. “Cocinado” y “Registrar lo que has comido” escriben en él; “Lo que has comido hoy” las lista (cada una se puede eliminar por separado).",
+          "El objetivo diario se basa en tu peso objetivo (perder/mantener/ganar) y se calcula con la media semanal de tu báscula, no con una sola medición. Estar a menos de 0,5 kg del objetivo cuenta como “mantener”; si bajas por debajo de un objetivo de pérdida de peso, recibes “mantener”, nunca “ganar” de forma automática.",
+          "Al perder peso, el objetivo diario se mantiene por encima de tu metabolismo basal y de tus necesidades de entrenamiento. Si tu peso objetivo queda por debajo de un IMC de 18,5, la app no calcula ningún déficit.",
+          "Cuando hayas registrado todo el día, toca “Marcar día como completo” bajo “Lo que has comido hoy”: solo esos días cuentan para la disponibilidad energética en el módulo de análisis."
+        ],
+        "2": "Al crear una comida, el botón “estimar” calcula a grandes rasgos las kcal a partir de los ingredientes. Todo es orientativo, no un consejo dietético.",
+        "3": "Para el balance necesitas estatura, peso y año de nacimiento en tu perfil; el sexo hace más preciso el metabolismo basal."
+      }
+    },
+    "eignung": {
+      "q": "Alcance y límites, perfil infantil y juvenil y “Ocultar las cifras de calorías”",
+      "blocks": {
+        "0": "Cat-O-Fit sirve para documentar y para información general de adultos sanos: no es un producto sanitario. Una breve comprobación de alcance (Ajustes → Salud e idoneidad) se aplica a toda la app:",
+        "1": [
+          "Enfermedad o medicación: análisis y suplementos solo como documentación, sin recomendaciones.",
+          "Embarazo, lactancia o trastorno de la conducta alimentaria: además, sin objetivos de pérdida de peso ni de déficit y sin programa para adelgazar.",
+          "Menores de 18 años (según el año de nacimiento): perfil infantil y juvenil, sin objetivos de calorías ni de peso, sin programa para adelgazar, sin suplementos de rendimiento, con los valores de análisis solo documentados y las cifras de calorías ocultas.",
+          "“Ocultar las cifras de calorías” oculta las cifras de kcal en Nutrición, en “Hoy” y en la disponibilidad energética, para quien no se siente a gusto con los números en torno a la comida."
+        ],
+        "2": "Mientras no se haya respondido la comprobación de alcance, la app no sugiere ningún déficit para adelgazar. Las preguntas no vienen rellenadas a propósito.",
+        "3": "Abrir Ajustes"
+      }
+    },
+    "einkaufsliste": {
+      "q": "¿Cómo funciona la lista de la compra?",
+      "blocks": {
+        "0": "La lista de la compra es compartida y se construye automáticamente a partir de los planes de comidas de todos los miembros:",
+        "1": [
+          "Cada miembro planifica en Nutrición los platos de la semana, con sus raciones (icono de la cesta).",
+          "Cat-O-Fit reúne todos los platos planificados, suma los ingredientes (p. ej. la avena de varias personas en una sola cantidad) y resta la despensa compartida: la lista muestra exactamente lo que necesitas.",
+          "Cuando hagas la compra, toca “Todo comprado → añadir a la despensa”: las cantidades pasan a la despensa compartida. “Cocinado” las descuenta de nuevo."
+        ],
+        "2": "El día de la compra vale para todos y lo fijan los admins en la gestión del equipo/familia (por defecto, el martes).",
+        "3": "Ir a la lista de la compra"
+      }
+    },
+    "wetter": {
+      "q": "¿Cómo uso el tiempo meteorológico en el plan?",
+      "blocks": {
+        "0": [
+          "Abre Ajustes → “Ubicación y tiempo” y busca tu ciudad.",
+          "En el calendario aparecen pequeños iconos del tiempo con la temperatura para los próximos días.",
+          "Con calor, lluvia o tormenta, la sesión afectada muestra una nota adecuada."
+        ],
+        "1": "Los datos meteorológicos vienen de Open-Meteo. Sin internet se quedan los últimos datos cargados y la app sigue funcionando con normalidad."
+      }
+    },
+    "zyklus": {
+      "q": "¿Para qué sirve el calendario del ciclo?",
+      "blocks": {
+        "0": "Registra el inicio de tu regla (“＋ Registrar” → “Menstruación”, o en la página del ciclo). Con eso, Cat-O-Fit calcula la duración de tu ciclo, la fase actual (menstruación/fase folicular/ovulación/fase lútea) y la previsión de tu próxima regla. Si no necesitas el ciclo, desactiva el módulo en Ajustes → Módulos.",
+        "1": "En tus días de menstruación, las sesiones están “protegidas”: puedes moverlas u omitirlas sin que nadie te juzgue; no cuentan como omitidas y no reducen ni el cumplimiento del plan ni el impulso. Los consejos por fase son neutros a propósito: la investigación sobre las diferencias de rendimiento a lo largo del ciclo es débil, y lo que cuenta es cómo te sientes.",
+        "2": "Con anticoncepción hormonal (la píldora, el DIU hormonal, el implante …) no hay fases naturales: con el interruptor de la página del ciclo, Cat-O-Fit solo muestra tus días de sangrado. Si pasan unos tres meses sin ninguna entrada nueva, la previsión se pausa.",
+        "3": "Los datos sensibles se quedan en local, en tu propio servidor; el módulo se puede desactivar en cualquier momento.",
+        "4": "Ir al calendario del ciclo"
+      }
+    },
+    "offline": {
+      "q": "¿Funciona la app sin conexión?",
+      "blocks": {
+        "0": "Sí. Cat-O-Fit guarda cada cambio al instante en local y sincroniza en segundo plano en cuanto vuelve a haber conexión: ideal para entrenar fuera de casa."
+      }
+    },
+    "datenschutz": {
+      "q": "¿Están seguros mis datos? ¿Qué se guarda y dónde?",
+      "aliases": "privacidad|protección de datos|proteccion de datos|RGPD|GDPR|seguridad|privado|servidor|nube|seguimiento|rastreo|Open Food Facts|Open-Meteo",
+      "blocks": {
+        "0": [
+          "En tu dispositivo: una copia de tus datos para que la app funcione sin conexión. Con “Dispositivo compartido” (Ajustes → Cuenta), al cerrar sesión se borra.",
+          "En tu servidor: todos los datos de todas las personas, como archivos en la carpeta “data”; eso es también la copia de seguridad completa.",
+          "Hacia fuera: solo la consulta del tiempo y, si está activada, la búsqueda nutricional (ver abajo). Sin cuenta, sin anuncios, sin seguimiento."
+        ],
+        "1": "Tus datos viven como archivos en tu propio servidor o NAS, no en la nube de otra empresa. El servidor solo entrega el ciclo, los análisis y los suplementos tras iniciar sesión con tu PIN, ni siquiera a los admins. Todos los demás datos (entrenamiento, planes, valores corporales) los puede leer cualquier dispositivo que alcance tu servidor; por eso la app debe estar en tu propia red doméstica (desde fuera, solo con un inicio de sesión delante). Quien gestiona el servidor puede leer todos los archivos.",
+        "2": "Solo llegan al exterior dos servicios adicionales, que se pueden desactivar: la consulta del tiempo a Open-Meteo (desde el dispositivo, con el lugar o las coordenadas) y, si está activada, la búsqueda nutricional en Open Food Facts (desde el servidor, solo con el nombre del ingrediente).",
+        "3": "En Ajustes → “Datos y copia de seguridad” puedes exportar tu copia personal en cualquier momento (incluidos ciclo, análisis y suplementos). Los admins pueden además hacer una copia completa de la familia con todos los miembros y restaurarla en caso de emergencia; por privacidad, sin las áreas privadas."
+      }
+    },
+    "familie": {
+      "q": "¿Pueden usar Cat-O-Fit varias personas?",
+      "blocks": {
+        "0": "¡Sí! Cat-O-Fit es para todo tu equipo o tu familia (hasta 32 personas). Al arrancar aparece el inicio de sesión: toca tu tarjeta e introduce tu PIN.",
+        "1": "Cada miembro tiene sus propios planes, entrenamientos, valores corporales y ajustes.",
+        "2": "Los admins gestionan el equipo o la familia (Más → “Gestionar equipo”: añadir miembros, roles, equipos, día de la compra) y pueden “Abrir” a un miembro, p. ej. para planificar por un menor o por el equipo; entonces arriba de la pantalla pone “Estás gestionando a …” con “Volver a mí”. El ciclo, los análisis y los suplementos siguen siendo siempre privados. Añadir miembros, cambiar roles y eliminarlos solo funciona con conexión al servidor.",
+        "3": "En Ajustes → Visibilidad en el panel del equipo/familia decides si se muestran tu objetivo principal y tus cifras; los objetivos ocultos aparecen en el panel como “🔒 privado”.",
+        "4": "Las personas recién añadidas empiezan con el PIN “0000”; hasta que fijen el suyo en Ajustes → Cuenta (con el PIN anterior), “Hoy” se lo recuerda. ¿Has olvidado tu PIN? Un admin abre al miembro y fija uno nuevo en Ajustes → Cuenta. Si la única persona admin ha olvidado su PIN, la única ayuda es trabajar en el propio servidor (ver Solución de problemas).",
+        "5": "Ir al panel del equipo/familia"
+      }
+    },
+    "teams": {
+      "q": "Formar equipos, asignar miembros y valorar por equipo",
+      "blocks": {
+        "0": "Además de toda la familia, como admin puedes formar equipos, p. ej. “Equipo Rojo”, “Equipo Azul”, “Equipo Verde”. Un miembro puede estar en VARIOS equipos a la vez, y algunos se quedan sin ningún equipo.",
+        "1": "Los equipos se crean en Más → “Gestionar equipo”: “Crear equipo”, elige un nombre y un icono y asigna a los miembros con marcas. Para cambiar de equipo, basta con mover las marcas: así quitas a una persona de un equipo y la pones en otro (o, además, en un segundo).",
+        "2": "En el panel del equipo/familia cambias arriba entre “Todo”, los equipos individuales y “Sin equipo”. Todas las cifras (kilómetros semanales, km del mes e hito, “Activos esta semana” y los logros del equipo) se suman entonces exactamente para los miembros del equipo elegido.",
+        "3": "Un miembro en dos equipos cuenta en ambos: práctico si alguien está, por ejemplo, en el grupo de carrera Y en el equipo de fútbol.",
+        "4": "Si se elimina a un miembro, desaparece automáticamente de todos los equipos: no quedan “fantasmas”.",
+        "5": "Gestionar equipos"
+      }
+    },
+    "erinnerungen-zuverlaessig": {
+      "q": "¿Son fiables los recordatorios?",
+      "blocks": {
+        "0": "Los avisos dentro de la app solo funcionan mientras la app está abierta. Para recordatorios fiables, exporta la sesión al calendario de iOS (.ics): el recordatorio que lleva también funciona con la app cerrada."
+      }
+    },
+    "kalender-abo": {
+      "q": "Suscribirte al plan en tu calendario",
+      "aliases": "suscripción|suscripcion|suscribir|suscribirse|suscribirme|calendario de suscripción|calendario de suscripcion|feed del calendario|webcal|ics|iCal|Outlook|Google Calendar",
+      "blocks": {
+        "0": "En lugar de abrir archivos .ics sueltos, tu calendario puede suscribirse a un plan entero: todas las sesiones y la carrera. Después recoge los cambios por sí mismo. A lo que te suscribes es siempre a un plan, no al calendario de la app.",
+        "1": [
+          "Más → “Objetivos y planes” → abre una carrera o un programa → toca el icono de descarga “Exportar” arriba; o, en el plan, “…” → “Añadir al calendario (.ics)”.",
+          "En la ventana “Exportar al calendario”, toca “Copiar enlace de suscripción”. El botón solo aparece con conexión al servidor y tras iniciar sesión con tu PIN.",
+          "Pega el enlace en tu calendario como suscripción:"
+        ],
+        "2": "iPhone/iPad: app Calendario → “Calendarios” → “Añadir calendario” → “Añadir calendario de suscripción”.",
+        "3": "Mac: Calendario → Archivo → “Nueva suscripción a calendario”.",
+        "4": "Google: en un navegador de ordenador, haz clic en + junto a “Otros calendarios” → “Desde URL” (no es posible en la app de Google).",
+        "5": "Outlook: “Añadir calendario” → “Suscribirse desde la web”.",
+        "6": "¿Tu servidor solo es accesible desde tu red doméstica? iCloud, Google y Outlook recogen las suscripciones por internet: no pueden suscribirse a un servidor al que no llegan. En ese caso, configura la suscripción directamente en el dispositivo: en el iPhone, en Ajustes de iOS → Apps → Calendario → Cuentas de calendario → Añadir cuenta → Otra → “Añadir calendario suscrito”; en el Mac, con “Ubicación: En mi Mac”. Si hay un inicio de sesión delante (Basic Auth), en el iPhone introduces ahí el nombre de usuario y la contraseña; Google y Outlook no pueden hacerlo.",
+        "7": "El enlace apunta al servidor desde el que lo copias y contiene tu clave de calendario personal: cada persona tiene la suya. Quien conozca el enlace puede leer las citas: compártelo solo con personas que puedan ver tu plan.",
+        "8": "Los calendarios consultan las suscripciones a su propio ritmo; en Outlook un cambio puede tardar más de 24 horas, según Microsoft. Los enlaces de versiones anteriores a la 3.20.0 (sin clave) siguen siendo válidos hasta el 30 de noviembre de 2026; después, vuelve a configurar la suscripción una vez.",
+        "9": "Ir a Objetivos y planes"
+      }
+    },
+    "module": {
+      "q": "Activar y desactivar módulos",
+      "aliases": "módulo|modulo|módulos|modulos|ocultar|desactivar|desconectar|apagar|activar|encender",
+      "blocks": {
+        "0": "En Ajustes → Módulos ocultas las áreas que no necesitas. Al principio todos los módulos están activados. Cuando uno se desactiva, desaparecen su elemento de menú y su entrada en “＋ Registrar”; tus datos se conservan.",
+        "1": [
+          "Nutrición: recetas, plan de comidas, diario de comidas y balance de calorías.",
+          "Lista de la compra: lista de la compra compartida y despensa.",
+          "Checklist diaria: checklist y recordatorios, incluidas sus fechas en el calendario.",
+          "Calendario del ciclo: ciclo, fases en el calendario y la pregunta sobre el primer día de la regla.",
+          "Análisis y suplementos: valores de análisis, disponibilidad energética y suplementos, incluidas las notas sobre ellos en Nutrición."
+        ],
+        "2": "Los interruptores valen para cada persona. Cuando gestionas a un miembro, el ciclo y los análisis quedan ocultos de todos modos, porque son privados.",
+        "3": "Abrir Ajustes"
+      }
+    },
+    "backup": {
+      "q": "Copia de seguridad de los datos: tres niveles",
+      "aliases": "copia de seguridad|backup|respaldo|copia completa|restaurar|mi copia|exportar|3-2-1|Hyper Backup|Synology",
+      "blocks": {
+        "0": [
+          "La carpeta “data” del servidor es la copia de seguridad completa: todas las personas, incluidos ciclo, análisis y suplementos. Debe ir en la copia de seguridad habitual del servidor (p. ej. Hyper Backup en la Synology).",
+          "Copia de seguridad completa de la familia (solo admins, Ajustes → Datos y copia de seguridad): todos los miembros, roles, equipos, informes y datos de entrenamiento, sin las áreas privadas.",
+          "Mi copia de seguridad (todos): tus propios datos, incluidos ciclo, análisis y suplementos. En iPhone y iPad, mediante el menú Compartir (“Guardar en Archivos”)."
+        ],
+        "1": "La regla 3-2-1, probada y comprobada: tres copias, en dos medios distintos, una de ellas fuera de casa. La copia completa no sustituye a la copia de la carpeta del servidor; si no, al perder el servidor faltarían las áreas privadas de todas las personas sin copia propia.",
+        "2": "Ir a “Datos y copia de seguridad”"
+      }
+    },
+    "fehlersuche": {
+      "q": "¿Algo no funciona? Solución de problemas",
+      "aliases": "problema|error|no funciona|actualización|actualizacion|actualizar|olvidé el PIN|olvide el PIN|PIN olvidado|caché|cache|sin conexión|sin conexion|pantalla en blanco|página en blanco|pagina en blanco|sincronizar|sincronización|sincronizacion",
+      "blocks": {
+        "0": [
+          "La versión nueva no aparece: cierra la app por completo (iPhone: desliza hacia arriba desde el borde inferior y quítala) y ábrela de nuevo. La app busca actualizaciones al abrirse y al volver a primer plano.",
+          "El estado se queda en “Sin conexión”: ¿se llega al servidor desde tu red doméstica (Wi-Fi, VPN)? Los cambios se quedan en el dispositivo y salen solos en cuanto el servidor responde: no se pierde nada. “Sincronizar ahora” en Ajustes → Datos y copia de seguridad lo lanza a mano.",
+          "“Confirma tu PIN”: el inicio de sesión en el servidor ha caducado o hace falta de nuevo tras una actualización. Con tu PIN se vuelven a sincronizar el ciclo, los análisis y los suplementos; “Más tarde” lo aplaza hasta la próxima vez que abras la app.",
+          "PIN olvidado: un admin abre al miembro y fija un nuevo PIN en Ajustes → Cuenta. Para la única persona admin hay una herramienta para el funcionamiento del servidor (documentación “Solución de problemas”).",
+          "“The app could not start” (el mensaje sale en inglés): normalmente el servidor no entrega un archivo, o lo entrega con un tipo de archivo incorrecto (por ejemplo, tras una actualización incompleta). El mensaje nombra el archivo afectado; la documentación de operación explica las causas.",
+          "La importación de salud da un error: 401 significa clave incorrecta, 403 falta de clave; vuelve a copiar la clave en Importación de salud."
+        ]
+      }
+    },
+    "glossar": {
+      "q": "Términos de la A a la Z",
+      "aliases": "glosario|términos|terminos|ACWR|CTL|ATL|TSB|AU|sRPE|RPE|VDOT|HRV|RMSSD|SDNN|FFM|RED-S|masa libre de grasa|disponibilidad energética|puesta a punto|tirada larga|impulso|momentum|Z1|Z5|planificado frente a real|RCV",
+      "blocks": {
+        "0": [
+          "ACWR (ratio de carga): carga de los últimos 7 días en relación con la media de los 21 días anteriores.",
+          "Disponibilidad energética (RED-S): lo que queda de la energía que comes después de entrenar, por kg de masa libre de grasa.",
+          "Disposición: puntuación diaria a partir de la frecuencia cardíaca en reposo, la HRV y el sueño, comparada con tus últimas dos semanas.",
+          "Forma, fatiga, frescura (CTL, ATL, TSB): carga a largo y a corto plazo y la diferencia entre ambas.",
+          "HRV: variabilidad de la frecuencia cardíaca; se mide como SDNN (Apple) o RMSSD (muchos relojes); no son comparables entre sí.",
+          "Impulso: tu dinámica de entrenamiento de las últimas semanas; se pausa en caso de enfermedad.",
+          "Logros: premios por entrenar y por alcanzar objetivos (Progreso → Logros).",
+          "Masa libre de grasa (FFM, masa corporal magra): el peso corporal sin grasa; medida o calculada a partir del valor de grasa corporal.",
+          "Objetivo: una carrera o un programa de entrenamiento; cada uno con su propio plan.",
+          "Planificado frente a real: comparación del plan con el entrenamiento que has hecho de verdad.",
+          "Puesta a punto: las semanas previas a una carrera con menos volumen, para llegar con frescura a la salida.",
+          "Puntos de carga (AU, sRPE): minutos × esfuerzo; la unidad común detrás de toda valoración de la carga.",
+          "RPE (esfuerzo): lo duro que fue una sesión, de 1 (muy ligera) a 10 (máxima).",
+          "Sesión: un entrenamiento planificado en el plan; entrenamiento: lo que has hecho de verdad.",
+          "Tirada larga: la carrera larga y suave de la semana.",
+          "VDOT: valor de forma según Jack Daniels; de él salen la previsión y los ritmos de entrenamiento.",
+          "Zonas de FC (Z1–Z5): rangos de frecuencia cardíaca, de la recuperación al VO₂max."
+        ]
+      }
     }
   },
   "labBest": "la mejor opción"
