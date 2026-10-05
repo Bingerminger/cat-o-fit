@@ -1,1 +1,418 @@
-{}
+{
+  "overnight-oats-mit-beeren": {
+    "title": "Overnight oats aux fruits rouges",
+    "ingredients": [
+      "60 g flocons d’avoine",
+      "150 g skyr",
+      "150 ml lait",
+      "100 g fruits rouges",
+      "1 c. à s. miel"
+    ]
+  },
+  "ruehrei-mit-vollkornbrot-avocado": {
+    "title": "Œufs brouillés, pain complet et avocat",
+    "ingredients": [
+      "3 œufs",
+      "2 tranches pain complet",
+      "1/2 avocat",
+      "épinards"
+    ]
+  },
+  "protein-porridge-mit-banane": {
+    "title": "Porridge protéiné à la banane",
+    "ingredients": [
+      "60 g flocons d’avoine",
+      "30 g poudre de protéines",
+      "250 ml lait",
+      "1 banane"
+    ]
+  },
+  "quark-mit-nuessen-apfel": {
+    "title": "Fromage blanc aux noix et à la pomme",
+    "ingredients": [
+      "250 g fromage blanc maigre",
+      "20 g noix",
+      "1 pomme",
+      "1 c. à c. miel"
+    ]
+  },
+  "vollkorn-pancakes-mit-quark": {
+    "title": "Pancakes complets au fromage blanc",
+    "ingredients": [
+      "60 g flocons d’avoine",
+      "2 œufs",
+      "150 g fromage blanc maigre",
+      "1 banane",
+      "1 c. à c. levure chimique"
+    ]
+  },
+  "chia-pudding-mit-mango": {
+    "title": "Pudding de chia à la mangue",
+    "ingredients": [
+      "30 g graines de chia",
+      "200 ml lait d’avoine",
+      "100 g mangue",
+      "1 c. à c. sirop d’agave"
+    ]
+  },
+  "bircher-muesli": {
+    "title": "Birchermüesli",
+    "ingredients": [
+      "50 g flocons d’avoine",
+      "150 g yaourt",
+      "1 pomme",
+      "20 g amandes",
+      "100 ml lait"
+    ]
+  },
+  "avocado-brot-mit-ei": {
+    "title": "Toast à l’avocat et à l’œuf",
+    "ingredients": [
+      "2 tranches pain complet",
+      "1/2 avocat",
+      "2 œufs"
+    ]
+  },
+  "griessbrei-mit-beeren": {
+    "title": "Semoule au lait et fruits rouges",
+    "ingredients": [
+      "50 g semoule",
+      "300 ml lait",
+      "100 g fruits rouges",
+      "1 c. à c. miel"
+    ]
+  },
+  "skyr-bowl-mit-granola": {
+    "title": "Bowl de skyr au granola",
+    "ingredients": [
+      "200 g skyr",
+      "40 g granola",
+      "1 banane",
+      "10 g noix"
+    ]
+  },
+  "tofu-ruehrei-mit-brot": {
+    "title": "Tofu brouillé et pain",
+    "ingredients": [
+      "200 g tofu",
+      "2 tranches pain complet",
+      "1 tomate"
+    ]
+  },
+  "erdnussbutter-toast-mit-banane": {
+    "title": "Toast au beurre de cacahuète et à la banane",
+    "ingredients": [
+      "2 tranches pain complet",
+      "20 g beurre de cacahuète",
+      "1 banane"
+    ]
+  },
+  "haehnchen-reis-bowl-mit-brokkoli": {
+    "title": "Bowl de poulet, riz et brocoli",
+    "ingredients": [
+      "150 g poulet",
+      "80 g riz",
+      "200 g brocoli",
+      "1 c. à s. huile"
+    ]
+  },
+  "lachs-mit-suesskartoffel-spinat": {
+    "title": "Saumon, patate douce et épinards",
+    "ingredients": [
+      "150 g saumon",
+      "250 g patate douce",
+      "épinards",
+      "1 c. à s. huile"
+    ]
+  },
+  "linsen-dal-mit-reis": {
+    "title": "Dal de lentilles au riz",
+    "ingredients": [
+      "120 g lentilles",
+      "80 g riz",
+      "1 oignon",
+      "200 g tomates"
+    ]
+  },
+  "pute-quinoa-pfanne": {
+    "title": "Poêlée de dinde et quinoa",
+    "ingredients": [
+      "150 g dinde",
+      "80 g quinoa",
+      "1 poivron",
+      "1 courgette"
+    ]
+  },
+  "rindergeschnetzeltes-mit-reis": {
+    "title": "Émincé de bœuf au riz",
+    "ingredients": [
+      "150 g bœuf",
+      "80 g riz",
+      "1 poivron",
+      "1 oignon"
+    ]
+  },
+  "kichererbsen-bowl-mit-quinoa": {
+    "title": "Bowl de pois chiches et quinoa",
+    "ingredients": [
+      "150 g pois chiches",
+      "80 g quinoa",
+      "100 g brocoli",
+      "1 carotte"
+    ]
+  },
+  "vollkorn-spaghetti-bolognese": {
+    "title": "Spaghettis complets à la bolognaise",
+    "ingredients": [
+      "100 g pâtes complètes",
+      "150 g viande hachée",
+      "200 g tomates",
+      "1 oignon"
+    ]
+  },
+  "gefuellte-suesskartoffel-mit-huettenkaese": {
+    "title": "Patate douce farcie au cottage cheese",
+    "ingredients": [
+      "250 g patate douce",
+      "150 g cottage cheese",
+      "100 g épinards"
+    ]
+  },
+  "couscous-salat-mit-feta": {
+    "title": "Salade de couscous à la feta",
+    "ingredients": [
+      "80 g couscous",
+      "50 g feta",
+      "1 poivron",
+      "1 concombre",
+      "1 c. à s. huile"
+    ]
+  },
+  "haehnchen-wrap-mit-gemuese": {
+    "title": "Wrap au poulet et aux légumes",
+    "ingredients": [
+      "1 wrap",
+      "150 g poulet",
+      "salade",
+      "1 tomate",
+      "50 g yaourt"
+    ]
+  },
+  "kabeljau-mit-kartoffeln-brokkoli": {
+    "title": "Cabillaud, pommes de terre et brocoli",
+    "ingredients": [
+      "180 g cabillaud",
+      "250 g pommes de terre",
+      "150 g brocoli",
+      "1 c. à s. huile"
+    ]
+  },
+  "gemuesecurry-mit-kichererbsen": {
+    "title": "Curry de légumes aux pois chiches",
+    "ingredients": [
+      "150 g pois chiches",
+      "80 g riz",
+      "200 ml lait de coco",
+      "1 poivron"
+    ]
+  },
+  "magerquark-mit-gemuesesticks": {
+    "title": "Fromage blanc maigre et bâtonnets de légumes",
+    "ingredients": [
+      "250 g fromage blanc maigre",
+      "1 poivron",
+      "1 concombre"
+    ]
+  },
+  "omelett-mit-feta-tomaten": {
+    "title": "Omelette à la feta et aux tomates",
+    "ingredients": [
+      "3 œufs",
+      "50 g feta",
+      "200 g tomates",
+      "épinards"
+    ]
+  },
+  "thunfisch-vollkornwrap": {
+    "title": "Wrap complet au thon",
+    "ingredients": [
+      "1 wrap",
+      "150 g thon",
+      "salade",
+      "50 g yaourt"
+    ]
+  },
+  "ofengemuese-mit-haehnchen": {
+    "title": "Légumes rôtis au poulet",
+    "ingredients": [
+      "150 g poulet",
+      "1 courgette",
+      "1 poivron",
+      "1 patate douce",
+      "1 c. à s. huile"
+    ]
+  },
+  "gebratener-tofu-mit-gemuese": {
+    "title": "Tofu sauté aux légumes",
+    "ingredients": [
+      "200 g tofu",
+      "1 poivron",
+      "100 g brocoli",
+      "1 c. à s. sauce soja"
+    ]
+  },
+  "haehnchensalat-mit-avocado": {
+    "title": "Salade de poulet à l’avocat",
+    "ingredients": [
+      "150 g poulet",
+      "1/2 avocat",
+      "salade",
+      "1 tomate",
+      "1 c. à s. huile"
+    ]
+  },
+  "linsensuppe": {
+    "title": "Soupe de lentilles",
+    "ingredients": [
+      "200 g lentilles",
+      "1 carotte",
+      "1 oignon",
+      "1 pomme de terre"
+    ]
+  },
+  "caprese-mit-mozzarella": {
+    "title": "Salade caprese à la mozzarella",
+    "ingredients": [
+      "125 g mozzarella",
+      "200 g tomates",
+      "basilic",
+      "1 c. à s. huile"
+    ]
+  },
+  "garnelen-zucchini-pfanne": {
+    "title": "Poêlée de crevettes et courgette",
+    "ingredients": [
+      "150 g crevettes",
+      "1 courgette",
+      "1 gousse ail",
+      "1 c. à s. huile"
+    ]
+  },
+  "putenbrust-mit-ofengemuese": {
+    "title": "Blanc de dinde et légumes rôtis",
+    "ingredients": [
+      "150 g dinde",
+      "1 courgette",
+      "1 poivron",
+      "100 g champignons",
+      "1 c. à s. huile"
+    ]
+  },
+  "vollkorn-pizza-mit-gemuese": {
+    "title": "Pizza complète aux légumes",
+    "ingredients": [
+      "1/2 pâte à pizza",
+      "100 g tomates",
+      "80 g mozzarella",
+      "1 poivron"
+    ]
+  },
+  "joghurt-bowl-mit-gurke-fladenbrot": {
+    "title": "Bowl de yaourt, concombre et pain pita",
+    "ingredients": [
+      "200 g yaourt",
+      "1 concombre",
+      "1 gousse ail",
+      "1/2 pain pita"
+    ]
+  },
+  "skyr-mit-beeren": {
+    "title": "Skyr aux fruits rouges",
+    "ingredients": [
+      "150 g skyr",
+      "100 g fruits rouges"
+    ]
+  },
+  "handvoll-mandeln-apfel": {
+    "title": "Une poignée d’amandes et une pomme",
+    "ingredients": [
+      "30 g amandes",
+      "1 pomme"
+    ]
+  },
+  "protein-shake-mit-banane": {
+    "title": "Shake protéiné à la banane",
+    "ingredients": [
+      "30 g poudre de protéines",
+      "250 ml lait",
+      "1 banane"
+    ]
+  },
+  "huettenkaese-auf-knaeckebrot": {
+    "title": "Cottage cheese sur pain suédois",
+    "ingredients": [
+      "150 g cottage cheese",
+      "2 tranches pain suédois"
+    ]
+  },
+  "energy-balls": {
+    "title": "Energy balls",
+    "ingredients": [
+      "40 g dattes",
+      "30 g flocons d’avoine",
+      "15 g amandes",
+      "1 c. à c. cacao"
+    ]
+  },
+  "gemuesesticks-mit-hummus": {
+    "title": "Bâtonnets de légumes et houmous",
+    "ingredients": [
+      "100 g houmous",
+      "1 carotte",
+      "1 poivron"
+    ]
+  },
+  "reiswaffeln-mit-frischkaese": {
+    "title": "Galettes de riz au fromage à tartiner",
+    "ingredients": [
+      "2 galettes de riz",
+      "50 g fromage à tartiner"
+    ]
+  },
+  "beeren-quark": {
+    "title": "Fromage blanc aux fruits rouges",
+    "ingredients": [
+      "200 g fromage blanc maigre",
+      "100 g fruits rouges"
+    ]
+  },
+  "studentenfutter": {
+    "title": "Mélange de noix et de raisins secs",
+    "ingredients": [
+      "25 g amandes",
+      "15 g noix de cajou",
+      "20 g raisins secs"
+    ]
+  },
+  "banane-mit-erdnussbutter": {
+    "title": "Banane au beurre de cacahuète",
+    "ingredients": [
+      "1 banane",
+      "20 g beurre de cacahuète"
+    ]
+  },
+  "edamame-mit-meersalz": {
+    "title": "Edamame au sel de mer",
+    "ingredients": [
+      "150 g edamame",
+      "1 pincée sel de mer"
+    ]
+  },
+  "huettenkaese-mit-ananas": {
+    "title": "Cottage cheese à l’ananas",
+    "ingredients": [
+      "150 g cottage cheese",
+      "100 g ananas"
+    ]
+  }
+}

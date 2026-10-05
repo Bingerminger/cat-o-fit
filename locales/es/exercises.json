@@ -1,1 +1,2879 @@
-{}
+{
+  "squat": {
+    "muscles": [
+      "muslos",
+      "glúteos",
+      "core"
+    ],
+    "equipment": "ninguno (peso opcional)",
+    "steps": [
+      "Colócate de pie con los pies a la anchura de los hombros y las puntas ligeramente hacia fuera.",
+      "Lleva las caderas hacia atrás y flexiona las rodillas como si te fueras a sentar.",
+      "Las rodillas siguen la línea de las puntas de los pies, la espalda se mantiene larga y el pecho arriba.",
+      "Baja hasta que los muslos queden más o menos horizontales y sube de nuevo con fuerza."
+    ],
+    "tip": "Reparte el peso por toda la planta del pie; los talones no se despegan del suelo. 3×10–15 repeticiones.",
+    "caution": "Si tienes dolor de rodilla o de cadera, baja solo hasta donde no te duela.",
+    "progression": "Más repeticiones, luego peso (mancuerna/pesa rusa) y, más adelante, sentadillas con pausa.",
+    "phases": {
+      "0": {
+        "label": "Bajar",
+        "cue": "Caderas atrás, pecho abierto"
+      },
+      "1": {
+        "label": "Abajo"
+      },
+      "2": {
+        "label": "Subir",
+        "cue": "Empuja con toda la planta del pie"
+      },
+      "3": {
+        "label": "Arriba"
+      }
+    }
+  },
+  "lunge": {
+    "muscles": [
+      "muslos",
+      "glúteos",
+      "equilibrio"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Desde la posición de pie, da un paso largo hacia delante.",
+      "Flexiona ambas rodillas hasta unos 90°; la rodilla de atrás desciende hacia el suelo.",
+      "La rodilla delantera queda sobre el tobillo y el tronco se mantiene erguido.",
+      "Empuja con el talón delantero para volver a la posición de pie y cambia de pierna."
+    ],
+    "tip": "Ideal para quienes corren: ayuda a corregir las debilidades de un solo lado. 3×8–10 por lado.",
+    "caution": "Si tienes problemas de rodilla, da pasos más cortos y no lleves la rodilla delantera más allá de la punta del pie.",
+    "progression": "Con peso, hacia atrás o en movimiento (zancadas caminando).",
+    "phases": {
+      "0": {
+        "label": "Paso adelante"
+      },
+      "1": {
+        "label": "Bajar",
+        "cue": "La rodilla de atrás baja hacia el suelo"
+      },
+      "2": {
+        "label": "Abajo"
+      },
+      "3": {
+        "label": "Empujar hacia atrás",
+        "cue": "Empuja con el talón delantero"
+      },
+      "4": {
+        "label": "De pie"
+      },
+      "5": {
+        "label": "De pie"
+      }
+    }
+  },
+  "pushup": {
+    "muscles": [
+      "pecho",
+      "hombros",
+      "tríceps",
+      "core"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Apoya las manos algo más separadas que los hombros; el cuerpo forma una línea recta.",
+      "Activa bien el core (sin dejar caer las caderas).",
+      "Flexiona los codos hacia atrás y baja el pecho hacia el suelo.",
+      "Empuja con fuerza para volver a subir."
+    ],
+    "tip": "¿Demasiado difícil? Apoya las rodillas o eleva las manos (mesa/pared). 3×6–12.",
+    "caution": "Si tienes molestias en hombros o muñecas, hazlas con las manos elevadas sobre un banco o apoyándote en los puños.",
+    "progression": "De la pared al banco, luego con las rodillas y después flexiones completas; más adelante, con los pies elevados.",
+    "phases": {
+      "0": {
+        "label": "Bajar",
+        "cue": "El cuerpo es una línea recta"
+      },
+      "1": {
+        "label": "Abajo"
+      },
+      "2": {
+        "label": "Empujar hacia arriba",
+        "cue": "Codos en diagonal hacia atrás"
+      },
+      "3": {
+        "label": "Arriba"
+      }
+    }
+  },
+  "deadlift": {
+    "muscles": [
+      "glúteos",
+      "isquiotibiales",
+      "zona lumbar"
+    ],
+    "equipment": "mancuerna/pesa rusa",
+    "steps": [
+      "Colócate con los pies a la anchura de las caderas y el peso delante de las espinillas.",
+      "Lleva las caderas hacia atrás, flexiona solo un poco las rodillas y mantén la espalda recta.",
+      "Mantén el peso pegado al cuerpo y baja hasta justo por debajo de las rodillas.",
+      "Levántate empujando con las caderas y aprieta los glúteos."
+    ],
+    "tip": "El movimiento nace en las caderas, no en la espalda. Primero la técnica, después el peso. 3×8.",
+    "caution": "Mantén la espalda neutra; si tienes dolor agudo de espalda, sáltatelo y que te lo revisen.",
+    "progression": "Más peso en pasos pequeños y, después, a una pierna.",
+    "gear": "mancuerna/pesa rusa",
+    "phases": {
+      "0": {
+        "label": "Caderas atrás",
+        "cue": "Espalda recta, peso pegado a la pierna"
+      },
+      "1": {
+        "label": "Abajo"
+      },
+      "2": {
+        "label": "Incorporarse",
+        "cue": "Caderas al frente, aprieta los glúteos"
+      },
+      "3": {
+        "label": "Arriba"
+      }
+    }
+  },
+  "row": {
+    "muscles": [
+      "espalda alta",
+      "bíceps",
+      "hombro posterior"
+    ],
+    "equipment": "mancuerna/pesa rusa",
+    "steps": [
+      "Haz la bisagra de cadera como en el peso muerto, con el tronco inclinado unos 45° hacia delante.",
+      "Deja los brazos colgando, con los omóplatos relajados.",
+      "Lleva el peso hacia las costillas inferiores, con los codos pegados al cuerpo.",
+      "Baja con control; la espalda se mantiene estable."
+    ],
+    "tip": "Equilibra la parte delantera del cuerpo, que correr tiende a favorecer. 3×10–12.",
+    "caution": "Mantén la espalda recta y no tires del peso a tirones.",
+    "progression": "Mancuerna más pesada o banda más fuerte; baja despacio (3 s).",
+    "gear": "mancuerna/pesa rusa",
+    "phases": {
+      "0": {
+        "label": "Tirar",
+        "cue": "Codos pegados al cuerpo, hacia atrás"
+      },
+      "1": {
+        "label": "Arriba"
+      },
+      "2": {
+        "label": "Bajar",
+        "cue": "La espalda se mantiene estable"
+      },
+      "3": {
+        "label": "Abajo"
+      }
+    }
+  },
+  "overhead_press": {
+    "muscles": [
+      "hombros",
+      "tríceps",
+      "core"
+    ],
+    "equipment": "mancuernas",
+    "steps": [
+      "Colócate erguido con las pesas a la altura de los hombros.",
+      "Activa el core y no dejes que las costillas se abran hacia fuera.",
+      "Empuja las pesas en vertical por encima de la cabeza hasta casi estirar los brazos.",
+      "Baja con control hasta la altura de los hombros."
+    ],
+    "tip": "Sin arquear la zona lumbar: mantén el abdomen firme. 3×8–10.",
+    "caution": "Si te duelen los hombros, no hagas press por encima de la cabeza: siéntate con menos peso o sáltatelo.",
+    "progression": "Más peso o un brazo cada vez (más trabajo de core).",
+    "gear": "mancuernas",
+    "phases": {
+      "0": {
+        "label": "Empujar hacia arriba",
+        "cue": "Abdomen firme, sin arquear la espalda"
+      },
+      "1": {
+        "label": "Arriba"
+      },
+      "2": {
+        "label": "Bajar",
+        "cue": "Con control hasta los hombros"
+      },
+      "3": {
+        "label": "Altura de los hombros"
+      }
+    }
+  },
+  "calf_raise": {
+    "muscles": [
+      "pantorrillas",
+      "tendón de Aquiles"
+    ],
+    "equipment": "ninguno (escalón opcional)",
+    "steps": [
+      "Colócate erguido, si quieres con la parte delantera de los pies sobre un escalón.",
+      "Sube despacio de puntillas y mantén un instante.",
+      "Baja con control hasta el final (en un escalón, por debajo de su altura)."
+    ],
+    "tip": "Ayuda a prevenir problemas del tendón de Aquiles y de las pantorrillas. 3×15–20; si quieres, avanza a una sola pierna.",
+    "caution": "Si el tendón de Aquiles está irritado, ve despacio y sin rebotes.",
+    "progression": "A una pierna, luego en un escalón bajando por debajo de su altura y, después, con peso.",
+    "phases": {
+      "0": {
+        "label": "Subir",
+        "cue": "De puntillas"
+      },
+      "1": {
+        "label": "Mantener arriba"
+      },
+      "2": {
+        "label": "Bajar",
+        "cue": "Baja despacio"
+      },
+      "3": {
+        "label": "Abajo"
+      }
+    }
+  },
+  "plank": {
+    "muscles": [
+      "core",
+      "hombros",
+      "glúteos"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Apoya los antebrazos en el suelo a la anchura de los hombros, con los codos bajo los hombros.",
+      "El cuerpo forma una línea recta de la cabeza a los talones.",
+      "Aprieta el abdomen y los glúteos y mete ligeramente la pelvis.",
+      "Respira con calma y mantén la posición."
+    ],
+    "tip": "Mejor corta y limpia que larga y con la cadera caída. 3×20–45 s.",
+    "caution": "Sin arquear la zona lumbar; si tienes dolor de espalda, empieza apoyando las rodillas.",
+    "progression": "Mantén más tiempo y luego levanta un brazo o una pierna.",
+    "phases": {
+      "0": {
+        "label": "Mantener",
+        "cue": "Abdomen firme, sin subir el trasero"
+      }
+    }
+  },
+  "side_plank": {
+    "muscles": [
+      "oblicuos",
+      "caderas",
+      "hombro"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Túmbate de lado con el antebrazo bajo el hombro y las piernas apiladas.",
+      "Eleva las caderas hasta que el cuerpo forme una línea recta.",
+      "Estira el brazo de arriba hacia el techo o apóyalo en la cadera.",
+      "Mantén la posición y cambia de lado."
+    ],
+    "tip": "Estabiliza las caderas al correr. 3×15–30 s por lado.",
+    "caution": "Si tienes molestias en el hombro, apóyate en la rodilla.",
+    "progression": "Levanta la pierna de arriba o sube y baja las caderas.",
+    "phases": {
+      "0": {
+        "label": "Mantener",
+        "cue": "Pelvis arriba, cuerpo en línea recta"
+      }
+    }
+  },
+  "glute_bridge": {
+    "muscles": [
+      "glúteos",
+      "isquiotibiales",
+      "core"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Túmbate boca arriba con los pies planos a la anchura de las caderas y los brazos a los lados.",
+      "Aprieta los glúteos y empuja las caderas hacia arriba.",
+      "Muslos y tronco forman una línea; mantén un instante.",
+      "Baja con control sin apoyarte del todo en el suelo."
+    ],
+    "tip": "Despierta unos glúteos que a menudo están «dormidos». 3×12–15; si quieres, a una pierna.",
+    "caution": "No empujes hasta arquear la zona lumbar: la fuerza sale de los glúteos.",
+    "progression": "A una pierna, luego con los pies elevados o con peso sobre las caderas.",
+    "phases": {
+      "0": {
+        "label": "Elevar la pelvis",
+        "cue": "Glúteos firmes, sin arquear la espalda"
+      },
+      "1": {
+        "label": "Mantener arriba"
+      },
+      "2": {
+        "label": "Bajar",
+        "cue": "Apoya vértebra a vértebra"
+      },
+      "3": {
+        "label": "Abajo"
+      }
+    }
+  },
+  "dead_bug": {
+    "muscles": [
+      "musculatura profunda del core",
+      "coordinación"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Túmbate boca arriba con los brazos hacia el techo y las caderas y rodillas elevadas a 90°.",
+      "Presiona suavemente la zona lumbar contra el suelo (abdomen firme).",
+      "Estira a la vez la pierna derecha y el brazo izquierdo, sin arquear la espalda.",
+      "Vuelve al centro y repite con el otro lado."
+    ],
+    "tip": "Estabilidad del core sin cargar la columna. 3×8 por lado, despacio.",
+    "caution": "La zona lumbar permanece en el suelo; si no, haz el movimiento más pequeño.",
+    "progression": "Más lento, con brazos y piernas estirados y, más adelante, con un peso ligero.",
+    "phases": {
+      "0": {
+        "label": "Estirar",
+        "cue": "La zona lumbar queda en el suelo"
+      },
+      "1": {
+        "label": "Estirado"
+      },
+      "2": {
+        "label": "Volver al centro"
+      },
+      "3": {
+        "label": "Centro"
+      }
+    }
+  },
+  "side_crunch": {
+    "muscles": [
+      "oblicuos",
+      "equilibrio"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Colócate erguido y estable, con el abdomen firme.",
+      "Inclina el tronco hacia un lado con control, deslizando la mano por el muslo.",
+      "Vuelve a subir con los abdominales laterales."
+    ],
+    "tip": "Movimiento pequeño y controlado. 3×12 por lado.",
+    "caution": "Inclínate solo hacia el lado; no te inclines hacia delante ni gires.",
+    "progression": "Con una mancuerna en la mano del lado contrario.",
+    "phases": {
+      "0": {
+        "label": "Inclinar hacia el lado",
+        "cue": "No te inclines hacia delante"
+      },
+      "1": {
+        "label": "Abajo"
+      },
+      "2": {
+        "label": "Incorporarse",
+        "cue": "Con los abdominales laterales"
+      },
+      "3": {
+        "label": "Centro"
+      }
+    }
+  },
+  "hip_flexor_stretch": {
+    "muscles": [
+      "flexores de la cadera",
+      "parte frontal del muslo"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Zancada profunda con la rodilla de atrás en el suelo (por ejemplo, sobre un cojín).",
+      "Mete ligeramente la pelvis y aprieta los glúteos.",
+      "Empuja suavemente la cadera hacia delante hasta notar el estiramiento en la parte delantera de la cadera.",
+      "Mantén la posición sin rebotar."
+    ],
+    "tip": "Importante si pasas muchas horas sentado y además corres. 2×30 s por lado.",
+    "caution": "Acolcha bien la rodilla; no compenses arqueando la zona lumbar.",
+    "progression": "Estira hacia arriba el brazo del lado de la pierna de atrás.",
+    "phases": {
+      "0": {
+        "label": "Mantener",
+        "cue": "Notas el tirón en la parte delantera de la cadera"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Empujar la cadera hacia delante",
+        "cue": "Aprieta los glúteos, sin arquear la espalda"
+      }
+    }
+  },
+  "hamstring_stretch": {
+    "muscles": [
+      "isquiotibiales",
+      "zona lumbar"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Adelanta un poco una pierna, con el talón en el suelo y la punta del pie hacia arriba.",
+      "Lleva las caderas hacia atrás e inclínate hacia delante con la espalda recta.",
+      "Dirige las manos hacia la espinilla hasta notar un estiramiento suave en la parte trasera.",
+      "Mantén la posición y cambia de lado."
+    ],
+    "tip": "Mantén la espalda larga, sin redondearla. 2×30 s por lado.",
+    "caution": "Solo un estiramiento suave: nunca a tirones ni con una distensión reciente.",
+    "progression": "Mantén más tiempo, cuidando conscientemente de que la espalda siga larga.",
+    "phases": {
+      "0": {
+        "label": "Mantener",
+        "cue": "Espalda larga, sin redondearla"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Caderas hacia atrás",
+        "cue": "Inclínate con la espalda recta"
+      }
+    }
+  },
+  "calf_stretch": {
+    "muscles": [
+      "pantorrillas",
+      "tendón de Aquiles"
+    ],
+    "equipment": "pared",
+    "steps": [
+      "Apoya ambas manos en la pared e inclínate hacia ella.",
+      "Estira una pierna hacia atrás, con el talón en el suelo.",
+      "Empuja las caderas hacia delante hasta notarlo en la pantorrilla.",
+      "Para trabajar la pantorrilla profunda, flexiona un poco la rodilla de atrás."
+    ],
+    "tip": "Sienta genial después de correr. 2×30 s por lado.",
+    "caution": "Si el tendón de Aquiles está irritado, estira con suavidad y sin llegar al dolor.",
+    "progression": "También con la rodilla flexionada (músculos profundos de la pantorrilla).",
+    "gear": "pared",
+    "phases": {
+      "0": {
+        "label": "Mantener",
+        "cue": "Pierna de atrás estirada, talón abajo"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Caderas hacia delante",
+        "cue": "El talón de atrás sigue en el suelo"
+      }
+    }
+  },
+  "cat_cow": {
+    "muscles": [
+      "columna",
+      "core"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "A cuatro apoyos, con las manos bajo los hombros y las rodillas bajo las caderas.",
+      "Inspira: deja que la espalda se hunda suavemente y mira hacia arriba («vaca»).",
+      "Espira: redondea la espalda y lleva la barbilla al pecho («gato»).",
+      "Pasa de una posición a otra varias veces al ritmo de la respiración."
+    ],
+    "tip": "Movilización suave de espalda y cuello. 8–10 ciclos tranquilos.",
+    "caution": "Muévete dentro de un rango sin dolor.",
+    "progression": "Más lento, con respiración consciente.",
+    "phases": {
+      "0": {
+        "label": "Vaca",
+        "cue": "La espalda se hunde, mirada al frente y arriba"
+      },
+      "1": {
+        "label": "Vaca"
+      },
+      "2": {
+        "label": "Gato",
+        "cue": "Espalda redondeada, barbilla al pecho"
+      },
+      "3": {
+        "label": "Gato"
+      }
+    }
+  },
+  "chest_opener": {
+    "muscles": [
+      "pecho",
+      "parte frontal del hombro"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Colócate erguido con el abdomen ligeramente activo.",
+      "Abre los brazos hacia atrás y entrelaza las manos sin apretar detrás de la espalda.",
+      "Eleva el esternón, con los hombros hacia atrás y abajo.",
+      "Respira con calma y mantén la posición con suavidad."
+    ],
+    "tip": "Contrarresta la postura encorvada de «pantalla». 2×20–30 s.",
+    "caution": "Si tienes inestabilidad de hombro, no tires hasta la posición final.",
+    "progression": "Mantén más tiempo y sube un poco más los brazos.",
+    "phases": {
+      "0": {
+        "label": "Mantener",
+        "cue": "Esternón arriba, hombros abajo"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Entrelazar las manos detrás de la espalda"
+      }
+    }
+  },
+  "split_squat": {
+    "muscles": [
+      "muslos",
+      "glúteos",
+      "equilibrio"
+    ],
+    "equipment": "superficie elevada (silla/banco)",
+    "steps": [
+      "Un pie adelantado en el suelo; el empeine del pie de atrás descansa sobre una silla o un banco.",
+      "Con el tronco erguido, flexiona la rodilla delantera y baja el cuerpo en vertical.",
+      "La rodilla delantera queda sobre el pie y la de atrás desciende hacia el suelo.",
+      "Sube con control empujando con el talón delantero."
+    ],
+    "tip": "Muy eficaz para la fuerza y la estabilidad a una pierna. 3×8–10 por lado.",
+    "caution": "Si tienes problemas de rodilla, no bajes tanto.",
+    "progression": "Sentadilla búlgara (pie de atrás elevado) y, después, con peso.",
+    "gear": "superficie elevada",
+    "phases": {
+      "0": {
+        "label": "Bajar",
+        "cue": "La rodilla delantera sobre el pie"
+      },
+      "1": {
+        "label": "Abajo"
+      },
+      "2": {
+        "label": "Subir",
+        "cue": "Empuja con el talón delantero"
+      },
+      "3": {
+        "label": "Arriba"
+      }
+    }
+  },
+  "wall_sit": {
+    "muscles": [
+      "muslos",
+      "glúteos"
+    ],
+    "equipment": "pared",
+    "steps": [
+      "Apoya toda la espalda contra la pared, con los pies a unos 40 cm de ella.",
+      "Desliza la espalda por la pared hasta que los muslos queden horizontales.",
+      "Las rodillas quedan sobre los tobillos y la espalda pegada a la pared.",
+      "Mantén la posición respirando con calma."
+    ],
+    "tip": "Resistencia de fuerza estática para las piernas: ideal sin material. 3×30–45 s.",
+    "caution": "Si tienes molestias en la rótula, siéntate más alto (ángulo superior a 90°).",
+    "progression": "Mantén más tiempo y luego alterna a una pierna.",
+    "gear": "pared",
+    "phases": {
+      "0": {
+        "label": "Mantener",
+        "cue": "Rodillas sobre los tobillos, espalda en la pared"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Deslizarse por la pared"
+      }
+    }
+  },
+  "step_up": {
+    "muscles": [
+      "muslos",
+      "glúteos",
+      "equilibrio"
+    ],
+    "equipment": "escalón/banco firme",
+    "steps": [
+      "Colócate frente a un escalón firme, a la altura de la rodilla.",
+      "Sube del todo con un pie, empujando con el talón.",
+      "Mantente estable arriba un momento y baja de nuevo con control.",
+      "No te impulses con la pierna de atrás: trabaja la pierna de arriba."
+    ],
+    "tip": "Muy útil para quienes corren (a una pierna y cercano a los movimientos cotidianos). 3×10 por lado.",
+    "caution": "Mantén la rodilla estable: que no se vaya hacia dentro.",
+    "progression": "Escalón más alto y, después, con peso.",
+    "gear": "escalón/banco firme",
+    "phases": {
+      "0": {
+        "label": "Pie en el escalón"
+      },
+      "1": {
+        "label": "Empujar hacia arriba",
+        "cue": "La fuerza sale del talón, rodilla estable"
+      },
+      "2": {
+        "label": "Estable arriba"
+      },
+      "3": {
+        "label": "Bajar",
+        "cue": "La pierna de arriba frena"
+      },
+      "4": {
+        "label": "Bajar"
+      },
+      "5": {
+        "label": "De pie"
+      },
+      "6": {
+        "label": "De pie"
+      }
+    }
+  },
+  "crunch": {
+    "muscles": [
+      "recto abdominal"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Túmbate boca arriba con las rodillas flexionadas y los pies en el suelo a la anchura de las caderas.",
+      "Coloca las manos sueltas junto a las sienes (sin tirar de la cabeza).",
+      "Enrolla el tronco hacia arriba con los abdominales; los omóplatos se despegan un poco del suelo.",
+      "Mantén un instante y baja despacio."
+    ],
+    "tip": "El movimiento sale del abdomen, no del cuello. 3×12–20.",
+    "caution": "No tires del cuello con las manos.",
+    "progression": "Más lento y, después, con un peso ligero sobre el pecho.",
+    "phases": {
+      "0": {
+        "label": "Enrollar",
+        "cue": "La fuerza sale del abdomen, nuca suelta"
+      },
+      "1": {
+        "label": "Arriba"
+      },
+      "2": {
+        "label": "Apoyar"
+      },
+      "3": {
+        "label": "Abajo"
+      }
+    }
+  },
+  "leg_raise": {
+    "muscles": [
+      "abdominales inferiores",
+      "flexores de la cadera"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Túmbate boca arriba con las piernas estiradas y las manos junto al cuerpo o bajo los glúteos.",
+      "Mantén conscientemente la zona lumbar pegada al suelo.",
+      "Eleva despacio las piernas estiradas hasta unos 90°.",
+      "Baja con control sin apoyar del todo los talones en el suelo."
+    ],
+    "tip": "Si notas un tirón en la espalda, flexiona un poco las rodillas. 3×10–15.",
+    "caution": "Si tienes dolor de espalda, mantén las rodillas flexionadas.",
+    "progression": "Piernas estiradas y bajada lenta.",
+    "phases": {
+      "0": {
+        "label": "Elevar las piernas",
+        "cue": "La zona lumbar queda en el suelo"
+      },
+      "1": {
+        "label": "Arriba"
+      },
+      "2": {
+        "label": "Bajar despacio",
+        "cue": "No apoyes del todo los talones"
+      },
+      "3": {
+        "label": "Abajo"
+      }
+    }
+  },
+  "hollow_hold": {
+    "muscles": [
+      "abdominales profundos",
+      "core"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Túmbate boca arriba con los brazos por encima de la cabeza y las piernas estiradas.",
+      "Presiona con firmeza la zona lumbar contra el suelo (abdomen firme).",
+      "Eleva un poco los hombros y las piernas: el cuerpo forma un cuenco poco profundo.",
+      "Sigue respirando con calma y mantén la posición."
+    ],
+    "tip": "La zona lumbar NO debe despegarse del suelo. 3×15–30 s.",
+    "caution": "La zona lumbar no debe levantarse; si lo hace, acerca las rodillas al pecho.",
+    "progression": "Brazos por encima de la cabeza y mantén más tiempo.",
+    "phases": {
+      "0": {
+        "label": "Mantener",
+        "cue": "Zona lumbar firme en el suelo"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Elevar hombros y piernas"
+      }
+    }
+  },
+  "superman": {
+    "muscles": [
+      "zona lumbar",
+      "glúteos",
+      "hombro posterior"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Túmbate boca abajo con los brazos estirados hacia delante.",
+      "Eleva a la vez los brazos, el pecho y las piernas, ligeramente despegados del suelo.",
+      "Mira al suelo con el cuello largo; no eches la cabeza hacia atrás.",
+      "Mantén un instante y baja con suavidad."
+    ],
+    "tip": "Fortalece la cadena posterior, a menudo descuidada. 3×10 o mantener 3×20 s.",
+    "caution": "La extensión boca abajo carga más la zona lumbar; si tienes molestias de espalda, haz mejor el bird dog.",
+    "progression": "Mantén más tiempo y alterna brazo y pierna.",
+    "phases": {
+      "0": {
+        "label": "Despegar",
+        "cue": "Mirada al suelo, cuello largo"
+      },
+      "1": {
+        "label": "Mantener"
+      },
+      "2": {
+        "label": "Apoyar"
+      },
+      "3": {
+        "label": "Abajo"
+      }
+    }
+  },
+  "bird_dog": {
+    "muscles": [
+      "core",
+      "zona lumbar",
+      "glúteos",
+      "coordinación"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "A cuatro apoyos, con las manos bajo los hombros y las rodillas bajo las caderas.",
+      "Estira a la vez el brazo derecho y la pierna izquierda.",
+      "Caderas y hombros se mantienen a la misma altura (sin girar).",
+      "Vuelve a la posición inicial y cambia de lado."
+    ],
+    "tip": "Estabilidad, no impulso: lento y controlado. 3×8–10 por lado.",
+    "caution": "Mantén la pelvis nivelada y no arquees la zona lumbar.",
+    "progression": "Mantén un momento y luego junta codo y rodilla bajo el cuerpo.",
+    "phases": {
+      "0": {
+        "label": "Estirar",
+        "cue": "Brazo y pierna contraria bien largos"
+      },
+      "1": {
+        "label": "Mantener",
+        "cue": "La pelvis se mantiene horizontal"
+      },
+      "2": {
+        "label": "Volver"
+      },
+      "3": {
+        "label": "A cuatro apoyos"
+      }
+    }
+  },
+  "child_pose": {
+    "muscles": [
+      "zona lumbar",
+      "caderas",
+      "hombros"
+    ],
+    "equipment": "ninguno (esterilla)",
+    "steps": [
+      "Desde la posición de rodillas, lleva el trasero hacia los talones.",
+      "Baja el tronco hacia delante y estira los brazos largos frente a ti.",
+      "La frente descansa en el suelo y los hombros, relajados.",
+      "Respira hondo hacia la zona lumbar."
+    ],
+    "tip": "Alivio suave para toda la espalda. 3×30–45 s.",
+    "caution": "Si tienes problemas de rodilla, pon un cojín entre el trasero y los talones.",
+    "progression": "Desplaza las manos hacia un lado (estiramiento lateral).",
+    "phases": {
+      "0": {
+        "label": "Mantener",
+        "cue": "La frente descansa; respira hacia la espalda"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Apoyar el tronco hacia delante"
+      }
+    }
+  },
+  "supine_twist": {
+    "muscles": [
+      "columna",
+      "zona lumbar",
+      "glúteos"
+    ],
+    "equipment": "ninguno (esterilla)",
+    "steps": [
+      "Túmbate boca arriba con los brazos abiertos a los lados (en T).",
+      "Flexiona ambas rodillas y bájalas juntas hacia un lado.",
+      "Si quieres, gira la cabeza hacia el lado contrario; los dos hombros se quedan en el suelo.",
+      "Respira con calma y cambia de lado."
+    ],
+    "tip": "Suelta la zona lumbar después de correr. 2×30 s por lado.",
+    "caution": "Los hombros siguen en el suelo; no fuerces.",
+    "progression": "Mantén más tiempo y estira la pierna de arriba.",
+    "phases": {
+      "0": {
+        "label": "Mantener",
+        "cue": "Los dos hombros siguen en el suelo"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Bajar las rodillas hacia un lado"
+      }
+    }
+  },
+  "figure_four": {
+    "muscles": [
+      "glúteos",
+      "piriforme",
+      "caderas"
+    ],
+    "equipment": "ninguno (esterilla)",
+    "steps": [
+      "Túmbate boca arriba con ambas rodillas flexionadas.",
+      "Cruza un tobillo sobre la rodilla contraria (formando un «4»).",
+      "Acerca la pierna de abajo al pecho hasta notar el estiramiento en el glúteo.",
+      "Mantén la posición y cambia de lado."
+    ],
+    "tip": "Un clásico para glúteos tensos o una sensación parecida a la ciática en quienes corren. 2×30 s por lado.",
+    "caution": "Si tienes dolor de cadera o de rodilla, no tires tanto.",
+    "progression": "Sentándote en una silla e inclinándote hacia delante.",
+    "phases": {
+      "0": {
+        "label": "Mantener",
+        "cue": "Se estira el glúteo, la cabeza queda apoyada"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Acercar la pierna de abajo"
+      }
+    }
+  },
+  "butterfly_stretch": {
+    "muscles": [
+      "cara interna del muslo",
+      "caderas"
+    ],
+    "equipment": "ninguno (esterilla)",
+    "steps": [
+      "Siéntate erguido y junta las plantas de los pies delante de ti.",
+      "Acerca los talones sin forzar y deja que las rodillas caigan hacia los lados.",
+      "Mantén el tronco recto e inclínalo ligeramente hacia delante.",
+      "No hagas rebotes: mantén la posición sin moverte."
+    ],
+    "tip": "Abre las caderas y la cara interna de los muslos. 2×30–45 s.",
+    "caution": "No presiones las rodillas ni hagas rebotes.",
+    "progression": "Talones más cerca y mantén más tiempo.",
+    "phases": {
+      "0": {
+        "label": "Mantener",
+        "cue": "Siéntate erguido, sin rebotar"
+      }
+    }
+  },
+  "fifa11": {
+    "muscles": [
+      "cuerpo entero",
+      "coordinación",
+      "tobillo",
+      "rodilla"
+    ],
+    "equipment": "ninguno (conos o marcas)",
+    "steps": [
+      "Parte 1 (unos 8 min): carrera suave con rotación de cadera hacia fuera y hacia dentro, desplazamiento lateral, contacto de hombros con otra persona, arrancadas cortas hacia delante y hacia atrás.",
+      "Parte 2 (unos 10 min): fuerza y equilibrio – plancha, plancha lateral, curl nórdico de isquiotibiales, apoyo a una pierna con balón, sentadillas, saltos.",
+      "Parte 3 (unos 2 min): carrera – a lo ancho del campo a ritmo creciente, con cambios de dirección y aterrizaje limpio.",
+      "En cada aterrizaje y sentadilla, las rodillas apuntan sobre las puntas de los pies, no hacia dentro."
+    ],
+    "tip": "Unos 20 minutos antes del entrenamiento o del partido, dos o tres veces por semana. En estudios redujo claramente la tasa de lesiones en el fútbol juvenil (Soligard et al. 2008).",
+    "caution": "Tras una lesión, empieza por el nivel más fácil y para si duele.",
+    "progression": "Tres niveles por ejercicio: fácil, medio y difícil; sube solo cuando domines con limpieza el anterior.",
+    "phases": {
+      "0": {
+        "label": "Carrera suave con elevación de rodillas",
+        "cue": "Las rodillas apuntan al frente, no hacia dentro"
+      },
+      "1": {
+        "label": "Cambio"
+      }
+    }
+  },
+  "nordic_hamstring": {
+    "muscles": [
+      "isquiotibiales",
+      "glúteos"
+    ],
+    "equipment": "otra persona o un anclaje fijo para los pies, esterilla",
+    "steps": [
+      "Ponte de rodillas sobre una superficie blanda, con los talones sujetos o anclados bajo un sofá.",
+      "El cuerpo recto desde las rodillas hasta la cabeza, con las caderas extendidas.",
+      "Déjate caer hacia delante despacio, frenando con los isquiotibiales todo el tiempo que puedas.",
+      "Amortigua con las manos y vuelve a subir con un pequeño empujón."
+    ],
+    "tip": "El ejercicio más conocido contra las roturas de isquiotibiales: incluirlo en los programas de prevención redujo la tasa más o menos a la mitad (van Dyk et al. 2019). Empieza con 2×4–5 y aumenta poco a poco.",
+    "caution": "No lo hagas con una distensión reciente. Las primeras veces provoca agujetas fuertes: empieza con pocas repeticiones y no el día antes de un partido.",
+    "progression": "Primero alarga la fase de bajada, luego añade repeticiones (hasta 3×8) y, más adelante, ve más lento.",
+    "gear": "otra persona",
+    "phases": {
+      "0": {
+        "label": "Despacio hacia delante",
+        "cue": "Caderas extendidas, frena con la parte trasera"
+      },
+      "1": {
+        "label": "Amortiguar"
+      },
+      "2": {
+        "label": "Manos en el suelo"
+      },
+      "3": {
+        "label": "Empujar hacia atrás",
+        "cue": "Empuja con las manos"
+      },
+      "4": {
+        "label": "De rodillas"
+      }
+    }
+  },
+  "copenhagen": {
+    "muscles": [
+      "cara interna del muslo (aductores)",
+      "zona lateral del core"
+    ],
+    "equipment": "banco u otra persona",
+    "steps": [
+      "Plancha lateral sobre el antebrazo con la pierna de arriba apoyada en un banco (al principio la rodilla, más adelante el pie).",
+      "La pierna de abajo cuelga libre bajo el banco.",
+      "Eleva las caderas hasta que el cuerpo forme una línea recta: te sostiene la cara interna de la pierna de arriba.",
+      "Mantén un instante, baja con control y cambia de lado."
+    ],
+    "tip": "Fortalece los aductores; la ingle es una zona de lesión frecuente en el fútbol. 2×6–8 por lado.",
+    "caution": "Si tienes dolor en la ingle, no la cargues: que te lo revisen.",
+    "progression": "De la rodilla apoyada en el banco al pie en el banco (palanca más larga) y, después, acerca la pierna de abajo al banco.",
+    "gear": "banco",
+    "phases": {
+      "0": {
+        "label": "Elevar la cadera",
+        "cue": "La pierna de arriba presiona el banco"
+      },
+      "1": {
+        "label": "Mantener"
+      },
+      "2": {
+        "label": "Bajar"
+      },
+      "3": {
+        "label": "Abajo"
+      }
+    }
+  },
+  "clamshell": {
+    "muscles": [
+      "lateral de los glúteos (abductores de la cadera)"
+    ],
+    "equipment": "ninguno (mini banda opcional)",
+    "steps": [
+      "Túmbate de lado con las caderas y las rodillas flexionadas unos 45° y los pies apilados.",
+      "La pelvis permanece vertical mientras la rodilla de arriba se abre como una concha.",
+      "Mantén los pies juntos.",
+      "Cierra de nuevo despacio."
+    ],
+    "tip": "Estabiliza la pelvis y las rodillas al correr (menos «hundimiento» hacia dentro). 3×15 por lado.",
+    "caution": "No ruedes hacia atrás: el movimiento sale de la cadera.",
+    "progression": "Con una mini banda sobre las rodillas y, después, mantén un momento arriba.",
+    "phases": {
+      "0": {
+        "label": "Abrir la rodilla",
+        "cue": "Pies juntos, pelvis quieta"
+      },
+      "1": {
+        "label": "Arriba"
+      },
+      "2": {
+        "label": "Cerrar"
+      },
+      "3": {
+        "label": "Cerrado"
+      }
+    }
+  },
+  "monster_walk": {
+    "muscles": [
+      "lateral de los glúteos",
+      "muslos"
+    ],
+    "equipment": "mini banda",
+    "steps": [
+      "Mini banda sobre las rodillas o alrededor de los tobillos, con las rodillas ligeramente flexionadas.",
+      "Mantén la banda tensa mientras caminas de lado o en diagonal hacia delante.",
+      "Las rodillas apuntan al frente y el tronco se mantiene quieto.",
+      "Da el mismo número de pasos en ambas direcciones."
+    ],
+    "tip": "Un buen calentamiento antes de correr o de un partido. 2–3×10 pasos en cada dirección.",
+    "caution": "No dejes que las rodillas se vayan hacia dentro.",
+    "progression": "Banda más fuerte, o la banda alrededor de los tobillos.",
+    "gear": "mini banda",
+    "phases": {
+      "0": {
+        "label": "Paso lateral",
+        "cue": "Mantén la banda tensa"
+      },
+      "1": {
+        "label": "Apoyar"
+      },
+      "2": {
+        "label": "Volver"
+      },
+      "3": {
+        "label": "Apoyar"
+      }
+    }
+  },
+  "soleus_raise": {
+    "muscles": [
+      "músculo profundo de la pantorrilla (sóleo)",
+      "tendón de Aquiles"
+    ],
+    "equipment": "escalón, peso opcional",
+    "steps": [
+      "Colócate junto a un escalón o una pared, con las rodillas flexionadas unos 30–45°.",
+      "Mantén las rodillas flexionadas y eleva los talones tan alto como puedas.",
+      "Mantén un instante arriba.",
+      "Baja despacio (3 segundos)."
+    ],
+    "tip": "Al correr, el sóleo soporta varias veces tu peso corporal: clave para el tendón de Aquiles y la pantorrilla. 3×15–20.",
+    "caution": "Si el tendón de Aquiles está irritado, trabaja despacio y mantén el dolor bajo.",
+    "progression": "A una pierna y, después, con peso (mochila, mancuerna).",
+    "gear": "escalón",
+    "phases": {
+      "0": {
+        "label": "Subir",
+        "cue": "Talones arriba, rodillas flexionadas"
+      },
+      "1": {
+        "label": "Mantener arriba"
+      },
+      "2": {
+        "label": "Bajar",
+        "cue": "Baja despacio (3 segundos)"
+      },
+      "3": {
+        "label": "Abajo"
+      }
+    }
+  },
+  "running_drills": {
+    "muscles": [
+      "tobillos",
+      "flexores de la cadera",
+      "coordinación"
+    ],
+    "equipment": "ninguno (20–30 m de espacio libre)",
+    "steps": [
+      "Trabajo de tobillos: pasos cortos y rápidos sobre la parte delantera del pie, 20 m.",
+      "Rodillas altas: sube las rodillas alternando deprisa hasta la altura de la cadera, con el tronco erguido, 20 m.",
+      "Talones al glúteo: lleva los talones hacia los glúteos con cadencia rápida, 20 m.",
+      "Vuelve trotando suave entre ejercicios; termina con 2–3 progresivos."
+    ],
+    "tip": "Mejora la economía de carrera y la coordinación; ideal tras el trote de calentamiento antes de sesiones de velocidad. 2 rondas.",
+    "caution": "Solo con el cuerpo caliente y sobre terreno llano.",
+    "progression": "Mayor cadencia y, después, skipping y saltos largos.",
+    "phases": {
+      "0": {
+        "label": "Rodillas arriba",
+        "cue": "Erguido, cadencia rápida"
+      },
+      "1": {
+        "label": "Cambio"
+      }
+    }
+  },
+  "pogo_jumps": {
+    "muscles": [
+      "pantorrillas",
+      "tendón de Aquiles",
+      "tobillos"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Pies a la anchura de las caderas y rodillas casi estiradas.",
+      "Pequeños saltos rápidos solo desde los tobillos: el suelo «quema».",
+      "Aterriza con suavidad y mantén los contactos con el suelo cortos.",
+      "20–30 segundos y descansa."
+    ],
+    "tip": "Pliometría sencilla: hace que los tendones sean más resistentes y la zancada más elástica. 3×20 s.",
+    "caution": "No lo hagas con dolor de Aquiles o de espinilla; solo tras unas semanas de trabajo de fuerza de pantorrillas.",
+    "progression": "Más tiempo y, después, a una pierna o de lado sobre una línea.",
+    "phases": {
+      "0": {
+        "label": "Subir",
+        "cue": "Solo desde el tobillo, contactos cortos"
+      },
+      "1": {
+        "label": "Aterrizar"
+      }
+    }
+  },
+  "goblet_squat": {
+    "muscles": [
+      "muslos",
+      "glúteos",
+      "core"
+    ],
+    "equipment": "pesa rusa o mancuerna",
+    "steps": [
+      "Sujeta el peso delante del pecho con ambas manos y los codos hacia abajo.",
+      "Pies a la anchura de los hombros, con las puntas ligeramente hacia fuera.",
+      "Baja erguido a una sentadilla profunda, con los codos entre las rodillas.",
+      "Sube empujando con todo el pie."
+    ],
+    "tip": "El peso delante del pecho mantiene el tronco erguido: ideal para aprender una sentadilla limpia. 3×8–12.",
+    "caution": "Mantén la espalda recta; si tienes dolor de rodilla, baja solo hasta donde no duela.",
+    "progression": "Más peso y, después, una pausa de 2 s abajo.",
+    "gear": "pesa rusa",
+    "phases": {
+      "0": {
+        "label": "Bajar",
+        "cue": "Codos entre las rodillas, pecho arriba"
+      },
+      "1": {
+        "label": "Abajo"
+      },
+      "2": {
+        "label": "Subir",
+        "cue": "Empuja los talones contra el suelo"
+      },
+      "3": {
+        "label": "Arriba"
+      }
+    }
+  },
+  "sumo_squat": {
+    "muscles": [
+      "cara interna del muslo",
+      "glúteos",
+      "muslos"
+    ],
+    "equipment": "ninguno (pesa rusa opcional)",
+    "steps": [
+      "Postura ancha, con las puntas bien hacia fuera.",
+      "Manos delante del pecho y tronco erguido.",
+      "Deja que las caderas bajen en vertical y empuja las rodillas hacia fuera, sobre las puntas de los pies.",
+      "Sube empujando con los talones y aprieta los glúteos arriba."
+    ],
+    "tip": "Trabaja la cara interna de los muslos y los glúteos. 3×12–15.",
+    "caution": "Las rodillas siguen la dirección de los pies: que no se vayan hacia dentro.",
+    "progression": "Con una pesa rusa entre las piernas y, después, bajando más despacio.",
+    "phases": {
+      "0": {
+        "label": "Bajar",
+        "cue": "Rodillas hacia fuera, sobre los pies"
+      },
+      "1": {
+        "label": "Abajo"
+      },
+      "2": {
+        "label": "Subir",
+        "cue": "Aprieta los glúteos y sube"
+      },
+      "3": {
+        "label": "Arriba"
+      }
+    }
+  },
+  "reverse_lunge": {
+    "muscles": [
+      "muslos",
+      "glúteos",
+      "equilibrio"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Colócate erguido con las manos en las caderas o sueltas.",
+      "Da un paso largo hacia atrás con una pierna.",
+      "Flexiona ambas rodillas; la de atrás baja hacia el suelo.",
+      "Empuja con el talón delantero hasta volver a la posición de pie y cambia de lado."
+    ],
+    "tip": "Más suave para las rodillas que el paso hacia delante: buen punto de partida. 3×8–10 por lado.",
+    "caution": "La rodilla delantera queda sobre el pie; si te falta equilibrio, agárrate a una pared.",
+    "progression": "Con mancuernas y, después, retrocediendo desde un escalón (déficit).",
+    "phases": {
+      "0": {
+        "label": "Paso atrás"
+      },
+      "1": {
+        "label": "Bajar",
+        "cue": "La rodilla delantera sobre el pie"
+      },
+      "2": {
+        "label": "Abajo"
+      },
+      "3": {
+        "label": "Empujar hacia arriba",
+        "cue": "La fuerza sale del talón delantero"
+      },
+      "4": {
+        "label": "De pie"
+      },
+      "5": {
+        "label": "De pie"
+      }
+    }
+  },
+  "side_lunge": {
+    "muscles": [
+      "cara interna del muslo",
+      "muslos",
+      "glúteos"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Postura ancha, con las puntas de los pies hacia delante.",
+      "Lleva el peso a un lado y flexiona esa rodilla, con las caderas hacia atrás.",
+      "La otra pierna permanece estirada y ambos talones, en el suelo.",
+      "Empuja para volver al centro y cambia de lado."
+    ],
+    "tip": "Fortalece las piernas en el plano lateral: importante para los cambios de dirección en el fútbol. 3×8 por lado.",
+    "caution": "Baja solo hasta donde los talones sigan en el suelo; la rodilla apunta sobre el pie.",
+    "progression": "Más profundo y, después, con un peso delante del pecho.",
+    "phases": {
+      "0": {
+        "label": "Flexionar hacia el lado",
+        "cue": "La otra pierna sigue estirada"
+      },
+      "1": {
+        "label": "Abajo"
+      },
+      "2": {
+        "label": "Volver al centro"
+      },
+      "3": {
+        "label": "Centro"
+      }
+    }
+  },
+  "single_leg_deadlift": {
+    "muscles": [
+      "glúteos",
+      "isquiotibiales",
+      "equilibrio"
+    ],
+    "equipment": "ninguno (mancuerna opcional)",
+    "steps": [
+      "Colócate sobre una pierna con la rodilla ligeramente flexionada.",
+      "Inclina el tronco hacia delante y levanta la pierna libre hacia atrás.",
+      "La espalda y la pierna de atrás forman una línea y la pelvis se mantiene nivelada.",
+      "Vuelve a subir despacio, empujando con los glúteos."
+    ],
+    "tip": "Fortalece los glúteos y el equilibrio; muy cercano a la carrera. 3×8 por lado.",
+    "caution": "No dejes que la pelvis se abra girando; si tienes dolor de espalda, baja solo hasta la horizontal.",
+    "progression": "Con una mancuerna en la mano contraria.",
+    "phases": {
+      "0": {
+        "label": "Inclinarse hacia delante",
+        "cue": "Pierna de atrás y espalda en línea"
+      },
+      "1": {
+        "label": "Abajo"
+      },
+      "2": {
+        "label": "Incorporarse",
+        "cue": "La pelvis se mantiene nivelada"
+      },
+      "3": {
+        "label": "De pie"
+      }
+    }
+  },
+  "hip_thrust": {
+    "muscles": [
+      "glúteos",
+      "isquiotibiales"
+    ],
+    "equipment": "banco o sofá",
+    "steps": [
+      "Apoya los omóplatos en un banco, con los pies firmes a la anchura de las caderas.",
+      "Eleva la pelvis hasta que rodillas, caderas y hombros formen una línea.",
+      "Aprieta los glúteos con fuerza arriba, con la barbilla ligeramente hacia el pecho.",
+      "Baja con control sin apoyarte del todo en el suelo."
+    ],
+    "tip": "El ejercicio más potente para los glúteos. 3×10–12.",
+    "caution": "No arquees la zona lumbar arriba: la fuerza sale de los glúteos.",
+    "progression": "A una pierna y, después, con un peso sobre las caderas.",
+    "gear": "banco",
+    "phases": {
+      "0": {
+        "label": "Pelvis arriba",
+        "cue": "Glúteos firmes, rodillas sobre los talones"
+      },
+      "1": {
+        "label": "Mantener arriba"
+      },
+      "2": {
+        "label": "Bajar"
+      },
+      "3": {
+        "label": "Abajo"
+      }
+    }
+  },
+  "single_leg_bridge": {
+    "muscles": [
+      "glúteos",
+      "isquiotibiales",
+      "core"
+    ],
+    "equipment": "esterilla",
+    "steps": [
+      "Túmbate boca arriba con un pie apoyado y la otra pierna estirada en el aire.",
+      "Eleva la pelvis empujando con el talón.",
+      "La pelvis se mantiene nivelada; mantén un instante arriba.",
+      "Baja despacio y cambia de lado."
+    ],
+    "tip": "Muestra enseguida las diferencias entre ambos lados. 3×10 por lado.",
+    "caution": "No dejes que la pelvis caiga hacia un lado; si se te acalambra la parte trasera del muslo, acerca el pie a los glúteos.",
+    "progression": "Mantén más tiempo arriba y, después, con el pie elevado.",
+    "phases": {
+      "0": {
+        "label": "Elevar la pelvis",
+        "cue": "La pelvis se mantiene nivelada"
+      },
+      "1": {
+        "label": "Mantener arriba"
+      },
+      "2": {
+        "label": "Bajar"
+      },
+      "3": {
+        "label": "Abajo"
+      }
+    }
+  },
+  "kettlebell_swing": {
+    "muscles": [
+      "glúteos",
+      "isquiotibiales",
+      "core"
+    ],
+    "equipment": "pesa rusa",
+    "steps": [
+      "Colócate con los pies algo más separados que las caderas y la pesa rusa en ambas manos.",
+      "Lleva las caderas hacia atrás y balancea la pesa entre las piernas.",
+      "Impulsa las caderas hacia delante con explosividad: los brazos son solo cuerdas.",
+      "La pesa flota hasta la altura del pecho y vuelve a caer para el siguiente balanceo."
+    ],
+    "tip": "Fuerza y resistencia en un solo ejercicio: un básico del entrenamiento de Hyrox. 3×15.",
+    "caution": "Mantén la espalda recta y no tires con los brazos; domina antes la bisagra de cadera.",
+    "progression": "Pesa rusa más pesada y, después, a un brazo.",
+    "gear": "pesa rusa",
+    "phases": {
+      "0": {
+        "label": "Balanceo hacia atrás",
+        "cue": "Caderas atrás, espalda recta"
+      },
+      "1": {
+        "label": "Caderas hacia delante",
+        "cue": "El impulso sale de la cadera, no de los brazos"
+      },
+      "2": {
+        "label": "Arriba"
+      }
+    }
+  },
+  "jump_squat": {
+    "muscles": [
+      "muslos",
+      "glúteos",
+      "pantorrillas"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Media sentadilla con los brazos hacia atrás.",
+      "Salta hacia arriba con explosividad, balanceando los brazos.",
+      "Aterriza con suavidad sobre la parte delantera de los pies y enlaza directamente con la siguiente sentadilla.",
+      "Las rodillas apuntan sobre los pies al aterrizar."
+    ],
+    "tip": "Potencia explosiva para acelerar y saltar. 3×8–10.",
+    "caution": "Solo con rodillas sanas, sobre suelo firme y antideslizante; aterriza sin hacer ruido.",
+    "progression": "Más repeticiones y, después, saltos a un cajón.",
+    "phases": {
+      "0": {
+        "label": "Bajar",
+        "cue": "Media sentadilla"
+      },
+      "1": {
+        "label": "Saltar",
+        "cue": "Estírate con explosividad"
+      },
+      "2": {
+        "label": "Aterrizar",
+        "cue": "Aterriza con suavidad y sin ruido"
+      },
+      "3": {
+        "label": "De pie"
+      }
+    }
+  },
+  "good_morning": {
+    "muscles": [
+      "isquiotibiales",
+      "glúteos",
+      "zona lumbar"
+    ],
+    "equipment": "ninguno (palo opcional)",
+    "steps": [
+      "Pies a la anchura de las caderas y manos detrás de la cabeza.",
+      "Flexiona un poco las rodillas, lleva las caderas hacia atrás e inclina hacia delante el tronco, recto.",
+      "Baja hasta casi la horizontal o hasta notar un tirón en la parte trasera.",
+      "Sube empujando con las caderas."
+    ],
+    "tip": "Enseña la bisagra de cadera sin peso: buena preparación para el peso muerto. 3×10–12.",
+    "caution": "La espalda se mantiene recta, sin redondearse; sáltatelo si tienes dolor de espalda.",
+    "progression": "Con un palo o un peso ligero sobre los hombros.",
+    "phases": {
+      "0": {
+        "label": "Inclinarse hacia delante",
+        "cue": "Espalda recta, rodillas ligeramente flexionadas"
+      },
+      "1": {
+        "label": "Abajo"
+      },
+      "2": {
+        "label": "Incorporarse",
+        "cue": "Empuja las caderas hacia delante"
+      },
+      "3": {
+        "label": "Arriba"
+      }
+    }
+  },
+  "tibialis_raise": {
+    "muscles": [
+      "músculo tibial (parte frontal de la pierna)"
+    ],
+    "equipment": "pared",
+    "steps": [
+      "Apoya la espalda contra una pared, con los pies a unos 30 cm de ella.",
+      "Los talones se quedan en el suelo; tira con fuerza de las puntas de los pies hacia las espinillas.",
+      "Mantén un instante arriba.",
+      "Baja despacio."
+    ],
+    "tip": "Fortalece la parte delantera de la pierna: ayuda contra el dolor de espinillas (periostitis tibial). 3×15–20.",
+    "caution": "Si tienes dolor agudo en la espinilla, trabaja solo sin dolor y que te lo revisen.",
+    "progression": "Pies más alejados de la pared y, después, a una pierna.",
+    "gear": "pared",
+    "phases": {
+      "0": {
+        "label": "Puntas arriba",
+        "cue": "Puntas arriba, talones en el suelo"
+      },
+      "1": {
+        "label": "Arriba"
+      },
+      "2": {
+        "label": "Bajar",
+        "cue": "Baja despacio"
+      }
+    }
+  },
+  "step_down": {
+    "muscles": [
+      "muslos",
+      "glúteos",
+      "estabilidad de rodilla"
+    ],
+    "equipment": "escalón o escaleras",
+    "steps": [
+      "Colócate sobre una pierna en un escalón, con la otra pierna colgando por delante del borde.",
+      "Flexiona la rodilla despacio hasta que el talón de la pierna libre toque el suelo.",
+      "La rodilla queda sobre el pie y la pelvis, nivelada.",
+      "Sube empujando con el talón de la pierna de apoyo."
+    ],
+    "tip": "Entrena la estabilidad de la rodilla para correr cuesta abajo. 3×8 por lado, despacio (3 s bajando).",
+    "caution": "No dejes que la rodilla se vaya hacia dentro; si tienes dolor de rótula, usa un escalón más bajo.",
+    "progression": "Escalón más alto y, después, con un peso en la mano contraria.",
+    "gear": "escalón",
+    "phases": {
+      "0": {
+        "label": "Bajar despacio",
+        "cue": "La rodilla sigue sobre el pie"
+      },
+      "1": {
+        "label": "Toca el talón"
+      },
+      "2": {
+        "label": "Empujar hacia arriba"
+      },
+      "3": {
+        "label": "Arriba"
+      }
+    }
+  },
+  "cossack_squat": {
+    "muscles": [
+      "cara interna del muslo",
+      "muslos",
+      "movilidad de cadera"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Postura muy ancha, con las puntas ligeramente hacia fuera.",
+      "Lleva el peso a un lado y baja a una sentadilla profunda sobre esa pierna.",
+      "La otra pierna permanece estirada; la punta del pie puede apuntar hacia arriba.",
+      "Pasa por el centro hacia el otro lado."
+    ],
+    "tip": "Fuerza y movilidad de cadera en un solo ejercicio. 3×6 por lado.",
+    "caution": "Baja solo hasta donde el talón siga en el suelo; sin movimientos bruscos.",
+    "progression": "Más profundo y, después, con un peso ligero delante del pecho.",
+    "phases": {
+      "0": {
+        "label": "Bajar hacia el lado",
+        "cue": "Talón en el suelo, la otra pierna larga"
+      },
+      "1": {
+        "label": "Abajo"
+      },
+      "2": {
+        "label": "Volver al centro"
+      },
+      "3": {
+        "label": "Centro"
+      }
+    }
+  },
+  "farmers_carry": {
+    "muscles": [
+      "fuerza de agarre",
+      "hombros",
+      "core"
+    ],
+    "equipment": "dos mancuernas o pesas rusas pesadas",
+    "steps": [
+      "Agarra dos pesos pesados a los lados y colócate erguido.",
+      "Hombros abajo y atrás, abdomen firme.",
+      "Camina con pasos cortos y regulares: el tronco no se balancea.",
+      "De 30 a 40 metros o 30 segundos; después, deja los pesos en el suelo."
+    ],
+    "tip": "Fuerza de agarre y estabilidad del core: una estación de Hyrox. 3×30 s.",
+    "caution": "Coge y deja los pesos con la espalda recta.",
+    "progression": "Más peso y, después, más distancia o a un solo lado (suitcase carry).",
+    "gear": "dos mancuernas pesadas",
+    "phases": {
+      "0": {
+        "label": "Caminar",
+        "cue": "Erguido, hombros abajo, agarre firme"
+      },
+      "1": {
+        "label": "Caminar"
+      }
+    }
+  },
+  "wall_ball": {
+    "muscles": [
+      "muslos",
+      "glúteos",
+      "hombros"
+    ],
+    "equipment": "balón medicinal y pared",
+    "steps": [
+      "Colócate a un brazo de distancia de la pared, con el balón delante del pecho.",
+      "Baja a una sentadilla profunda.",
+      "Extiéndete con explosividad y lanza el balón a un punto alto de la pared.",
+      "Atrapa el balón y enlaza directamente con la siguiente sentadilla."
+    ],
+    "tip": "Cuerpo entero y resistencia: una estación de Hyrox. 3×15.",
+    "caution": "Espalda recta y rodillas sobre los pies; usa un balón ligero mientras aprendes.",
+    "progression": "Balón más pesado, objetivo más alto y más repeticiones.",
+    "gear": "balón medicinal y pared",
+    "phases": {
+      "0": {
+        "label": "Bajar",
+        "cue": "Sentadilla profunda, balón al pecho"
+      },
+      "1": {
+        "label": "Extender y lanzar",
+        "cue": "Desde las piernas hacia el objetivo"
+      },
+      "2": {
+        "label": "Atrapar el balón"
+      },
+      "3": {
+        "label": "De pie"
+      }
+    }
+  },
+  "thruster": {
+    "muscles": [
+      "muslos",
+      "glúteos",
+      "hombros"
+    ],
+    "equipment": "dos mancuernas",
+    "steps": [
+      "Mancuernas sobre los hombros y pies a la anchura de los hombros.",
+      "Baja en sentadilla con los codos apuntando hacia delante.",
+      "Sube con la fuerza de las piernas y empuja las mancuernas por encima de la cabeza en un solo movimiento.",
+      "Vuelve a los hombros y enlaza directamente con la siguiente sentadilla."
+    ],
+    "tip": "Transfiere la fuerza de las piernas a los brazos y, además, pone a prueba tu resistencia. 3×10.",
+    "caution": "No arquees la zona lumbar con los brazos arriba; sáltatelo si tienes dolor de hombro.",
+    "progression": "Mancuernas más pesadas y, después, más rondas.",
+    "gear": "dos mancuernas",
+    "phases": {
+      "0": {
+        "label": "Bajar",
+        "cue": "Las pesas se quedan en los hombros"
+      },
+      "1": {
+        "label": "Empujar hacia arriba",
+        "cue": "Desde las piernas, en un solo movimiento"
+      },
+      "2": {
+        "label": "Volver a los hombros"
+      },
+      "3": {
+        "label": "De pie"
+      }
+    }
+  },
+  "incline_pushup": {
+    "muscles": [
+      "pecho",
+      "hombros",
+      "tríceps"
+    ],
+    "equipment": "banco, mesa o alféizar",
+    "steps": [
+      "Manos algo más separadas que los hombros sobre un borde estable.",
+      "El cuerpo forma una línea de la cabeza a los pies.",
+      "Baja el pecho hasta el borde, con los codos en diagonal hacia atrás.",
+      "Empuja con fuerza para subir."
+    ],
+    "tip": "La forma fácil de empezar con las flexiones: cuanto más alto el borde, más fácil. 3×10–15.",
+    "caution": "El borde no debe resbalar; no dejes caer las caderas.",
+    "progression": "Borde más bajo, luego flexiones con las rodillas apoyadas y después flexiones completas.",
+    "gear": "banco",
+    "phases": {
+      "0": {
+        "label": "Bajar",
+        "cue": "Pecho al borde, cuerpo recto"
+      },
+      "1": {
+        "label": "Abajo"
+      },
+      "2": {
+        "label": "Empujar hacia arriba"
+      },
+      "3": {
+        "label": "Arriba"
+      }
+    }
+  },
+  "knee_pushup": {
+    "muscles": [
+      "pecho",
+      "hombros",
+      "tríceps",
+      "core"
+    ],
+    "equipment": "esterilla",
+    "steps": [
+      "Rodillas en la esterilla y manos algo más separadas que los hombros.",
+      "Línea recta de las rodillas a la cabeza.",
+      "Baja el pecho hacia el suelo con control.",
+      "Empuja hacia arriba sin doblarte por las caderas."
+    ],
+    "tip": "Un escalón hacia las flexiones completas. 3×8–12.",
+    "caution": "Acolcha las rodillas; las caderas siguen la línea y no se empujan hacia arriba.",
+    "progression": "Más repeticiones y, después, algunas flexiones completas.",
+    "phases": {
+      "0": {
+        "label": "Bajar",
+        "cue": "De las rodillas a la cabeza, una línea"
+      },
+      "1": {
+        "label": "Abajo"
+      },
+      "2": {
+        "label": "Empujar hacia arriba"
+      },
+      "3": {
+        "label": "Arriba"
+      }
+    }
+  },
+  "pike_pushup": {
+    "muscles": [
+      "hombros",
+      "tríceps"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Desde la posición de flexión, empuja las caderas muy arriba: una V invertida.",
+      "Manos a la anchura de los hombros y cabeza entre los brazos.",
+      "Flexiona los codos y baja la cabeza hacia el suelo, delante de las manos.",
+      "Empuja con fuerza para volver a subir."
+    ],
+    "tip": "Fuerza de hombros sin mancuernas. 3×6–8.",
+    "caution": "No lo hagas con dolor de hombros o de cuello; baja despacio.",
+    "progression": "Pies elevados y, después, baja más profundo.",
+    "phases": {
+      "0": {
+        "label": "Cabeza hacia el suelo",
+        "cue": "Las caderas siguen altas"
+      },
+      "1": {
+        "label": "Abajo"
+      },
+      "2": {
+        "label": "Empujar hacia arriba"
+      },
+      "3": {
+        "label": "Arriba"
+      }
+    }
+  },
+  "bench_dip": {
+    "muscles": [
+      "tríceps",
+      "hombros",
+      "pecho"
+    ],
+    "equipment": "banco o silla firme",
+    "steps": [
+      "Manos a la anchura de los hombros en el borde, detrás de ti, con los dedos hacia delante.",
+      "Piernas estiradas delante y glúteos justo delante del borde.",
+      "Flexiona los codos hacia atrás y baja el cuerpo.",
+      "Vuelve a subir empujando con los brazos."
+    ],
+    "tip": "Tríceps con tu propio peso corporal. 3×8–12.",
+    "caution": "No bajes más allá de que los brazos queden horizontales; sáltatelo si tienes dolor de hombro.",
+    "progression": "Estira más las piernas y, después, con los pies elevados.",
+    "gear": "banco",
+    "phases": {
+      "0": {
+        "label": "Bajar",
+        "cue": "Los codos apuntan hacia atrás"
+      },
+      "1": {
+        "label": "Abajo"
+      },
+      "2": {
+        "label": "Empujar hacia arriba"
+      },
+      "3": {
+        "label": "Arriba"
+      }
+    }
+  },
+  "biceps_curl": {
+    "muscles": [
+      "bíceps",
+      "antebrazos"
+    ],
+    "equipment": "mancuernas o banda elástica",
+    "steps": [
+      "Colócate erguido con las mancuernas y las palmas hacia delante.",
+      "Los codos se quedan pegados a los costados.",
+      "Eleva las mancuernas en curl hasta los hombros.",
+      "Vuelve a estirar los brazos despacio."
+    ],
+    "tip": "Sencillo y fácil de graduar. 3×10–12.",
+    "caution": "No lances el peso con la espalda.",
+    "progression": "Mancuernas más pesadas y, después, bajada más lenta (3 s).",
+    "gear": "mancuernas",
+    "phases": {
+      "0": {
+        "label": "Flexionar",
+        "cue": "Codos pegados al cuerpo"
+      },
+      "1": {
+        "label": "Arriba"
+      },
+      "2": {
+        "label": "Estirar despacio"
+      },
+      "3": {
+        "label": "Abajo"
+      }
+    }
+  },
+  "triceps_extension": {
+    "muscles": [
+      "tríceps"
+    ],
+    "equipment": "una mancuerna",
+    "steps": [
+      "Colócate erguido, sujetando una mancuerna por encima de la cabeza con ambas manos.",
+      "Los brazos se mantienen junto a la cabeza.",
+      "Baja la mancuerna por detrás de la cabeza.",
+      "Vuelve a estirar los brazos."
+    ],
+    "tip": "Fortalece la parte posterior de los brazos. 3×10–12.",
+    "caution": "No arquees la zona lumbar y mantén el abdomen firme; si te duelen los hombros, usa menos peso o sáltatelo.",
+    "progression": "Mancuerna más pesada y, después, a un brazo.",
+    "gear": "una mancuerna",
+    "phases": {
+      "0": {
+        "label": "Bajar detrás de la cabeza",
+        "cue": "Los brazos junto a la cabeza"
+      },
+      "1": {
+        "label": "Abajo"
+      },
+      "2": {
+        "label": "Estirar"
+      },
+      "3": {
+        "label": "Arriba"
+      }
+    }
+  },
+  "lateral_raise": {
+    "muscles": [
+      "parte lateral de los hombros"
+    ],
+    "equipment": "mancuernas ligeras",
+    "steps": [
+      "Colócate erguido con las mancuernas a los lados y los codos ligeramente flexionados.",
+      "Eleva los brazos hacia los lados hasta la altura de los hombros.",
+      "Los hombros se quedan abajo: no los encojas.",
+      "Baja despacio."
+    ],
+    "tip": "Basta con poco peso: lo que cuenta es la técnica. 3×12–15.",
+    "caution": "No subas por encima de la altura de los hombros ni uses impulso; sáltatelo si tienes dolor de hombro.",
+    "progression": "Algo más de peso y, después, mantén 1 s arriba.",
+    "gear": "mancuernas ligeras",
+    "phases": {
+      "0": {
+        "label": "Elevar hacia los lados",
+        "cue": "Hasta los hombros, hombros abajo"
+      },
+      "1": {
+        "label": "Arriba"
+      },
+      "2": {
+        "label": "Bajar"
+      },
+      "3": {
+        "label": "Abajo"
+      }
+    }
+  },
+  "band_pull_apart": {
+    "muscles": [
+      "espalda alta",
+      "parte posterior de los hombros"
+    ],
+    "equipment": "banda elástica",
+    "steps": [
+      "Agarra la banda a la anchura de los hombros, con los brazos estirados delante del pecho.",
+      "Separa la banda hasta que los brazos queden abiertos a los lados.",
+      "Omóplatos juntos y hombros abajo.",
+      "Vuelve despacio."
+    ],
+    "tip": "Contrarresta la postura encorvada del escritorio; sirve también como pausa rápida. 3×15.",
+    "caution": "No arquees la zona lumbar para compensar y no dejes que la banda vuelva de golpe.",
+    "progression": "Banda más fuerte y, después, mantén 2 s al final.",
+    "gear": "banda elástica",
+    "phases": {
+      "0": {
+        "label": "Separar",
+        "cue": "Omóplatos juntos, brazos largos"
+      },
+      "1": {
+        "label": "Mantener"
+      },
+      "2": {
+        "label": "Volver"
+      },
+      "3": {
+        "label": "Delante"
+      }
+    }
+  },
+  "pullup": {
+    "muscles": [
+      "dorsales",
+      "bíceps",
+      "fuerza de agarre"
+    ],
+    "equipment": "barra de dominadas",
+    "steps": [
+      "Agarra la barra algo más ancha que los hombros y cuélgate.",
+      "Baja activamente los hombros.",
+      "Tira del pecho hacia la barra hasta que la barbilla la sobrepase.",
+      "Baja despacio."
+    ],
+    "tip": "Al principio, usa una banda de ayuda o practica solo la bajada lenta. 3×3–8.",
+    "caution": "Sin balanceos; sáltatelo si tienes dolor de hombro.",
+    "progression": "De la bajada lenta a tu primera dominada completa y, después, más repeticiones.",
+    "gear": "barra de dominadas",
+    "phases": {
+      "0": {
+        "label": "Subir",
+        "cue": "Pecho a la barra, hombros abajo"
+      },
+      "1": {
+        "label": "Arriba"
+      },
+      "2": {
+        "label": "Bajar despacio"
+      },
+      "3": {
+        "label": "Colgado"
+      }
+    }
+  },
+  "inverted_row": {
+    "muscles": [
+      "espalda alta",
+      "bíceps",
+      "core"
+    ],
+    "equipment": "mesa firme o barra",
+    "steps": [
+      "Túmbate bajo una mesa firme o una barra baja y agarra el borde.",
+      "Los talones se quedan en el suelo y el cuerpo forma una línea recta.",
+      "Lleva el pecho hacia el borde, juntando los omóplatos.",
+      "Baja despacio."
+    ],
+    "tip": "Un ejercicio de tirón sin material: equilibra las flexiones. 3×8–12.",
+    "caution": "Comprueba antes que la mesa o la barra aguantan tu peso con seguridad.",
+    "progression": "Adelanta los pies o elévalos.",
+    "gear": "mesa firme",
+    "phases": {
+      "0": {
+        "label": "Pecho a la barra",
+        "cue": "El cuerpo es una línea"
+      },
+      "1": {
+        "label": "Arriba"
+      },
+      "2": {
+        "label": "Bajar"
+      },
+      "3": {
+        "label": "Abajo"
+      }
+    }
+  },
+  "single_arm_row": {
+    "muscles": [
+      "espalda alta",
+      "bíceps",
+      "hombro posterior"
+    ],
+    "equipment": "mancuerna y banco",
+    "steps": [
+      "Apoya una rodilla y la mano del mismo lado en el banco, con la espalda horizontal.",
+      "La mancuerna cuelga de la mano libre.",
+      "Lleva el codo pegado al cuerpo hacia la cadera.",
+      "Baja despacio y cambia de lado."
+    ],
+    "tip": "Fuerza de espalda con la espalda bien apoyada. 3×10 por lado.",
+    "caution": "La espalda se mantiene recta y no se abre girando.",
+    "progression": "Mancuerna más pesada y, después, mantén 1 s arriba.",
+    "gear": "mancuerna y banco",
+    "phases": {
+      "0": {
+        "label": "Tirar",
+        "cue": "Codo a la cadera, espalda recta"
+      },
+      "1": {
+        "label": "Arriba"
+      },
+      "2": {
+        "label": "Bajar"
+      },
+      "3": {
+        "label": "Abajo"
+      }
+    }
+  },
+  "side_lying_leg_raise": {
+    "muscles": [
+      "parte externa de los glúteos",
+      "abductores de la cadera"
+    ],
+    "equipment": "esterilla (mini banda opcional)",
+    "steps": [
+      "Túmbate de lado con la cabeza apoyada en el brazo de abajo y las piernas estiradas.",
+      "Eleva la pierna de arriba, estirada y con la punta del pie hacia delante.",
+      "La pelvis no se inclina hacia atrás.",
+      "Baja despacio y cambia de lado."
+    ],
+    "tip": "Estabiliza la pelvis y las rodillas al correr. 3×15 por lado.",
+    "caution": "Sube solo hasta donde la pelvis siga quieta.",
+    "progression": "Con una mini banda y, después, mantén 2 s arriba.",
+    "phases": {
+      "0": {
+        "label": "Elevar la pierna",
+        "cue": "Puntas al frente, sin inclinarte"
+      },
+      "1": {
+        "label": "Arriba"
+      },
+      "2": {
+        "label": "Bajar"
+      },
+      "3": {
+        "label": "Abajo"
+      }
+    }
+  },
+  "donkey_kick": {
+    "muscles": [
+      "glúteos"
+    ],
+    "equipment": "esterilla",
+    "steps": [
+      "A cuatro apoyos, con las rodillas bajo las caderas.",
+      "Mantén una pierna flexionada y empuja el talón hacia el techo.",
+      "No arquees la zona lumbar; la pelvis se mantiene nivelada.",
+      "Vuelve despacio y cambia de lado."
+    ],
+    "tip": "Trabaja los glúteos y es suave con la espalda. 3×12 por lado.",
+    "caution": "Sube solo hasta donde la espalda siga recta.",
+    "progression": "Con una mini banda sobre las rodillas o una tobillera lastrada.",
+    "phases": {
+      "0": {
+        "label": "Talón al techo",
+        "cue": "Sin arquear la espalda, pelvis nivelada"
+      },
+      "1": {
+        "label": "Arriba"
+      },
+      "2": {
+        "label": "Volver"
+      },
+      "3": {
+        "label": "A cuatro apoyos"
+      }
+    }
+  },
+  "bicycle_crunch": {
+    "muscles": [
+      "oblicuos y abdominales"
+    ],
+    "equipment": "esterilla",
+    "steps": [
+      "Túmbate boca arriba con las manos sueltas detrás de la cabeza y los hombros ligeramente elevados.",
+      "Lleva una rodilla al pecho y estira la otra pierna.",
+      "Gira el codo contrario hacia la rodilla flexionada.",
+      "Cambia de lado con fluidez."
+    ],
+    "tip": "Despacio funciona mejor que rápido. 3×10 por lado.",
+    "caution": "No tires de la cabeza; si te duele la espalda, mantén la pierna estirada más alta.",
+    "progression": "Más lento y con la pierna estirada más baja.",
+    "phases": {
+      "0": {
+        "label": "Rodilla al codo contrario",
+        "cue": "Los hombros siguen arriba"
+      },
+      "1": {
+        "label": "Girar"
+      },
+      "2": {
+        "label": "Cambiar"
+      }
+    }
+  },
+  "russian_twist": {
+    "muscles": [
+      "oblicuos",
+      "core"
+    ],
+    "equipment": "ninguno (peso opcional)",
+    "steps": [
+      "Siéntate erguido con las rodillas flexionadas y el tronco algo inclinado hacia atrás.",
+      "Manos juntas delante del pecho.",
+      "Gira el tronco hacia un lado, con las manos hacia el suelo junto a la cadera.",
+      "Gira hacia el otro lado manteniendo la espalda larga."
+    ],
+    "tip": "Gira desde el core, no te limites a balancear los brazos. 3×10 por lado.",
+    "caution": "Si te duele la espalda, mantén los pies en el suelo y gira menos.",
+    "progression": "Levanta los pies y, después, añade un peso.",
+    "phases": {
+      "0": {
+        "label": "Girar hacia el lado",
+        "cue": "Gira el tronco, los pies quietos"
+      },
+      "1": {
+        "label": "Lado"
+      },
+      "2": {
+        "label": "Al centro"
+      }
+    }
+  },
+  "reverse_crunch": {
+    "muscles": [
+      "abdominales inferiores"
+    ],
+    "equipment": "esterilla",
+    "steps": [
+      "Túmbate boca arriba con los brazos a los lados y las rodillas flexionadas sobre las caderas.",
+      "Enrolla la pelvis hacia arriba y lleva las rodillas hacia el pecho.",
+      "Sin impulso; la cabeza se queda en el suelo.",
+      "Baja despacio."
+    ],
+    "tip": "Fortalece los abdominales inferiores cuidando la espalda. 3×10–12.",
+    "caution": "Sin balanceos; si el cuello te molesta, mantén la cabeza apoyada de forma consciente.",
+    "progression": "Más lento y, después, mantén 1 s arriba.",
+    "phases": {
+      "0": {
+        "label": "Enrollar la pelvis",
+        "cue": "Rodillas al pecho, sin impulso"
+      },
+      "1": {
+        "label": "Arriba"
+      },
+      "2": {
+        "label": "Apoyar despacio"
+      },
+      "3": {
+        "label": "Abajo"
+      }
+    }
+  },
+  "shoulder_tap": {
+    "muscles": [
+      "core",
+      "hombros"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Plancha alta, con los pies algo más separados que las caderas.",
+      "Una mano toca el hombro contrario.",
+      "Las caderas se quedan quietas y no se balancean.",
+      "Sigue alternando."
+    ],
+    "tip": "Resiste la rotación: para un core estable. 3×10 por lado.",
+    "caution": "Si te molestan las muñecas, trabaja sobre los puños o con las manos elevadas.",
+    "progression": "Pies más juntos y, después, más lento.",
+    "phases": {
+      "0": {
+        "label": "Tocar el hombro",
+        "cue": "Las caderas quietas"
+      },
+      "1": {
+        "label": "Tocar"
+      },
+      "2": {
+        "label": "Volver la mano"
+      },
+      "3": {
+        "label": "Apoyo"
+      }
+    }
+  },
+  "bear_plank": {
+    "muscles": [
+      "core",
+      "muslos",
+      "hombros"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "A cuatro apoyos, con los dedos de los pies flexionados bajo el cuerpo.",
+      "Despega las rodillas unos centímetros del suelo.",
+      "La espalda se mantiene plana, como una mesa.",
+      "Mantén la posición respirando con calma."
+    ],
+    "tip": "Una tensión del core que se nota enseguida. 3×20–40 s.",
+    "caution": "Despega las rodillas solo un poco; no redondees la espalda.",
+    "progression": "Mantén más tiempo y, después, desplázate hacia delante gateando como un oso.",
+    "phases": {
+      "0": {
+        "label": "Mantener",
+        "cue": "Las rodillas flotan, espalda plana"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Despegar las rodillas"
+      }
+    }
+  },
+  "v_up": {
+    "muscles": [
+      "abdominales",
+      "flexores de la cadera"
+    ],
+    "equipment": "esterilla",
+    "steps": [
+      "Túmbate boca arriba con los brazos por encima de la cabeza y las piernas estiradas.",
+      "Eleva a la vez brazos y piernas: lleva las manos hacia los pies.",
+      "Mantén la V un instante arriba.",
+      "Baja despacio."
+    ],
+    "tip": "Exigente: domina antes los crunches y las elevaciones de piernas. 3×8–10.",
+    "caution": "No lo hagas si tienes dolor de espalda; sin impulso.",
+    "progression": "Más lento y con 1 s de pausa arriba.",
+    "phases": {
+      "0": {
+        "label": "Plegarse",
+        "cue": "Manos hacia los pies"
+      },
+      "1": {
+        "label": "Arriba"
+      },
+      "2": {
+        "label": "Apoyar despacio"
+      },
+      "3": {
+        "label": "Abajo"
+      }
+    }
+  },
+  "flutter_kicks": {
+    "muscles": [
+      "abdominales inferiores",
+      "flexores de la cadera"
+    ],
+    "equipment": "esterilla",
+    "steps": [
+      "Túmbate boca arriba con las manos junto a los glúteos o debajo de ellos.",
+      "Piernas estiradas, justo por encima del suelo.",
+      "Patadas pequeñas y rápidas de arriba abajo, alternando.",
+      "La zona lumbar se queda en el suelo."
+    ],
+    "tip": "Corto y limpio, mejor que largo y con la espalda arqueada. 3×20–30 s.",
+    "caution": "Si la zona lumbar se despega, mantén las piernas más altas.",
+    "progression": "Piernas más bajas y, después, más tiempo.",
+    "phases": {
+      "0": {
+        "label": "Patadas pequeñas",
+        "cue": "Zona lumbar en el suelo"
+      },
+      "1": {
+        "label": "Cambio"
+      }
+    }
+  },
+  "glute_bridge_march": {
+    "muscles": [
+      "glúteos",
+      "core"
+    ],
+    "equipment": "esterilla",
+    "steps": [
+      "Boca arriba, eleva las caderas en un puente.",
+      "Levanta una rodilla cada vez, como si marcharas.",
+      "La pelvis se mantiene arriba y nivelada.",
+      "Baja despacio cuando hayas terminado las repeticiones."
+    ],
+    "tip": "Combina fuerza de glúteos y estabilidad de la pelvis. 3×8 por lado.",
+    "caution": "No dejes que la pelvis caiga hacia un lado; mantén el movimiento lento.",
+    "progression": "Mantén más tiempo y separa más los pies.",
+    "phases": {
+      "0": {
+        "label": "Elevar la rodilla",
+        "cue": "La pelvis sigue arriba y nivelada"
+      },
+      "1": {
+        "label": "Arriba"
+      },
+      "2": {
+        "label": "Apoyar el pie"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Elevar la pelvis"
+      }
+    }
+  },
+  "worlds_greatest_stretch": {
+    "muscles": [
+      "caderas",
+      "columna dorsal",
+      "isquiotibiales"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Zancada profunda, con ambas manos en el suelo por dentro del pie delantero.",
+      "Baja el codo interior hacia el pie delantero.",
+      "Después, gira ese brazo hacia el techo, siguiéndolo con la mirada.",
+      "Vuelve y cambia de lado."
+    ],
+    "tip": "Moviliza caderas y espalda de una vez: ideal para calentar. 4–5 por lado.",
+    "caution": "Muévete dentro de un rango sin dolor; baja la rodilla de atrás si lo necesitas.",
+    "progression": "Respira más largo en cada posición.",
+    "phases": {
+      "0": {
+        "label": "Codo al pie",
+        "cue": "Pierna de atrás larga"
+      },
+      "1": {
+        "label": "Mantener"
+      },
+      "2": {
+        "label": "Volver la mano"
+      },
+      "3": {
+        "label": "Girar el brazo al techo",
+        "cue": "La mirada sigue la mano"
+      },
+      "4": {
+        "label": "Abierto"
+      },
+      "5": {
+        "label": "Volver"
+      },
+      "6": {
+        "label": "Zancada"
+      }
+    }
+  },
+  "downward_dog": {
+    "muscles": [
+      "pantorrillas",
+      "isquiotibiales",
+      "hombros"
+    ],
+    "equipment": "esterilla",
+    "steps": [
+      "Desde la posición a cuatro apoyos, flexiona los dedos de los pies bajo el cuerpo.",
+      "Empuja las caderas hacia arriba y atrás: una V invertida.",
+      "Espalda larga y talones hundiéndose hacia el suelo; puedes flexionar las rodillas.",
+      "Mantén la posición respirando con calma."
+    ],
+    "tip": "Estira toda la parte posterior del cuerpo. 3×30 s.",
+    "caution": "Si te molestan las muñecas o los hombros, hazlo sobre los antebrazos.",
+    "progression": "Mantén más tiempo y baja cada talón por turnos.",
+    "phases": {
+      "0": {
+        "label": "Mantener",
+        "cue": "Talones hacia el suelo, espalda larga"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Empujar la cadera hacia arriba"
+      }
+    }
+  },
+  "cobra": {
+    "muscles": [
+      "abdominales",
+      "columna",
+      "flexores de la cadera"
+    ],
+    "equipment": "esterilla",
+    "steps": [
+      "Túmbate boca abajo con las manos junto a los hombros.",
+      "Eleva el pecho despacio; la pelvis se queda en el suelo.",
+      "Hombros abajo y mirada al frente.",
+      "Mantén un instante y baja."
+    ],
+    "tip": "Una extensión suave tras muchas horas en la silla. 6–8 repeticiones.",
+    "caution": "Sube solo hasta donde te resulte cómodo en la zona lumbar.",
+    "progression": "Mantén más tiempo y estira más los brazos.",
+    "phases": {
+      "0": {
+        "label": "Elevar el pecho",
+        "cue": "Pelvis en el suelo, hombros abajo"
+      },
+      "1": {
+        "label": "Mantener"
+      },
+      "2": {
+        "label": "Apoyar"
+      },
+      "3": {
+        "label": "Abajo"
+      }
+    }
+  },
+  "quad_stretch": {
+    "muscles": [
+      "parte frontal del muslo",
+      "flexores de la cadera"
+    ],
+    "equipment": "ninguno (pared opcional)",
+    "steps": [
+      "Colócate erguido sobre una pierna, agarrándote a una pared si lo necesitas.",
+      "Lleva el talón de la otra pierna hacia los glúteos.",
+      "La rodilla apunta hacia abajo y las caderas, ligeramente hacia delante.",
+      "Mantén la posición y cambia de lado."
+    ],
+    "tip": "El clásico después de correr. 2×30 s por lado.",
+    "caution": "No arquees la zona lumbar; si te molesta la rodilla, pasa una toalla alrededor del pie.",
+    "progression": "Mantén más tiempo, metiendo la pelvis de forma consciente.",
+    "phases": {
+      "0": {
+        "label": "Mantener",
+        "cue": "Rodilla hacia abajo, cadera hacia delante"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Talón al glúteo"
+      }
+    }
+  },
+  "pigeon_pose": {
+    "muscles": [
+      "glúteos",
+      "caderas"
+    ],
+    "equipment": "esterilla",
+    "steps": [
+      "Desde la posición a cuatro apoyos, lleva una rodilla hacia delante, entre las manos, con la espinilla en diagonal.",
+      "Estira la pierna de atrás, larga.",
+      "Las caderas se hunden hacia el suelo; el tronco, erguido o inclinado hacia delante.",
+      "Mantén la posición y cambia de lado."
+    ],
+    "tip": "Un estiramiento profundo de glúteos: sienta bien tras tiradas largas. 2×30–45 s por lado.",
+    "caution": "Si te duele la rodilla, coloca la espinilla menos en diagonal o haz en su lugar el estiramiento en 4.",
+    "progression": "Inclina más el tronco hacia delante y mantén más tiempo.",
+    "phases": {
+      "0": {
+        "label": "Mantener",
+        "cue": "La cadera baja hacia el suelo"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Apoyar el tronco"
+      }
+    }
+  },
+  "leg_swings": {
+    "muscles": [
+      "caderas",
+      "isquiotibiales"
+    ],
+    "equipment": "ninguno (pared para apoyarte)",
+    "steps": [
+      "Colócate de lado junto a una pared y agárrate.",
+      "Balancea la pierna exterior, suelta, hacia delante y hacia atrás.",
+      "El tronco se mantiene quieto y erguido.",
+      "Aumenta poco a poco el balanceo y cambia de lado."
+    ],
+    "tip": "Un calentamiento dinámico antes de correr. 10–15 por lado.",
+    "caution": "Balancea con control, sin dar tirones.",
+    "progression": "Mayor amplitud de movimiento, también hacia los lados, cruzando delante del cuerpo.",
+    "phases": {
+      "0": {
+        "label": "Hacia atrás",
+        "cue": "Balanceo suelto, tronco quieto"
+      },
+      "1": {
+        "label": "Hacia delante"
+      }
+    }
+  },
+  "arm_circles": {
+    "muscles": [
+      "hombros",
+      "espalda alta"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Colócate erguido con los brazos largos.",
+      "Círculos grandes y lentos hacia delante.",
+      "Después, cambia de sentido.",
+      "Los hombros se mantienen relajados."
+    ],
+    "tip": "Suelta los hombros antes de entrenar. 10 en cada sentido.",
+    "caution": "Muévete dentro de un rango sin dolor.",
+    "progression": "Círculos más grandes, también con un brazo cada vez.",
+    "phases": {
+      "0": {
+        "label": "Círculos grandes",
+        "cue": "Brazos largos, hombros sueltos"
+      },
+      "1": {
+        "label": "Círculos grandes"
+      },
+      "2": {
+        "label": "Círculos grandes"
+      },
+      "3": {
+        "label": "Círculos grandes"
+      }
+    }
+  },
+  "ankle_rocks": {
+    "muscles": [
+      "tobillo",
+      "pantorrilla"
+    ],
+    "equipment": "pared",
+    "steps": [
+      "Arrodíllate sobre una rodilla frente a una pared, con el pie delantero a un palmo de ella.",
+      "Empuja la rodilla hacia la pared; el talón se queda en el suelo.",
+      "Mantén un instante y vuelve.",
+      "Aumenta poco a poco la distancia y cambia de lado."
+    ],
+    "tip": "Más movilidad de tobillo para sentadillas profundas y una zancada fluida al correr. 10 por lado.",
+    "caution": "El talón se queda abajo; si duele la parte delantera de la articulación, no avances tanto.",
+    "progression": "Aleja más el pie de la pared.",
+    "gear": "pared",
+    "phases": {
+      "0": {
+        "label": "Rodilla hacia la pared",
+        "cue": "El talón sigue en el suelo"
+      },
+      "1": {
+        "label": "Delante"
+      },
+      "2": {
+        "label": "Volver"
+      }
+    }
+  },
+  "neck_stretch": {
+    "muscles": [
+      "cuello",
+      "parte superior del hombro"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Ponte de pie o siéntate erguido, con los hombros relajados.",
+      "Inclina una oreja hacia el hombro.",
+      "Apoya con suavidad la mano del mismo lado sobre la cabeza, sin tirar.",
+      "Mantén la posición y cambia de lado."
+    ],
+    "tip": "Relaja tras muchas horas en la silla. 2×20 s por lado.",
+    "caution": "Con suavidad; si te hormiguean los brazos, suelta de inmediato.",
+    "progression": "Baja activamente el hombro contrario.",
+    "phases": {
+      "0": {
+        "label": "Mantener",
+        "cue": "El hombro contrario abajo, tira con suavidad"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Oreja al hombro"
+      }
+    }
+  },
+  "side_bend_stretch": {
+    "muscles": [
+      "lateral del tronco",
+      "dorsales"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Colócate con los pies a la anchura de las caderas y una mano en la cadera.",
+      "Estira el otro brazo por encima de la cabeza.",
+      "Inclínate hacia el lado sin caer hacia delante.",
+      "Mantén un instante, vuelve a erguirte y cambia de lado."
+    ],
+    "tip": "Alarga los costados: bueno tras estar mucho tiempo sentado. 4 por lado.",
+    "caution": "No arquees la zona lumbar; la pelvis se queda centrada.",
+    "progression": "Mantén más tiempo y lleva el brazo más lejos por encima de la cabeza.",
+    "phases": {
+      "0": {
+        "label": "Estirar hacia el lado",
+        "cue": "Hazte largo, sin caer hacia delante"
+      },
+      "1": {
+        "label": "Mantener"
+      },
+      "2": {
+        "label": "Incorporarse"
+      },
+      "3": {
+        "label": "Centro"
+      }
+    }
+  },
+  "inchworm": {
+    "muscles": [
+      "isquiotibiales",
+      "hombros",
+      "core"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Desde la posición de pie, inclínate hacia delante y apoya las manos en el suelo.",
+      "Camina con las manos hacia delante hasta la posición de flexión.",
+      "Mantén un instante y vuelve caminando con las manos hacia atrás.",
+      "Sube enrollando la espalda despacio."
+    ],
+    "tip": "Un calentamiento de cuerpo entero. 5 repeticiones.",
+    "caution": "Puedes flexionar las rodillas; no lo hagas con dolor agudo de espalda.",
+    "progression": "Añade una flexión cuando estés en la posición de flexión.",
+    "phases": {
+      "0": {
+        "label": "Rodar hacia delante"
+      },
+      "1": {
+        "label": "Caminar con las manos hacia delante",
+        "cue": "Piernas lo más estiradas posible"
+      },
+      "2": {
+        "label": "Plancha"
+      },
+      "3": {
+        "label": "Volver con las manos"
+      },
+      "4": {
+        "label": "Subir enrollando"
+      },
+      "5": {
+        "label": "De pie"
+      }
+    }
+  },
+  "deep_squat_hold": {
+    "muscles": [
+      "caderas",
+      "tobillos",
+      "espalda"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Colócate con los pies a la anchura de los hombros y las puntas ligeramente hacia fuera.",
+      "Baja a una sentadilla profunda, con los talones en el suelo.",
+      "Los codos empujan suavemente las rodillas hacia fuera, con el pecho abierto.",
+      "Mantén la posición respirando con calma."
+    ],
+    "tip": "Recupera la movilidad perdida. 3×30 s.",
+    "caution": "Si te duelen las rodillas, baja menos; pon algo bajo los talones si lo necesitas.",
+    "progression": "Mantén más tiempo, desplazando el peso de un lado a otro.",
+    "phases": {
+      "0": {
+        "label": "Mantener",
+        "cue": "Talones en el suelo, pecho abierto"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Bajar a la sentadilla profunda"
+      }
+    }
+  },
+  "jumping_jack": {
+    "muscles": [
+      "pantorrillas",
+      "hombros",
+      "cardio"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Colócate erguido con los brazos a los lados.",
+      "Salta separando las piernas y levanta a la vez los brazos por encima de la cabeza.",
+      "Salta de nuevo a la posición inicial.",
+      "Ligero y elástico, a un ritmo constante."
+    ],
+    "tip": "Activa la circulación. 3×20–30.",
+    "caution": "Sobre una superficie blanda; si tienes problemas de rodilla o de suelo pélvico, sáltatelo y da un paso lateral.",
+    "progression": "Más rápido y, después, más tiempo.",
+    "phases": {
+      "0": {
+        "label": "Saltar"
+      },
+      "1": {
+        "label": "Abierto",
+        "cue": "Aterriza ligero sobre la parte delantera del pie"
+      },
+      "2": {
+        "label": "Saltar"
+      },
+      "3": {
+        "label": "Cerrado"
+      },
+      "4": {
+        "label": "Cerrado"
+      }
+    }
+  },
+  "high_knees": {
+    "muscles": [
+      "flexores de la cadera",
+      "pantorrillas",
+      "cardio"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Corre en el sitio.",
+      "Lleva las rodillas hasta la altura de la cadera, alternando deprisa.",
+      "Aterriza sobre la parte delantera de los pies, con los brazos acompañando.",
+      "El tronco se mantiene erguido."
+    ],
+    "tip": "Corto e intenso: ideal para intervalos. 3×20 s.",
+    "caution": "Solo con el cuerpo caliente y sobre un suelo antideslizante.",
+    "progression": "Más tiempo y, después, más rápido.",
+    "phases": {
+      "0": {
+        "label": "Rodillas arriba",
+        "cue": "Rodillas a la altura de la cadera, pasos rápidos"
+      },
+      "1": {
+        "label": "Cambio"
+      }
+    }
+  },
+  "butt_kicks": {
+    "muscles": [
+      "isquiotibiales",
+      "pantorrillas",
+      "cardio"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Corre en el sitio.",
+      "Lleva los talones hacia los glúteos, alternando.",
+      "Contactos con el suelo cortos y rápidos.",
+      "Tronco erguido y brazos sueltos balanceándose."
+    ],
+    "tip": "Ejercicios de carrera en el sitio. 3×20 s.",
+    "caution": "Solo con el cuerpo caliente y sobre un suelo antideslizante.",
+    "progression": "Mayor cadencia y, después, avanzando.",
+    "phases": {
+      "0": {
+        "label": "Talón al glúteo",
+        "cue": "Tronco erguido, cadencia rápida"
+      },
+      "1": {
+        "label": "Cambio"
+      }
+    }
+  },
+  "burpee": {
+    "muscles": [
+      "cuerpo entero",
+      "cardio"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Desde la posición de pie, baja en cuclillas con las manos en el suelo.",
+      "Lanza los pies hacia atrás hasta la posición de flexión.",
+      "Vuelve a lanzar los pies hacia delante.",
+      "Salta hacia arriba con los brazos por encima de la cabeza y aterriza con suavidad."
+    ],
+    "tip": "Acondicionamiento de cuerpo entero: parte del entrenamiento de Hyrox. 3×8–10.",
+    "caution": "Aprende primero sin el salto (lleva los pies atrás caminando); mantén la espalda recta en la posición de flexión.",
+    "progression": "Con una flexión en el suelo y, después, con un salto de longitud (burpee broad jump).",
+    "phases": {
+      "0": {
+        "label": "Cuclillas, manos al suelo"
+      },
+      "1": {
+        "label": "Lanzar los pies hacia atrás"
+      },
+      "2": {
+        "label": "Plancha",
+        "cue": "El cuerpo sigue recto"
+      },
+      "3": {
+        "label": "Lanzar los pies hacia delante"
+      },
+      "4": {
+        "label": "Salto vertical"
+      },
+      "5": {
+        "label": "Aterrizar",
+        "cue": "Aterriza con suavidad"
+      },
+      "6": {
+        "label": "De pie"
+      }
+    }
+  },
+  "mountain_climber": {
+    "muscles": [
+      "core",
+      "flexores de la cadera",
+      "cardio"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Plancha alta, con las manos bajo los hombros.",
+      "Lleva una rodilla al pecho.",
+      "Cambia de pierna con rapidez, alternando.",
+      "Las caderas se mantienen bajas y quietas."
+    ],
+    "tip": "Core y cardio en uno. 3×20–30 s.",
+    "caution": "Si te molestan las muñecas, hazlo con las manos elevadas sobre un banco.",
+    "progression": "Más rápido y, después, más tiempo.",
+    "phases": {
+      "0": {
+        "label": "Rodilla al pecho",
+        "cue": "Caderas bajas y quietas"
+      },
+      "1": {
+        "label": "Cambio"
+      }
+    }
+  },
+  "skater_jump": {
+    "muscles": [
+      "glúteos",
+      "muslos",
+      "equilibrio"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Colócate sobre una pierna, ligeramente flexionada.",
+      "Salta lateralmente a la otra pierna.",
+      "Aterriza con suavidad, con la pierna libre cruzando por detrás de la de apoyo.",
+      "Sigue yendo de un lado a otro con ritmo."
+    ],
+    "tip": "Potencia y estabilidad en el salto lateral: bueno para el fútbol. 3×20–30 s.",
+    "caution": "Al aterrizar, la rodilla apunta sobre el pie, no hacia dentro.",
+    "progression": "Salta más lejos y mantén un instante al aterrizar.",
+    "phases": {
+      "0": {
+        "label": "Saltar hacia el lado",
+        "cue": "Aterriza suave sobre una pierna"
+      },
+      "1": {
+        "label": "Aterrizar"
+      },
+      "2": {
+        "label": "Despegar"
+      }
+    }
+  },
+  "bear_crawl": {
+    "muscles": [
+      "core",
+      "hombros",
+      "muslos"
+    ],
+    "equipment": "ninguno",
+    "steps": [
+      "Plancha del oso: las rodillas flotan justo por encima del suelo.",
+      "Mueve un poco hacia delante la mano y el pie contrarios.",
+      "La espalda se mantiene plana y las caderas, quietas.",
+      "Gatea hacia delante y hacia atrás."
+    ],
+    "tip": "Coordinación y fuerza de core: a los niños también les gusta. 3×20–30 s.",
+    "caution": "Pasos pequeños, con las rodillas justo por encima del suelo.",
+    "progression": "Más tiempo y, después, hacia atrás o de lado.",
+    "phases": {
+      "0": {
+        "label": "Mano y pie contrario adelante",
+        "cue": "Rodillas justo sobre el suelo"
+      },
+      "1": {
+        "label": "Apoyar"
+      }
+    }
+  }
+}

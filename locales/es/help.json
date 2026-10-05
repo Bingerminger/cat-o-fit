@@ -1,1 +1,421 @@
-{}
+{
+  "sections": {
+    "start": "Primeros pasos",
+    "usecases": "Cómo alcanzar tu objetivo",
+    "views": "Las áreas de un vistazo",
+    "knowledge": "Conocimientos de entrenamiento",
+    "faq": "Conviene saber",
+    "glossar": "Glosario"
+  },
+  "articles": {
+    "willkommen": {
+      "q": "¡Te damos la bienvenida{hi}!",
+      "blocks": {
+        "0": "Cat-O-Fit planifica y acompaña tu entrenamiento{hi}: para ti y para toda tu familia. Con la app avanzas hacia tus objetivos –una carrera objetivo o un programa de entrenamiento sin carrera (forma física, fuerza, adelgazamiento, movilidad)–: fijas tu objetivo, recibes un plan, entrenas y ves tu progreso paso a paso.",
+        "1": "La app guarda cada cambio al instante en tu dispositivo y lo sincroniza con tu propio servidor o NAS: sin conexión, simplemente más tarde, incluso en pleno entrenamiento.",
+        "2": "Puedes añadir la app a la pantalla de inicio (icono Compartir en Safari → “Añadir a pantalla de inicio”). Así se abre a pantalla completa, como una app de verdad."
+      }
+    },
+    "aufbau": {
+      "q": "¿Cómo está organizado todo?",
+      "blocks": {
+        "0": "Cat-O-Fit separa con claridad lo que planificas de lo que haces:",
+        "1": [
+          "Objetivo: una carrera (p. ej. tu media maratón) o un programa de entrenamiento sin carrera.",
+          "Plan de entrenamiento: se genera automáticamente por fases hasta la carrera, o a lo largo de la duración del programa.",
+          "Sesiones planificadas: en el calendario, y puedes moverlas.",
+          "Entrenamientos realizados: lo que has hecho de verdad (planificado frente a real)."
+        ],
+        "2": "Ir a “Hoy”"
+      }
+    },
+    "anmelden": {
+      "q": "Iniciar sesión, cambiar de persona y cerrar sesión",
+      "aliases": "login|iniciar sesión|iniciar sesion|entrar|acceder|cerrar sesión|cerrar sesion|salir|PIN|contraseña|contrasena|cambiar de perfil|cambiar de usuario|dispositivo compartido|iPad compartido",
+      "blocks": {
+        "0": "La primera vez que arrancas, un breve asistente configura la app: primero creas la persona admin con su propio PIN (de 4 a 8 dígitos, que no sea 0000) y después cargas datos de ejemplo o empiezas desde cero. A partir de ahí, sin sesión iniciada, Cat-O-Fit solo muestra el inicio de sesión: los menús aparecen cuando has entrado.",
+        "1": [
+          "Toca tu tarjeta e introduce tu PIN. El servidor lo comprueba; tras cinco intentos fallidos hay una breve pausa.",
+          "No hay un cambio de perfil aparte: basta con cerrar sesión y vuelves directamente al inicio de sesión.",
+          "Para cerrar sesión: en iPhone, en “Más” (arriba, junto a tu nombre); en iPad y Mac, abajo en la barra lateral, o en Ajustes → Cuenta."
+        ],
+        "2": "Al recargar la página sigues con la sesión iniciada; solo se cierra al cerrar la app o la pestaña. Por eso, en un iPad compartido toca siempre “Cerrar sesión”, o activa “Dispositivo compartido” en Ajustes → Cuenta: así, al cerrar sesión se borran del dispositivo todos los datos personales.",
+        "3": "Sin conexión con el servidor solo puedes iniciar sesión en un dispositivo donde ya hayas entrado antes con conexión. La app solo sincroniza el ciclo, los análisis y los suplementos cuando el servidor ha confirmado tu inicio de sesión; hasta entonces todo queda a salvo en el dispositivo. Si falta la confirmación (por ejemplo, tras una actualización), la app te pide el PIN una vez.",
+        "4": "La opción de menú “Equipo/familia” es vuestra vista común, con las insignias del equipo. La administración (añadir miembros, roles, equipos) está en Más → “Gestionar equipo” y solo la ven los admins; “Restablecer la app” está al final del todo de Ajustes."
+      }
+    },
+    "diagramme": {
+      "q": "Leer los valores de un gráfico",
+      "blocks": {
+        "0": "Cada gráfico de tendencia te da números concretos: no hace falta adivinar qué muestra la curva en cada momento.",
+        "1": [
+          "Desliza el dedo (o, en ordenador, el ratón) por el gráfico.",
+          "Una línea guía salta al punto de datos más cercano y un pequeño globo muestra la fecha y el valor.",
+          "Con varias curvas, como forma, fatiga y frescura, ves los tres valores del mismo día a la vez.",
+          "En ordenador también puedes usar el teclado: muévete con las flechas y cierra con Escape."
+        ],
+        "2": "El eje y muestra valores de referencia redondos con líneas de cuadrícula finas, así que ves el rango de un vistazo sin tocar el gráfico."
+      }
+    },
+    "belastung-pruefen": {
+      "q": "Comprobar si tu carga sigue siendo sana",
+      "blocks": {
+        "0": "La tarjeta “Carga y forma” de “Hoy” responde a tres preguntas, con lenguaje claro en lugar de jerga.",
+        "1": [
+          "¿Estás subiendo demasiado rápido? El ratio de carga compara tus últimos 7 días con la media de las tres semanas anteriores (ACWR). 1,3 significa “un 30 % más de lo habitual”; entre 0,8 y 1,3 estás cerca de tu media.",
+          "¿Te has recuperado? La forma menos la fatiga da tu frescura, valorada en relación con tu forma: fresco, equilibrado, en entrenamiento o claramente cansado. Solo se valora cuando hay unos tres meses de datos.",
+          "¿Entrenas de forma demasiado uniforme? Solo aparece un aviso cuando tus días de entrenamiento se parecen mucho y la semana está bien por encima de tu media; caminar y la movilidad no cuentan aquí."
+        ],
+        "2": "Los umbrales son una orientación sacada de datos observacionales del deporte de equipo: no son un barómetro de lesiones ni una promesa de protección. En las primeras cuatro semanas la tarjeta dice con honestidad “Tus datos aún se están acumulando”. La fuerza, el fútbol y el ciclismo cuentan igual que correr; los valores son puntos de carga (AU = minutos × esfuerzo)."
+      }
+    },
+    "wettkampf-anlegen": {
+      "q": "Crear una carrera y generar el plan",
+      "blocks": {
+        "0": [
+          "Abre “Objetivos y planes” y toca “+” → elige “Carrera”.",
+          "Introduce el nombre, la fecha, la distancia y el tiempo objetivo, y elige la prioridad: A – cima de la temporada, B – carrera importante, C – carrera de preparación o por diversión.",
+          "Guarda: llegas a la página del objetivo.",
+          "Toca “Crear plan” y elige tu nivel (Principiante, Intermedio, Avanzado), los días de carrera por semana (3–6) y si tienes compromisos fijos (p. ej. entrenamientos del club); por defecto, ninguno.",
+          "Cat-O-Fit reparte las semanas en las fases Base → Construcción → Pico → Puesta a punto: volumen a partir de donde estás ahora, como mucho un 8–12 % más por semana, una de cada cuatro semanas más suave, la tirada larga limitada y la sesión de carrera el día de tu carrera, sea el día de la semana que sea."
+        ],
+        "1": "Cat-O-Fit deduce los ritmos objetivo a partir de tu tiempo objetivo: no tienes que calcular nada{hi}. Si el tiempo objetivo es muy ambicioso o la preparación es corta, la app te lo dice con honestidad y propone alternativas.",
+        "2": "Los planes que ya están en marcha se pueden recalcular con la lógica actual del plan mediante ↻ “Recalcular desde hoy”: todo lo anterior a hoy se queda como está.",
+        "3": "Ir a tus objetivos"
+      }
+    },
+    "programm-starten": {
+      "q": "Empezar un programa de entrenamiento sin carrera",
+      "blocks": {
+        "0": "¿Solo quieres estar en mejor forma, más fuerte o más sano, sin una carrera? Entonces crea un programa de entrenamiento.",
+        "1": [
+          "Abre “Objetivos y planes” y toca “+” → elige “Programa de entrenamiento”.",
+          "Elige un enfoque: Forma física general, Fuerza y músculo, Adelgazamiento o Movilidad y salud.",
+          "Fija los días de entrenamiento por semana (3–5) y la duración (4, 8 o 12 semanas).",
+          "Guardar y crear plan: el plan semanal está listo al instante."
+        ],
+        "2": "La resistencia crece semana a semana hasta el rango de la OMS (desde 150 minutos; caminar cuenta), además de fuerza dos días, desde los primeros pasos hasta variantes más exigentes. Una de cada cuatro semanas es más suave. “Recalcular el plan desde hoy” crea de nuevo las semanas que vienen; lo que ya has hecho se queda.",
+        "3": "Ir a tus objetivos"
+      }
+    },
+    "training-durchfuehren": {
+      "q": "Hacer una sesión de entrenamiento",
+      "blocks": {
+        "0": [
+          "En el panel de inicio o en el calendario, toca la sesión de hoy.",
+          "Verás el objetivo (distancia, ritmo objetivo, zona de FC). Toca “Empezar”.",
+          "En el modo de entrenamiento corre el reloj; en las series, Cat-O-Fit te guía con sonido por el calentamiento, el esfuerzo, el descanso y la vuelta a la calma, con el ritmo objetivo y la zona de FC de cada fase.",
+          "Al final toca “Terminar entrenamiento” → introduce distancia, esfuerzo (RPE) y sensación → listo. Si descartas sin guardar, te pide confirmación."
+        ],
+        "1": "En las tiradas largas, Cat-O-Fit te recuerda beber automáticamente. En iPhone: no bloquees la pantalla (si no, las señales se pausan, aunque el tiempo sigue contando bien) y mantén desactivado el interruptor de silencio: Safari no puede vibrar."
+      }
+    },
+    "training-nachtragen": {
+      "q": "Registrar un entrenamiento después, sin reloj",
+      "blocks": {
+        "0": "¿Has corrido sin el móvil o se te ha olvidado? No pasa nada.",
+        "1": [
+          "Abre la sesión (Hoy, calendario o plan).",
+          "Toca “Registrar como hecha”.",
+          "Introduce lo que sepas (distancia, tiempo, sensación); todo es opcional."
+        ],
+        "2": "La comparación entre lo planificado y lo real es honesta: una carrera suave que fue demasiado rápida no cuenta como “Objetivo en gran parte cumplido”; las series no se juzgan por la media de toda la sesión."
+      }
+    },
+    "training-ohne-plan": {
+      "q": "Registrar un entrenamiento sin plan",
+      "blocks": {
+        "0": "Un paseo en bici improvisado, una carrera en un día de descanso o entrenar sin ningún objetivo: todo eso también va a tu diario de entrenamiento.",
+        "1": [
+          "En “Hoy” toca “Registrar actividad”, o en el calendario (vista semanal) toca el “+” de la cabecera del día.",
+          "Introduce deporte, fecha, duración, distancia, frecuencia cardíaca y esfuerzo.",
+          "Si encaja una sesión planificada del mismo día, la app te ofrece vincular el entrenamiento con ella."
+        ],
+        "2": "Las actividades no planificadas aparecen en el calendario, en “Hoy” y en Progreso, en “Sesiones sin plan”: ábrelas, edítalas o elimínalas ahí. “Hoy” te propone asociar las actividades importadas (Apple Health, GPX/TCX) con una sesión."
+      }
+    },
+    "einheit-verschieben": {
+      "q": "Reprogramar una sesión sin desordenar tu semana",
+      "aliases": "reprogramar|mover|aplazar|posponer|arrastrar|arrastrar y soltar|qué pasaría si|que pasaria si|what-if|mañana|manana|pasado mañana|pasado manana|cambiar de día|cambiar de dia|cambiar fecha|próximo día libre|proximo dia libre",
+      "blocks": {
+        "0": "Surge algo: es normal. Lo importante es que la semana siguiente siga cuadrando.",
+        "1": [
+          "Abre la sesión → “Reprogramar”: “Mañana”, “Pasado mañana” o “Próximo día libre” con un toque, o elige una fecha.",
+          "En el calendario (vista semanal) también puedes arrastrar: sujeta la sesión por su asa (⠿) y llévala a otro día.",
+          "Cat-O-Fit lo comprueba al instante: ¿ya hay algo ese día? ¿Hay una sesión exigente (tempo, series, fuerza, tirada larga) el día anterior o el siguiente? Debajo ves el efecto en la carga semanal, antes y después.",
+          "Confirma si encaja. La sesión lleva entonces la nota “Movida”; un arrastre en el calendario se puede revertir con “Deshacer”."
+        ],
+        "2": "Los avisos no bloquean nada: puedes reprogramar igualmente si quieres. La sesión reprogramada sigue contando para la carga semanal y para la revisión de la semana.",
+        "3": "Ir al calendario"
+      }
+    },
+    "einheiten-anpassen": {
+      "q": "Ajustar, añadir y recuperar sesiones",
+      "blocks": {
+        "0": "Tu plan es tuyo: ajústalo cuando quieras.",
+        "1": [
+          "Abre una sesión y toca el icono del lápiz de arriba: se pueden editar el tipo, el ritmo objetivo, la zona de FC, la estructura de las series, la distancia y la descripción.",
+          "Con el “+” del plan de entrenamiento creas una sesión nueva, con una gran variedad de deportes: natación, senderismo, remo, tenis, bádminton, squash, tenis de mesa, ciclismo indoor, elíptica, entrenamiento en el gimnasio y más.",
+          "En el cuadro de edición también puedes eliminar una sesión."
+        ],
+        "2": "Si creas tú una sesión y ya hay otra de intensidad parecida en la misma semana, Cat-O-Fit te ofrece quitar esa del plan, para que la carga semanal se mantenga constante. Tú decides: “Quitar del plan” o “Conservar ambas”.",
+        "3": "¿Ha cambiado algo de fondo en una semana (p. ej. el inicio de la temporada o una concentración)? En la vista “Las semanas de un vistazo” del plan, “Recalcular esta semana” recalcula solo esa semana desde cero; el entrenamiento que ya has hecho se conserva.",
+        "4": "¿Se te ha pasado alguna? Las sesiones pasadas y abiertas aparecen como “Atrasada”. En el panel de inicio, un aviso te recuerda reprogramarlas, registrarlas o marcarlas como omitidas.",
+        "5": "Si has marcado una sesión clave (tempo, series, tirada larga, fuerza) como omitida, el panel de inicio te ofrece recuperarla en un día libre de la semana siguiente, en lugar de dejarla perder."
+      }
+    },
+    "koerperwerte": {
+      "q": "Mantener al día tus valores corporales",
+      "blocks": {
+        "0": [
+          "Toca “＋ Registrar” → “Valores corporales” (o Progreso → Cuerpo → “+”).",
+          "Introduce, p. ej., peso, frecuencia cardíaca en reposo o sueño: solo lo que quieras.",
+          "Los gráficos muestran tu tendencia con una escala en el eje y y, para el peso, con una línea de objetivo.",
+          "La “Masa muscular” es el valor de una báscula de análisis corporal; la “Masa magra” (p. ej. de Apple Health) es bastante mayor y entra en la disponibilidad energética.",
+          "Método de HRV: Apple guarda SDNN; muchos relojes y anillos muestran RMSSD. Los números no son comparables: la tendencia, los objetivos y la disposición solo comparan valores del mismo tipo de medición."
+        ],
+        "1": "¿Quieres el valor exacto? Desliza el dedo por un gráfico (en ordenador: pasa el ratón por encima): una línea guía salta al punto más cercano y muestra fecha + valor.",
+        "2": "La presentación es neutra a propósito: importa la tendencia, no las oscilaciones diarias. En Ajustes puedes ocultar valores concretos.",
+        "3": "Ir a valores corporales"
+      }
+    },
+    "apple-health": {
+      "q": "Importar Apple Health: automático o gratis con un archivo",
+      "aliases": "Health Auto Export|Apple Watch|importar|importación|importacion|Atajos|Shortcuts|Garmin|Withings|iPhone|sincronizar|sincronización|sincronizacion|importación automática|importacion automatica|wearable|dispositivo vestible|datos de salud",
+      "blocks": {
+        "0": "Tus fuentes (Garmin, Apple Watch, Withings …) escriben en Apple Health. De ahí llegan a Cat-O-Fit{hi} los valores más importantes: peso, frecuencia cardíaca en reposo, HRV, VO₂max, sueño, pasos, energía activa y entrenamientos. Hay tres vías:",
+        "1": [
+          "Automática con “Health Auto Export – JSON+CSV” (App Store): la app en sí es gratuita, pero la transferencia automática que necesitas (REST API) solo está en Premium: según la App Store, unos 8 € al año o 30 € de pago único. Configuración: en Cat-O-Fit, en Importación de salud, “Activar la importación automática” y copia la URL del endpoint; en Health Auto Export, en Automations → + → “REST API”, pega la URL, método POST, formato JSON (versión de exportación 2), elige métricas + workouts, agregación “daily”, periodo “Since last sync” → guarda → “Run now”.",
+          "Gratis y automática con un atajo: con la app “Atajos” de Apple puedes leer valores de salud y enviarlos a la misma dirección; las instrucciones están en la documentación (Apple Health). Que la automatización funcione de forma fiable con el iPhone bloqueado depende de iOS.",
+          "Gratis, a mano: iPhone → app Salud → foto de perfil → “Exportar todos los datos de salud” y sube el ZIP en Importación de salud (importación completa). También sirven grabaciones sueltas como archivo GPX o TCX (Garmin, Strava …), con deporte, tiempo en movimiento, parciales por kilómetro y tiempo en zonas de FC."
+        ],
+        "2": "Solo necesitas un inicio de sesión adicional (cabecera “Authorization”) si tu instancia está detrás de un inicio de sesión previo; la Basic Auth integrada del contenedor deja pasar el endpoint de salud de todos modos. Comprobación: en Importación de salud, “Importado recientemente (automático)” muestra los valores diarios recibidos; las entradas manuales se conservan y los entrenamientos duplicados se detectan.",
+        "3": "Ir a Importación de salud"
+      }
+    },
+    "health-connect": {
+      "q": "Android: importar valores desde Health Connect",
+      "aliases": "Android|Google Fit|Samsung Health|HC Webhook|Pixel Watch|Galaxy Watch|Health Connect|app puente|importar|importación|importacion|sincronizar|sincronización|sincronizacion",
+      "blocks": {
+        "0": "En Android, Health Connect reúne los valores de tu reloj y de tus apps. Los sitios web no pueden leerlos, así que una pequeña app puente del dispositivo envía los datos a Cat-O-Fit, por ejemplo la de código abierto “HC Webhook”.",
+        "1": [
+          "En Cat-O-Fit, en Importación de salud, “Activar la importación automática” y copia la URL del endpoint y la clave.",
+          "En la app puente, introduce la URL como dirección del webhook y envía la clave como cabecera “X-Catofit-Token” (si no es posible: añade “&token=<clave>” a la dirección).",
+          "Permite los tipos de datos: peso, grasa corporal, masa corporal magra, frecuencia cardíaca en reposo, HRV, sueño, pasos, calorías activas, entrenamientos y frecuencia cardíaca. El ciclo, solo si quieres importarlo: sigue siendo privado."
+        ],
+        "2": "Cat-O-Fit detecta los días y los entrenamientos que se envían dos veces. La HRV de Health Connect es RMSSD y se evalúa por separado de los valores de Apple (SDNN).",
+        "3": "Ir a Importación de salud"
+      }
+    },
+    "erinnerungen": {
+      "q": "Recibir recordatorios en el iPhone",
+      "blocks": {
+        "0": "La forma más fiable en iPhone/iPad es el calendario nativo.",
+        "1": [
+          "Abre una sesión o el plan y toca el icono de exportar.",
+          "Elige “Plan completo”, “Esta sesión” o “Solo la carrera”.",
+          "El archivo .ics se abre en el calendario de iOS, con un recordatorio 1 hora antes y la tarde anterior."
+        ]
+      }
+    },
+    "fortschritt": {
+      "q": "Entender tu progreso",
+      "blocks": {
+        "0": "En “Progreso” ves de un vistazo en qué punto estás; arriba del todo, el semáforo “¿Voy por buen camino?”.",
+        "1": [
+          "Semáforo (verde/ámbar/rojo): resume el cumplimiento, la carga y las sesiones omitidas de las últimas 4 semanas, con sus motivos.",
+          "Cumplimiento del plan: cuántas sesiones previstas has completado en la ventana de 4 semanas.",
+          "Volumen semanal y carga de entrenamiento: tu carga a lo largo del tiempo (7 frente a 28 días).",
+          "Sesiones omitidas: por motivo; las debidas a lesión o enfermedad no cuentan en tu contra.",
+          "Métricas y objetivos: peso, perímetros, ritmo, frecuencia cardíaca en reposo y VO₂max con una flecha de tendencia y “mantener/mejorar”.",
+          "Año de entrenamiento: un mapa de calor de los últimos 12 meses (como en GitHub); cuanto más oscuro el día, más tiempo de entrenamiento.",
+          "Predicción de carrera: una estimación aproximada de tu posible tiempo."
+        ],
+        "2": "Ir a Progreso"
+      }
+    },
+    "navigation": {
+      "q": "Navegación",
+      "blocks": {
+        "0": "Abajo (iPhone) o a la izquierda (iPad, Mac): Hoy · Calendario · ＋ Registrar · Progreso · Más. “＋ Registrar” es el sitio fijo para entrenamiento, valores corporales, comida, valor de análisis, menstruación y tarea de la checklist. “Progreso” reúne Entrenamiento (estadísticas), Cuerpo, Logros e Informes como pestañas. “Más” está organizado por temas y muestra arriba quién ha iniciado sesión; cuando gestionas a un miembro, con “Volver a mí”."
+      }
+    },
+    "heute": {
+      "q": "Hoy (panel de inicio)",
+      "blocks": {
+        "0": "Tu pantalla de inicio del día: la sesión de hoy (el ▶ la inicia directamente), la cuenta atrás hasta la próxima carrera, un consejo del coach (se pueden desplegar más), carga y forma, el resumen de la semana y tus objetivos semanales y de salud. En horizontal, en iPad o Mac, usa dos columnas.",
+        "1": "Abrir"
+      }
+    },
+    "kalender": {
+      "q": "Calendario",
+      "blocks": {
+        "0": "Vista mensual y semanal de todas las sesiones planificadas y las actividades no planificadas. En la vista semanal puedes reprogramar arrastrando. Cada entrada lleva a su sesión.",
+        "1": "Abrir"
+      }
+    },
+    "ziele": {
+      "q": "Objetivos y planes",
+      "aliases": "carrera|programa|evento|prioridad|objetivo|meta|tiempo objetivo|cuenta atrás|cuenta atras",
+      "blocks": {
+        "0": "Tus carreras y programas de entrenamiento en un solo sitio: crear, editar, generar un plan. Carreras con cuenta atrás y prioridad (A – cima de la temporada, B – importante, C – preparación), programas con un enfoque y días de entrenamiento por semana.",
+        "1": "Abrir"
+      }
+    },
+    "trainingsplan": {
+      "q": "Plan de entrenamiento",
+      "blocks": {
+        "0": "El plan de una carrera o de un programa: línea de tiempo de las fases, datos clave (nivel, días de carrera, ritmos objetivo), la vista “Las semanas de un vistazo” y todas las sesiones. Con “…” arriba lo actualizas desde hoy, fijas compromisos o lo exportas a tu calendario."
+      }
+    },
+    "einheit-ansicht": {
+      "q": "Sesión (vista)",
+      "aliases": "sesión|sesion|evaluación|evaluacion|revisión|revision|planificado frente a real|objetivo frente a real|análisis|analisis|parciales",
+      "blocks": {
+        "0": "Una sola sesión en tres estados: planificada (el objetivo, con “Empezar · Registrar como hecha” abajo), en curso (modo de entrenamiento) y completada (revisión con una comparación entre lo planificado y lo real; con GPX/TCX, también parciales y tiempo en zonas de FC)."
+      }
+    },
+    "workout-modus": {
+      "q": "Modo de entrenamiento",
+      "blocks": {
+        "0": "Pantalla completa para entrenar: controles grandes, cronómetro o control de series con el ritmo objetivo y la zona de FC de cada fase, un contador de series con cuenta atrás de descanso para la fuerza y recordatorio de pausa para beber."
+      }
+    },
+    "fortschritt-koerper": {
+      "q": "Progreso → Cuerpo",
+      "blocks": {
+        "0": "Tus medidas corporales como tendencias con escala en el eje Y y un marcador de objetivo, dibujadas por fecha, a 3 meses, 1 año o todo; las series largas, como medias semanales. Al pasar el dedo o el ratón por el gráfico ves fecha + valor. Registrar, editar, importar.",
+        "1": "Abrir"
+      }
+    },
+    "fortschritt-training": {
+      "q": "Progreso → Entrenamiento",
+      "blocks": {
+        "0": "Un semáforo “¿Voy por buen camino?”, cumplimiento del plan, volumen semanal, mapa de calor del año de entrenamiento, carga de entrenamiento, sesiones omitidas por motivo, distribución de las sesiones, métricas y objetivos (mantener/mejorar), predicción de carrera, además de la forma actual y las zonas de entrenamiento.",
+        "1": "Abrir"
+      }
+    },
+    "erfolge": {
+      "q": "Progreso → Logros",
+      "aliases": "logros|insignias|medallas|trofeos|premios|badges|impulso|momentum|racha",
+      "blocks": {
+        "0": "Tu impulso y todos los logros con su progreso: los conseguidos, en color; los pendientes, con una barra de progreso.",
+        "1": "Abrir"
+      }
+    },
+    "uebungen": {
+      "q": "Biblioteca de ejercicios",
+      "aliases": "ejercicios|lista de ejercicios|animación|animacion|animaciones|seguir el ejercicio",
+      "blocks": {
+        "0": "93 ejercicios de fuerza, core, movilidad, cardio y prevención, cada uno con una animación al ritmo del movimiento, además de instrucciones paso a paso, grupos musculares, material, dificultad, consejo, progresión y una nota de precaución. Incluyen ejercicios de Hyrox como los wall balls y los swings con pesa rusa, estiramientos de espalda y cadera, y ejercicios de prevención para correr y para el fútbol (curl nórdico de isquiotibiales, Copenhague, calentamiento FIFA 11+). Las sesiones de fútbol los sugieren directamente.",
+        "1": [
+          "Filtra por categoría arriba (fuerza/core/movilidad/cardio) Y por zona del cuerpo (espalda, caderas, abdomen, piernas, tren superior), o busca en el campo de texto.",
+          "Toca un ejercicio: la figura muestra el movimiento al ritmo del ejercicio, con los músculos que trabajan resaltados en color.",
+          "Fija las repeticiones (los segundos, en los ejercicios de mantener) y las series, y toca “Seguir el ejercicio”: la animación cuenta series y repeticiones, muestra la indicación técnica y la respiración, respeta los descansos y avisa cuándo cambiar de lado. “Lento” ayuda a aprender y “Sonido” da un compás audible.",
+          "Al final el ejercicio cuenta como hecho, o puedes contar al detalle con “Hecho (+1)”. Un entrenamiento completado también cuenta sus ejercicios automáticamente.",
+          "En las sesiones de fuerza y de movilidad/recuperación, primero se listan los ejercicios de la descripción (“en el plan”) y después sugerencias según la frecuencia con que los uses. Toca “+” para añadir un ejercicio a la sesión."
+        ],
+        "2": "Las animaciones son esquemáticas a propósito y no sustituyen a una instrucción individual.",
+        "3": "Abrir"
+      }
+    },
+    "durchgehend": {
+      "q": "Seguir sin parar, con música e indicaciones de voz",
+      "aliases": "entrenamientos|entrenamiento guiado|música|musica|anuncios|voz|indicaciones de voz|vídeo|video|sesión|sesion|sin parar|de una vez|seguir sin parar",
+      "blocks": {
+        "0": "Una sesión entera de una vez, como un vídeo para seguir: la figura en pantalla demuestra cada ejercicio al ritmo, con una pausa intermedia que muestra una vista previa, cambios de lado y un descanso entre rondas. Pensado para un iPad o un móvil en el suelo; no tienes que tocar nada.",
+        "1": [
+          "Inicio: en una sesión de fuerza o de movilidad, toca “Seguir sin parar” (las cantidades salen de la descripción: “12×”, “30 s/lado”, “3 rondas”) o, en la Biblioteca de ejercicios, en “Entrenamientos”, elige uno del catálogo (búsqueda y filtros para fuerza, core, movilidad, cardio, correr y fútbol).",
+          "En el resumen, fija las rondas y el descanso, elige música e indicaciones de voz y toca “¡Vamos!”.",
+          "Música: un ritmo acorde con el ejercicio, cada movimiento en el compás; más suave durante las pausas. “Música propia” deja que, p. ej., Spotify siga sonando; para eso el dispositivo no debe estar en silencio.",
+          "Las indicaciones de voz llegan durante las pausas (siguiente ejercicio, cambio de lado). Durante el ejercicio te guían los tonos: tres tonos antes de empezar, suenan las tres últimas repeticiones o segundos, un tono doble en “quedan 10 segundos” y un tono grave al final.",
+          "Al tocar aparece la barra de control: pausa, atrás, adelante, música e indicaciones de voz sí/no, terminar. Al tocar la barra de secciones saltas a esa sección.",
+          "Al final todos los ejercicios cuentan como hechos; desde una sesión planificada, “Registrar como hecha” los registra al instante con la duración."
+        ],
+        "2": "¿No se oye nada? Sube el volumen. Con “Música” la oyes aunque el dispositivo esté en silencio; con “Música propia”, no.",
+        "3": "Abrir entrenamientos"
+      }
+    },
+    "laborwerte-woher": {
+      "q": "¿De dónde saco mis análisis?",
+      "blocks": {
+        "0": "En Alemania hay varias vías para llegar a un informe de laboratorio: se diferencian sobre todo en quién paga y en lo específica para el deporte que es la elección de valores.",
+        "3": "Para comparar resultados a lo largo del tiempo, mantén en lo posible el mismo laboratorio y el mismo método. La sangre de la yema del dedo es más sensible a la preparación que una extracción de sangre venosa; los pequeños saltos entre dos proveedores suelen ser diferencias de medición y no un cambio real."
+      }
+    },
+    "referenzbereich": {
+      "q": "¿Por qué introduzco el rango de referencia de mi laboratorio?",
+      "blocks": {
+        "0": "Porque en Alemania NO existen rangos de referencia uniformes en todo el país: cada laboratorio fija el suyo, según el método de medición, el aparato y el grupo de comparación. Para la ferritina, la fT3 o la vitamina B12 difieren de forma notable. Por eso el rango siempre figura impreso junto al valor en tu informe.",
+        "1": [
+          "Al registrar un valor, los campos “Rango de referencia de tu laboratorio” muestran un rango típico solo como pista en gris, en la unidad que has elegido.",
+          "Copia el rango de tu informe. Solo se guarda lo que introduces tú; si lo dejas vacío, vale el rango típico.",
+          "Cat-O-Fit valora entonces el valor frente a TU laboratorio. El rango objetivo deportivo sigue ahí como segunda capa."
+        ],
+        "2": "Hasta la v3.19.0, el valor predeterminado ya rellenado se guardaba junto con el valor (y se convertía mal si cambiabas la unidad). La app reconoce esos valores antiguos y los vuelve a valorar frente al rango típico: no tienes que corregir nada.",
+        "3": "Qué está estandarizado y qué no:"
+      }
+    },
+    "labor": {
+      "q": "Análisis y suplementos",
+      "blocks": {
+        "0": "Registra los valores de tu informe de laboratorio, sigue su evolución y colócalos en un contexto deportivo. La clave: los rangos de laboratorio valen para la población general; una ferritina de 25 µg/l es “normal”, pero justa para el entrenamiento de resistencia. Cat-O-Fit te muestra ambos rangos.",
+        "1": [
+          "La primera vez que lo abres, te hace unas preguntas breves para definir el alcance; valen para toda la app: Cat-O-Fit está pensado para adultos sanos. Con enfermedad, medicación, embarazo, lactancia o un trastorno de la conducta alimentaria, el módulo se queda en simple documentación, sin recomendaciones. La app reconoce a niños y adolescentes por el año de nacimiento: sus valores solo se documentan, no se valoran.",
+          "“+ Registrar un valor”: analito, fecha, valor medido y, justo al lado, la unidad; para casi todos los valores están disponibles las unidades habituales en Alemania (p. ej. PCR en mg/l o mg/dl, vitamina D en nmol/l o ng/ml); la app convierte y muestra el valor tal como figuraba en el informe. Si un valor queda muy fuera de lo habitual, pregunta: “¿Es correcta la unidad?”",
+          "El magnesio se ofrece como valor en sangre total y como valor en suero; elige el que corresponda. Para la B12 hay holo-TC y B12 total.",
+          "En “Circunstancias de la extracción de sangre” puedes anotar ejercicio intenso en las 48 horas previas, ayuno, biotina y, si tienes ciclo, el día del ciclo. Tras un ejercicio intenso, la app no valora entonces la CK, la urea ni la PCR, y valora el estradiol solo frente al rango de tu laboratorio para la fase del ciclo.",
+          "Al tocar un valor ves su evolución con ambos rangos (referencia a trazos, rango objetivo deportivo como área), la fuente de los rangos y todas las mediciones; ahí puedes editar y eliminar valores.",
+          "La app muestra una tendencia solo a partir de tres mediciones a lo largo de al menos dos meses y cuando el cambio es mayor que la variación natural del valor. Una proyección (“cuándo saldrá el valor del rango favorable”) solo existe en el sentido desfavorable y como máximo con un año de antelación.",
+          "La ferritina se interpreta junto con la PCR de la misma extracción: con inflamación, un valor alto no se puede valorar, pero uno bajo sigue siendo relevante.",
+          "Los valores antiguos (la vitamina D, a los cuatro meses o si es de otra estación; la mayoría de los demás, al año) se quedan en el historial, pero ya no llevan sugerencias; entonces la app aconseja una nueva medición.",
+          "En “Suplementos” encuentras información general con la justificación, la cantidad habitual (acorde con las cantidades máximas del BfR y los límites superiores de la EFSA), el momento de la toma y las interacciones, siempre con la alimentación como primera vía. Un valor demasiado alto nunca lleva a “suplementar”, sino al consejo de revisar tu ingesta. Para los productos de rendimiento hay una nota sobre productos analizados por lotes (Lista de Colonia).",
+          "Lo que tomas con regularidad lo introduces en “Tu plan” y lo vas marcando. Los productos que solo tomas cuando hace falta (p. ej. cafeína antes de carreras) los marcas como tales: no cuentan para el cumplimiento."
+        ],
+        "2": "Arriba del todo, la app estima tu aporte de energía: si comes lo suficiente para lo que entrenas. El cálculo solo usa los días que has confirmado con “Marcar día como completo” en Nutrición, y el resultado es un rango, no una medición. Para ello la app necesita tu masa libre de grasa, medida (báscula, Apple Health) o calculada a partir de un valor de grasa corporal de los últimos cuatro meses. Aportar poca energía es un problema más frecuente en el deporte de resistencia que la falta de algún suplemento, y una causa habitual de peor rendimiento, lesiones y alteraciones del ciclo.",
+        "3": "El hierro nunca se sugiere sin un valor de laboratorio: tomado por sospecha, es perjudicial cuando las reservas están llenas. Cat-O-Fit sirve para documentar y para información general de personas adultas sanas: no es un producto sanitario ni un diagnóstico; ante valores anómalos, la app te remite expresamente a un médico. Tus valores son privados: los admins no los ven en la app y el servidor solo los entrega cuando inicias sesión con tu PIN. Eso sí, quien gestiona el servidor puede leer los archivos guardados.",
+        "4": "Abrir"
+      }
+    },
+    "energieverfuegbarkeit": {
+      "q": "Aporte de energía (disponibilidad energética, RED-S)",
+      "aliases": "RED-S|disponibilidad energética|disponibilidad energetica|EA|LEA|baja disponibilidad energética|baja disponibilidad energetica|masa libre de grasa|masa magra|comer poco|no comer lo suficiente|déficit energético|deficit energetico|aporte de energía|aporte de energia",
+      "blocks": {
+        "0": "El aporte de energía estima si comes lo suficiente para lo que entrenas. Técnicamente se llama disponibilidad energética: la energía que comes menos el gasto energético del ejercicio, dividido entre la masa libre de grasa en kg.",
+        "1": [
+          "El cálculo solo usa los días que has confirmado con “Marcar día como completo” en Nutrición; hasta que haya suficientes días, la app lo dice en lugar de afirmar que falta energía.",
+          "Valor orientativo: unas 45 kcal por kg de masa libre de grasa. Con un objetivo de adelgazamiento, de 30 a 45 es aceptable de forma temporal; por debajo de 30 (en hombres, por debajo de 25) se vuelve crítico para las hormonas, los huesos y la recuperación.",
+          "La masa libre de grasa sale de una medición (báscula, Apple Health) o de un valor de grasa corporal de los últimos cuatro meses. Como todos los datos de partida son estimaciones, la app muestra un rango."
+        ],
+        "2": "Aportar poca energía de forma persistente se llama RED-S (déficit energético relativo en el deporte) en la medicina deportiva. Cat-O-Fit no hace ningún diagnóstico: ante alteraciones del ciclo, lesiones frecuentes o cansancio persistente, esto corresponde a manos médicas.",
+        "3": "Ir a Análisis y suplementos"
+      }
+    },
+    "trendprojektion": {
+      "q": "Tendencia y proyección de los valores de laboratorio",
+      "aliases": "proyección|proyeccion|tendencia|previsión|prevision|historial|variación|variacion|variación natural|variacion natural|RCV|valor de cambio de referencia",
+      "blocks": {
+        "0": [
+          "Una tendencia aparece solo a partir de tres mediciones a lo largo de al menos dos meses, y solo si el cambio es mayor que la variación natural del valor (aprox. ferritina 48 %, vitamina D 30 %, hemoglobina 9 %, en el resto 25 %).",
+          "La proyección prolonga la evolución en línea recta e indica cuándo se saldría del rango favorable; solo en el sentido desfavorable y como máximo con un año de antelación.",
+          "La vitamina D varía con la estación: un valor de verano dice poco en invierno."
+        ],
+        "1": "Una proyección es un motivo para el siguiente control, no una predicción."
+      }
+    },
+    "berichte": {
+      "q": "Informes y certificados",
+      "blocks": {
+        "0": "Crea registros inalterables de tu progreso: un informe mensual, un informe de carrera (preparación + resultado) o un certificado de un objetivo que has alcanzado. Antes de guardar ves una vista previa; una vez guardados, se conservan y se pueden imprimir o guardar como PDF, todo en local.",
+        "1": "Abrir"
+      }
+    },
+    "ernaehrung-einkauf": {
+      "q": "Nutrición, compra y checklist",
+      "blocks": {
+        "0": "Ideas de comidas ricas en proteínas con sugerencias de recetas, un balance de calorías de hoy, una lista de la compra automática con despensa (a partir del plan semanal de comidas) y la “Checklist” con recordatorios: rutinas diarias o citas con fecha/hora. Las citas también aparecen automáticamente en el calendario (vista semanal y mensual) y además se pueden exportar como .ics; también hay plantillas, como la preparación de una carrera. Se puede desactivar en Ajustes."
+      }
+    }
+  },
+  "labBest": "la mejor opción"
+}

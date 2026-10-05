@@ -1,1 +1,57 @@
-{}
+{
+  "ics": {
+    "calendarName": "Catofit Training",
+    "training": "Entraînement",
+    "race": "Course",
+    "distance": "Distance : {km} km",
+    "pace": "Allure cible : {pace} min/km",
+    "hrZone": "Zone de FC : Z{zone}",
+    "openInApp": "Ouvrir dans l’app : {url}",
+    "raceDistance": "Distance : {distance}",
+    "raceDistanceKm": "Distance : {distance} ({km} km)",
+    "targetTime": "Temps visé : {time}",
+    "priority": "Priorité : {priority}",
+    "alarmHour": "{title} dans 1 heure",
+    "alarmTomorrow": "Demain : {title}",
+    "alarmRace": "Course dans 2 heures – échauffe-toi !",
+    "alarmRaceTomorrow": "Course demain : {name}",
+    "file": {
+      "session": "seance",
+      "race": "course",
+      "plan": "plan"
+    },
+    "error": {
+      "missingId": "Le paramètre « id » est manquant.",
+      "invalidUser": "Le paramètre « user » est manquant ou invalide.",
+      "linkInvalid": "Ce lien de calendrier n’est plus valide. Exporte à nouveau le rendez-vous depuis l’app.",
+      "linkExpired": "Les liens de calendrier sans clé ne sont plus valides. Exporte à nouveau le rendez-vous depuis l’app.",
+      "unitNotFound": "Séance introuvable.",
+      "eventNotFound": "Événement introuvable."
+    }
+  },
+  "import": {
+    "title": "{type} ({source})",
+    "type": {
+      "easy": "Course à pied",
+      "walk": "Marche",
+      "hike": "Randonnée",
+      "cross_bike": "Sortie à vélo",
+      "swim": "Natation",
+      "strength": "Renforcement",
+      "rowing": "Aviron",
+      "tennis": "Tennis",
+      "tabletennis": "Tennis de table",
+      "cross_football": "Football",
+      "mobility": "Mobilité",
+      "other": "Entraînement"
+    },
+    "source": {
+      "appleHealth": "Apple Health",
+      "healthConnect": "Health Connect",
+      "healthImport": "Import santé"
+    }
+  },
+  "food": {
+    "product": "Produit {code}"
+  }
+}

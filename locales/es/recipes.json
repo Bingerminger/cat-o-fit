@@ -1,1 +1,418 @@
-{}
+{
+  "overnight-oats-mit-beeren": {
+    "title": "Overnight oats con frutos rojos",
+    "ingredients": [
+      "60 g copos de avena",
+      "150 g skyr",
+      "150 ml leche",
+      "100 g frutos rojos",
+      "1 cda miel"
+    ]
+  },
+  "ruehrei-mit-vollkornbrot-avocado": {
+    "title": "Huevos revueltos con pan integral y aguacate",
+    "ingredients": [
+      "3 huevos",
+      "2 rebanadas pan integral",
+      "1/2 aguacate",
+      "espinacas"
+    ]
+  },
+  "protein-porridge-mit-banane": {
+    "title": "Porridge proteico con plátano",
+    "ingredients": [
+      "60 g copos de avena",
+      "30 g proteína en polvo",
+      "250 ml leche",
+      "1 plátano"
+    ]
+  },
+  "quark-mit-nuessen-apfel": {
+    "title": "Quark con nueces y manzana",
+    "ingredients": [
+      "250 g quark desnatado",
+      "20 g nueces",
+      "1 manzana",
+      "1 cdta miel"
+    ]
+  },
+  "vollkorn-pancakes-mit-quark": {
+    "title": "Tortitas integrales con quark",
+    "ingredients": [
+      "60 g copos de avena",
+      "2 huevos",
+      "150 g quark desnatado",
+      "1 plátano",
+      "1 cdta levadura química"
+    ]
+  },
+  "chia-pudding-mit-mango": {
+    "title": "Pudin de chía con mango",
+    "ingredients": [
+      "30 g semillas de chía",
+      "200 ml bebida de avena",
+      "100 g mango",
+      "1 cdta sirope de agave"
+    ]
+  },
+  "bircher-muesli": {
+    "title": "Muesli Bircher",
+    "ingredients": [
+      "50 g copos de avena",
+      "150 g yogur",
+      "1 manzana",
+      "20 g almendras",
+      "100 ml leche"
+    ]
+  },
+  "avocado-brot-mit-ei": {
+    "title": "Tostada de aguacate con huevo",
+    "ingredients": [
+      "2 rebanadas pan integral",
+      "1/2 aguacate",
+      "2 huevos"
+    ]
+  },
+  "griessbrei-mit-beeren": {
+    "title": "Papilla de sémola con frutos rojos",
+    "ingredients": [
+      "50 g sémola",
+      "300 ml leche",
+      "100 g frutos rojos",
+      "1 cdta miel"
+    ]
+  },
+  "skyr-bowl-mit-granola": {
+    "title": "Bol de skyr con granola",
+    "ingredients": [
+      "200 g skyr",
+      "40 g granola",
+      "1 plátano",
+      "10 g nueces"
+    ]
+  },
+  "tofu-ruehrei-mit-brot": {
+    "title": "Revuelto de tofu con pan",
+    "ingredients": [
+      "200 g tofu",
+      "2 rebanadas pan integral",
+      "1 tomate"
+    ]
+  },
+  "erdnussbutter-toast-mit-banane": {
+    "title": "Tostada de crema de cacahuete con plátano",
+    "ingredients": [
+      "2 rebanadas pan integral",
+      "20 g crema de cacahuete",
+      "1 plátano"
+    ]
+  },
+  "haehnchen-reis-bowl-mit-brokkoli": {
+    "title": "Bol de pollo y arroz con brócoli",
+    "ingredients": [
+      "150 g pollo",
+      "80 g arroz",
+      "200 g brócoli",
+      "1 cda aceite"
+    ]
+  },
+  "lachs-mit-suesskartoffel-spinat": {
+    "title": "Salmón con boniato y espinacas",
+    "ingredients": [
+      "150 g salmón",
+      "250 g boniato",
+      "espinacas",
+      "1 cda aceite"
+    ]
+  },
+  "linsen-dal-mit-reis": {
+    "title": "Dal de lentejas con arroz",
+    "ingredients": [
+      "120 g lentejas",
+      "80 g arroz",
+      "1 cebolla",
+      "200 g tomates"
+    ]
+  },
+  "pute-quinoa-pfanne": {
+    "title": "Salteado de pavo y quinoa",
+    "ingredients": [
+      "150 g pavo",
+      "80 g quinoa",
+      "1 pimiento",
+      "1 calabacín"
+    ]
+  },
+  "rindergeschnetzeltes-mit-reis": {
+    "title": "Ternera en tiras con arroz",
+    "ingredients": [
+      "150 g ternera",
+      "80 g arroz",
+      "1 pimiento",
+      "1 cebolla"
+    ]
+  },
+  "kichererbsen-bowl-mit-quinoa": {
+    "title": "Bol de garbanzos con quinoa",
+    "ingredients": [
+      "150 g garbanzos",
+      "80 g quinoa",
+      "100 g brócoli",
+      "1 zanahoria"
+    ]
+  },
+  "vollkorn-spaghetti-bolognese": {
+    "title": "Espaguetis integrales a la boloñesa",
+    "ingredients": [
+      "100 g pasta integral",
+      "150 g carne picada",
+      "200 g tomates",
+      "1 cebolla"
+    ]
+  },
+  "gefuellte-suesskartoffel-mit-huettenkaese": {
+    "title": "Boniato relleno de queso cottage",
+    "ingredients": [
+      "250 g boniato",
+      "150 g queso cottage",
+      "100 g espinacas"
+    ]
+  },
+  "couscous-salat-mit-feta": {
+    "title": "Ensalada de cuscús con feta",
+    "ingredients": [
+      "80 g cuscús",
+      "50 g feta",
+      "1 pimiento",
+      "1 pepino",
+      "1 cda aceite"
+    ]
+  },
+  "haehnchen-wrap-mit-gemuese": {
+    "title": "Wrap de pollo con verduras",
+    "ingredients": [
+      "1 wrap",
+      "150 g pollo",
+      "lechuga",
+      "1 tomate",
+      "50 g yogur"
+    ]
+  },
+  "kabeljau-mit-kartoffeln-brokkoli": {
+    "title": "Bacalao con patatas y brócoli",
+    "ingredients": [
+      "180 g bacalao",
+      "250 g patatas",
+      "150 g brócoli",
+      "1 cda aceite"
+    ]
+  },
+  "gemuesecurry-mit-kichererbsen": {
+    "title": "Curry de verduras con garbanzos",
+    "ingredients": [
+      "150 g garbanzos",
+      "80 g arroz",
+      "200 ml leche de coco",
+      "1 pimiento"
+    ]
+  },
+  "magerquark-mit-gemuesesticks": {
+    "title": "Quark desnatado con bastoncitos de verdura",
+    "ingredients": [
+      "250 g quark desnatado",
+      "1 pimiento",
+      "1 pepino"
+    ]
+  },
+  "omelett-mit-feta-tomaten": {
+    "title": "Omelette con feta y tomates",
+    "ingredients": [
+      "3 huevos",
+      "50 g feta",
+      "200 g tomates",
+      "espinacas"
+    ]
+  },
+  "thunfisch-vollkornwrap": {
+    "title": "Wrap integral de atún",
+    "ingredients": [
+      "1 wrap",
+      "150 g atún",
+      "lechuga",
+      "50 g yogur"
+    ]
+  },
+  "ofengemuese-mit-haehnchen": {
+    "title": "Verduras al horno con pollo",
+    "ingredients": [
+      "150 g pollo",
+      "1 calabacín",
+      "1 pimiento",
+      "1 boniato",
+      "1 cda aceite"
+    ]
+  },
+  "gebratener-tofu-mit-gemuese": {
+    "title": "Tofu salteado con verduras",
+    "ingredients": [
+      "200 g tofu",
+      "1 pimiento",
+      "100 g brócoli",
+      "1 cda salsa de soja"
+    ]
+  },
+  "haehnchensalat-mit-avocado": {
+    "title": "Ensalada de pollo con aguacate",
+    "ingredients": [
+      "150 g pollo",
+      "1/2 aguacate",
+      "lechuga",
+      "1 tomate",
+      "1 cda aceite"
+    ]
+  },
+  "linsensuppe": {
+    "title": "Sopa de lentejas",
+    "ingredients": [
+      "200 g lentejas",
+      "1 zanahoria",
+      "1 cebolla",
+      "1 patata"
+    ]
+  },
+  "caprese-mit-mozzarella": {
+    "title": "Ensalada caprese con mozzarella",
+    "ingredients": [
+      "125 g mozzarella",
+      "200 g tomates",
+      "albahaca",
+      "1 cda aceite"
+    ]
+  },
+  "garnelen-zucchini-pfanne": {
+    "title": "Salteado de gambas y calabacín",
+    "ingredients": [
+      "150 g gambas",
+      "1 calabacín",
+      "1 diente ajo",
+      "1 cda aceite"
+    ]
+  },
+  "putenbrust-mit-ofengemuese": {
+    "title": "Pechuga de pavo con verduras al horno",
+    "ingredients": [
+      "150 g pavo",
+      "1 calabacín",
+      "1 pimiento",
+      "100 g champiñones",
+      "1 cda aceite"
+    ]
+  },
+  "vollkorn-pizza-mit-gemuese": {
+    "title": "Pizza integral con verduras",
+    "ingredients": [
+      "1/2 masa de pizza",
+      "100 g tomates",
+      "80 g mozzarella",
+      "1 pimiento"
+    ]
+  },
+  "joghurt-bowl-mit-gurke-fladenbrot": {
+    "title": "Bol de yogur con pepino y pan plano",
+    "ingredients": [
+      "200 g yogur",
+      "1 pepino",
+      "1 diente ajo",
+      "1/2 pan plano"
+    ]
+  },
+  "skyr-mit-beeren": {
+    "title": "Skyr con frutos rojos",
+    "ingredients": [
+      "150 g skyr",
+      "100 g frutos rojos"
+    ]
+  },
+  "handvoll-mandeln-apfel": {
+    "title": "Un puñado de almendras y una manzana",
+    "ingredients": [
+      "30 g almendras",
+      "1 manzana"
+    ]
+  },
+  "protein-shake-mit-banane": {
+    "title": "Batido de proteínas con plátano",
+    "ingredients": [
+      "30 g proteína en polvo",
+      "250 ml leche",
+      "1 plátano"
+    ]
+  },
+  "huettenkaese-auf-knaeckebrot": {
+    "title": "Queso cottage sobre pan crujiente",
+    "ingredients": [
+      "150 g queso cottage",
+      "2 rebanadas pan crujiente"
+    ]
+  },
+  "energy-balls": {
+    "title": "Bolitas energéticas",
+    "ingredients": [
+      "40 g dátiles",
+      "30 g copos de avena",
+      "15 g almendras",
+      "1 cdta cacao"
+    ]
+  },
+  "gemuesesticks-mit-hummus": {
+    "title": "Bastoncitos de verdura con hummus",
+    "ingredients": [
+      "100 g hummus",
+      "1 zanahoria",
+      "1 pimiento"
+    ]
+  },
+  "reiswaffeln-mit-frischkaese": {
+    "title": "Tortitas de arroz con queso crema",
+    "ingredients": [
+      "2 tortitas de arroz",
+      "50 g queso crema"
+    ]
+  },
+  "beeren-quark": {
+    "title": "Quark con frutos rojos",
+    "ingredients": [
+      "200 g quark desnatado",
+      "100 g frutos rojos"
+    ]
+  },
+  "studentenfutter": {
+    "title": "Mezcla de frutos secos",
+    "ingredients": [
+      "25 g almendras",
+      "15 g anacardos",
+      "20 g pasas"
+    ]
+  },
+  "banane-mit-erdnussbutter": {
+    "title": "Plátano con crema de cacahuete",
+    "ingredients": [
+      "1 plátano",
+      "20 g crema de cacahuete"
+    ]
+  },
+  "edamame-mit-meersalz": {
+    "title": "Edamame con sal marina",
+    "ingredients": [
+      "150 g edamame",
+      "1 pizca sal marina"
+    ]
+  },
+  "huettenkaese-mit-ananas": {
+    "title": "Queso cottage con piña",
+    "ingredients": [
+      "150 g queso cottage",
+      "100 g piña"
+    ]
+  }
+}

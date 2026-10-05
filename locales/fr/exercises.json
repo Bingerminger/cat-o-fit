@@ -1,1 +1,2879 @@
-{}
+{
+  "squat": {
+    "muscles": [
+      "cuisses",
+      "fessiers",
+      "sangle abdominale"
+    ],
+    "equipment": "aucun (charge en option)",
+    "steps": [
+      "Place-toi debout, pieds écartés à la largeur des épaules, pointes légèrement tournées vers l’extérieur.",
+      "Pousse les hanches vers l’arrière et fléchis comme pour t’asseoir.",
+      "Les genoux suivent la direction des orteils, le dos reste long, la poitrine ouverte.",
+      "Descends jusqu’à ce que les cuisses soient à peu près horizontales, puis remonte avec puissance."
+    ],
+    "tip": "Répartis ton poids sur toute la plante du pied, les talons restent au sol. 3×10–15 répétitions.",
+    "caution": "En cas de douleur au genou ou à la hanche, ne descends que jusqu’où tu peux le faire sans douleur.",
+    "progression": "D’abord plus de répétitions, puis une charge (haltère/kettlebell), plus tard des squats avec pause.",
+    "phases": {
+      "0": {
+        "label": "Descendre",
+        "cue": "Hanches en arrière, poitrine ouverte"
+      },
+      "1": {
+        "label": "En bas"
+      },
+      "2": {
+        "label": "Monter",
+        "cue": "Appuie sur toute la plante du pied"
+      },
+      "3": {
+        "label": "En haut"
+      }
+    }
+  },
+  "lunge": {
+    "muscles": [
+      "cuisses",
+      "fessiers",
+      "équilibre"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Depuis la position debout, fais un grand pas en avant.",
+      "Fléchis les deux genoux à environ 90°, le genou arrière descend vers le sol.",
+      "Le genou avant reste au-dessus de la cheville, le buste droit.",
+      "Repousse-toi avec le talon avant pour revenir debout, puis change de côté."
+    ],
+    "tip": "Idéal pour les personnes qui courent : il révèle les faiblesses d’un seul côté. 3×8–10 par côté.",
+    "caution": "En cas de problèmes de genou, fais des pas plus courts et ne laisse pas le genou avant dépasser les orteils.",
+    "progression": "Avec une charge, en marche arrière ou en avançant (fentes marchées).",
+    "phases": {
+      "0": {
+        "label": "Pas en avant"
+      },
+      "1": {
+        "label": "Descendre",
+        "cue": "Le genou arrière descend vers le sol"
+      },
+      "2": {
+        "label": "En bas"
+      },
+      "3": {
+        "label": "Remonter",
+        "cue": "Pousse avec le talon avant"
+      },
+      "4": {
+        "label": "Debout"
+      },
+      "5": {
+        "label": "Debout"
+      }
+    }
+  },
+  "pushup": {
+    "muscles": [
+      "pectoraux",
+      "épaules",
+      "triceps",
+      "sangle abdominale"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Mains un peu plus écartées que la largeur des épaules, le corps forme une ligne droite.",
+      "Gaine fermement le ventre (les hanches ne s’affaissent pas).",
+      "Fléchis les coudes vers l’arrière et descends la poitrine vers le sol.",
+      "Repousse-toi avec puissance."
+    ],
+    "tip": "Trop difficile ? Mets-toi à genoux ou surélève les mains (table/mur). 3×6–12.",
+    "caution": "En cas de douleur à l’épaule ou au poignet, fais-les mains surélevées sur un banc ou sur les poings.",
+    "progression": "Du mur au banc, puis à genoux et enfin des pompes complètes ; plus tard avec les pieds surélevés.",
+    "phases": {
+      "0": {
+        "label": "Abaisser",
+        "cue": "Le corps reste en ligne droite"
+      },
+      "1": {
+        "label": "En bas"
+      },
+      "2": {
+        "label": "Pousser",
+        "cue": "Coudes en oblique vers l’arrière"
+      },
+      "3": {
+        "label": "En haut"
+      }
+    }
+  },
+  "deadlift": {
+    "muscles": [
+      "fessiers",
+      "ischio-jambiers",
+      "bas du dos"
+    ],
+    "equipment": "haltère/kettlebell",
+    "steps": [
+      "Place-toi pieds écartés à la largeur du bassin, la charge devant les tibias.",
+      "Pousse les hanches vers l’arrière, ne fléchis les genoux que légèrement, le dos reste droit.",
+      "Garde la charge près du corps et descends jusque juste sous les genoux.",
+      "Redresse-toi en poussant les hanches vers l’avant et serre les fessiers."
+    ],
+    "tip": "Le mouvement vient des hanches, pas du dos. D’abord la technique, ensuite la charge. 3×8.",
+    "caution": "Garde le dos neutre – évite l’exercice en cas de douleur aiguë au dos et fais-toi examiner.",
+    "progression": "Augmente la charge par petits paliers, puis passe sur une jambe.",
+    "gear": "haltère/kettlebell",
+    "phases": {
+      "0": {
+        "label": "Hanches en arrière",
+        "cue": "Dos droit, charge près de la jambe"
+      },
+      "1": {
+        "label": "En bas"
+      },
+      "2": {
+        "label": "Se redresser",
+        "cue": "Hanches en avant, fessiers serrés"
+      },
+      "3": {
+        "label": "En haut"
+      }
+    }
+  },
+  "row": {
+    "muscles": [
+      "haut du dos",
+      "biceps",
+      "arrière de l’épaule"
+    ],
+    "equipment": "haltère/kettlebell",
+    "steps": [
+      "Charnière de hanches comme pour le soulevé de terre, buste penché vers l’avant à environ 45°.",
+      "Les bras pendent, les omoplates sont relâchées.",
+      "Tire la charge vers le bas des côtes, coudes près du corps.",
+      "Redescends en contrôle, le dos reste stable."
+    ],
+    "tip": "Rééquilibre l’avant du corps, que la course a tendance à favoriser. 3×10–12.",
+    "caution": "Garde le dos droit et ne tire pas la charge d’un coup sec.",
+    "progression": "Haltère plus lourd ou bande plus ferme, descente lente (3 s).",
+    "gear": "haltère/kettlebell",
+    "phases": {
+      "0": {
+        "label": "Tirer",
+        "cue": "Coudes vers l’arrière, près du corps"
+      },
+      "1": {
+        "label": "En haut"
+      },
+      "2": {
+        "label": "Redescendre",
+        "cue": "Le dos reste stable"
+      },
+      "3": {
+        "label": "En bas"
+      }
+    }
+  },
+  "overhead_press": {
+    "muscles": [
+      "épaules",
+      "triceps",
+      "sangle abdominale"
+    ],
+    "equipment": "haltères",
+    "steps": [
+      "Tiens-toi bien droit, les charges à hauteur d’épaules.",
+      "Gaine le ventre, ne laisse pas les côtes s’ouvrir.",
+      "Pousse les charges droit au-dessus de la tête jusqu’à avoir presque les bras tendus.",
+      "Redescends en contrôle à hauteur d’épaules."
+    ],
+    "tip": "Pas de dos cambré – garde les abdos serrés. 3×8–10.",
+    "caution": "En cas de douleur à l’épaule, ne pousse pas au-dessus de la tête : assieds-toi avec une charge plus légère, ou passe l’exercice.",
+    "progression": "Plus de charge ou un bras à la fois (plus de gainage).",
+    "gear": "haltères",
+    "phases": {
+      "0": {
+        "label": "Pousser",
+        "cue": "Ventre gainé, pas de dos creux"
+      },
+      "1": {
+        "label": "En haut"
+      },
+      "2": {
+        "label": "Abaisser",
+        "cue": "Descente contrôlée jusqu’aux épaules"
+      },
+      "3": {
+        "label": "Hauteur des épaules"
+      }
+    }
+  },
+  "calf_raise": {
+    "muscles": [
+      "mollets",
+      "tendon d’Achille"
+    ],
+    "equipment": "aucun (marche en option)",
+    "steps": [
+      "Tiens-toi droit, si tu veux avec l’avant des pieds sur une marche.",
+      "Monte lentement sur la pointe des pieds et tiens brièvement.",
+      "Redescends en contrôle jusqu’en bas (sur une marche, sous le niveau de la marche)."
+    ],
+    "tip": "Aide à prévenir les problèmes d’Achille et de mollet. 3×15–20, passe sur une jambe si tu veux.",
+    "caution": "Si ton tendon d’Achille est irrité, va lentement et ne rebondis pas.",
+    "progression": "Sur une jambe, puis sur une marche en descendant sous le niveau de la marche, puis avec une charge.",
+    "phases": {
+      "0": {
+        "label": "Monter",
+        "cue": "Sur la pointe des pieds"
+      },
+      "1": {
+        "label": "Tenir en haut"
+      },
+      "2": {
+        "label": "Abaisser",
+        "cue": "Descends lentement"
+      },
+      "3": {
+        "label": "En bas"
+      }
+    }
+  },
+  "plank": {
+    "muscles": [
+      "sangle abdominale",
+      "épaules",
+      "fessiers"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Avant-bras au sol, écartés de la largeur des épaules, coudes sous les épaules.",
+      "Ton corps forme une ligne droite de la tête aux talons.",
+      "Serre les abdos et les fessiers, bascule légèrement le bassin.",
+      "Respire calmement et tiens la position."
+    ],
+    "tip": "Mieux vaut court et propre que long et affaissé. 3×20–45 s.",
+    "caution": "Pas de dos cambré – en cas de douleur au dos, commence sur les genoux.",
+    "progression": "Tiens plus longtemps, puis lève un bras ou une jambe.",
+    "phases": {
+      "0": {
+        "label": "Tenir",
+        "cue": "Ventre gainé, ne monte pas les fesses"
+      }
+    }
+  },
+  "side_plank": {
+    "muscles": [
+      "obliques",
+      "hanches",
+      "épaule"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Allonge-toi sur le côté, l’avant-bras sous l’épaule, les jambes empilées.",
+      "Lève les hanches jusqu’à ce que ton corps forme une ligne droite.",
+      "Tends le bras du dessus vers le plafond ou pose-le sur la hanche.",
+      "Tiens, puis change de côté."
+    ],
+    "tip": "Stabilise tes hanches quand tu cours. 3×15–30 s par côté.",
+    "caution": "En cas de problème d’épaule, appuie-toi sur le genou.",
+    "progression": "Lève la jambe du dessus ou monte et descends les hanches.",
+    "phases": {
+      "0": {
+        "label": "Tenir",
+        "cue": "Bassin haut, corps aligné"
+      }
+    }
+  },
+  "glute_bridge": {
+    "muscles": [
+      "fessiers",
+      "ischio-jambiers",
+      "sangle abdominale"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Allonge-toi sur le dos, pieds à plat écartés à la largeur du bassin, bras le long du corps.",
+      "Serre les fessiers et pousse les hanches vers le haut.",
+      "Cuisses et buste forment une ligne, tiens brièvement.",
+      "Redescends en contrôle sans te poser complètement."
+    ],
+    "tip": "Réveille les fessiers souvent « endormis ». 3×12–15, sur une jambe si tu veux.",
+    "caution": "Ne pousse pas en cambrant le bas du dos – la force vient des fessiers.",
+    "progression": "Sur une jambe, puis pieds surélevés ou avec une charge sur les hanches.",
+    "phases": {
+      "0": {
+        "label": "Lever le bassin",
+        "cue": "Fessiers serrés, pas de dos creux"
+      },
+      "1": {
+        "label": "Tenir en haut"
+      },
+      "2": {
+        "label": "Abaisser",
+        "cue": "Redescends vertèbre par vertèbre"
+      },
+      "3": {
+        "label": "En bas"
+      }
+    }
+  },
+  "dead_bug": {
+    "muscles": [
+      "muscles profonds du tronc",
+      "coordination"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Allonge-toi sur le dos, bras vers le plafond, hanches et genoux levés à 90°.",
+      "Plaque doucement le bas du dos contre le sol (abdos serrés).",
+      "Étends en même temps la jambe droite et le bras gauche, sans cambrer le dos.",
+      "Reviens au centre, puis passe de l’autre côté."
+    ],
+    "tip": "Stabilité du tronc sans charger la colonne. 3×8 par côté, lentement.",
+    "caution": "Le bas du dos reste au sol – sinon, réduis l’amplitude du mouvement.",
+    "progression": "Plus lentement, bras/jambes tendus, plus tard avec une charge légère.",
+    "phases": {
+      "0": {
+        "label": "Étendre",
+        "cue": "Bas du dos au sol"
+      },
+      "1": {
+        "label": "Étendu"
+      },
+      "2": {
+        "label": "Retour au centre"
+      },
+      "3": {
+        "label": "Centre"
+      }
+    }
+  },
+  "side_crunch": {
+    "muscles": [
+      "obliques",
+      "équilibre"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Tiens-toi droit et stable, abdos serrés.",
+      "Incline le buste sur le côté en contrôle, la main glisse le long de la cuisse.",
+      "Remonte en utilisant les abdominaux latéraux."
+    ],
+    "tip": "Petit mouvement contrôlé. 3×12 par côté.",
+    "caution": "Incline-toi seulement sur le côté, sans te pencher en avant ni te tourner.",
+    "progression": "Avec un haltère dans la main du côté opposé.",
+    "phases": {
+      "0": {
+        "label": "Pencher sur le côté",
+        "cue": "Ne te penche pas en avant"
+      },
+      "1": {
+        "label": "En bas"
+      },
+      "2": {
+        "label": "Se redresser",
+        "cue": "Depuis les abdominaux latéraux"
+      },
+      "3": {
+        "label": "Centre"
+      }
+    }
+  },
+  "hip_flexor_stretch": {
+    "muscles": [
+      "fléchisseurs de la hanche",
+      "avant de la cuisse"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Grande fente, genou arrière au sol (par exemple sur un coussin).",
+      "Bascule légèrement le bassin, serre les fessiers.",
+      "Pousse doucement les hanches vers l’avant jusqu’à sentir l’étirement à l’avant de la hanche.",
+      "Reste immobile, sans rebondir."
+    ],
+    "tip": "Important si tu passes beaucoup de temps assis et que tu cours. 2×30 s par côté.",
+    "caution": "Protège bien ton genou ; ne compense pas en cambrant le bas du dos.",
+    "progression": "Tends le bras du côté de la jambe arrière au-dessus de la tête.",
+    "phases": {
+      "0": {
+        "label": "Tenir",
+        "cue": "Étirement à l’avant de la hanche"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Pousser les hanches vers l’avant",
+        "cue": "Fessiers serrés, pas de dos creux"
+      }
+    }
+  },
+  "hamstring_stretch": {
+    "muscles": [
+      "ischio-jambiers",
+      "bas du dos"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Avance légèrement une jambe, talon au sol, orteils vers le haut.",
+      "Pousse les hanches vers l’arrière et penche-toi en avant, dos droit.",
+      "Dirige les mains vers le tibia jusqu’à sentir un léger étirement à l’arrière.",
+      "Tiens, puis change de côté."
+    ],
+    "tip": "Garde le dos long – ne l’arrondis pas. 2×30 s par côté.",
+    "caution": "Un étirement léger seulement – jamais par à-coups, et pas avec une élongation récente.",
+    "progression": "Tiens plus longtemps en gardant consciemment le dos long.",
+    "phases": {
+      "0": {
+        "label": "Tenir",
+        "cue": "Dos long, sans l’arrondir"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Hanches en arrière",
+        "cue": "Penche-toi en avant, dos droit"
+      }
+    }
+  },
+  "calf_stretch": {
+    "muscles": [
+      "mollets",
+      "tendon d’Achille"
+    ],
+    "equipment": "mur",
+    "steps": [
+      "Appuie-toi au mur avec les deux mains.",
+      "Tends une jambe droite vers l’arrière, le talon reste au sol.",
+      "Pousse les hanches vers l’avant jusqu’à sentir l’étirement dans le mollet.",
+      "Pour le mollet profond, fléchis légèrement le genou arrière."
+    ],
+    "tip": "Fait du bien après une course. 2×30 s par côté.",
+    "caution": "Si ton tendon d’Achille est irrité, étire-toi doucement et jamais jusqu’à la douleur.",
+    "progression": "Aussi avec le genou fléchi (muscles profonds du mollet).",
+    "gear": "mur",
+    "phases": {
+      "0": {
+        "label": "Tenir",
+        "cue": "Jambe arrière tendue, talon au sol"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Hanches en avant",
+        "cue": "Talon arrière au sol"
+      }
+    }
+  },
+  "cat_cow": {
+    "muscles": [
+      "colonne vertébrale",
+      "sangle abdominale"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "À quatre pattes, mains sous les épaules, genoux sous les hanches.",
+      "Inspire : laisse doucement le dos se creuser, regarde vers le haut (« vache »).",
+      "Expire : arrondis le dos, menton vers la poitrine (« chat »).",
+      "Enchaîne les deux plusieurs fois au rythme de ta respiration."
+    ],
+    "tip": "Mobilisation douce pour le dos et la nuque. 8–10 allers-retours calmes.",
+    "caution": "Reste dans une amplitude sans douleur.",
+    "progression": "Plus lentement, avec une respiration consciente.",
+    "phases": {
+      "0": {
+        "label": "Vache",
+        "cue": "Dos creusé, regard vers l’avant et le haut"
+      },
+      "1": {
+        "label": "Vache"
+      },
+      "2": {
+        "label": "Chat",
+        "cue": "Dos rond, menton vers la poitrine"
+      },
+      "3": {
+        "label": "Chat"
+      }
+    }
+  },
+  "chest_opener": {
+    "muscles": [
+      "pectoraux",
+      "avant de l’épaule"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Tiens-toi droit, abdos légèrement engagés.",
+      "Ouvre les bras vers l’arrière et joins les mains sans serrer derrière le dos.",
+      "Lève le sternum, épaules en arrière et vers le bas.",
+      "Respire calmement, tiens en douceur."
+    ],
+    "tip": "Contrecarre la « posture d’écran » voûtée. 2×20–30 s.",
+    "caution": "En cas d’instabilité de l’épaule, ne tire pas jusqu’à la position finale.",
+    "progression": "Tiens plus longtemps, bras un peu plus haut.",
+    "phases": {
+      "0": {
+        "label": "Tenir",
+        "cue": "Sternum haut, épaules basses"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Joindre les mains dans le dos"
+      }
+    }
+  },
+  "split_squat": {
+    "muscles": [
+      "cuisses",
+      "fessiers",
+      "équilibre"
+    ],
+    "equipment": "surface surélevée (chaise/banc)",
+    "steps": [
+      "Un pied devant au sol, le dessus du pied arrière posé sur une chaise ou un banc.",
+      "Buste droit, fléchis le genou avant et descends droit vers le bas.",
+      "Le genou avant reste au-dessus du pied, le genou arrière descend vers le sol.",
+      "Remonte en contrôle en poussant avec le talon avant."
+    ],
+    "tip": "Très efficace pour la force et la stabilité sur une jambe. 3×8–10 par côté.",
+    "caution": "En cas de problèmes de genou, ne descends pas aussi bas.",
+    "progression": "Squat bulgare (pied arrière surélevé), puis avec une charge.",
+    "gear": "surface surélevée",
+    "phases": {
+      "0": {
+        "label": "Descendre",
+        "cue": "Genou avant au-dessus du pied"
+      },
+      "1": {
+        "label": "En bas"
+      },
+      "2": {
+        "label": "Monter",
+        "cue": "Pousse avec le talon avant"
+      },
+      "3": {
+        "label": "En haut"
+      }
+    }
+  },
+  "wall_sit": {
+    "muscles": [
+      "cuisses",
+      "fessiers"
+    ],
+    "equipment": "mur",
+    "steps": [
+      "Place-toi le dos bien à plat contre le mur, pieds à environ 40 cm devant.",
+      "Glisse le long du mur jusqu’à ce que les cuisses soient horizontales.",
+      "Genoux au-dessus des chevilles, le dos reste contre le mur.",
+      "Tiens la position en respirant calmement."
+    ],
+    "tip": "Endurance de force statique pour les jambes – idéal sans matériel. 3×30–45 s.",
+    "caution": "En cas de problèmes de rotule, assieds-toi plus haut (angle supérieur à 90°).",
+    "progression": "Tiens plus longtemps, puis alterne sur une jambe.",
+    "gear": "mur",
+    "phases": {
+      "0": {
+        "label": "Tenir",
+        "cue": "Genoux au-dessus des chevilles, dos contre le mur"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Glisser le long du mur"
+      }
+    }
+  },
+  "step_up": {
+    "muscles": [
+      "cuisses",
+      "fessiers",
+      "équilibre"
+    ],
+    "equipment": "marche/banc solide",
+    "steps": [
+      "Place-toi devant une marche solide, à hauteur de genou.",
+      "Monte entièrement avec un pied en poussant avec le talon.",
+      "Reste stable en haut un instant, puis redescends en contrôle.",
+      "Ne te propulse pas avec la jambe arrière – c’est la jambe du haut qui travaille."
+    ],
+    "tip": "Adapté aux personnes qui courent (sur une jambe, proche des gestes du quotidien). 3×10 par côté.",
+    "caution": "Garde le genou stable – ne le laisse pas partir vers l’intérieur.",
+    "progression": "Marche plus haute, puis avec une charge.",
+    "gear": "marche/banc solide",
+    "phases": {
+      "0": {
+        "label": "Pied sur la marche"
+      },
+      "1": {
+        "label": "Pousser",
+        "cue": "Force depuis le talon, genou stable"
+      },
+      "2": {
+        "label": "Stable en haut"
+      },
+      "3": {
+        "label": "Abaisser",
+        "cue": "La jambe du haut freine"
+      },
+      "4": {
+        "label": "Abaisser"
+      },
+      "5": {
+        "label": "Debout"
+      },
+      "6": {
+        "label": "Debout"
+      }
+    }
+  },
+  "crunch": {
+    "muscles": [
+      "grand droit de l’abdomen"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Allonge-toi sur le dos, genoux fléchis, pieds écartés à la largeur du bassin.",
+      "Mains posées sans serrer aux tempes (ne tire pas sur la tête).",
+      "Enroule le haut du corps avec les abdos, les omoplates se décollent légèrement.",
+      "Tiens brièvement, redescends lentement."
+    ],
+    "tip": "Le mouvement vient des abdos, pas de la nuque. 3×12–20.",
+    "caution": "Ne tire pas sur la nuque avec les mains.",
+    "progression": "Plus lentement, puis avec une charge légère sur la poitrine.",
+    "phases": {
+      "0": {
+        "label": "S’enrouler",
+        "cue": "Force des abdos, nuque relâchée"
+      },
+      "1": {
+        "label": "En haut"
+      },
+      "2": {
+        "label": "Se poser"
+      },
+      "3": {
+        "label": "En bas"
+      }
+    }
+  },
+  "leg_raise": {
+    "muscles": [
+      "bas des abdos",
+      "fléchisseurs de la hanche"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Allonge-toi sur le dos, jambes tendues, mains à côté ou sous les fesses.",
+      "Garde consciemment le bas du dos au sol.",
+      "Lève lentement les jambes tendues jusqu’à environ 90°.",
+      "Redescends en contrôle sans poser complètement les talons au sol."
+    ],
+    "tip": "Si le dos tire, fléchis un peu les genoux. 3×10–15.",
+    "caution": "En cas de douleur au dos, garde les genoux fléchis.",
+    "progression": "Jambes tendues, descente lente.",
+    "phases": {
+      "0": {
+        "label": "Lever les jambes",
+        "cue": "Bas du dos au sol"
+      },
+      "1": {
+        "label": "En haut"
+      },
+      "2": {
+        "label": "Descendre lentement",
+        "cue": "Ne pose pas complètement les talons"
+      },
+      "3": {
+        "label": "En bas"
+      }
+    }
+  },
+  "hollow_hold": {
+    "muscles": [
+      "abdominaux profonds",
+      "sangle abdominale"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Allonge-toi sur le dos, bras au-dessus de la tête, jambes tendues.",
+      "Plaque fermement le bas du dos au sol (abdos gainés).",
+      "Lève légèrement les épaules et les jambes – ton corps prend la forme d’une barque.",
+      "Continue de respirer calmement et tiens la position."
+    ],
+    "tip": "Le bas du dos ne doit PAS décoller du sol. 3×15–30 s.",
+    "caution": "Le bas du dos ne doit pas se décoller – si c’est le cas, ramène les genoux vers toi.",
+    "progression": "Bras au-dessus de la tête, tiens plus longtemps.",
+    "phases": {
+      "0": {
+        "label": "Tenir",
+        "cue": "Bas du dos bien plaqué au sol"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Lever épaules et jambes"
+      }
+    }
+  },
+  "superman": {
+    "muscles": [
+      "bas du dos",
+      "fessiers",
+      "arrière de l’épaule"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Allonge-toi sur le ventre, bras tendus devant toi.",
+      "Décolle en même temps les bras, la poitrine et les jambes du sol.",
+      "Regarde le sol, nuque longue – ne renverse pas la tête en arrière.",
+      "Tiens brièvement, redescends doucement."
+    ],
+    "tip": "Renforce la chaîne postérieure, souvent négligée. 3×10 ou tenue 3×20 s.",
+    "caution": "L’extension à plat ventre sollicite davantage les lombaires – en cas de problèmes de dos, fais plutôt le bird dog.",
+    "progression": "Tiens plus longtemps, alterne bras et jambe.",
+    "phases": {
+      "0": {
+        "label": "Décoller",
+        "cue": "Regard vers le sol, nuque longue"
+      },
+      "1": {
+        "label": "Tenir"
+      },
+      "2": {
+        "label": "Se poser"
+      },
+      "3": {
+        "label": "En bas"
+      }
+    }
+  },
+  "bird_dog": {
+    "muscles": [
+      "sangle abdominale",
+      "bas du dos",
+      "fessiers",
+      "coordination"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "À quatre pattes, mains sous les épaules, genoux sous les hanches.",
+      "Étends en même temps le bras droit et la jambe gauche.",
+      "Hanches et épaules restent à plat (pas de rotation).",
+      "Reviens et change de côté."
+    ],
+    "tip": "De la stabilité, pas de l’élan – lent et contrôlé. 3×8–10 par côté.",
+    "caution": "Garde le bassin horizontal, ne cambre pas le bas du dos.",
+    "progression": "Tiens brièvement, puis rapproche coude et genou sous le corps.",
+    "phases": {
+      "0": {
+        "label": "Étendre",
+        "cue": "Allonge le bras et la jambe opposée"
+      },
+      "1": {
+        "label": "Tenir",
+        "cue": "Bassin horizontal"
+      },
+      "2": {
+        "label": "Retour"
+      },
+      "3": {
+        "label": "Quatre pattes"
+      }
+    }
+  },
+  "child_pose": {
+    "muscles": [
+      "bas du dos",
+      "hanches",
+      "épaules"
+    ],
+    "equipment": "aucun (tapis)",
+    "steps": [
+      "Depuis la position à genoux, assieds les fesses vers les talons.",
+      "Pose le buste vers l’avant, étire les bras loin devant toi.",
+      "Le front repose au sol, épaules relâchées.",
+      "Respire profondément dans le bas du dos."
+    ],
+    "tip": "Un soulagement doux pour tout le dos. 3×30–45 s.",
+    "caution": "En cas de problèmes de genou, glisse un coussin entre les fesses et les talons.",
+    "progression": "Déplace les mains sur le côté (étirement latéral).",
+    "phases": {
+      "0": {
+        "label": "Tenir",
+        "cue": "Front posé, respire profondément dans le dos"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Se poser vers l’avant"
+      }
+    }
+  },
+  "supine_twist": {
+    "muscles": [
+      "colonne vertébrale",
+      "bas du dos",
+      "fessiers"
+    ],
+    "equipment": "aucun (tapis)",
+    "steps": [
+      "Allonge-toi sur le dos, bras écartés sur les côtés (en T).",
+      "Fléchis les deux genoux et fais-les descendre ensemble d’un côté.",
+      "Tourne si tu veux la tête de l’autre côté, les deux épaules restent au sol.",
+      "Respire calmement, puis change de côté."
+    ],
+    "tip": "Détend le bas du dos après une course. 2×30 s par côté.",
+    "caution": "Les épaules restent au sol, ne force pas.",
+    "progression": "Tiens plus longtemps, tends la jambe du dessus.",
+    "phases": {
+      "0": {
+        "label": "Tenir",
+        "cue": "Les deux épaules restent au sol"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Poser les genoux sur le côté"
+      }
+    }
+  },
+  "figure_four": {
+    "muscles": [
+      "fessiers",
+      "piriforme",
+      "hanches"
+    ],
+    "equipment": "aucun (tapis)",
+    "steps": [
+      "Allonge-toi sur le dos, les deux genoux fléchis.",
+      "Croise une cheville sur l’autre genou (en forme de « 4 »).",
+      "Ramène la jambe du bas vers la poitrine jusqu’à sentir l’étirement dans les fessiers.",
+      "Tiens, puis change de côté."
+    ],
+    "tip": "Un classique contre les fessiers tendus ou une sensation de sciatique chez les personnes qui courent. 2×30 s par côté.",
+    "caution": "En cas de douleur à la hanche ou au genou, ne tire pas aussi loin.",
+    "progression": "Sur une chaise, en te penchant en avant.",
+    "phases": {
+      "0": {
+        "label": "Tenir",
+        "cue": "Étirement dans les fessiers, tête posée"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Ramener la jambe du bas"
+      }
+    }
+  },
+  "butterfly_stretch": {
+    "muscles": [
+      "intérieur des cuisses",
+      "hanches"
+    ],
+    "equipment": "aucun (tapis)",
+    "steps": [
+      "Assieds-toi bien droit, rapproche les plantes des pieds devant toi.",
+      "Ramène les talons sans forcer, laisse les genoux descendre sur les côtés.",
+      "Reste droit, penche légèrement le buste vers l’avant.",
+      "Ne rebondis pas – reste immobile."
+    ],
+    "tip": "Ouvre les hanches et l’intérieur des cuisses. 2×30–45 s.",
+    "caution": "N’appuie pas sur les genoux et ne rebondis pas.",
+    "progression": "Talons plus près, tiens plus longtemps.",
+    "phases": {
+      "0": {
+        "label": "Tenir",
+        "cue": "Assis bien droit, sans rebondir"
+      }
+    }
+  },
+  "fifa11": {
+    "muscles": [
+      "tout le corps",
+      "coordination",
+      "cheville",
+      "genou"
+    ],
+    "equipment": "aucun (plots ou marqueurs)",
+    "steps": [
+      "Partie 1 (env. 8 min) : course tranquille avec rotation de la hanche vers l’extérieur/l’intérieur, pas chassés, contact d’épaule avec un binôme, courtes accélérations en avant et en arrière.",
+      "Partie 2 (env. 10 min) : force et équilibre – planche, planche latérale, Nordic hamstring, appui sur une jambe avec ballon, squats, sauts.",
+      "Partie 3 (env. 2 min) : course – sur le terrain à vitesse croissante, changements de direction avec une réception propre.",
+      "À chaque réception et à chaque squat, les genoux pointent au-dessus des orteils, pas vers l’intérieur."
+    ],
+    "tip": "Environ 20 minutes avant l’entraînement ou un match, deux à trois fois par semaine. Dans les études, il a nettement réduit le taux de blessures dans le football des jeunes (Soligard et al. 2008).",
+    "caution": "Après une blessure, commence par le niveau le plus facile et arrête si ça fait mal.",
+    "progression": "Trois niveaux par exercice : facile, moyen, difficile – ne monte d’un niveau que quand tu réussis proprement le précédent.",
+    "phases": {
+      "0": {
+        "label": "Course légère, genoux hauts",
+        "cue": "Genoux vers l’avant, pas vers l’intérieur"
+      },
+      "1": {
+        "label": "Alterner"
+      }
+    }
+  },
+  "nordic_hamstring": {
+    "muscles": [
+      "ischio-jambiers",
+      "fessiers"
+    ],
+    "equipment": "binôme ou appui fixe pour les pieds, tapis",
+    "steps": [
+      "À genoux sur une surface molle, talons maintenus ou coincés sous un canapé.",
+      "Corps droit des genoux à la tête, hanches étendues.",
+      "Penche-toi lentement vers l’avant en freinant avec les ischio-jambiers aussi longtemps que possible.",
+      "Rattrape-toi avec les mains et remonte en te repoussant légèrement."
+    ],
+    "tip": "L’exercice le plus connu contre les élongations des ischio-jambiers : l’intégrer aux programmes de prévention a à peu près divisé le taux par deux (van Dyk et al. 2019). Commence par 2×4–5 et progresse lentement.",
+    "caution": "Pas en cas d’élongation récente. Les premières fois, les courbatures sont fortes – commence avec peu de répétitions, et pas la veille d’un match.",
+    "progression": "D’abord allonge la phase de descente, puis ajoute des répétitions (jusqu’à 3×8), plus tard va plus lentement.",
+    "gear": "binôme",
+    "phases": {
+      "0": {
+        "label": "Lentement vers l’avant",
+        "cue": "Hanches étendues, freine avec l’arrière des cuisses"
+      },
+      "1": {
+        "label": "Se rattraper"
+      },
+      "2": {
+        "label": "Mains au sol"
+      },
+      "3": {
+        "label": "Remonter",
+        "cue": "Repousse-toi avec les mains"
+      },
+      "4": {
+        "label": "À genoux"
+      }
+    }
+  },
+  "copenhagen": {
+    "muscles": [
+      "intérieur des cuisses (adducteurs)",
+      "côtés du tronc"
+    ],
+    "equipment": "banc ou binôme",
+    "steps": [
+      "Planche latérale sur l’avant-bras, la jambe du dessus posée sur un banc (d’abord le genou, plus tard le pied).",
+      "La jambe du dessous pend librement sous le banc.",
+      "Lève les hanches jusqu’à former une ligne droite – c’est l’intérieur de la jambe du dessus qui te porte.",
+      "Tiens brièvement, redescends en contrôle, change de côté."
+    ],
+    "tip": "Renforce les adducteurs – l’aine est une zone de blessure fréquente au football. 2×6–8 par côté.",
+    "caution": "En cas de douleur à l’aine, ne la sollicite pas – fais-toi examiner.",
+    "progression": "Du genou sur le banc au pied sur le banc (bras de levier plus long), puis ramène la jambe du dessous vers le banc.",
+    "gear": "banc",
+    "phases": {
+      "0": {
+        "label": "Lever les hanches",
+        "cue": "La jambe du haut appuie sur le banc"
+      },
+      "1": {
+        "label": "Tenir"
+      },
+      "2": {
+        "label": "Abaisser"
+      },
+      "3": {
+        "label": "En bas"
+      }
+    }
+  },
+  "clamshell": {
+    "muscles": [
+      "côté des fessiers (abducteurs de la hanche)"
+    ],
+    "equipment": "aucun (mini-band en option)",
+    "steps": [
+      "Allonge-toi sur le côté, hanches et genoux fléchis à environ 45°, pieds l’un sur l’autre.",
+      "Le bassin reste droit pendant que le genou du dessus s’ouvre comme une coquille.",
+      "Garde les pieds joints.",
+      "Referme lentement."
+    ],
+    "tip": "Stabilise le bassin et les genoux quand tu cours (moins de genoux qui rentrent vers l’intérieur). 3×15 par côté.",
+    "caution": "Ne roule pas vers l’arrière – le mouvement vient de la hanche.",
+    "progression": "Avec un mini-band au-dessus des genoux, puis tiens brièvement en haut.",
+    "phases": {
+      "0": {
+        "label": "Ouvrir le genou",
+        "cue": "Pieds joints, bassin immobile"
+      },
+      "1": {
+        "label": "En haut"
+      },
+      "2": {
+        "label": "Refermer"
+      },
+      "3": {
+        "label": "Fermé"
+      }
+    }
+  },
+  "monster_walk": {
+    "muscles": [
+      "côté des fessiers",
+      "cuisses"
+    ],
+    "equipment": "mini-band",
+    "steps": [
+      "Mini-band au-dessus des genoux ou autour des chevilles, genoux légèrement fléchis.",
+      "Garde le band tendu en marchant sur le côté ou en diagonale vers l’avant.",
+      "Les genoux pointent vers l’avant, le buste reste immobile.",
+      "Fais le même nombre de pas dans les deux directions."
+    ],
+    "tip": "Un bon échauffement avant une course ou un match. 2–3×10 pas dans chaque direction.",
+    "caution": "Ne laisse pas les genoux partir vers l’intérieur.",
+    "progression": "Band plus ferme, ou band autour des chevilles.",
+    "gear": "mini-band",
+    "phases": {
+      "0": {
+        "label": "Pas sur le côté",
+        "cue": "Garde la tension dans la bande"
+      },
+      "1": {
+        "label": "Poser le pied"
+      },
+      "2": {
+        "label": "Retour"
+      },
+      "3": {
+        "label": "Poser le pied"
+      }
+    }
+  },
+  "soleus_raise": {
+    "muscles": [
+      "muscle profond du mollet (soléaire)",
+      "tendon d’Achille"
+    ],
+    "equipment": "marche, charge en option",
+    "steps": [
+      "Tiens-toi près d’une marche ou d’un mur, genoux fléchis à environ 30–45°.",
+      "Garde les genoux fléchis et monte les talons le plus haut possible.",
+      "Tiens brièvement en haut.",
+      "Redescends lentement (3 secondes)."
+    ],
+    "tip": "Quand tu cours, le soléaire supporte plusieurs fois ton poids – essentiel pour le tendon d’Achille et le mollet. 3×15–20.",
+    "caution": "Si ton tendon d’Achille est irrité, va lentement et garde la douleur faible.",
+    "progression": "Sur une jambe, puis avec une charge (sac à dos, haltère).",
+    "gear": "marche",
+    "phases": {
+      "0": {
+        "label": "Monter",
+        "cue": "Talons en haut, genoux restent fléchis"
+      },
+      "1": {
+        "label": "Tenir en haut"
+      },
+      "2": {
+        "label": "Abaisser",
+        "cue": "Descends lentement (3 secondes)"
+      },
+      "3": {
+        "label": "En bas"
+      }
+    }
+  },
+  "running_drills": {
+    "muscles": [
+      "chevilles",
+      "fléchisseurs de la hanche",
+      "coordination"
+    ],
+    "equipment": "aucun (20–30 m d’espace dégagé)",
+    "steps": [
+      "Travail de cheville : pas courts et rapides sur l’avant-pied, 20 m.",
+      "Montées de genoux : alterne rapidement les genoux jusqu’à environ hauteur de hanche, buste droit, 20 m.",
+      "Talons-fesses : talons vers les fessiers, cadence rapide, 20 m.",
+      "Reviens en trottinant tranquillement entre deux ; termine par 2–3 accélérations."
+    ],
+    "tip": "Améliore l’économie de course et la coordination – idéal après le footing d’échauffement avant les séances de vitesse. 2 passages.",
+    "caution": "Seulement après échauffement, sur un sol plat.",
+    "progression": "Cadence plus élevée, puis skipping et foulées bondissantes.",
+    "phases": {
+      "0": {
+        "label": "Genoux hauts",
+        "cue": "Buste droit, cadence rapide"
+      },
+      "1": {
+        "label": "Alterner"
+      }
+    }
+  },
+  "pogo_jumps": {
+    "muscles": [
+      "mollets",
+      "tendon d’Achille",
+      "chevilles"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Pieds écartés à la largeur du bassin, genoux presque tendus.",
+      "Petits sauts rapides uniquement depuis les chevilles – le sol « brûle ».",
+      "Réceptionne en silence, garde des contacts au sol brefs.",
+      "20–30 secondes, puis repos."
+    ],
+    "tip": "Pliométrie simple : rend les tendons plus résistants et la foulée plus dynamique. 3×20 s.",
+    "caution": "Pas en cas de douleur à l’Achille ou au tibia ; seulement après quelques semaines de renforcement des mollets.",
+    "progression": "Plus longtemps, puis sur une jambe ou latéralement par-dessus une ligne.",
+    "phases": {
+      "0": {
+        "label": "Monter",
+        "cue": "Uniquement depuis la cheville, contacts courts"
+      },
+      "1": {
+        "label": "Réception"
+      }
+    }
+  },
+  "goblet_squat": {
+    "muscles": [
+      "cuisses",
+      "fessiers",
+      "sangle abdominale"
+    ],
+    "equipment": "kettlebell ou haltère",
+    "steps": [
+      "Tiens la charge devant la poitrine à deux mains, coudes vers le bas.",
+      "Pieds écartés à la largeur des épaules, pointes légèrement tournées vers l’extérieur.",
+      "Descends droit dans un squat profond, coudes entre les genoux.",
+      "Remonte en poussant avec toute la plante du pied."
+    ],
+    "tip": "La charge devant la poitrine garde le buste droit – idéal pour apprendre un squat propre. 3×8–12.",
+    "caution": "Garde le dos droit ; en cas de douleur au genou, ne descends que jusqu’où c’est sans douleur.",
+    "progression": "Charge plus lourde, puis pause de 2 s en bas.",
+    "gear": "kettlebell",
+    "phases": {
+      "0": {
+        "label": "Descendre",
+        "cue": "Coudes entre les genoux, poitrine haute"
+      },
+      "1": {
+        "label": "En bas"
+      },
+      "2": {
+        "label": "Monter",
+        "cue": "Appuie les talons dans le sol"
+      },
+      "3": {
+        "label": "En haut"
+      }
+    }
+  },
+  "sumo_squat": {
+    "muscles": [
+      "intérieur des cuisses",
+      "fessiers",
+      "cuisses"
+    ],
+    "equipment": "aucun (kettlebell en option)",
+    "steps": [
+      "Écartement large, pointes bien tournées vers l’extérieur.",
+      "Mains devant la poitrine, buste droit.",
+      "Laisse les hanches descendre droit vers le bas en poussant les genoux vers l’extérieur, au-dessus des orteils.",
+      "Remonte en poussant avec les talons et serre les fessiers en haut."
+    ],
+    "tip": "Cible l’intérieur des cuisses et les fessiers. 3×12–15.",
+    "caution": "Les genoux suivent la direction des pieds – ne les laisse pas rentrer.",
+    "progression": "Avec une kettlebell entre les jambes, puis descente plus lente.",
+    "phases": {
+      "0": {
+        "label": "Descendre",
+        "cue": "Genoux vers l’extérieur, au-dessus des pieds"
+      },
+      "1": {
+        "label": "En bas"
+      },
+      "2": {
+        "label": "Monter",
+        "cue": "Serre les fessiers et pousse vers le haut"
+      },
+      "3": {
+        "label": "En haut"
+      }
+    }
+  },
+  "reverse_lunge": {
+    "muscles": [
+      "cuisses",
+      "fessiers",
+      "équilibre"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Tiens-toi droit, mains sur les hanches ou relâchées.",
+      "Fais un grand pas en arrière avec une jambe.",
+      "Fléchis les deux genoux ; le genou arrière descend vers le sol.",
+      "Repousse-toi avec le talon avant pour revenir debout, change de côté."
+    ],
+    "tip": "Plus doux pour les genoux que le pas en avant – un bon point de départ. 3×8–10 par côté.",
+    "caution": "Le genou avant reste au-dessus du pied ; si ton équilibre est instable, tiens-toi à un mur.",
+    "progression": "Avec des haltères, puis en reculant depuis une marche (déficit).",
+    "phases": {
+      "0": {
+        "label": "Pas en arrière"
+      },
+      "1": {
+        "label": "Descendre",
+        "cue": "Genou avant au-dessus du pied"
+      },
+      "2": {
+        "label": "En bas"
+      },
+      "3": {
+        "label": "Pousser",
+        "cue": "Force depuis le talon avant"
+      },
+      "4": {
+        "label": "Debout"
+      },
+      "5": {
+        "label": "Debout"
+      }
+    }
+  },
+  "side_lunge": {
+    "muscles": [
+      "intérieur des cuisses",
+      "cuisses",
+      "fessiers"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Écartement large, pointes vers l’avant.",
+      "Reporte le poids sur un côté et fléchis ce genou, hanches en arrière.",
+      "L’autre jambe reste tendue, les deux talons au sol.",
+      "Repousse-toi vers le centre et change de côté."
+    ],
+    "tip": "Renforce les jambes latéralement – important pour les changements de direction au football. 3×8 par côté.",
+    "caution": "Ne descends que tant que les talons restent au sol ; le genou pointe au-dessus du pied.",
+    "progression": "Plus bas, puis avec une charge devant la poitrine.",
+    "phases": {
+      "0": {
+        "label": "Fléchir sur le côté",
+        "cue": "L’autre jambe reste tendue"
+      },
+      "1": {
+        "label": "En bas"
+      },
+      "2": {
+        "label": "Retour au centre"
+      },
+      "3": {
+        "label": "Centre"
+      }
+    }
+  },
+  "single_leg_deadlift": {
+    "muscles": [
+      "fessiers",
+      "ischio-jambiers",
+      "équilibre"
+    ],
+    "equipment": "aucun (haltère en option)",
+    "steps": [
+      "Tiens-toi sur une jambe, genou légèrement fléchi.",
+      "Penche le buste vers l’avant et lève la jambe libre derrière toi.",
+      "Le dos et la jambe arrière forment une ligne, le bassin reste horizontal.",
+      "Remonte lentement en poussant avec les fessiers."
+    ],
+    "tip": "Renforce les fessiers et l’équilibre – très proche de la course. 3×8 par côté.",
+    "caution": "Ne laisse pas le bassin s’ouvrir en rotation ; en cas de douleur au dos, descends seulement jusqu’à l’horizontale.",
+    "progression": "Avec un haltère dans la main opposée.",
+    "phases": {
+      "0": {
+        "label": "Basculer en avant",
+        "cue": "Jambe arrière et dos forment une ligne"
+      },
+      "1": {
+        "label": "En bas"
+      },
+      "2": {
+        "label": "Se redresser",
+        "cue": "Bassin horizontal"
+      },
+      "3": {
+        "label": "Debout"
+      }
+    }
+  },
+  "hip_thrust": {
+    "muscles": [
+      "fessiers",
+      "ischio-jambiers"
+    ],
+    "equipment": "banc ou canapé",
+    "steps": [
+      "Appuie les omoplates contre un banc, pieds posés à la largeur du bassin.",
+      "Lève le bassin jusqu’à aligner genoux, hanches et épaules.",
+      "Serre fort les fessiers en haut, menton légèrement vers la poitrine.",
+      "Redescends en contrôle sans te poser complètement."
+    ],
+    "tip": "L’exercice le plus puissant pour les fessiers. 3×10–12.",
+    "caution": "Ne cambre pas le bas du dos en haut – la force vient des fessiers.",
+    "progression": "Sur une jambe, puis avec une charge sur les hanches.",
+    "gear": "banc",
+    "phases": {
+      "0": {
+        "label": "Bassin en haut",
+        "cue": "Fessiers serrés, genoux au-dessus des talons"
+      },
+      "1": {
+        "label": "Tenir en haut"
+      },
+      "2": {
+        "label": "Abaisser"
+      },
+      "3": {
+        "label": "En bas"
+      }
+    }
+  },
+  "single_leg_bridge": {
+    "muscles": [
+      "fessiers",
+      "ischio-jambiers",
+      "sangle abdominale"
+    ],
+    "equipment": "tapis",
+    "steps": [
+      "Allonge-toi sur le dos, un pied posé, l’autre jambe tendue en l’air.",
+      "Lève le bassin en poussant avec le talon.",
+      "Le bassin reste horizontal ; tiens brièvement en haut.",
+      "Redescends lentement, change de côté."
+    ],
+    "tip": "Montre vite les différences entre tes deux côtés. 3×10 par côté.",
+    "caution": "Ne laisse pas le bassin tomber d’un côté ; si l’arrière de la cuisse crampe, rapproche le pied des fessiers.",
+    "progression": "Tiens plus longtemps en haut, puis avec le pied surélevé.",
+    "phases": {
+      "0": {
+        "label": "Lever le bassin",
+        "cue": "Bassin horizontal"
+      },
+      "1": {
+        "label": "Tenir en haut"
+      },
+      "2": {
+        "label": "Abaisser"
+      },
+      "3": {
+        "label": "En bas"
+      }
+    }
+  },
+  "kettlebell_swing": {
+    "muscles": [
+      "fessiers",
+      "ischio-jambiers",
+      "sangle abdominale"
+    ],
+    "equipment": "kettlebell",
+    "steps": [
+      "Place-toi pieds un peu plus écartés que la largeur du bassin, kettlebell dans les deux mains.",
+      "Pousse les hanches vers l’arrière et balance la kettlebell entre les jambes.",
+      "Projette les hanches vers l’avant de façon explosive – les bras ne sont que des cordes.",
+      "La kettlebell monte jusqu’à hauteur de poitrine et retombe dans le balancement suivant."
+    ],
+    "tip": "Force et cardio en un – un incontournable de l’entraînement Hyrox. 3×15.",
+    "caution": "Garde le dos droit, ne tire pas avec les bras ; maîtrise d’abord la charnière de hanches.",
+    "progression": "Kettlebell plus lourde, puis à un bras.",
+    "gear": "kettlebell",
+    "phases": {
+      "0": {
+        "label": "Balancer en arrière",
+        "cue": "Hanches en arrière, dos droit"
+      },
+      "1": {
+        "label": "Hanches en avant",
+        "cue": "L’élan vient des hanches, pas des bras"
+      },
+      "2": {
+        "label": "En haut"
+      }
+    }
+  },
+  "jump_squat": {
+    "muscles": [
+      "cuisses",
+      "fessiers",
+      "mollets"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Demi-squat, bras en arrière.",
+      "Saute avec explosivité en balançant les bras.",
+      "Réceptionne en douceur sur l’avant-pied et enchaîne directement avec le squat suivant.",
+      "À la réception, tes genoux pointent au-dessus de tes pieds."
+    ],
+    "tip": "Puissance explosive pour accélérer et sauter. 3×8–10.",
+    "caution": "Seulement avec des genoux en bonne santé, sur un sol ferme et antidérapant ; réceptionne en silence.",
+    "progression": "Plus de répétitions, puis sauts sur une boîte.",
+    "phases": {
+      "0": {
+        "label": "Descendre",
+        "cue": "Demi-squat"
+      },
+      "1": {
+        "label": "Impulsion",
+        "cue": "Extension explosive"
+      },
+      "2": {
+        "label": "Réception",
+        "cue": "Réception souple et silencieuse"
+      },
+      "3": {
+        "label": "Debout"
+      }
+    }
+  },
+  "good_morning": {
+    "muscles": [
+      "ischio-jambiers",
+      "fessiers",
+      "bas du dos"
+    ],
+    "equipment": "aucun (bâton en option)",
+    "steps": [
+      "Pieds écartés à la largeur du bassin, mains derrière la tête.",
+      "Fléchis légèrement les genoux, pousse les hanches vers l’arrière et incline le buste droit vers l’avant.",
+      "Descends jusqu’à peu près l’horizontale, ou jusqu’à sentir une tension à l’arrière.",
+      "Remonte en poussant les hanches vers l’avant."
+    ],
+    "tip": "Apprend la charnière de hanches sans charge – bonne préparation au soulevé de terre. 3×10–12.",
+    "caution": "Le dos reste droit, ne le laisse pas s’arrondir ; évite l’exercice en cas de douleur au dos.",
+    "progression": "Avec un bâton ou une charge légère sur les épaules.",
+    "phases": {
+      "0": {
+        "label": "Se pencher en avant",
+        "cue": "Dos droit, genoux légèrement fléchis"
+      },
+      "1": {
+        "label": "En bas"
+      },
+      "2": {
+        "label": "Se redresser",
+        "cue": "Pousse les hanches vers l’avant"
+      },
+      "3": {
+        "label": "En haut"
+      }
+    }
+  },
+  "tibialis_raise": {
+    "muscles": [
+      "muscle tibial (avant de la jambe)"
+    ],
+    "equipment": "mur",
+    "steps": [
+      "Adosse-toi à un mur, pieds à environ une longueur de pied devant.",
+      "Les talons restent au sol ; relève fortement les orteils vers les tibias.",
+      "Tiens brièvement en haut.",
+      "Redescends lentement."
+    ],
+    "tip": "Renforce l’avant de la jambe – aide contre les périostites. 3×15–20.",
+    "caution": "En cas de douleur aiguë au tibia, travaille sans douleur et fais-toi examiner.",
+    "progression": "Pieds plus loin du mur, puis sur une jambe.",
+    "gear": "mur",
+    "phases": {
+      "0": {
+        "label": "Orteils vers le haut",
+        "cue": "Orteils levés, talons au sol"
+      },
+      "1": {
+        "label": "En haut"
+      },
+      "2": {
+        "label": "Abaisser",
+        "cue": "Descends lentement"
+      }
+    }
+  },
+  "step_down": {
+    "muscles": [
+      "cuisses",
+      "fessiers",
+      "stabilité du genou"
+    ],
+    "equipment": "marche ou escalier",
+    "steps": [
+      "Tiens-toi sur une jambe sur une marche, l’autre jambe pend devant le bord.",
+      "Fléchis lentement le genou jusqu’à ce que le talon de la jambe libre touche le sol.",
+      "Le genou reste au-dessus du pied, le bassin horizontal.",
+      "Remonte en poussant avec le talon de la jambe d’appui."
+    ],
+    "tip": "Entraîne la stabilité du genou pour les descentes en course. 3×8 par côté, lentement (3 s pour descendre).",
+    "caution": "Ne laisse pas le genou rentrer vers l’intérieur ; en cas de douleur à la rotule, utilise une marche plus basse.",
+    "progression": "Marche plus haute, puis avec une charge dans la main opposée.",
+    "gear": "marche",
+    "phases": {
+      "0": {
+        "label": "Descendre lentement",
+        "cue": "Genou au-dessus du pied"
+      },
+      "1": {
+        "label": "Le talon touche"
+      },
+      "2": {
+        "label": "Pousser"
+      },
+      "3": {
+        "label": "En haut"
+      }
+    }
+  },
+  "cossack_squat": {
+    "muscles": [
+      "intérieur des cuisses",
+      "cuisses",
+      "mobilité de la hanche"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Écartement très large, pointes légèrement tournées vers l’extérieur.",
+      "Reporte le poids sur un côté et descends profondément en squat de ce côté.",
+      "L’autre jambe reste tendue ; les orteils peuvent pointer vers le haut.",
+      "Passe par le centre vers l’autre côté."
+    ],
+    "tip": "Force et mobilité de la hanche en un. 3×6 par côté.",
+    "caution": "Ne descends que tant que le talon reste au sol ; pas de mouvements saccadés.",
+    "progression": "Plus profond, puis avec une charge légère devant la poitrine.",
+    "phases": {
+      "0": {
+        "label": "Profond sur le côté",
+        "cue": "Talon au sol, autre jambe allongée"
+      },
+      "1": {
+        "label": "En bas"
+      },
+      "2": {
+        "label": "Retour au centre"
+      },
+      "3": {
+        "label": "Centre"
+      }
+    }
+  },
+  "farmers_carry": {
+    "muscles": [
+      "force de préhension",
+      "épaules",
+      "sangle abdominale"
+    ],
+    "equipment": "deux haltères ou kettlebells lourds",
+    "steps": [
+      "Saisis deux charges lourdes le long du corps et redresse-toi.",
+      "Épaules basses et en arrière, abdos gainés.",
+      "Marche à pas courts et réguliers – le buste ne se balance pas.",
+      "30 à 40 mètres ou 30 secondes, puis repose les charges."
+    ],
+    "tip": "Force de préhension et stabilité du tronc – une station Hyrox. 3×30 s.",
+    "caution": "Soulève et repose les charges le dos droit.",
+    "progression": "Plus lourd, puis plus longtemps ou d’un seul côté (suitcase carry).",
+    "gear": "deux haltères lourds",
+    "phases": {
+      "0": {
+        "label": "Marcher",
+        "cue": "Buste droit, épaules basses, prise ferme"
+      },
+      "1": {
+        "label": "Marcher"
+      }
+    }
+  },
+  "wall_ball": {
+    "muscles": [
+      "cuisses",
+      "fessiers",
+      "épaules"
+    ],
+    "equipment": "médecine-ball et mur",
+    "steps": [
+      "Place-toi à environ une longueur de bras du mur, ballon devant la poitrine.",
+      "Descends en squat profond.",
+      "Remonte avec explosivité et lance le ballon vers une cible haute sur le mur.",
+      "Rattrape le ballon et enchaîne directement avec le squat suivant."
+    ],
+    "tip": "Corps entier et cardio – une station Hyrox. 3×15.",
+    "caution": "Dos droit, genoux au-dessus des pieds ; utilise un ballon léger pendant l’apprentissage.",
+    "progression": "Ballon plus lourd, cible plus haute, plus de répétitions.",
+    "gear": "médecine-ball et mur",
+    "phases": {
+      "0": {
+        "label": "Descendre",
+        "cue": "Descends bas, ballon contre la poitrine"
+      },
+      "1": {
+        "label": "Étendre et lancer",
+        "cue": "Élan des jambes vers la cible au mur"
+      },
+      "2": {
+        "label": "Rattraper le ballon"
+      },
+      "3": {
+        "label": "Debout"
+      }
+    }
+  },
+  "thruster": {
+    "muscles": [
+      "cuisses",
+      "fessiers",
+      "épaules"
+    ],
+    "equipment": "deux haltères",
+    "steps": [
+      "Haltères sur les épaules, pieds écartés à la largeur des épaules.",
+      "Descends en squat, coudes vers l’avant.",
+      "Remonte depuis les jambes et pousse les haltères au-dessus de la tête en un seul mouvement.",
+      "Reviens sur les épaules et enchaîne directement avec le squat suivant."
+    ],
+    "tip": "Transfère la puissance des jambes vers les bras – et teste aussi ton endurance. 3×10.",
+    "caution": "Ne cambre pas le bas du dos au-dessus de la tête ; évite l’exercice en cas de douleur à l’épaule.",
+    "progression": "Haltères plus lourds, puis plus de tours.",
+    "gear": "deux haltères",
+    "phases": {
+      "0": {
+        "label": "Descendre",
+        "cue": "Les charges restent sur les épaules"
+      },
+      "1": {
+        "label": "Pousser",
+        "cue": "Des jambes vers le haut en un seul mouvement"
+      },
+      "2": {
+        "label": "Retour sur les épaules"
+      },
+      "3": {
+        "label": "Debout"
+      }
+    }
+  },
+  "incline_pushup": {
+    "muscles": [
+      "pectoraux",
+      "épaules",
+      "triceps"
+    ],
+    "equipment": "banc, table ou rebord de fenêtre",
+    "steps": [
+      "Mains un peu plus écartées que la largeur des épaules sur un bord stable.",
+      "Ton corps forme une ligne de la tête aux pieds.",
+      "Descends la poitrine vers le bord, coudes orientés vers l’arrière.",
+      "Repousse-toi avec puissance."
+    ],
+    "tip": "L’entrée en douceur dans les pompes – plus le bord est haut, plus c’est facile. 3×10–15.",
+    "caution": "Le bord doit être antidérapant ; ne laisse pas les hanches s’affaisser.",
+    "progression": "Bord plus bas, puis pompes sur les genoux, puis pompes complètes.",
+    "gear": "banc",
+    "phases": {
+      "0": {
+        "label": "Abaisser",
+        "cue": "Poitrine vers le bord, corps aligné"
+      },
+      "1": {
+        "label": "En bas"
+      },
+      "2": {
+        "label": "Pousser"
+      },
+      "3": {
+        "label": "En haut"
+      }
+    }
+  },
+  "knee_pushup": {
+    "muscles": [
+      "pectoraux",
+      "épaules",
+      "triceps",
+      "sangle abdominale"
+    ],
+    "equipment": "tapis",
+    "steps": [
+      "Genoux sur le tapis, mains un peu plus écartées que la largeur des épaules.",
+      "Une ligne droite des genoux à la tête.",
+      "Descends la poitrine vers le sol en contrôle.",
+      "Repousse-toi sans plier aux hanches."
+    ],
+    "tip": "Une étape vers les pompes complètes. 3×8–12.",
+    "caution": "Protège tes genoux ; les hanches restent alignées et ne montent pas.",
+    "progression": "Plus de répétitions, puis quelques pompes complètes.",
+    "phases": {
+      "0": {
+        "label": "Abaisser",
+        "cue": "Des genoux à la tête, une seule ligne"
+      },
+      "1": {
+        "label": "En bas"
+      },
+      "2": {
+        "label": "Pousser"
+      },
+      "3": {
+        "label": "En haut"
+      }
+    }
+  },
+  "pike_pushup": {
+    "muscles": [
+      "épaules",
+      "triceps"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Depuis la position de pompe, pousse les hanches vers le haut – un V inversé.",
+      "Mains écartées à la largeur des épaules, tête entre les bras.",
+      "Fléchis les coudes et descends la tête vers le sol devant les mains.",
+      "Repousse-toi avec puissance."
+    ],
+    "tip": "Force d’épaules sans haltères. 3×6–8.",
+    "caution": "Pas en cas de douleur à l’épaule ou à la nuque ; descends lentement.",
+    "progression": "Pieds surélevés, puis descends plus bas.",
+    "phases": {
+      "0": {
+        "label": "Tête vers le sol",
+        "cue": "Hanches hautes"
+      },
+      "1": {
+        "label": "En bas"
+      },
+      "2": {
+        "label": "Pousser"
+      },
+      "3": {
+        "label": "En haut"
+      }
+    }
+  },
+  "bench_dip": {
+    "muscles": [
+      "triceps",
+      "épaules",
+      "pectoraux"
+    ],
+    "equipment": "banc ou chaise solide",
+    "steps": [
+      "Mains écartées à la largeur des épaules sur le bord derrière toi, doigts vers l’avant.",
+      "Jambes devant, fesses juste devant le bord.",
+      "Fléchis les coudes vers l’arrière et descends le corps.",
+      "Repousse-toi avec les bras."
+    ],
+    "tip": "Les triceps avec ton propre poids de corps. 3×8–12.",
+    "caution": "Ne descends pas plus bas que les bras à l’horizontale ; évite l’exercice en cas de douleur à l’épaule.",
+    "progression": "Tends davantage les jambes, puis pieds surélevés.",
+    "gear": "banc",
+    "phases": {
+      "0": {
+        "label": "Abaisser",
+        "cue": "Coudes vers l’arrière"
+      },
+      "1": {
+        "label": "En bas"
+      },
+      "2": {
+        "label": "Pousser"
+      },
+      "3": {
+        "label": "En haut"
+      }
+    }
+  },
+  "biceps_curl": {
+    "muscles": [
+      "biceps",
+      "avant-bras"
+    ],
+    "equipment": "haltères ou bande élastique",
+    "steps": [
+      "Tiens-toi droit, haltères paumes vers l’avant.",
+      "Les coudes restent le long du corps.",
+      "Monte les haltères jusqu’aux épaules.",
+      "Tends à nouveau les bras lentement."
+    ],
+    "tip": "Simple et facile à adapter. 3×10–12.",
+    "caution": "Ne balance pas la charge avec le dos.",
+    "progression": "Haltères plus lourds, puis descente plus lente (3 s).",
+    "gear": "haltères",
+    "phases": {
+      "0": {
+        "label": "Fléchir",
+        "cue": "Coudes près du corps"
+      },
+      "1": {
+        "label": "En haut"
+      },
+      "2": {
+        "label": "Tendre lentement"
+      },
+      "3": {
+        "label": "En bas"
+      }
+    }
+  },
+  "triceps_extension": {
+    "muscles": [
+      "triceps"
+    ],
+    "equipment": "un haltère",
+    "steps": [
+      "Tiens-toi droit, un haltère tenu à deux mains au-dessus de la tête.",
+      "Les bras restent près de la tête.",
+      "Descends l’haltère derrière la tête.",
+      "Tends à nouveau les bras."
+    ],
+    "tip": "Renforce l’arrière des bras. 3×10–12.",
+    "caution": "Ne cambre pas le bas du dos, gaine les abdos ; en cas de douleur à l’épaule, prends plus léger ou passe l’exercice.",
+    "progression": "Haltère plus lourd, puis à un bras.",
+    "gear": "un haltère",
+    "phases": {
+      "0": {
+        "label": "Descendre derrière la tête",
+        "cue": "Bras près de la tête"
+      },
+      "1": {
+        "label": "En bas"
+      },
+      "2": {
+        "label": "Étendre"
+      },
+      "3": {
+        "label": "En haut"
+      }
+    }
+  },
+  "lateral_raise": {
+    "muscles": [
+      "côté des épaules"
+    ],
+    "equipment": "haltères légers",
+    "steps": [
+      "Tiens-toi droit, haltères le long du corps, coudes légèrement fléchis.",
+      "Lève les bras sur les côtés jusqu’à hauteur d’épaules.",
+      "Les épaules restent basses – ne les hausse pas.",
+      "Redescends lentement."
+    ],
+    "tip": "Une charge légère suffit – c’est la technique qui compte. 3×12–15.",
+    "caution": "Pas au-dessus de la hauteur d’épaules et sans élan ; évite l’exercice en cas de douleur à l’épaule.",
+    "progression": "Un peu plus lourd, puis tiens 1 s en haut.",
+    "gear": "haltères légers",
+    "phases": {
+      "0": {
+        "label": "Lever sur les côtés",
+        "cue": "Jusqu’à hauteur d’épaules, épaules basses"
+      },
+      "1": {
+        "label": "En haut"
+      },
+      "2": {
+        "label": "Abaisser"
+      },
+      "3": {
+        "label": "En bas"
+      }
+    }
+  },
+  "band_pull_apart": {
+    "muscles": [
+      "haut du dos",
+      "arrière des épaules"
+    ],
+    "equipment": "bande élastique",
+    "steps": [
+      "Saisis la bande à la largeur des épaules, bras tendus devant la poitrine.",
+      "Écarte la bande jusqu’à ce que les bras soient ouverts sur les côtés.",
+      "Omoplates rapprochées, épaules basses.",
+      "Reviens lentement."
+    ],
+    "tip": "Contrecarre la posture voûtée du bureau – fonctionne aussi comme pause rapide. 3×15.",
+    "caution": "Ne compense pas en cambrant le bas du dos et ne laisse pas la bande claquer en retour.",
+    "progression": "Bande plus ferme, puis tiens 2 s en fin de mouvement.",
+    "gear": "bande élastique",
+    "phases": {
+      "0": {
+        "label": "Écarter",
+        "cue": "Omoplates rapprochées, bras longs"
+      },
+      "1": {
+        "label": "Tenir"
+      },
+      "2": {
+        "label": "Ramener"
+      },
+      "3": {
+        "label": "Devant"
+      }
+    }
+  },
+  "pullup": {
+    "muscles": [
+      "grands dorsaux",
+      "biceps",
+      "force de préhension"
+    ],
+    "equipment": "barre de traction",
+    "steps": [
+      "Saisis la barre un peu plus large que les épaules et suspends-toi.",
+      "Abaisse activement les épaules.",
+      "Tire la poitrine vers la barre jusqu’à ce que le menton passe au-dessus.",
+      "Redescends lentement."
+    ],
+    "tip": "Au début, utilise une bande pour t’aider ou entraîne seulement la descente lente. 3×3–8.",
+    "caution": "Pas de balancier ; évite l’exercice en cas de douleur à l’épaule.",
+    "progression": "De la descente lente à ta première traction complète, puis plus de répétitions.",
+    "gear": "barre de traction",
+    "phases": {
+      "0": {
+        "label": "Se hisser",
+        "cue": "Poitrine vers la barre, épaules basses"
+      },
+      "1": {
+        "label": "En haut"
+      },
+      "2": {
+        "label": "Redescendre lentement"
+      },
+      "3": {
+        "label": "Suspension"
+      }
+    }
+  },
+  "inverted_row": {
+    "muscles": [
+      "haut du dos",
+      "biceps",
+      "sangle abdominale"
+    ],
+    "equipment": "table solide ou barre",
+    "steps": [
+      "Allonge-toi sous une table solide ou une barre basse et saisis le bord.",
+      "Les talons restent au sol ; ton corps forme une ligne droite.",
+      "Tire la poitrine vers le bord en serrant les omoplates.",
+      "Redescends lentement."
+    ],
+    "tip": "Un exercice de tirage sans matériel – équilibre les pompes. 3×8–12.",
+    "caution": "Vérifie d’abord que la table ou la barre supporte ton poids en toute sécurité.",
+    "progression": "Avance les pieds, ou surélève-les.",
+    "gear": "table solide",
+    "phases": {
+      "0": {
+        "label": "Poitrine vers la barre",
+        "cue": "Corps aligné"
+      },
+      "1": {
+        "label": "En haut"
+      },
+      "2": {
+        "label": "Redescendre"
+      },
+      "3": {
+        "label": "En bas"
+      }
+    }
+  },
+  "single_arm_row": {
+    "muscles": [
+      "haut du dos",
+      "biceps",
+      "arrière de l’épaule"
+    ],
+    "equipment": "haltère et banc",
+    "steps": [
+      "Pose un genou et la main du même côté sur le banc, dos à l’horizontale.",
+      "L’haltère pend dans la main libre.",
+      "Tire le coude près du corps vers la hanche.",
+      "Redescends lentement, puis change de côté."
+    ],
+    "tip": "De la force dorsale avec un dos bien soutenu. 3×10 par côté.",
+    "caution": "Le dos reste droit et ne s’ouvre pas en rotation.",
+    "progression": "Haltère plus lourd, puis tenue de 1 s en haut.",
+    "gear": "haltère et banc",
+    "phases": {
+      "0": {
+        "label": "Tirer",
+        "cue": "Coude vers la hanche, dos droit"
+      },
+      "1": {
+        "label": "En haut"
+      },
+      "2": {
+        "label": "Redescendre"
+      },
+      "3": {
+        "label": "En bas"
+      }
+    }
+  },
+  "side_lying_leg_raise": {
+    "muscles": [
+      "côté des fessiers",
+      "abducteurs de la hanche"
+    ],
+    "equipment": "tapis (mini-band en option)",
+    "steps": [
+      "Allonge-toi sur le côté, la tête sur l’avant-bras du dessous, jambes tendues.",
+      "Lève la jambe du dessus en la gardant tendue, orteils vers l’avant.",
+      "Le bassin ne bascule pas vers l’arrière.",
+      "Redescends lentement, puis change de côté."
+    ],
+    "tip": "Stabilise le bassin et les genoux quand tu cours. 3×15 par côté.",
+    "caution": "Ne monte que tant que le bassin reste immobile.",
+    "progression": "Avec un mini-band, puis tenue de 2 s en haut.",
+    "phases": {
+      "0": {
+        "label": "Lever la jambe",
+        "cue": "Orteils vers l’avant, sans basculer"
+      },
+      "1": {
+        "label": "En haut"
+      },
+      "2": {
+        "label": "Abaisser"
+      },
+      "3": {
+        "label": "En bas"
+      }
+    }
+  },
+  "donkey_kick": {
+    "muscles": [
+      "fessiers"
+    ],
+    "equipment": "tapis",
+    "steps": [
+      "À quatre pattes, genoux sous les hanches.",
+      "Garde une jambe fléchie et pousse le talon vers le plafond.",
+      "Ne cambre pas le bas du dos ; le bassin reste horizontal.",
+      "Reviens lentement, puis change de côté."
+    ],
+    "tip": "Cible les fessiers et ménage le dos. 3×12 par côté.",
+    "caution": "Ne monte que tant que le dos reste droit.",
+    "progression": "Avec un mini-band au-dessus des genoux ou un lest à la cheville.",
+    "phases": {
+      "0": {
+        "label": "Talon vers le plafond",
+        "cue": "Pas de dos creux, bassin stable"
+      },
+      "1": {
+        "label": "En haut"
+      },
+      "2": {
+        "label": "Retour"
+      },
+      "3": {
+        "label": "Quatre pattes"
+      }
+    }
+  },
+  "bicycle_crunch": {
+    "muscles": [
+      "obliques et abdominaux"
+    ],
+    "equipment": "tapis",
+    "steps": [
+      "Allonge-toi sur le dos, mains derrière la tête sans serrer, épaules légèrement décollées.",
+      "Ramène un genou vers la poitrine et tends l’autre jambe.",
+      "Tourne le coude opposé vers le genou fléchi.",
+      "Change de côté de façon fluide."
+    ],
+    "tip": "Lentement, c’est plus efficace que vite. 3×10 par côté.",
+    "caution": "Ne tire pas sur la tête ; si le dos fait mal, garde la jambe tendue plus haut.",
+    "progression": "Plus lentement, avec la jambe tendue plus bas.",
+    "phases": {
+      "0": {
+        "label": "Genou vers le coude opposé",
+        "cue": "Épaules décollées"
+      },
+      "1": {
+        "label": "Tourner"
+      },
+      "2": {
+        "label": "Changer"
+      }
+    }
+  },
+  "russian_twist": {
+    "muscles": [
+      "obliques",
+      "sangle abdominale"
+    ],
+    "equipment": "aucun (charge en option)",
+    "steps": [
+      "Assieds-toi bien droit, genoux fléchis, buste légèrement incliné vers l’arrière.",
+      "Mains jointes devant la poitrine.",
+      "Tourne le buste d’un côté, les mains vers le sol à côté de la hanche.",
+      "Tourne de l’autre côté en gardant le dos long."
+    ],
+    "tip": "Tourne depuis le tronc, ne balance pas seulement les bras. 3×10 par côté.",
+    "caution": "Si le dos fait mal, garde les pieds au sol et tourne moins loin.",
+    "progression": "Lève les pieds, puis ajoute une charge.",
+    "phases": {
+      "0": {
+        "label": "Tourner sur le côté",
+        "cue": "Le buste tourne, pieds immobiles"
+      },
+      "1": {
+        "label": "Côté"
+      },
+      "2": {
+        "label": "Vers le centre"
+      }
+    }
+  },
+  "reverse_crunch": {
+    "muscles": [
+      "bas des abdos"
+    ],
+    "equipment": "tapis",
+    "steps": [
+      "Allonge-toi sur le dos, bras le long du corps, genoux fléchis au-dessus des hanches.",
+      "Enroule le bassin vers le haut et ramène les genoux vers la poitrine.",
+      "Sans élan ; la tête reste au sol.",
+      "Redescends lentement."
+    ],
+    "tip": "Renforce le bas des abdos en ménageant le dos. 3×10–12.",
+    "caution": "Pas de balancier ; si la nuque te gêne, garde consciemment la tête au sol.",
+    "progression": "Plus lentement, avec une tenue de 1 s en haut.",
+    "phases": {
+      "0": {
+        "label": "Enrouler le bassin",
+        "cue": "Genoux vers la poitrine, sans élan"
+      },
+      "1": {
+        "label": "En haut"
+      },
+      "2": {
+        "label": "Poser lentement"
+      },
+      "3": {
+        "label": "En bas"
+      }
+    }
+  },
+  "shoulder_tap": {
+    "muscles": [
+      "sangle abdominale",
+      "épaules"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Planche haute, pieds un peu plus écartés que la largeur du bassin.",
+      "Une main touche l’épaule opposée.",
+      "Les hanches restent immobiles et ne basculent pas.",
+      "Continue en alternant."
+    ],
+    "tip": "Résiste à la rotation – pour un tronc stable. 3×10 par côté.",
+    "caution": "Si les poignets te gênent, travaille sur les poings ou les mains surélevées.",
+    "progression": "Pieds plus rapprochés, puis plus lentement.",
+    "phases": {
+      "0": {
+        "label": "Toucher l’épaule",
+        "cue": "Hanches immobiles"
+      },
+      "1": {
+        "label": "Toucher"
+      },
+      "2": {
+        "label": "Main en retour"
+      },
+      "3": {
+        "label": "Appui"
+      }
+    }
+  },
+  "bear_plank": {
+    "muscles": [
+      "sangle abdominale",
+      "cuisses",
+      "épaules"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "À quatre pattes, orteils repliés sous les pieds.",
+      "Décolle les genoux de quelques centimètres du sol.",
+      "Le dos reste plat comme une table.",
+      "Tiens en respirant calmement."
+    ],
+    "tip": "Une tension du tronc qu’on sent vite. 3×20–40 s.",
+    "caution": "Ne décolle les genoux que légèrement ; n’arrondis pas le dos.",
+    "progression": "Tiens plus longtemps, puis avance en marche de l’ours.",
+    "phases": {
+      "0": {
+        "label": "Tenir",
+        "cue": "Genoux en l’air, dos plat"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Soulever les genoux"
+      }
+    }
+  },
+  "v_up": {
+    "muscles": [
+      "abdominaux",
+      "fléchisseurs de la hanche"
+    ],
+    "equipment": "tapis",
+    "steps": [
+      "Allonge-toi sur le dos, bras au-dessus de la tête, jambes tendues.",
+      "Lève en même temps les bras et les jambes – dirige les mains vers les pieds.",
+      "Tiens brièvement le V en haut.",
+      "Redescends lentement."
+    ],
+    "tip": "Exigeant – maîtrise d’abord les crunchs et les relevés de jambes. 3×8–10.",
+    "caution": "Pas en cas de douleur au dos ; sans élan.",
+    "progression": "Plus lentement, avec une tenue de 1 s en haut.",
+    "phases": {
+      "0": {
+        "label": "Se replier",
+        "cue": "Mains vers les pieds"
+      },
+      "1": {
+        "label": "En haut"
+      },
+      "2": {
+        "label": "Poser lentement"
+      },
+      "3": {
+        "label": "En bas"
+      }
+    }
+  },
+  "flutter_kicks": {
+    "muscles": [
+      "bas des abdos",
+      "fléchisseurs de la hanche"
+    ],
+    "equipment": "tapis",
+    "steps": [
+      "Allonge-toi sur le dos, mains à côté ou sous les fesses.",
+      "Jambes tendues, juste au-dessus du sol.",
+      "De petits battements rapides de haut en bas, en alternance.",
+      "Le bas du dos reste au sol."
+    ],
+    "tip": "Court et propre plutôt que long avec le dos cambré. 3×20–30 s.",
+    "caution": "Si le bas du dos décolle, tiens les jambes plus haut.",
+    "progression": "Jambes plus basses, puis plus longtemps.",
+    "phases": {
+      "0": {
+        "label": "Petits battements",
+        "cue": "Bas du dos au sol"
+      },
+      "1": {
+        "label": "Alterner"
+      }
+    }
+  },
+  "glute_bridge_march": {
+    "muscles": [
+      "fessiers",
+      "sangle abdominale"
+    ],
+    "equipment": "tapis",
+    "steps": [
+      "Allonge-toi sur le dos et lève les hanches en pont.",
+      "Lève un genou à la fois, comme si tu marchais.",
+      "Le bassin reste en haut et horizontal.",
+      "Redescends lentement quand tu as fait tes répétitions."
+    ],
+    "tip": "Combine la force des fessiers et la stabilité du bassin. 3×8 par côté.",
+    "caution": "Ne laisse pas le bassin tomber d’un côté ; garde un mouvement lent.",
+    "progression": "Tiens plus longtemps, pieds plus éloignés.",
+    "phases": {
+      "0": {
+        "label": "Lever le genou",
+        "cue": "Bassin haut et horizontal"
+      },
+      "1": {
+        "label": "En haut"
+      },
+      "2": {
+        "label": "Reposer le pied"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Lever le bassin"
+      }
+    }
+  },
+  "worlds_greatest_stretch": {
+    "muscles": [
+      "hanches",
+      "colonne dorsale",
+      "ischio-jambiers"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Grande fente, les deux mains au sol à l’intérieur du pied avant.",
+      "Descends le coude intérieur vers le pied avant.",
+      "Puis tourne ce bras vers le plafond, le regard le suit.",
+      "Reviens et change de côté."
+    ],
+    "tip": "Mobilise hanches et dos en une seule fois – idéal pour s’échauffer. 4–5 par côté.",
+    "caution": "Reste dans une amplitude sans douleur ; pose le genou arrière si besoin.",
+    "progression": "Prends des respirations plus longues dans chaque position.",
+    "phases": {
+      "0": {
+        "label": "Coude vers le pied",
+        "cue": "Jambe arrière allongée"
+      },
+      "1": {
+        "label": "Tenir"
+      },
+      "2": {
+        "label": "Main en retour"
+      },
+      "3": {
+        "label": "Tourner le bras vers le plafond",
+        "cue": "Le regard suit la main"
+      },
+      "4": {
+        "label": "Ouvert"
+      },
+      "5": {
+        "label": "Retour"
+      },
+      "6": {
+        "label": "Fente"
+      }
+    }
+  },
+  "downward_dog": {
+    "muscles": [
+      "mollets",
+      "ischio-jambiers",
+      "épaules"
+    ],
+    "equipment": "tapis",
+    "steps": [
+      "Depuis la position à quatre pattes, replie les orteils sous les pieds.",
+      "Pousse les hanches vers le haut et l’arrière – un V inversé.",
+      "Dos long, talons qui descendent vers le sol ; les genoux peuvent rester fléchis.",
+      "Tiens en respirant calmement."
+    ],
+    "tip": "Étire tout l’arrière du corps. 3×30 s.",
+    "caution": "Si les poignets ou les épaules te gênent, fais-le sur les avant-bras.",
+    "progression": "Tiens plus longtemps en abaissant chaque talon à tour de rôle.",
+    "phases": {
+      "0": {
+        "label": "Tenir",
+        "cue": "Talons vers le sol, dos long"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Pousser les hanches vers le haut"
+      }
+    }
+  },
+  "cobra": {
+    "muscles": [
+      "abdominaux",
+      "colonne vertébrale",
+      "fléchisseurs de la hanche"
+    ],
+    "equipment": "tapis",
+    "steps": [
+      "Allonge-toi sur le ventre, mains à côté des épaules.",
+      "Lève lentement la poitrine ; le bassin reste au sol.",
+      "Épaules basses, regard vers l’avant.",
+      "Tiens brièvement, puis redescends."
+    ],
+    "tip": "Une extension douce après de longues périodes assis. 6–8 répétitions.",
+    "caution": "Monte seulement jusqu’où c’est confortable pour le bas du dos.",
+    "progression": "Tiens plus longtemps, tends davantage les bras.",
+    "phases": {
+      "0": {
+        "label": "Lever la poitrine",
+        "cue": "Bassin au sol, épaules basses"
+      },
+      "1": {
+        "label": "Tenir"
+      },
+      "2": {
+        "label": "Se poser"
+      },
+      "3": {
+        "label": "En bas"
+      }
+    }
+  },
+  "quad_stretch": {
+    "muscles": [
+      "avant de la cuisse",
+      "fléchisseurs de la hanche"
+    ],
+    "equipment": "aucun (mur en option)",
+    "steps": [
+      "Tiens-toi droit sur une jambe, en t’appuyant à un mur si besoin.",
+      "Ramène le talon de l’autre jambe vers les fessiers.",
+      "Le genou pointe vers le bas, les hanches légèrement vers l’avant.",
+      "Tiens, puis change de côté."
+    ],
+    "tip": "Le classique après une course. 2×30 s par côté.",
+    "caution": "Ne cambre pas le bas du dos ; si le genou te gêne, passe une serviette autour du pied.",
+    "progression": "Tiens plus longtemps en rentrant consciemment le bassin.",
+    "phases": {
+      "0": {
+        "label": "Tenir",
+        "cue": "Genou vers le bas, hanches en avant"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Talon vers les fesses"
+      }
+    }
+  },
+  "pigeon_pose": {
+    "muscles": [
+      "fessiers",
+      "hanches"
+    ],
+    "equipment": "tapis",
+    "steps": [
+      "Depuis la position à quatre pattes, amène un genou vers l’avant entre les mains, le tibia posé en travers.",
+      "Étends la jambe arrière loin derrière toi.",
+      "Les hanches descendent vers le sol ; buste droit ou penché vers l’avant.",
+      "Tiens, puis change de côté."
+    ],
+    "tip": "Un étirement profond des fessiers – fait du bien après de longues sorties. 2×30–45 s par côté.",
+    "caution": "Si le genou fait mal, place le tibia moins en travers ou fais plutôt l’étirement en « 4 ».",
+    "progression": "Penche davantage le buste vers l’avant, tiens plus longtemps.",
+    "phases": {
+      "0": {
+        "label": "Tenir",
+        "cue": "Les hanches descendent vers le sol"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Poser le buste"
+      }
+    }
+  },
+  "leg_swings": {
+    "muscles": [
+      "hanches",
+      "ischio-jambiers"
+    ],
+    "equipment": "aucun (mur pour se tenir)",
+    "steps": [
+      "Place-toi de côté par rapport à un mur et tiens-toi.",
+      "Balance la jambe extérieure librement vers l’avant et vers l’arrière.",
+      "Le buste reste immobile et droit.",
+      "Augmente progressivement l’amplitude, puis change de côté."
+    ],
+    "tip": "Un échauffement dynamique avant la course. 10–15 par côté.",
+    "caution": "Balance en contrôle, sans à-coups.",
+    "progression": "Amplitude plus grande, aussi latéralement devant le corps.",
+    "phases": {
+      "0": {
+        "label": "Vers l’arrière",
+        "cue": "Balance librement, buste immobile"
+      },
+      "1": {
+        "label": "Vers l’avant"
+      }
+    }
+  },
+  "arm_circles": {
+    "muscles": [
+      "épaules",
+      "haut du dos"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Tiens-toi droit, bras longs.",
+      "De grands cercles lents vers l’avant.",
+      "Puis change de sens.",
+      "Les épaules restent relâchées."
+    ],
+    "tip": "Détend les épaules avant l’entraînement. 10 dans chaque sens.",
+    "caution": "Reste dans une amplitude sans douleur.",
+    "progression": "Cercles plus grands, aussi un bras à la fois.",
+    "phases": {
+      "0": {
+        "label": "Grands cercles",
+        "cue": "Bras longs, épaules relâchées"
+      },
+      "1": {
+        "label": "Grands cercles"
+      },
+      "2": {
+        "label": "Grands cercles"
+      },
+      "3": {
+        "label": "Grands cercles"
+      }
+    }
+  },
+  "ankle_rocks": {
+    "muscles": [
+      "cheville",
+      "mollet"
+    ],
+    "equipment": "mur",
+    "steps": [
+      "À demi-genou face à un mur, le pied avant à environ la largeur d’une main du mur.",
+      "Pousse le genou vers le mur ; le talon reste au sol.",
+      "Tiens brièvement et reviens.",
+      "Augmente progressivement la distance, puis change de côté."
+    ],
+    "tip": "Plus de mobilité de la cheville pour les squats profonds et une foulée fluide. 10 par côté.",
+    "caution": "Le talon reste au sol ; si l’avant de l’articulation fait mal, va moins loin.",
+    "progression": "Éloigne le pied du mur.",
+    "gear": "mur",
+    "phases": {
+      "0": {
+        "label": "Genou vers le mur",
+        "cue": "Talon au sol"
+      },
+      "1": {
+        "label": "Devant"
+      },
+      "2": {
+        "label": "Retour"
+      }
+    }
+  },
+  "neck_stretch": {
+    "muscles": [
+      "nuque",
+      "haut de l’épaule"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Tiens-toi ou assieds-toi droit, épaules relâchées.",
+      "Incline une oreille vers l’épaule.",
+      "Pose doucement la main du même côté sur la tête – ne tire pas.",
+      "Tiens, puis change de côté."
+    ],
+    "tip": "Relaxant après de longues périodes assis. 2×20 s par côté.",
+    "caution": "Vas-y en douceur ; si des fourmillements apparaissent dans les bras, relâche tout de suite.",
+    "progression": "Abaisse activement l’épaule opposée.",
+    "phases": {
+      "0": {
+        "label": "Tenir",
+        "cue": "Épaule opposée basse, tire doucement"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Oreille vers l’épaule"
+      }
+    }
+  },
+  "side_bend_stretch": {
+    "muscles": [
+      "côtés du tronc",
+      "grands dorsaux"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Pieds écartés à la largeur du bassin, une main sur la hanche.",
+      "Tends l’autre bras au-dessus de la tête.",
+      "Incline-toi sur le côté sans basculer vers l’avant.",
+      "Tiens brièvement, redresse-toi, change de côté."
+    ],
+    "tip": "Allonge les flancs – bien après une longue position assise. 4 par côté.",
+    "caution": "Ne cambre pas le bas du dos ; le bassin reste centré.",
+    "progression": "Tiens plus longtemps, passe le bras plus loin au-dessus de la tête.",
+    "phases": {
+      "0": {
+        "label": "S’étirer sur le côté",
+        "cue": "Grandis-toi, sans basculer en avant"
+      },
+      "1": {
+        "label": "Tenir"
+      },
+      "2": {
+        "label": "Se redresser"
+      },
+      "3": {
+        "label": "Centre"
+      }
+    }
+  },
+  "inchworm": {
+    "muscles": [
+      "ischio-jambiers",
+      "épaules",
+      "sangle abdominale"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Debout, penche-toi en avant et pose les mains au sol.",
+      "Avance les mains jusqu’à la position de pompe.",
+      "Tiens brièvement, puis reviens avec les mains.",
+      "Remonte lentement en déroulant."
+    ],
+    "tip": "Un échauffement pour tout le corps. 5 répétitions.",
+    "caution": "Les genoux peuvent être fléchis ; pas en cas de douleur aiguë au dos.",
+    "progression": "Ajoute une pompe une fois en position de pompe.",
+    "phases": {
+      "0": {
+        "label": "Se dérouler vers l’avant"
+      },
+      "1": {
+        "label": "Avancer les mains",
+        "cue": "Jambes aussi tendues que possible"
+      },
+      "2": {
+        "label": "Planche"
+      },
+      "3": {
+        "label": "Reculer les mains"
+      },
+      "4": {
+        "label": "Remonter en déroulant"
+      },
+      "5": {
+        "label": "Debout"
+      }
+    }
+  },
+  "deep_squat_hold": {
+    "muscles": [
+      "hanches",
+      "chevilles",
+      "dos"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Pieds écartés à la largeur des épaules, pointes légèrement tournées vers l’extérieur.",
+      "Descends en squat profond, les talons restent au sol.",
+      "Les coudes poussent doucement les genoux vers l’extérieur, poitrine ouverte.",
+      "Tiens en respirant calmement."
+    ],
+    "tip": "Redonne la mobilité perdue. 3×30 s.",
+    "caution": "Si les genoux font mal, descends moins ; glisse un support sous les talons si besoin.",
+    "progression": "Tiens plus longtemps en transférant le poids d’un côté à l’autre.",
+    "phases": {
+      "0": {
+        "label": "Tenir",
+        "cue": "Talons au sol, poitrine ouverte"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Squat profond"
+      }
+    }
+  },
+  "jumping_jack": {
+    "muscles": [
+      "mollets",
+      "épaules",
+      "cardio"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Tiens-toi droit, bras le long du corps.",
+      "Saute en écartant les jambes et lève en même temps les bras au-dessus de la tête.",
+      "Saute pour revenir à la position de départ.",
+      "Léger et dynamique, à un rythme régulier."
+    ],
+    "tip": "Met la circulation en route. 3×20–30.",
+    "caution": "Sur une surface souple ; en cas de problèmes de genou ou de plancher pelvien, supprime le saut (pas chassé sur le côté).",
+    "progression": "Plus vite, puis plus longtemps.",
+    "phases": {
+      "0": {
+        "label": "Sauter"
+      },
+      "1": {
+        "label": "Ouvert",
+        "cue": "Réception légère sur l’avant-pied"
+      },
+      "2": {
+        "label": "Sauter"
+      },
+      "3": {
+        "label": "Fermé"
+      },
+      "4": {
+        "label": "Fermé"
+      }
+    }
+  },
+  "high_knees": {
+    "muscles": [
+      "fléchisseurs de la hanche",
+      "mollets",
+      "cardio"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Cours sur place.",
+      "Monte les genoux à hauteur des hanches, en alternant rapidement.",
+      "Réceptionne sur l’avant-pied, les bras accompagnent le mouvement.",
+      "Le buste reste droit."
+    ],
+    "tip": "Court et intense – idéal pour les intervalles. 3×20 s.",
+    "caution": "Seulement après échauffement et sur un sol antidérapant.",
+    "progression": "Plus longtemps, puis plus vite.",
+    "phases": {
+      "0": {
+        "label": "Genoux hauts",
+        "cue": "Genoux à hauteur de hanche, pas rapides"
+      },
+      "1": {
+        "label": "Alterner"
+      }
+    }
+  },
+  "butt_kicks": {
+    "muscles": [
+      "ischio-jambiers",
+      "mollets",
+      "cardio"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Cours sur place.",
+      "Ramène les talons vers les fessiers, en alternant.",
+      "Contacts au sol courts et rapides.",
+      "Buste droit, bras qui se balancent librement."
+    ],
+    "tip": "Gammes de course sur place. 3×20 s.",
+    "caution": "Seulement après échauffement et sur un sol antidérapant.",
+    "progression": "Cadence plus élevée, puis en avançant.",
+    "phases": {
+      "0": {
+        "label": "Talon vers les fesses",
+        "cue": "Buste droit, cadence rapide"
+      },
+      "1": {
+        "label": "Alterner"
+      }
+    }
+  },
+  "burpee": {
+    "muscles": [
+      "corps entier",
+      "cardio"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Debout, descends en squat, mains au sol.",
+      "Envoie les pieds en arrière d’un saut en position de pompe.",
+      "Ramène les pieds d’un saut.",
+      "Saute en levant les bras au-dessus de la tête et réceptionne en douceur."
+    ],
+    "tip": "Cardio pour tout le corps – fait partie de l’entraînement Hyrox. 3×8–10.",
+    "caution": "Apprends-le d’abord sans saut (recule les pieds en marchant) ; garde le dos droit en position de pompe.",
+    "progression": "Avec une pompe au sol, puis un burpee avec saut en longueur.",
+    "phases": {
+      "0": {
+        "label": "Accroupi, mains au sol"
+      },
+      "1": {
+        "label": "Pieds en arrière d’un saut"
+      },
+      "2": {
+        "label": "Planche",
+        "cue": "Corps aligné"
+      },
+      "3": {
+        "label": "Pieds ramenés d’un saut"
+      },
+      "4": {
+        "label": "Saut vertical"
+      },
+      "5": {
+        "label": "Réception",
+        "cue": "Réception souple"
+      },
+      "6": {
+        "label": "Debout"
+      }
+    }
+  },
+  "mountain_climber": {
+    "muscles": [
+      "sangle abdominale",
+      "fléchisseurs de la hanche",
+      "cardio"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Planche haute, mains sous les épaules.",
+      "Ramène un genou vers la poitrine.",
+      "Change de jambe rapidement, en alternant.",
+      "Les hanches restent basses et immobiles."
+    ],
+    "tip": "Gainage et cardio en un. 3×20–30 s.",
+    "caution": "Si les poignets te gênent, fais-le mains surélevées sur un banc.",
+    "progression": "Plus vite, puis plus longtemps.",
+    "phases": {
+      "0": {
+        "label": "Genou vers la poitrine",
+        "cue": "Hanches basses et stables"
+      },
+      "1": {
+        "label": "Alterner"
+      }
+    }
+  },
+  "skater_jump": {
+    "muscles": [
+      "fessiers",
+      "cuisses",
+      "équilibre"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Tiens-toi sur une jambe, légèrement fléchie.",
+      "Saute sur le côté sur l’autre jambe.",
+      "Réceptionne en douceur, la jambe libre passe derrière la jambe d’appui.",
+      "Continue d’aller et retour en rythme."
+    ],
+    "tip": "Puissance et stabilité en sauts latéraux – bien pour le football. 3×20–30 s.",
+    "caution": "À la réception, le genou pointe au-dessus du pied, pas vers l’intérieur.",
+    "progression": "Saute plus loin, tiens brièvement à la réception.",
+    "phases": {
+      "0": {
+        "label": "Sauter sur le côté",
+        "cue": "Réception souple sur une jambe"
+      },
+      "1": {
+        "label": "Réception"
+      },
+      "2": {
+        "label": "Impulsion"
+      }
+    }
+  },
+  "bear_crawl": {
+    "muscles": [
+      "sangle abdominale",
+      "épaules",
+      "cuisses"
+    ],
+    "equipment": "aucun",
+    "steps": [
+      "Planche de l’ours : les genoux flottent juste au-dessus du sol.",
+      "Avance un peu la main et le pied opposés.",
+      "Le dos reste plat, les hanches immobiles.",
+      "Avance en rampant, puis recule."
+    ],
+    "tip": "Coordination et force du tronc – les enfants adorent aussi. 3×20–30 s.",
+    "caution": "Petits pas, genoux juste au-dessus du sol.",
+    "progression": "Plus longtemps, puis en arrière ou latéralement.",
+    "phases": {
+      "0": {
+        "label": "Main et pied opposé en avant",
+        "cue": "Genoux juste au-dessus du sol"
+      },
+      "1": {
+        "label": "Poser"
+      }
+    }
+  }
+}

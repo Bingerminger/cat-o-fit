@@ -2,6 +2,7 @@
 // the German ones: the player reads them from the unit text (js/show-program.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { setLocale } from '../js/i18n.js';
 import { addDays } from '../js/ui.js';
 import { generatePlanUnits, makePhases, weekTemplateFor } from '../js/plangen.js';
@@ -24,12 +25,19 @@ const doses = (units) => units.filter((u) => ['strength', 'mobility', 'gym'].inc
   return { rounds: d.rounds, roundRest: d.roundRest, items: d.items.map(({ id, reps, holdS, perSide }) => ({ id, reps, holdS, perSide })) };
 });
 
-for (const [name, make] of [['run (HM)', () => raceUnits('hm', 'run')], ['Hyrox', () => raceUnits('hyrox', 'hyrox')],
-  ['triathlon', () => raceUnits('tri_olympic', 'triathlon')], ['programmes', programUnits]]) {
-  test(`${name}: English plan texts carry the same exercises and doses as German`, async () => {
-    const de = doses(make());
-    assert.ok(de.some((d) => d.items.length), 'the German plan names exercises');
-    await setLocale('en');
-    try { assert.deepEqual(doses(make()), de); } finally { await setLocale('de'); }
-  });
+// Every language whose catalog already has the plan texts (the others fall back to English).
+const ROOT = new URL('../', import.meta.url);
+const LANGS = Object.keys(JSON.parse(readFileSync(new URL('locales/languages.json', ROOT), 'utf8'))).filter((l) => l !== 'de')
+  .filter((l) => { const ui = JSON.parse(readFileSync(new URL(`locales/${l}/ui.json`, ROOT), 'utf8')); return ui.plangen && ui.exerciseNames; });
+
+for (const lang of LANGS) {
+  for (const [name, make] of [['run (HM)', () => raceUnits('hm', 'run')], ['Hyrox', () => raceUnits('hyrox', 'hyrox')],
+    ['triathlon', () => raceUnits('tri_olympic', 'triathlon')], ['programmes', programUnits]]) {
+    test(`${name}: ${lang} plan texts carry the same exercises and doses as German`, async () => {
+      const de = doses(make());
+      assert.ok(de.some((d) => d.items.length), 'the German plan names exercises');
+      await setLocale(lang);
+      try { assert.deepEqual(doses(make()), de); } finally { await setLocale('de'); }
+    });
+  }
 }

@@ -1,1 +1,57 @@
-{}
+{
+  "ics": {
+    "calendarName": "Catofit Entrenamiento",
+    "training": "Entrenamiento",
+    "race": "Carrera",
+    "distance": "Distancia: {km} km",
+    "pace": "Ritmo objetivo: {pace} min/km",
+    "hrZone": "Zona de FC: Z{zone}",
+    "openInApp": "Abrir en la app: {url}",
+    "raceDistance": "Distancia: {distance}",
+    "raceDistanceKm": "Distancia: {distance} ({km} km)",
+    "targetTime": "Tiempo objetivo: {time}",
+    "priority": "Prioridad: {priority}",
+    "alarmHour": "{title} en 1 hora",
+    "alarmTomorrow": "Mañana: {title}",
+    "alarmRace": "Carrera en 2 horas – ¡a calentar!",
+    "alarmRaceTomorrow": "Mañana, carrera: {name}",
+    "file": {
+      "session": "sesion",
+      "race": "carrera",
+      "plan": "plan"
+    },
+    "error": {
+      "missingId": "Falta el parámetro «id».",
+      "invalidUser": "Falta el parámetro «user» o no es válido.",
+      "linkInvalid": "Este enlace de calendario ya no es válido. Vuelve a exportar la cita desde la app.",
+      "linkExpired": "Los enlaces de calendario sin clave ya no son válidos. Vuelve a exportar la cita desde la app.",
+      "unitNotFound": "Sesión no encontrada.",
+      "eventNotFound": "Evento no encontrado."
+    }
+  },
+  "import": {
+    "title": "{type} ({source})",
+    "type": {
+      "easy": "Carrera a pie",
+      "walk": "Caminata",
+      "hike": "Senderismo",
+      "cross_bike": "Paseo en bici",
+      "swim": "Natación",
+      "strength": "Fuerza",
+      "rowing": "Remo",
+      "tennis": "Tenis",
+      "tabletennis": "Tenis de mesa",
+      "cross_football": "Fútbol",
+      "mobility": "Movilidad",
+      "other": "Entrenamiento"
+    },
+    "source": {
+      "appleHealth": "Apple Health",
+      "healthConnect": "Health Connect",
+      "healthImport": "Importación de salud"
+    }
+  },
+  "food": {
+    "product": "Producto {code}"
+  }
+}
