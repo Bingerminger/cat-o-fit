@@ -1,12 +1,12 @@
-# Schutz der Rohdaten: kein direkter Webzugriff auf die JSON-Dateien.
-# Der Zugriff läuft ausschließlich über /api/api.php.
+# Protection of the raw data: no direct web access to the JSON files.
+# Access goes exclusively through /api/api.php.
 
 # Apache 2.4
 <IfModule mod_authz_core.c>
     Require all denied
 </IfModule>
 
-# Apache 2.2 (Fallback)
+# Apache 2.2 (fallback)
 <IfModule !mod_authz_core.c>
     Order allow,deny
     Deny from all

@@ -1,4 +1,4 @@
-# Hält die per Commit-SHA gepinnten GitHub Actions aktuell (Vorschläge als Pull Request).
+# Keeps the GitHub Actions pinned by commit SHA up to date (proposals arrive as pull requests).
 version: 2
 updates:
   - package-ecosystem: github-actions

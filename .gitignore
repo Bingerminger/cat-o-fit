@@ -1,23 +1,23 @@
 # macOS
 .DS_Store
 
-# Atomare Schreib-Temporärdateien der PHP-Persistenz
+# Temporary files of the PHP persistence layer's atomic writes
 data/.tmp_*
 
-# Laufzeit-Datenablage. Im Repo liegt in data/ nur der Zugriffsschutz (.htaccess);
-# die Entwickler-Seeds stehen seit v3.20.0 unter tools/seed/ (eine frische
-# Installation startet mit der Ersteinrichtung).
+# Runtime data storage. In the repo, data/ holds only the access protection (.htaccess);
+# the developer seeds have lived in tools/seed/ since v3.20.0 (a fresh
+# installation starts with the initial setup).
 data/users/
 data/family/
 data/auth/
 data/.bootstrap.lock
 data/*.json
 
-# Open-Food-Facts-Nährwert-Cache (Laufzeit, maschinenspezifisch)
+# Open Food Facts nutrition cache (runtime, machine-specific)
 data/foodfacts.json
 data/foodfacts.json.lock
 
-# Lokale Entwickler-Werkzeuge & Arbeitsverzeichnisse (maschinenspezifisch)
+# Local developer tools and working directories (machine-specific)
 .playwright-mcp/
 scratch/
 graphify-out/

@@ -1,29 +1,29 @@
-# Versionskontrolle & GitHub
+# Version control and GitHub
 .git
 .github
 .gitignore
 .editorconfig
 
-# Doku, Tests & Entwickler-Werkzeuge (nicht Teil der laufenden App)
+# Docs, tests and developer tools (not part of the running app)
 docs
 test
 test-setup.js
 tools
-# … bis auf das Notfall-Werkzeug für vergessene Admin-PINs (Kommandozeile, siehe docs/betrieb)
+# … except the emergency tool for forgotten admin PINs (command line, see docs/operations)
 !tools/reset-pin.php
 node_modules
 scratch
 package.json
 *.md
 
-# Laufzeit- und Entwicklerdaten bleiben draußen: Der Container startet bewusst mit
-# leerer Instanz (Ersteinrichtungs-Assistent, Demodaten dort ladbar); data/.htaccess
-# kommt mit. (Die Entwickler-Seeds liegen unter tools/, das ohnehin draußen bleibt.)
+# Runtime and developer data stay out: the container deliberately starts with an
+# empty instance (initial setup wizard, demo data can be loaded there); data/.htaccess
+# comes along. (The developer seeds live under tools/, which stays out anyway.)
 data/*.json
 data/users
 data/family
 data/auth
 
-# Docker-Selbstbezug
+# Docker self-reference
 docker-compose.yml
 .dockerignore

@@ -1,4 +1,4 @@
-# Tests: nie per HTTP ausliefern (Web Station/Git-Checkout).
+# Tests: never serve over HTTP (Web Station/git checkout).
 <IfModule mod_authz_core.c>
     Require all denied
 </IfModule>

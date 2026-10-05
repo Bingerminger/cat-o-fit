@@ -30,7 +30,7 @@ const serveToken = (ok) => {
   globalThis.fetch = async (url) => ({
     ok, status: ok ? 200 : 403,
     json: async () => (String(url).includes('action=ics-token')
-      ? (ok ? { ok: true, token: 'a'.repeat(48) } : { ok: false, code: 'admin', error: 'Nur Admin.' })
+      ? (ok ? { ok: true, token: 'a'.repeat(48) } : { ok: false, code: 'admin', error: 'Only an admin can create calendar links for other people.' })
       : { ok: true }),
   });
 };

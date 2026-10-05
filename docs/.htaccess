@@ -1,4 +1,4 @@
-# Dokumentation: gehört auf GitHub, nicht auf den App-Server (Web Station/Git-Checkout).
+# Documentation: belongs on GitHub, not on the app server (Web Station/git checkout).
 <IfModule mod_authz_core.c>
     Require all denied
 </IfModule>

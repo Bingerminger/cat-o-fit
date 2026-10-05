@@ -1,13 +1,13 @@
-# Cat-O-Fit – Server-Hinweise für die statische App-Shell.
+# Cat-O-Fit – server notes for the static app shell.
 #
-# WICHTIG: ES-Module (<script type="module">) werden vom Browser nur ausgeführt,
-# wenn der Server die .js-Dateien mit einem JavaScript-MIME-Typ ausliefert.
-# Liefert der Server sie als text/plain oder application/octet-stream, bleibt die
-# Seite weiß. Diese Regeln stellen den korrekten Typ sicher.
+# IMPORTANT: the browser only runs ES modules (<script type="module">) if the
+# server delivers the .js files with a JavaScript MIME type. If the server sends
+# them as text/plain or application/octet-stream, the page stays blank. These
+# rules make sure the correct type is sent.
 #
-# Synology Web Station mit Apache-Backend wertet diese Datei aus. Beim Nginx-
-# Backend wird sie ignoriert – dort liefert Nginx .js standardmäßig korrekt aus;
-# falls nicht, im Web-Station-Profil den MIME-Typ "js -> text/javascript" setzen.
+# Synology Web Station with the Apache back end evaluates this file. With the
+# Nginx back end it is ignored – Nginx serves .js correctly by default; if it
+# does not, set the MIME type "js -> text/javascript" in the Web Station profile.
 
 <IfModule mod_mime.c>
   AddType text/javascript            .js .mjs
@@ -16,37 +16,38 @@
   AddType image/svg+xml              .svg
 </IfModule>
 
-# Kompression: Die Shell (rund 830 KB JavaScript, ohne Build) geht gezippt mit etwa
-# 280 KB über die Leitung – spürbar unterwegs über VPN/LTE zum Heimserver.
+# Compression: the shell (around 830 KB of JavaScript, no build step) goes over the
+# wire at roughly 280 KB gzipped – noticeable on the move, over VPN/LTE to the home server.
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json application/manifest+json image/svg+xml
 </IfModule>
 
-# App-Shell nie hart cachen: Der Browser darf speichern, MUSS aber vor Gebrauch
-# revalidieren (liefert 304, wenn unverändert). So kommen neue Releases sofort an –
-# auch im normalen Tab OHNE Service-Worker (bisher wurden js/css heuristisch
-# gecacht und zeigten nach einem Release weiter die alte Version).
+# Never cache the app shell hard: the browser may store it but MUST revalidate
+# before use (answers 304 if unchanged). This way new releases arrive immediately –
+# even in a normal tab WITHOUT a service worker (previously js/css were cached
+# heuristically and kept showing the old version after a release).
 <IfModule mod_headers.c>
   <FilesMatch "\.(html|js|mjs|css|webmanifest|json)$">
     Header set Cache-Control "no-cache"
   </FilesMatch>
 
-  # Sicherheits-Header: keine Einbettung in fremde Seiten (Clickjacking), keine
-  # Referrer an Dritte, keine Geräte-APIs, nur eigene Skripte/Stile. Die einzige
-  # Verbindung nach außen aus dem Browser ist die (abschaltbare) Open-Meteo-Wetterabfrage.
+  # Security headers: no embedding in foreign pages (clickjacking), no referrer
+  # sent to third parties, no device APIs, only own scripts/styles. The only
+  # connection from the browser to the outside is the (switchable) Open-Meteo weather query.
   Header always set X-Content-Type-Options "nosniff"
   Header always set X-Frame-Options "DENY"
   Header always set Referrer-Policy "no-referrer"
-  # Kamera nur für die eigene Seite: zum Scannen von Strichcodes (Ernährung). Der Browser
-  # fragt trotzdem jedes Mal um Erlaubnis; eingebettete fremde Seiten bekommen sie nie.
+  # Camera for the own page only: for scanning barcodes (nutrition). The browser
+  # still asks for permission every time; embedded foreign pages never get it.
   Header always set Permissions-Policy "camera=(self), microphone=(), geolocation=(), payment=(), usb=()"
   Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://api.open-meteo.com https://geocoding-api.open-meteo.com; manifest-src 'self'; worker-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
 </IfModule>
 
-# Nur die App ausliefern: Entwickler-, Doku- und Repo-Dateien sind nicht abrufbar
-# (wichtig bei Web Station/Git-Checkout; tools/, test/ und docs/ tragen zusätzlich
-# eine eigene .htaccess). Nginx wertet diese Datei nicht aus – siehe README,
-# Abschnitt „Betrieb außerhalb des Heimnetzes".
+# Serve the app only: developer, documentation and repo files cannot be fetched
+# (important with Web Station/git checkout; tools/, test/ and docs/ additionally
+# carry their own .htaccess). Nginx does not evaluate this file – see the
+# installation guide (docs/operations/installation.md), section "Running outside
+# your home network".
 <FilesMatch "^(\..*|package\.json|package-lock\.json|test-setup\.js|Dockerfile|docker-compose\.yml|[A-Z_]+\.md)$">
   <IfModule mod_authz_core.c>
     Require all denied

@@ -1,36 +1,36 @@
 # =============================================================================
-# Cat-O-Fit — Docker-Image (Multi-Arch: linux/amd64 + linux/arm64)
+# Cat-O-Fit — Docker image (multi-arch: linux/amd64 + linux/arm64)
 #
-# Apache + PHP in einem Container. Die JSON-Daten leben im Volume unter
-# /var/www/html/data (siehe docker-compose.yml). Der Container startet bewusst
-# mit LEERER Instanz: Beim ersten Aufruf führt die App durch die
-# Ersteinrichtung (Admin anlegen, optional Demodaten laden).
+# Apache + PHP in one container. The JSON data lives in the volume at
+# /var/www/html/data (see docker-compose.yml). The container deliberately starts
+# with an EMPTY instance: on first access the app walks you through the
+# initial setup (create an admin, optionally load demo data).
 # =============================================================================
 FROM php:8.4-apache
 
-# zip für ZIP-Uploads des Apple-Health-Exports (XMLReader ist bereits enthalten),
-# opcache für vernünftige PHP-Performance auf NAS-Hardware.
+# zip for ZIP uploads of the Apple Health export (XMLReader is already included),
+# opcache for reasonable PHP performance on NAS hardware.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends libzip-dev \
     && docker-php-ext-install -j"$(nproc)" zip opcache \
     && rm -rf /var/lib/apt/lists/*
 
-# Zeitzone (überschreibbar: docker run -e TZ=Europe/Vienna …)
+# Time zone (overridable: docker run -e TZ=Europe/Vienna …)
 ENV TZ=Europe/Berlin
 
-# Apache: .htaccess-Regeln der App aktivieren (MIME-Typen für ES-Module,
-# Cache-Control, data/-Schutz) + data/ zusätzlich serverseitig fest sperren.
+# Apache: enable the app's .htaccess rules (MIME types for ES modules,
+# Cache-Control, data/ protection) + additionally lock down data/ firmly on the server side.
 COPY docker/apache.conf /etc/apache2/conf-available/cat-o-fit.conf
 RUN a2enmod headers && a2enconf cat-o-fit
 
-# PHP-Laufzeitwerte (Upload-Limits für den Health-Import, Zeitzone für .ics).
+# PHP runtime values (upload limits for the Health import, time zone for .ics).
 COPY docker/php.ini /usr/local/etc/php/conf.d/cat-o-fit.ini
 
-# App-Dateien (.dockerignore hält Doku, Tests, Werkzeuge und Demo-Seeds draußen).
+# App files (.dockerignore keeps docs, tests, tools and demo seeds out).
 COPY . /var/www/html/
 
-# data/.htaccess für Bind-Mounts beiseitelegen, die ohne den Schutz starten;
-# das docker/-Verzeichnis gehört nicht in den Webroot.
+# Set data/.htaccess aside for bind mounts that start without the protection;
+# the docker/ directory does not belong in the web root.
 RUN cp /var/www/html/data/.htaccess /opt/cat-o-fit-data-htaccess \
     && rm -rf /var/www/html/docker
 
@@ -45,7 +45,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
     CMD ["php", "/usr/local/bin/cat-o-fit-healthcheck.php"]
 
 LABEL org.opencontainers.image.title="Cat-O-Fit" \
-      org.opencontainers.image.description="Fitness-, Health- & Trainings-PWA für Team und Familie – selbst gehostet, ohne Datenbank." \
+      org.opencontainers.image.description="Training planner PWA for the whole family and teams – self-hosted, no database, seven languages." \
       org.opencontainers.image.source="https://github.com/Bingerminger/cat-o-fit" \
       org.opencontainers.image.licenses="AGPL-3.0-or-later"
 

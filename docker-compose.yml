@@ -1,15 +1,15 @@
 # =============================================================================
-# Cat-O-Fit per Docker Compose — läuft auf amd64 und arm64
-# (Mac, Synology Container Manager, jeder Docker-Host).
+# Cat-O-Fit via Docker Compose — runs on amd64 and arm64
+# (Mac, Synology Container Manager, any Docker host).
 #
-#   docker compose up -d      → App unter http://localhost:8080
+#   docker compose up -d      → app at http://localhost:8080
 #
-# Standard ist das fertige Image aus der GitHub Container Registry. Selbst bauen:
+# By default this uses the prebuilt image from the GitHub Container Registry. To build it yourself:
 #   docker compose build && docker compose up -d
-# (nutzt das Dockerfile in diesem Verzeichnis).
+# (uses the Dockerfile in this directory).
 #
-# Synology-Tipp (Container Manager → Projekt): statt des benannten Volumes
-# einen Ordner binden, z. B.
+# Synology tip (Container Manager → Project): instead of the named volume,
+# bind a folder, e.g.
 #   - /volume1/docker/cat-o-fit/data:/var/www/html/data
 # =============================================================================
 services:
@@ -18,22 +18,22 @@ services:
     build: .
     container_name: cat-o-fit
     ports:
-      # ACHTUNG: Die PIN schützt die Profile in der App und – seit v3.20.0 – die
-      # privaten Bereiche (Zyklus, Labor, Ergänzungen) auch auf dem Server. Alle
-      # anderen Daten sind für jedes Gerät im Netz erreichbar. Der Container gehört
-      # deshalb ins eigene, vertrauenswürdige Netz. Soll er von außen erreichbar
-      # sein, ist eine Anmeldung davor PFLICHT: Reverse-Proxy mit HTTPS und
-      # Anmeldung oder mindestens die eingebaute Basic-Auth (siehe unten).
-      # Nur lokal erreichbar machen: "127.0.0.1:8080:80"
+      # WARNING: The PIN protects the profiles in the app and – since v3.20.0 – the
+      # private areas (cycle, labs, supplements) on the server as well. All other
+      # data is reachable from every device on the network. The container therefore
+      # belongs in your own, trusted network. If it is to be reachable from outside,
+      # a login in front of it is MANDATORY: a reverse proxy with HTTPS and
+      # authentication, or at least the built-in Basic Auth (see below).
+      # To make it reachable locally only: "127.0.0.1:8080:80"
       - "8080:80"
     environment:
-      # Zeitzone für PHP und die Kalender-Dateien (z. B. Europe/Vienna, America/New_York).
+      # Time zone for PHP and the calendar files (e.g. Europe/Vienna, America/New_York).
       - TZ=Europe/Berlin
-      # Optional: Anmeldung vor der ganzen App (Basic-Auth). Ohne diese Zeilen wie bisher.
+      # Optional: login in front of the whole app (Basic Auth). Without these lines it behaves as before.
       # - CATOFIT_BASIC_AUTH=1
-      # - CATOFIT_AUTH_USER=familie
-      # - CATOFIT_AUTH_PASSWORD=bitte-ein-langes-passwort
-      # Optional: nur diese Hostnamen annehmen (Schutz vor DNS-Rebinding), kommagetrennt.
+      # - CATOFIT_AUTH_USER=family
+      # - CATOFIT_AUTH_PASSWORD=please-use-a-long-password
+      # Optional: accept only these host names (protection against DNS rebinding), comma-separated.
       # - CATOFIT_ALLOWED_HOSTS=fit.example.org
     volumes:
       - cat-o-fit-data:/var/www/html/data

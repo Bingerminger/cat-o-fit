@@ -1,4 +1,4 @@
-# Entwickler-Werkzeuge: nie per HTTP ausliefern (Web Station/Git-Checkout).
+# Developer tools: never serve over HTTP (Web Station/git checkout).
 <IfModule mod_authz_core.c>
     Require all denied
 </IfModule>

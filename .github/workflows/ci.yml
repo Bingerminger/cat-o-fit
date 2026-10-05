@@ -1,18 +1,18 @@
 name: CI
 
-# Unit- & Regressionstests bei jedem Push auf main und bei jedem Pull Request.
+# Unit and regression tests on every push to main and on every pull request.
 on:
   push:
     branches: [main]
   pull_request:
 
-# Nur lesen – die Tests brauchen keine weiteren Rechte.
+# Read-only – the tests need no further permissions.
 permissions:
   contents: read
 
 jobs:
   test:
-    name: Unit- & Regressionstests
+    name: Unit & regression tests
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -22,17 +22,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Node ${{ matrix.node-version }} einrichten
+      - name: Set up Node ${{ matrix.node-version }}
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ matrix.node-version }}
 
-      # Keine Dependencies (Vanilla JS, kein Build) – die Tests laufen mit dem
-      # Node-eigenen Test-Runner (node:test). Daher direkt ausführen.
-      - name: Tests ausführen
+      # No dependencies (vanilla JS, no build) – the tests run with Node's own
+      # test runner (node:test), so just run them directly.
+      - name: Run tests
         run: npm test
 
-      # PHP ist auf den Ubuntu-Runnern vorinstalliert. test-api.php startet sich einen
-      # eigenen PHP-Testserver mit leerem Temp-Datenverzeichnis.
-      - name: PHP-Tests (Health-Mapping, Persistenz, API, Kalender)
+      # PHP is preinstalled on the Ubuntu runners. test-api.php starts its own
+      # PHP test server with an empty temporary data directory.
+      - name: PHP tests (health mapping, persistence, API, calendar)
         run: php tools/test-health-ingest.php && php tools/test-health-xml.php && php tools/test-storage.php && php tools/test-api.php && php tools/test-ics.php

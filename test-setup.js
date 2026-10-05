@@ -26,7 +26,7 @@ class MemStorage {
       let used = 0;
       for (const [kk, vv] of this._m) if (kk !== k) used += kk.length + vv.length;
       if (used + String(k).length + s.length > this._quota) {
-        const e = new Error('Das Kontingent ist erschöpft.'); e.name = 'QuotaExceededError'; throw e;
+        const e = new Error('The quota has been exceeded.'); e.name = 'QuotaExceededError'; throw e;
       }
     }
     this._m.set(k, s);
@@ -307,35 +307,35 @@ function createFakeServer() {
     if (action === 'logout') { auth.session = null; return resp({ ok: true }); }
     if (action === 'login') {
       const m = member(body.user);
-      if (!m) return resp({ ok: false, error: 'Dieses Profil gibt es nicht (mehr).', code: 'unknown' }, 404);
+      if (!m) return resp({ ok: false, error: 'This profile does not exist (any more).', code: 'unknown' }, 404);
       if (isHash(m.pinHash)) {
-        if ((auth.fails[body.user] || 0) >= 5) return resp({ ok: false, error: 'Zu viele Fehlversuche – bitte kurz warten.', code: 'locked', retryAfter: 900 }, 429);
+        if ((auth.fails[body.user] || 0) >= 5) return resp({ ok: false, error: 'Too many failed attempts – please wait a moment.', code: 'locked', retryAfter: 900 }, 429);
         if (!(await pinOk(m, body.user, String(body.pin ?? '')))) {
           auth.fails[body.user] = (auth.fails[body.user] || 0) + 1;
           const left = 5 - auth.fails[body.user];
-          return left > 0 ? resp({ ok: false, error: 'Falsche PIN.', code: 'pin', left }, 401)
-            : resp({ ok: false, error: 'Zu viele Fehlversuche – bitte kurz warten.', code: 'locked', retryAfter: 900 }, 429);
+          return left > 0 ? resp({ ok: false, error: 'Wrong PIN.', code: 'pin', left }, 401)
+            : resp({ ok: false, error: 'Too many failed attempts – please wait a moment.', code: 'locked', retryAfter: 900 }, 429);
         }
         delete auth.fails[body.user];
       }
       auth.session = body.user;
       return resp({ ok: true, user: body.user, role: m.role === 'admin' ? 'admin' : 'user', weakPin: !isHash(m.pinHash) || body.pin === '0000' });
     }
-    if (!auth.session || !member(auth.session)) return resp({ ok: false, error: 'Bitte melde dich an.', code: 'session' }, 401);
+    if (!auth.session || !member(auth.session)) return resp({ ok: false, error: 'Please sign in – the sign-in at the server is missing or has expired.', code: 'session' }, 401);
     if (action === 'set-pin') {
       const m = member(body.user);
-      if (!m) return resp({ ok: false, error: 'unbekannt', code: 'unknown' }, 404);
+      if (!m) return resp({ ok: false, error: 'This profile does not exist (any more).', code: 'unknown' }, 404);
       if (auth.session === body.user) {
-        if (isHash(m.pinHash) && !(await pinOk(m, body.user, String(body.old ?? '')))) return resp({ ok: false, error: 'Die bisherige PIN stimmt nicht.', code: 'pin', left: 4 }, 401);
-      } else if (sessionRole() !== 'admin') return resp({ ok: false, error: 'Nur Admin.', code: 'admin' }, 403);
-      if (!/^\d{4,8}$/.test(String(body.pin)) || body.pin === '0000') return resp({ ok: false, error: 'Die PIN braucht 4 bis 8 Ziffern und darf nicht 0000 sein.', code: 'weak' }, 400);
+        if (isHash(m.pinHash) && !(await pinOk(m, body.user, String(body.old ?? '')))) return resp({ ok: false, error: 'The current PIN is wrong.', code: 'pin', left: 4 }, 401);
+      } else if (sessionRole() !== 'admin') return resp({ ok: false, error: "Only an admin can set another person's PIN.", code: 'admin' }, 403);
+      if (!/^\d{4,8}$/.test(String(body.pin)) || body.pin === '0000') return resp({ ok: false, error: 'The PIN needs 4 to 8 digits and must not be 0000.', code: 'weak' }, 400);
       const { sha256Hex } = await import('./js/sha256.js');
       const s = fam();
       s.records[body.user] = { ...m, pinHash: sha256Hex(`catofit:${body.user}:${body.pin}`), updatedAt: new Date().toISOString(), rev: ++s.rev };
       return resp({ ok: true });
     }
     if (action === 'ics-token') {
-      if (auth.session !== body.user && sessionRole() !== 'admin') return resp({ ok: false, error: 'Nur Admin.', code: 'admin' }, 403);
+      if (auth.session !== body.user && sessionRole() !== 'admin') return resp({ ok: false, error: 'Only an admin can create calendar links for other people.', code: 'admin' }, 403);
       auth.icsTokens[body.user] ||= 'a'.repeat(48);
       return resp({ ok: true, token: auth.icsTokens[body.user] });
     }
@@ -355,12 +355,12 @@ function createFakeServer() {
     if (delay) {
       await new Promise((r, reject) => {
         const t = setTimeout(r, delay);
-        if (init.signal) init.signal.addEventListener('abort', () => { clearTimeout(t); const e = new Error('Abgebrochen'); e.name = 'AbortError'; reject(e); }, { once: true });
+        if (init.signal) init.signal.addEventListener('abort', () => { clearTimeout(t); const e = new Error('Aborted'); e.name = 'AbortError'; reject(e); }, { once: true });
       });
     }
-    if (opts.offline) { entry.status = 0; throw new TypeError('fetch failed (Test-Server offline)'); }
+    if (opts.offline) { entry.status = 0; throw new TypeError('fetch failed (test server offline)'); }
     const failing = opts.failStatus || (typeof opts.failWhen === 'function' ? opts.failWhen(u, init) : null);
-    if (failing) { entry.status = failing; return resp({ ok: false, error: 'Testfehler' }, failing); }
+    if (failing) { entry.status = failing; return resp({ ok: false, error: 'Test failure' }, failing); }
     if (action === 'ping') return resp({ ok: true, pong: true, apiVersion: 1, features: opts.features });
     // Bulk fetch like api.php: only the named areas, private ones only with the person's own session.
     if (action === 'changes-all' && opts.features.includes('changes-all')) {
@@ -383,14 +383,14 @@ function createFakeServer() {
       return r;
     }
     if (action === 'delete-user') {
-      if (sessionRole() !== 'admin') { entry.status = 401; return resp({ ok: false, error: 'Nur Admin.', code: auth.session ? 'admin' : 'session' }, auth.session ? 403 : 401); }
+      if (sessionRole() !== 'admin') { entry.status = 401; return resp({ ok: false, error: auth.session ? 'Only an admin can delete members.' : 'Please sign in – the sign-in at the server is missing or has expired.', code: auth.session ? 'admin' : 'session' }, auth.session ? 403 : 401); }
       for (const k of Object.keys(stores)) if (k.startsWith(`user|${user}|`)) delete stores[k];
       return resp({ ok: true, deleted: user });
     }
     // Private areas: only the signed-in person themself (like api.php).
     if (scope === 'user' && PRIVATE.includes(area) && (!auth.session || auth.session !== user)) {
       entry.status = auth.session ? 403 : 401;
-      return resp({ ok: false, error: 'Dieser Bereich ist privat.', code: auth.session ? 'private' : 'session' }, entry.status);
+      return resp({ ok: false, error: auth.session ? 'This area is private.' : 'Please sign in – the sign-in at the server is missing or has expired.', code: auth.session ? 'private' : 'session' }, entry.status);
     }
     const s = srv(key(area, scope, user));
     const out = (recs) => (scope === 'family' ? recs.map(publicRec) : recs);
@@ -403,7 +403,7 @@ function createFakeServer() {
       const body = JSON.parse(init.body || '{}');
       const ops = Array.isArray(body.ops) ? body.ops : [];
       entry.ops = ops.length;
-      if (ops.length > opts.opLimit) { entry.status = 413; return resp({ ok: false, error: 'Zu viele Operationen in einem Batch.' }, 413); }
+      if (ops.length > opts.opLimit) { entry.status = 413; return resp({ ok: false, error: 'Too many operations in one batch.' }, 413); }
       if (scope === 'family') {
         // Like apply_ops with guard: check every op against the current state, then apply it.
         const rejected = []; const applied = [];
