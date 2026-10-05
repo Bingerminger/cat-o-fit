@@ -11,7 +11,7 @@
 import * as store from './storage.js';
 import {
   el, icon, iconSvg, uid, nowIso, navigate, typeMeta, typeIcon, fmtKm, fmtPace,
-  fmtPaceRange, fmtDate, fmtDayMonth, addDays, diffDays, todayStr, parseHms, fmtNum,
+  fmtPaceRange, fmtDate, fmtDayMonth, addDays, diffDays, todayStr, parseHms, fmtNum, fmtInt,
   sectionHead, emptyState, toast, confirmDialog, openSheet, closeSheet,
   effectiveStatus, STATUS_META, input, field, segmented,
   goOrRefresh, actionSheet,
@@ -360,7 +360,7 @@ export function render(view, eventId) {
   const planRun = units.filter((u) => typeMeta(u.type).cat === 'run');
   const totalKm = planRun.reduce((a, u) => a + (u.targetDistanceKm || 0), 0);
   view.appendChild(el('div', { class: 'stat-grid mt-4' }, [
-    stat(fmtKm(totalKm, 0), t('plans.statRunKm')),
+    stat(fmtInt(Math.round(totalKm)), t('plans.statRunKm')),   // the label already says "km"
     stat(`${units.length}`, t('plans.statSessions')),
     stat(`${done}`, t('plans.statDone')),
   ]));

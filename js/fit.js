@@ -59,10 +59,10 @@ function readValue(view, off, baseType, size, little) {
  */
 export function readFit(input) {
   const bytes = input instanceof Uint8Array ? input : new Uint8Array(input);
-  if (bytes.length < 14) throw new Error('keine FIT-Datei');
+  if (bytes.length < 14) throw new Error('not a FIT file');
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   const headerSize = bytes[0];
-  if (headerSize < 12 || String.fromCharCode(bytes[8], bytes[9], bytes[10], bytes[11]) !== '.FIT') throw new Error('keine FIT-Datei');
+  if (headerSize < 12 || String.fromCharCode(bytes[8], bytes[9], bytes[10], bytes[11]) !== '.FIT') throw new Error('not a FIT file');
   const dataSize = view.getUint32(4, true);
   const end = Math.min(bytes.length, headerSize + dataSize);
 

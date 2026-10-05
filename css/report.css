@@ -6,7 +6,7 @@
 
 .report-sheet { margin-top: 16px; position: relative; border-radius: 20px; overflow: hidden; }
 
-/* ===================== URKUNDE ===================== */
+/* ===================== CERTIFICATE ===================== */
 .report-sheet--cert {
   text-align: center;
   padding: 34px 26px 26px;
@@ -58,13 +58,13 @@
 }
 .cert__rule { position: relative; z-index: 2; width: 150px; height: 2px; margin: 14px auto 0; background: linear-gradient(90deg, transparent, #c79a3e 50%, transparent); }
 .cert__verdict { position: relative; z-index: 2; margin: 16px auto 4px; max-width: 440px; font-size: .98rem; line-height: 1.55; color: #5d4a1c; }
-.cert__detail { position: relative; z-index: 2; display: inline-flex; gap: 8px; margin: 2px 10px; font-size: .9rem; }
-.cert__detail-label { color: #a98a45; }
+.cert__detail { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 10px 10px 0; font-size: .9rem; text-align: center; }
+.cert__detail-label { color: #a98a45; font-size: .76rem; letter-spacing: .04em; }
 .cert__detail-value { font-weight: 750; color: #5c4410; }
 .cert__foot { position: relative; z-index: 2; margin-top: 22px; font-size: .82rem; color: #9a7322; font-weight: 600; }
 .cert__seal-note { position: relative; z-index: 2; margin-top: 2px; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: #b89a55; }
 
-/* ===================== BERICHT ===================== */
+/* ===================== REPORT ===================== */
 .report-sheet--report {
   background: var(--surface);
   border: 1px solid var(--border);

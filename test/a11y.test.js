@@ -152,5 +152,5 @@ test('UI-15: settings start with a jump bar to the sections', async () => {
   const nav = view.childNodes[0];
   assert.equal(nav.getAttribute('aria-label'), 'Abschnitte der Einstellungen');
   const labels = nav.querySelectorAll('button').map((b) => b.textContent);
-  assert.ok(labels.includes('Module') && labels.includes('Daten & Backup'), labels.join(', '));
+  assert.ok(labels.includes('Module') && labels.includes('Daten & Sicherung'), labels.join(', '));
 });

@@ -74,7 +74,7 @@ function renderSetup(view) {
 
   function step1() {
     const nameInp = el('input', { class: 'input', type: 'text', value: st.name, placeholder: t('setup.yourName'), maxlength: '24', autocomplete: 'off' });
-    const pinInp = el('input', { class: 'input', type: 'password', inputmode: 'numeric', value: st.pin, placeholder: '4 bis 8 Ziffern', maxlength: '8', autocomplete: 'new-password' });
+    const pinInp = el('input', { class: 'input', type: 'password', inputmode: 'numeric', value: st.pin, placeholder: t('setup.pinDigits'), maxlength: '8', autocomplete: 'new-password' });
     const pin2Inp = el('input', { class: 'input', type: 'password', inputmode: 'numeric', value: st.pin2, placeholder: t('setup.repeatPin'), maxlength: '8', autocomplete: 'new-password' });
     const err = el('div', { class: 'pin-err', role: 'alert', hidden: true });
     const showErr = (msg, focusEl) => { err.textContent = msg; err.hidden = false; if (focusEl) focusEl.focus(); };

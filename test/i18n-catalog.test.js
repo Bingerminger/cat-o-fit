@@ -23,7 +23,7 @@ const GERMAN_ALLOWED = ['js/energy.js', 'js/food.js', 'js/exercise-terms-de.js',
 const INTERNAL_VALUES = ["'erhöht'", "'Obst & Gemüse'", "'Stück'", "'Rückschlag'", "'geschätzt'", "'Entzündung'", "'Getränke'", "'Meißen'"];
 /** Key prefixes the code builds at run time (e.g. `format.${x}`); listed here so they count as used. */
 const DYNAMIC_PREFIXES = ['format.', 'sessionTypes.', 'feelings.', 'priorities.', 'status.', 'rpe.',
-  'exerciseNames.', 'exerciseAliases.', 'exerciseLib.level.', 'exercises.', 'workoutCatalog.', 'showProgram.parse.', 'motion.breath.', 'plangen.raceLabel.', 'help.sections.', 'help.articles.', 'food.unit.', 'recipes.',
+  'exerciseNames.', 'exerciseAliases.', 'exerciseLib.level.', 'exercises.', 'workoutCatalog.', 'showProgram.parse.', 'motion.breath.', 'plangen.raceLabel.', 'help.sections.', 'help.articles.', 'food.unit.', 'recipes.', 'nutrition.tag.',
   'server.'];
 /** Areas only the server reads (api/i18n.php) – their keys are checked against api/*.php. */
 const SERVER_AREAS = ['server'];
@@ -189,7 +189,9 @@ test('translated modules contain no hard-coded German text', () => {
   for (const file of jsFiles().filter((f) => !GERMAN_ALLOWED.includes(f))) {
     const code = read(file).replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"`])\/\/.*$/gm, '$1');
     const literals = [...code.matchAll(/'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"|`(?:[^`\\]|\\.)*`/g)].map((m) => m[0]);
-    const german = literals.filter((s) => /[äöüÄÖÜß]/.test(s) && !INTERNAL_VALUES.includes(s));
+    // Umlauts, or a phrase with a German function word ('4 bis 8 Ziffern' slipped through on umlauts alone).
+    const phrase = (s) => /\s/.test(s.slice(1, -1)) && /(^|[\s(])(bis|und|oder|nicht|mit|der|die|das|dem|den|ein|eine|einen|ist|sind|wird|noch|nur|auch|bei|von|zum|zur|vom|dein|deine|kein|keine|jetzt|heute)(?=[\s.,:;!?)]|$)/.test(s.slice(1, -1));
+    const german = literals.filter((s) => (/[äöüÄÖÜß]/.test(s) || phrase(s)) && !INTERNAL_VALUES.includes(s));
     assert.deepEqual(german, [], `${file}: German text belongs in locales/de`);
   }
 });

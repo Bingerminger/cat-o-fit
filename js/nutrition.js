@@ -90,6 +90,18 @@ export const SUGGESTED_MEALS = RECIPE_ROWS.map(([id, category, kcal, protein, ta
   get ingredients() { return tList(`recipes.${id}.ingredients`) || []; },
 }));
 
+/** Built-in recipe tags. They are stored as these ids; nutrition.tag.<id> has the label per language. */
+const TAG_IDS = ['proteinreich', 'vegetarisch', 'vegan', 'low-carb', 'schnell', 'meal-prep', 'unterwegs',
+  'ballaststoffreich', 'vor-dem-training', 'nach-dem-training', 'omega-3', 'leicht', 'glutenfrei'];
+/** Label of a tag: built-in tags in the active language, the person's own tags as typed. */
+export function tagLabel(tag) { return TAG_IDS.includes(tag) ? t(`nutrition.tag.${tag}`) : tag; }
+/** A typed tag back to what is stored: a built-in tag's label (or id) becomes its id, anything else stays. */
+export function tagFromLabel(text) {
+  const typed = String(text).trim();
+  const low = typed.toLowerCase();
+  return TAG_IDS.find((id) => id === low || t(`nutrition.tag.${id}`).toLowerCase() === low) || typed;
+}
+
 let recipesLoading = null;
 /** Loads recipe titles and ingredients (lazy catalog area). */
 export function loadRecipeTexts() { return (recipesLoading ||= loadArea('recipes')); }
@@ -490,7 +502,7 @@ function mealCard(m, isRec = false) {
       cooked > 0 ? el('span', { class: 'chip chip--good', text: t('nutrition.cookedTimes', { n: cooked }) }) : null,
       m.kcal && !currentEligibility().hideNumbers ? el('span', { class: 'chip', text: `${fmtInt(m.kcal)} kcal` }) : null,
       m.protein ? el('span', { class: 'chip', text: t('nutrition.proteinG', { g: m.protein }) }) : null,
-      ...(m.tags || []).map((tag) => el('span', { class: 'chip', text: tag })),
+      ...(m.tags || []).map((tag) => el('span', { class: 'chip', text: tagLabel(tag) })),
     ]),
     m.ingredients?.length ? el('div', { class: 'muted mt-2', style: { fontSize: '.84rem' }, text: m.ingredients.join(' · ') }) : null,
     m.note ? el('div', { class: 'dim mt-2', style: { fontSize: '.8rem' }, text: m.note }) : null,
@@ -526,7 +538,7 @@ function openMealForm(existing = null) {
   const kcalI = input({ type: 'number', value: m.kcal || '', placeholder: 'kcal', inputmode: 'numeric' });
   const protI = input({ type: 'number', value: m.protein || '', placeholder: 'g', inputmode: 'numeric' });
   const ingI = textarea({ value: (m.ingredients || []).join('\n'), placeholder: t('nutrition.ingredientsPlaceholder') });
-  const tagsI = input({ value: (m.tags || []).join(', '), placeholder: t('nutrition.tagsPlaceholder') });
+  const tagsI = input({ value: (m.tags || []).map(tagLabel).join(', '), placeholder: t('nutrition.tagsPlaceholder') });
   const noteI = input({ value: m.note || '', placeholder: t('nutrition.note') });
 
   // kcal field with an estimate from the ingredients (#26)
@@ -578,7 +590,7 @@ function openMealForm(existing = null) {
             ...m, id: m.id || uid('n'), title: titleI.value.trim(), category: catI.value,
             kcal: parseInt(kcalI.value) || null, protein: parseInt(protI.value) || null,
             ingredients: ingI.value.split('\n').map((x) => x.trim()).filter(Boolean),
-            tags: tagsI.value.split(',').map((x) => x.trim()).filter(Boolean),
+            tags: tagsI.value.split(',').map((x) => x.trim()).filter(Boolean).map(tagFromLabel),
             note: noteI.value.trim(),
           });
           closeSheet(); toast(t('nutrition.saved'), 'good'); rerender();

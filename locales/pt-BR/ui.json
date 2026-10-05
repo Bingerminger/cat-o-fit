@@ -651,6 +651,7 @@
     "serverEmptyTitle": "O servidor está vazio",
     "serverEmptyText": "Ele foi configurado de novo ou redefinido, e a família de antes não está mais lá. Configure o Cat-O-Fit outra vez – depois você pode restaurar um backup em Configurações → Dados e backup.",
     "yourName": "Seu nome",
+    "pinDigits": "De 4 a 8 dígitos",
     "repeatPin": "Repita o PIN",
     "nameMissing": "Informe um nome.",
     "pinsDiffer": "Os dois PINs não coincidem.",
@@ -2572,7 +2573,22 @@
     "sizeMedium": "Média",
     "sizeLarge": "Grande",
     "sizeRestaurant": "Restaurante",
-    "offCount": "{n}× Open Food Facts"
+    "offCount": "{n}× Open Food Facts",
+    "tag": {
+      "proteinreich": "rico em proteína",
+      "vegetarisch": "vegetariano",
+      "vegan": "vegano",
+      "low-carb": "low carb",
+      "schnell": "rápido",
+      "meal-prep": "marmita",
+      "unterwegs": "para levar",
+      "ballaststoffreich": "rico em fibras",
+      "vor-dem-training": "pré-treino",
+      "nach-dem-training": "pós-treino",
+      "omega-3": "ômega-3",
+      "leicht": "leve",
+      "glutenfrei": "sem glúten"
+    }
   },
   "stepper": {
     "less": "menos",

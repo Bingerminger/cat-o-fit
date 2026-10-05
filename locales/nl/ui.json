@@ -651,6 +651,7 @@
     "serverEmptyTitle": "De server is leeg",
     "serverEmptyText": "Hij is opnieuw ingericht of gereset en het eerdere gezin is er niet meer. Stel Cat-O-Fit opnieuw in – een back-up kun je daarna herstellen onder Instellingen → Gegevens & back-up.",
     "yourName": "Je naam",
+    "pinDigits": "4 tot 8 cijfers",
     "repeatPin": "Herhaal pincode",
     "nameMissing": "Vul een naam in.",
     "pinsDiffer": "De twee pincodes komen niet overeen.",
@@ -2572,7 +2573,22 @@
     "sizeMedium": "Gemiddeld",
     "sizeLarge": "Groot",
     "sizeRestaurant": "Restaurant",
-    "offCount": "{n}× Open Food Facts"
+    "offCount": "{n}× Open Food Facts",
+    "tag": {
+      "proteinreich": "eiwitrijk",
+      "vegetarisch": "vegetarisch",
+      "vegan": "veganistisch",
+      "low-carb": "koolhydraatarm",
+      "schnell": "snel",
+      "meal-prep": "meal prep",
+      "unterwegs": "onderweg",
+      "ballaststoffreich": "vezelrijk",
+      "vor-dem-training": "voor de training",
+      "nach-dem-training": "na de training",
+      "omega-3": "omega-3",
+      "leicht": "licht",
+      "glutenfrei": "glutenvrij"
+    }
   },
   "stepper": {
     "less": "minder",

@@ -350,7 +350,7 @@
       "aria": "Abschnitte der Einstellungen",
       "goals": "Ziele",
       "training": "Training",
-      "backup": "Daten & Backup"
+      "backup": "Daten & Sicherung"
     },
     "weakPin": "Du nutzt noch die Standard-PIN (oder gar keine). Bitte lege eine eigene fest.",
     "sharedDevice": {
@@ -651,6 +651,7 @@
     "serverEmptyTitle": "Der Server ist leer",
     "serverEmptyText": "Er wurde neu aufgesetzt oder zurückgesetzt, die frühere Familie gibt es dort nicht mehr. Richte Cat-O-Fit neu ein – eine Sicherung spielst du danach unter Einstellungen → Daten & Sicherung ein.",
     "yourName": "Dein Name",
+    "pinDigits": "4 bis 8 Ziffern",
     "repeatPin": "PIN wiederholen",
     "nameMissing": "Bitte gib einen Namen ein.",
     "pinsDiffer": "Die beiden PINs stimmen nicht überein.",
@@ -2572,7 +2573,22 @@
     "sizeMedium": "Mittel",
     "sizeLarge": "Groß",
     "sizeRestaurant": "Restaurant",
-    "offCount": "{n}× Open Food Facts"
+    "offCount": "{n}× Open Food Facts",
+    "tag": {
+      "proteinreich": "proteinreich",
+      "vegetarisch": "vegetarisch",
+      "vegan": "vegan",
+      "low-carb": "Low Carb",
+      "schnell": "schnell",
+      "meal-prep": "Meal-Prep",
+      "unterwegs": "unterwegs",
+      "ballaststoffreich": "ballaststoffreich",
+      "vor-dem-training": "vor dem Training",
+      "nach-dem-training": "nach dem Training",
+      "omega-3": "Omega-3",
+      "leicht": "leicht",
+      "glutenfrei": "glutenfrei"
+    }
   },
   "stepper": {
     "less": "weniger",
