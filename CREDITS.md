@@ -49,9 +49,42 @@ the source next to the switch and under "About & legal".
 | Recipe ideas (48 dishes) | compiled for Cat-O-Fit; nutrition values calculated from the ingredients | AGPL-3.0-or-later (like the code) |
 | Nutrition table of the "estimate" helper | rounded averages per 100 g or ml, compiled for Cat-O-Fit | AGPL-3.0-or-later |
 | Exercise graphics | self-drawn, symbolic stick figures | AGPL-3.0-or-later |
+| Voice clips in `assets/voice` (7 languages) | synthetically spoken with Piper, see [Voice clips](#voice-clips) | per voice: CC0, CC BY 4.0 or public domain |
 | Icons | self-drawn (see below) | AGPL-3.0-or-later |
 | Screenshots in `docs/assets` | generated from the app with sample data | AGPL-3.0-or-later |
 | Lab ranges and target corridors | from specialist literature and laboratory information; source per value in the app and under [Methods & sources](docs/knowledge/methods-and-sources.md) | information for orientation only |
+
+## Voice clips
+
+The announcements in the follow-along workouts ("Rest. Next up: …", the exercise names, the
+repetitions and seconds) are short audio clips in `assets/voice/<language>/`, one voice per
+language. They are spoken synthetically by **[Piper](https://github.com/OHF-Voice/piper1-gpl)**
+(GPL-3.0), a neural text-to-speech engine, with voices from
+**[rhasspy/piper-voices](https://huggingface.co/rhasspy/piper-voices)**. Piper and the voice
+models are only used to generate the clips (`tools/voice-clips.py`); they are not part of Cat-O-Fit,
+and only the finished audio files are bundled. Each voice was chosen because the recordings it was
+trained on are free to use: CC0, CC BY or public domain. The voice models were trained or
+fine-tuned by the Piper project and its contributors (see the model card of each voice).
+
+| Language | Voice (model) | Recordings it was trained on | Licence of the recordings | Model card |
+|---|---|---|---|---|
+| Deutsch | `de_DE-thorsten-medium` "Thorsten" | [Thorsten-Voice](https://github.com/thorstenMueller/Thorsten-Voice) by Thorsten Müller | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | [link](https://huggingface.co/rhasspy/piper-voices/blob/main/de/de_DE/thorsten/medium/MODEL_CARD) |
+| English | `en_GB-cori-medium` "Cori" | [LibriVox](https://librivox.org) audiobook recordings, compiled by Bryce Beattie ([notes](https://brycebeattie.com/files/tts/)) | public domain | [link](https://huggingface.co/rhasspy/piper-voices/blob/main/en/en_GB/cori/medium/MODEL_CARD) |
+| Français | `fr_FR-siwis-medium` "Siwis" | [SIWIS French Speech Synthesis Database](https://datashare.is.ed.ac.uk/handle/10283/2353), University of Edinburgh | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | [link](https://huggingface.co/rhasspy/piper-voices/blob/main/fr/fr_FR/siwis/medium/MODEL_CARD) |
+| Español | `es_ES-davefx-medium` "Davefx" | speaker "dave" of the [Open Home Foundation voice datasets](https://github.com/OHF-Voice/voice-datasets) (es_ES) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | [link](https://huggingface.co/rhasspy/piper-voices/blob/main/es/es_ES/davefx/medium/MODEL_CARD) |
+| Italiano | `it_IT-paola-medium` "Paola" | speaker "paola" of the [Open Home Foundation voice datasets](https://github.com/OHF-Voice/voice-datasets) (it_IT), also on [Hugging Face](https://huggingface.co/datasets/paolapersico1/Voice-Dataset-Italian) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | [link](https://huggingface.co/rhasspy/piper-voices/blob/main/it/it_IT/paola/medium/MODEL_CARD) |
+| Português (Brasil) | `pt_BR-faber-medium` "Faber" | speaker "faber" of the [Open Home Foundation voice datasets](https://github.com/OHF-Voice/voice-datasets) (pt_BR) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | [link](https://huggingface.co/rhasspy/piper-voices/blob/main/pt/pt_BR/faber/medium/MODEL_CARD) |
+| Nederlands | `nl_NL-alex-medium` "Alex" | speaker "alex" of the [Open Home Foundation voice datasets](https://github.com/OHF-Voice/voice-datasets) (nl_NL) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | [link](https://huggingface.co/rhasspy/piper-voices/blob/main/nl/nl_NL/alex/medium/MODEL_CARD) |
+
+The Open Home Foundation voice datasets (formerly Nabu Casa) are community recordings collected
+for Home Assistant's "Year of Voice" and released under CC0.
+
+> Contains speech synthesised by voices trained on the SIWIS French Speech Synthesis Database
+> (University of Edinburgh, CC BY 4.0). The clips were generated, normalised and converted to AAC.
+
+The voices are synthetic: nobody speaks to you in person, and the clips can sound odd on
+English loanwords in the exercise names. Native speakers are asked to listen and report anything
+that is wrong (see [locales/REVIEW.md](locales/REVIEW.md)).
 
 ## Design inspiration
 

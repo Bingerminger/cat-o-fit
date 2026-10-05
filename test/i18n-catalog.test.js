@@ -16,7 +16,7 @@ const PLURAL = ['zero', 'one', 'two', 'few', 'many', 'other'];
 
 /** The only modules allowed to contain German literals: matching vocabularies and the German
     terms of plan texts written before v4.0.0 (energy.js, food.js, exercise-terms-de.js), the German
-    voice's phonetic help (voice.js) and the start-up diagnosis, which cannot rely on the catalogs
+    voices' phonetic help (voice.js) and the start-up diagnosis, which cannot rely on the catalogs
     (boot-check.js). Every other module keeps its user-facing text in the catalogs. */
 const GERMAN_ALLOWED = ['js/energy.js', 'js/food.js', 'js/exercise-terms-de.js', 'js/voice.js', 'js/boot-check.js'];
 /** Internal values (compared in code, never shown) that happen to be German words. */

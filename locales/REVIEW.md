@@ -17,3 +17,15 @@ even a single fix helps.
 
 When you have reviewed an area of a language, add your GitHub name and the area (for example
 "ui, help") to the last column in your pull request.
+
+## Voice clips
+
+The recorded voice cues in `assets/voice/<language>/` are spoken by free synthetic voices
+(licences in [CREDITS.md](../CREDITS.md#voice-clips)). The new voices (English, French, Spanish,
+Italian, Portuguese, Dutch) **need a listening check by native speakers**: nobody has listened to
+them yet. Please play a few clips of your language (the "Follow along non-stop" workouts, or the
+`.m4a` files directly) and report anything garbled, too fast or wrongly pronounced. Names most
+likely to be off are the English loanwords in the exercise names (Dead bug, Hollow hold,
+Kettlebell swings, Burpees, Jumping jacks, Wall balls, Mountain climbers, World's greatest stretch).
+Names a voice cannot read are respelled per language in `js/voice.js` (`SAY`); a fix there plus
+`tools/voice-clips.py --only ex-<id>` regenerates the clip.

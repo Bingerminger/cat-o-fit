@@ -348,11 +348,13 @@ Do **not** break these rules in the store (`storage.js`) and backend (`storage.p
   (`navigator.audioSession`, otherwise a silent `assets/audio/silence.wav`) – otherwise Web Audio stays
   silent on iPhone/iPad in silent mode. Ready-made workouts are in
   `js/workouts.js` (catalogue with `cat` for the filters). Announcements come from voice clips
-  (`js/voice.js`: `voiceTexts` lists them all, `assets/voice/<key>.m4a`), played through the
-  audio clock – speechSynthesis only as a fallback, because on iOS it stays silent next to Web Audio. New
-  exercise or new text → regenerate the clips: `node --import ./test-setup.js tools/voice-texts.mjs`
-  and `tools/voice-clips.py` (Piper + voice Thorsten, instructions at the top of the file); a test checks
-  that a file exists for every clip. Listening tests with levels: `node tools/music-preview.mjs` (Playwright as above).
+  (`js/voice.js`: `voiceTexts` lists them all, `assets/voice/<lang>/<key>.m4a` for every language in
+  `VOICE_LANGUAGES`), played through the audio clock – speechSynthesis only as a fallback, because on iOS
+  it stays silent next to Web Audio. New exercise or new text → regenerate the clips of every language:
+  `node --import ./test-setup.js tools/voice-texts.mjs <lang>` and `tools/voice-clips.py` (Piper, one voice
+  per language; models, licences and instructions at the top of the file and in CREDITS.md); a test checks
+  that a file exists for every clip in every language. Names a voice cannot read get a respelling in
+  `voice.js` (`SAY` per language, only where needed). Listening tests with levels: `node tools/music-preview.mjs` (Playwright as above).
 - **Rolling planning, triage & dual goal (since v3.8.0).** Pure modules, all based on `today`
   and covered by node:test: `js/rolling.js` (rest-day detection from ACWR/hard days/form; only
   open, NON-fixed demanding sessions are eased; transparency log `plan.adaptLog` with an

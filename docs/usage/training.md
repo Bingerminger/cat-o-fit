@@ -450,7 +450,7 @@ Then **“Let’s go”** – after that you do not have to tap anything:
 - **“Own music”** lets e.g. Spotify keep playing; voice cues and count-in tones come on top. For that,
   the device must not be on silent.
 - **Voice cues** come during the rests: the next exercise with its amount, the switch of sides, the
-  next round. They are recorded speech and play the same way as the music – even on silent and without
+  next round. They are recorded speech in every language of the app and play the same way as the music – even on silent and without
   the music breaking off. **During the exercise, tones guide you:** three tones count down every
   start, the last three repetitions or seconds tick, a double tone says “10 seconds left”, and a low
   tone ends the exercise.

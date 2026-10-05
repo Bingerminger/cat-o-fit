@@ -133,12 +133,10 @@ test('Viewport for the stage: different aspect ratio, flush at the bottom, every
 });
 
 test('Announcements from voice building blocks: every block exists as a file, every announcement is complete', async () => {
-  const { existsSync } = await import('node:fs');
   const { EXERCISES } = await import('../js/exercises.js');
   const { voiceTexts, doseKeys } = await import('../js/voice.js');
   const { WORKOUTS, WORKOUT_CATS } = await import('../js/workouts.js');
   const texts = voiceTexts(EXERCISES);
-  for (const key of Object.keys(texts)) assert.ok(existsSync(new URL(`../assets/voice/de/${key}.m4a`, import.meta.url)), `Building block missing: ${key}`);
   for (const e of EXERCISES) assert.ok(texts[`ex-${e.id}`], `Name missing: ${e.id}`);
   assert.deepEqual(doseKeys('12×'), ['reps-12']);
   assert.deepEqual(doseKeys('10× je Seite'), ['reps-10', 'per-side']);
@@ -154,4 +152,36 @@ test('Announcements from voice building blocks: every block exists as a file, ev
   assert.ok(WORKOUTS.length >= 20);
   const cats = new Set(WORKOUT_CATS.map((c) => c.key));
   for (const w of WORKOUTS) assert.ok(cats.has(w.cat), `${w.id}: filter ${w.cat}`);
+});
+
+test('Recorded voices: every language in VOICE_LANGUAGES has a clip for every building block, and no stray ones', async () => {
+  const { existsSync, readdirSync, statSync } = await import('node:fs');
+  const { EXERCISES } = await import('../js/exercises.js');
+  const { voiceTexts, spokenName, VOICE_LANGUAGES } = await import('../js/voice.js');
+  const { setLocale, languages } = await import('../js/i18n.js');
+  assert.ok(VOICE_LANGUAGES.includes('de'));
+  assert.equal(new Set(VOICE_LANGUAGES).size, VOICE_LANGUAGES.length, 'no language twice');
+  const keys = Object.keys(voiceTexts(EXERCISES));
+  assert.equal(keys.length, 190);
+  try {
+    for (const lang of VOICE_LANGUAGES) {
+      assert.ok(lang in languages(), `${lang} is a language of the app`);
+      await setLocale(lang);
+      const texts = voiceTexts(EXERCISES);
+      assert.deepEqual(Object.keys(texts), keys, `${lang}: same building blocks as German`);
+      const dir = new URL(`../assets/voice/${lang}/`, import.meta.url);
+      for (const key of keys) {
+        assert.ok(String(texts[key]).trim(), `${lang}: text for ${key}`);
+        assert.ok(existsSync(new URL(`${key}.m4a`, dir)), `${lang}: building block missing: ${key}`);
+        assert.ok(statSync(new URL(`${key}.m4a`, dir)).size > 1000, `${lang}: ${key} is too short to be speech`);
+      }
+      assert.deepEqual(readdirSync(dir).filter((f) => f.endsWith('.m4a')).map((f) => f.slice(0, -4)).sort(), [...keys].sort(), `${lang}: no clip without a building block`);
+    }
+    // Pronunciation help is per language and only where a voice cannot read a name.
+    const byId = (id) => EXERCISES.find((e) => e.id === id);
+    await setLocale('de'); assert.equal(spokenName(byId('dead_bug')), 'Dedd Bagg');
+    await setLocale('fr'); assert.equal(spokenName(byId('step_up')), 'Step-eup');
+    await setLocale('en'); assert.equal(spokenName(byId('dead_bug')), byId('dead_bug').name);
+    await setLocale('pt-BR'); assert.equal(spokenName(byId('dead_bug')), byId('dead_bug').name);
+  } finally { await setLocale('de'); }
 });

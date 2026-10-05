@@ -30,9 +30,9 @@ auf [Deutsch](docs/de/README.md) und [Englisch](docs/README.md).
 
 Französisch, Spanisch, Italienisch, Portugiesisch und Niederländisch sind maschinell übersetzt und gegen
 die App geprüft, aber noch nicht von Muttersprachlern gegengelesen – Korrekturen sind sehr willkommen
-([so hilfst du](CONTRIBUTING.md#translations)). Die aufgenommenen Ansagen im Workout sind vorerst
-deutsch; in den anderen Sprachen liest die Sprachausgabe deines Geräts sie vor. Einheiten sind metrisch
-(imperiale sind geplant).
+([so hilfst du](CONTRIBUTING.md#translations)). Die Ansagen im Workout sind in jeder Sprache
+aufgenommene Clips, gesprochen von freien synthetischen Stimmen ([Nachweise](CREDITS.md#voice-clips));
+die neuen hat noch keine Muttersprachlerin angehört. Einheiten sind metrisch (imperiale sind geplant).
 
 ## Warum Cat-O-Fit?
 

@@ -95,7 +95,7 @@ sportbezogene Ebene.
 | Fußball-Aufwärmen | FIFA 11+: Soligard T et al.: Comprehensive warm-up programme to prevent injuries in young female footballers. *BMJ* 337 (2008), a2469 |
 | Übungsgrafiken | selbst gezeichnete, schematische Animationen einer Vorturnerin im Takt der Ausführung – sie ersetzen keine individuelle Anleitung |
 | Trainingsmusik | im Gerät erzeugt (Web Audio), keine Aufnahmen Dritter; Tempo nach der Bewegung |
-| Ansagen | Deutsch: synthetisch eingesprochene Clips mit [Piper](https://github.com/OHF-Voice/piper1-gpl) und der Stimme „Thorsten“ ([Thorsten-Voice](https://github.com/thorstenMueller/Thorsten-Voice), Datensatz CC0); andere Sprachen: die Stimme, die dein Gerät mitbringt, auf dem Gerät vorgelesen |
+| Ansagen | in jeder Sprache synthetisch eingesprochene Clips mit [Piper](https://github.com/OHF-Voice/piper1-gpl), eine Stimme je Sprache, nur Stimmen, deren Aufnahmen CC0, CC BY oder gemeinfrei sind: Deutsch „Thorsten“ ([Thorsten-Voice](https://github.com/thorstenMueller/Thorsten-Voice), CC0), Englisch „Cori“ (LibriVox, gemeinfrei), Französisch „Siwis“ (SIWIS-Datenbank, CC BY 4.0), Spanisch „Davefx“, Italienisch „Paola“, Portugiesisch „Faber“, Niederländisch „Alex“ ([Voice-Datensätze der Open Home Foundation](https://github.com/OHF-Voice/voice-datasets), CC0); Quellen und Links in [CREDITS](../../../CREDITS.md#voice-clips) |
 
 > Cat-O-Fit dient der **Dokumentation und allgemeinen Information für gesunde Erwachsene**. Die
 > Quellen erklären, woher Bereiche und Formeln stammen – sie machen aus der App kein Medizinprodukt.

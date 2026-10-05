@@ -29,8 +29,9 @@ Calendar files and imported workouts follow that person's language, too. The doc
 
 French, Spanish, Italian, Portuguese and Dutch were machine-translated and checked against the app,
 but not yet by native speakers – corrections are very welcome ([how to help](CONTRIBUTING.md#translations)).
-Recorded voice cues during workouts are German for now; in the other languages your device's own
-speech output reads them. Units are metric (imperial is planned).
+The voice cues during workouts are recorded clips in every language, spoken by free synthetic voices
+([credits](CREDITS.md#voice-clips)); no native speaker has listened to the new ones yet. Units are
+metric (imperial is planned).
 
 ## Why Cat-O-Fit?
 

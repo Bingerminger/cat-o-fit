@@ -21,8 +21,8 @@ release – makes Cat-O-Fit multilingual from the ground up and switches develop
   (71 articles), all 93 exercises with their movement cues, the 25 follow-along workouts, recipes,
   lab values and badges. Content that only applies to Germany (statutory health insurance, IGeL,
   Kölner Liste) only shows when the country is set to Germany.
-- **Voice cues in every language:** the follow-along player gets pre-recorded voice clips per
-  language, like the German ones today – only voices with a free licence.
+- **Voice cues in every language:** the follow-along player has pre-recorded voice clips per
+  language – only voices with a free licence (CC0, CC BY or public domain), credited in CREDITS.md.
 - **Formats from the browser's `Intl`:** dates, weekdays, months, numbers and plural forms follow the
   chosen language. Units stay metric in v4.0.0; data are always stored metric.
 - **No migration of your data:** values stored by older versions stay as they are and are shown in

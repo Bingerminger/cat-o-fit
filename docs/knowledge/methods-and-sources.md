@@ -95,7 +95,7 @@ sport-related layer.
 | Football warm-up | FIFA 11+: Soligard T et al.: Comprehensive warm-up programme to prevent injuries in young female footballers. *BMJ* 337 (2008), a2469 |
 | Exercise illustrations | self-drawn, schematic animations of an on-screen instructor in time with the movement – they do not replace individual instruction |
 | Workout music | generated on the device (Web Audio), no recordings by third parties; tempo follows the movement |
-| Announcements | German: synthetically spoken clips made with [Piper](https://github.com/OHF-Voice/piper1-gpl) and the voice “Thorsten” ([Thorsten-Voice](https://github.com/thorstenMueller/Thorsten-Voice), dataset CC0); other languages: the voice your device provides, read aloud on the device |
+| Announcements | synthetically spoken clips in every language, made with [Piper](https://github.com/OHF-Voice/piper1-gpl), one voice per language, only voices whose recordings are CC0, CC BY or public domain: German “Thorsten” ([Thorsten-Voice](https://github.com/thorstenMueller/Thorsten-Voice), CC0), English “Cori” (LibriVox, public domain), French “Siwis” (SIWIS database, CC BY 4.0), Spanish “Davefx”, Italian “Paola”, Portuguese “Faber”, Dutch “Alex” ([Open Home Foundation voice datasets](https://github.com/OHF-Voice/voice-datasets), CC0); sources and links in [CREDITS](../../CREDITS.md#voice-clips) |
 
 > Cat-O-Fit serves **documentation and general information for healthy adults**. The sources explain
 > where ranges and formulas come from – they do not turn the app into a medical device.

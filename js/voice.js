@@ -6,19 +6,19 @@
    recordings over the same audio path as the music: building blocks such as
    "Pause. Als Nächstes:" + "Liegestütz" + "10 Wiederholungen" (German clip texts: "Break. Next up:"
    + "Push-up" + "10 repetitions") are laid onto the audio clock one after the other. Generated
-   with tools/voice-clips.py (Piper, voice "Thorsten", CC0 dataset);
+   with tools/voice-clips.py (Piper, one voice per language – see CREDITS.md);
    \`voiceTexts()\` is the list of all building blocks.
    ========================================================================= */
 
 import { audioContext } from './audio.js';
 import { t, tVariants, locale } from './i18n.js';
 
-/** Languages with recorded clips (assets/voice/<lang>/<key>.m4a). Other languages get the
-    device voice in their language instead (the show passes the text as fallback). */
-export const VOICE_LANGUAGES = ['de'];
+/** Languages with recorded clips (assets/voice/<lang>/<key>.m4a). A language without clips gets the
+    device voice in its language instead (the show passes the text as fallback). */
+export const VOICE_LANGUAGES = ['en', 'de', 'fr', 'es', 'it', 'pt-BR', 'nl'];
 const clipLanguage = () => (VOICE_LANGUAGES.includes(locale()) ? locale() : null);
 
-/** Pronunciation help for English names – the German voice reads what it sees (German only). */
+/** Pronunciation help for English names – the German voice reads what it sees. */
 const SAY_DE = {
   dead_bug: 'Dedd Bagg', split_squat: 'Bulgarischer Splitt Skwott', step_up: 'Stepp-app', crunch: 'Krantsch',
   hollow_hold: 'Hollo Hould', superman: 'Supermän', bird_dog: 'Börd Dogg', nordic_hamstring: 'Nordik Hämstring Körl',
@@ -30,9 +30,19 @@ const SAY_DE = {
   worlds_greatest_stretch: 'Wörlds Greitest Stretsch', inchworm: 'Intschwörm', burpee: 'Börpie', mountain_climber: 'Mauntn Klaimer',
 };
 
-/** Name for speaking: without the parenthetical, English names phonetically. */
+/** The same for the other recorded voices, but only for names a voice obviously cannot read (English
+    loanwords it would spell out or break up); everything else is left to the voice. */
+const SAY_FR = { step_up: 'Step-eup', v_up: 'Vi-eup' };
+const SAY_ES = {
+  dead_bug: 'Ded Bag', hollow_hold: 'Jólou Jóuld', wall_ball: 'Uol Bol', jumping_jack: 'Yámping Yak',
+  burpee: 'Búrpi', worlds_greatest_stretch: 'Uérlds Gréitest Estrech',
+};
+const SAY_IT = { dead_bug: 'Ded Bag', hollow_hold: 'Olou Ould', bear_plank: 'Ber Plank', bear_crawl: 'Ber Crol', worlds_greatest_stretch: 'Uorlds Greitest Stretch' };
+const SAY = { de: SAY_DE, fr: SAY_FR, es: SAY_ES, it: SAY_IT };
+
+/** Name for speaking: without the parenthetical, difficult names phonetically (per language). */
 export function spokenName(e) {
-  return (locale() === 'de' && SAY_DE[e.id]) || e.name.replace(/\s*\(.*\)\s*$/, '');
+  return (SAY[locale()] || {})[e.id] || e.name.replace(/\s*\(.*\)\s*$/, '');
 }
 
 export const MAX_REPS = 50;

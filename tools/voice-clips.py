@@ -1,13 +1,27 @@
-"""Generate the session's voice building blocks (assets/voice/<key>.m4a).
+"""Generate the session's voice building blocks (assets/voice/<lang>/<key>.m4a).
 
-Voice: Piper (https://github.com/OHF-Voice/piper1-gpl) with "Thorsten" (de_DE,
-CC0 dataset, https://github.com/thorstenMueller/Thorsten-Voice). The texts come
-from js/voice.js (voiceTexts) via tools/voice-texts.mjs.
+Generator: Piper (https://github.com/OHF-Voice/piper1-gpl), one voice per language, models
+from huggingface.co/rhasspy/piper-voices (<lang>/<region>/<name>/<quality>/<model>.onnx and
+.onnx.json). Only voices whose recordings are CC0, CC BY, MIT or public domain (read the
+MODEL_CARD of every voice before adding one); licences and links are in CREDITS.md.
+
+    de  de_DE-thorsten-medium   Thorsten-Voice, CC0
+    en  en_GB-cori-medium       LibriVox, public domain
+    fr  fr_FR-siwis-medium      SIWIS database, CC BY 4.0
+    es  es_ES-davefx-medium     Open Home Foundation voice datasets, CC0
+    it  it_IT-paola-medium      Open Home Foundation voice datasets, CC0
+    pt-BR  pt_BR-faber-medium   Open Home Foundation voice datasets, CC0
+    nl  nl_NL-alex-medium       Open Home Foundation voice datasets, CC0
+
+The texts come from the catalogs of the language via js/voice.js (voiceTexts) and
+tools/voice-texts.mjs, which takes the language as its argument.
 
     python3 -m venv /tmp/piper && /tmp/piper/bin/pip install piper-tts
-    # Model: de_DE-thorsten-medium.onnx (+ .onnx.json) from huggingface.co/rhasspy/piper-voices
-    node --import ./test-setup.js tools/voice-texts.mjs > /tmp/voice.json
-    /tmp/piper/bin/python tools/voice-clips.py /tmp/voice.json <model.onnx> assets/voice [--only key,key]
+    node --import ./test-setup.js tools/voice-texts.mjs fr > /tmp/voice-fr.json
+    /tmp/piper/bin/python tools/voice-clips.py /tmp/voice-fr.json <model.onnx> assets/voice/fr [--only key,key]
+
+The output folder is the language's own (assets/voice/<lang>); VOICE_LANGUAGES in js/voice.js
+lists the languages that have one.
 
 Silence at the start and end is trimmed, the volume levelled (peak 0.9), then
 converted to AAC (32 kbit/s, mono) with macOS afconvert. Existing files are kept,
