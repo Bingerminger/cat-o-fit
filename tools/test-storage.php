@@ -29,7 +29,7 @@ $pass = 0; $fail = 0;
 function check(string $name, bool $cond, $got = null): void {
     global $pass, $fail;
     if ($cond) { $pass++; echo "  OK  $name\n"; }
-    else { $fail++; echo "  FEHLER  $name" . ($got !== null ? "  (got: " . json_encode($got, JSON_UNESCAPED_UNICODE) . ")" : "") . "\n"; }
+    else { $fail++; echo "  FAILED  $name" . ($got !== null ? "  (got: " . json_encode($got, JSON_UNESCAPED_UNICODE) . ")" : "") . "\n"; }
 }
 function live(array $recs, string $id): bool { return isset($recs[$id]) && empty($recs[$id]['deleted']); }
 
@@ -44,27 +44,27 @@ $before = file_get_contents($path);
 chmod($path, 0000);
 clearstatcache();
 if (is_readable($path)) {
-    echo "  --  unlesbare Datei: übersprungen (Prozess darf trotz Rechte 000 lesen, z. B. root)\n";
+    echo "  --  unreadable file: skipped (process may read despite mode 000, e.g. root)\n";
 } else {
     $threw = false;
     try { apply_ops('sessions', 'user', $u, [['op' => 'upsert', 'record' => ['id' => 's-3']]]); }
     catch (RuntimeException $e) { $threw = true; }
     chmod($path, 0664);
-    check('unlesbare Datei: Schreiben scheitert mit Fehler', $threw);
-    check('unlesbare Datei: Bestand unverändert (keine 1-Datensatz-Datei)', file_get_contents($path) === $before);
+    check('unreadable file: writing fails with an error', $threw);
+    check('unreadable file: contents unchanged (no one-record file)', file_get_contents($path) === $before);
 }
 chmod($path, 0664);
 
 // --- 2) An empty file still counts as an empty area ----------------------------
 file_put_contents(area_path('diary', 'user', $u), '');
 $s = read_store('diary', 'user', $u);
-check('leere Datei -> leerer Bereich', $s['rev'] === 0 && $s['records'] === [], $s);
+check('empty file -> empty area', $s['rev'] === 0 && $s['records'] === [], $s);
 
 // --- 3) Corrupt file: error + backup copy (existing behaviour) -------
 file_put_contents(area_path('events', 'user', $u), '{kaputt');
 $threw = false;
 try { read_store('events', 'user', $u); } catch (RuntimeException $e) { $threw = true; }
-check('beschädigte Datei: Fehler + .corrupt-Kopie', $threw && (glob(area_path('events', 'user', $u) . '.corrupt-*') ?: []) !== []);
+check('corrupt file: error + .corrupt copy', $threw && (glob(area_path('events', 'user', $u) . '.corrupt-*') ?: []) !== []);
 
 // --- 4) replace with baseRev: late restore spares newer data ------
 $v = 'u-restore';
@@ -82,16 +82,16 @@ apply_ops('health', 'user', $v, [['op' => 'replace', 'baseRev' => $base, 'record
     ['id' => 'h-backup', 'weight' => 72],
 ]]]);
 $recs = read_store('health', 'user', $v)['records'];
-check('baseRev: neuerer Datensatz bleibt', live($recs, 'h-neu'));
-check('baseRev: neuere Änderung wird nicht zurückgedreht', ($recs['h-alt']['weight'] ?? null) === 68.5, $recs['h-alt'] ?? null);
-check('baseRev: Datensatz aus der Sicherung kommt hinzu', live($recs, 'h-backup'));
-check('baseRev: älterer, nicht gesicherter Datensatz wird entfernt', !empty($recs['h-weg']['deleted']));
+check('baseRev: newer record is kept', live($recs, 'h-neu'));
+check('baseRev: newer change is not rolled back', ($recs['h-alt']['weight'] ?? null) === 68.5, $recs['h-alt'] ?? null);
+check('baseRev: record from the backup is added', live($recs, 'h-backup'));
+check('baseRev: older record missing from the backup is removed', !empty($recs['h-weg']['deleted']));
 
 // --- 5) replace without baseRev stays authoritative (existing behaviour) -----------
 apply_ops('health', 'user', $v, [['op' => 'replace', 'records' => [['id' => 'h-nur', 'weight' => 1]]]]);
 $recs = read_store('health', 'user', $v)['records'];
-check('ohne baseRev: nur die gesendeten Datensätze bleiben', live($recs, 'h-nur') && !live($recs, 'h-neu') && !live($recs, 'h-alt') && !live($recs, 'h-backup'));
+check('without baseRev: only the sent records remain', live($recs, 'h-nur') && !live($recs, 'h-neu') && !live($recs, 'h-alt') && !live($recs, 'h-backup'));
 
 // --- Result --------------------------------------------------------------
-echo "\nstorage: {$pass} ok, {$fail} fehlgeschlagen\n";
+echo "\nstorage: {$pass} ok, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

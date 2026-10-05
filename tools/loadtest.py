@@ -41,7 +41,7 @@ member_ops = [{"op":"upsert","record":{"id":u,"_kind":"member","name":f"User{i:0
               for i,u in enumerate(users,1)]
 ok, ms, pl = req("POST", f"{BASE}?area=family&scope=family&action=ops", {"ops": member_ops})
 if not (ok and isinstance(pl,dict) and pl.get("ok")):
-    print("FEHLER: Mitglieder anlegen fehlgeschlagen:", pl); sys.exit(1)
+    print("ERROR: creating the members failed:", pl); sys.exit(1)
 
 # ---- Workload tasks ----
 write_revs = {u: [] for u in users}; wr_lock = threading.Lock()
@@ -75,7 +75,7 @@ for u in users:
     tasks += [(do_import,(u,n)) for n in range(IMPORTS)]
 random.shuffle(tasks)
 
-print(f"… {len(tasks)} Tasks, {NUSERS} Nutzer, Parallelität {CONCURRENCY} gegen {BASE}")
+print(f"… {len(tasks)} tasks, {NUSERS} users, concurrency {CONCURRENCY} against {BASE}")
 t_start = time.perf_counter()
 with ThreadPoolExecutor(max_workers=CONCURRENCY) as ex:
     for f in [ex.submit(fn,*a) for fn,a in tasks]: f.result()
@@ -89,31 +89,31 @@ for u in users:
     d = pl.get("data") if ok and isinstance(pl,dict) else None
     n = len(d) if isinstance(d,(list,dict)) else -1
     if n == WRITES: counts_ok += 1
-integ.append(("Schreib-Integrität – alle Upserts persistiert", f"{counts_ok}/{NUSERS} Nutzer = {WRITES}", counts_ok==NUSERS))
+integ.append(("Write integrity – all upserts persisted", f"{counts_ok}/{NUSERS} users = {WRITES}", counts_ok==NUSERS))
 
 rev_ok = sum(1 for u in users if len(write_revs[u])==len(set(write_revs[u])) and all(r is not None for r in write_revs[u]))
-integ.append(("Rev eindeutig – keine verlorenen Updates", f"{rev_ok}/{NUSERS} Nutzer eindeutig", rev_ok==NUSERS))
+integ.append(("Rev unique – no lost updates", f"{rev_ok}/{NUSERS} users unique", rev_ok==NUSERS))
 
 nfiles=0; bad=0
 for fp in glob.glob(os.path.join(DATA_DIR,"**","*.json"), recursive=True):
     nfiles+=1
     try: json.load(open(fp))
     except Exception: bad+=1
-integ.append(("JSON-Integrität auf Platte", f"{nfiles-bad}/{nfiles} Dateien valide", bad==0))
+integ.append(("JSON integrity on disk", f"{nfiles-bad}/{nfiles} files valid", bad==0))
 
 def ids(u):
     ok,ms,pl = req("GET", f"{BASE}?area=sessions&user={u}")
     d = pl.get("data") if ok and isinstance(pl,dict) else []
     return {r.get("id") for r in d} if isinstance(d,list) else set()
 overlap = ids(users[0]) & ids(users[1]) if NUSERS>=2 else set()
-integ.append(("Nutzer-Isolation – keine fremden Datensätze", "kein Überlapp" if not overlap else f"{len(overlap)} Überlapp!", not overlap))
+integ.append(("User isolation – no foreign records", "no overlap" if not overlap else f"{len(overlap)} overlap!", not overlap))
 
 imp_ok=0
 for u in users:
     ok,ms,pl = req("GET", f"{BASE}?area=health&user={u}")
     d = pl.get("data") if ok and isinstance(pl,dict) else None
     if isinstance(d,list) and len(d)==IMPORT_RECS: imp_ok+=1
-integ.append((f"Import-Integrität – health == {IMPORT_RECS}", f"{imp_ok}/{NUSERS} korrekt", imp_ok==NUSERS))
+integ.append((f"Import integrity – health == {IMPORT_RECS}", f"{imp_ok}/{NUSERS} correct", imp_ok==NUSERS))
 
 # ---- Phase 3: evaluation ----
 def st(typ):
@@ -123,18 +123,18 @@ def st(typ):
 
 total = sum(len(v) for v in metrics.values()); total_err = sum(1 for v in metrics.values() for ok,_ in v if not ok)
 def line(): print("+"+"-"*22+"+"+"-"*8+"+"+"-"*8+"+"+"-"*7+"+"+"-"*9+"+"+"-"*9+"+"+"-"*9+"+")
-print("\n=== PERFORMANCE (Latenz in ms) ===")
-line(); print(f"| {'Operation':20} | {'Anfr.':>6} | {'OK':>6} | {'Fehl':>5} | {'Ø ms':>7} | {'p50':>7} | {'p95':>7} |"); line()
+print("\n=== PERFORMANCE (latency in ms) ===")
+line(); print(f"| {'Operation':20} | {'Reqs':>6} | {'OK':>6} | {'Err':>5} | {'avg ms':>7} | {'p50':>7} | {'p95':>7} |"); line()
 for typ,label in [("write","Write (upsert)"),("read","Read (changes)"),("backup","Backup (11 Areas)"),("import",f"Import (replace {IMPORT_RECS})")]:
     n,okc,err,avg,p50,p95,mx = st(typ)
     print(f"| {label:20} | {n:>6} | {okc:>6} | {err:>5} | {avg:>7.1f} | {p50:>7.1f} | {p95:>7.1f} |")
 line()
-print(f"\nGesamt: {total} Anfragen in {wall:.2f}s  ·  {total/wall:.0f} req/s  ·  {total_err} Fehler  ·  {CONCURRENCY} parallel, 8 PHP-Worker")
+print(f"\nTotal: {total} requests in {wall:.2f}s  ·  {total/wall:.0f} req/s  ·  {total_err} errors  ·  {CONCURRENCY} parallel, 8 PHP workers")
 
-print("\n=== DATENINTEGRITÄT ===")
+print("\n=== DATA INTEGRITY ===")
 allpass=True
 print("+"+"-"*48+"+"+"-"*26+"+"+"-"*8+"+")
-print(f"| {'Prüfung':46} | {'Ergebnis':24} | {'Status':6} |")
+print(f"| {'Check':46} | {'Result':24} | {'Status':6} |")
 print("+"+"-"*48+"+"+"-"*26+"+"+"-"*8+"+")
 for name,res,ok in integ:
     allpass = allpass and ok
@@ -143,8 +143,8 @@ print("+"+"-"*48+"+"+"-"*26+"+"+"-"*8+"+")
 
 # Machine-readable conclusion (last line)
 usable = (total_err==0) and allpass and (st('write')[5] < 1000)  # p95 write < 1s counts as "usable"
-print(f"\nFAZIT: Integrität {'BESTANDEN' if allpass else 'FEHLGESCHLAGEN'} · "
-      f"Fehlerquote {100*total_err/max(total,1):.2f}% · "
-      f"Write-p95 {st('write')[5]:.0f}ms · "
-      f"Nutzbarkeit: {'GUT ✓' if usable else 'PRÜFEN ✗'}")
+print(f"\nVERDICT: integrity {'PASSED' if allpass else 'FAILED'} · "
+      f"error rate {100*total_err/max(total,1):.2f}% · "
+      f"write p95 {st('write')[5]:.0f}ms · "
+      f"usability: {'GOOD ✓' if usable else 'CHECK ✗'}")
 sys.exit(0 if (allpass and total_err==0) else 2)

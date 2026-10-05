@@ -53,7 +53,7 @@ for (const style of styles) {
   head.write('data', 36); head.writeUInt32LE(pcm.length, 40);
   const file = join(out, `musik-${style}.wav`);
   writeFileSync(file, Buffer.concat([head, pcm]));
-  console.log(`${style.padEnd(7)} ${res.bpm} BPM · Rechenzeit ${res.ms.join('/')} ms · Pause ${JSON.stringify(res.rest)} · Anlauf ${JSON.stringify(res.build)} · Übung ${JSON.stringify(res.work)}`);
+  console.log(`${style.padEnd(7)} ${res.bpm} BPM · compute time ${res.ms.join('/')} ms · rest ${JSON.stringify(res.rest)} · build-up ${JSON.stringify(res.build)} · exercise ${JSON.stringify(res.work)}`);
 }
 await browser.close();
 srv.stop();

@@ -28,7 +28,7 @@ function frames(m) {
   const out = [];
   const sides = m.sides === 'each' ? ['a', 'b'] : ['a'];
   for (const side of sides) {
-    for (const [kind, phases] of [['Einstieg', introOf(m, side)], ['', cycleOf(m, side)]]) {
+    for (const [kind, phases] of [['Intro', introOf(m, side)], ['', cycleOf(m, side)]]) {
       let t = 0;
       for (const ph of phases) {
         const tag = `${kind ? `${kind} ` : ''}${side === 'b' ? '② ' : ''}`;
@@ -53,7 +53,7 @@ ${readFileSync(join(ROOT, 'css', 'motion.css'), 'utf8')}`;
 
 function section(id) {
   const m = MOTIONS[id];
-  const cells = [`<div class="cell thumb"><div class="art">${motionSVG(m, thumbKeys(m))}</div><small>Standbild</small></div>`];
+  const cells = [`<div class="cell thumb"><div class="art">${motionSVG(m, thumbKeys(m))}</div><small>Still</small></div>`];
   for (const f of frames(m)) cells.push(`<div class="cell"><div class="art">${frameSVG(m, f.t, { list: f.list, side: f.side })}</div><small>${f.label}</small></div>`);
   return `<section><h3>${id} · ${m.view}${m.sides ? ` · ${m.sides}` : ''}</h3><div class="row">${cells.join('')}</div></section>`;
 }
@@ -65,7 +65,7 @@ const files = pages.map((chunk, i) => {
   writeFileSync(file, `<!doctype html><html data-theme="${dark ? 'dark' : 'light'}"><meta charset="utf-8"><style>${css}</style>${chunk.map(section).join('')}`);
   return file;
 });
-console.log(`${ids.length} Übungen auf ${files.length} Bögen in ${out}`);
+console.log(`${ids.length} exercises on ${files.length} sheets in ${out}`);
 
 if (process.env.PLAYWRIGHT_MODULE) {
   const { chromium } = await import(process.env.PLAYWRIGHT_MODULE);

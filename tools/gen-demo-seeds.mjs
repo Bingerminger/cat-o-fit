@@ -76,8 +76,8 @@ const files = {
 
 for (const [path, data] of Object.entries(files)) {
   writeFileSync(path, JSON.stringify(data, null, 2) + '\n');
-  const count = Array.isArray(data) ? `${data.length} Einträge` : 'Objekt';
+  const count = Array.isArray(data) ? `${data.length} entries` : 'object';
   console.log(`  ✓ ${path} (${count})`);
 }
-console.log(`\nFertig. Health-Punkte: ${d.self.health.length}, Zyklen: ${d.self.cycle.length}, Plan-Einheiten: ${plan.units.length}.`);
-console.log(`Ort: ${d.settings.location.name}, Zyklus-Modul: ${d.settings.modules.cycle}.`);
+console.log(`\nDone. Health points: ${d.self.health.length}, cycles: ${d.self.cycle.length}, plan units: ${plan.units.length}.`);
+console.log(`Location: ${d.settings.location.name}, cycle module: ${d.settings.modules.cycle}.`);

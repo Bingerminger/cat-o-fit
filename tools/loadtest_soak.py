@@ -29,7 +29,7 @@ def req(method, url, body=None):
 users = [f"u-load-{i:02d}" for i in range(1,NUSERS+1)]
 mops = [{"op":"upsert","record":{"id":u,"_kind":"member","name":f"User{i:02d}","role":"user","createdAt":"2026-06-30T00:00:00Z"}} for i,u in enumerate(users,1)]
 ok,ms,pl = req("POST", f"{BASE}?area=family&scope=family&action=ops", {"ops":mops})
-if not (ok and isinstance(pl,dict) and pl.get("ok")): print("FEHLER Mitglieder:", pl); sys.exit(1)
+if not (ok and isinstance(pl,dict) and pl.get("ok")): print("ERROR members:", pl); sys.exit(1)
 
 widx={u:0 for u in users}; wl={u:threading.Lock() for u in users}
 def nextw(u):
@@ -77,7 +77,7 @@ def worker():
         elif r<0.96: op_import(u)
         else: op_backup(u)
 
-print(f"… Dauerlauf {DURATION:.0f}s · {CONCURRENCY} parallel · Write-Cap {MAXW}/Nutzer · 8 PHP-Worker")
+print(f"… soak run {DURATION:.0f}s · {CONCURRENCY} parallel · write cap {MAXW}/user · 8 PHP workers")
 with ThreadPoolExecutor(max_workers=CONCURRENCY) as ex:
     for f in [ex.submit(worker) for _ in range(CONCURRENCY)]: f.result()
 wall=time.perf_counter()-start
@@ -91,26 +91,26 @@ for u in users:
     ids={r.get("id") for r in d} if isinstance(d,list) else None
     # Every confirmed ID is on the server, and nothing is there that was never sent.
     if ids is not None and okids[u] <= ids <= sent[u]: cok+=1
-integ.append(("Schreib-Integrität – bestätigt ⊆ Server ⊆ gesendet", f"{cok}/{NUSERS} Nutzer exakt", cok==NUSERS))
+integ.append(("Write integrity – confirmed ⊆ server ⊆ sent", f"{cok}/{NUSERS} users exact", cok==NUSERS))
 rok=sum(1 for u in users if len(revs[u])==succ[u])
-integ.append(("Rev eindeutig – keine verlorenen Updates", f"{rok}/{NUSERS} eindeutig", rok==NUSERS))
+integ.append(("Rev unique – no lost updates", f"{rok}/{NUSERS} unique", rok==NUSERS))
 nf=0;bad=0
 for fp in glob.glob(os.path.join(DATA_DIR,"**","*.json"),recursive=True):
     nf+=1
     try: json.load(open(fp))
     except Exception: bad+=1
-integ.append(("JSON-Integrität auf Platte", f"{nf-bad}/{nf} valide", bad==0))
+integ.append(("JSON integrity on disk", f"{nf-bad}/{nf} valid", bad==0))
 def sids(u):
     ok,ms,pl=req("GET", f"{BASE}?area=sessions&user={u}"); d=pl.get("data") if ok and isinstance(pl,dict) else []
     return {r.get("id") for r in d} if isinstance(d,list) else set()
 ov=sids(users[0])&sids(users[1])
-integ.append(("Nutzer-Isolation", "kein Überlapp" if not ov else f"{len(ov)} Überlapp!", not ov))
+integ.append(("User isolation", "no overlap" if not ov else f"{len(ov)} overlap!", not ov))
 hok=0
 for u in users:
     ok,ms,pl=req("GET", f"{BASE}?area=health&user={u}"); d=pl.get("data") if ok and isinstance(pl,dict) else None
     n=len(d) if isinstance(d,list) else -1
     if n in (0,IMPORT_RECS): hok+=1
-integ.append((f"Import-Integrität – health ∈ {{0,{IMPORT_RECS}}}", f"{hok}/{NUSERS} gültig", hok==NUSERS))
+integ.append((f"Import integrity – health ∈ {{0,{IMPORT_RECS}}}", f"{hok}/{NUSERS} valid", hok==NUSERS))
 
 def stx(t):
     rows=metrics.get(t,[]); n=len(rows); okc=sum(1 for ok,_,_ in rows if ok); lat=sorted(ms for _,ms,_ in rows)
@@ -118,19 +118,19 @@ def stx(t):
     return n,okc,n-okc,(statistics.mean(lat) if lat else 0),pct(.5),pct(.95)
 tot=sum(len(v) for v in metrics.values()); terr=sum(1 for v in metrics.values() for ok,_,_ in v if not ok)
 totw=sum(succ.values())
-print("\n=== PERFORMANCE (Latenz ms) ===")
+print("\n=== PERFORMANCE (latency ms) ===")
 L=lambda: print("+"+"-"*22+"+"+"-"*8+"+"+"-"*8+"+"+"-"*7+"+"+"-"*9+"+"+"-"*9+"+")
-L(); print(f"| {'Operation':20} | {'Anfr.':>6} | {'OK':>6} | {'Fehl':>5} | {'Ø ms':>7} | {'p95':>7} |"); L()
+L(); print(f"| {'Operation':20} | {'Reqs':>6} | {'OK':>6} | {'Err':>5} | {'avg ms':>7} | {'p95':>7} |"); L()
 for t,lab in [("write","Write (upsert)"),("read","Read (changes)"),("backup","Backup (11 Areas)"),("import",f"Import ({IMPORT_RECS})")]:
     n,okc,err,avg,p50,p95=stx(t); print(f"| {lab:20} | {n:>6} | {okc:>6} | {err:>5} | {avg:>7.1f} | {p95:>7.1f} |")
 L()
-print(f"\nGesamt: {tot} Anfragen · {totw} Writes in {wall:.1f}s · {tot/wall:.0f} req/s · {terr} Fehler")
+print(f"\nTotal: {tot} requests · {totw} writes in {wall:.1f}s · {tot/wall:.0f} req/s · {terr} errors")
 
 # Write latency per time window (degradation through file growth?)
-print("\n=== WRITE-LATENZ JE 10-s-FENSTER (p95) ===")
+print("\n=== WRITE LATENCY PER 10 s WINDOW (p95) ===")
 wrows=metrics.get("write",[]); nb=int(DURATION//BUCKET)+1
 print("+"+"-"*9+"+"+"-"*9+"+"+"-"*10+"+")
-print(f"| {'Fenster':7} | {'Writes':>7} | {'p95 ms':>8} |")
+print(f"| {'Window':7} | {'Writes':>7} | {'p95 ms':>8} |")
 print("+"+"-"*9+"+"+"-"*9+"+"+"-"*10+"+")
 for b in range(nb):
     lat=sorted(ms for _,ms,bb in wrows if bb==b)
@@ -139,15 +139,15 @@ for b in range(nb):
     print(f"| {b*10:>3}-{b*10+10:<3} | {len(lat):>7} | {p95:>8.1f} |")
 print("+"+"-"*9+"+"+"-"*9+"+"+"-"*10+"+")
 
-print("\n=== DATENINTEGRITÄT ===")
+print("\n=== DATA INTEGRITY ===")
 ap=True
 print("+"+"-"*52+"+"+"-"*24+"+"+"-"*8+"+")
-print(f"| {'Prüfung':50} | {'Ergebnis':22} | {'Status':6} |")
+print(f"| {'Check':50} | {'Result':22} | {'Status':6} |")
 print("+"+"-"*52+"+"+"-"*24+"+"+"-"*8+"+")
 for name,res,ok in integ:
     ap=ap and ok; print(f"| {name:50} | {res:22} | {('✓ OK' if ok else '✗ FAIL'):6} |")
 print("+"+"-"*52+"+"+"-"*24+"+"+"-"*8+"+")
 sz=sum(os.path.getsize(fp) for fp in glob.glob(os.path.join(DATA_DIR,'**','*.json'),recursive=True))/1e6
-print(f"\nFAZIT: Integrität {'BESTANDEN' if ap else 'FEHLGESCHLAGEN'} · Fehlerquote {100*terr/max(tot,1):.2f}% · "
-      f"Write-p95 {stx('write')[5]:.0f}ms · Daten {sz:.1f}MB · Nutzbarkeit: {'GUT ✓' if (terr==0 and ap and stx('write')[5]<2000) else 'PRÜFEN ✗'}")
+print(f"\nVERDICT: integrity {'PASSED' if ap else 'FAILED'} · error rate {100*terr/max(tot,1):.2f}% · "
+      f"write p95 {stx('write')[5]:.0f}ms · data {sz:.1f}MB · usability: {'GOOD ✓' if (terr==0 and ap and stx('write')[5]<2000) else 'CHECK ✗'}")
 sys.exit(0 if (ap and terr==0) else 2)

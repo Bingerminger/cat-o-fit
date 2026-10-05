@@ -29,7 +29,7 @@ def trim_and_normalize(src: Path, dst: Path) -> None:
         rate = w.getframerate()
         data = array.array('h', w.readframes(w.getnframes()))
     if not data:
-        raise ValueError('leer')
+        raise ValueError('empty')
     limit = 600
     first = next((i for i, v in enumerate(data) if abs(v) > limit), 0)
     last = next((i for i in range(len(data) - 1, -1, -1) if abs(data[i]) > limit), len(data) - 1)
@@ -73,7 +73,7 @@ def main() -> None:
         trim_and_normalize(raw, clean)
         subprocess.run(['afconvert', '-f', 'm4af', '-d', 'aac', '-b', '32000', '-c', '1', str(clean), str(target)], check=True)
         done += 1
-    print(f'{done} Bausteine erzeugt in {out}')
+    print(f'{done} clips generated in {out}')
 
 
 if __name__ == '__main__':
