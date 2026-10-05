@@ -1,1 +1,418 @@
-{}
+{
+  "overnight-oats-mit-beeren": {
+    "title": "Overnight oats met bosvruchten",
+    "ingredients": [
+      "60 g havermout",
+      "150 g skyr",
+      "150 ml melk",
+      "100 g bosvruchten",
+      "1 el honing"
+    ]
+  },
+  "ruehrei-mit-vollkornbrot-avocado": {
+    "title": "Roerei met volkorenbrood & avocado",
+    "ingredients": [
+      "3 eieren",
+      "2 sneetjes volkorenbrood",
+      "1/2 avocado",
+      "spinazie"
+    ]
+  },
+  "protein-porridge-mit-banane": {
+    "title": "Eiwitporridge met banaan",
+    "ingredients": [
+      "60 g havermout",
+      "30 g eiwitpoeder",
+      "250 ml melk",
+      "1 banaan"
+    ]
+  },
+  "quark-mit-nuessen-apfel": {
+    "title": "Kwark met noten & appel",
+    "ingredients": [
+      "250 g magere kwark",
+      "20 g walnoten",
+      "1 appel",
+      "1 tl honing"
+    ]
+  },
+  "vollkorn-pancakes-mit-quark": {
+    "title": "Volkoren pancakes met kwark",
+    "ingredients": [
+      "60 g havermout",
+      "2 eieren",
+      "150 g magere kwark",
+      "1 banaan",
+      "1 tl bakpoeder"
+    ]
+  },
+  "chia-pudding-mit-mango": {
+    "title": "Chiapudding met mango",
+    "ingredients": [
+      "30 g chiazaad",
+      "200 ml havermelk",
+      "100 g mango",
+      "1 tl agavesiroop"
+    ]
+  },
+  "bircher-muesli": {
+    "title": "Bircher muesli",
+    "ingredients": [
+      "50 g havermout",
+      "150 g yoghurt",
+      "1 appel",
+      "20 g amandelen",
+      "100 ml melk"
+    ]
+  },
+  "avocado-brot-mit-ei": {
+    "title": "Avocadotoast met ei",
+    "ingredients": [
+      "2 sneetjes volkorenbrood",
+      "1/2 avocado",
+      "2 eieren"
+    ]
+  },
+  "griessbrei-mit-beeren": {
+    "title": "Griesmeelpap met bosvruchten",
+    "ingredients": [
+      "50 g griesmeel",
+      "300 ml melk",
+      "100 g bosvruchten",
+      "1 tl honing"
+    ]
+  },
+  "skyr-bowl-mit-granola": {
+    "title": "Skyrbowl met granola",
+    "ingredients": [
+      "200 g skyr",
+      "40 g granola",
+      "1 banaan",
+      "10 g walnoten"
+    ]
+  },
+  "tofu-ruehrei-mit-brot": {
+    "title": "Roerei van tofu met brood",
+    "ingredients": [
+      "200 g tofu",
+      "2 sneetjes volkorenbrood",
+      "1 tomaat"
+    ]
+  },
+  "erdnussbutter-toast-mit-banane": {
+    "title": "Pindakaastoast met banaan",
+    "ingredients": [
+      "2 sneetjes volkorenbrood",
+      "20 g pindakaas",
+      "1 banaan"
+    ]
+  },
+  "haehnchen-reis-bowl-mit-brokkoli": {
+    "title": "Kip-rijstbowl met broccoli",
+    "ingredients": [
+      "150 g kip",
+      "80 g rijst",
+      "200 g broccoli",
+      "1 el olie"
+    ]
+  },
+  "lachs-mit-suesskartoffel-spinat": {
+    "title": "Zalm met zoete aardappel & spinazie",
+    "ingredients": [
+      "150 g zalm",
+      "250 g zoete aardappel",
+      "spinazie",
+      "1 el olie"
+    ]
+  },
+  "linsen-dal-mit-reis": {
+    "title": "Linzendal met rijst",
+    "ingredients": [
+      "120 g linzen",
+      "80 g rijst",
+      "1 ui",
+      "200 g tomaten"
+    ]
+  },
+  "pute-quinoa-pfanne": {
+    "title": "Roerbak met kalkoen & quinoa",
+    "ingredients": [
+      "150 g kalkoen",
+      "80 g quinoa",
+      "1 paprika",
+      "1 courgette"
+    ]
+  },
+  "rindergeschnetzeltes-mit-reis": {
+    "title": "Runderreepjes met rijst",
+    "ingredients": [
+      "150 g rundvlees",
+      "80 g rijst",
+      "1 paprika",
+      "1 ui"
+    ]
+  },
+  "kichererbsen-bowl-mit-quinoa": {
+    "title": "Kikkererwtenbowl met quinoa",
+    "ingredients": [
+      "150 g kikkererwten",
+      "80 g quinoa",
+      "100 g broccoli",
+      "1 wortel"
+    ]
+  },
+  "vollkorn-spaghetti-bolognese": {
+    "title": "Volkoren spaghetti bolognese",
+    "ingredients": [
+      "100 g volkorenpasta",
+      "150 g gehakt",
+      "200 g tomaten",
+      "1 ui"
+    ]
+  },
+  "gefuellte-suesskartoffel-mit-huettenkaese": {
+    "title": "Gevulde zoete aardappel met huttenkaas",
+    "ingredients": [
+      "250 g zoete aardappel",
+      "150 g huttenkaas",
+      "100 g spinazie"
+    ]
+  },
+  "couscous-salat-mit-feta": {
+    "title": "Couscoussalade met feta",
+    "ingredients": [
+      "80 g couscous",
+      "50 g feta",
+      "1 paprika",
+      "1 komkommer",
+      "1 el olie"
+    ]
+  },
+  "haehnchen-wrap-mit-gemuese": {
+    "title": "Kipwrap met groenten",
+    "ingredients": [
+      "1 wrap",
+      "150 g kip",
+      "sla",
+      "1 tomaat",
+      "50 g yoghurt"
+    ]
+  },
+  "kabeljau-mit-kartoffeln-brokkoli": {
+    "title": "Kabeljauw met aardappelen & broccoli",
+    "ingredients": [
+      "180 g kabeljauw",
+      "250 g aardappelen",
+      "150 g broccoli",
+      "1 el olie"
+    ]
+  },
+  "gemuesecurry-mit-kichererbsen": {
+    "title": "Groentecurry met kikkererwten",
+    "ingredients": [
+      "150 g kikkererwten",
+      "80 g rijst",
+      "200 ml kokosmelk",
+      "1 paprika"
+    ]
+  },
+  "magerquark-mit-gemuesesticks": {
+    "title": "Magere kwark met groentesticks",
+    "ingredients": [
+      "250 g magere kwark",
+      "1 paprika",
+      "1 komkommer"
+    ]
+  },
+  "omelett-mit-feta-tomaten": {
+    "title": "Omelet met feta & tomaten",
+    "ingredients": [
+      "3 eieren",
+      "50 g feta",
+      "200 g tomaten",
+      "spinazie"
+    ]
+  },
+  "thunfisch-vollkornwrap": {
+    "title": "Volkoren tonijnwrap",
+    "ingredients": [
+      "1 wrap",
+      "150 g tonijn",
+      "sla",
+      "50 g yoghurt"
+    ]
+  },
+  "ofengemuese-mit-haehnchen": {
+    "title": "Ovengroenten met kip",
+    "ingredients": [
+      "150 g kip",
+      "1 courgette",
+      "1 paprika",
+      "1 zoete aardappel",
+      "1 el olie"
+    ]
+  },
+  "gebratener-tofu-mit-gemuese": {
+    "title": "Gebakken tofu met groenten",
+    "ingredients": [
+      "200 g tofu",
+      "1 paprika",
+      "100 g broccoli",
+      "1 el sojasaus"
+    ]
+  },
+  "haehnchensalat-mit-avocado": {
+    "title": "Kipsalade met avocado",
+    "ingredients": [
+      "150 g kip",
+      "1/2 avocado",
+      "sla",
+      "1 tomaat",
+      "1 el olie"
+    ]
+  },
+  "linsensuppe": {
+    "title": "Linzensoep",
+    "ingredients": [
+      "200 g linzen",
+      "1 wortel",
+      "1 ui",
+      "1 aardappel"
+    ]
+  },
+  "caprese-mit-mozzarella": {
+    "title": "Caprese met mozzarella",
+    "ingredients": [
+      "125 g mozzarella",
+      "200 g tomaten",
+      "basilicum",
+      "1 el olie"
+    ]
+  },
+  "garnelen-zucchini-pfanne": {
+    "title": "Roerbak met garnalen & courgette",
+    "ingredients": [
+      "150 g garnalen",
+      "1 courgette",
+      "1 teen knoflook",
+      "1 el olie"
+    ]
+  },
+  "putenbrust-mit-ofengemuese": {
+    "title": "Kalkoenfilet met ovengroenten",
+    "ingredients": [
+      "150 g kalkoen",
+      "1 courgette",
+      "1 paprika",
+      "100 g champignons",
+      "1 el olie"
+    ]
+  },
+  "vollkorn-pizza-mit-gemuese": {
+    "title": "Volkoren pizza met groenten",
+    "ingredients": [
+      "1/2 pizzadeeg",
+      "100 g tomaten",
+      "80 g mozzarella",
+      "1 paprika"
+    ]
+  },
+  "joghurt-bowl-mit-gurke-fladenbrot": {
+    "title": "Yoghurtbowl met komkommer & platbrood",
+    "ingredients": [
+      "200 g yoghurt",
+      "1 komkommer",
+      "1 teen knoflook",
+      "1/2 platbrood"
+    ]
+  },
+  "skyr-mit-beeren": {
+    "title": "Skyr met bosvruchten",
+    "ingredients": [
+      "150 g skyr",
+      "100 g bosvruchten"
+    ]
+  },
+  "handvoll-mandeln-apfel": {
+    "title": "Een handvol amandelen & een appel",
+    "ingredients": [
+      "30 g amandelen",
+      "1 appel"
+    ]
+  },
+  "protein-shake-mit-banane": {
+    "title": "Eiwitshake met banaan",
+    "ingredients": [
+      "30 g eiwitpoeder",
+      "250 ml melk",
+      "1 banaan"
+    ]
+  },
+  "huettenkaese-auf-knaeckebrot": {
+    "title": "Huttenkaas op knäckebröd",
+    "ingredients": [
+      "150 g huttenkaas",
+      "2 sneetjes knäckebröd"
+    ]
+  },
+  "energy-balls": {
+    "title": "Energyballs",
+    "ingredients": [
+      "40 g dadels",
+      "30 g havermout",
+      "15 g amandelen",
+      "1 tl cacao"
+    ]
+  },
+  "gemuesesticks-mit-hummus": {
+    "title": "Groentesticks met hummus",
+    "ingredients": [
+      "100 g hummus",
+      "1 wortel",
+      "1 paprika"
+    ]
+  },
+  "reiswaffeln-mit-frischkaese": {
+    "title": "Rijstwafels met roomkaas",
+    "ingredients": [
+      "2 rijstwafels",
+      "50 g roomkaas"
+    ]
+  },
+  "beeren-quark": {
+    "title": "Bosvruchtenkwark",
+    "ingredients": [
+      "200 g magere kwark",
+      "100 g bosvruchten"
+    ]
+  },
+  "studentenfutter": {
+    "title": "Studentenhaver",
+    "ingredients": [
+      "25 g amandelen",
+      "15 g cashewnoten",
+      "20 g rozijnen"
+    ]
+  },
+  "banane-mit-erdnussbutter": {
+    "title": "Banaan met pindakaas",
+    "ingredients": [
+      "1 banaan",
+      "20 g pindakaas"
+    ]
+  },
+  "edamame-mit-meersalz": {
+    "title": "Edamame met zeezout",
+    "ingredients": [
+      "150 g edamame",
+      "1 snufje zeezout"
+    ]
+  },
+  "huettenkaese-mit-ananas": {
+    "title": "Huttenkaas met ananas",
+    "ingredients": [
+      "150 g huttenkaas",
+      "100 g ananas"
+    ]
+  }
+}

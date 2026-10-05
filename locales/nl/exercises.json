@@ -1,1 +1,2879 @@
-{}
+{
+  "squat": {
+    "muscles": [
+      "bovenbenen",
+      "bilspieren",
+      "core"
+    ],
+    "equipment": "geen (eventueel gewicht)",
+    "steps": [
+      "Sta met je voeten op schouderbreedte, tenen iets naar buiten gedraaid.",
+      "Duw je heupen naar achteren en buig alsof je op een stoel gaat zitten.",
+      "Je knieën volgen de richting van je tenen, je rug blijft lang, borst omhoog.",
+      "Zak tot je bovenbenen ongeveer horizontaal zijn en duw dan krachtig weer omhoog."
+    ],
+    "tip": "Verdeel je gewicht over je hele voetzool, je hielen blijven op de grond. 3×10–15 herhalingen.",
+    "caution": "Bij knie- of heupklachten ga je alleen zo diep als pijnloos kan.",
+    "progression": "Meer herhalingen, daarna gewicht (dumbbell/kettlebell), later squats met een pauze.",
+    "phases": {
+      "0": {
+        "label": "Omlaag",
+        "cue": "Heupen naar achteren, borst blijft open"
+      },
+      "1": {
+        "label": "Onderaan"
+      },
+      "2": {
+        "label": "Omhoog",
+        "cue": "Duw door je hele voet"
+      },
+      "3": {
+        "label": "Bovenaan"
+      }
+    }
+  },
+  "lunge": {
+    "muscles": [
+      "bovenbenen",
+      "bilspieren",
+      "balans"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Maak vanuit stand een grote stap naar voren.",
+      "Buig beide knieën tot ~90°, je achterste knie zakt richting de grond.",
+      "Je voorste knie blijft boven je enkel, romp rechtop.",
+      "Duw je via je voorste hiel terug naar stand en wissel dan van been."
+    ],
+    "tip": "Ideaal voor hardlopers om eenzijdige zwaktes aan te pakken. 3×8–10 per kant.",
+    "caution": "Bij knieklachten zet je kleinere stappen en duw je je voorste knie niet voorbij je tenen.",
+    "progression": "Met gewicht, achterwaarts of al lopend (walking lunges).",
+    "phases": {
+      "0": {
+        "label": "Stap naar voren"
+      },
+      "1": {
+        "label": "Omlaag",
+        "cue": "Achterste knie zakt richting de grond"
+      },
+      "2": {
+        "label": "Onderaan"
+      },
+      "3": {
+        "label": "Terugduwen",
+        "cue": "Duw af met de voorste hiel"
+      },
+      "4": {
+        "label": "Staand"
+      },
+      "5": {
+        "label": "Staand"
+      }
+    }
+  },
+  "pushup": {
+    "muscles": [
+      "borst",
+      "schouders",
+      "triceps",
+      "core"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Handen iets breder dan schouderbreed, je lichaam vormt een rechte lijn.",
+      "Span je core stevig aan (geen doorhangende heupen).",
+      "Buig je ellebogen naar achteren en zak met je borst richting de grond.",
+      "Duw krachtig weer omhoog."
+    ],
+    "tip": "Te zwaar? Ga op je knieën of zet je handen hoger (tafel/muur). 3×6–12.",
+    "caution": "Bij schouder- of polsklachten doe je ze verhoogd tegen een bank of op je vuisten.",
+    "progression": "Van de muur naar de bank, dan op je knieën en daarna hele push-ups; later met je voeten verhoogd.",
+    "phases": {
+      "0": {
+        "label": "Zakken",
+        "cue": "Lichaam blijft in een rechte lijn"
+      },
+      "1": {
+        "label": "Onderaan"
+      },
+      "2": {
+        "label": "Omhoog duwen",
+        "cue": "Ellebogen schuin naar achteren"
+      },
+      "3": {
+        "label": "Bovenaan"
+      }
+    }
+  },
+  "deadlift": {
+    "muscles": [
+      "bilspieren",
+      "hamstrings",
+      "onderrug"
+    ],
+    "equipment": "dumbbell/kettlebell",
+    "steps": [
+      "Sta op heupbreedte, het gewicht vóór je scheenbenen.",
+      "Duw je heupen naar achteren, buig je knieën maar een klein beetje, je rug blijft recht.",
+      "Houd het gewicht dicht tegen je lichaam, tot net onder je knieën.",
+      "Kom omhoog door je heupen naar voren te drijven en knijp je bilspieren samen."
+    ],
+    "tip": "De beweging komt uit je heupen, niet uit je rug. Eerst techniek, dan gewicht. 3×8.",
+    "caution": "Houd je rug neutraal – sla het over bij acute rugpijn en laat het nakijken.",
+    "progression": "In kleine stappen meer gewicht, daarna op één been.",
+    "gear": "dumbbell/kettlebell",
+    "phases": {
+      "0": {
+        "label": "Heupen naar achteren",
+        "cue": "Rug recht, gewicht dicht langs het been"
+      },
+      "1": {
+        "label": "Onderaan"
+      },
+      "2": {
+        "label": "Oprichten",
+        "cue": "Heupen naar voren, bilspieren aanspannen"
+      },
+      "3": {
+        "label": "Bovenaan"
+      }
+    }
+  },
+  "row": {
+    "muscles": [
+      "bovenrug",
+      "biceps",
+      "achterkant schouder"
+    ],
+    "equipment": "dumbbell/kettlebell",
+    "steps": [
+      "Scharnier vanuit je heupen zoals bij de deadlift, romp ~45° voorovergebogen.",
+      "Je armen hangen lang, schouderbladen ontspannen.",
+      "Trek het gewicht naar je onderste ribben, ellebogen dicht langs je lichaam.",
+      "Laat gecontroleerd zakken, je rug blijft stabiel."
+    ],
+    "tip": "Zorgt voor evenwicht met de voorkant van je lichaam, die bij hardlopen de overhand krijgt. 3×10–12.",
+    "caution": "Houd je rug recht en ruk niet aan het gewicht.",
+    "progression": "Zwaardere dumbbell of sterkere band, langzaam zakken (3 s).",
+    "gear": "dumbbell/kettlebell",
+    "phases": {
+      "0": {
+        "label": "Trekken",
+        "cue": "Ellebogen naar achteren, dicht langs het lichaam"
+      },
+      "1": {
+        "label": "Bovenaan"
+      },
+      "2": {
+        "label": "Laten zakken",
+        "cue": "Rug blijft rustig"
+      },
+      "3": {
+        "label": "Onderaan"
+      }
+    }
+  },
+  "overhead_press": {
+    "muscles": [
+      "schouders",
+      "triceps",
+      "core"
+    ],
+    "equipment": "dumbbells",
+    "steps": [
+      "Sta rechtop, gewichten op schouderhoogte.",
+      "Span je core aan, laat je ribben niet naar voren uitsteken.",
+      "Druk de gewichten recht boven je hoofd tot je armen bijna gestrekt zijn.",
+      "Laat gecontroleerd zakken tot schouderhoogte."
+    ],
+    "tip": "Geen holle onderrug – houd je buikspieren strak. 3×8–10.",
+    "caution": "Bij schouderpijn druk je niet boven je hoofd – ga liever zitten met een lichter gewicht, of sla het over.",
+    "progression": "Meer gewicht of één arm tegelijk (meer core).",
+    "gear": "dumbbells",
+    "phases": {
+      "0": {
+        "label": "Omhoog duwen",
+        "cue": "Core strak, geen holle rug"
+      },
+      "1": {
+        "label": "Bovenaan"
+      },
+      "2": {
+        "label": "Zakken",
+        "cue": "Gecontroleerd tot schouderhoogte"
+      },
+      "3": {
+        "label": "Schouderhoogte"
+      }
+    }
+  },
+  "calf_raise": {
+    "muscles": [
+      "kuiten",
+      "achillespees"
+    ],
+    "equipment": "geen (eventueel een opstap)",
+    "steps": [
+      "Sta rechtop, zet desgewenst de ballen van je voeten op een opstap.",
+      "Kom langzaam omhoog op je tenen en houd even vast.",
+      "Laat gecontroleerd zakken, helemaal naar beneden (op een opstap: tot onder de hoogte van de opstap)."
+    ],
+    "tip": "Helpt tegen achillespees- en kuitklachten. 3×15–20, bouw desgewenst op naar één been.",
+    "caution": "Bij een geïrriteerde achillespees ga je langzaam en veer je niet.",
+    "progression": "Op één been, daarna op een opstap tot onder het niveau van de opstap zakken, dan met gewicht.",
+    "phases": {
+      "0": {
+        "label": "Omhoog",
+        "cue": "Op de tenen"
+      },
+      "1": {
+        "label": "Bovenaan vasthouden"
+      },
+      "2": {
+        "label": "Zakken",
+        "cue": "Langzaam zakken"
+      },
+      "3": {
+        "label": "Onderaan"
+      }
+    }
+  },
+  "plank": {
+    "muscles": [
+      "core",
+      "schouders",
+      "bilspieren"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Onderarmen op de grond op schouderbreedte, ellebogen onder je schouders.",
+      "Je lichaam vormt een rechte lijn van hoofd tot hielen.",
+      "Span je buik- en bilspieren aan en kantel je bekken iets naar achteren.",
+      "Adem rustig door en houd de positie vast."
+    ],
+    "tip": "Liever kort en netjes dan lang en doorhangend. 3×20–45 s.",
+    "caution": "Geen holle onderrug – bij rugpijn begin je op je knieën.",
+    "progression": "Langer vasthouden, daarna een arm of een been optillen.",
+    "phases": {
+      "0": {
+        "label": "Vasthouden",
+        "cue": "Core strak, duw je billen niet omhoog"
+      }
+    }
+  },
+  "side_plank": {
+    "muscles": [
+      "schuine buikspieren",
+      "heupen",
+      "schouder"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Ga op je zij liggen, onderarm onder je schouder, benen op elkaar.",
+      "Til je heupen op tot je lichaam een rechte lijn vormt.",
+      "Strek je bovenste arm naar het plafond of leg hem op je heup.",
+      "Houd vast en wissel dan van kant."
+    ],
+    "tip": "Stabiliseert je heupen tijdens het hardlopen. 3×15–30 s per kant.",
+    "caution": "Bij schouderklachten steun je op je knie.",
+    "progression": "Til je bovenste been op of laat je heupen zakken en weer omhoog komen.",
+    "phases": {
+      "0": {
+        "label": "Vasthouden",
+        "cue": "Bekken omhoog, lichaam blijft recht"
+      }
+    }
+  },
+  "glute_bridge": {
+    "muscles": [
+      "bilspieren",
+      "hamstrings",
+      "core"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Ga op je rug liggen, voeten plat op heupbreedte, armen langs je lichaam.",
+      "Knijp je bilspieren samen en duw je heupen omhoog.",
+      "Bovenbenen en romp vormen één lijn, houd even vast.",
+      "Laat gecontroleerd zakken zonder helemaal neer te komen."
+    ],
+    "tip": "Maakt de vaak “slapende” bilspieren wakker. 3×12–15, desgewenst op één been.",
+    "caution": "Duw niet door tot een holle onderrug – de kracht komt uit je bilspieren.",
+    "progression": "Op één been, daarna met verhoogde voeten of met gewicht op je heupen.",
+    "phases": {
+      "0": {
+        "label": "Bekken optillen",
+        "cue": "Bilspieren strak, geen holle rug"
+      },
+      "1": {
+        "label": "Bovenaan vasthouden"
+      },
+      "2": {
+        "label": "Zakken",
+        "cue": "Wervel voor wervel neerleggen"
+      },
+      "3": {
+        "label": "Onderaan"
+      }
+    }
+  },
+  "dead_bug": {
+    "muscles": [
+      "diepe rompspieren",
+      "coördinatie"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Ga op je rug liggen, armen naar het plafond, heupen en knieën opgetild tot 90°.",
+      "Druk je onderrug zachtjes in de grond (buikspieren strak).",
+      "Strek tegelijk je rechterbeen en linkerarm, zonder een holle rug te maken.",
+      "Terug naar het midden, daarna de andere kant."
+    ],
+    "tip": "Stabiele core zonder je wervelkolom te belasten. 3×8 per kant, langzaam.",
+    "caution": "Je onderrug blijft op de grond – maak de beweging anders kleiner.",
+    "progression": "Langzamer, armen/benen gestrekt, later met een licht gewicht.",
+    "phases": {
+      "0": {
+        "label": "Strekken",
+        "cue": "Onderrug blijft op de grond"
+      },
+      "1": {
+        "label": "Lang"
+      },
+      "2": {
+        "label": "Terug naar het midden"
+      },
+      "3": {
+        "label": "Midden"
+      }
+    }
+  },
+  "side_crunch": {
+    "muscles": [
+      "schuine buikspieren",
+      "balans"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Sta rechtop en stabiel, buikspieren strak.",
+      "Buig je bovenlichaam gecontroleerd opzij en laat je hand langs je bovenbeen glijden.",
+      "Kom met je zijdelingse buikspieren weer omhoog."
+    ],
+    "tip": "Kleine, gecontroleerde beweging. 3×12 per kant.",
+    "caution": "Buig alleen opzij, leun niet naar voren en draai niet.",
+    "progression": "Met een dumbbell in de hand aan de andere kant.",
+    "phases": {
+      "0": {
+        "label": "Opzij buigen",
+        "cue": "Niet naar voren buigen"
+      },
+      "1": {
+        "label": "Onderaan"
+      },
+      "2": {
+        "label": "Oprichten",
+        "cue": "Vanuit de zijdelingse buikspieren"
+      },
+      "3": {
+        "label": "Midden"
+      }
+    }
+  },
+  "hip_flexor_stretch": {
+    "muscles": [
+      "heupbuigers",
+      "voorkant bovenbeen"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Diepe lunge, achterste knie op de grond (bijvoorbeeld op een kussen).",
+      "Kantel je bekken iets naar achteren en knijp je bilspieren samen.",
+      "Duw je heupen rustig naar voren tot je een rek voelt aan de voorkant van je heup.",
+      "Houd stil vast, niet veren."
+    ],
+    "tip": "Belangrijk als je veel zit en hardloopt. 2×30 s per kant.",
+    "caution": "Zorg voor een zachte onderlaag voor je knie; compenseer niet met een holle onderrug.",
+    "progression": "Strek de arm aan de kant van het achterste been boven je hoofd.",
+    "phases": {
+      "0": {
+        "label": "Vasthouden",
+        "cue": "Rek aan de voorkant van de heup"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Heupen naar voren duwen",
+        "cue": "Bilspieren aanspannen, geen holle rug"
+      }
+    }
+  },
+  "hamstring_stretch": {
+    "muscles": [
+      "hamstrings",
+      "onderrug"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Zet één been iets naar voren, hiel op de grond, tenen omhoog.",
+      "Duw je heupen naar achteren en buig met een rechte rug naar voren.",
+      "Reik met je handen naar je scheen tot je een lichte rek aan de achterkant voelt.",
+      "Houd vast en wissel dan van kant."
+    ],
+    "tip": "Houd je rug lang – niet ronden. 2×30 s per kant.",
+    "caution": "Alleen een lichte rek – nooit schokkerig en niet bij een verse verrekking.",
+    "progression": "Langer vasthouden, bewust je rug lang houden.",
+    "phases": {
+      "0": {
+        "label": "Vasthouden",
+        "cue": "Rug lang, niet ronden"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Heupen naar achteren",
+        "cue": "Met rechte rug naar voren buigen"
+      }
+    }
+  },
+  "calf_stretch": {
+    "muscles": [
+      "kuiten",
+      "achillespees"
+    ],
+    "equipment": "muur",
+    "steps": [
+      "Leun met beide handen tegen de muur.",
+      "Strek één been recht naar achteren, de hiel blijft op de grond.",
+      "Duw je heupen naar voren tot je het in je kuit voelt.",
+      "Voor de diepe kuitspier buig je je achterste knie iets."
+    ],
+    "tip": "Voelt lekker na het hardlopen. 2×30 s per kant.",
+    "caution": "Bij een geïrriteerde achillespees rek je voorzichtig en niet tot pijn.",
+    "progression": "Ook met gebogen knie (diepe kuitspieren).",
+    "gear": "muur",
+    "phases": {
+      "0": {
+        "label": "Vasthouden",
+        "cue": "Achterste been recht, hiel omlaag"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Heupen naar voren",
+        "cue": "Achterste hiel blijft op de grond"
+      }
+    }
+  },
+  "cat_cow": {
+    "muscles": [
+      "wervelkolom",
+      "core"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Ga op handen en knieën staan, handen onder je schouders, knieën onder je heupen.",
+      "Adem in: laat je rug rustig doorzakken en kijk omhoog (“koe”).",
+      "Adem uit: rond je rug, kin naar je borst (“kat”).",
+      "Beweeg op het ritme van je ademhaling een paar keer heen en weer tussen de twee."
+    ],
+    "tip": "Zachte mobilisatie voor rug en nek. 8–10 rustige rondes.",
+    "caution": "Blijf binnen een pijnvrij bereik.",
+    "progression": "Langzamer, met bewuste ademhaling.",
+    "phases": {
+      "0": {
+        "label": "Koe",
+        "cue": "Rug zakt, blik naar voren en omhoog"
+      },
+      "1": {
+        "label": "Koe"
+      },
+      "2": {
+        "label": "Kat",
+        "cue": "Rug rond, kin naar de borst"
+      },
+      "3": {
+        "label": "Kat"
+      }
+    }
+  },
+  "chest_opener": {
+    "muscles": [
+      "borst",
+      "voorkant schouder"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Sta rechtop, buikspieren licht aangespannen.",
+      "Open je armen naar achteren en vouw je handen losjes achter je rug in elkaar.",
+      "Til je borstbeen op, schouders naar achteren en omlaag.",
+      "Adem rustig en houd het zacht vast."
+    ],
+    "tip": "Werkt de voorovergebogen “schermhouding” tegen. 2×20–30 s.",
+    "caution": "Bij instabiele schouders trek je niet door tot de eindpositie.",
+    "progression": "Langer vasthouden, armen iets hoger.",
+    "phases": {
+      "0": {
+        "label": "Vasthouden",
+        "cue": "Borstbeen omhoog, schouders omlaag"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Handen achter je rug vouwen"
+      }
+    }
+  },
+  "split_squat": {
+    "muscles": [
+      "bovenbenen",
+      "bilspieren",
+      "balans"
+    ],
+    "equipment": "verhoging (stoel/bank)",
+    "steps": [
+      "Eén voet vooruit op de grond, de wreef van je achterste voet rust op een stoel of bank.",
+      "Romp rechtop, buig je voorste knie en zak recht naar beneden.",
+      "Je voorste knie blijft boven je voet, de achterste knie zakt richting de grond.",
+      "Duw gecontroleerd omhoog via je voorste hiel."
+    ],
+    "tip": "Zeer effectief voor kracht en stabiliteit op één been. 3×8–10 per kant.",
+    "caution": "Bij knieklachten ga je minder diep.",
+    "progression": "Bulgarian split squat (achterste voet verhoogd), daarna met gewicht.",
+    "gear": "verhoging",
+    "phases": {
+      "0": {
+        "label": "Omlaag",
+        "cue": "Voorste knie blijft boven de voet"
+      },
+      "1": {
+        "label": "Onderaan"
+      },
+      "2": {
+        "label": "Omhoog",
+        "cue": "Duw omhoog via de voorste hiel"
+      },
+      "3": {
+        "label": "Bovenaan"
+      }
+    }
+  },
+  "wall_sit": {
+    "muscles": [
+      "bovenbenen",
+      "bilspieren"
+    ],
+    "equipment": "muur",
+    "steps": [
+      "Sta met je rug plat tegen de muur, voeten ongeveer 40 cm ervoor.",
+      "Glijd langs de muur omlaag tot je bovenbenen horizontaal zijn.",
+      "Knieën boven je enkels, je rug blijft tegen de muur.",
+      "Houd de positie vast en adem rustig."
+    ],
+    "tip": "Statische krachtuithouding voor je benen – ideaal zonder materiaal. 3×30–45 s.",
+    "caution": "Bij klachten aan je kniescheiben ga je minder diep zitten (hoek groter dan 90°).",
+    "progression": "Langer vasthouden, daarna afwisselend op één been.",
+    "gear": "muur",
+    "phases": {
+      "0": {
+        "label": "Vasthouden",
+        "cue": "Knieën boven de enkels, rug tegen de muur"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Langs de muur omlaag glijden"
+      }
+    }
+  },
+  "step_up": {
+    "muscles": [
+      "bovenbenen",
+      "bilspieren",
+      "balans"
+    ],
+    "equipment": "stevige opstap/bank",
+    "steps": [
+      "Sta voor een stevige opstap ter hoogte van je knie.",
+      "Stap met één voet helemaal omhoog en duw af via de hiel.",
+      "Sta even stabiel bovenaan en laat jezelf dan gecontroleerd weer zakken.",
+      "Duw niet af met je achterste been – je bovenste been doet het werk."
+    ],
+    "tip": "Handig voor hardlopers (op één been, dicht bij alledaagse bewegingen). 3×10 per kant.",
+    "caution": "Houd je knie stabiel – laat hem niet naar binnen zakken.",
+    "progression": "Hogere opstap, daarna met gewicht.",
+    "gear": "stevige opstap/bank",
+    "phases": {
+      "0": {
+        "label": "Voet op de opstap"
+      },
+      "1": {
+        "label": "Omhoog duwen",
+        "cue": "Kracht uit de hiel, knie stabiel"
+      },
+      "2": {
+        "label": "Stabiel bovenaan"
+      },
+      "3": {
+        "label": "Zakken",
+        "cue": "Het bovenste been remt af"
+      },
+      "4": {
+        "label": "Zakken"
+      },
+      "5": {
+        "label": "Staand"
+      },
+      "6": {
+        "label": "Staand"
+      }
+    }
+  },
+  "crunch": {
+    "muscles": [
+      "rechte buikspier"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Ga op je rug liggen, knieën gebogen, voeten op heupbreedte op de grond.",
+      "Handen losjes bij je slapen (trek niet aan je hoofd).",
+      "Rol je bovenlichaam op met je buikspieren, je schouderbladen komen iets los.",
+      "Houd even vast en zak langzaam terug."
+    ],
+    "tip": "De beweging komt uit je buikspieren, niet uit je nek. 3×12–20.",
+    "caution": "Trek niet met je handen aan je nek.",
+    "progression": "Langzamer, daarna met een licht gewicht op je borst.",
+    "phases": {
+      "0": {
+        "label": "Oprollen",
+        "cue": "Kracht uit de buik, nek ontspannen"
+      },
+      "1": {
+        "label": "Bovenaan"
+      },
+      "2": {
+        "label": "Neerleggen"
+      },
+      "3": {
+        "label": "Onderaan"
+      }
+    }
+  },
+  "leg_raise": {
+    "muscles": [
+      "onderste buikspieren",
+      "heupbuigers"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Ga op je rug liggen, benen gestrekt, handen naast of onder je billen.",
+      "Houd je onderrug bewust op de grond.",
+      "Til je gestrekte benen langzaam op tot ~90°.",
+      "Laat gecontroleerd zakken zonder je hielen helemaal op de grond te leggen."
+    ],
+    "tip": "Als je rug protesteert, buig je je knieën iets. 3×10–15.",
+    "caution": "Bij rugpijn houd je je knieën gebogen.",
+    "progression": "Gestrekte benen, langzaam zakken.",
+    "phases": {
+      "0": {
+        "label": "Benen optillen",
+        "cue": "Onderrug blijft op de grond"
+      },
+      "1": {
+        "label": "Bovenaan"
+      },
+      "2": {
+        "label": "Langzaam zakken",
+        "cue": "Hielen niet helemaal neerleggen"
+      },
+      "3": {
+        "label": "Onderaan"
+      }
+    }
+  },
+  "hollow_hold": {
+    "muscles": [
+      "diepe buikspieren",
+      "core"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Ga op je rug liggen, armen boven je hoofd, benen gestrekt.",
+      "Druk je onderrug stevig in de grond (buikspieren aanspannen).",
+      "Til je schouders en benen een stukje op – je lichaam wordt een ondiepe kom.",
+      "Adem rustig door en houd vast."
+    ],
+    "tip": "Je onderrug mag NIET van de grond komen. 3×15–30 s.",
+    "caution": "Je onderrug mag niet loskomen – gebeurt dat toch, trek dan je knieën in.",
+    "progression": "Armen boven je hoofd, langer vasthouden.",
+    "phases": {
+      "0": {
+        "label": "Vasthouden",
+        "cue": "Onderrug stevig op de grond"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Schouders en benen optillen"
+      }
+    }
+  },
+  "superman": {
+    "muscles": [
+      "onderrug",
+      "bilspieren",
+      "achterkant schouder"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Ga op je buik liggen, armen gestrekt naar voren.",
+      "Til tegelijk je armen, borst en benen een stukje van de grond.",
+      "Kijk naar de grond, nek lang – trek je hoofd niet naar achteren.",
+      "Houd even vast en laat rustig zakken."
+    ],
+    "tip": "Versterkt de vaak verwaarloosde achterkant van je lichaam. 3×10 of 3×20 s vasthouden.",
+    "caution": "Strekken op je buik belast de lendenwervels meer – doe bij rugklachten liever de bird dog.",
+    "progression": "Langer vasthouden, afwisselend arm en been.",
+    "phases": {
+      "0": {
+        "label": "Loskomen",
+        "cue": "Blik op de grond, nek lang"
+      },
+      "1": {
+        "label": "Vasthouden"
+      },
+      "2": {
+        "label": "Neerleggen"
+      },
+      "3": {
+        "label": "Onderaan"
+      }
+    }
+  },
+  "bird_dog": {
+    "muscles": [
+      "core",
+      "onderrug",
+      "bilspieren",
+      "coördinatie"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Ga op handen en knieën staan, handen onder je schouders, knieën onder je heupen.",
+      "Strek tegelijk je rechterarm en linkerbeen lang uit.",
+      "Heupen en schouders blijven waterpas (niet draaien).",
+      "Breng ze terug en wissel van kant."
+    ],
+    "tip": "Stabiliteit, geen zwaaien – langzaam en gecontroleerd. 3×8–10 per kant.",
+    "caution": "Houd je bekken waterpas en maak geen holle onderrug.",
+    "progression": "Kort vasthouden, daarna elleboog en knie onder je lichaam bij elkaar brengen.",
+    "phases": {
+      "0": {
+        "label": "Strekken",
+        "cue": "Arm en tegenoverliggend been lang maken"
+      },
+      "1": {
+        "label": "Vasthouden",
+        "cue": "Bekken blijft waterpas"
+      },
+      "2": {
+        "label": "Terug"
+      },
+      "3": {
+        "label": "Handen en knieën"
+      }
+    }
+  },
+  "child_pose": {
+    "muscles": [
+      "onderrug",
+      "heupen",
+      "schouders"
+    ],
+    "equipment": "geen (mat)",
+    "steps": [
+      "Ga vanuit knielen met je billen naar je hielen toe zitten.",
+      "Zak met je bovenlichaam naar voren en strek je armen lang voor je uit.",
+      "Je voorhoofd rust op de grond, schouders ontspannen.",
+      "Adem diep in je onderrug."
+    ],
+    "tip": "Zachte verlichting voor je hele rug. 3×30–45 s.",
+    "caution": "Bij knieklachten leg je een kussen tussen je billen en je hielen.",
+    "progression": "Loop met je handen opzij (zijwaartse rek).",
+    "phases": {
+      "0": {
+        "label": "Vasthouden",
+        "cue": "Voorhoofd rust, adem diep naar de rug"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Naar voren zakken"
+      }
+    }
+  },
+  "supine_twist": {
+    "muscles": [
+      "wervelkolom",
+      "onderrug",
+      "bilspieren"
+    ],
+    "equipment": "geen (mat)",
+    "steps": [
+      "Ga op je rug liggen, armen zijwaarts gespreid (T-vorm).",
+      "Buig beide knieën en laat ze samen naar één kant zakken.",
+      "Draai desgewenst je hoofd de andere kant op, houd beide schouders op de grond.",
+      "Adem rustig en wissel dan van kant."
+    ],
+    "tip": "Maakt je onderrug los na het hardlopen. 2×30 s per kant.",
+    "caution": "Schouders blijven op de grond, forceer niets.",
+    "progression": "Langer vasthouden, het bovenste been strekken.",
+    "phases": {
+      "0": {
+        "label": "Vasthouden",
+        "cue": "Beide schouders blijven op de grond"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Knieën opzij laten zakken"
+      }
+    }
+  },
+  "figure_four": {
+    "muscles": [
+      "bilspieren",
+      "piriformis",
+      "heupen"
+    ],
+    "equipment": "geen (mat)",
+    "steps": [
+      "Ga op je rug liggen, beide knieën gebogen.",
+      "Leg één enkel over de andere knie (in de vorm van een “4”).",
+      "Trek het onderste been naar je borst tot je het in je bilspieren voelt.",
+      "Houd vast en wissel dan van kant."
+    ],
+    "tip": "Een klassieker bij strakke bilspieren of een ischias-achtig gevoel bij hardlopers. 2×30 s per kant.",
+    "caution": "Bij heup- of knieklachten trek je minder ver.",
+    "progression": "Zittend op een stoel, naar voren leunend.",
+    "phases": {
+      "0": {
+        "label": "Vasthouden",
+        "cue": "Rek in de bilspier, hoofd blijft op de grond"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Het onderste been naar je toe trekken"
+      }
+    }
+  },
+  "butterfly_stretch": {
+    "muscles": [
+      "binnenkant bovenbenen",
+      "heupen"
+    ],
+    "equipment": "geen (mat)",
+    "steps": [
+      "Zit rechtop, breng de voetzolen voor je tegen elkaar.",
+      "Trek je hielen losjes naar je toe en laat je knieën naar de zijkanten zakken.",
+      "Blijf rechtop, leun je bovenlichaam iets naar voren.",
+      "Niet veren – houd stil vast."
+    ],
+    "tip": "Opent je heupen en de binnenkant van je bovenbenen. 2×30–45 s.",
+    "caution": "Duw niet op je knieën en veer niet.",
+    "progression": "Hielen dichterbij, langer vasthouden.",
+    "phases": {
+      "0": {
+        "label": "Vasthouden",
+        "cue": "Zit rechtop, niet veren"
+      }
+    }
+  },
+  "fifa11": {
+    "muscles": [
+      "hele lichaam",
+      "coördinatie",
+      "enkel",
+      "knie"
+    ],
+    "equipment": "geen (pylonen of markeringen)",
+    "steps": [
+      "Deel 1 (ca. 8 min): rustig hardlopen met heup naar buiten/binnen, zijwaartse pasjes, schoudercontact met een partner, korte sprintjes vooruit en achteruit.",
+      "Deel 2 (ca. 10 min): kracht en balans – plank, side plank, Nordic hamstrings, staan op één been met bal, squats, sprongen.",
+      "Deel 3 (ca. 2 min): hardlopen – over het veld met oplopend tempo, richtingsveranderingen met een nette landing.",
+      "Bij elke landing en squat wijzen je knieën over je tenen, niet naar binnen."
+    ],
+    "tip": "Ongeveer 20 minuten vóór de training of een wedstrijd, twee tot drie keer per week. In onderzoek verminderde het de blessurekans in het jeugdvoetbal duidelijk (Soligard et al. 2008).",
+    "caution": "Begin na een blessure op het makkelijkste niveau en stop als het pijn doet.",
+    "progression": "Drie niveaus per oefening: makkelijk, gemiddeld, moeilijk – ga pas omhoog als je het makkelijkere netjes kunt.",
+    "phases": {
+      "0": {
+        "label": "Joggen met hoge knieën",
+        "cue": "Knieën wijzen naar voren, niet naar binnen"
+      },
+      "1": {
+        "label": "Wisselen"
+      }
+    }
+  },
+  "nordic_hamstring": {
+    "muscles": [
+      "hamstrings",
+      "bilspieren"
+    ],
+    "equipment": "partner of vast punt voor je voeten, mat",
+    "steps": [
+      "Kniel op een zachte ondergrond, je hielen vastgehouden of onder een sofa geklemd.",
+      "Lichaam recht van knieën tot hoofd, heupen gestrekt.",
+      "Zak langzaam naar voren en rem zo lang mogelijk af met je hamstrings.",
+      "Vang jezelf op met je handen en kom met een kleine duw weer omhoog."
+    ],
+    "tip": "De bekendste oefening tegen hamstringverrekkingen: in preventieprogramma’s halveerde ze het aantal blessures ongeveer (van Dyk et al. 2019). Begin met 2×4–5 en bouw langzaam op.",
+    "caution": "Niet bij een verse verrekking. De eerste keren geven flinke spierpijn – begin met weinig herhalingen en niet de dag vóór een wedstrijd.",
+    "progression": "Verleng eerst de zakfase, voeg dan herhalingen toe (tot 3×8) en ga later langzamer.",
+    "gear": "partner",
+    "phases": {
+      "0": {
+        "label": "Langzaam naar voren",
+        "cue": "Heupen gestrekt, rem af met de achterkant van je benen"
+      },
+      "1": {
+        "label": "Opvangen"
+      },
+      "2": {
+        "label": "Handen op de grond"
+      },
+      "3": {
+        "label": "Terugduwen",
+        "cue": "Duw af met je handen"
+      },
+      "4": {
+        "label": "Knielend"
+      }
+    }
+  },
+  "copenhagen": {
+    "muscles": [
+      "binnenkant bovenbenen (adductoren)",
+      "zijkant van de core"
+    ],
+    "equipment": "bank of partner",
+    "steps": [
+      "Side plank op je onderarm met je bovenste been op een bank (eerst je knie, later je voet).",
+      "Je onderste been hangt vrij onder de bank.",
+      "Til je heupen op tot je lichaam een rechte lijn vormt – de binnenkant van je bovenste been draagt je.",
+      "Houd kort vast, laat gecontroleerd zakken en wissel van kant."
+    ],
+    "tip": "Versterkt de adductoren – de lies is een veelvoorkomende blessureplek in het voetbal. 2×6–8 per kant.",
+    "caution": "Heb je pijn in de lies, belast die dan niet – laat het nakijken.",
+    "progression": "Van knie op de bank naar voet op de bank (langere hefboom), daarna je onderste been naar de bank optillen.",
+    "gear": "bank",
+    "phases": {
+      "0": {
+        "label": "Heupen optillen",
+        "cue": "Bovenste been drukt in de bank"
+      },
+      "1": {
+        "label": "Vasthouden"
+      },
+      "2": {
+        "label": "Zakken"
+      },
+      "3": {
+        "label": "Onderaan"
+      }
+    }
+  },
+  "clamshell": {
+    "muscles": [
+      "zijkant van de bilspieren (heupabductoren)"
+    ],
+    "equipment": "geen (eventueel miniband)",
+    "steps": [
+      "Ga op je zij liggen, heupen en knieën ongeveer 45° gebogen, voeten op elkaar.",
+      "Je bekken blijft rechtop terwijl je bovenste knie opengaat als een schelp.",
+      "Houd je voeten tegen elkaar.",
+      "Sluit langzaam weer."
+    ],
+    "tip": "Stabiliseert je bekken en knieën tijdens het hardlopen (minder “inzakken”). 3×15 per kant.",
+    "caution": "Rol niet naar achteren – de beweging komt uit je heup.",
+    "progression": "Met een miniband boven je knieën, daarna bovenaan kort vasthouden.",
+    "phases": {
+      "0": {
+        "label": "Knieën openen",
+        "cue": "Voeten blijven tegen elkaar, bekken stil"
+      },
+      "1": {
+        "label": "Bovenaan"
+      },
+      "2": {
+        "label": "Sluiten"
+      },
+      "3": {
+        "label": "Gesloten"
+      }
+    }
+  },
+  "monster_walk": {
+    "muscles": [
+      "zijkant van de bilspieren",
+      "bovenbenen"
+    ],
+    "equipment": "miniband",
+    "steps": [
+      "Miniband boven je knieën of om je enkels, knieën licht gebogen.",
+      "Houd spanning op de band terwijl je zijwaarts of schuin naar voren loopt.",
+      "Knieën wijzen naar voren, je bovenlichaam blijft stil.",
+      "Zet in beide richtingen evenveel stappen."
+    ],
+    "tip": "Een goede warming-up vóór een loop of wedstrijd. 2–3×10 stappen per richting.",
+    "caution": "Laat je knieën niet naar binnen zakken.",
+    "progression": "Sterkere band, of de band om je enkels.",
+    "gear": "miniband",
+    "phases": {
+      "0": {
+        "label": "Zijwaarts stappen",
+        "cue": "Houd spanning op de band"
+      },
+      "1": {
+        "label": "Voet neerzetten"
+      },
+      "2": {
+        "label": "Terug"
+      },
+      "3": {
+        "label": "Voet neerzetten"
+      }
+    }
+  },
+  "soleus_raise": {
+    "muscles": [
+      "diepe kuitspier (soleus)",
+      "achillespees"
+    ],
+    "equipment": "opstap, eventueel gewicht",
+    "steps": [
+      "Sta bij een opstap of een muur, knieën ongeveer 30–45° gebogen.",
+      "Houd je knieën gebogen en kom met je hielen zo hoog mogelijk omhoog.",
+      "Houd bovenaan even vast.",
+      "Laat langzaam zakken (3 seconden)."
+    ],
+    "tip": "Bij het hardlopen draagt de soleus een veelvoud van je lichaamsgewicht – cruciaal voor je achillespees en kuit. 3×15–20.",
+    "caution": "Is je achillespees geïrriteerd, werk dan langzaam en houd de pijn laag.",
+    "progression": "Op één been, daarna met gewicht (rugzak, dumbbell).",
+    "gear": "opstap",
+    "phases": {
+      "0": {
+        "label": "Omhoog",
+        "cue": "Hielen omhoog, knieën blijven gebogen"
+      },
+      "1": {
+        "label": "Bovenaan vasthouden"
+      },
+      "2": {
+        "label": "Zakken",
+        "cue": "Langzaam zakken (3 seconden)"
+      },
+      "3": {
+        "label": "Onderaan"
+      }
+    }
+  },
+  "running_drills": {
+    "muscles": [
+      "enkels",
+      "heupbuigers",
+      "coördinatie"
+    ],
+    "equipment": "geen (20–30 m vrije ruimte)",
+    "steps": [
+      "Enkeldrills: korte, snelle pasjes op de ballen van je voeten, 20 m.",
+      "Hoge knieën: til je knieën snel afwisselend tot ongeveer heuphoogte, bovenlichaam rechtop, 20 m.",
+      "Hielen naar billen: hielen richting je bilspieren, hoge pasfrequentie, 20 m.",
+      "Jog tussendoor rustig terug; sluit af met 2–3 versnellingen."
+    ],
+    "tip": "Verbetert je loopeconomie en coördinatie – ideaal na het inlopen vóór snelheidstrainingen. 2 rondes.",
+    "caution": "Alleen als je warm bent, op vlak terrein.",
+    "progression": "Hogere pasfrequentie, daarna skippings en bounding.",
+    "phases": {
+      "0": {
+        "label": "Knieën omhoog",
+        "cue": "Rechtop, hoge pasfrequentie"
+      },
+      "1": {
+        "label": "Wisselen"
+      }
+    }
+  },
+  "pogo_jumps": {
+    "muscles": [
+      "kuiten",
+      "achillespees",
+      "enkels"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Voeten op heupbreedte, knieën bijna gestrekt.",
+      "Kleine, snelle sprongetjes alleen vanuit je enkels – de vloer is “heet”.",
+      "Land zacht, houd de grondcontacten kort.",
+      "20–30 seconden, daarna rust."
+    ],
+    "tip": "Eenvoudige plyometrie: maakt je pezen veerkrachtiger en je pas springeriger. 3×20 s.",
+    "caution": "Niet bij pijn aan de achillespees of scheenbenen; pas na een aantal weken kuitkrachttraining.",
+    "progression": "Langer, daarna op één been of zijwaarts over een lijn.",
+    "phases": {
+      "0": {
+        "label": "Omhoog",
+        "cue": "Alleen vanuit de enkel, korte contacten"
+      },
+      "1": {
+        "label": "Landen"
+      }
+    }
+  },
+  "goblet_squat": {
+    "muscles": [
+      "bovenbenen",
+      "bilspieren",
+      "core"
+    ],
+    "equipment": "kettlebell of dumbbell",
+    "steps": [
+      "Houd het gewicht met beide handen voor je borst, ellebogen wijzen omlaag.",
+      "Voeten op schouderbreedte, tenen iets naar buiten gedraaid.",
+      "Zak rechtop in een diepe squat, ellebogen tussen je knieën.",
+      "Duw via je hele voet weer omhoog."
+    ],
+    "tip": "Het gewicht voor je borst houdt je bovenlichaam rechtop – ideaal om een nette squat te leren. 3×8–12.",
+    "caution": "Houd je rug recht; bij knieklachten ga je alleen zo diep als pijnloos kan.",
+    "progression": "Zwaarder gewicht, daarna 2 s pauze onderaan.",
+    "gear": "kettlebell",
+    "phases": {
+      "0": {
+        "label": "Omlaag",
+        "cue": "Ellebogen tussen de knieën, borst omhoog"
+      },
+      "1": {
+        "label": "Onderaan"
+      },
+      "2": {
+        "label": "Omhoog",
+        "cue": "Duw je hielen in de grond"
+      },
+      "3": {
+        "label": "Bovenaan"
+      }
+    }
+  },
+  "sumo_squat": {
+    "muscles": [
+      "binnenkant bovenbenen",
+      "bilspieren",
+      "bovenbenen"
+    ],
+    "equipment": "geen (eventueel kettlebell)",
+    "steps": [
+      "Brede stand, tenen goed naar buiten gedraaid.",
+      "Handen voor je borst, bovenlichaam rechtop.",
+      "Laat je heupen recht naar beneden zakken en duw je knieën naar buiten over je tenen.",
+      "Duw omhoog via je hielen en knijp bovenaan je bilspieren samen."
+    ],
+    "tip": "Richt zich op de binnenkant van je bovenbenen en je bilspieren. 3×12–15.",
+    "caution": "Je knieën volgen de richting van je voeten – laat ze niet naar binnen zakken.",
+    "progression": "Met een kettlebell tussen je benen, daarna langzamer zakken.",
+    "phases": {
+      "0": {
+        "label": "Omlaag",
+        "cue": "Knieën wijzen naar buiten over de voeten"
+      },
+      "1": {
+        "label": "Onderaan"
+      },
+      "2": {
+        "label": "Omhoog",
+        "cue": "Knijp je bilspieren samen en duw omhoog"
+      },
+      "3": {
+        "label": "Bovenaan"
+      }
+    }
+  },
+  "reverse_lunge": {
+    "muscles": [
+      "bovenbenen",
+      "bilspieren",
+      "balans"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Sta rechtop, handen op je heupen of ontspannen.",
+      "Zet met één been een grote stap naar achteren.",
+      "Buig beide knieën; je achterste knie zakt richting de grond.",
+      "Duw via je voorste hiel terug naar stand en wissel van been."
+    ],
+    "tip": "Vriendelijker voor de knieën dan een stap naar voren – een goed beginpunt. 3×8–10 per kant.",
+    "caution": "Je voorste knie blijft boven je voet; sta je onvast, houd je dan vast aan een muur.",
+    "progression": "Met dumbbells, daarna achteruit stappen vanaf een opstap (deficit).",
+    "phases": {
+      "0": {
+        "label": "Stap naar achteren"
+      },
+      "1": {
+        "label": "Omlaag",
+        "cue": "Voorste knie blijft boven de voet"
+      },
+      "2": {
+        "label": "Onderaan"
+      },
+      "3": {
+        "label": "Omhoog duwen",
+        "cue": "Kracht uit de voorste hiel"
+      },
+      "4": {
+        "label": "Staand"
+      },
+      "5": {
+        "label": "Staand"
+      }
+    }
+  },
+  "side_lunge": {
+    "muscles": [
+      "binnenkant bovenbenen",
+      "bovenbenen",
+      "bilspieren"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Brede stand, tenen wijzen naar voren.",
+      "Verplaats je gewicht naar één kant en buig die knie, heupen naar achteren.",
+      "Je andere been blijft gestrekt, beide hielen blijven op de grond.",
+      "Duw terug naar het midden en wissel van kant."
+    ],
+    "tip": "Versterkt je benen zijwaarts – belangrijk voor richtingsveranderingen in het voetbal. 3×8 per kant.",
+    "caution": "Ga alleen zo diep dat je hielen op de grond blijven; je knie wijst over je voet.",
+    "progression": "Dieper, daarna met een gewicht voor je borst.",
+    "phases": {
+      "0": {
+        "label": "Zijwaarts buigen",
+        "cue": "Het andere been blijft gestrekt"
+      },
+      "1": {
+        "label": "Onderaan"
+      },
+      "2": {
+        "label": "Terug naar het midden"
+      },
+      "3": {
+        "label": "Midden"
+      }
+    }
+  },
+  "single_leg_deadlift": {
+    "muscles": [
+      "bilspieren",
+      "hamstrings",
+      "balans"
+    ],
+    "equipment": "geen (eventueel dumbbell)",
+    "steps": [
+      "Sta op één been, knie licht gebogen.",
+      "Kantel je bovenlichaam naar voren en til je vrije been achter je op.",
+      "Je rug en achterste been vormen één lijn, je bekken blijft waterpas.",
+      "Kom langzaam weer omhoog en duw door via je bilspieren."
+    ],
+    "tip": "Versterkt je bilspieren en balans – lijkt sterk op hardlopen. 3×8 per kant.",
+    "caution": "Laat je bekken niet open draaien; bij rugpijn ga je alleen tot horizontaal.",
+    "progression": "Met een dumbbell in de tegenoverliggende hand.",
+    "phases": {
+      "0": {
+        "label": "Naar voren kantelen",
+        "cue": "Achterste been en rug vormen één lijn"
+      },
+      "1": {
+        "label": "Onderaan"
+      },
+      "2": {
+        "label": "Oprichten",
+        "cue": "Bekken blijft waterpas"
+      },
+      "3": {
+        "label": "Staand"
+      }
+    }
+  },
+  "hip_thrust": {
+    "muscles": [
+      "bilspieren",
+      "hamstrings"
+    ],
+    "equipment": "bank of sofa",
+    "steps": [
+      "Laat je schouderbladen op een bank rusten, voeten op heupbreedte neergezet.",
+      "Duw je bekken omhoog tot knieën, heupen en schouders één lijn vormen.",
+      "Knijp bovenaan je bilspieren stevig samen, kin iets naar je borst.",
+      "Laat gecontroleerd zakken zonder helemaal neer te komen."
+    ],
+    "tip": "De krachtigste oefening voor je bilspieren. 3×10–12.",
+    "caution": "Maak bovenaan geen holle onderrug – de kracht komt uit je bilspieren.",
+    "progression": "Op één been, daarna met een gewicht op je heupen.",
+    "gear": "bank",
+    "phases": {
+      "0": {
+        "label": "Bekken omhoog",
+        "cue": "Bilspieren strak, knieën boven de hielen"
+      },
+      "1": {
+        "label": "Bovenaan vasthouden"
+      },
+      "2": {
+        "label": "Zakken"
+      },
+      "3": {
+        "label": "Onderaan"
+      }
+    }
+  },
+  "single_leg_bridge": {
+    "muscles": [
+      "bilspieren",
+      "hamstrings",
+      "core"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Ga op je rug liggen, één voet neergezet, het andere been gestrekt in de lucht.",
+      "Duw je bekken omhoog via je hiel.",
+      "Je bekken blijft waterpas; houd bovenaan even vast.",
+      "Laat langzaam zakken en wissel van kant."
+    ],
+    "tip": "Laat snel verschillen tussen je linker- en rechterkant zien. 3×10 per kant.",
+    "caution": "Laat je bekken niet naar één kant zakken; krijg je kramp achter in je bovenbeen, zet je voet dan dichter bij je billen.",
+    "progression": "Bovenaan langer vasthouden, daarna met je voet verhoogd.",
+    "phases": {
+      "0": {
+        "label": "Bekken optillen",
+        "cue": "Bekken blijft waterpas"
+      },
+      "1": {
+        "label": "Bovenaan vasthouden"
+      },
+      "2": {
+        "label": "Zakken"
+      },
+      "3": {
+        "label": "Onderaan"
+      }
+    }
+  },
+  "kettlebell_swing": {
+    "muscles": [
+      "bilspieren",
+      "hamstrings",
+      "core"
+    ],
+    "equipment": "kettlebell",
+    "steps": [
+      "Sta iets breder dan heupbreed, kettlebell in beide handen.",
+      "Duw je heupen naar achteren en zwaai de kettlebell naar achteren tussen je benen.",
+      "Drijf je heupen explosief naar voren – je armen zijn slechts touwen.",
+      "De kettlebell zweeft omhoog tot borsthoogte en valt terug in de volgende swing."
+    ],
+    "tip": "Kracht en conditie in één – een vast onderdeel van Hyrox-training. 3×15.",
+    "caution": "Houd je rug recht en trek niet met je armen; beheers eerst het heupscharnier.",
+    "progression": "Zwaardere kettlebell, daarna met één arm.",
+    "gear": "kettlebell",
+    "phases": {
+      "0": {
+        "label": "Naar achteren zwaaien",
+        "cue": "Heupen naar achteren, rug recht"
+      },
+      "1": {
+        "label": "Heupen naar voren",
+        "cue": "Zwaai vanuit de heupen, niet vanuit de armen"
+      },
+      "2": {
+        "label": "Bovenaan"
+      }
+    }
+  },
+  "jump_squat": {
+    "muscles": [
+      "bovenbenen",
+      "bilspieren",
+      "kuiten"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Halve squat, armen naar achteren.",
+      "Spring explosief omhoog en zwaai je armen mee.",
+      "Land zacht op de ballen van je voeten en ga meteen door naar de volgende squat.",
+      "Je knieën wijzen over je voeten als je landt."
+    ],
+    "tip": "Explosieve kracht voor versnellen en springen. 3×8–10.",
+    "caution": "Alleen met gezonde knieën, op een stevige, antislip ondergrond; land zacht.",
+    "progression": "Meer herhalingen, daarna sprongen op een box.",
+    "phases": {
+      "0": {
+        "label": "Omlaag",
+        "cue": "Halve squat"
+      },
+      "1": {
+        "label": "Afzetten",
+        "cue": "Explosief strekken"
+      },
+      "2": {
+        "label": "Landen",
+        "cue": "Zacht en stil landen"
+      },
+      "3": {
+        "label": "Staand"
+      }
+    }
+  },
+  "good_morning": {
+    "muscles": [
+      "hamstrings",
+      "bilspieren",
+      "onderrug"
+    ],
+    "equipment": "geen (eventueel stok)",
+    "steps": [
+      "Voeten op heupbreedte, handen achter je hoofd.",
+      "Buig je knieën iets, duw je heupen naar achteren en kantel je rechte bovenlichaam naar voren.",
+      "Ga tot ongeveer horizontaal, of tot je een rek achter in je benen voelt.",
+      "Kom weer omhoog door je heupen naar voren te drijven."
+    ],
+    "tip": "Leert je het heupscharnier zonder gewicht – goede voorbereiding op deadlifts. 3×10–12.",
+    "caution": "Je rug blijft recht, laat hem niet ronden; sla het over bij rugpijn.",
+    "progression": "Met een stok of een licht gewicht op je schouders.",
+    "phases": {
+      "0": {
+        "label": "Naar voren leunen",
+        "cue": "Rug recht, knieën licht gebogen"
+      },
+      "1": {
+        "label": "Onderaan"
+      },
+      "2": {
+        "label": "Oprichten",
+        "cue": "Heupen naar voren duwen"
+      },
+      "3": {
+        "label": "Bovenaan"
+      }
+    }
+  },
+  "tibialis_raise": {
+    "muscles": [
+      "scheenspier (voorkant onderbeen)"
+    ],
+    "equipment": "muur",
+    "steps": [
+      "Leun met je rug tegen een muur, voeten ongeveer een voetlengte ervoor.",
+      "Je hielen blijven op de grond; trek je tenen stevig omhoog richting je scheenbenen.",
+      "Houd bovenaan even vast.",
+      "Laat langzaam zakken."
+    ],
+    "tip": "Versterkt de voorkant van je onderbeen – helpt tegen scheenbeenklachten (shin splints). 3×15–20.",
+    "caution": "Bij acute scheenbeenpijn werk je alleen pijnvrij en laat je het nakijken.",
+    "progression": "Voeten verder van de muur, daarna op één been.",
+    "gear": "muur",
+    "phases": {
+      "0": {
+        "label": "Tenen omhoog",
+        "cue": "Tenen omhoog, hielen blijven op de grond"
+      },
+      "1": {
+        "label": "Bovenaan"
+      },
+      "2": {
+        "label": "Zakken",
+        "cue": "Langzaam zakken"
+      }
+    }
+  },
+  "step_down": {
+    "muscles": [
+      "bovenbenen",
+      "bilspieren",
+      "kniestabiliteit"
+    ],
+    "equipment": "opstap of trap",
+    "steps": [
+      "Sta op één been op een opstap, het andere been hangt voor de rand.",
+      "Buig je knie langzaam tot de hiel van je vrije been de grond aantikt.",
+      "Je knie blijft boven je voet, je bekken waterpas.",
+      "Duw terug omhoog via de hiel van je standbeen."
+    ],
+    "tip": "Traint kniestabiliteit voor bergafwaarts lopen. 3×8 per kant, langzaam (3 s omlaag).",
+    "caution": "Laat je knie niet naar binnen zakken; bij kniescheibeklachten gebruik je een lagere opstap.",
+    "progression": "Hogere opstap, daarna met een gewicht in de tegenoverliggende hand.",
+    "gear": "opstap",
+    "phases": {
+      "0": {
+        "label": "Langzaam zakken",
+        "cue": "Knie blijft boven de voet"
+      },
+      "1": {
+        "label": "Hiel tikt aan"
+      },
+      "2": {
+        "label": "Omhoog duwen"
+      },
+      "3": {
+        "label": "Bovenaan"
+      }
+    }
+  },
+  "cossack_squat": {
+    "muscles": [
+      "binnenkant bovenbenen",
+      "bovenbenen",
+      "heupmobiliteit"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Zeer brede stand, tenen iets naar buiten gedraaid.",
+      "Verplaats je gewicht naar één kant en zak diep in een squat aan die kant.",
+      "Je andere been blijft gestrekt; je tenen mogen omhoog wijzen.",
+      "Beweeg via het midden naar de andere kant."
+    ],
+    "tip": "Heupkracht en mobiliteit in één. 3×6 per kant.",
+    "caution": "Ga alleen zo diep dat je hiel op de grond blijft; geen schokkerige bewegingen.",
+    "progression": "Dieper, daarna met een licht gewicht voor je borst.",
+    "phases": {
+      "0": {
+        "label": "Laag naar de zijkant",
+        "cue": "Hiel blijft op de grond, ander been lang"
+      },
+      "1": {
+        "label": "Onderaan"
+      },
+      "2": {
+        "label": "Terug naar het midden"
+      },
+      "3": {
+        "label": "Midden"
+      }
+    }
+  },
+  "farmers_carry": {
+    "muscles": [
+      "grijpkracht",
+      "schouders",
+      "core"
+    ],
+    "equipment": "twee zware dumbbells of kettlebells",
+    "steps": [
+      "Pak twee zware gewichten langs je zij en sta rechtop.",
+      "Schouders omlaag en naar achteren, buikspieren aangespannen.",
+      "Loop met korte, gelijkmatige pasjes – je bovenlichaam zwaait niet.",
+      "30 tot 40 meter of 30 seconden, zet ze dan neer."
+    ],
+    "tip": "Grijpkracht en corestabiliteit – een Hyrox-station. 3×30 s.",
+    "caution": "Pak de gewichten op en zet ze neer met een rechte rug.",
+    "progression": "Zwaarder, daarna langer of eenzijdig (suitcase carry).",
+    "gear": "twee zware dumbbells",
+    "phases": {
+      "0": {
+        "label": "Lopen",
+        "cue": "Rechtop, schouders omlaag, stevige grip"
+      },
+      "1": {
+        "label": "Lopen"
+      }
+    }
+  },
+  "wall_ball": {
+    "muscles": [
+      "bovenbenen",
+      "bilspieren",
+      "schouders"
+    ],
+    "equipment": "medicineball en muur",
+    "steps": [
+      "Sta ongeveer een armlengte van de muur, bal voor je borst.",
+      "Zak in een diepe squat.",
+      "Strek explosief en gooi de bal naar een doel hoog op de muur.",
+      "Vang de bal en ga meteen door naar de volgende squat."
+    ],
+    "tip": "Hele lichaam en conditie – een Hyrox-station. 3×15.",
+    "caution": "Rug recht, knieën boven je voeten; gebruik een lichte bal zolang je het leert.",
+    "progression": "Zwaardere bal, hoger doel, meer herhalingen.",
+    "gear": "medicineball en muur",
+    "phases": {
+      "0": {
+        "label": "Omlaag",
+        "cue": "Diep zakken, bal bij de borst"
+      },
+      "1": {
+        "label": "Strekken en gooien",
+        "cue": "Vanuit de benen naar het doel op de muur"
+      },
+      "2": {
+        "label": "Bal vangen"
+      },
+      "3": {
+        "label": "Staand"
+      }
+    }
+  },
+  "thruster": {
+    "muscles": [
+      "bovenbenen",
+      "bilspieren",
+      "schouders"
+    ],
+    "equipment": "twee dumbbells",
+    "steps": [
+      "Dumbbells op je schouders, voeten op schouderbreedte.",
+      "Zak in een squat, ellebogen wijzen naar voren.",
+      "Duw omhoog vanuit je benen en druk de dumbbells in één beweging boven je hoofd.",
+      "Terug naar je schouders en meteen door naar de volgende squat."
+    ],
+    "tip": "Brengt kracht van je benen over naar je armen – en test ook je uithoudingsvermogen. 3×10.",
+    "caution": "Maak boven je hoofd geen holle onderrug; sla het over bij schouderpijn.",
+    "progression": "Zwaardere dumbbells, daarna meer rondes.",
+    "gear": "twee dumbbells",
+    "phases": {
+      "0": {
+        "label": "Omlaag",
+        "cue": "Gewichten blijven op de schouders"
+      },
+      "1": {
+        "label": "Omhoog duwen",
+        "cue": "In één beweging omhoog vanuit de benen"
+      },
+      "2": {
+        "label": "Terug naar de schouders"
+      },
+      "3": {
+        "label": "Staand"
+      }
+    }
+  },
+  "incline_pushup": {
+    "muscles": [
+      "borst",
+      "schouders",
+      "triceps"
+    ],
+    "equipment": "bank, tafel of vensterbank",
+    "steps": [
+      "Handen iets breder dan schouderbreed op een stabiele rand.",
+      "Je lichaam vormt een lijn van hoofd tot tenen.",
+      "Zak met je borst naar de rand, ellebogen schuin naar achteren.",
+      "Duw krachtig omhoog."
+    ],
+    "tip": "De makkelijke instap voor push-ups – hoe hoger de rand, hoe makkelijker. 3×10–15.",
+    "caution": "De rand moet antislip zijn; laat je heupen niet doorzakken.",
+    "progression": "Lagere rand, daarna push-ups op je knieën en dan hele push-ups.",
+    "gear": "bank",
+    "phases": {
+      "0": {
+        "label": "Zakken",
+        "cue": "Borst naar de rand, lichaam recht"
+      },
+      "1": {
+        "label": "Onderaan"
+      },
+      "2": {
+        "label": "Omhoog duwen"
+      },
+      "3": {
+        "label": "Bovenaan"
+      }
+    }
+  },
+  "knee_pushup": {
+    "muscles": [
+      "borst",
+      "schouders",
+      "triceps",
+      "core"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Knieën op de mat, handen iets breder dan schouderbreed.",
+      "Een rechte lijn van knieën tot hoofd.",
+      "Zak gecontroleerd met je borst naar de grond.",
+      "Duw omhoog zonder in je heupen te knikken."
+    ],
+    "tip": "Een opstapje naar hele push-ups. 3×8–12.",
+    "caution": "Zorg voor een zachte onderlaag voor je knieën; je heupen blijven in lijn en worden niet omhoog geduwd.",
+    "progression": "Meer herhalingen, daarna een paar hele push-ups.",
+    "phases": {
+      "0": {
+        "label": "Zakken",
+        "cue": "Van knieën tot hoofd in één lijn"
+      },
+      "1": {
+        "label": "Onderaan"
+      },
+      "2": {
+        "label": "Omhoog duwen"
+      },
+      "3": {
+        "label": "Bovenaan"
+      }
+    }
+  },
+  "pike_pushup": {
+    "muscles": [
+      "schouders",
+      "triceps"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Duw vanuit een push-uppositie je heupen hoog op – een omgekeerde V.",
+      "Handen op schouderbreedte, hoofd tussen je armen.",
+      "Buig je ellebogen en zak met je hoofd richting de grond voor je handen.",
+      "Duw krachtig weer omhoog."
+    ],
+    "tip": "Schouderkracht zonder dumbbells. 3×6–8.",
+    "caution": "Niet bij schouder- of nekpijn; zak langzaam.",
+    "progression": "Voeten verhoogd, daarna dieper gaan.",
+    "phases": {
+      "0": {
+        "label": "Hoofd richting de grond",
+        "cue": "Heupen blijven hoog"
+      },
+      "1": {
+        "label": "Onderaan"
+      },
+      "2": {
+        "label": "Omhoog duwen"
+      },
+      "3": {
+        "label": "Bovenaan"
+      }
+    }
+  },
+  "bench_dip": {
+    "muscles": [
+      "triceps",
+      "schouders",
+      "borst"
+    ],
+    "equipment": "bank of stevige stoel",
+    "steps": [
+      "Handen op schouderbreedte op de rand achter je, vingers wijzen naar voren.",
+      "Benen voor je uit, je billen net voor de rand.",
+      "Buig je ellebogen naar achteren en zak met je lichaam.",
+      "Duw je met je armen weer omhoog."
+    ],
+    "tip": "Triceps met je eigen lichaamsgewicht. 3×8–12.",
+    "caution": "Ga niet lager dan bovenarmen horizontaal; sla het over bij schouderpijn.",
+    "progression": "Strek je benen verder, daarna met verhoogde voeten.",
+    "gear": "bank",
+    "phases": {
+      "0": {
+        "label": "Zakken",
+        "cue": "Ellebogen wijzen naar achteren"
+      },
+      "1": {
+        "label": "Onderaan"
+      },
+      "2": {
+        "label": "Omhoog duwen"
+      },
+      "3": {
+        "label": "Bovenaan"
+      }
+    }
+  },
+  "biceps_curl": {
+    "muscles": [
+      "biceps",
+      "onderarmen"
+    ],
+    "equipment": "dumbbells of weerstandsband",
+    "steps": [
+      "Sta rechtop, dumbbells met je handpalmen naar voren.",
+      "Je ellebogen blijven langs je zij.",
+      "Curl de dumbbells omhoog naar je schouders.",
+      "Strek je armen weer langzaam."
+    ],
+    "tip": "Eenvoudig en makkelijk op te schalen. 3×10–12.",
+    "caution": "Zwaai het gewicht niet omhoog met je rug.",
+    "progression": "Zwaardere dumbbells, daarna langzamer zakken (3 s).",
+    "gear": "dumbbells",
+    "phases": {
+      "0": {
+        "label": "Buigen",
+        "cue": "Ellebogen blijven langs het lichaam"
+      },
+      "1": {
+        "label": "Bovenaan"
+      },
+      "2": {
+        "label": "Langzaam strekken"
+      },
+      "3": {
+        "label": "Onderaan"
+      }
+    }
+  },
+  "triceps_extension": {
+    "muscles": [
+      "triceps"
+    ],
+    "equipment": "één dumbbell",
+    "steps": [
+      "Sta rechtop en houd één dumbbell met beide handen boven je hoofd.",
+      "Je bovenarmen blijven naast je hoofd.",
+      "Laat de dumbbell achter je hoofd zakken.",
+      "Strek je armen weer."
+    ],
+    "tip": "Versterkt de achterkant van je bovenarmen. 3×10–12.",
+    "caution": "Maak geen holle onderrug, span je buikspieren aan; bij schouderpijn ga je lichter of sla je het over.",
+    "progression": "Zwaardere dumbbell, daarna met één arm.",
+    "gear": "één dumbbell",
+    "phases": {
+      "0": {
+        "label": "Achter het hoofd laten zakken",
+        "cue": "Bovenarmen blijven naast het hoofd"
+      },
+      "1": {
+        "label": "Onderaan"
+      },
+      "2": {
+        "label": "Strekken"
+      },
+      "3": {
+        "label": "Bovenaan"
+      }
+    }
+  },
+  "lateral_raise": {
+    "muscles": [
+      "zijkant van de schouders"
+    ],
+    "equipment": "lichte dumbbells",
+    "steps": [
+      "Sta rechtop, dumbbells langs je zij, ellebogen licht gebogen.",
+      "Til je armen zijwaarts tot schouderhoogte.",
+      "Je schouders blijven omlaag – trek ze niet op.",
+      "Laat langzaam zakken."
+    ],
+    "tip": "Een licht gewicht is genoeg – techniek is wat telt. 3×12–15.",
+    "caution": "Niet hoger dan schouderhoogte en zonder zwaaien; sla het over bij schouderpijn.",
+    "progression": "Iets zwaarder, daarna 1 s vasthouden bovenaan.",
+    "gear": "lichte dumbbells",
+    "phases": {
+      "0": {
+        "label": "Zijwaarts heffen",
+        "cue": "Tot schouderhoogte, schouders omlaag"
+      },
+      "1": {
+        "label": "Bovenaan"
+      },
+      "2": {
+        "label": "Zakken"
+      },
+      "3": {
+        "label": "Onderaan"
+      }
+    }
+  },
+  "band_pull_apart": {
+    "muscles": [
+      "bovenrug",
+      "achterkant van de schouders"
+    ],
+    "equipment": "weerstandsband",
+    "steps": [
+      "Pak de band op schouderbreedte vast, armen gestrekt voor je borst.",
+      "Trek de band uit elkaar tot je armen zijwaarts gespreid zijn.",
+      "Schouderbladen naar elkaar, schouders omlaag.",
+      "Keer langzaam terug."
+    ],
+    "tip": "Werkt tegen een ronde bureauhouding – ook handig als korte pauze. 3×15.",
+    "caution": "Compenseer niet met een holle onderrug en laat de band niet terugschieten.",
+    "progression": "Sterkere band, daarna 2 s vasthouden aan het einde.",
+    "gear": "weerstandsband",
+    "phases": {
+      "0": {
+        "label": "Uit elkaar trekken",
+        "cue": "Schouderbladen naar elkaar, armen lang"
+      },
+      "1": {
+        "label": "Vasthouden"
+      },
+      "2": {
+        "label": "Terugbrengen"
+      },
+      "3": {
+        "label": "Voor de borst"
+      }
+    }
+  },
+  "pullup": {
+    "muscles": [
+      "brede rugspieren",
+      "biceps",
+      "grijpkracht"
+    ],
+    "equipment": "optrekstang",
+    "steps": [
+      "Pak de stang iets breder dan schouderbreed vast en hang eraan.",
+      "Trek je schouders actief omlaag.",
+      "Trek je borst naar de stang tot je kin erboven is.",
+      "Laat jezelf langzaam zakken."
+    ],
+    "tip": "Gebruik in het begin een band als hulp of oefen alleen het langzaam zakken. 3×3–8.",
+    "caution": "Niet zwaaien; sla het over bij schouderpijn.",
+    "progression": "Van langzaam zakken naar je eerste hele pull-up, daarna meer herhalingen.",
+    "gear": "optrekstang",
+    "phases": {
+      "0": {
+        "label": "Optrekken",
+        "cue": "Borst naar de stang, schouders omlaag"
+      },
+      "1": {
+        "label": "Bovenaan"
+      },
+      "2": {
+        "label": "Langzaam zakken"
+      },
+      "3": {
+        "label": "Hangen"
+      }
+    }
+  },
+  "inverted_row": {
+    "muscles": [
+      "bovenrug",
+      "biceps",
+      "core"
+    ],
+    "equipment": "stevige tafel of stang",
+    "steps": [
+      "Ga onder een stevige tafel of een lage stang liggen en pak de rand vast.",
+      "Je hielen blijven op de grond; je lichaam vormt een rechte lijn.",
+      "Trek je borst naar de rand en knijp je schouderbladen samen.",
+      "Laat langzaam zakken."
+    ],
+    "tip": "Een trekoefening zonder materiaal – zorgt voor balans met push-ups. 3×8–12.",
+    "caution": "Controleer eerst of de tafel of stang je gewicht veilig kan dragen.",
+    "progression": "Zet je voeten verder naar voren of verhoog ze.",
+    "gear": "stevige tafel",
+    "phases": {
+      "0": {
+        "label": "Borst naar de stang",
+        "cue": "Lichaam blijft in één lijn"
+      },
+      "1": {
+        "label": "Bovenaan"
+      },
+      "2": {
+        "label": "Laten zakken"
+      },
+      "3": {
+        "label": "Onderaan"
+      }
+    }
+  },
+  "single_arm_row": {
+    "muscles": [
+      "bovenrug",
+      "biceps",
+      "achterkant schouder"
+    ],
+    "equipment": "dumbbell en bank",
+    "steps": [
+      "Zet één knie en de hand aan dezelfde kant op de bank, je rug horizontaal.",
+      "De dumbbell hangt in je vrije hand.",
+      "Trek je elleboog dicht langs je lichaam naar je heup.",
+      "Laat langzaam zakken en wissel dan van kant."
+    ],
+    "tip": "Rugkracht met je rug veilig ondersteund. 3×10 per kant.",
+    "caution": "Je rug blijft recht en draait niet open.",
+    "progression": "Zwaardere dumbbell, daarna 1 s vasthouden bovenaan.",
+    "gear": "dumbbell en bank",
+    "phases": {
+      "0": {
+        "label": "Trekken",
+        "cue": "Ellebogen naar de heupen, rug recht"
+      },
+      "1": {
+        "label": "Bovenaan"
+      },
+      "2": {
+        "label": "Laten zakken"
+      },
+      "3": {
+        "label": "Onderaan"
+      }
+    }
+  },
+  "side_lying_leg_raise": {
+    "muscles": [
+      "buitenste bilspieren",
+      "heupabductoren"
+    ],
+    "equipment": "mat (eventueel miniband)",
+    "steps": [
+      "Ga op je zij liggen, hoofd rustend op je onderarm, benen gestrekt.",
+      "Til je bovenste been op en houd het gestrekt, tenen wijzen naar voren.",
+      "Je bekken kantelt niet naar achteren.",
+      "Laat langzaam zakken en wissel dan van kant."
+    ],
+    "tip": "Stabiliseert je bekken en knieën tijdens het hardlopen. 3×15 per kant.",
+    "caution": "Ga alleen zo hoog dat je bekken stil blijft.",
+    "progression": "Met een miniband, daarna 2 s vasthouden bovenaan.",
+    "phases": {
+      "0": {
+        "label": "Been optillen",
+        "cue": "Tenen wijzen naar voren, niet kantelen"
+      },
+      "1": {
+        "label": "Bovenaan"
+      },
+      "2": {
+        "label": "Zakken"
+      },
+      "3": {
+        "label": "Onderaan"
+      }
+    }
+  },
+  "donkey_kick": {
+    "muscles": [
+      "bilspieren"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Op handen en knieën, knieën onder je heupen.",
+      "Houd één been gebogen en duw de hiel naar het plafond.",
+      "Maak geen holle onderrug; je bekken blijft waterpas.",
+      "Keer langzaam terug en wissel van kant."
+    ],
+    "tip": "Richt zich op je bilspieren en is vriendelijk voor je rug. 3×12 per kant.",
+    "caution": "Ga alleen zo hoog dat je rug recht blijft.",
+    "progression": "Met een miniband boven je knieën of een enkelgewicht.",
+    "phases": {
+      "0": {
+        "label": "Hiel naar het plafond",
+        "cue": "Geen holle rug, bekken blijft recht"
+      },
+      "1": {
+        "label": "Bovenaan"
+      },
+      "2": {
+        "label": "Terug"
+      },
+      "3": {
+        "label": "Handen en knieën"
+      }
+    }
+  },
+  "bicycle_crunch": {
+    "muscles": [
+      "schuine en rechte buikspieren"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Ga op je rug liggen, handen losjes achter je hoofd, schouders iets opgetild.",
+      "Trek één knie naar je borst en strek het andere been.",
+      "Draai de tegenoverliggende elleboog naar de gebogen knie.",
+      "Wissel vloeiend van kant."
+    ],
+    "tip": "Langzaam werkt beter dan snel. 3×10 per kant.",
+    "caution": "Trek niet aan je hoofd; doet je rug pijn, houd het gestrekte been dan hoger.",
+    "progression": "Langzamer, met het gestrekte been lager.",
+    "phases": {
+      "0": {
+        "label": "Knie naar tegenoverliggende elleboog",
+        "cue": "Schouders blijven omhoog"
+      },
+      "1": {
+        "label": "Draaien"
+      },
+      "2": {
+        "label": "Wisselen"
+      }
+    }
+  },
+  "russian_twist": {
+    "muscles": [
+      "schuine buikspieren",
+      "core"
+    ],
+    "equipment": "geen (eventueel gewicht)",
+    "steps": [
+      "Zit rechtop, knieën gebogen, bovenlichaam iets achterover.",
+      "Handen samen voor je borst.",
+      "Draai je bovenlichaam naar één kant, handen richting de grond naast je heup.",
+      "Draai naar de andere kant en houd je rug lang."
+    ],
+    "tip": "Draai vanuit je core, zwaai niet alleen met je armen. 3×10 per kant.",
+    "caution": "Doet je rug pijn, houd je voeten dan op de grond en draai minder ver.",
+    "progression": "Til je voeten op, voeg daarna een gewicht toe.",
+    "phases": {
+      "0": {
+        "label": "Zijwaarts draaien",
+        "cue": "Bovenlichaam draait, voeten blijven stil"
+      },
+      "1": {
+        "label": "Zijkant"
+      },
+      "2": {
+        "label": "Naar het midden"
+      }
+    }
+  },
+  "reverse_crunch": {
+    "muscles": [
+      "onderste buikspieren"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Ga op je rug liggen, armen langs je zij, knieën gebogen boven je heupen.",
+      "Rol je bekken omhoog en trek je knieën naar je borst.",
+      "Geen zwaai; je hoofd blijft op de grond.",
+      "Laat langzaam zakken."
+    ],
+    "tip": "Versterkt je onderste buikspieren op een rugvriendelijke manier. 3×10–12.",
+    "caution": "Niet zwaaien; hindert je nek, houd je hoofd dan bewust op de grond.",
+    "progression": "Langzamer, met 1 s vasthouden bovenaan.",
+    "phases": {
+      "0": {
+        "label": "Bekken inrollen",
+        "cue": "Knieën naar de borst, geen zwaai"
+      },
+      "1": {
+        "label": "Bovenaan"
+      },
+      "2": {
+        "label": "Langzaam neerleggen"
+      },
+      "3": {
+        "label": "Onderaan"
+      }
+    }
+  },
+  "shoulder_tap": {
+    "muscles": [
+      "core",
+      "schouders"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Hoge plank, voeten iets breder dan heupbreed.",
+      "Eén hand tikt de tegenoverliggende schouder aan.",
+      "Je heupen blijven stil en schommelen niet.",
+      "Blijf afwisselen."
+    ],
+    "tip": "Weerstaat draaiing – voor een stabiele core. 3×10 per kant.",
+    "caution": "Als je polsen hinderen, werk je op je vuisten of met je handen verhoogd.",
+    "progression": "Voeten dichter bij elkaar, daarna langzamer.",
+    "phases": {
+      "0": {
+        "label": "Schouder aantikken",
+        "cue": "Heupen blijven stil"
+      },
+      "1": {
+        "label": "Tik"
+      },
+      "2": {
+        "label": "Hand terug"
+      },
+      "3": {
+        "label": "Steunpositie"
+      }
+    }
+  },
+  "bear_plank": {
+    "muscles": [
+      "core",
+      "bovenbenen",
+      "schouders"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Op handen en knieën, tenen onder.",
+      "Til je knieën een paar centimeter van de grond.",
+      "Je rug blijft vlak als een tafel.",
+      "Houd vast en adem rustig."
+    ],
+    "tip": "Corespanning die je snel voelt. 3×20–40 s.",
+    "caution": "Til je knieën maar een klein stukje; rond je rug niet.",
+    "progression": "Langer vasthouden, daarna vooruit bewegen in een bear crawl.",
+    "phases": {
+      "0": {
+        "label": "Vasthouden",
+        "cue": "Knieën zweven, rug blijft vlak"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Knieën optillen"
+      }
+    }
+  },
+  "v_up": {
+    "muscles": [
+      "buikspieren",
+      "heupbuigers"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Ga op je rug liggen, armen boven je hoofd, benen gestrekt.",
+      "Til tegelijk je armen en benen op – reik met je handen naar je voeten.",
+      "Houd de V bovenaan even vast.",
+      "Laat langzaam zakken."
+    ],
+    "tip": "Zwaar – beheers eerst crunches en leg raises. 3×8–10.",
+    "caution": "Niet bij rugpijn; geen zwaai.",
+    "progression": "Langzamer, met 1 s vasthouden bovenaan.",
+    "phases": {
+      "0": {
+        "label": "Samenvouwen",
+        "cue": "Handen richting de voeten"
+      },
+      "1": {
+        "label": "Bovenaan"
+      },
+      "2": {
+        "label": "Langzaam neerleggen"
+      },
+      "3": {
+        "label": "Onderaan"
+      }
+    }
+  },
+  "flutter_kicks": {
+    "muscles": [
+      "onderste buikspieren",
+      "heupbuigers"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Ga op je rug liggen, handen naast of onder je billen.",
+      "Benen gestrekt, vlak boven de grond.",
+      "Kleine, snelle schoppen omhoog en omlaag, afwisselend.",
+      "Je onderrug blijft op de grond."
+    ],
+    "tip": "Liever kort en netjes dan lang met een holle rug. 3×20–30 s.",
+    "caution": "Komt je onderrug los, houd je benen dan hoger.",
+    "progression": "Benen lager, daarna langer.",
+    "phases": {
+      "0": {
+        "label": "Kleine slagen",
+        "cue": "Onderrug op de grond"
+      },
+      "1": {
+        "label": "Wisselen"
+      }
+    }
+  },
+  "glute_bridge_march": {
+    "muscles": [
+      "bilspieren",
+      "core"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Til vanuit rugligging je heupen op in een brug.",
+      "Til om en om één knie op, alsof je marcheert.",
+      "Je bekken blijft omhoog en waterpas.",
+      "Laat langzaam zakken als je je herhalingen hebt gedaan."
+    ],
+    "tip": "Combineert bilspierkracht en bekkenstabiliteit. 3×8 per kant.",
+    "caution": "Laat je bekken niet naar één kant zakken; houd de beweging langzaam.",
+    "progression": "Langer vasthouden, voeten verder weg.",
+    "phases": {
+      "0": {
+        "label": "Knie optillen",
+        "cue": "Bekken blijft omhoog en recht"
+      },
+      "1": {
+        "label": "Bovenaan"
+      },
+      "2": {
+        "label": "Voet neerzetten"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Bekken optillen"
+      }
+    }
+  },
+  "worlds_greatest_stretch": {
+    "muscles": [
+      "heupen",
+      "borstwervelkolom",
+      "hamstrings"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Diepe lunge, beide handen op de grond binnen je voorste voet.",
+      "Laat je binnenste elleboog zakken richting je voorste voet.",
+      "Draai die arm daarna omhoog naar het plafond, je ogen volgen hem.",
+      "Kom terug en wissel van kant."
+    ],
+    "tip": "Mobiliseert je heupen en rug in één keer – ideaal om op te warmen. 4–5 per kant.",
+    "caution": "Blijf binnen een pijnvrij bereik; laat zo nodig je achterste knie zakken.",
+    "progression": "Adem langer in elke positie.",
+    "phases": {
+      "0": {
+        "label": "Elleboog naar voet",
+        "cue": "Achterste been lang"
+      },
+      "1": {
+        "label": "Vasthouden"
+      },
+      "2": {
+        "label": "Hand terug"
+      },
+      "3": {
+        "label": "Arm naar het plafond draaien",
+        "cue": "Ogen volgen de hand"
+      },
+      "4": {
+        "label": "Open"
+      },
+      "5": {
+        "label": "Terug"
+      },
+      "6": {
+        "label": "Lunge"
+      }
+    }
+  },
+  "downward_dog": {
+    "muscles": [
+      "kuiten",
+      "hamstrings",
+      "schouders"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Zet vanuit handen en knieën je tenen om.",
+      "Duw je heupen omhoog en naar achteren – een omgekeerde V.",
+      "Rug lang, hielen zakken richting de grond; je knieën mogen gebogen zijn.",
+      "Houd vast en adem rustig."
+    ],
+    "tip": "Rekt de hele achterkant van je lichaam. 3×30 s.",
+    "caution": "Als je polsen of schouders hinderen, doe je het op je onderarmen.",
+    "progression": "Langer vasthouden, om en om elke hiel laten zakken.",
+    "phases": {
+      "0": {
+        "label": "Vasthouden",
+        "cue": "Hielen richting de grond, rug lang"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Heupen omhoog duwen"
+      }
+    }
+  },
+  "cobra": {
+    "muscles": [
+      "buikspieren",
+      "wervelkolom",
+      "heupbuigers"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Ga op je buik liggen, handen naast je schouders.",
+      "Til je borst langzaam op; je bekken blijft op de grond.",
+      "Schouders omlaag, blik naar voren.",
+      "Houd even vast en laat dan zakken."
+    ],
+    "tip": "Een zachte strekking na lang zitten. 6–8 herhalingen.",
+    "caution": "Ga alleen zo ver als prettig voelt voor je onderrug.",
+    "progression": "Langer vasthouden, je armen verder strekken.",
+    "phases": {
+      "0": {
+        "label": "Borst optillen",
+        "cue": "Bekken blijft op de grond, schouders omlaag"
+      },
+      "1": {
+        "label": "Vasthouden"
+      },
+      "2": {
+        "label": "Neerleggen"
+      },
+      "3": {
+        "label": "Onderaan"
+      }
+    }
+  },
+  "quad_stretch": {
+    "muscles": [
+      "voorkant bovenbeen",
+      "heupbuigers"
+    ],
+    "equipment": "geen (eventueel muur)",
+    "steps": [
+      "Sta rechtop op één been en houd je zo nodig vast aan een muur.",
+      "Trek de hiel van je andere been naar je bilspieren.",
+      "Je knie wijst omlaag, je heupen iets naar voren.",
+      "Houd vast en wissel dan van kant."
+    ],
+    "tip": "De klassieker na het hardlopen. 2×30 s per kant.",
+    "caution": "Maak geen holle onderrug; hindert je knie, doe dan een handdoek om je voet.",
+    "progression": "Langer vasthouden, bewust je bekken naar achteren kantelen.",
+    "phases": {
+      "0": {
+        "label": "Vasthouden",
+        "cue": "Knie wijst omlaag, heupen naar voren"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Hiel naar bil"
+      }
+    }
+  },
+  "pigeon_pose": {
+    "muscles": [
+      "bilspieren",
+      "heupen"
+    ],
+    "equipment": "mat",
+    "steps": [
+      "Breng vanuit handen en knieën één knie naar voren tussen je handen, je scheen ligt schuin.",
+      "Strek je achterste been lang naar achteren.",
+      "Je heupen zakken richting de grond; bovenlichaam rechtop of naar voren gevouwen.",
+      "Houd vast en wissel dan van kant."
+    ],
+    "tip": "Een diepe bilrek – voelt fijn na lange duurlopen. 2×30–45 s per kant.",
+    "caution": "Doet je knie pijn, leg je scheen dan minder schuin of doe liever de figure-four-rek.",
+    "progression": "Vouw je bovenlichaam verder naar voren, houd langer vast.",
+    "phases": {
+      "0": {
+        "label": "Vasthouden",
+        "cue": "Heupen zakken richting de grond"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Bovenlichaam laten zakken"
+      }
+    }
+  },
+  "leg_swings": {
+    "muscles": [
+      "heupen",
+      "hamstrings"
+    ],
+    "equipment": "geen (muur om je aan vast te houden)",
+    "steps": [
+      "Sta zijwaarts naast een muur en houd je vast.",
+      "Zwaai je buitenste been losjes naar voren en naar achteren.",
+      "Je bovenlichaam blijft stil en rechtop.",
+      "Bouw de zwaai geleidelijk op en wissel dan van kant."
+    ],
+    "tip": "Een dynamische warming-up vóór het hardlopen. 10–15 per kant.",
+    "caution": "Zwaai gecontroleerd, niet rukken.",
+    "progression": "Groter bewegingsbereik, ook zijwaarts voor je lichaam langs.",
+    "phases": {
+      "0": {
+        "label": "Naar achteren",
+        "cue": "Zwaai los, bovenlichaam stil"
+      },
+      "1": {
+        "label": "Naar voren"
+      }
+    }
+  },
+  "arm_circles": {
+    "muscles": [
+      "schouders",
+      "bovenrug"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Sta rechtop, armen lang.",
+      "Maak grote, langzame cirkels naar voren.",
+      "Verander dan van richting.",
+      "Je schouders blijven ontspannen."
+    ],
+    "tip": "Maakt je schouders los vóór de training. 10 in elke richting.",
+    "caution": "Blijf binnen een pijnvrij bereik.",
+    "progression": "Grotere cirkels, ook met één arm tegelijk.",
+    "phases": {
+      "0": {
+        "label": "Grote cirkels",
+        "cue": "Armen lang, schouders ontspannen"
+      },
+      "1": {
+        "label": "Grote cirkels"
+      },
+      "2": {
+        "label": "Grote cirkels"
+      },
+      "3": {
+        "label": "Grote cirkels"
+      }
+    }
+  },
+  "ankle_rocks": {
+    "muscles": [
+      "enkel",
+      "kuit"
+    ],
+    "equipment": "muur",
+    "steps": [
+      "Ga in een halve knielstand voor een muur, je voorste voet ongeveer een handbreed ervandaan.",
+      "Duw je knie richting de muur; je hiel blijft op de grond.",
+      "Houd even vast en kom terug.",
+      "Vergroot de afstand geleidelijk en wissel dan van kant."
+    ],
+    "tip": "Meer enkelmobiliteit voor diepe squats en een soepele loopstap. 10 per kant.",
+    "caution": "Je hiel blijft omlaag; doet de voorkant van het gewricht pijn, ga dan minder ver.",
+    "progression": "Zet je voet verder van de muur.",
+    "gear": "muur",
+    "phases": {
+      "0": {
+        "label": "Knie richting muur",
+        "cue": "Hiel blijft op de grond"
+      },
+      "1": {
+        "label": "Voor"
+      },
+      "2": {
+        "label": "Terug"
+      }
+    }
+  },
+  "neck_stretch": {
+    "muscles": [
+      "nek",
+      "bovenkant van de schouder"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Sta of zit rechtop, schouders ontspannen.",
+      "Kantel één oor richting je schouder.",
+      "Leg de hand aan dezelfde kant zacht op je hoofd – niet trekken.",
+      "Houd vast en wissel dan van kant."
+    ],
+    "tip": "Ontspannend na lang zitten. 2×20 s per kant.",
+    "caution": "Rustig aan; krijg je een tintelend gevoel in je armen, laat dan meteen los.",
+    "progression": "Duw de tegenoverliggende schouder actief omlaag.",
+    "phases": {
+      "0": {
+        "label": "Vasthouden",
+        "cue": "Tegenoverliggende schouder blijft omlaag, trek zacht"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Oor naar schouder"
+      }
+    }
+  },
+  "side_bend_stretch": {
+    "muscles": [
+      "zijkant van de romp",
+      "brede rugspieren"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Sta met je voeten op heupbreedte, één hand op je heup.",
+      "Strek je andere arm boven je hoofd.",
+      "Leun opzij zonder naar voren te kantelen.",
+      "Houd kort vast, kom weer rechtop en wissel van kant."
+    ],
+    "tip": "Rekt je zijkanten – prettig na het zitten. 4 per kant.",
+    "caution": "Maak geen holle onderrug; je bekken blijft in het midden.",
+    "progression": "Langer vasthouden, je arm verder over je hoofd reiken.",
+    "phases": {
+      "0": {
+        "label": "Zijwaarts strekken",
+        "cue": "Lang maken, niet naar voren kantelen"
+      },
+      "1": {
+        "label": "Vasthouden"
+      },
+      "2": {
+        "label": "Oprichten"
+      },
+      "3": {
+        "label": "Midden"
+      }
+    }
+  },
+  "inchworm": {
+    "muscles": [
+      "hamstrings",
+      "schouders",
+      "core"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Buig vanuit stand naar voren en zet je handen op de grond.",
+      "Loop met je handen naar voren naar een push-uppositie.",
+      "Houd even vast en loop dan met je handen terug.",
+      "Rol langzaam omhoog."
+    ],
+    "tip": "Een warming-up voor het hele lichaam. 5 herhalingen.",
+    "caution": "Je knieën mogen gebogen zijn; niet bij acute rugpijn.",
+    "progression": "Voeg een push-up toe in de push-uppositie.",
+    "phases": {
+      "0": {
+        "label": "Naar voren afrollen"
+      },
+      "1": {
+        "label": "Handen naar voren lopen",
+        "cue": "Houd je benen zo recht mogelijk"
+      },
+      "2": {
+        "label": "Plank"
+      },
+      "3": {
+        "label": "Handen terug lopen"
+      },
+      "4": {
+        "label": "Omhoog rollen"
+      },
+      "5": {
+        "label": "Staand"
+      }
+    }
+  },
+  "deep_squat_hold": {
+    "muscles": [
+      "heupen",
+      "enkels",
+      "rug"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Sta op schouderbreedte, tenen iets naar buiten gedraaid.",
+      "Zak in een diepe squat, je hielen blijven op de grond.",
+      "Je ellebogen duwen je knieën zacht naar buiten, borst open.",
+      "Houd vast en adem rustig."
+    ],
+    "tip": "Wint verloren mobiliteit terug. 3×30 s.",
+    "caution": "Doen je knieën pijn, ga dan minder diep; leg zo nodig iets onder je hielen.",
+    "progression": "Langer vasthouden, je gewicht van links naar rechts verplaatsen.",
+    "phases": {
+      "0": {
+        "label": "Vasthouden",
+        "cue": "Hielen op de grond, borst open"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "In een diepe squat zakken"
+      }
+    }
+  },
+  "jumping_jack": {
+    "muscles": [
+      "kuiten",
+      "schouders",
+      "cardio"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Sta rechtop, armen langs je zij.",
+      "Spring je benen uit elkaar en til tegelijk je armen boven je hoofd.",
+      "Spring terug naar de startpositie.",
+      "Licht en veerkrachtig, in een gelijkmatig ritme."
+    ],
+    "tip": "Brengt je bloedsomloop op gang. 3×20–30.",
+    "caution": "Op een zachte ondergrond; bij knie- of bekkenbodemklachten sla je de sprong over (stap opzij).",
+    "progression": "Sneller, daarna langer.",
+    "phases": {
+      "0": {
+        "label": "Springen"
+      },
+      "1": {
+        "label": "Open",
+        "cue": "Land licht op de voorvoet"
+      },
+      "2": {
+        "label": "Springen"
+      },
+      "3": {
+        "label": "Dicht"
+      },
+      "4": {
+        "label": "Dicht"
+      }
+    }
+  },
+  "high_knees": {
+    "muscles": [
+      "heupbuigers",
+      "kuiten",
+      "cardio"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Ren op de plaats.",
+      "Drijf je knieën om en om snel omhoog tot heuphoogte.",
+      "Land op de ballen van je voeten, armen zwaaien mee.",
+      "Je bovenlichaam blijft rechtop."
+    ],
+    "tip": "Kort en intensief – ideaal voor intervallen. 3×20 s.",
+    "caution": "Alleen als je warm bent en op een antislipvloer.",
+    "progression": "Langer, daarna sneller.",
+    "phases": {
+      "0": {
+        "label": "Knieën omhoog",
+        "cue": "Knieën tot heuphoogte, snelle pasjes"
+      },
+      "1": {
+        "label": "Wisselen"
+      }
+    }
+  },
+  "butt_kicks": {
+    "muscles": [
+      "hamstrings",
+      "kuiten",
+      "cardio"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Ren op de plaats.",
+      "Breng je hielen om en om naar je bilspieren.",
+      "Korte, snelle grondcontacten.",
+      "Bovenlichaam rechtop, armen zwaaien los mee."
+    ],
+    "tip": "Loopdrills op de plaats. 3×20 s.",
+    "caution": "Alleen als je warm bent en op een antislipvloer.",
+    "progression": "Hogere pasfrequentie, daarna al bewegend naar voren.",
+    "phases": {
+      "0": {
+        "label": "Hiel naar bil",
+        "cue": "Bovenlichaam rechtop, hoge pasfrequentie"
+      },
+      "1": {
+        "label": "Wisselen"
+      }
+    }
+  },
+  "burpee": {
+    "muscles": [
+      "hele lichaam",
+      "cardio"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Zak vanuit stand in een hurkzit, handen op de grond.",
+      "Spring met je voeten naar achteren in een push-uppositie.",
+      "Spring je voeten weer naar voren.",
+      "Spring omhoog met je armen boven je hoofd en land zacht."
+    ],
+    "tip": "Conditie voor het hele lichaam – onderdeel van Hyrox-training. 3×8–10.",
+    "caution": "Leer het eerst zonder sprong (stap met je voeten naar achteren); houd je rug recht in de push-uppositie.",
+    "progression": "Met een push-up op de grond, daarna een burpee broad jump.",
+    "phases": {
+      "0": {
+        "label": "Hurkzit, handen op de grond"
+      },
+      "1": {
+        "label": "Voeten naar achteren springen"
+      },
+      "2": {
+        "label": "Plank",
+        "cue": "Lichaam blijft recht"
+      },
+      "3": {
+        "label": "Voeten naar voren springen"
+      },
+      "4": {
+        "label": "Sprong omhoog"
+      },
+      "5": {
+        "label": "Landen",
+        "cue": "Zacht landen"
+      },
+      "6": {
+        "label": "Staand"
+      }
+    }
+  },
+  "mountain_climber": {
+    "muscles": [
+      "core",
+      "heupbuigers",
+      "cardio"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Hoge plank, handen onder je schouders.",
+      "Trek één knie naar je borst.",
+      "Wissel snel van been, om en om.",
+      "Je heupen blijven laag en stil."
+    ],
+    "tip": "Core en cardio in één. 3×20–30 s.",
+    "caution": "Als je polsen hinderen, doe je het met je handen verhoogd op een bank.",
+    "progression": "Sneller, daarna langer.",
+    "phases": {
+      "0": {
+        "label": "Knie naar de borst",
+        "cue": "Heupen blijven laag en stabiel"
+      },
+      "1": {
+        "label": "Wisselen"
+      }
+    }
+  },
+  "skater_jump": {
+    "muscles": [
+      "bilspieren",
+      "bovenbenen",
+      "balans"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Sta op één licht gebogen been.",
+      "Spring zijwaarts op het andere been.",
+      "Land zacht, je vrije been zwaait achter je standbeen.",
+      "Blijf in een ritme heen en weer gaan."
+    ],
+    "tip": "Zijwaartse sprongkracht en stabiliteit – goed voor voetbal. 3×20–30 s.",
+    "caution": "Bij de landing wijst je knie over je voet, niet naar binnen.",
+    "progression": "Verder springen, bij de landing kort vasthouden.",
+    "phases": {
+      "0": {
+        "label": "Zijwaarts springen",
+        "cue": "Zacht landen op één been"
+      },
+      "1": {
+        "label": "Landen"
+      },
+      "2": {
+        "label": "Afzetten"
+      }
+    }
+  },
+  "bear_crawl": {
+    "muscles": [
+      "core",
+      "schouders",
+      "bovenbenen"
+    ],
+    "equipment": "geen",
+    "steps": [
+      "Bear plank: je knieën zweven net boven de grond.",
+      "Beweeg de tegenoverliggende hand en voet een klein stukje naar voren.",
+      "Je rug blijft vlak, je heupen stil.",
+      "Kruip vooruit en terug."
+    ],
+    "tip": "Coördinatie en corekracht – kinderen vinden het ook leuk. 3×20–30 s.",
+    "caution": "Kleine stappen, knieën net boven de grond.",
+    "progression": "Langer, daarna achteruit of zijwaarts.",
+    "phases": {
+      "0": {
+        "label": "Hand en tegenoverliggende voet naar voren",
+        "cue": "Knieën net boven de grond"
+      },
+      "1": {
+        "label": "Neerzetten"
+      }
+    }
+  }
+}

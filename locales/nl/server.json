@@ -1,1 +1,57 @@
-{}
+{
+  "ics": {
+    "calendarName": "Catofit-training",
+    "training": "Training",
+    "race": "Wedstrijd",
+    "distance": "Afstand: {km} km",
+    "pace": "Streeftempo: {pace} min/km",
+    "hrZone": "Hartslagzone: Z{zone}",
+    "openInApp": "Open in de app: {url}",
+    "raceDistance": "Afstand: {distance}",
+    "raceDistanceKm": "Afstand: {distance} ({km} km)",
+    "targetTime": "Streeftijd: {time}",
+    "priority": "Prioriteit: {priority}",
+    "alarmHour": "{title} over 1 uur",
+    "alarmTomorrow": "Morgen: {title}",
+    "alarmRace": "Wedstrijd over 2 uur – warm je op!",
+    "alarmRaceTomorrow": "Morgen wedstrijd: {name}",
+    "file": {
+      "session": "training",
+      "race": "wedstrijd",
+      "plan": "schema"
+    },
+    "error": {
+      "missingId": "Parameter \"id\" ontbreekt.",
+      "invalidUser": "Parameter \"user\" ontbreekt of is ongeldig.",
+      "linkInvalid": "Deze agendalink is niet (meer) geldig. Exporteer de afspraak opnieuw vanuit de app.",
+      "linkExpired": "Agendalinks zonder sleutel zijn niet meer geldig. Exporteer de afspraak opnieuw vanuit de app.",
+      "unitNotFound": "Training niet gevonden.",
+      "eventNotFound": "Afspraak niet gevonden."
+    }
+  },
+  "import": {
+    "title": "{type} ({source})",
+    "type": {
+      "easy": "Hardlopen",
+      "walk": "Wandeling",
+      "hike": "Wandeltocht",
+      "cross_bike": "Fietstocht",
+      "swim": "Zwemmen",
+      "strength": "Krachttraining",
+      "rowing": "Roeien",
+      "tennis": "Tennis",
+      "tabletennis": "Tafeltennis",
+      "cross_football": "Voetbal",
+      "mobility": "Mobiliteit",
+      "other": "Training"
+    },
+    "source": {
+      "appleHealth": "Apple Health",
+      "healthConnect": "Health Connect",
+      "healthImport": "Health-import"
+    }
+  },
+  "food": {
+    "product": "Product {code}"
+  }
+}

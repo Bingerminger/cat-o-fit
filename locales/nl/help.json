@@ -1,1 +1,859 @@
-{}
+{
+  "sections": {
+    "start": "Aan de slag",
+    "usecases": "Zo bereik je je doel",
+    "views": "De onderdelen in één oogopslag",
+    "knowledge": "Trainingskennis",
+    "faq": "Goed om te weten",
+    "glossar": "Woordenlijst"
+  },
+  "articles": {
+    "willkommen": {
+      "q": "Welkom{hi}!",
+      "blocks": {
+        "0": "Cat-O-Fit plant en begeleidt je training{hi} – voor jou en je hele gezin. Je werkt ermee naar je doelen toe – een doelwedstrijd of een trainingsprogramma zonder wedstrijd (fitheid, kracht, afvallen, mobiliteit): je stelt je doel in, krijgt er een schema voor, traint – en ziet je voortgang, stap voor stap.",
+        "1": "De app slaat elke wijziging meteen op je apparaat op en synchroniseert die met je eigen server of NAS – zonder verbinding gewoon later, zelfs midden in een training.",
+        "2": "Je kunt de app aan je beginscherm toevoegen (deel-icoon in Safari → “Zet op beginscherm”). Daarna start hij schermvullend op, als een echte app."
+      }
+    },
+    "aufbau": {
+      "q": "Hoe is alles opgebouwd?",
+      "blocks": {
+        "0": "Cat-O-Fit houdt plannen en doen duidelijk uit elkaar:",
+        "1": [
+          "Doel – een wedstrijd (bijv. je halve marathon) of een trainingsprogramma zonder wedstrijd.",
+          "Trainingsschema – automatisch opgebouwd in fasen tot de wedstrijd, of over de looptijd van het programma.",
+          "Geplande trainingen – in de agenda, en je kunt ze verplaatsen.",
+          "Voltooide training – wat je echt hebt gedaan (gepland vs. werkelijk)."
+        ],
+        "2": "Naar “Vandaag”"
+      }
+    },
+    "anmelden": {
+      "q": "Aanmelden, wisselen en afmelden",
+      "aliases": "inloggen|aanmelden|uitloggen|afmelden|login|logout|pincode|PIN|wachtwoord|profiel wisselen|gebruiker wisselen|gedeeld apparaat|gedeelde iPad",
+      "blocks": {
+        "0": "De allereerste keer dat je start, zet een korte wizard de app op: eerst maak je de beheerder aan met een eigen pincode (4 tot 8 cijfers, niet 0000), daarna laad je demodata of begin je leeg. Daarna toont Cat-O-Fit als je bent afgemeld alleen het aanmeldscherm – de menu’s verschijnen zodra je bent aangemeld.",
+        "1": [
+          "Tik op je tegel en voer je pincode in. De server controleert die; na vijf foute pogingen volgt een korte pauze.",
+          "Er is geen apart profielwissel: meld je gewoon af – je komt meteen weer bij het aanmeldscherm uit.",
+          "Afmelden: op iPhone via “Meer” (bovenaan, bij je naam), op iPad en Mac onderaan de zijbalk – of in Instellingen → Account."
+        ],
+        "2": "Opnieuw laden houdt je aangemeld; alleen het sluiten van de app of het tabblad meldt je af. Tik op een gedeelde iPad dus altijd op “Afmelden” – of zet “Gedeeld apparaat” aan in Instellingen → Account: dan wist afmelden alle persoonlijke gegevens van het apparaat.",
+        "3": "Zonder serververbinding kun je je alleen aanmelden op een apparaat waarop je eerder online bent aangemeld. De app synchroniseert cyclus, labwaarden en supplementen pas nadat de server je aanmelding heeft bevestigd – tot dan blijft alles veilig op het apparaat. Ontbreekt die bevestiging (bijvoorbeeld na een update), dan vraagt de app één keer om je pincode.",
+        "4": "Het menu-item “Team/gezin” is je gezamenlijke overzicht met teambadges. Beheer (leden toevoegen, rollen, teams) staat onder Meer → “Team beheren” en is alleen zichtbaar voor beheerders; “App resetten” staat helemaal onderaan Instellingen."
+      }
+    },
+    "diagramme": {
+      "q": "Waarden aflezen in een grafiek",
+      "blocks": {
+        "0": "Elke trendgrafiek geeft je concrete getallen – je hoeft niet te raden wat de lijn op dit moment laat zien.",
+        "1": [
+          "Beweeg je vinger (of op een computer de muis) over de grafiek.",
+          "Een hulplijn springt naar het dichtstbijzijnde datapunt en een klein bubbeltje toont de datum en de waarde.",
+          "Bij meerdere lijnen – zoals fitheid, vermoeidheid en vorm – zie je alle drie de waarden van dezelfde dag tegelijk.",
+          "Op een computer kun je ook het toetsenbord gebruiken: bewegen met de pijltjestoetsen, sluiten met Escape."
+        ],
+        "2": "De y-as toont ronde referentiewaarden met dunne rasterlijnen – zo zie je het bereik in één oogopslag, zonder de grafiek aan te raken."
+      }
+    },
+    "belastung-pruefen": {
+      "q": "Controleren of je belasting nog gezond is",
+      "blocks": {
+        "0": "De kaart “Belasting & vorm” bij “Vandaag” beantwoordt drie vragen – in gewone taal in plaats van vakjargon.",
+        "1": [
+          "Bouw je te snel op? De belastingsverhouding vergelijkt je laatste 7 dagen met het gemiddelde van de drie weken daarvoor (ACWR). 1,3 betekent “30% meer dan gebruikelijk”; tussen 0,8 en 1,3 zit je dicht bij je gemiddelde.",
+          "Ben je hersteld? Fitheid min vermoeidheid geeft je vorm – ingedeeld ten opzichte van je fitheid: fris, in balans, in training of duidelijk vermoeid. Pas beoordeeld als er ongeveer drie maanden aan gegevens zijn.",
+          "Train je te eenzijdig? Er verschijnt pas een melding als je trainingsdagen erg op elkaar lijken en de week ruim boven je gemiddelde ligt; wandelen en mobiliteit tellen hier niet mee."
+        ],
+        "2": "De drempelwaarden zijn een richtlijn op basis van observationele gegevens uit teamsporten – geen blessurebarometer en geen belofte van bescherming. In de eerste vier weken zegt de kaart eerlijk “Je gegevens worden nog opgebouwd”. Kracht, voetbal en fietsen tellen net zo mee als hardlopen; de waarden zijn belastingspunten (AU = minuten × inspanning)."
+      }
+    },
+    "wettkampf-anlegen": {
+      "q": "Een wedstrijd aanmaken en het schema genereren",
+      "blocks": {
+        "0": [
+          "Open “Doelen & schema’s” en tik op “+” → kies “Wedstrijd”.",
+          "Vul de naam, datum, afstand en streeftijd in en kies de prioriteit: A – hoogtepunt van het seizoen, B – belangrijke wedstrijd, C – opbouw- of plezierwedstrijd.",
+          "Sla op – je komt op de doelpagina.",
+          "Tik op “Schema maken” en kies je niveau (Beginner, Gemiddeld, Gevorderd), loopdagen per week (3–6) en of je vaste afspraken hebt (bijv. clubtraining) – standaard geen.",
+          "Cat-O-Fit verdeelt de weken over de fasen Basis → Opbouw → Piek → Afbouw: omvang vanaf waar je nu staat, hooguit 8–12% meer per week, elke 4e week rustiger, de lange duurloop begrensd, de wedstrijd op je wedstrijddag – welke weekdag dat ook is."
+        ],
+        "1": "Cat-O-Fit leidt de streeftempo’s af van je streeftijd – je hoeft niets uit te rekenen{hi}. Is de streeftijd erg ambitieus of de voorbereiding kort, dan zegt de app dat eerlijk en stelt hij alternatieven voor.",
+        "2": "Schema’s die al lopen kun je met de huidige schemalogica opnieuw laten berekenen via ↻ “Vanaf vandaag herberekenen” – alles vóór vandaag blijft zoals het is.",
+        "3": "Naar je doelen"
+      }
+    },
+    "programm-starten": {
+      "q": "Een trainingsprogramma zonder wedstrijd starten",
+      "blocks": {
+        "0": "Wil je gewoon fitter, sterker of gezonder worden – zonder wedstrijd? Maak dan een trainingsprogramma.",
+        "1": [
+          "Open “Doelen & schema’s” en tik op “+” → kies “Trainingsprogramma”.",
+          "Kies een focus: Algemene fitheid, Kracht & spieropbouw, Afvallen of Mobiliteit & gezondheid.",
+          "Stel de trainingsdagen per week (3–5) en de duur (4, 8 of 12 weken) in.",
+          "Opslaan & schema maken – het weekschema staat meteen klaar."
+        ],
+        "2": "Uithoudingsvermogen bouwt week na week op tot het WHO-niveau (vanaf 150 minuten, wandelen telt mee), plus kracht op twee dagen – van beginnen tot zwaardere varianten. Elke 4e week is rustiger. “Vanaf vandaag herberekenen” maakt de komende weken opnieuw; wat al gedaan is, blijft staan.",
+        "3": "Naar je doelen"
+      }
+    },
+    "training-durchfuehren": {
+      "q": "Een training uitvoeren",
+      "blocks": {
+        "0": [
+          "Tik op het dashboard of in de agenda op de training van vandaag.",
+          "Je ziet het doel (afstand, streeftempo, hartslagzone). Tik op “Start”.",
+          "In de workoutmodus loopt de klok; bij intervallen begeleidt Cat-O-Fit je met geluid door warming-up, inspanning, rust en cooling-down – met het streeftempo en de hartslagzone van elke fase.",
+          "Tik aan het eind op “Workout beëindigen” → vul afstand, inspanning (RPE) en gevoel in → klaar. Weggooien zonder opslaan vraagt om bevestiging."
+        ],
+        "1": "Bij lange duurlopen herinnert Cat-O-Fit je er automatisch aan om te drinken. Op iPhone: vergrendel het scherm niet (anders pauzeren de signalen, al loopt de tijd wel correct door) en zet de iPhone niet op stil – Safari kan niet trillen."
+      }
+    },
+    "training-nachtragen": {
+      "q": "Een training achteraf vastleggen, zonder horloge",
+      "blocks": {
+        "0": "Je liep zonder telefoon, of je was hem vergeten? Geen probleem.",
+        "1": [
+          "Open de training (dashboard, agenda of schema).",
+          "Tik op “Als gedaan vastleggen”.",
+          "Vul in wat je weet (afstand, tijd, gevoel) – alles is optioneel."
+        ],
+        "2": "De vergelijking tussen gepland en werkelijk is eerlijk: een rustige duurloop die veel te snel was, telt niet als “Doel grotendeels gehaald”; intervallen worden niet beoordeeld op het gemiddelde van de hele training."
+      }
+    },
+    "training-ohne-plan": {
+      "q": "Een training zonder schema vastleggen",
+      "blocks": {
+        "0": "Een spontane fietstocht, een loopje op een rustdag of trainen zonder enig doel – ook dat hoort in je trainingsdagboek.",
+        "1": [
+          "Tik bij “Vandaag” op “Activiteit vastleggen” – of tik in de agenda (weekweergave) op de “+” in de dagkop.",
+          "Vul sport, datum, duur, afstand, hartslag en inspanning in.",
+          "Past een geplande training op dezelfde dag, dan biedt de app aan de training daaraan te koppelen."
+        ],
+        "2": "Ongeplande activiteiten verschijnen in de agenda, bij “Vandaag” en bij Voortgang onder “Trainingen zonder schema” – open, bewerk of verwijder ze daar. “Vandaag” stelt geïmporteerde activiteiten (Apple Health, GPX/TCX) voor om te koppelen."
+      }
+    },
+    "einheit-verschieben": {
+      "q": "Een training verplaatsen zonder je week te slopen",
+      "aliases": "verplaatsen|verzetten|uitstellen|slepen|drag-and-drop|drag & drop|wat-als|morgen|overmorgen|dagen wisselen|datum wijzigen|volgende vrije dag",
+      "blocks": {
+        "0": "Er komt iets tussen – dat is normaal. Waar het om gaat, is dat de week erna nog klopt.",
+        "1": [
+          "Open de training → “Verplaatsen”: “Morgen”, “Overmorgen” of “Volgende vrije dag” met één tik – of kies een datum.",
+          "In de agenda (weekweergave) kun je ook slepen: houd de training vast bij het handvat (⠿) en sleep hem naar een andere dag.",
+          "Cat-O-Fit controleert meteen: staat er al iets? Is er een zware training (tempo, intervallen, kracht, lange duurloop) de dag ervoor of erna? Daaronder zie je het effect op de weekbelasting – voor en na.",
+          "Bevestig als het past. De training krijgt dan de notitie “Verplaatst”; een sleepactie in de agenda kun je terugdraaien met “Ongedaan maken”."
+        ],
+        "2": "De meldingen blokkeren niets – je verplaatst toch als je dat wilt. De verplaatste training telt nog steeds mee voor de weekbelasting en de weekcheck.",
+        "3": "Naar de agenda"
+      }
+    },
+    "einheiten-anpassen": {
+      "q": "Trainingen aanpassen, toevoegen en inhalen",
+      "blocks": {
+        "0": "Je schema is van jou – pas het aan wanneer je wilt.",
+        "1": [
+          "Open een training en tik bovenaan op het potlood: type, streeftempo, hartslagzone, intervalstructuur, afstand en beschrijving zijn allemaal te bewerken.",
+          "Met de “+” in het trainingsschema maak je een gloednieuwe training – met een ruime keuze aan sporten: zwemmen, hiken, roeien, tennis, badminton, squash, tafeltennis, indoor cycling, crosstrainer, sportschooltraining en meer.",
+          "In het bewerkvenster kun je een training ook verwijderen."
+        ],
+        "2": "Maak je zelf een training en staat er in dezelfde week al een training met een vergelijkbare intensiteit, dan biedt Cat-O-Fit aan die uit het schema te halen – zodat de weekbelasting gelijk blijft. Jij beslist: “Uit schema halen” of “Beide houden”.",
+        "3": "Is er voor een week iets fundamenteels veranderd (bijv. start van het seizoen, een trainingskamp)? In het overzicht “Weken in één oogopslag” van het schema herberekent “Deze week herberekenen” alleen die ene week opnieuw – training die je al hebt gedaan blijft behouden.",
+        "4": "Gemist? Verstreken, openstaande trainingen verschijnen als “Achterstallig”. Op het dashboard herinnert een melding je eraan ze te verplaatsen, vast te leggen of af te vinken.",
+        "5": "Heb je een kerntraining (tempo, intervallen, lange duurloop, kracht) als gemist gemarkeerd, dan stelt het dashboard voor die volgende week op een vrije dag in te halen – in plaats van hem te laten vervallen."
+      }
+    },
+    "koerperwerte": {
+      "q": "Je lichaamswaarden bijhouden",
+      "blocks": {
+        "0": [
+          "Tik op “＋ Vastleggen” → “Lichaamswaarden” (of Voortgang → Lichaam → “+”).",
+          "Vul bijv. gewicht, rusthartslag of slaap in – alleen wat je wilt.",
+          "De grafieken tonen je trend met een y-schaal en, bij gewicht, met een doellijn.",
+          "“Spiermassa” is de waarde van een lichaamsanalyseweegschaal; “Magere massa” (bijv. uit Apple Health) ligt aanzienlijk hoger en telt mee voor de energievoorziening.",
+          "HRV-methode: Apple slaat SDNN op, veel horloges en ringen tonen RMSSD. De getallen zijn niet vergelijkbaar – trend, doelen en gereedheid vergelijken alleen waarden van hetzelfde meettype."
+        ],
+        "1": "Wil je de exacte waarde? Sleep je vinger over een grafiek (op een computer: beweeg de muis erheen) – een hulplijn springt naar het dichtstbijzijnde punt en toont datum + waarde.",
+        "2": "De weergave is bewust neutraal: het gaat om de trend, niet om dagelijkse schommelingen. Je kunt afzonderlijke waarden verbergen in Instellingen.",
+        "3": "Naar lichaamswaarden"
+      }
+    },
+    "apple-health": {
+      "q": "Apple Health importeren: automatisch of gratis via een bestand",
+      "aliases": "Health Auto Export|Apple Watch|importeren|import|Opdrachten|Shortcuts|Garmin|Withings|iPhone|synchroniseren|automatisch importeren|wearable|gezondheidsgegevens",
+      "blocks": {
+        "0": "Je bronnen (Garmin, Apple Watch, Withings …) schrijven naar Apple Health. Vanaf daar komen de belangrijkste waarden bij Cat-O-Fit{hi} – gewicht, rusthartslag, HRV, VO₂max, slaap, stappen, actieve energie en workouts. Er zijn drie manieren:",
+        "1": [
+          "Automatisch met “Health Auto Export – JSON+CSV” (App Store): de app zelf is gratis, maar de automatische overdracht die je nodig hebt (REST API) is alleen met Premium beschikbaar – volgens de App Store ongeveer €8 per jaar of €30 eenmalig. Instellen: klik in Cat-O-Fit bij Gezondheidsimport op “Auto-import inschakelen” en kopieer de endpoint-URL; kies in Health Auto Export bij Automations → + → “REST API”, plak de URL, methode POST, formaat JSON (exportversie 2), kies metrics + workouts, aggregatie “daily”, periode “Since last sync” → opslaan → “Run now”.",
+          "Gratis en automatisch via een opdracht: met Apples app “Opdrachten” kun je gezondheidswaarden lezen en naar hetzelfde adres sturen – de instructies staan in de documentatie (Apple Health). Of de automatisering betrouwbaar draait terwijl de iPhone vergrendeld is, hangt van iOS af.",
+          "Gratis, met de hand: iPhone → app Gezondheid → profielfoto → “Exporteer alle gezondheidsgegevens” en upload de ZIP bij Gezondheidsimport (volledige import). Losse opnames als GPX- of TCX-bestand (Garmin, Strava …) werken ook – met sport, bewegingstijd, kilometertijden en tijd in hartslagzones."
+        ],
+        "2": "Een extra aanmelding (header “Authorization”) heb je alleen nodig als je instantie achter een voorgeschakelde aanmelding zit – de ingebouwde Basic Auth van de container laat het gezondheidsendpoint hoe dan ook door. Controle: bij Gezondheidsimport toont “Onlangs geïmporteerd (automatisch)” de overgenomen dagwaarden; handmatige invoer blijft behouden, dubbele workouts worden herkend.",
+        "3": "Naar Gezondheidsimport"
+      }
+    },
+    "health-connect": {
+      "q": "Android: waarden importeren uit Health Connect",
+      "aliases": "Android|Google Fit|Samsung Health|HC Webhook|Pixel Watch|Galaxy Watch|Health Connect|brug-app|importeren|import|synchroniseren",
+      "blocks": {
+        "0": "Op Android verzamelt Health Connect de waarden van je horloge en apps. Websites kunnen er niet uit lezen – daarom stuurt een kleine brug-app op het apparaat de gegevens naar Cat-O-Fit, bijvoorbeeld de open-source “HC Webhook”.",
+        "1": [
+          "Klik in Cat-O-Fit bij Gezondheidsimport op “Auto-import inschakelen” en kopieer de endpoint-URL en de sleutel.",
+          "Voer in de brug-app de URL in als webhookadres en stuur de sleutel mee als header “X-Catofit-Token” (lukt dat niet: voeg “&token=<key>” aan het adres toe).",
+          "Sta de gegevenstypen toe: gewicht, vetpercentage, magere massa, rusthartslag, HRV, slaap, stappen, actieve calorieën, workouts en hartslag. Cyclus alleen als je die geïmporteerd wilt hebben – hij blijft privé."
+        ],
+        "2": "Cat-O-Fit herkent dagen en workouts die dubbel zijn verstuurd. HRV uit Health Connect is RMSSD en wordt apart van Apple-waarden (SDNN) beoordeeld.",
+        "3": "Naar Gezondheidsimport"
+      }
+    },
+    "erinnerungen": {
+      "q": "Herinneringen krijgen op je iPhone",
+      "blocks": {
+        "0": "De betrouwbaarste manier op iPhone/iPad is de eigen agenda.",
+        "1": [
+          "Open een training of het schema en tik op het exporticoon.",
+          "Kies “Volledig schema”, “Deze training” of “Alleen de wedstrijd”.",
+          "Het .ics-bestand opent in de iOS-agenda – inclusief een herinnering 1 uur van tevoren en de avond ervoor."
+        ]
+      }
+    },
+    "fortschritt": {
+      "q": "Je voortgang begrijpen",
+      "blocks": {
+        "0": "Onder “Voortgang” zie je in één oogopslag waar je staat – helemaal bovenaan het stoplicht “Zit ik op koers?”.",
+        "1": [
+          "Stoplicht (groen/oranje/rood): vat naleving, belasting en gemiste trainingen over de afgelopen 4 weken samen – met redenen.",
+          "Schemanaleving: hoeveel van de trainingen die aan de beurt waren je in het venster van 4 weken hebt voltooid.",
+          "Weekomvang & trainingsbelasting: je belasting in de tijd (7 vs. 28 dagen).",
+          "Gemiste trainingen: per reden – trainingen die door blessure of ziekte zijn gemist, tellen niet tegen je.",
+          "Waarden & doelen: gewicht, omtrek, tempo, rusthartslag & VO₂max met een trendpijl en “behouden/verbeteren”.",
+          "Trainingsjaar: een heatmap van de afgelopen 12 maanden (zoals op GitHub) – hoe donkerder een dag, hoe meer trainingstijd.",
+          "Wedstrijdvoorspelling: een ruwe schatting van je mogelijke tijd."
+        ],
+        "2": "Naar Voortgang"
+      }
+    },
+    "navigation": {
+      "q": "Navigatie",
+      "blocks": {
+        "0": "Onderaan (iPhone) of links (iPad, Mac): Vandaag · Agenda · ＋ Vastleggen · Voortgang · Meer. “＋ Vastleggen” is de vaste plek voor training, lichaamswaarden, maaltijd, labwaarde, menstruatie en checklistitem. “Voortgang” bundelt Training (statistieken), Lichaam, Badges en Rapporten als tabbladen. “Meer” is per onderwerp geordend en toont bovenaan wie is aangemeld – als je een lid beheert, met “Terug naar mij”."
+      }
+    },
+    "heute": {
+      "q": "Vandaag (dashboard)",
+      "blocks": {
+        "0": "Je startscherm voor de dag: de training van vandaag (met ▶ start je hem direct), aftelling naar de volgende wedstrijd, een coachtip (meer is uit te klappen), belasting & vorm, weekoverzicht en je week- en gezondheidsdoelen. In liggende stand op iPad of Mac gebruikt het twee kolommen.",
+        "1": "Openen"
+      }
+    },
+    "kalender": {
+      "q": "Agenda",
+      "blocks": {
+        "0": "Maand- en weekweergave van alle geplande trainingen en ongeplande activiteiten. In de weekweergave kun je verplaatsen door te slepen. Elk item leidt naar de training.",
+        "1": "Openen"
+      }
+    },
+    "ziele": {
+      "q": "Doelen & schema’s",
+      "aliases": "wedstrijd|race|programma|evenement|prioriteit|doel|streeftijd|aftelling",
+      "blocks": {
+        "0": "Je wedstrijden en trainingsprogramma’s op één plek – aanmaken, bewerken, een schema genereren. Wedstrijden met aftelling en prioriteit (A – hoogtepunt van het seizoen, B – belangrijk, C – opbouw), programma’s met een focus en trainingsdagen per week.",
+        "1": "Openen"
+      }
+    },
+    "trainingsplan": {
+      "q": "Trainingsschema",
+      "blocks": {
+        "0": "Het schema voor een wedstrijd of programma: faseoverzicht, kerngegevens (niveau, loopdagen, streeftempo’s), het overzicht “Weken in één oogopslag” en alle trainingen. Via “…” bovenaan werk je het bij vanaf vandaag, stel je vaste afspraken in of exporteer je het naar je agenda."
+      }
+    },
+    "einheit-ansicht": {
+      "q": "Training (weergave)",
+      "aliases": "training|evaluatie|terugblik|gepland vs werkelijk|doel vs werkelijk|analyse|kilometertijden|splits",
+      "blocks": {
+        "0": "Eén training in drie toestanden: gepland (het doel, met “Start · Als gedaan vastleggen” onderaan), bezig (workoutmodus) en voltooid (terugblik met een vergelijking van gepland en werkelijk; bij GPX/TCX ook kilometertijden en tijd in hartslagzones)."
+      }
+    },
+    "workout-modus": {
+      "q": "Workoutmodus",
+      "blocks": {
+        "0": "Schermvullend voor de training: grote knoppen, stopwatch of intervalbesturing met streeftempo en hartslagzone voor elke fase, een setteller met rustaftelling voor krachttraining, herinnering voor drinkpauzes."
+      }
+    },
+    "fortschritt-koerper": {
+      "q": "Voortgang → Lichaam",
+      "blocks": {
+        "0": "Je lichaamsmetingen als trends met een Y-schaal en een doelmarkering – uitgezet op datum, over 3 maanden, 1 jaar of alles; lange reeksen als weekgemiddelden. Met een vinger of de muis over de grafiek zie je datum + waarde. Vastleggen, bewerken, importeren.",
+        "1": "Openen"
+      }
+    },
+    "fortschritt-training": {
+      "q": "Voortgang → Training",
+      "blocks": {
+        "0": "Een stoplicht “Zit ik op koers?”, schemanaleving, weekomvang, heatmap van het trainingsjaar, trainingsbelasting, gemiste trainingen per reden, verdeling van trainingen, waarden & doelen (behouden/verbeteren), wedstrijdvoorspelling, plus de huidige vorm en trainingszones.",
+        "1": "Openen"
+      }
+    },
+    "erfolge": {
+      "q": "Voortgang → Badges",
+      "aliases": "badges|prestaties|onderscheidingen|medailles|trofeeën|momentum|beloningen",
+      "blocks": {
+        "0": "Je momentum en alle badges met voortgang – behaalde in kleur, openstaande met een voortgangsbalk.",
+        "1": "Openen"
+      }
+    },
+    "uebungen": {
+      "q": "Oefeningenbibliotheek",
+      "aliases": "oefeningen|oefeningenlijst|animatie|animaties|meedoen|volgen",
+      "blocks": {
+        "0": "93 oefeningen voor kracht, core, mobiliteit, cardio en preventie – elk als animatie in het ritme van de beweging, plus stap-voor-stap-uitleg, spiergroepen, materiaal, moeilijkheid, tip, progressie en een waarschuwing. Daaronder Hyrox-oefeningen zoals wall balls en kettlebell swings, rug- en heuprekoefeningen, en preventieoefeningen voor hardlopen en voetbal (Nordic hamstring, Copenhagen, FIFA 11+ warming-up). Voetbaltrainingen stellen ze direct voor.",
+        "1": [
+          "Filter bovenaan op categorie (kracht/core/mobiliteit/cardio) EN op lichaamsregio (rug, heupen, buik, benen, bovenlichaam) – of zoek in het tekstveld.",
+          "Tik op een oefening: de figuur laat de beweging zien in het ritme van de oefening, met de werkende spieren in kleur gemarkeerd.",
+          "Stel de herhalingen (seconden bij statische oefeningen) en sets in en tik dan op “Meedoen”: de animatie telt sets en herhalingen, toont de techniektip en ademhaling, houdt de rustpauzes bij en laat zien wanneer je van kant wisselt. “Langzaam” helpt bij het leren, “Geluid” geeft een hoorbare maat.",
+          "Aan het eind telt de oefening als gedaan – of je telt gedetailleerd mee met “Gedaan (+1)”. Een voltooide training telt de bijbehorende oefeningen ook automatisch mee.",
+          "Bij kracht- en mobiliteits-/hersteltrainingen staan eerst de oefeningen uit de beschrijving (“in je schema”), gevolgd door suggesties op basis van hoe vaak je ze gebruikt. Tik op “+” om een oefening aan de training toe te voegen."
+        ],
+        "2": "De animaties zijn bewust schematisch en vervangen geen persoonlijke begeleiding.",
+        "3": "Openen"
+      }
+    },
+    "durchgehend": {
+      "q": "Non-stop meedoen – met muziek en stemaanwijzingen",
+      "aliases": "workout|workouts|muziek|aankondigingen|stem|video|training|non-stop|meedoen|in één keer",
+      "blocks": {
+        "0": "Een hele training in één keer – als een video om mee te doen: de instructeur op het scherm doet elke oefening voor op de maat, met tussendoor een pauze met een preview, kantwissels en rust tussen de rondes. Bedoeld voor een iPad of telefoon op de grond; je hoeft nergens op te tikken.",
+        "1": [
+          "Start: tik bij een kracht- of mobiliteitstraining op “Non-stop meedoen” – de hoeveelheden komen uit de beschrijving (“12×”, “30 s/kant”, “3 rondes”) – of kies in de Oefeningenbibliotheek onder “Workouts” er een uit de catalogus (zoeken en filters voor kracht, core, mobiliteit, cardio, hardlopen & voetbal).",
+          "Stel op het overzicht de rondes en rust in, kies muziek en stemaanwijzingen en tik op “Daar gaan we”.",
+          "Muziek: een beat die bij de oefening past, elke beweging op de maat; rustiger tijdens de pauzes. Met “Eigen muziek” blijft bijvoorbeeld Spotify doorspelen – daarvoor mag het apparaat niet op stil staan.",
+          "Stemaanwijzingen komen tijdens de pauzes (volgende oefening, van kant wisselen). Tijdens de oefening sturen tonen je: drie tonen voordat je begint, de laatste drie herhalingen of seconden tikken, een dubbele toon bij “nog 10 seconden”, een lage toon aan het eind.",
+          "Door te tikken verschijnt de besturingsbalk: pauze, terug, vooruit, muziek en stemaanwijzingen aan/uit, afronden. Tikken op de sectiebalk springt naar dat onderdeel.",
+          "Aan het eind tellen alle oefeningen als gedaan; vanuit een geplande training legt “Als gedaan vastleggen” ze direct vast met de duur."
+        ],
+        "2": "Geen geluid? Zet het volume hoger. Met “Muziek” hoor je het ook als het apparaat op stil staat; met “Eigen muziek” niet.",
+        "3": "Workouts openen"
+      }
+    },
+    "laborwerte-woher": {
+      "q": "Waar krijg ik mijn labuitslagen vandaan?",
+      "blocks": {
+        "0": "In Duitsland leiden meerdere wegen naar een labverslag – ze verschillen vooral in wie betaalt en hoe sportspecifiek de keuze van waarden is.",
+        "3": "Blijf voor het vergelijken van uitslagen in de tijd waar mogelijk bij hetzelfde lab en dezelfde methode. Bloed uit een vingertop is gevoeliger voor de voorbereiding dan een veneuze bloedafname; kleine sprongen tussen twee aanbieders zijn vaak meetverschillen en geen echte verandering."
+      }
+    },
+    "referenzbereich": {
+      "q": "Waarom voer ik de referentiewaarden van mijn lab in?",
+      "blocks": {
+        "0": "Omdat er in Duitsland GEEN landelijk uniforme referentiewaarden zijn: elk lab bepaalt die zelf – afhankelijk van meetmethode, apparaat en vergelijkingsgroep. Bij ferritine, fT3 of vitamine B12 verschillen ze merkbaar. Daarom staan de referentiewaarden op je verslag altijd naast de waarde.",
+        "1": [
+          "Als je een waarde vastlegt, tonen de velden “Referentiewaarden van jouw lab” alleen een gangbaar bereik als grijze hint – in de eenheid die je hebt gekozen.",
+          "Neem het bereik over van je verslag. Alleen wat je zelf invult, wordt opgeslagen; laat je het leeg, dan geldt het gangbare bereik.",
+          "Cat-O-Fit beoordeelt de waarde dan tegen JOUW lab. Het sportdoelbereik blijft er als tweede laag naast staan."
+        ],
+        "2": "Tot en met v3.19.0 werd de vooraf ingevulde standaardwaarde samen met de waarde opgeslagen (en verkeerd omgerekend als je de eenheid wijzigde). De app herkent zulke oudere waarden en beoordeelt ze weer tegen het gangbare bereik – je hoeft niets te corrigeren.",
+        "3": "Wat wel en niet gestandaardiseerd is:"
+      }
+    },
+    "labor": {
+      "q": "Labwaarden & supplementen",
+      "blocks": {
+        "0": "Leg waarden uit je labverslag vast, volg hun verloop en laat ze in een sportcontext plaatsen. Het punt: labbereiken gelden voor de algemene bevolking – een ferritine van 25 µg/l is “normaal”, maar grensgeval voor duurtraining. Cat-O-Fit toont je beide bereiken.",
+        "1": [
+          "De eerste keer dat je het opent, krijg je een paar korte vragen om het toepassingsgebied vast te stellen – ze gelden voor de hele app: Cat-O-Fit is ontworpen voor gezonde volwassenen. Bij ziekte, medicatie, zwangerschap, borstvoeding of een eetstoornis blijft de module bij pure documentatie, zonder aanbevelingen. De app herkent kinderen en tieners aan het geboortejaar: hun waarden worden alleen gedocumenteerd, niet beoordeeld.",
+          "“+ Waarde vastleggen”: parameter, datum, gemeten waarde en de eenheid er direct naast – voor bijna elke waarde zijn de in Duitsland gebruikelijke eenheden beschikbaar (bijv. CRP in mg/l of mg/dl, vitamine D in nmol/l of ng/ml); de app rekent om en toont de waarde zoals die op het verslag stond. Ligt een waarde ver buiten het gebruikelijke bereik, dan vraagt hij: “Klopt de eenheid?”",
+          "Magnesium komt als volbloed- en als serumwaarde – kies de juiste. Bij B12 zijn er holo-TC en totaal B12.",
+          "Onder “Omstandigheden van de bloedafname” kun je zware inspanning in de 48 uur ervoor, nuchter zijn, biotine en, voor vrouwen, de cyclusdag noteren. Na zware inspanning beoordeelt de app dan CK, ureum en CRP niet, en beoordeelt hij oestradiol alleen tegen het bereik van je lab voor de cyclusfase.",
+          "Tik op een waarde om het verloop te zien met beide bereiken (referentie gestippeld, sportdoelbereik als vlak), de bron van de bereiken en alle metingen – daar kun je waarden bewerken en verwijderen.",
+          "De app toont pas een trend vanaf drie metingen over minimaal twee maanden en wanneer de verandering groter is dan de natuurlijke variatie van de waarde. Een projectie (“wanneer verlaat de waarde het gunstige bereik”) bestaat alleen in de ongunstige richting en hooguit een jaar vooruit.",
+          "Ferritine wordt samen met het CRP uit dezelfde bloedafname geïnterpreteerd: bij ontsteking is een hoge waarde niet te beoordelen, maar een lage is nog steeds opvallend.",
+          "Oudere waarden (vitamine D na vier maanden of uit een ander seizoen, de meeste andere na een jaar) blijven in de geschiedenis staan maar geven geen suggesties meer – de app adviseert dan een nieuwe meting.",
+          "Onder “Supplementen” vind je algemene informatie met de onderbouwing, de gebruikelijke hoeveelheid (in lijn met de maximumgehalten van het BfR en de bovengrenzen van de EFSA), timing en interacties – altijd eerst de weg via voeding. Een te hoge waarde leidt nooit tot “suppleren”, maar tot het advies je inname te controleren. Bij prestatieproducten staat een opmerking over batchgetest producten (Kölner Liste).",
+          "Wat je regelmatig inneemt, voer je in onder “Jouw schema” en vink je af. Producten die je alleen nodig hebt (bijv. cafeïne vóór wedstrijden) markeer je als zodanig – ze tellen niet mee voor de naleving."
+        ],
+        "2": "Helemaal bovenaan schat de app je energievoorziening: of je genoeg eet voor wat je traint. De berekening gebruikt alleen dagen die je in Voeding hebt bevestigd met “Dag als compleet markeren”, en het resultaat is een bereik, geen meting. Daarvoor heeft de app je vetvrije massa nodig – gemeten (weegschaal, Apple Health) of uit een vetpercentage van de afgelopen vier maanden. Te weinig energie is in duursport een vaker voorkomend probleem dan een ontbrekend supplement – en een veelvoorkomende oorzaak van dalende prestaties, blessures en cyclusstoornissen.",
+        "3": "IJzer wordt nooit voorgesteld zonder labwaarde – op vermoeden ingenomen is het schadelijk als de voorraden vol zijn. Cat-O-Fit is bedoeld voor documentatie en algemene informatie voor gezonde volwassenen – geen medisch hulpmiddel, geen diagnose: bij afwijkende waarden verwijst de app uitdrukkelijk naar een arts. Je waarden zijn privé: in de app niet zichtbaar voor beheerders, en de server geeft ze pas vrij nadat je je met je pincode hebt aangemeld. Wie de server beheert, kan de opgeslagen bestanden echter wel lezen.",
+        "4": "Openen"
+      }
+    },
+    "energieverfuegbarkeit": {
+      "q": "Energievoorziening (energiebeschikbaarheid, RED-S)",
+      "aliases": "RED-S|energiebeschikbaarheid|EA|LEA|lage energiebeschikbaarheid|vetvrije massa|magere massa|te weinig eten|niet genoeg eten|energietekort",
+      "blocks": {
+        "0": "De energievoorziening schat of je genoeg eet voor wat je traint. Technisch heet dat energiebeschikbaarheid: de energie die je eet min het energieverbruik door training, gedeeld door de vetvrije massa in kg.",
+        "1": [
+          "De berekening gebruikt alleen dagen die je in Voeding hebt bevestigd met “Dag als compleet markeren” – zolang er niet genoeg dagen zijn, zegt de app dat in plaats van een tekort te beweren.",
+          "Richtwaarde ongeveer 45 kcal per kg vetvrije massa. Bij een afvaldoel is 30–45 tijdelijk acceptabel; onder 30 (voor mannen onder 25) wordt het kritiek voor hormonen, botten en herstel.",
+          "De vetvrije massa komt uit een meting (weegschaal, Apple Health) of uit een vetpercentage van de afgelopen vier maanden. Omdat alle invoer schattingen zijn, toont de app een bereik."
+        ],
+        "2": "Aanhoudend te weinig energie heet in de sportgeneeskunde RED-S (relatief energietekort in sport). Cat-O-Fit stelt geen diagnose – bij cyclusstoornissen, vaak blessures of aanhoudende vermoeidheid hoort dit in medische handen.",
+        "3": "Naar Labwaarden & supplementen"
+      }
+    },
+    "trendprojektion": {
+      "q": "Trend en projectie bij labwaarden",
+      "aliases": "projectie|trend|prognose|verloop|variatie|natuurlijke variatie|RCV|reference change value",
+      "blocks": {
+        "0": [
+          "Een trend verschijnt pas vanaf drie metingen over minimaal twee maanden – en alleen als de verandering groter is dan de natuurlijke variatie van de waarde (ongeveer ferritine 48%, vitamine D 30%, hemoglobine 9%, anders 25%).",
+          "De projectie trekt het verloop in een rechte lijn door en zegt wanneer het gunstige bereik zou worden verlaten – alleen in de ongunstige richting en hooguit een jaar vooruit.",
+          "Vitamine D varieert met het seizoen: een zomerwaarde zegt in de winter weinig."
+        ],
+        "1": "Een projectie is een reden voor de volgende controle, geen voorspelling."
+      }
+    },
+    "berichte": {
+      "q": "Rapporten & certificaten",
+      "blocks": {
+        "0": "Maak onveranderlijke overzichten van je voortgang: een maandrapport, een wedstrijdrapport (voorbereiding + uitslag) of een certificaat voor een bereikt doel. Vóór het opslaan zie je een voorbeeld; eenmaal opgeslagen worden ze bewaard en kun je ze afdrukken of als pdf opslaan – alles lokaal.",
+        "1": "Openen"
+      }
+    },
+    "ernaehrung-einkauf": {
+      "q": "Voeding, boodschappen & checklist",
+      "blocks": {
+        "0": "Eiwitrijke maaltijdideeën met receptsuggesties, een caloriebalans voor vandaag, een automatische boodschappenlijst met voorraadkast (op basis van het weekmenu) en de “Checklist” met herinneringen: dagelijkse routines of afspraken met datum/tijd. Afspraken verschijnen ook automatisch in de Agenda (week- en maandweergave) en kunnen daarnaast als .ics worden geëxporteerd – plus sjablonen zoals wedstrijdvoorbereiding. Uit te zetten in Instellingen."
+      }
+    },
+    "einstellungen": {
+      "q": "Instellingen",
+      "blocks": {
+        "0": "Profiel, hartslagzones, tempobereiken, thema & accentkleur, modules, zichtbare waarden en “Gegevens & back-up” (persoonlijke back-up voor iedereen, volledige gezinsback-up en herstel voor beheerders).",
+        "1": "Openen"
+      }
+    },
+    "periodisierung": {
+      "q": "De trainingsfasen (periodisering)",
+      "blocks": {
+        "0": "Een goed schema bouwt op in fasen – dat is vriendelijk voor jou en bouwt tegelijk fitheid op:",
+        "1": [
+          "Basis: veel rustige omvang, aerobe basis.",
+          "Opbouw: drempelduurlopen, snelheidsuithoudingsvermogen.",
+          "Piek: korte, snelle prikkels (VO₂max) en wedstrijdtempo.",
+          "Afbouw: omvang omlaag, de scherpte behouden – fris aan de start."
+        ]
+      }
+    },
+    "hf-zonen": {
+      "q": "Hartslagzones",
+      "blocks": {
+        "0": "Cat-O-Fit gebruikt vijf zones, afgeleid van je maximale hartslag – optioneel met rusthartslag via hartslagreserve (Karvonen) of vanuit je drempelhartslag (“Drempel”): uit een inspanningstest of een veldtest van 30 minuten (gemiddelde hartslag van de laatste 20 minuten), zones volgens Friel. Ken je je maximale hartslag niet, dan schat de app die in Instellingen op basis van je leeftijd (Tanaka: 208 − 0,7 × leeftijd); een gemeten waarde is altijd beter.",
+        "1": [
+          "Z1 Herstel – heel rustig.",
+          "Z2 Basisduur – “praattempo”, hier wordt uithoudingsvermogen opgebouwd.",
+          "Z3 Gelijkmatig tempo – flink, maar beheerst.",
+          "Z4 Drempel – snel, “prettig zwaar”.",
+          "Z5 VO₂max – heel zwaar, slechts kort."
+        ],
+        "2": "Je kunt je maximale hartslag en rusthartslag in Instellingen aanpassen – de zones worden opnieuw berekend."
+      }
+    },
+    "pace-bereiche": {
+      "q": "Tempobereiken (snelheid)",
+      "blocks": {
+        "0": "Elk trainingstype heeft een tempobereik in min/km, afgeleid van je streeftijd. Het is een suggestie, geen verplichting – hoe je je die dag voelt, telt."
+      }
+    },
+    "rpe": {
+      "q": "RPE – hoe zwaar voelde het?",
+      "aliases": "inspanning|ervaren inspanning|beleefde inspanning|RPE|Borg|hoe zwaar",
+      "blocks": {
+        "0": "RPE (1–10) is je subjectief ervaren inspanning. Het vult hartslag en tempo aan – vooral op dagen dat de cijfers “anders voelen”.",
+        "1": [
+          "1–2 heel licht tot licht – wandelen, een rustige cooling-down.",
+          "3–4 rustig tot matig – je zou de hele tijd kunnen kletsen.",
+          "5–6 vrij zwaar tot pittig – je kunt nog in korte zinnen praten.",
+          "7–8 zwaar tot heel zwaar – tempo, intervallen, wedstrijden over langere afstanden.",
+          "9–10 extreem zwaar tot maximaal – slechts kort vol te houden, een eindsprint."
+        ],
+        "2": "Vermenigvuldigd met de duur geeft de inspanning je belastingspunten (minuten × RPE)."
+      }
+    },
+    "trainingslast": {
+      "q": "Trainingsbelasting & herstel",
+      "blocks": {
+        "0": "De statistieken tonen je hardloopkilometers van de afgelopen 7 en 28 dagen – alleen hardlopen; fietsen, wandelen en zwemmen tellen daar niet mee. Stijgt de belasting erg snel, plan dan bewust herstel in. Cat-O-Fit doet geen beloften over blessurebescherming, maar geeft alleen aanwijzingen.",
+        "1": "De waarde “Belastingspunten · 7 dagen” berekent minuten × inspanning over alle sporten – dus kracht, voetbal, fietsen of een oefenwedstrijd tellen ook mee, niet alleen de loopkilometers. Zonder vastgelegde duur telt de geplande duur, en pas daarna 30 minuten.",
+        "2": "De coach past zich in beide richtingen aan: waren je trainingen weken achtereen erg zwaar, dan stelt het dashboard een lichtere week voor (omvang omlaag, vaste afspraken blijven); waren ze eerder rustig en pleit niets ertegen, dan kun je de komende week iets opschroeven."
+      }
+    },
+    "vdot": {
+      "q": "Huidige vorm & streeftempo’s (VDOT) – zo gebruik je ze",
+      "blocks": {
+        "0": "Bij Vandaag schat de kaart “Huidige vorm” een VDOT (een vorm-/prestatiegetal volgens Jack Daniels) op basis van je recente loopprestaties en leidt daar passende trainingszones uit af. Direct erboven staat de kaart “Jouw trainingszones” met de actuele streeftempo’s van het schema – zodat je beide direct kunt vergelijken.",
+        "1": "Zo lees je de kaart:",
+        "2": [
+          "De VDOT-chip (bijv. “VDOT 41,9”) is je geschatte huidige prestatie.",
+          "“afgevlakt over 7 weken · laatste 8,0 km in 38:00 op wo 1 jul” betekent: de vorm is NIET één enkele loop, maar een afgevlakte waarde uit je laatste weken – elke week telt je beste zware training (wedstrijd, tempo, intervallen of een inspanning van 7 of hoger), recentere weken tellen zwaarder en losse uitschieters worden begrensd. “laatste …” noemt je meest recente kwaliteitstraining. Rustige duurlopen onderschatten je vorm – loop je alleen rustig, dan zegt de kaart dat en adviseert hij geen langzamere tempo’s.",
+          "Je vorm springt dus NIET na één erg snelle (of langzame) dag – ze weerspiegelt je stabiele trend.",
+          "Rustig / Drempel / Intervallen zijn de tempo’s die bij deze vorm passen.",
+          "De regel eronder vergelijkt vorm en schema, bijv. “Je vorm is ongeveer 7 s/km sneller dan je geplande streeftempo’s – tijd om ze aan te scherpen.” Komen ze overeen, dan staat er “passen goed bij je huidige vorm”."
+        ],
+        "3": "Met één tik aanpassen:",
+        "4": [
+          "Tik op “Trainingszones aan je vorm aanpassen”.",
+          "Cat-O-Fit past de vormtempo’s direct toe op je trainingszones EN op alle openstaande, toekomstige hardlooptrainingen in je schema – elke training krijgt de zone voor zijn type (lange duurloop → lange duurloop, drempel → drempel). Met een streeftijd blijft het wedstrijdtempo je doel.",
+          "Daarna zegt de kaart “passen goed bij …” – vorm en schema komen weer overeen."
+        ],
+        "5": "Een enkele uitschieter verschuift de vorm niet – ze wordt over meerdere weken afgevlakt. Het vervangt geen inspanningstest: heb je daar je maximale hartslag vastgesteld, voer die dan in bij Instellingen."
+      }
+    },
+    "trinkpausen": {
+      "q": "Drinkpauzes bij de lange duurloop",
+      "blocks": {
+        "0": "Bij lange duurlopen toont de workoutmodus met regelmatige tussenpozen een drinkherinnering (met geluid, en waar mogelijk trillen) – zodat je over lange afstanden niet vergeet te drinken. Tip: vaak kleine slokjes in plaats van af en toe veel.",
+        "1": "Je kunt het interval per training zelf instellen: in het bewerkvenster onder “Drinkpauze elke (min)”. Leeg = automatisch per type, 0 = uit."
+      }
+    },
+    "coach": {
+      "q": "Wat laat de coach me zien?",
+      "blocks": {
+        "0": "De coach geeft je precies één aanbeveling bij Vandaag{hi} – in een vaste volgorde, zodat twee kaarten elkaar nooit tegenspreken:",
+        "1": [
+          "Eerst waarschuwingssignalen: een rustige terugkeer na ziekte/blessure, een hersteldag als de belasting duidelijk hoger is dan gepland, vandaag rustiger als de gereedheid laag is, rustiger na voetbal als de wedstrijd hard is gespeeld, een lichtere week na weken met erg zware trainingen.",
+          "Dan je schema: de dag spreiden (twee trainingen op dezelfde dag), de gemiste kerntraining inhalen, de weekomvang in balans brengen (overgebleven loopkilometers rustig inhalen) – nooit na ziekte of blessure.",
+          "Als laatste progressie (“Er zit meer in”) – alleen zonder waarschuwingssignaal, met belasting in het gebruikelijke bereik en niet in de 14 dagen na een onderbreking.",
+          "Daaronder informatie zonder eigen oordeel: gereedheid (HRV, rusthartslag, slaap), vormprognose, hartslag bij rustige duurlopen, inspanning van recente trainingen (gemiddelde RPE)."
+        ],
+        "2": "“Waarom deze aanbeveling?” onder de kaart laat zien wat er nog meer had gepast. Trainen volgens schema is geen waarschuwingssignaal, en de coach raakt nooit vaste afspraken aan. Wijzigingen in het schema gebeuren alleen wanneer jij ze in gang zet."
+      }
+    },
+    "belastung-form": {
+      "q": "Belasting & vorm begrijpen (ACWR, fitheid/vorm)",
+      "blocks": {
+        "0": "De kaart “Belasting & vorm” bij Vandaag vat je trainingsbelasting samen – over alle sporten (hardlopen, kracht, voetbal …), berekend als belastingspunten (AU): minuten × inspanning (RPE 1–10).",
+        "1": [
+          "Belastingsverhouding (ACWR) – je laatste 7 dagen in verhouding tot het gemiddelde van de 21 dagen daarvoor (ontkoppeld: de acute dagen zitten niet in hun eigen vergelijkingswaarde). 0,8–1,3 betekent: dicht bij je gemiddelde.",
+          "Fitheid / vermoeidheid / vorm – de langetermijnfitheid (CTL) min de kortetermijnvermoeidheid (ATL) geeft je vorm (TSB), ingedeeld ten opzichte van fitheid: fris (boven +10%), in balans, in training (tot −30%), duidelijk vermoeid. De eerste ongeveer drie maanden stabiliseert de fitheidscurve nog – tot dan is er geen beoordeling.",
+          "Monotonie & strain – alleen een melding als eentonige trainingsdagen samenvallen met een week die duidelijk boven je gemiddelde ligt; zeer lichte activiteit telt niet mee."
+        ],
+        "2": "Beperkingen van de maat: de waarden 0,8/1,3/1,5 komen uit observationele gegevens in teamsporten. Dat trainen volgens dit stoplicht blessures voorkomt, is niet bewezen – zie het als een aanwijzing hoeveel je belasting is gestegen ten opzichte van je eigen gemiddelde. Deze waarden voeden ook de automatische hersteldag."
+      }
+    },
+    "belastungspunkte": {
+      "q": "Belastingspunten: minuten × inspanning",
+      "aliases": "sRPE|sessie-RPE|session RPE|AU|arbitraire eenheden|trainingsbelasting|belasting|Foster",
+      "blocks": {
+        "0": "Cat-O-Fit meet de belasting van alle sporten met één getal: belastingspunten (AU) = duur in minuten × inspanning (RPE 1–10). De methode heet session-RPE en komt van Carl Foster.",
+        "1": [
+          "Voorbeeld: 45 minuten rustig (RPE 4) geven 180 punten, 60 minuten intervallen (RPE 8) geven 480 punten.",
+          "Ontbreekt de duur, dan rekent de app hem uit de afstand (per sport), daarna uit de geplande duur, en gebruikt ten slotte 30 minuten.",
+          "Ontbreekt de inspanning, dan schat de app die uit je gemiddelde hartslag ten opzichte van je maximale hartslag (Instellingen → “Hartslagzones”) – bij intervallen, tempo en wedstrijden nooit lager dan de typische waarde, omdat de rustpauzes het gemiddelde omlaag trekken. Zonder hartslag gebruikt hij een typische waarde voor het soort training.",
+          "Bij geïmporteerde workouts zonder inspanningsscore vraagt Vandaag kort (“Hoe zwaar was het?”) – je eigen gevoel is nauwkeuriger dan elke schatting."
+        ],
+        "2": "Belastingsverhouding (ACWR), fitheid/vermoeidheid/vorm en monotonie komen allemaal uit belastingspunten – elk oordeel over belasting heeft dezelfde bron."
+      }
+    },
+    "monotonie": {
+      "q": "Monotonie en strain",
+      "aliases": "strain|eentonigheid|monotonie|afwisseling|trainingsmonotonie|Foster",
+      "blocks": {
+        "0": "Monotonie beschrijft hoe eentonig je trainingsdagen zijn: het weekgemiddelde van de belastingspunten gedeeld door hun spreiding (volgens Foster). Strain is de weekbelasting maal de monotonie.",
+        "1": [
+          "Een melding verschijnt alleen als beide samenvallen: monotonie van 2 of meer EN een week die minstens 10% boven je gebruikelijke weekbelasting ligt.",
+          "Zeer lichte activiteit (inspanning tot 3, zoals wandelen of mobiliteit) telt hier niet mee."
+        ],
+        "2": "Afwisseling van zware en rustige dagen verlaagt de monotonie – een echte rustdag heeft meer effect dan nog een rustige training."
+      }
+    },
+    "bereitschaft": {
+      "q": "Gereedheid: rusthartslag, HRV en slaap",
+      "aliases": "gereedheid|herstel|HRV|hartslagvariabiliteit|rusthartslag|polsslag|RHR|slaap|uitgerust|moe",
+      "blocks": {
+        "0": "Gereedheid (0–100) vergelijkt je meest recente herstelcijfers met je eigen normale bereik: een rusthartslag boven je gemiddelde verlaagt hem, ruim zeven uur slaap of meer helpt, en alles onder zes en een half uur kost je punten. Bij HRV telt niet één dag, maar het gemiddelde van de laatste zeven dagen vergeleken met de vier weken ervoor – zit het daaronder, dan daalt de gereedheid; één slechte ochtend doet niets kantelen.",
+        "1": [
+          "75 en hoger: hoog · 55–74: solide · 40–54: matig · daaronder: laag.",
+          "HRV telt vanaf drie metingen in zeven dagen en tien in vier weken – en alleen binnen één meettype (SDNN of RMSSD).",
+          "Zijn de laatste metingen meer dan vier dagen oud, dan toont de app geen gereedheid."
+        ],
+        "2": "Is de gereedheid laag, dan stelt de coach voor vandaag rustiger te trainen – een aanbeveling, geen diagnose."
+      }
+    },
+    "feste-termine": {
+      "q": "Plannen rond vaste afspraken (voetbal & wedstrijden)",
+      "blocks": {
+        "0": "Je voert terugkerende vaste afspraken één keer in – het trainingsschema schikt zich er dan omheen. Nieuwe schema’s hebben geen standaardafspraken; de app vraagt ernaar als je er een maakt. Staat dezelfde afspraak in twee schema’s, dan verschijnt hij per dag maar één keer.",
+        "1": [
+          "Kies je voetbaltrainingsdagen (bijv. ma & wo) en geef de duur en intensiteit (licht/normaal/intensief) op.",
+          "Voeg terugkerende wedstrijden toe met een startdatum (bijv. “vanaf 19 aug, elke zondag, 2 uur”) – ze tellen als hoge belasting.",
+          "Op een wedstrijddag vervalt de geplande training; de week wordt rond de vaste afspraken gepland."
+        ],
+        "2": "Voetbal is HIIT-achtig en kost veel energie: vanaf “normaal” telt een voetbaldag als een zware dag (hij werkt volledig door in belasting & vorm). Het schema zet een kwaliteitstraining of lange duurloop nooit direct naast een zware afspraak – is er geen rustige dag, dan wordt de kwaliteitstraining “Rustig met versnellingen”. Heb je hard gespeeld en komt er daarna nog een pittige training, dan stelt de coach voor het rustiger aan te doen."
+      }
+    },
+    "erholungstag": {
+      "q": "Automatische hersteldag & voortschrijdende planning",
+      "blocks": {
+        "0": "Cat-O-Fit plant voortschrijdend: in plaats van een star blok past de komende week zich aan aan wat je werkelijk hebt gedaan.",
+        "1": [
+          "Ligt je belasting ruim boven wat gepland was, of stapelen zware dagen zich op die niet in het schema stonden, dan stelt de coach een hersteldag voor bij de volgende zware training in de komende twee dagen. Training die het schema volgt, is geen waarschuwingssignaal.",
+          "Vallen er twee trainingen op die dag (bijvoorbeeld van twee doelen), dan wordt de hele dag teruggeschroefd naar rustig – of je verplaatst er één naar een vrije dag (de dag spreiden).",
+          "Voer je een menstruatiestart voor vandaag of morgen in, dan vraagt de app of je het rustiger aan wilt doen – pas dan wordt iets aangepast.",
+          "Elke automatische aanpassing verschijnt transparant in het logboek “Recente automatische aanpassingen” en kan ongedaan worden gemaakt zolang de training nog openstaat."
+        ],
+        "2": "Er verandert niets achter je rug om – aanpassingen zijn zichtbaar en omkeerbaar. “Vandaag” toont steeds maar één aanbeveling; “Waarom deze aanbeveling?” laat zien wat opzijgelegd is."
+      }
+    },
+    "wochen-check": {
+      "q": "Weekcheck: botsingen & prioritering",
+      "blocks": {
+        "0": "De weekcheck in het schema laat zien wanneer er in een week te veel samenvalt – en in welke volgorde Cat-O-Fit prioriteert.",
+        "1": [
+          "Vaste afspraken (voetbal/wedstrijden) komen eerst.",
+          "Dan de kernlopen (tempo/intervallen, lange duurloop).",
+          "Daarna kracht, en tot slot extra omvang.",
+          "Voorbeeld (wat-als): voordat je een training toevoegt of verplaatst, toont de app het effect op de weekbelasting."
+        ]
+      }
+    },
+    "ziel-cockpit": {
+      "q": "Doelcockpit: halve marathon + afvallen samen",
+      "blocks": {
+        "0": "Twee doelen tegelijk? De doelcockpit brengt een prestatiedoel (bijv. een halve marathon) en afvallen in één oogopslag samen.",
+        "1": [
+          "De nadruk verschuift mee met de trainingsfase: in de basisfase is het tekort het grootst (rond 450 kcal), in de opbouwfase kleiner (rond 300 kcal), in de piekfase klein en tijdens de afbouw nul – dan vul je aan.",
+          "De aanbeveling voor het tekort is gekoppeld aan je caloriebalans – met ondergrenzen: nooit onder je basaal metabolisme en nooit zo laag dat er na de training minder dan 30 kcal per kg vetvrije massa overblijft. Zonder vetpercentage wordt het tekort op 15% begrensd.",
+          "Een eerlijke prikkelcheck waarschuwt je als er te weinig trainingsprikkel is ingesteld voor vooruitgang."
+        ],
+        "2": "Zo val je af zonder de kerntrainingen te verpesten."
+      }
+    },
+    "gesundheitsziel": {
+      "q": "Hoe stel ik een gezondheidsdoel in?",
+      "links": {
+        "2": "Naar Instellingen"
+      },
+      "blocks": {
+        "0": "Naast de weekdoelen (actieve minuten & trainingsdagen) kun je aparte streefwaarden voor lichaamswaarden instellen.",
+        "1": [
+          "Instellingen → Gezondheidsdoelen → “+ Doel”.",
+          "Kies een waarde (gewicht, vetpercentage, rusthartslag, HRV of VO₂max), voer dan een streefwaarde en eventueel een streefdatum in.",
+          "Je huidige waarde wordt onthouden als startpunt; de voortgang telt vanaf daar richting het doel.",
+          "Bij “Vandaag” verschijnt de kaart “Gezondheidsdoelen” met een voortgangsbalk per doel."
+        ],
+        "2": "De voortgang wordt bijgewerkt bij elke nieuwe lichaamswaarde (＋ Vastleggen → Lichaamswaarden) of via de Apple Health-import."
+      }
+    },
+    "momentum": {
+      "q": "Hoe werken badges & momentum?",
+      "blocks": {
+        "0": "Je ontgrendelt badges voor voltooide trainingen en bereikte doelen – automatisch, met een klein feestje.",
+        "1": "Momentum is je “vlam van motivatie”: hij groeit als je doorgaat en krimpt zacht als er hiaten zijn. Het is bedoeld als duwtje, nooit als straf.",
+        "2": [
+          "Reeksen tellen in weken: een kalenderweek met minstens drie trainingsdagen zet de reeks voort – rustdagen horen erbij.",
+          "Momentum stijgt met maximaal vijf trainingsdagen per week; meer levert geen extra momentum op.",
+          "Ziek of geblesseerd? Leg de afwezigheid vast met een reden – het momentum pauzeert en de reeks breekt niet."
+        ],
+        "3": "Naar Badges & momentum"
+      }
+    },
+    "vorlieben": {
+      "q": "Hoe leert Cat-O-Fit mijn voorkeuren?",
+      "blocks": {
+        "0": "Bij Voeding markeer je favoriete gerechten met ♥ en tik je na het koken op “Gekookt”. Daaruit leert Cat-O-Fit welke tags (bijv. eiwitrijk, vegetarisch) je het liefst hebt en stelt het passende gerechten voor onder “Aanbevolen voor jou”.",
+        "1": "De dagelijkse checklist onthoudt ook wat je vaak gebruikt en biedt dat aan als snelle toevoeging."
+      }
+    },
+    "kalorienbilanz": {
+      "q": "Hoe werkt de caloriebalans?",
+      "blocks": {
+        "0": "Bovenaan Voeding zie je je dagbalans: verbruikte energie versus opgenomen energie.",
+        "1": [
+          "Verbruikt = basaal metabolisme (uit lengte, gewicht, geboortejaar, geslacht) + dagelijkse activiteit + de training van vandaag.",
+          "Opgenomen = de items in je eetdagboek van vandaag. “Gekookt” en “Wat je at vastleggen” schrijven erin; “Vandaag gegeten” somt ze op (elk afzonderlijk te verwijderen).",
+          "Het dagdoel is gebaseerd op je streefgewicht (afvallen/behouden/aankomen) – berekend met het weekgemiddelde van je weegschaal, niet met één meting. Binnen 0,5 kg van het streefgewicht telt als “behouden”; kom je onder een afvalstreefgewicht, dan krijg je “behouden”, nooit automatisch “aankomen”.",
+          "Bij afvallen blijft het dagdoel boven je basaal metabolisme en boven je trainingsbehoefte. Ligt je streefgewicht onder een BMI van 18,5, dan berekent de app geen tekort.",
+          "Heb je alles voor de dag vastgelegd, tik dan onder “Vandaag gegeten” op “Dag als compleet markeren” – alleen zulke dagen tellen mee voor de energievoorziening in de labmodule."
+        ],
+        "2": "Als je een maaltijd maakt, schat de knop “schatten” de kcal grofweg uit de ingrediënten. Alles is bedoeld als richtlijn – geen dieetadvies.",
+        "3": "Voor de balans heb je lengte, gewicht en geboortejaar in je profiel nodig; geslacht maakt het basaal metabolisme nauwkeuriger."
+      }
+    },
+    "eignung": {
+      "q": "Toepassingsgebied en grenzen, kinder- en jeugdprofiel en “Caloriecijfers verbergen”",
+      "blocks": {
+        "0": "Cat-O-Fit is bedoeld voor documentatie en algemene informatie voor gezonde volwassenen – het is geen medisch hulpmiddel. Een korte geschiktheidscheck (Instellingen → Gezondheid & geschiktheid) geldt voor de hele app:",
+        "1": [
+          "Ziekte of medicatie: labwaarden en supplementen alleen ter documentatie, zonder aanbevelingen.",
+          "Zwangerschap, borstvoeding of een eetstoornis: bovendien geen afval- of tekortdoelen en geen afvalprogramma.",
+          "Onder de 18 (op basis van het geboortejaar): kinder- en jeugdprofiel – geen calorie- of gewichtsdoelen, geen afvalprogramma, geen prestatiesupplementen, labwaarden alleen gedocumenteerd, caloriecijfers verborgen.",
+          "“Caloriecijfers verbergen” verbergt kcal-cijfers in Voeding, bij “Vandaag” en in de energievoorziening – voor wie zich niet goed voelt bij getallen rond eten."
+        ],
+        "2": "Zolang de geschiktheidscheck niet is beantwoord, stelt de app geen afvaltekort voor. De vragen zijn bewust niet vooraf ingevuld.",
+        "3": "Instellingen openen"
+      }
+    },
+    "einkaufsliste": {
+      "q": "Hoe werkt de boodschappenlijst?",
+      "blocks": {
+        "0": "De boodschappenlijst is gedeeld en wordt automatisch opgebouwd uit de maaltijdplannen van alle leden:",
+        "1": [
+          "Elk lid plant bij Voeding gerechten met porties voor de week (mandje-icoon).",
+          "Cat-O-Fit voegt alle geplande gerechten samen, telt de ingrediënten op (bijv. havermout van meerdere mensen tot één hoeveelheid) en trekt de gedeelde voorraadkast af – de lijst toont precies wat je nodig hebt.",
+          "Als je boodschappen doet, tik je op “Alles gekocht → in de voorraadkast”: de hoeveelheden gaan naar de gedeelde voorraadkast. “Gekookt” trekt ze er weer van af."
+        ],
+        "2": "De boodschappendag geldt voor iedereen en wordt door beheerders ingesteld in het team-/gezinsbeheer (standaard dinsdag).",
+        "3": "Naar de boodschappenlijst"
+      }
+    },
+    "wetter": {
+      "q": "Hoe gebruik ik het weer in het schema?",
+      "blocks": {
+        "0": [
+          "Open Instellingen → “Locatie & weer” en zoek je stad.",
+          "In de agenda verschijnen kleine weericoontjes met de temperatuur voor de komende dagen.",
+          "Bij hitte, regen of storm toont de betreffende training een passende melding."
+        ],
+        "1": "Weergegevens komen van Open-Meteo. Zonder internet blijven de laatst geladen gegevens staan – de app werkt gewoon door."
+      }
+    },
+    "zyklus": {
+      "q": "Wat doet de cyclusagenda?",
+      "blocks": {
+        "0": "Leg je menstruatiestart vast (“＋ Vastleggen” → “Menstruatie”, of op de cycluspagina). Daaruit berekent Cat-O-Fit je cycluslengte, de huidige fase (menstruatie/folliculair/ovulatie/luteaal) en de voorspelling voor je volgende menstruatie. Heb je de cyclus niet nodig, zet de module dan uit onder Instellingen → Modules.",
+        "1": "Op je menstruatiedagen zijn trainingen “beschermd”: je kunt ze zonder oordeel verplaatsen of overslaan – ze tellen niet als gemist en verlagen noch de schemanaleving noch het momentum. De fasetips zijn bewust neutraal: het onderzoek naar prestatieverschillen over de cyclus is zwak – hoe jij je voelt, telt.",
+        "2": "Bij hormonale anticonceptie (de pil, hormoonspiraal, implantaat …) zijn er geen natuurlijke fasen: met de schakelaar op de cycluspagina toont Cat-O-Fit alleen je bloedingsdagen. Zonder nieuwe invoer gedurende ongeveer drie maanden pauzeert de voorspelling.",
+        "3": "Gevoelige gegevens blijven lokaal op je eigen server – de module kan op elk moment worden uitgezet.",
+        "4": "Naar de cyclusagenda"
+      }
+    },
+    "offline": {
+      "q": "Werkt de app offline?",
+      "blocks": {
+        "0": "Ja. Cat-O-Fit slaat elke wijziging meteen lokaal op en synchroniseert op de achtergrond zodra er weer verbinding is – ideaal om onderweg te trainen."
+      }
+    },
+    "datenschutz": {
+      "q": "Zijn mijn gegevens veilig? Wat wordt waar opgeslagen?",
+      "aliases": "privacy|gegevensbescherming|AVG|GDPR|beveiliging|privé|server|cloud|tracking|Open Food Facts|Open-Meteo",
+      "blocks": {
+        "0": [
+          "Op je apparaat: een kopie van je gegevens, zodat de app offline werkt. Met “Gedeeld apparaat” (Instellingen → Account) wordt die bij het afmelden weer gewist.",
+          "Op je server: alle gegevens van alle mensen als bestanden in de map “data” – dat is ook de complete back-up.",
+          "Naar buiten: alleen het weerverzoek en – indien ingeschakeld – de voedingsopzoeking (zie hieronder). Geen account, geen advertenties, geen tracking."
+        ],
+        "1": "Je gegevens staan als bestanden op je eigen server of NAS, niet in andermans cloud. De server geeft cyclus, labwaarden en supplementen alleen vrij na je aanmelding met pincode – ook niet aan beheerders. Alle andere gegevens (training, schema’s, lichaamswaarden) kan elk apparaat lezen dat je server kan bereiken; de app hoort daarom op je eigen thuisnetwerk (van buitenaf alleen met een aanmelding ervoor). Wie de server beheert, kan alle bestanden lezen.",
+        "2": "Slechts twee extra diensten die kunnen worden uitgezet, bereiken de buitenwereld: het weerverzoek aan Open-Meteo (vanaf het apparaat, met plaats of coördinaten) en – indien ingeschakeld – de voedingsopzoeking bij Open Food Facts (vanaf de server, alleen met de naam van het ingrediënt).",
+        "3": "Onder Instellingen → “Gegevens & back-up” kun je je persoonlijke back-up op elk moment exporteren (inclusief cyclus, labwaarden en supplementen). Beheerders kunnen daarnaast een volledige gezinsback-up van alle leden maken en die in nood herstellen – om privacyredenen zonder de privégebieden."
+      }
+    },
+    "familie": {
+      "q": "Kunnen meerdere mensen Cat-O-Fit gebruiken?",
+      "blocks": {
+        "0": "Ja! Cat-O-Fit is voor je hele team of gezin (tot 32 mensen). Bij het opstarten verschijnt het aanmeldscherm – tik op je tegel en voer je pincode in.",
+        "1": "Elk lid heeft eigen schema’s, trainingen, lichaamswaarden en instellingen.",
+        "2": "Beheerders beheren het team of gezin (Meer → “Team beheren”: leden toevoegen, rollen, teams, boodschappendag) en kunnen een lid “Openen”, bijv. om voor kinderen of het team te plannen – bovenaan het scherm staat dan “Je beheert …” met “Terug naar mij”. Cyclus, labwaarden en supplementen blijven daarbij altijd privé. Leden toevoegen, rollen wijzigen en verwijderen werkt alleen met een verbinding met de server.",
+        "3": "In Instellingen → Zichtbaarheid op het team-/gezinsdashboard bepaal je of je hoofddoel en je cijfers worden getoond – verborgen doelen verschijnen op het dashboard als “🔒 privé”.",
+        "4": "Nieuw toegevoegde leden beginnen met de pincode “0000”; tot ze in Instellingen → Account een eigen pincode instellen (met de vorige pincode), herinnert “Vandaag” hen eraan. Pincode vergeten? Een beheerder opent het lid en stelt onder Instellingen → Account een nieuwe in. Heeft de enige beheerder zijn pincode vergeten, dan is de enige hulp werken op de server zelf (zie Problemen oplossen).",
+        "5": "Naar het team-/gezinsdashboard"
+      }
+    },
+    "teams": {
+      "q": "Teams vormen, leden toewijzen en per team evalueren",
+      "blocks": {
+        "0": "Naast het hele gezin kun je als beheerder teams vormen – bijv. “Team Rood”, “Team Blauw”, “Team Groen”. Een lid kan in MEERDERE teams tegelijk zitten, en sommige leden zitten helemaal in geen team.",
+        "1": "Teams maak je onder Meer → “Team beheren”: “Team maken”, kies een naam en icoon en wijs de leden toe met vinkjes. Om van team te wisselen verplaats je gewoon de vinkjes – zo haal je iemand uit het ene team en zet je die in een ander (of ook in een tweede).",
+        "2": "Op het team-/gezinsdashboard schakel je bovenaan tussen “Alle”, de afzonderlijke teams en “Geen team”. Alle cijfers – weekkilometers, maand-km & mijlpaal, “Deze week actief” en de teambadges – worden dan opgeteld voor precies de leden van het gekozen team.",
+        "3": "Een lid in twee teams telt in beide mee – handig als iemand bijvoorbeeld in de loopgroep ÉN het voetbalteam zit.",
+        "4": "Wordt een lid verwijderd, dan verdwijnt die automatisch uit alle teams – er blijven geen “spoken” achter.",
+        "5": "Teams beheren"
+      }
+    },
+    "erinnerungen-zuverlaessig": {
+      "q": "Hoe betrouwbaar zijn herinneringen?",
+      "blocks": {
+        "0": "Meldingen in de app werken alleen terwijl de app open is. Exporteer voor betrouwbare herinneringen de training naar de iOS-agenda (.ics) – de herinnering die daarin zit, werkt ook als de app gesloten is."
+      }
+    },
+    "kalender-abo": {
+      "q": "Het schema in je agenda abonneren",
+      "aliases": "abonnement|abonneren|agenda-abonnement|agendafeed|webcal|ics|iCal|Outlook|Google Agenda",
+      "blocks": {
+        "0": "In plaats van losse .ics-bestanden te openen kan je agenda zich op een heel schema abonneren – alle trainingen en de wedstrijd. Wijzigingen haalt hij dan zelf op. Waarop je je abonneert, is altijd een schema, niet de agenda van de app.",
+        "1": [
+          "Meer → “Doelen & schema’s” → open een wedstrijd of programma → tik bovenaan op het downloadicoon “Exporteren” – of in het schema op “…” → “Aan agenda toevoegen (.ics)”.",
+          "Tik in het venster “Exporteren naar agenda” op “Abonnementslink kopiëren”. De knop verschijnt alleen met een verbinding met de server en na je aanmelding met pincode.",
+          "Plak de link als abonnement in je agenda:"
+        ],
+        "2": "iPhone/iPad: app Agenda → “Agenda’s” → “Voeg agenda toe” → “Voeg agenda-abonnement toe”.",
+        "3": "Mac: Agenda → Archief → “Nieuw agenda-abonnement”.",
+        "4": "Google: klik in een browser op een computer op + naast “Andere agenda’s” → “Via URL” (in de Google-app kan dit niet).",
+        "5": "Outlook: “Agenda toevoegen” → “Abonneren via internet”.",
+        "6": "Alleen bereikbaar op je thuisnetwerk? iCloud, Google en Outlook halen abonnementen via internet op – ze kunnen zich niet abonneren op een server die ze niet kunnen bereiken. Stel het abonnement in dat geval direct op het apparaat in: op de iPhone via iOS Instellingen → Apps → Agenda → Accounts → Voeg account toe → Overig → “Voeg geabonneerde agenda toe”, op de Mac met “Locatie: Op mijn Mac”. Staat er een aanmelding voor (Basic Auth), dan voer je op de iPhone daar de gebruikersnaam en het wachtwoord in; Google en Outlook kunnen dat niet.",
+        "7": "De link verwijst naar de server waarvan je hem kopieert en bevat je persoonlijke agendasleutel – iedereen krijgt een eigen sleutel. Wie de link kent, kan de afspraken lezen: deel hem alleen met mensen die je schema mogen zien.",
+        "8": "Agenda’s vragen abonnementen op volgens hun eigen schema; bij Outlook kan een wijziging volgens Microsoft meer dan 24 uur duren. Links van versies vóór 3.20.0 (zonder sleutel) blijven geldig tot 30 november 2026 – stel daarna het abonnement eenmalig opnieuw in.",
+        "9": "Naar Doelen & schema’s"
+      }
+    },
+    "module": {
+      "q": "Modules aan- en uitzetten",
+      "aliases": "module|modules|verbergen|uitzetten|uitschakelen|inschakelen|aanzetten",
+      "blocks": {
+        "0": "Onder Instellingen → Modules verberg je onderdelen die je niet nodig hebt. Alle modules staan in het begin aan. Zet je er een uit, dan verdwijnen het menu-item en de ingang onder “＋ Vastleggen”; je gegevens blijven behouden.",
+        "1": [
+          "Voeding – recepten, maaltijdplan, eetdagboek en caloriebalans.",
+          "Boodschappenlijst – gedeelde boodschappenlijst en voorraadkast.",
+          "Dagelijkse checklist – checklist & herinneringen, inclusief hun data in de agenda.",
+          "Cyclusagenda – cyclus, fasen in de agenda en de vraag naar de eerste dag van een menstruatie.",
+          "Labwaarden & supplementen – labwaarden, energievoorziening en supplementen, inclusief de opmerkingen daarover in Voeding."
+        ],
+        "2": "De schakelaars gelden per persoon. Als je een lid beheert, blijven cyclus en labwaarden hoe dan ook verborgen – ze zijn privé.",
+        "3": "Instellingen openen"
+      }
+    },
+    "backup": {
+      "q": "Back-up van gegevens: drie niveaus",
+      "aliases": "back-up|backup|volledige back-up|herstellen|mijn back-up|exporteren|3-2-1|Hyper Backup|Synology",
+      "blocks": {
+        "0": [
+          "De map “data” van de server is de complete back-up – alle mensen, inclusief cyclus, labwaarden en supplementen. Hij hoort in de reguliere back-up van de server (bijv. Hyper Backup op de Synology).",
+          "Volledige gezinsback-up (alleen beheerders, Instellingen → Gegevens & back-up): alle leden, rollen, teams, rapporten en trainingsgegevens – zonder de privégebieden.",
+          "Mijn back-up (iedereen): je eigen gegevens inclusief cyclus, labwaarden en supplementen. Op iPhone en iPad via het deelmenu (“Bewaar in Bestanden”)."
+        ],
+        "1": "De beproefde 3-2-1-regel: drie kopieën, op twee verschillende media, waarvan één op een andere locatie. De volledige back-up vervangt het back-uppen van de servermap niet – anders zouden na verlies van de server de privégebieden van iedereen zonder eigen back-up ontbreken.",
+        "2": "Naar “Gegevens & back-up”"
+      }
+    },
+    "fehlersuche": {
+      "q": "Werkt er iets niet? Problemen oplossen",
+      "aliases": "probleem|fout|werkt niet|update|pincode vergeten|cache|offline|wit scherm|lege pagina|sync|synchroniseren",
+      "blocks": {
+        "0": [
+          "Nieuwe versie verschijnt niet: sluit de app helemaal af (iPhone: veeg vanaf de onderrand omhoog en veeg hem weg) en open hem opnieuw. De app haalt updates op bij het openen en wanneer hij weer op de voorgrond komt.",
+          "Status blijft “Offline”: is de server bereikbaar op je thuisnetwerk (wifi, VPN)? Wijzigingen blijven op het apparaat en gaan automatisch weg zodra de server antwoordt – er gaat niets verloren. “Nu synchroniseren” in Instellingen → Gegevens & back-up start het met de hand.",
+          "“Bevestig je pincode”: de aanmelding bij de server is verlopen of na een update opnieuw nodig. Met je pincode worden cyclus, labwaarden en supplementen weer gesynchroniseerd; “Later” stelt het uit tot de volgende keer dat je de app opent.",
+          "Pincode vergeten: een beheerder opent het lid en stelt onder Instellingen → Account een nieuwe pincode in. Voor de enige beheerder is er een tool voor het beheer van de server (documentatie “Problemen oplossen”).",
+          "“De app kon niet starten”: meestal levert de server een bestand niet, of levert hij het met het verkeerde bestandstype (bijvoorbeeld na een onvolledige update). De melding noemt het betreffende bestand; de beheerdocumentatie legt de oorzaken uit.",
+          "Gezondheidsimport meldt een fout: 401 betekent verkeerde sleutel, 403 ontbrekende sleutel – kopieer de sleutel opnieuw in Gezondheidsimport."
+        ]
+      }
+    },
+    "glossar": {
+      "q": "Begrippen van A tot Z",
+      "aliases": "woordenlijst|begrippen|termen|ACWR|CTL|ATL|TSB|AU|sRPE|RPE|VDOT|HRV|RMSSD|SDNN|FFM|RED-S|afbouw|tapering|lange duurloop|momentum|Z1|Z5|gepland vs werkelijk|RCV",
+      "blocks": {
+        "0": [
+          "ACWR (belastingsverhouding) – belasting van de laatste 7 dagen ten opzichte van het gemiddelde van de 21 dagen daarvoor.",
+          "Badges – onderscheidingen voor training en bereikte doelen (Voortgang → Badges).",
+          "Belastingspunten (AU, sRPE) – minuten × inspanning; de gemeenschappelijke eenheid achter alle oordelen over belasting.",
+          "Doel – een wedstrijd of een trainingsprogramma; elk met een eigen schema.",
+          "Energiebeschikbaarheid (RED-S) – wat overblijft van de energie die je at, nadat je hebt getraind, per kg vetvrije massa.",
+          "Fitheid, vermoeidheid, vorm (CTL, ATL, TSB) – langetermijn- en kortetermijnbelasting en het verschil ertussen.",
+          "Gepland vs. werkelijk – vergelijking van het schema met de training die je echt hebt gedaan.",
+          "Geplande training – een training in het schema; voltooide training – wat je echt hebt gedaan.",
+          "Gereedheid – dagscore uit rusthartslag, HRV en slaap, vergeleken met je laatste twee weken.",
+          "Hartslagzones (Z1–Z5) – hartslagbereiken van herstel tot VO₂max.",
+          "HRV – hartslagvariabiliteit; gemeten als SDNN (Apple) of RMSSD (veel horloges) – niet met elkaar vergelijkbaar.",
+          "Lange duurloop – de lange, rustige loop van de week.",
+          "Momentum – de vaart die je de laatste weken hebt opgebouwd; pauzeert bij ziekte.",
+          "RPE (inspanning) – hoe zwaar een training was, van 1 (heel licht) tot 10 (maximaal).",
+          "Tapering – de weken vóór een wedstrijd met minder omvang, zodat je fris aan de start staat.",
+          "VDOT – fitheidswaarde volgens Jack Daniels; voorspelling en trainingstempo’s komen daaruit voort.",
+          "Vetvrije massa (FFM, magere lichaamsmassa) – lichaamsgewicht zonder vet; gemeten of berekend uit het vetpercentage."
+        ]
+      }
+    }
+  },
+  "labBest": "beste match"
+}
