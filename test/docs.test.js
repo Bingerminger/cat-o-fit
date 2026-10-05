@@ -139,8 +139,12 @@ test('DOC-12: Menüpfade in Doku und Hilfe gibt es wirklich', async () => {
   const { MORE_GROUPS, PROGRESS_TABS } = await import('../js/nav.js');
   const more = MORE_GROUPS.flatMap((g) => g.items.map((i) => i.label));
   const progress = PROGRESS_TABS.map((t) => t.label);
-  const settings = [...read(join(ROOT, 'js', 'settings.js')).matchAll(/sectionHead\('([^']+)'/g)].map((m) => m[1]);
-  const files = [...mdFiles.filter((f) => /docs[\\/](nutzung|betrieb|wissen)|APPLE-HEALTH|README/.test(f)), join(ROOT, 'js', 'helpcontent.js')];
+  // Settings section headings: keys in settings.js, German text from the catalog.
+  const deUi = JSON.parse(read(join(ROOT, 'locales', 'de', 'ui.json')));
+  const heading = (key) => key.split('.').reduce((o, k) => (o == null ? o : o[k]), deUi);
+  const settings = [...read(join(ROOT, 'js', 'settings.js')).matchAll(/sectionHead\(t\('([\w.]+)'\)/g)].map((m) => heading(m[1])).filter(Boolean);
+  // The German help texts live in the catalog since v4.0.0.
+  const files = [...mdFiles.filter((f) => /docs[\\/](nutzung|betrieb|wissen)|APPLE-HEALTH|README/.test(f)), join(ROOT, 'locales', 'de', 'help.json')];
   const bad = [];
   const check = (text, name, re, allowed, what) => {
     for (const m of text.matchAll(re)) {

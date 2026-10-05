@@ -25,6 +25,7 @@ const TRANSLATED_MODULES = [
   'js/show-program.js', 'js/motion-player.js', 'js/workouts.js', 'js/helpcontent.js', 'js/checklist.js', 'js/shopping.js',
   'js/badges.js', 'js/report.js', 'js/reports.js', 'js/statistics.js', 'js/charts.js',
   'js/health.js', 'js/health-import.js', 'js/healthdata.js', 'js/cycle.js', 'js/cyclecalc.js', 'js/family.js', 'js/family-admin.js',
+  'js/settings.js',
 ];
 /** Internal values (compared in code, never shown) that happen to be German words. */
 const INTERNAL_VALUES = ["'erhöht'", "'Obst & Gemüse'", "'Stück'", "'Rückschlag'"];

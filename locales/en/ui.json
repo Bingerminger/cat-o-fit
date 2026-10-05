@@ -57,6 +57,360 @@
       "instance": "Like the instance ({language})",
       "instanceLabel": "Default language",
       "instanceHint": "For new people and the sign-in screen."
+    },
+    "managingNote": "You are managing {name}. The settings on this page apply to {name}.",
+    "pin": {
+      "setFor": "Set PIN for {name}",
+      "change": "Change PIN",
+      "wrongLeft": {
+        "one": "The current PIN is wrong ({count} attempt left).",
+        "other": "The current PIN is wrong ({count} attempts left)."
+      },
+      "resetFor": "PIN for {name} has been reset",
+      "dialogName": "PIN for {name}",
+      "current": "current PIN",
+      "new": "new PIN",
+      "repeat": "repeat new PIN",
+      "mismatch": "The two new PINs do not match.",
+      "notSaved": "The PIN was not saved.",
+      "changed": "PIN changed",
+      "rules": "4 to 8 digits, not 0000. To change it, the app needs a connection to the server.",
+      "title": "PIN",
+      "set": "Set PIN",
+      "wrong": "The current PIN is wrong.",
+      "dialogNameNew": "New PIN for {name}"
+    },
+    "profile": {
+      "target": "Target {kg} kg",
+      "goalsHeading": "GOALS",
+      "year": "Year",
+      "sexNone": "Not specified",
+      "sexFemale": "Female",
+      "sexMale": "Male",
+      "goalsPlaceholder": "One goal per line",
+      "targetWeight": "Target weight (kg)",
+      "minorNoTarget": "Children and teenagers have no target weight – what matters is eating enough and eating a varied diet.",
+      "saveAnyway": "Save anyway",
+      "editTitle": "Edit profile",
+      "name": "Name",
+      "height": "Height (cm)",
+      "birthYear": "Year of birth",
+      "weight": "Weight (kg)",
+      "sex": "Sex",
+      "sexHint": "Used for the basal metabolic rate in the calorie balance (optional).",
+      "goals": "Goals",
+      "saved": "Profile saved"
+    },
+    "goals": {
+      "targetBy": "Target {target} · by {date}",
+      "removeMessage": "Really delete “{name}”?",
+      "add": "+ Goal",
+      "emptyNoWeight": "No goals yet. Set one, for example a resting heart rate or VO₂max goal – your progress appears on “Today”.",
+      "empty": "No goals yet. Set one, for example a weight, resting heart rate or VO₂max goal – your progress appears on “Today”.",
+      "paused": "Paused – weight and body fat goals are switched off by your scope check.",
+      "removeAria": "Remove goal",
+      "removeTitle": "Remove goal?",
+      "remove": "Remove",
+      "target": "Target {target}"
+    },
+    "hrZones": {
+      "estimateFromAge": "Estimate zones from age (max HR ≈ {max})",
+      "updated": "Zones updated",
+      "maxHr": "Max HR",
+      "method": "Calculation",
+      "pctMax": "% max HR",
+      "reserve": "HR reserve",
+      "threshold": "Threshold",
+      "needRestHr": "Enter your resting heart rate first to use HR reserve",
+      "lthrLabel": "Threshold HR (bpm)",
+      "lthrPlaceholder": "e.g. 168",
+      "lthrHint": "From performance testing (lactate or spiroergometry threshold) or as a field test: after warming up, run alone for 30 minutes as fast as you can keep steady – your average HR over the last 20 minutes is your threshold HR. Zones after Friel: Z2 85–89%, Z4 95–99% of threshold.",
+      "ageHint": "Estimated from your age (208 − 0.7 × age) – for an individual it is often 10 beats off. A hard run with a chest strap or a stress test gives you your true maximum heart rate.",
+      "karvonenHint": "HR reserve (Karvonen): resting HR + fraction × (max HR − resting HR) – takes your resting heart rate into account."
+    },
+    "appearance": {
+      "accentAria": "Accent {color}",
+      "theme": "Theme",
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark",
+      "accent": "ACCENT COLOUR"
+    },
+    "modules": {
+      "aria": "{name} module",
+      "checklist": "Daily checklist",
+      "cycle": "Cycle calendar"
+    },
+    "metrics": {
+      "showAria": "Show {name}",
+      "restingHr": "Resting heart rate",
+      "weight": "Weight",
+      "bodyFat": "Body fat",
+      "muscleMass": "Muscle mass",
+      "leanMass": "Lean mass",
+      "visceralFat": "Visceral fat",
+      "hrv": "HRV",
+      "vo2max": "VO₂max",
+      "sleep": "Sleep",
+      "energy": "Energy",
+      "mood": "Mood"
+    },
+    "location": {
+      "chosen": "Location: {place}",
+      "current": "Current: {place}",
+      "weatherShow": "Show weather in the plan",
+      "cityPlaceholder": "City, e.g. Dresden",
+      "searchAria": "Search for a place",
+      "search": "Search",
+      "notFound": "Place not found",
+      "which": "Which place do you mean?",
+      "unreachable": "Weather service not reachable",
+      "fieldLabel": "Location for the weather forecast",
+      "credit": "Weather data from Open-Meteo. Without internet the last loaded forecast is kept."
+    },
+    "footer": "Cat-O-Fit · Training plans for the whole family · v{version}",
+    "gate": {
+      "minorAge": "Child and youth profile (age {age} by year of birth): no calorie or weight targets, no weight-loss programme, no performance supplements, lab values documented only.",
+      "answeredNoWeight": "Answered: {reasons}. No weight-loss or deficit goals; lab values and supplements are documented only.",
+      "notAnswered": "Not answered yet – until then Cat-O-Fit does not calculate any weight-loss goals.",
+      "answeredNone": "Answered: none of these apply.",
+      "title": "Scope check",
+      "answer": "Answer",
+      "hideCalories": "Hide calorie figures",
+      "hiddenMinor": "Always hidden in the child and youth profile.",
+      "hideCaloriesHint": "Hides kcal figures in Nutrition, on “Today” and in energy availability – for anyone who doesn’t feel good about numbers around eating. You can still log everything.",
+      "always": "always",
+      "hidden": "Calorie figures hidden",
+      "visible": "Calorie figures visible",
+      "disclaimer": "Cat-O-Fit is for documentation and general information for healthy adults – not a medical device, no diagnosis, no therapy.",
+      "minor": "Child and youth profile: no calorie or weight targets, no weight-loss programme, no performance supplements, lab values documented only.",
+      "answered": "Answered: {reasons}. Lab values and supplements are documented only."
+    },
+    "reset": {
+      "word": "DELETE",
+      "typeWord": "Please type “{word}” to confirm.",
+      "label": "Type “{word}” to confirm",
+      "button": "Reset / clear app",
+      "hint": "Irrevocably deletes ALL members and data and restarts the first-time setup.",
+      "needServer": "To reset, the app needs a connection to the server and your sign-in with PIN.",
+      "intro": "This removes ALL members, sessions, plans, values and settings – on this device and on the server. It cannot be undone. The first-time setup starts afterwards.",
+      "confirmButton": "Delete everything and reset",
+      "title": "Reset app"
+    },
+    "goalSheet": {
+      "hrvMethod": "{method} – the goal only counts values of this measurement type",
+      "current": "Current: {value} – saved as your starting point; progress counts from here to the goal.",
+      "target": "Target value",
+      "noMeasurement": "No measurement logged yet – log your body values first so your progress can be counted.",
+      "create": "Create",
+      "createAnyway": "Create anyway",
+      "enterTarget": "Please enter a target value",
+      "created": "Goal created",
+      "title": "New health goal",
+      "metric": "Metric",
+      "date": "Target date (optional)"
+    },
+    "bodyFat": {
+      "warning": "A body fat level below about {floor}% {who} is in the range of essential fat – that is a health risk, for hormones and bones too. Better to discuss a goal like this with a doctor.",
+      "men": "for men",
+      "women": "for women",
+      "unknown": "for women (for men below about 5%)"
+    },
+    "bmiWarning": "At {height} cm, this target weight equals a BMI of {bmi} – below 18.5 counts as underweight. Cat-O-Fit does not calculate a deficit for it, but recommends keeping your weight.",
+    "fileNames": {
+      "familyBackup": "catofit-family-backup",
+      "sessions": "sessions",
+      "health": "body-values",
+      "labs": "lab-values",
+      "diary": "food-diary"
+    },
+    "csv": {
+      "notExported": "{label} not exported",
+      "ready": "{label} ready",
+      "sessionsHint": {
+        "one": "{count} entry · duration, distance, heart rate, load",
+        "other": "{count} entries · duration, distance, heart rate, load"
+      },
+      "healthHint": {
+        "one": "{count} day · weight, resting heart rate, HRV, sleep …",
+        "other": "{count} days · weight, resting heart rate, HRV, sleep …"
+      },
+      "labsHint": {
+        "one": "{count} measurement · with your lab’s reference range",
+        "other": "{count} measurements · with your lab’s reference range"
+      },
+      "diaryHint": {
+        "one": "{count} entry · kcal and protein",
+        "other": "{count} entries · kcal and protein"
+      },
+      "failed": "Export failed",
+      "failedMsg": "The spreadsheet could not be created.",
+      "title": "Export as spreadsheet",
+      "sessions": "Sessions",
+      "health": "Body values",
+      "labs": "Lab values",
+      "diary": "Food diary"
+    },
+    "readAccess": {
+      "copied": "{what} copied",
+      "title": "Read access for your own tools",
+      "intro": "For example for an AI assistant that you run yourself: it can read your sessions, plans, body values and nutrition – never write. Cycle, labs and supplements are not included. Cat-O-Fit itself uses no AI.",
+      "allow": "Allow read access",
+      "manual": "Copy manually (⌘/Ctrl+C)",
+      "address": "Address",
+      "copyAddress": "Copy address",
+      "keyLabel": "Key (as header “X-Catofit-Token”)",
+      "copyKey": "Copy key",
+      "key": "Key",
+      "hint": "Optionally append “&areas=sessions,health” and “&from=2026-01-01”. Anyone who knows the key can read this data – only give it to tools you trust. Switching it off invalidates it immediately."
+    },
+    "import": {
+      "quotedName": "“{name}”",
+      "foreignNamed": "This backup comes from {who}. Importing it into your profile “{profile}” overwrites your existing data.",
+      "restoredSkipped": {
+        "one": "{count} area restored, {skipped} skipped.",
+        "other": "{count} areas restored, {skipped} skipped."
+      },
+      "privateKept": "Private areas (cycle, labs, supplements) of the member are left untouched while managing.",
+      "reloading": "The app will now reload.",
+      "notJson": "The file is not valid JSON.",
+      "otherProfile": "another profile",
+      "overwrite": "Existing data in this profile will be overwritten.",
+      "confirmTitle": "Import backup?",
+      "confirm": "Import",
+      "done": "Backup imported",
+      "failedMsg": "The backup could not be imported.",
+      "restored": {
+        "one": "{count} area restored.",
+        "other": "{count} areas restored."
+      },
+      "foreign": "This backup comes from {who}. Importing it into your profile overwrites your existing data."
+    },
+    "fullBackup": {
+      "exported": {
+        "one": "The whole family ({count} member) without private cycle data. {saved}",
+        "other": "The whole family ({count} members) without private cycle data. {saved}"
+      },
+      "wrongFile": "This is not a full family backup. For a personal backup, use “{action}”.",
+      "unknown": "unknown",
+      "confirm": {
+        "one": "This full backup ({count} member, created on {when}) overwrites ALL members, roles, teams, settings and data – on this device and on the server. Private areas (cycle, labs, supplements) and the PINs are left untouched. This cannot be undone.",
+        "other": "This full backup ({count} members, created on {when}) overwrites ALL members, roles, teams, settings and data – on this device and on the server. Private areas (cycle, labs, supplements) and the PINs are left untouched. This cannot be undone."
+      },
+      "members": {
+        "one": "{count} member",
+        "other": "{count} members"
+      },
+      "partial": {
+        "one": "{who}: {done} of {total} areas are on the server. {count} area could not be sent yet – it is saved on this device and will be sent automatically as soon as the server is reachable. Newer entries by the members will not be overwritten. The app will now reload.",
+        "other": "{who}: {done} of {total} areas are on the server. {count} areas could not be sent yet – they are saved on this device and will be sent automatically as soon as the server is reachable. Newer entries by the members will not be overwritten. The app will now reload."
+      },
+      "restored": {
+        "one": "{who} and {count} area have been restored and are on the server. The app will now reload.",
+        "other": "{who} and {count} areas have been restored and are on the server. The app will now reload."
+      },
+      "title": "Full family backup",
+      "intro": "Backs up the whole family: all members, roles, teams, settings and all data including certificates and reports. For privacy reasons without the private areas (cycle, labs, supplements) – each member backs those up themselves.",
+      "export": "Export full backup",
+      "restore": "Restore full backup (overwrites all)",
+      "failed": "Full backup failed",
+      "failedMsg": "The full backup could not be created.",
+      "notSaved": "Full backup not saved",
+      "ready": "Full backup ready",
+      "fileFailedMsg": "The file could not be provided.",
+      "needServerTitle": "Server connection needed",
+      "needServerMsg": "A full backup can only be restored with a connection to the server. Please sign out and sign back in with your PIN as soon as the server is reachable.",
+      "restoreFailed": "Restore failed",
+      "wrongFileTitle": "Wrong file",
+      "confirmTitle": "Restore the whole family?",
+      "confirmButton": "Restore everything",
+      "partialTitle": "Restore not yet complete",
+      "restoredTitle": "Family restored",
+      "restoreFailedMsg": "The full backup could not be imported."
+    },
+    "sections": {
+      "account": "Account",
+      "visibility": "Visibility on the team/family dashboard",
+      "profile": "Profile",
+      "health": "Health & suitability",
+      "weeklyGoals": "Weekly goals",
+      "healthGoals": "Health goals",
+      "hrZones": "Heart rate zones",
+      "paceZones": "Training zones (pace)",
+      "appearance": "Appearance",
+      "modules": "Modules",
+      "bodyMetrics": "Visible body values",
+      "location": "Location & weather",
+      "shopping": "Shopping",
+      "admin": "Administration (admin)",
+      "data": "Data & backup",
+      "about": "About & legal"
+    },
+    "jump": {
+      "aria": "Settings sections",
+      "goals": "Goals",
+      "training": "Training",
+      "backup": "Data & backup"
+    },
+    "weakPin": "You are still using the default PIN (or none at all). Please set your own.",
+    "sharedDevice": {
+      "title": "Shared device",
+      "hint": "Remove all personal data from this device when you sign out – for example on the family iPad. Applies to this device only.",
+      "on": "Signing out will now clear this device",
+      "off": "Data stays on the device after signing out"
+    },
+    "visibility": {
+      "intro": "What the others see of you on the shared dashboard. Your name and avatar stay visible for sign-in; cycle, labs and supplements are always private anyway.",
+      "goal": "Show my main goal",
+      "metrics": "Show my figures (momentum, km, streak)",
+      "metricsAria": "Show my figures",
+      "load": "Show my load to coaches",
+      "loadHint": "Admins see your weekly load, your load ratio and how you have been feeling over the last few days."
+    },
+    "weeklyGoals": {
+      "saved": "Weekly goals saved",
+      "activeMinutes": "Active minutes / week",
+      "trainingDays": "Training days / week",
+      "hintMinor": "Based on the WHO recommendations for children and teenagers (on average 60 min of activity a day, so about 420 min a week). Your progress appears as rings on “Today”.",
+      "hint": "Based on the WHO recommendations (≥ 150 min of activity a week). Your progress appears as rings on “Today”."
+    },
+    "shopping": {
+      "day": "Shopping day (shared)",
+      "adminOnly": "Admin only"
+    },
+    "change": "Change",
+    "nutrition": {
+      "foodLookup": "Fill in nutrition values online",
+      "foodLookupHint": "On: the “estimate” helper when adding meals asks Open Food Facts (an open database) for the calories and protein of each ingredient. Your server only sends the ingredient name there; results are cached on the server. Off: purely local estimate without internet.",
+      "foodLookupCredit": "Nutrition data: <a href=\"https://openfoodfacts.org\" target=\"_blank\" rel=\"noopener\">Open Food Facts</a> – database under ODbL, contents under DbCL."
+    },
+    "admin": {
+      "manageTitle": "Manage team/family",
+      "manageHint": "Members, roles, shopping day & dashboard figures."
+    },
+    "data": {
+      "syncNow": "Sync now",
+      "synced": "Synced",
+      "exportBackup": "Export my backup (JSON)",
+      "exportCsv": "Export as spreadsheet (CSV)",
+      "importBackup": "Import my backup",
+      "healthImport": "Apple Health & file import",
+      "hint": "Your personal backup saves your own data (including cycle, labs and supplements). The spreadsheets (CSV) are meant for further work – only the backup can be restored."
+    },
+    "about": {
+      "legal1": "Cat-O-Fit is <strong>open source</strong> and licensed under the <strong>GNU AGPL v3.0 or later</strong>. Your data lives on this device and on your own server. Only two optional extra services go online: the weather lookup at Open-Meteo (straight from the device, with the place or coordinates) and – if switched on – the nutrition search at Open Food Facts (from the server, with the ingredient name only).",
+      "legal2": "Weather data from <a href=\"https://open-meteo.com/\" target=\"_blank\" rel=\"noopener\">Open-Meteo</a> (CC BY 4.0; the free interface is for non-commercial use only). Nutrition data from <a href=\"https://openfoodfacts.org\" target=\"_blank\" rel=\"noopener\">Open Food Facts</a> (ODbL/DbCL). Brands mentioned (e.g. VDOT, Hyrox, Apple Health, Garmin, Strava, Synology) belong to their respective owners and are named for description only.",
+      "license": "Licence",
+      "credits": "Credits",
+      "trademarks": "Trademarks",
+      "source": "Source code"
+    },
+    "save": "Save",
+    "backup": {
+      "notSaved": "Backup not saved",
+      "ready": "Backup ready",
+      "failed": "Backup failed",
+      "failedMsg": "The backup could not be created."
     }
   },
   "common": {
