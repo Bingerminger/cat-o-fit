@@ -11,11 +11,11 @@
    Keine externen Quellen. Per node:test abgedeckt.
    ========================================================================= */
 
-import { diffDays, fmtKm, fmtDuration, fmtDate, typeMeta, parseHms, fmtDec } from './ui.js';
+import { diffDays, fmtKm, fmtDuration, fmtDate, typeMeta, parseHms, fmtDec, monthName } from './ui.js';
 import { evaluateBadges, momentum } from './badges.js';
 import { adherence, isRunSession } from './fitness.js';
 
-const MONTHS = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+import { t, tp } from './i18n.js';
 
 function pad2(n) { return String(n).padStart(2, '0'); }
 function hms(sec) {
@@ -29,7 +29,7 @@ function live(arr) { return (arr || []).filter((r) => r && !r.deleted); }
 export function monthRange(monthStr) {
   const [y, m] = monthStr.split('-').map(Number);
   const last = new Date(y, m, 0).getDate();
-  return { from: `${monthStr}-01`, to: `${monthStr}-${pad2(last)}`, label: `${MONTHS[m - 1]} ${y}` };
+  return { from: `${monthStr}-01`, to: `${monthStr}-${pad2(last)}`, label: `${monthName(m - 1)} ${y}` };
 }
 
 function inRange(items, key, from, to) { return live(items).filter((s) => s[key] >= from && s[key] <= to); }
@@ -93,33 +93,36 @@ export function buildMonthReport({ profile = {}, sessions = [], plans = [], heal
   const mom = momentum({ sessions, plans, health, events, profile, isProtectedDay }, asOf);
 
   const training = [
-    { label: 'Trainingseinheiten', value: String(agg.count) },
-    { label: 'Aktive Tage', value: String(agg.activeDays) },
-    { label: 'Gelaufene Kilometer', value: fmtKm(agg.km, 0) },
+    { label: t('report.trainingSessions'), value: String(agg.count) },
+    { label: t('report.activeDays'), value: String(agg.activeDays) },
+    { label: t('report.kmRunLabel'), value: fmtKm(agg.km, 0) },
   ];
-  if (agg.otherKm > 0) training.push({ label: 'Weitere Kilometer (Rad, Gehen, Schwimmen …)', value: fmtKm(agg.otherKm, 0) });
-  training.push({ label: 'Trainingszeit', value: fmtDuration(agg.durationSec) });
-  if (adh.pct != null) training.push({ label: 'Plan-Einhaltung', value: `${adh.pct} % (${adh.done}/${adh.due})` });
+  if (agg.otherKm > 0) training.push({ label: t('report.otherKmMonth'), value: fmtKm(agg.otherKm, 0) });
+  training.push({ label: t('report.trainingTime'), value: fmtDuration(agg.durationSec) });
+  if (adh.pct != null) training.push({ label: t('report.planAdherence'), value: t('report.adherenceValue', { pct: adh.pct, done: adh.done, due: adh.due }) });
 
   const verteilung = Object.entries(agg.byType).sort((a, b) => b[1] - a[1]).map(([k, v]) => ({ label: k, value: String(v) }));
 
-  const sections = [{ heading: 'Training', items: training }];
-  if (verteilung.length) sections.push({ heading: 'Einheiten-Verteilung', items: verteilung });
+  const sections = [{ heading: t('report.headingTraining'), items: training }];
+  if (verteilung.length) sections.push({ heading: t('report.headingMix'), items: verteilung });
   const kg = (v) => `${fmtDec(v)} kg`;
-  if (w) sections.push({ heading: 'Körpergewicht', items: [
-    { label: 'Zu Monatsbeginn (Wochenmittel)', value: kg(w.start) },
-    { label: 'Zu Monatsende (Wochenmittel)', value: kg(w.end) },
-    { label: 'Veränderung', value: `${w.delta > 0 ? '+' : ''}${kg(w.delta)}` },
+  if (w) sections.push({ heading: t('report.headingWeight'), items: [
+    { label: t('report.weightStart'), value: kg(w.start) },
+    { label: t('report.weightEnd'), value: kg(w.end) },
+    { label: t('report.weightChange'), value: `${w.delta > 0 ? '+' : ''}${kg(w.delta)}` },
   ] });
 
   const verdict = agg.count === 0
-    ? 'In diesem Monat wurde kein Training erfasst.'
-    : `${agg.count} Einheiten an ${agg.activeDays} Tagen${agg.km > 0 ? `, ${fmtKm(agg.km, 0)} gelaufen` : ''} – Momentum „${mom.level}“. Weiter dranbleiben!`;
+    ? t('report.verdictEmpty')
+    : t('report.verdictMonth', {
+      sessions: tp('report.sessionsCount', agg.count), days: tp('report.onDays', agg.activeDays),
+      km: agg.km > 0 ? t('report.kmRun', { km: fmtKm(agg.km, 0) }) : '', level: mom.level,
+    });
 
   return {
     type: 'month',
-    title: `Monatsbericht ${label}`,
-    subtitle: profile.name ? `für ${profile.name}` : '',
+    title: t('report.titleMonth', { label }),
+    subtitle: profile.name ? t('report.forName', { name: profile.name }) : '',
     subject: { name: profile.name || '' },
     // Laufender Monat: der Stand steht im (versiegelten) Bericht – sonst sah ein Bericht vom
     // 28. wie ein vollständiger Monat aus (UI-39).
@@ -149,44 +152,44 @@ export function buildEventReport({ profile = {}, event = {}, plan = null, sessio
   const hit = targetSec != null && resultSec != null ? resultSec <= targetSec + 1 : null;
 
   const stamm = [
-    { label: 'Wettkampf', value: event.name || '–' },
-    { label: 'Datum', value: event.date ? fmtDate(event.date) : '–' },
+    { label: t('report.race'), value: event.name || '–' },
+    { label: t('report.date'), value: event.date ? fmtDate(event.date) : '–' },
   ];
-  if (event.distanceKm) stamm.push({ label: 'Distanz', value: fmtKm(event.distanceKm, event.distanceKm % 1 ? 1 : 0) });
-  if (event.targetTime) stamm.push({ label: 'Zielzeit', value: event.targetTime });
+  if (event.distanceKm) stamm.push({ label: t('report.distance'), value: fmtKm(event.distanceKm, event.distanceKm % 1 ? 1 : 0) });
+  if (event.targetTime) stamm.push({ label: t('report.targetTime'), value: event.targetTime });
 
   const vorbereitung = [
-    { label: 'Trainingszeitraum', value: start ? `${fmtDate(start)} – ${fmtDate(end)}` : '–' },
-    { label: 'Einheiten absolviert', value: String(agg.count) },
-    { label: 'Gelaufene Kilometer', value: fmtKm(agg.km, 0) },
+    { label: t('report.trainingPeriod'), value: start ? `${fmtDate(start)} – ${fmtDate(end)}` : '–' },
+    { label: t('report.sessionsDone'), value: String(agg.count) },
+    { label: t('report.kmRunLabel'), value: fmtKm(agg.km, 0) },
   ];
-  if (agg.otherKm > 0) vorbereitung.push({ label: 'Weitere Kilometer (Rad, Schwimmen, Gehen …)', value: fmtKm(agg.otherKm, 0) });
-  if (adh.pct != null) vorbereitung.push({ label: 'Plan-Einhaltung', value: `${adh.pct} % (${adh.done}/${adh.due})` });
+  if (agg.otherKm > 0) vorbereitung.push({ label: t('report.otherKmEvent'), value: fmtKm(agg.otherKm, 0) });
+  if (adh.pct != null) vorbereitung.push({ label: t('report.planAdherence'), value: t('report.adherenceValue', { pct: adh.pct, done: adh.done, due: adh.due }) });
 
-  const sections = [{ heading: 'Eckdaten', items: stamm }, { heading: 'Vorbereitung', items: vorbereitung }];
+  const sections = [{ heading: t('report.headingFacts'), items: stamm }, { heading: t('report.headingPrep'), items: vorbereitung }];
 
   if (result) {
-    const items = [{ label: 'Ergebniszeit', value: hms(resultSec) }];
-    if (result.distanceKm) items.push({ label: 'Distanz', value: fmtKm(result.distanceKm, 1) });
-    if (result.avgHr) items.push({ label: 'Ø Herzfrequenz', value: `${result.avgHr} bpm` });
-    if (hit != null) items.push({ label: 'Zielzeit', value: hit ? 'erreicht ✓' : 'knapp verpasst' });
-    sections.push({ heading: 'Wettkampf-Ergebnis', items });
+    const items = [{ label: t('report.finishTime'), value: hms(resultSec) }];
+    if (result.distanceKm) items.push({ label: t('report.distance'), value: fmtKm(result.distanceKm, 1) });
+    if (result.avgHr) items.push({ label: t('report.avgHr'), value: `${result.avgHr} bpm` });
+    if (hit != null) items.push({ label: t('report.targetTime'), value: hit ? t('report.targetHit') : t('report.targetMissed') });
+    sections.push({ heading: t('report.headingResult'), items });
   }
 
   let verdict;
   if (!result) {
-    verdict = `Eine Vorbereitung über ${agg.count} Einheiten und ${fmtKm(agg.km, 0)}. Das Ergebnis kann nach dem Wettkampf ergänzt werden.`;
+    verdict = tp('report.verdictNoResult', agg.count, { km: fmtKm(agg.km, 0) });
   } else if (hit === true) {
-    verdict = `Ziel erreicht! Mit ${hms(resultSec)} unter der Zielzeit – die ${agg.count} Vorbereitungseinheiten haben sich ausgezahlt.`;
+    verdict = tp('report.verdictHit', agg.count, { time: hms(resultSec) });
   } else if (hit === false) {
-    verdict = `${hms(resultSec)} im Ziel – knapp an der Zielzeit vorbei, aber eine starke Leistung nach ${agg.count} Einheiten. Die Erfahrung zählt für das nächste Mal.`;
+    verdict = tp('report.verdictMiss', agg.count, { time: hms(resultSec) });
   } else {
-    verdict = `Geschafft: ${hms(resultSec)} nach ${agg.count} Vorbereitungseinheiten.`;
+    verdict = tp('report.verdictDone', agg.count, { time: hms(resultSec) });
   }
 
   return {
     type: 'event',
-    title: `Wettkampf-Bericht`,
+    title: t('report.titleEvent'),
     subtitle: event.name || '',
     subject: { name: profile.name || '' },
     period: { label: event.date ? fmtDate(event.date) : '', from: start, to: end },
@@ -200,15 +203,16 @@ export function buildEventReport({ profile = {}, event = {}, plan = null, sessio
 
 /* -------------------------------- Urkunde ------------------------------- */
 export function buildGoalReport({ profile = {}, goalTitle, goalDetail = '', date } = {}) {
+  const goal = sentenceEnd(`${goalTitle || ''}${goalDetail ? ' – ' + goalDetail : ''}`);
   return {
     type: 'goal',
-    title: 'Urkunde',
-    subtitle: goalTitle || 'Ziel erreicht',
+    title: t('report.titleGoal'),
+    subtitle: goalTitle || t('report.goalReached'),
     subject: { name: profile.name || '' },
     period: { label: date ? fmtDate(date) : '' },
-    sections: goalDetail ? [{ heading: 'Erreicht', items: [{ label: goalTitle || 'Ziel', value: goalDetail }] }] : [],
+    sections: goalDetail ? [{ heading: t('report.headingAchieved'), items: [{ label: goalTitle || t('report.goal'), value: goalDetail }] }] : [],
     highlights: [],
-    verdict: `${profile.name || 'Du'} hat ein selbst gestecktes Ziel erreicht: ${sentenceEnd(`${goalTitle || ''}${goalDetail ? ' – ' + goalDetail : ''}`)} Großartige Leistung!`,
+    verdict: profile.name ? t('report.goalVerdictNamed', { name: profile.name, goal }) : t('report.goalVerdict', { goal }),
     certificate: true,
   };
 }

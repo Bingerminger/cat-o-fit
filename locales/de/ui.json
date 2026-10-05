@@ -2181,5 +2181,437 @@
   "stepper": {
     "less": "weniger",
     "more": "mehr"
+  },
+  "badges": {
+    "tiers": {
+      "legendary": "Legendär",
+      "epic": "Episch",
+      "advanced": "Fortgeschritten",
+      "beginner": "Einsteiger"
+    },
+    "items": {
+      "first": {
+        "name": "Erster Schritt",
+        "desc": "Dein allererstes Training"
+      },
+      "weeks3": {
+        "name": "Drei Wochen dran",
+        "desc": "3 Wochen in Folge mit mindestens 3 Trainingstagen"
+      },
+      "weeks6": {
+        "name": "Sechs-Wochen-Rhythmus",
+        "desc": "6 Wochen in Folge mit mindestens 3 Trainingstagen"
+      },
+      "weeks12": {
+        "name": "Ein Quartal Konstanz",
+        "desc": "12 Wochen in Folge mit mindestens 3 Trainingstagen"
+      },
+      "weeks26": {
+        "name": "Halbes Jahr am Ball",
+        "desc": "26 Wochen in Folge mit mindestens 3 Trainingstagen"
+      },
+      "weeks52": {
+        "name": "Ein ganzes Jahr",
+        "desc": "52 Wochen in Folge mit mindestens 3 Trainingstagen"
+      },
+      "count10": {
+        "name": "Zehnerpack",
+        "desc": "10 Trainings absolviert"
+      },
+      "count50": {
+        "name": "Halbhundert",
+        "desc": "50 Trainings absolviert"
+      },
+      "count100": {
+        "name": "Centurio",
+        "desc": "100 Trainings absolviert"
+      },
+      "count200": {
+        "name": "Doppel-Centurio",
+        "desc": "200 Trainings absolviert"
+      },
+      "km100": {
+        "name": "Erste 100 km",
+        "desc": "100 km gesammelt"
+      },
+      "km500": {
+        "name": "500-km-Club",
+        "desc": "500 km gesammelt"
+      },
+      "km1000": {
+        "name": "Tausendsassa",
+        "desc": "1000 km gesammelt"
+      },
+      "km2000": {
+        "name": "Weltenbummler:in",
+        "desc": "2000 km gesammelt"
+      },
+      "long15": {
+        "name": "Langstreckenliebe",
+        "desc": "Ein Lauf über 15 km"
+      },
+      "long21": {
+        "name": "HM-Generalprobe",
+        "desc": "Ein Lauf über 21 km"
+      },
+      "marathon": {
+        "name": "Marathon-Distanz",
+        "desc": "Ein Lauf über 42 km"
+      },
+      "quality1": {
+        "name": "Schärfe drin",
+        "desc": "Erste Tempo-/Intervalleinheit"
+      },
+      "interval10": {
+        "name": "Intervall-König:in",
+        "desc": "10 Intervalleinheiten"
+      },
+      "swim1": {
+        "name": "Erste Bahnen",
+        "desc": "Erste Schwimmeinheit"
+      },
+      "swim10": {
+        "name": "Wasserratte",
+        "desc": "10× geschwommen"
+      },
+      "swim25": {
+        "name": "Delfin",
+        "desc": "25× geschwommen"
+      },
+      "hike1": {
+        "name": "Erste Wanderung",
+        "desc": "Erste Wanderung"
+      },
+      "hike10": {
+        "name": "Gipfelstürmer:in",
+        "desc": "10× gewandert"
+      },
+      "walk10": {
+        "name": "Vielgeher:in",
+        "desc": "10× spazieren / gehen"
+      },
+      "row1": {
+        "name": "Erste Ruderschläge",
+        "desc": "Erste Rudereinheit"
+      },
+      "row10": {
+        "name": "Rudermeister:in",
+        "desc": "10× gerudert"
+      },
+      "racket1": {
+        "name": "Erster Aufschlag",
+        "desc": "Erstes Tennis/Badminton/Squash/TT"
+      },
+      "racket10": {
+        "name": "Matchball",
+        "desc": "10× Rückschlagsport"
+      },
+      "bike10": {
+        "name": "Vielfahrer:in",
+        "desc": "10× Rad/Indoor-Cycling"
+      },
+      "strength10": {
+        "name": "Eisen-Fan",
+        "desc": "10× Kraft/Gerätetraining"
+      },
+      "strength50": {
+        "name": "Kraftpaket",
+        "desc": "50× Kraft/Gerätetraining"
+      },
+      "variety5": {
+        "name": "Allrounder:in",
+        "desc": "5 verschiedene Sportarten"
+      },
+      "cats4": {
+        "name": "Vielseitig",
+        "desc": "Lauf, Kraft, Cross & Mobility"
+      },
+      "variety10": {
+        "name": "Zehnkämpfer:in",
+        "desc": "10 verschiedene Sportarten"
+      },
+      "race": {
+        "name": "Finisher",
+        "desc": "Einen Wettkampf absolviert"
+      },
+      "races3": {
+        "name": "Seriensieger:in",
+        "desc": "3 Wettkämpfe absolviert"
+      },
+      "dist3": {
+        "name": "Distanzsammler:in",
+        "desc": "3 verschiedene Wettkampf-Distanzen"
+      },
+      "hyrox": {
+        "name": "Hyrox-Held:in",
+        "desc": "Einen Hyrox absolviert"
+      },
+      "triathlon": {
+        "name": "Triathlet:in",
+        "desc": "Einen Triathlon absolviert"
+      },
+      "program1": {
+        "name": "Programm durchgezogen",
+        "desc": "Ein Trainingsprogramm abgeschlossen"
+      },
+      "program3": {
+        "name": "Programm-Profi",
+        "desc": "3 Trainingsprogramme abgeschlossen"
+      },
+      "perfectweek": {
+        "name": "Perfekte Woche",
+        "desc": "Eine Trainingswoche komplett erledigt"
+      },
+      "adherence90": {
+        "name": "Verlässlich",
+        "desc": "90 % Plan-Einhaltung"
+      },
+      "weight": {
+        "name": "Ziel erreicht",
+        "desc": "Zielgewicht erreicht"
+      },
+      "sleep7": {
+        "name": "Schlafchampion",
+        "desc": "7× mindestens 7 h Schlaf"
+      },
+      "sober7": {
+        "name": "Klare Woche",
+        "desc": "7 Tage in Folge ohne Alkohol"
+      },
+      "sober30": {
+        "name": "Klarer Kopf",
+        "desc": "30 Tage in Folge ohne Alkohol"
+      },
+      "cycle3": {
+        "name": "Zyklus im Blick",
+        "desc": "3 Periodenstarts eingetragen"
+      }
+    },
+    "messageBlazingWeeks": {
+      "one": "{count} Woche in Folge dran – du brennst gerade richtig!",
+      "other": "{count} Wochen in Folge dran – du brennst gerade richtig!"
+    },
+    "heading": "Abzeichen · {got}/{total}",
+    "level": {
+      "blazing": "Lodernd",
+      "rolling": "In Schwung",
+      "spark": "Funke",
+      "embers": "Glut"
+    },
+    "message": {
+      "paused": "Pausiert – erhol dich gut. Krankheits- und Verletzungstage kosten keinen Schwung.",
+      "good": "Schöner Schwung – bleib dran, es läuft!",
+      "spark": "Der Funke ist da – die nächste Einheit facht ihn an.",
+      "fading": "Dein Schwung lässt nach – schon eine lockere Einheit bringt dich zurück.",
+      "start": "Zeit, den Schwung zu entfachen – los geht's!"
+    },
+    "hero": {
+      "eyebrow": "Dein Schwung",
+      "momentum": "Momentum"
+    },
+    "footnote": "Abzeichen schalten sich automatisch frei, sobald du sie erreichst – ganz ohne Druck.",
+    "earned": "✓ erreicht",
+    "messageBlazing": "Du brennst gerade richtig!"
+  },
+  "report": {
+    "adherenceValue": "{pct} % ({done}/{due})",
+    "titleMonth": "Monatsbericht {label}",
+    "forName": "für {name}",
+    "verdictMonth": "{sessions} {days}{km} – Momentum „{level}“. Weiter dranbleiben!",
+    "verdictNoResult": {
+      "one": "Eine Vorbereitung über {count} Einheit und {km}. Das Ergebnis kann nach dem Wettkampf ergänzt werden.",
+      "other": "Eine Vorbereitung über {count} Einheiten und {km}. Das Ergebnis kann nach dem Wettkampf ergänzt werden."
+    },
+    "verdictHit": {
+      "one": "Ziel erreicht! Mit {time} unter der Zielzeit – die {count} Vorbereitungseinheit hat sich ausgezahlt.",
+      "other": "Ziel erreicht! Mit {time} unter der Zielzeit – die {count} Vorbereitungseinheiten haben sich ausgezahlt."
+    },
+    "verdictMiss": {
+      "one": "{time} im Ziel – knapp an der Zielzeit vorbei, aber eine starke Leistung nach {count} Einheit. Die Erfahrung zählt für das nächste Mal.",
+      "other": "{time} im Ziel – knapp an der Zielzeit vorbei, aber eine starke Leistung nach {count} Einheiten. Die Erfahrung zählt für das nächste Mal."
+    },
+    "verdictDone": {
+      "one": "Geschafft: {time} nach {count} Vorbereitungseinheit.",
+      "other": "Geschafft: {time} nach {count} Vorbereitungseinheiten."
+    },
+    "goalVerdictNamed": "{name} hat ein selbst gestecktes Ziel erreicht: {goal} Großartige Leistung!",
+    "trainingSessions": "Trainingseinheiten",
+    "activeDays": "Aktive Tage",
+    "kmRunLabel": "Gelaufene Kilometer",
+    "otherKmMonth": "Weitere Kilometer (Rad, Gehen, Schwimmen …)",
+    "trainingTime": "Trainingszeit",
+    "planAdherence": "Plan-Einhaltung",
+    "headingTraining": "Training",
+    "headingMix": "Einheiten-Verteilung",
+    "headingWeight": "Körpergewicht",
+    "weightStart": "Zu Monatsbeginn (Wochenmittel)",
+    "weightEnd": "Zu Monatsende (Wochenmittel)",
+    "weightChange": "Veränderung",
+    "verdictEmpty": "In diesem Monat wurde kein Training erfasst.",
+    "titleEvent": "Wettkampf-Bericht",
+    "race": "Wettkampf",
+    "date": "Datum",
+    "distance": "Distanz",
+    "targetTime": "Zielzeit",
+    "trainingPeriod": "Trainingszeitraum",
+    "sessionsDone": "Einheiten absolviert",
+    "otherKmEvent": "Weitere Kilometer (Rad, Schwimmen, Gehen …)",
+    "headingFacts": "Eckdaten",
+    "headingPrep": "Vorbereitung",
+    "finishTime": "Ergebniszeit",
+    "avgHr": "Ø Herzfrequenz",
+    "targetHit": "erreicht ✓",
+    "targetMissed": "knapp verpasst",
+    "headingResult": "Wettkampf-Ergebnis",
+    "titleGoal": "Urkunde",
+    "goalReached": "Ziel erreicht",
+    "headingAchieved": "Erreicht",
+    "goal": "Ziel",
+    "sessionsCount": {
+      "one": "{count} Einheit",
+      "other": "{count} Einheiten"
+    },
+    "onDays": {
+      "one": "an {count} Tag",
+      "other": "an {count} Tagen"
+    },
+    "kmRun": ", {km} gelaufen",
+    "goalVerdict": "Du hast ein selbst gestecktes Ziel erreicht: {goal} Großartige Leistung!"
+  },
+  "reports": {
+    "typeMonth": "Monatsbericht",
+    "typeEvent": "Wettkampf-Bericht",
+    "typeGoal": "Urkunde",
+    "created": "erstellt {date}",
+    "monthRunning": "Der Monat läuft noch – der Bericht zeigt den Stand vom {date} und bleibt danach unverändert.",
+    "awardedOn": "Verliehen am {date}",
+    "asOf": "Stand {date}",
+    "createdOn": "Erstellt am {date} · unveränderlicher Beleg",
+    "create": "Bericht erstellen",
+    "intro": "Berichte sind Momentaufnahmen: einmal erstellt, bleiben sie unverändert erhalten – als Beleg deiner Entwicklung. Sie lassen sich ansehen und ausdrucken (auch als PDF).",
+    "emptyTitle": "Noch keine Berichte",
+    "emptyText": "Erstelle deinen ersten Monatsbericht, einen Wettkampf-Bericht oder eine Urkunde.",
+    "kindMonth": "Monat",
+    "kindEvent": "Wettkampf",
+    "kind": "Art",
+    "preview": "Vorschau – nach dem Speichern bleibt der Bericht unverändert erhalten, als Beleg.",
+    "edit": "Ändern",
+    "saveCertificate": "Urkunde speichern",
+    "saveReport": "Bericht speichern",
+    "toastCreated": "Bericht erstellt",
+    "createMonth": "Monatsbericht erstellen",
+    "createEvent": "Wettkampf-Bericht erstellen",
+    "createGoal": "Urkunde erstellen",
+    "noRace": "Noch kein Wettkampf angelegt.",
+    "raceHint": "Enthält Vorbereitung und – falls erfasst – das Ergebnis.",
+    "goalPlaceholder": "z. B. Zielgewicht erreicht",
+    "detailPlaceholder": "z. B. von 72 auf 65 kg (optional)",
+    "goalTitle": "Titel des Ziels",
+    "goalDetails": "Details (optional)",
+    "titleRequired": "Bitte einen Titel eingeben",
+    "printPdf": "Drucken / PDF",
+    "printOrSave": "Drucken oder als PDF speichern",
+    "awardedTo": "verliehen an",
+    "permanentRecordCert": "Unveränderlicher Beleg · Cat-O-Fit",
+    "achievementsInPeriod": "Erfolge in diesem Zeitraum"
+  },
+  "statistics": {
+    "weekLabel": "{day}.",
+    "heatmapNote": {
+      "one": "{count} aktiver Tag in den letzten 12 Monaten · je dunkler, desto mehr Trainingszeit",
+      "other": "{count} aktive Tage in den letzten 12 Monaten · je dunkler, desto mehr Trainingszeit"
+    },
+    "loadHintNote": "{hint} (Nur eine Orientierung gegenüber deinem eigenen Schnitt – kein Verletzungsschutz.)",
+    "target": "Ziel {value} {unit}",
+    "goalHold": "halten",
+    "predictionFrom": "{name} · aus {basis}",
+    "noDataTitle": "Noch keine Daten",
+    "noDataText": "Sobald du Einheiten absolvierst, erscheinen hier deine Trends.",
+    "onPlanHeading": "Bin ich auf Plan?",
+    "onPlanHint": "Statusampel aus Einhaltung, Last und Ausfällen (letzte 4 Wochen)",
+    "adherenceHeading": "Plan-Einhaltung",
+    "dueDone": "fällige Einheiten (4 Wochen) erledigt",
+    "consistency": "Konsistenz zählt mehr als einzelne Top-Tage.",
+    "weeklyVolume": "Wochenumfang",
+    "weeklyAxis": "↕ Lauf-km pro Woche · → Kalenderwoche (Mo–So), letzte 8",
+    "weeklyAria": "Lauf-Kilometer pro Woche",
+    "trainingYear": "Trainingsjahr",
+    "hint": {
+      "unclear": "Noch zu wenig Daten.",
+      "building": "Die Datenbasis wächst noch – bewertet wird ab 4 Wochen Trainingshistorie.",
+      "wellAbove": "Belastung deutlich über deinem Schnitt – auf Erholung achten.",
+      "raised": "Belastung erhöht – behutsam steigern.",
+      "low": "Ruhigere Phase – ideal zur Regeneration.",
+      "normal": "Belastung im üblichen Rahmen."
+    },
+    "loadHeading": "Trainingslast",
+    "runKm7": "Lauf-km · 7 Tage",
+    "runKm28": "Lauf-km · 28 Tage",
+    "points7": "Belastungspunkte · 7 Tage",
+    "pointsExplain": "Belastungspunkte = Minuten × Anstrengung (RPE 1–10) über alle Sportarten (auch Kraft, Fußball, Rad) – Lauf-km zeigen nur das Laufpensum.",
+    "missed": {
+      "injured": "Verletzt",
+      "sick": "Krank",
+      "time": "Keine Zeit",
+      "other": "Sonstiges"
+    },
+    "missedHeading": "Ausgefallene Einheiten (4 Wochen)",
+    "healthMissNote": "Gesundheitsbedingte Ausfälle zählen nicht gegen deine Einhaltung.",
+    "mixHeading": "Einheiten-Verteilung (8 Wochen)",
+    "sessions": "Einheiten",
+    "sessionsByType": "Einheiten nach Art",
+    "metricsHeading": "Werte & Ziele",
+    "weightHeading": "Gewicht (kg)",
+    "weight": "Gewicht",
+    "predictionHeading": "Wettkampfprognose",
+    "predictionRiegel": "Riegel-Schätzung – nur eine Näherung.",
+    "predictionVdot": "Aus deiner Form (VDOT-Äquivalenz) – nur eine Näherung.",
+    "formHeading": "Form & Trainingsbereiche",
+    "freeHeading": "Trainings ohne Plan",
+    "freeHint": "Antippen zum Ansehen, Bearbeiten oder Löschen. Neue Trainings erfasst du auf „Heute“ oder im Kalender.",
+    "goalImprove": "verbessern"
+  },
+  "charts": {
+    "noData": "Keine Daten",
+    "noDataNamed": "{name}: keine Daten",
+    "range": "von {from} bis {to}",
+    "summary": {
+      "one": "{name}: {count} Wert{span}; niedrigster {lo}, höchster {hi}, zuletzt {last}{lastLabel}.",
+      "other": "{name}: {count} Werte{span}; niedrigster {lo}, höchster {hi}, zuletzt {last}{lastLabel}."
+    },
+    "target": "Ziel {value}",
+    "trend": "Verlauf",
+    "multiSummary": {
+      "one": "{name}: {count} Tag{span}; zuletzt {last}.",
+      "other": "{name}: {count} Tage{span}; zuletzt {last}."
+    },
+    "barSummary": {
+      "one": "{name}: {count} Wert{span}; höchster {hi}, zuletzt {last}{lastLabel}.",
+      "other": "{name}: {count} Werte{span}; höchster {hi}, zuletzt {last}{lastLabel}."
+    },
+    "distribution": "Verteilung",
+    "noDataShort": "keine Daten",
+    "heatmapSummary": {
+      "one": "{name}: {count} Trainingstag in {weeks}, zusammen {hours}.",
+      "other": "{name}: {count} Trainingstage in {weeks}, zusammen {hours}."
+    },
+    "noTraining": "kein Training",
+    "less": "weniger",
+    "more": "mehr",
+    "routeDistance": "Strecke über {km} km – ohne Karte gezeichnet",
+    "elevationAscent": "Höhenprofil: {min} bis {max} m, {ascent} Höhenmeter bergauf",
+    "start": "Start",
+    "barChart": "Balkendiagramm",
+    "trainingYear": "Trainingsjahr",
+    "weeksCount": {
+      "one": "{count} Woche",
+      "other": "{count} Wochen"
+    },
+    "hoursCount": {
+      "one": "{count} Stunde",
+      "other": "{count} Stunden"
+    },
+    "route": "Strecke – ohne Karte gezeichnet",
+    "elevation": "Höhenprofil: {min} bis {max} m"
   }
 }

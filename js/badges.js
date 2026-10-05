@@ -10,6 +10,7 @@
 
 import { diffDays, todayStr, addDays, typeMeta, el, iconSvg, sectionHead, fmtNum, weekStartMonday } from './ui.js';
 import { lsGet, lsSet } from './env.js';
+import { locale, t, tp } from './i18n.js';
 import * as store from './storage.js';
 import { setHeader } from './router.js';
 import { progressTabs } from './nav.js';
@@ -132,8 +133,8 @@ export function computeStats(data = {}, today = todayStr()) {
   // Sportart-Zähler (je Trainingsart) + Vielfalt
   const byType = {};
   run.forEach((s) => { if (s.type) byType[s.type] = (byType[s.type] || 0) + 1; });
-  const cnt = (t) => byType[t] || 0;
-  const distinctTypes = Object.keys(byType).filter((t) => t !== 'rest').length;
+  const cnt = (type) => byType[type] || 0;
+  const distinctTypes = Object.keys(byType).filter((type) => type !== 'rest').length;
   const distinctCats = new Set(run.map((s) => typeMeta(s.type).cat).filter((c) => c && c !== 'rest')).size;
   const marathonRun = longestRun >= 42;
 
@@ -166,84 +167,84 @@ export function computeStats(data = {}, today = todayStr()) {
 // Jeder Badge: emoji, name, desc, Kategorie und eine Fortschrittsfunktion.
 // tier = Aufwand/Schwierigkeit: 4 Legendär · 3 Episch · 2 Fortgeschritten · 1 Einsteiger.
 export const TIERS = [
-  { tier: 4, label: 'Legendär', color: '#f5a623' },
-  { tier: 3, label: 'Episch', color: '#7c5cff' },
-  { tier: 2, label: 'Fortgeschritten', color: '#3d8bff' },
-  { tier: 1, label: 'Einsteiger', color: '#43c59e' },
+  { tier: 4, get label() { return t('badges.tiers.legendary'); }, color: '#f5a623' },
+  { tier: 3, get label() { return t('badges.tiers.epic'); }, color: '#7c5cff' },
+  { tier: 2, get label() { return t('badges.tiers.advanced'); }, color: '#3d8bff' },
+  { tier: 1, get label() { return t('badges.tiers.beginner'); }, color: '#43c59e' },
 ];
 
 export const BADGES = [
   /* ---- Einstieg & Konstanz ---- */
-  { id: 'first', tier: 1, emoji: '🌱', name: 'Erster Schritt', cat: 'Start', desc: 'Dein allererstes Training', p: (s) => [s.totalSessions, 1] },
+  { id: 'first', tier: 1, emoji: '🌱', get name() { return t('badges.items.first.name'); }, cat: 'Start', get desc() { return t('badges.items.first.desc'); }, p: (s) => [s.totalSessions, 1] },
   // Konstanz in Wochen (≥ 3 Trainingstage je Woche) – Ruhetage gehören dazu.
-  { id: 'weeks3', tier: 1, emoji: '🔥', name: 'Drei Wochen dran', cat: 'Konstanz', desc: '3 Wochen in Folge mit mindestens 3 Trainingstagen', p: (s) => [s.streak, 3] },
-  { id: 'weeks6', tier: 2, emoji: '💪', name: 'Sechs-Wochen-Rhythmus', cat: 'Konstanz', desc: '6 Wochen in Folge mit mindestens 3 Trainingstagen', p: (s) => [s.streak, 6] },
-  { id: 'weeks12', tier: 3, emoji: '⚡', name: 'Ein Quartal Konstanz', cat: 'Konstanz', desc: '12 Wochen in Folge mit mindestens 3 Trainingstagen', p: (s) => [s.streak, 12] },
-  { id: 'weeks26', tier: 4, emoji: '🏔️', name: 'Halbes Jahr am Ball', cat: 'Konstanz', desc: '26 Wochen in Folge mit mindestens 3 Trainingstagen', p: (s) => [s.streak, 26] },
-  { id: 'weeks52', tier: 4, emoji: '❄️', name: 'Ein ganzes Jahr', cat: 'Konstanz', desc: '52 Wochen in Folge mit mindestens 3 Trainingstagen', p: (s) => [s.streak, 52] },
+  { id: 'weeks3', tier: 1, emoji: '🔥', get name() { return t('badges.items.weeks3.name'); }, cat: 'Konstanz', get desc() { return t('badges.items.weeks3.desc'); }, p: (s) => [s.streak, 3] },
+  { id: 'weeks6', tier: 2, emoji: '💪', get name() { return t('badges.items.weeks6.name'); }, cat: 'Konstanz', get desc() { return t('badges.items.weeks6.desc'); }, p: (s) => [s.streak, 6] },
+  { id: 'weeks12', tier: 3, emoji: '⚡', get name() { return t('badges.items.weeks12.name'); }, cat: 'Konstanz', get desc() { return t('badges.items.weeks12.desc'); }, p: (s) => [s.streak, 12] },
+  { id: 'weeks26', tier: 4, emoji: '🏔️', get name() { return t('badges.items.weeks26.name'); }, cat: 'Konstanz', get desc() { return t('badges.items.weeks26.desc'); }, p: (s) => [s.streak, 26] },
+  { id: 'weeks52', tier: 4, emoji: '❄️', get name() { return t('badges.items.weeks52.name'); }, cat: 'Konstanz', get desc() { return t('badges.items.weeks52.desc'); }, p: (s) => [s.streak, 52] },
 
   /* ---- Umfang (Trainings) ---- */
-  { id: 'count10', tier: 1, emoji: '📦', name: 'Zehnerpack', cat: 'Umfang', desc: '10 Trainings absolviert', p: (s) => [s.totalSessions, 10] },
-  { id: 'count50', tier: 3, emoji: '🎯', name: 'Halbhundert', cat: 'Umfang', desc: '50 Trainings absolviert', p: (s) => [s.totalSessions, 50] },
-  { id: 'count100', tier: 4, emoji: '👑', name: 'Centurio', cat: 'Umfang', desc: '100 Trainings absolviert', p: (s) => [s.totalSessions, 100] },
-  { id: 'count200', tier: 4, emoji: '🏛️', name: 'Doppel-Centurio', cat: 'Umfang', desc: '200 Trainings absolviert', p: (s) => [s.totalSessions, 200] },
+  { id: 'count10', tier: 1, emoji: '📦', get name() { return t('badges.items.count10.name'); }, cat: 'Umfang', get desc() { return t('badges.items.count10.desc'); }, p: (s) => [s.totalSessions, 10] },
+  { id: 'count50', tier: 3, emoji: '🎯', get name() { return t('badges.items.count50.name'); }, cat: 'Umfang', get desc() { return t('badges.items.count50.desc'); }, p: (s) => [s.totalSessions, 50] },
+  { id: 'count100', tier: 4, emoji: '👑', get name() { return t('badges.items.count100.name'); }, cat: 'Umfang', get desc() { return t('badges.items.count100.desc'); }, p: (s) => [s.totalSessions, 100] },
+  { id: 'count200', tier: 4, emoji: '🏛️', get name() { return t('badges.items.count200.name'); }, cat: 'Umfang', get desc() { return t('badges.items.count200.desc'); }, p: (s) => [s.totalSessions, 200] },
 
   /* ---- Distanz (km) ---- */
-  { id: 'km100', tier: 2, emoji: '🛣️', name: 'Erste 100 km', cat: 'Distanz', desc: '100 km gesammelt', p: (s) => [s.totalKm, 100] },
-  { id: 'km500', tier: 3, emoji: '🚀', name: '500-km-Club', cat: 'Distanz', desc: '500 km gesammelt', p: (s) => [s.totalKm, 500] },
-  { id: 'km1000', tier: 4, emoji: '🌍', name: 'Tausendsassa', cat: 'Distanz', desc: '1000 km gesammelt', p: (s) => [s.totalKm, 1000] },
-  { id: 'km2000', tier: 4, emoji: '✈️', name: 'Weltenbummler:in', cat: 'Distanz', desc: '2000 km gesammelt', p: (s) => [s.totalKm, 2000] },
+  { id: 'km100', tier: 2, emoji: '🛣️', get name() { return t('badges.items.km100.name'); }, cat: 'Distanz', get desc() { return t('badges.items.km100.desc'); }, p: (s) => [s.totalKm, 100] },
+  { id: 'km500', tier: 3, emoji: '🚀', get name() { return t('badges.items.km500.name'); }, cat: 'Distanz', get desc() { return t('badges.items.km500.desc'); }, p: (s) => [s.totalKm, 500] },
+  { id: 'km1000', tier: 4, emoji: '🌍', get name() { return t('badges.items.km1000.name'); }, cat: 'Distanz', get desc() { return t('badges.items.km1000.desc'); }, p: (s) => [s.totalKm, 1000] },
+  { id: 'km2000', tier: 4, emoji: '✈️', get name() { return t('badges.items.km2000.name'); }, cat: 'Distanz', get desc() { return t('badges.items.km2000.desc'); }, p: (s) => [s.totalKm, 2000] },
 
   /* ---- Long Run & Tempo ---- */
-  { id: 'long15', tier: 2, emoji: '🦵', name: 'Langstreckenliebe', cat: 'Long Run', desc: 'Ein Lauf über 15 km', p: (s) => [s.longestRun, 15] },
-  { id: 'long21', tier: 3, emoji: '🏃‍♀️', name: 'HM-Generalprobe', cat: 'Long Run', desc: 'Ein Lauf über 21 km', p: (s) => [s.longestRun, 21] },
-  { id: 'marathon', tier: 4, emoji: '🏁', name: 'Marathon-Distanz', cat: 'Long Run', desc: 'Ein Lauf über 42 km', p: (s) => [s.longestRun, 42] },
-  { id: 'quality1', tier: 1, emoji: '🌶️', name: 'Schärfe drin', cat: 'Tempo', desc: 'Erste Tempo-/Intervalleinheit', p: (s) => [s.qualityCount, 1] },
-  { id: 'interval10', tier: 3, emoji: '🎡', name: 'Intervall-König:in', cat: 'Tempo', desc: '10 Intervalleinheiten', p: (s) => [s.intervalCount, 10] },
+  { id: 'long15', tier: 2, emoji: '🦵', get name() { return t('badges.items.long15.name'); }, cat: 'Long Run', get desc() { return t('badges.items.long15.desc'); }, p: (s) => [s.longestRun, 15] },
+  { id: 'long21', tier: 3, emoji: '🏃‍♀️', get name() { return t('badges.items.long21.name'); }, cat: 'Long Run', get desc() { return t('badges.items.long21.desc'); }, p: (s) => [s.longestRun, 21] },
+  { id: 'marathon', tier: 4, emoji: '🏁', get name() { return t('badges.items.marathon.name'); }, cat: 'Long Run', get desc() { return t('badges.items.marathon.desc'); }, p: (s) => [s.longestRun, 42] },
+  { id: 'quality1', tier: 1, emoji: '🌶️', get name() { return t('badges.items.quality1.name'); }, cat: 'Tempo', get desc() { return t('badges.items.quality1.desc'); }, p: (s) => [s.qualityCount, 1] },
+  { id: 'interval10', tier: 3, emoji: '🎡', get name() { return t('badges.items.interval10.name'); }, cat: 'Tempo', get desc() { return t('badges.items.interval10.desc'); }, p: (s) => [s.intervalCount, 10] },
 
   /* ---- Sportarten: Schwimmen ---- */
-  { id: 'swim1', tier: 1, emoji: '🏊', name: 'Erste Bahnen', cat: 'Schwimmen', desc: 'Erste Schwimmeinheit', p: (s) => [s.swimCount, 1] },
-  { id: 'swim10', tier: 2, emoji: '🌊', name: 'Wasserratte', cat: 'Schwimmen', desc: '10× geschwommen', p: (s) => [s.swimCount, 10] },
-  { id: 'swim25', tier: 3, emoji: '🐬', name: 'Delfin', cat: 'Schwimmen', desc: '25× geschwommen', p: (s) => [s.swimCount, 25] },
+  { id: 'swim1', tier: 1, emoji: '🏊', get name() { return t('badges.items.swim1.name'); }, cat: 'Schwimmen', get desc() { return t('badges.items.swim1.desc'); }, p: (s) => [s.swimCount, 1] },
+  { id: 'swim10', tier: 2, emoji: '🌊', get name() { return t('badges.items.swim10.name'); }, cat: 'Schwimmen', get desc() { return t('badges.items.swim10.desc'); }, p: (s) => [s.swimCount, 10] },
+  { id: 'swim25', tier: 3, emoji: '🐬', get name() { return t('badges.items.swim25.name'); }, cat: 'Schwimmen', get desc() { return t('badges.items.swim25.desc'); }, p: (s) => [s.swimCount, 25] },
 
   /* ---- Sportarten: Wandern & Gehen ---- */
-  { id: 'hike1', tier: 1, emoji: '🥾', name: 'Erste Wanderung', cat: 'Wandern', desc: 'Erste Wanderung', p: (s) => [s.hikeCount, 1] },
-  { id: 'hike10', tier: 3, emoji: '⛰️', name: 'Gipfelstürmer:in', cat: 'Wandern', desc: '10× gewandert', p: (s) => [s.hikeCount, 10] },
-  { id: 'walk10', tier: 1, emoji: '🚶', name: 'Vielgeher:in', cat: 'Gehen', desc: '10× spazieren / gehen', p: (s) => [s.walkCount, 10] },
+  { id: 'hike1', tier: 1, emoji: '🥾', get name() { return t('badges.items.hike1.name'); }, cat: 'Wandern', get desc() { return t('badges.items.hike1.desc'); }, p: (s) => [s.hikeCount, 1] },
+  { id: 'hike10', tier: 3, emoji: '⛰️', get name() { return t('badges.items.hike10.name'); }, cat: 'Wandern', get desc() { return t('badges.items.hike10.desc'); }, p: (s) => [s.hikeCount, 10] },
+  { id: 'walk10', tier: 1, emoji: '🚶', get name() { return t('badges.items.walk10.name'); }, cat: 'Gehen', get desc() { return t('badges.items.walk10.desc'); }, p: (s) => [s.walkCount, 10] },
 
   /* ---- Sportarten: Rudern ---- */
-  { id: 'row1', tier: 1, emoji: '🚣', name: 'Erste Ruderschläge', cat: 'Rudern', desc: 'Erste Rudereinheit', p: (s) => [s.rowingCount, 1] },
-  { id: 'row10', tier: 3, emoji: '🛶', name: 'Rudermeister:in', cat: 'Rudern', desc: '10× gerudert', p: (s) => [s.rowingCount, 10] },
+  { id: 'row1', tier: 1, emoji: '🚣', get name() { return t('badges.items.row1.name'); }, cat: 'Rudern', get desc() { return t('badges.items.row1.desc'); }, p: (s) => [s.rowingCount, 1] },
+  { id: 'row10', tier: 3, emoji: '🛶', get name() { return t('badges.items.row10.name'); }, cat: 'Rudern', get desc() { return t('badges.items.row10.desc'); }, p: (s) => [s.rowingCount, 10] },
 
   /* ---- Sportarten: Rückschlag, Rad, Kraft ---- */
-  { id: 'racket1', tier: 1, emoji: '🎾', name: 'Erster Aufschlag', cat: 'Rückschlag', desc: 'Erstes Tennis/Badminton/Squash/TT', p: (s) => [s.racketCount, 1] },
-  { id: 'racket10', tier: 2, emoji: '🏓', name: 'Matchball', cat: 'Rückschlag', desc: '10× Rückschlagsport', p: (s) => [s.racketCount, 10] },
-  { id: 'bike10', tier: 2, emoji: '🚴', name: 'Vielfahrer:in', cat: 'Radsport', desc: '10× Rad/Indoor-Cycling', p: (s) => [s.bikeCount, 10] },
-  { id: 'strength10', tier: 2, emoji: '🏋️', name: 'Eisen-Fan', cat: 'Kraft', desc: '10× Kraft/Gerätetraining', p: (s) => [s.strengthCount, 10] },
-  { id: 'strength50', tier: 4, emoji: '🦾', name: 'Kraftpaket', cat: 'Kraft', desc: '50× Kraft/Gerätetraining', p: (s) => [s.strengthCount, 50] },
+  { id: 'racket1', tier: 1, emoji: '🎾', get name() { return t('badges.items.racket1.name'); }, cat: 'Rückschlag', get desc() { return t('badges.items.racket1.desc'); }, p: (s) => [s.racketCount, 1] },
+  { id: 'racket10', tier: 2, emoji: '🏓', get name() { return t('badges.items.racket10.name'); }, cat: 'Rückschlag', get desc() { return t('badges.items.racket10.desc'); }, p: (s) => [s.racketCount, 10] },
+  { id: 'bike10', tier: 2, emoji: '🚴', get name() { return t('badges.items.bike10.name'); }, cat: 'Radsport', get desc() { return t('badges.items.bike10.desc'); }, p: (s) => [s.bikeCount, 10] },
+  { id: 'strength10', tier: 2, emoji: '🏋️', get name() { return t('badges.items.strength10.name'); }, cat: 'Kraft', get desc() { return t('badges.items.strength10.desc'); }, p: (s) => [s.strengthCount, 10] },
+  { id: 'strength50', tier: 4, emoji: '🦾', get name() { return t('badges.items.strength50.name'); }, cat: 'Kraft', get desc() { return t('badges.items.strength50.desc'); }, p: (s) => [s.strengthCount, 50] },
 
   /* ---- Vielfalt ---- */
-  { id: 'variety5', tier: 2, emoji: '🎨', name: 'Allrounder:in', cat: 'Vielfalt', desc: '5 verschiedene Sportarten', p: (s) => [s.distinctTypes, 5] },
-  { id: 'cats4', tier: 3, emoji: '🤹', name: 'Vielseitig', cat: 'Vielfalt', desc: 'Lauf, Kraft, Cross & Mobility', p: (s) => [s.distinctCats, 4] },
-  { id: 'variety10', tier: 4, emoji: '🌈', name: 'Zehnkämpfer:in', cat: 'Vielfalt', desc: '10 verschiedene Sportarten', p: (s) => [s.distinctTypes, 10] },
+  { id: 'variety5', tier: 2, emoji: '🎨', get name() { return t('badges.items.variety5.name'); }, cat: 'Vielfalt', get desc() { return t('badges.items.variety5.desc'); }, p: (s) => [s.distinctTypes, 5] },
+  { id: 'cats4', tier: 3, emoji: '🤹', get name() { return t('badges.items.cats4.name'); }, cat: 'Vielfalt', get desc() { return t('badges.items.cats4.desc'); }, p: (s) => [s.distinctCats, 4] },
+  { id: 'variety10', tier: 4, emoji: '🌈', get name() { return t('badges.items.variety10.name'); }, cat: 'Vielfalt', get desc() { return t('badges.items.variety10.desc'); }, p: (s) => [s.distinctTypes, 10] },
 
   /* ---- Eventarten / Wettkämpfe ---- */
-  { id: 'race', tier: 3, emoji: '🏅', name: 'Finisher', cat: 'Wettkampf', desc: 'Einen Wettkampf absolviert', p: (s) => [s.racesFinishedCount, 1] },
-  { id: 'races3', tier: 4, emoji: '🥇', name: 'Seriensieger:in', cat: 'Wettkampf', desc: '3 Wettkämpfe absolviert', p: (s) => [s.racesFinishedCount, 3] },
-  { id: 'dist3', tier: 3, emoji: '🎽', name: 'Distanzsammler:in', cat: 'Wettkampf', desc: '3 verschiedene Wettkampf-Distanzen', p: (s) => [s.distinctDistances, 3] },
-  { id: 'hyrox', tier: 4, emoji: '🤸', name: 'Hyrox-Held:in', cat: 'Wettkampf', desc: 'Einen Hyrox absolviert', p: (s) => [s.hyroxDone ? 1 : 0, 1] },
-  { id: 'triathlon', tier: 4, emoji: '🔱', name: 'Triathlet:in', cat: 'Wettkampf', desc: 'Einen Triathlon absolviert', p: (s) => [s.triathlonDone ? 1 : 0, 1] },
-  { id: 'program1', tier: 2, emoji: '📋', name: 'Programm durchgezogen', cat: 'Programm', desc: 'Ein Trainingsprogramm abgeschlossen', p: (s) => [s.programsDone, 1] },
-  { id: 'program3', tier: 4, emoji: '🎖️', name: 'Programm-Profi', cat: 'Programm', desc: '3 Trainingsprogramme abgeschlossen', p: (s) => [s.programsDone, 3] },
+  { id: 'race', tier: 3, emoji: '🏅', get name() { return t('badges.items.race.name'); }, cat: 'Wettkampf', get desc() { return t('badges.items.race.desc'); }, p: (s) => [s.racesFinishedCount, 1] },
+  { id: 'races3', tier: 4, emoji: '🥇', get name() { return t('badges.items.races3.name'); }, cat: 'Wettkampf', get desc() { return t('badges.items.races3.desc'); }, p: (s) => [s.racesFinishedCount, 3] },
+  { id: 'dist3', tier: 3, emoji: '🎽', get name() { return t('badges.items.dist3.name'); }, cat: 'Wettkampf', get desc() { return t('badges.items.dist3.desc'); }, p: (s) => [s.distinctDistances, 3] },
+  { id: 'hyrox', tier: 4, emoji: '🤸', get name() { return t('badges.items.hyrox.name'); }, cat: 'Wettkampf', get desc() { return t('badges.items.hyrox.desc'); }, p: (s) => [s.hyroxDone ? 1 : 0, 1] },
+  { id: 'triathlon', tier: 4, emoji: '🔱', get name() { return t('badges.items.triathlon.name'); }, cat: 'Wettkampf', get desc() { return t('badges.items.triathlon.desc'); }, p: (s) => [s.triathlonDone ? 1 : 0, 1] },
+  { id: 'program1', tier: 2, emoji: '📋', get name() { return t('badges.items.program1.name'); }, cat: 'Programm', get desc() { return t('badges.items.program1.desc'); }, p: (s) => [s.programsDone, 1] },
+  { id: 'program3', tier: 4, emoji: '🎖️', get name() { return t('badges.items.program3.name'); }, cat: 'Programm', get desc() { return t('badges.items.program3.desc'); }, p: (s) => [s.programsDone, 3] },
 
   /* ---- Plan & Gesundheit ---- */
-  { id: 'perfectweek', tier: 2, emoji: '📅', name: 'Perfekte Woche', cat: 'Plan', desc: 'Eine Trainingswoche komplett erledigt', p: (s) => [s.perfectWeek ? 1 : 0, 1] },
-  { id: 'adherence90', tier: 3, emoji: '🤝', name: 'Verlässlich', cat: 'Plan', desc: '90 % Plan-Einhaltung', p: (s) => [s.adherence, 90] },
-  { id: 'weight', tier: 3, emoji: '⚖️', name: 'Ziel erreicht', cat: 'Gesundheit', desc: 'Zielgewicht erreicht', p: (s) => [s.weightReached ? 1 : 0, 1] },
-  { id: 'sleep7', tier: 2, emoji: '😴', name: 'Schlafchampion', cat: 'Gesundheit', desc: '7× mindestens 7 h Schlaf', p: (s) => [s.sleepStreak, 7] },
-  { id: 'sober7', tier: 2, emoji: '🌿', name: 'Klare Woche', cat: 'Gesundheit', desc: '7 Tage in Folge ohne Alkohol', p: (s) => [s.soberStreak, 7] },
-  { id: 'sober30', tier: 4, emoji: '💎', name: 'Klarer Kopf', cat: 'Gesundheit', desc: '30 Tage in Folge ohne Alkohol', p: (s) => [s.soberStreak, 30] },
-  { id: 'cycle3', tier: 1, emoji: '🌙', name: 'Zyklus im Blick', cat: 'Zyklus', desc: '3 Periodenstarts eingetragen', p: (s) => [s.cycleStarts, 3] },
+  { id: 'perfectweek', tier: 2, emoji: '📅', get name() { return t('badges.items.perfectweek.name'); }, cat: 'Plan', get desc() { return t('badges.items.perfectweek.desc'); }, p: (s) => [s.perfectWeek ? 1 : 0, 1] },
+  { id: 'adherence90', tier: 3, emoji: '🤝', get name() { return t('badges.items.adherence90.name'); }, cat: 'Plan', get desc() { return t('badges.items.adherence90.desc'); }, p: (s) => [s.adherence, 90] },
+  { id: 'weight', tier: 3, emoji: '⚖️', get name() { return t('badges.items.weight.name'); }, cat: 'Gesundheit', get desc() { return t('badges.items.weight.desc'); }, p: (s) => [s.weightReached ? 1 : 0, 1] },
+  { id: 'sleep7', tier: 2, emoji: '😴', get name() { return t('badges.items.sleep7.name'); }, cat: 'Gesundheit', get desc() { return t('badges.items.sleep7.desc'); }, p: (s) => [s.sleepStreak, 7] },
+  { id: 'sober7', tier: 2, emoji: '🌿', get name() { return t('badges.items.sober7.name'); }, cat: 'Gesundheit', get desc() { return t('badges.items.sober7.desc'); }, p: (s) => [s.soberStreak, 7] },
+  { id: 'sober30', tier: 4, emoji: '💎', get name() { return t('badges.items.sober30.name'); }, cat: 'Gesundheit', get desc() { return t('badges.items.sober30.desc'); }, p: (s) => [s.soberStreak, 30] },
+  { id: 'cycle3', tier: 1, emoji: '🌙', get name() { return t('badges.items.cycle3.name'); }, cat: 'Zyklus', get desc() { return t('badges.items.cycle3.desc'); }, p: (s) => [s.cycleStarts, 3] },
 ];
 
 /** Abzeichen, die nur aus Trainingsdaten entstehen – das Team-Dashboard zählt nur
@@ -301,20 +302,20 @@ export function momentum(data, today = todayStr()) {
   const paused = (ill.has(today) || ill.has(addDays(today, -1)))
     && !(sessions || []).some((s) => s && !s.deleted && s.date === today);
 
-  const level = score >= 75 ? 'Lodernd' : score >= 50 ? 'In Schwung' : score >= 25 ? 'Funke' : 'Glut';
+  const level = score >= 75 ? t('badges.level.blazing') : score >= 50 ? t('badges.level.rolling') : score >= 25 ? t('badges.level.spark') : t('badges.level.embers');
   const flames = score >= 75 ? '🔥🔥🔥' : score >= 50 ? '🔥🔥' : score >= 25 ? '🔥' : '✨';
   const weeks = stats.streak;
   const message = paused
-    ? 'Pausiert – erhol dich gut. Krankheits- und Verletzungstage kosten keinen Schwung.'
+    ? t('badges.message.paused')
     : score >= 75
-      ? `${weeks ? `${weeks} ${weeks === 1 ? 'Woche' : 'Wochen'} in Folge dran – ` : ''}du brennst gerade richtig!`
+      ? (weeks ? tp('badges.messageBlazingWeeks', weeks) : t('badges.messageBlazing'))
       : score >= 50
-        ? 'Schöner Schwung – bleib dran, es läuft!'
+        ? t('badges.message.good')
         : score >= 25
-          ? 'Der Funke ist da – die nächste Einheit facht ihn an.'
+          ? t('badges.message.spark')
           : missed > 0
-            ? 'Dein Schwung lässt nach – schon eine lockere Einheit bringt dich zurück.'
-            : 'Zeit, den Schwung zu entfachen – los geht\'s!';
+            ? t('badges.message.fading')
+            : t('badges.message.start');
   return { score, level, flames, missed, activeDays, done14: activeDays, streak: weeks, paused, message };
 }
 
@@ -350,7 +351,7 @@ export function badgeData() {
 }
 
 export function render(view) {
-  setHeader({ title: 'Fortschritt' });
+  setHeader({ title: t('nav.progress') });
   view.appendChild(progressTabs('#/badges'));
   const data = badgeData();
   const today = todayStr();
@@ -360,7 +361,7 @@ export function render(view) {
 
   // Momentum-Hero
   view.appendChild(el('div', { class: 'hero' }, [
-    el('div', { class: 'hero__eyebrow', text: 'Dein Schwung' }),
+    el('div', { class: 'hero__eyebrow', text: t('badges.hero.eyebrow') }),
     el('div', { class: 'hero__row', style: { alignItems: 'center', marginTop: '6px' } }, [
       el('div', {}, [
         el('div', { style: { fontSize: '2.4rem', lineHeight: '1' }, text: m.flames }),
@@ -368,14 +369,14 @@ export function render(view) {
       ]),
       el('div', { style: { textAlign: 'right' } }, [
         el('div', { class: 'num', style: { fontSize: '2.6rem', fontWeight: '800', lineHeight: '1' }, text: String(m.score) }),
-        el('div', { style: { opacity: '.85', fontSize: '.72rem' }, text: 'Momentum' }),
+        el('div', { style: { opacity: '.85', fontSize: '.72rem' }, text: t('badges.hero.momentum') }),
       ]),
     ]),
     el('div', { style: { marginTop: '10px', opacity: '.95', fontSize: '.9rem', position: 'relative' }, text: m.message }),
   ]));
 
   // Abzeichen – nach Aufwand gruppiert, die anspruchsvollste Stufe zuerst.
-  view.appendChild(sectionHead(`Abzeichen · ${unlockedCount}/${badges.length}`));
+  view.appendChild(sectionHead(t('badges.heading', { got: unlockedCount, total: badges.length })));
   TIERS.forEach(({ tier, label, color }) => {
     const group = badges.filter((b) => (b.tier || 1) === tier);
     if (!group.length) return;
@@ -391,7 +392,7 @@ export function render(view) {
     view.appendChild(grid);
   });
 
-  view.appendChild(el('p', { class: 'dim center mt-6', style: { fontSize: '.78rem' }, text: 'Abzeichen schalten sich automatisch frei, sobald du sie erreichst – ganz ohne Druck.' }));
+  view.appendChild(el('p', { class: 'dim center mt-6', style: { fontSize: '.78rem' }, text: t('badges.footnote') }));
 
   // Erreichte als „gesehen“ markieren (keine erneute Feier).
   markAllSeen(data, today);
@@ -401,10 +402,11 @@ export function render(view) {
 // Lange Namen brechen dort um – MIT Trennstrich („Tausend-/sassa“), nur wenn nötig.
 // Das Null-Breiten-Leerzeichen brach ohne Strich um und las sich wie ein Fehler (UI-42).
 const WRAP_PARTS = [
-  'bummler', 'meister', 'stürmer', 'sammler', 'champion', 'sieger', 'ratte',
-  'paket', 'kämpfer', 'fahrer', 'geher', 'probe', 'liebe', 'sassa', 'rounder', 'held',
+  'bummler', 'meister', 'st\u00fcrmer', 'sammler', 'champion', 'sieger', 'ratte',
+  'paket', 'k\u00e4mpfer', 'fahrer', 'geher', 'probe', 'liebe', 'sassa', 'rounder', 'held',
 ];
 export function softWrap(text) {
+  if (locale() !== 'de') return text;   // the word parts below are German
   let out = text;
   for (const p of WRAP_PARTS) out = out.replace(new RegExp(`(.)(${p})`, 'g'), `$1\u00ad$2`);
   return out;
@@ -417,7 +419,7 @@ function badgeCard(b) {
     el('div', { class: 'badge-card__desc', text: softWrap(b.desc) }),
   ]);
   if (b.unlocked) {
-    card.appendChild(el('div', { class: 'badge-card__check', text: '✓ erreicht' }));
+    card.appendChild(el('div', { class: 'badge-card__check', text: t('badges.earned') }));
   } else if (b.target > 1) {
     card.appendChild(el('div', { class: 'badge-progress' }, el('i', { style: { width: `${Math.round(b.progress * 100)}%` } })));
     card.appendChild(el('div', { class: 'badge-card__prog', text: `${fmtNum(Math.min(b.cur, b.target), b.cur % 1 ? 1 : 0)} / ${b.target}` }));

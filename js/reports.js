@@ -18,17 +18,19 @@ import { buildMonthReport, buildEventReport, buildGoalReport, monthRange } from 
 import { currentEligibility } from './wellness.js';
 import { isProtectedDay } from './cycle.js';
 
+import { t } from './i18n.js';
+
 const TYPE_META = {
-  month: { label: 'Monatsbericht', icon: 'chart', color: '#3d8bff' },
-  event: { label: 'Wettkampf-Bericht', icon: 'trophy', color: '#f5a623' },
-  goal:  { label: 'Urkunde', icon: 'flag', color: '#18b48a' },
+  month: { get label() { return t('reports.typeMonth'); }, icon: 'chart', color: '#3d8bff' },
+  event: { get label() { return t('reports.typeEvent'); }, icon: 'trophy', color: '#f5a623' },
+  goal:  { get label() { return t('reports.typeGoal'); }, icon: 'flag', color: '#18b48a' },
 };
-function tMeta(t) { return TYPE_META[t] || TYPE_META.month; }
+function tMeta(type) { return TYPE_META[type] || TYPE_META.month; }
 
 export function render(view) {
   setHeader({
-    title: 'Fortschritt',
-    actions: [{ icon: 'plus', label: 'Bericht erstellen', onClick: () => openCreate() }],
+    title: t('nav.progress'),
+    actions: [{ icon: 'plus', label: t('reports.create'), onClick: () => openCreate() }],
   });
   view.appendChild(progressTabs('#/reports'));
 
@@ -38,13 +40,13 @@ export function render(view) {
     el('div', { class: 'row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('info'), style: { color: 'var(--accent-text)', flex: '0 0 auto', width: '20px' } }),
       el('div', { class: 'muted', style: { fontSize: '.84rem' } },
-        'Berichte sind Momentaufnahmen: einmal erstellt, bleiben sie unverändert erhalten – als Beleg deiner Entwicklung. Sie lassen sich ansehen und ausdrucken (auch als PDF).'),
+        t('reports.intro')),
     ]),
   ]));
 
   if (!reports.length) {
-    view.appendChild(emptyState('trophy', 'Noch keine Berichte', 'Erstelle deinen ersten Monatsbericht, einen Wettkampf-Bericht oder eine Urkunde.'));
-    view.appendChild(el('button', { class: 'btn btn--primary btn--block mt-4', onclick: () => openCreate() }, [icon('plus'), 'Bericht erstellen']));
+    view.appendChild(emptyState('trophy', t('reports.emptyTitle'), t('reports.emptyText')));
+    view.appendChild(el('button', { class: 'btn btn--primary btn--block mt-4', onclick: () => openCreate() }, [icon('plus'), t('reports.create')]));
     return;
   }
 
@@ -55,7 +57,7 @@ export function render(view) {
       el('span', { class: 'type-icon type-icon--sm', style: { background: 'var(--accent-soft)', color: m.color }, html: iconSvg(m.icon) }),
       el('div', { class: 'list-item__body' }, [
         el('div', { class: 'list-item__title', text: r.title }),
-        el('div', { class: 'list-item__sub', text: `${m.label}${r.subtitle ? ' · ' + r.subtitle : ''} · erstellt ${fmtDate((r.createdAt || '').slice(0, 10))}` }),
+        el('div', { class: 'list-item__sub', text: `${m.label}${r.subtitle ? ' · ' + r.subtitle : ''} · ${t('reports.created', { date: fmtDate((r.createdAt || '').slice(0, 10)) })}` }),
       ]),
       el('span', { class: 'list-item__chev', html: iconSvg('chevronRight') }),
     ]));
@@ -86,13 +88,13 @@ function openCreate() {
     else bodyHost.appendChild(goalForm(toPreview));
   };
   const typeCtl = segmented(
-    [{ value: 'month', label: 'Monat' }, { value: 'event', label: 'Wettkampf' }, { value: 'goal', label: 'Urkunde' }],
+    [{ value: 'month', label: t('reports.kindMonth') }, { value: 'event', label: t('reports.kindEvent') }, { value: 'goal', label: t('reports.typeGoal') }],
     type, (v) => { type = v; renderBody(); },
   );
   renderBody();
-  formWrap.appendChild(field('Art', typeCtl));
+  formWrap.appendChild(field(t('reports.kind'), typeCtl));
   formWrap.appendChild(bodyHost);
-  openSheet({ title: 'Bericht erstellen', body: el('div', {}, [formWrap, previewHost]) });
+  openSheet({ title: t('reports.create'), body: el('div', {}, [formWrap, previewHost]) });
 }
 
 /** Vorschau eines noch nicht gespeicherten Berichts – so, wie er danach aussieht. */
@@ -104,11 +106,11 @@ export function reportPreview(report, { onEdit, onSave }) {
   if (isCert) buildCertificate(sheet, shown);
   else buildReport(sheet, shown, m);
   return el('div', {}, [
-    el('div', { class: 'dim', style: { fontSize: '.8rem' }, text: 'Vorschau – nach dem Speichern bleibt der Bericht unverändert erhalten, als Beleg.' }),
+    el('div', { class: 'dim', style: { fontSize: '.8rem' }, text: t('reports.preview') }),
     sheet,
     el('div', { class: 'row gap-2 mt-3' }, [
-      el('button', { class: 'btn btn--ghost grow', type: 'button', onclick: onEdit }, 'Ändern'),
-      el('button', { class: 'btn btn--primary grow', type: 'button', onclick: onSave }, [icon('check'), isCert ? 'Urkunde speichern' : 'Bericht speichern']),
+      el('button', { class: 'btn btn--ghost grow', type: 'button', onclick: onEdit }, t('reports.edit')),
+      el('button', { class: 'btn btn--primary grow', type: 'button', onclick: onSave }, [icon('check'), isCert ? t('reports.saveCertificate') : t('reports.saveReport')]),
     ]),
   ]);
 }
@@ -116,7 +118,7 @@ export function reportPreview(report, { onEdit, onSave }) {
 function seal(report) {
   const rec = store.addReport(report);
   closeSheet();
-  toast('Bericht erstellt', 'good');
+  toast(t('reports.toastCreated'), 'good');
   navigate(`#/report/${rec.id}`);
 }
 
@@ -136,13 +138,13 @@ function monthForm(done) {
   const note = el('div', { class: 'dim mt-1', style: { fontSize: '.78rem' } });
   const setNote = () => {
     note.textContent = month === opts[0].value
-      ? `Der Monat läuft noch – der Bericht zeigt den Stand vom ${fmtDate(today)} und bleibt danach unverändert.`
+      ? t('reports.monthRunning', { date: fmtDate(today) })
       : '';
   };
   const sel = select(opts, month, { onchange: (e) => { month = e.target.value; setNote(); } });
   setNote();
   return el('div', {}, [
-    field('Monat', sel),
+    field(t('reports.kindMonth'), sel),
     note,
     el('button', { class: 'btn btn--primary btn--block mt-3', onclick: () => done(buildMonthReport({
       profile: store.profile(), sessions: store.get('sessions'), plans: store.get('plans'),
@@ -151,36 +153,36 @@ function monthForm(done) {
       showWeight: !currentEligibility().noWeightGoals,
       // Geschützte Zyklustage zählen wie in Statistik und Erfolgen nicht als verpasst.
       isProtectedDay,
-    })) }, [icon('check'), 'Monatsbericht erstellen']),
+    })) }, [icon('check'), t('reports.createMonth')]),
   ]);
 }
 
 function eventForm(done) {
   const events = store.get('events').filter((e) => e.kind !== 'program');
-  if (!events.length) return el('div', { class: 'muted', text: 'Noch kein Wettkampf angelegt.' });
+  if (!events.length) return el('div', { class: 'muted', text: t('reports.noRace') });
   let eid = events[0].id;
   const sel = select(events.map((e) => ({ value: e.id, label: e.name })), eid, { onchange: (e) => { eid = e.target.value; } });
   return el('div', {}, [
-    field('Wettkampf', sel),
-    el('div', { class: 'dim mt-1', style: { fontSize: '.76rem' }, text: 'Enthält Vorbereitung und – falls erfasst – das Ergebnis.' }),
+    field(t('reports.kindEvent'), sel),
+    el('div', { class: 'dim mt-1', style: { fontSize: '.76rem' }, text: t('reports.raceHint') }),
     el('button', { class: 'btn btn--primary btn--block mt-3', onclick: () => {
       const ev = store.find('events', eid);
       const plan = store.get('plans').find((p) => p.eventId === eid) || null;
       done(buildEventReport({ profile: store.profile(), event: ev, plan, sessions: store.get('sessions'), health: store.get('health'), today: todayStr(), isProtectedDay }));
-    } }, [icon('check'), 'Wettkampf-Bericht erstellen']),
+    } }, [icon('check'), t('reports.createEvent')]),
   ]);
 }
 
 function goalForm(done) {
-  const titleI = input({ placeholder: 'z. B. Zielgewicht erreicht' });
-  const detailI = input({ placeholder: 'z. B. von 72 auf 65 kg (optional)' });
+  const titleI = input({ placeholder: t('reports.goalPlaceholder') });
+  const detailI = input({ placeholder: t('reports.detailPlaceholder') });
   return el('div', {}, [
-    field('Titel des Ziels', titleI),
-    field('Details (optional)', detailI),
+    field(t('reports.goalTitle'), titleI),
+    field(t('reports.goalDetails'), detailI),
     el('button', { class: 'btn btn--primary btn--block mt-3', onclick: () => {
-      const t = titleI.value.trim(); if (!t) { toast('Bitte einen Titel eingeben', 'bad'); return; }
-      done(buildGoalReport({ profile: store.profile(), goalTitle: t, goalDetail: detailI.value.trim(), date: todayStr() }));
-    } }, [icon('check'), 'Urkunde erstellen']),
+      const title = titleI.value.trim(); if (!title) { toast(t('reports.titleRequired'), 'bad'); return; }
+      done(buildGoalReport({ profile: store.profile(), goalTitle: title, goalDetail: detailI.value.trim(), date: todayStr() }));
+    } }, [icon('check'), t('reports.createGoal')]),
   ]);
 }
 
@@ -191,7 +193,7 @@ export function renderDetail(view, id) {
   const m = tMeta(r.type);
   setHeader({
     title: m.label, back: '#/reports',
-    actions: [{ icon: 'download', label: 'Drucken / PDF', onClick: () => window.print() }],
+    actions: [{ icon: 'download', label: t('reports.printPdf'), onClick: () => window.print() }],
   });
 
   const isCert = r.type === 'goal' || r.certificate;
@@ -203,7 +205,7 @@ export function renderDetail(view, id) {
   else buildReport(sheet, r, m);
 
   view.appendChild(sheet);
-  view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-4 no-print', onclick: () => window.print() }, [icon('download'), 'Drucken oder als PDF speichern']));
+  view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-4 no-print', onclick: () => window.print() }, [icon('download'), t('reports.printOrSave')]));
 }
 
 /** „🌱 Name“ -> { emoji, name } für schöne Badge-Kacheln. */
@@ -232,9 +234,9 @@ function buildCertificate(sheet, r) {
     el('span', { class: 'cert__brand-logo', html: iconSvg('activity') }), 'Cat-O-Fit',
   ]));
   sheet.appendChild(el('div', { class: 'cert__seal' }, [el('span', { text: '★' })]));
-  sheet.appendChild(el('div', { class: 'cert__kicker', text: 'Urkunde' }));
+  sheet.appendChild(el('div', { class: 'cert__kicker', text: t('reports.typeGoal') }));
   if (r.subtitle) sheet.appendChild(el('div', { class: 'cert__award', text: r.subtitle }));
-  sheet.appendChild(el('div', { class: 'cert__presented', text: 'verliehen an' }));
+  sheet.appendChild(el('div', { class: 'cert__presented', text: t('reports.awardedTo') }));
   sheet.appendChild(el('div', { class: 'cert__name', text: r.subject?.name || '—' }));
   sheet.appendChild(el('div', { class: 'cert__rule' }));
   if (r.verdict) sheet.appendChild(el('div', { class: 'cert__verdict', text: r.verdict }));
@@ -244,8 +246,8 @@ function buildCertificate(sheet, r) {
     ]));
   }));
   if (r.highlights?.length) sheet.appendChild(badgeTiles(r.highlights));
-  sheet.appendChild(el('div', { class: 'cert__foot', text: `Verliehen am ${fmtDateLong((r.createdAt || '').slice(0, 10))}` }));
-  sheet.appendChild(el('div', { class: 'cert__seal-note', text: 'Unveränderlicher Beleg · Cat-O-Fit' }));
+  sheet.appendChild(el('div', { class: 'cert__foot', text: t('reports.awardedOn', { date: fmtDateLong((r.createdAt || '').slice(0, 10)) }) }));
+  sheet.appendChild(el('div', { class: 'cert__seal-note', text: t('reports.permanentRecordCert') }));
 }
 
 /* ----------------------------- Bericht ---------------------------------- */
@@ -257,7 +259,7 @@ function buildReport(sheet, r, m) {
       el('span', { class: 'report-head__badge', html: iconSvg(m.icon) }),
     ]),
     el('div', { class: 'report-head__title', text: r.title }),
-    el('div', { class: 'report-head__meta', text: [r.subject?.name && `für ${r.subject.name}`, r.period?.label, r.period?.asOf && `Stand ${fmtDate(r.period.asOf)}`].filter(Boolean).join(' · ') }),
+    el('div', { class: 'report-head__meta', text: [r.subject?.name && t('report.forName', { name: r.subject.name }), r.period?.label, r.period?.asOf && t('reports.asOf', { date: fmtDate(r.period.asOf) })].filter(Boolean).join(' · ') }),
   ]));
 
   const body = el('div', { class: 'report-body' });
@@ -276,10 +278,10 @@ function buildReport(sheet, r, m) {
   });
 
   if (r.highlights?.length) {
-    body.appendChild(el('div', { class: 'report-section-head' }, [el('span', { class: 'report-section-bar' }), 'Erfolge in diesem Zeitraum']));
+    body.appendChild(el('div', { class: 'report-section-head' }, [el('span', { class: 'report-section-bar' }), t('reports.achievementsInPeriod')]));
     body.appendChild(badgeTiles(r.highlights));
   }
 
-  body.appendChild(el('div', { class: 'report-foot', text: `Erstellt am ${fmtDateLong((r.createdAt || '').slice(0, 10))} · unveränderlicher Beleg` }));
+  body.appendChild(el('div', { class: 'report-foot', text: t('reports.createdOn', { date: fmtDateLong((r.createdAt || '').slice(0, 10)) }) }));
   sheet.appendChild(body);
 }

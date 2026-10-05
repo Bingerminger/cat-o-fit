@@ -12,6 +12,8 @@
    ========================================================================= */
 
 import { fmtNum } from './ui.js';
+import { fmtDayMonth, monthNames, weekdayNames } from './format.js';
+import { t as tr, tp } from './i18n.js';
 
 const SVGNS = 'http://www.w3.org/2000/svg';
 function s(tag, attrs = {}, children) {
@@ -29,13 +31,10 @@ const AXIS_FS = 10.5;     // Achsenwerte/Datum in px
 const LABEL_FS = 10.5;    // Balken-Beschriftung
 const VALUE_FS = 10;      // Werte über Balken
 
-const MONTHS_SHORT = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
-const MONTHS_ABBR = ['Jan.', 'Feb.', 'März', 'Apr.', 'Mai', 'Juni', 'Juli', 'Aug.', 'Sept.', 'Okt.', 'Nov.', 'Dez.'];
 const dayNum = (iso) => Math.round(Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10)) / 86400000);
 /** „27. Sept.“ – mit Jahr, wenn die Spanne fast ein Jahr oder mehr umfasst. */
 function dateLabel(iso, withYear) {
-  const d = +iso.slice(8, 10), m = +iso.slice(5, 7) - 1;
-  return `${d}. ${MONTHS_ABBR[m]}${withYear ? ` ${iso.slice(0, 4)}` : ''}`;
+  return `${fmtDayMonth(iso.slice(0, 10))}${withYear ? ` ${iso.slice(0, 4)}` : ''}`;
 }
 const isIso = (v) => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}/.test(v);
 
@@ -96,8 +95,8 @@ function fitWidth(host, draw) {
 
 /** Leeres Diagramm („Keine Daten“). */
 function emptySvg(W, H) {
-  const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, class: 'chart', style: `width:100%;height:${H}px`, role: 'img', 'aria-label': 'Keine Daten' });
-  svg.appendChild(txt('Keine Daten', { class: 'chart-axis', x: W / 2, y: H / 2, 'text-anchor': 'middle', 'font-size': 12 }));
+  const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, class: 'chart', style: `width:100%;height:${H}px`, role: 'img', 'aria-label': tr('charts.noData') });
+  svg.appendChild(txt(tr('charts.noData'), { class: 'chart-axis', x: W / 2, y: H / 2, 'text-anchor': 'middle', 'font-size': 12 }));
   return svg;
 }
 
@@ -211,14 +210,16 @@ function timeAxis(pts) {
 
 /** Zusammenfassung für Screenreader: Zeitraum, Min/Max, letzter Wert. */
 function summary(name, pts, fmt, unit, dates) {
-  if (!pts.length) return `${name}: keine Daten`;
+  if (!pts.length) return tr('charts.noDataNamed', { name });
   const vals = pts.map((p) => p.value);
   const lo = Math.min(...vals), hi = Math.max(...vals);
   const first = dates ? dateLabel(pts[0].date, true) : pts[0].label;
   const last = pts[pts.length - 1];
   const lastLbl = dates ? dateLabel(last.date, true) : last.label;
-  const span = first && lastLbl && pts.length > 1 ? ` von ${first} bis ${lastLbl}` : '';
-  return `${name}: ${pts.length} Werte${span}; niedrigster ${fmt(lo)}${unit}, höchster ${fmt(hi)}${unit}, zuletzt ${fmt(last.value)}${unit}${lastLbl ? ` (${lastLbl})` : ''}.`;
+  const span = first && lastLbl && pts.length > 1 ? ` ${tr('charts.range', { from: first, to: lastLbl })}` : '';
+  return tp('charts.summary', pts.length, {
+    name, span, lo: `${fmt(lo)}${unit}`, hi: `${fmt(hi)}${unit}`, last: `${fmt(last.value)}${unit}`, lastLabel: lastLbl ? ` (${lastLbl})` : '',
+  });
 }
 
 /**
@@ -304,7 +305,7 @@ export function lineChart(points, opts = {}) {
     if (opts.target != null) {
       const ty = y(opts.target);
       svg.appendChild(s('line', { class: 'chart-target', x1: padL, y1: ty, x2: W - padR, y2: ty, 'stroke-width': 1, 'stroke-dasharray': '4 4' }));
-      svg.appendChild(txt(opts.targetLabel || `Ziel ${fmt(opts.target)}`, { class: 'chart-label', x: W - padR, y: ty - 4, 'text-anchor': 'end', 'font-size': AXIS_FS }));
+      svg.appendChild(txt(opts.targetLabel || tr('charts.target', { value: fmt(opts.target) }), { class: 'chart-label', x: W - padR, y: ty - 4, 'text-anchor': 'end', 'font-size': AXIS_FS }));
     }
 
     // Segmente: ein `null` in der Eingabe (Tag/Woche ohne Wert) unterbricht die Linie.
@@ -344,7 +345,7 @@ export function lineChart(points, opts = {}) {
       title: (i) => (time ? dateLabel(valid[i].date, true) : valid[i].label || ''),
       rows: (i) => [{ value: fmt(valid[i].value) + unit }],
       pointsAt: (i) => [{ x: x(i), y: y(valid[i].value), color }],
-      label: summary(opts.label || 'Verlauf', valid, fmt, unit, !!time),
+      label: summary(opts.label || tr('charts.trend'), valid, fmt, unit, !!time),
     });
     wrap.appendChild(svg);
   });
@@ -381,9 +382,13 @@ export function multiLineChart(series, opts = {}) {
   const n = Math.max(...clean.map((ser) => ser.points.length));
   const base = clean.find((ser) => ser.points.length === n) || clean[0];
   const bind = attachScrubber(wrap);
-  const name = opts.label || clean.map((ser) => ser.name).filter(Boolean).join(', ') || 'Verlauf';
+  const name = opts.label || clean.map((ser) => ser.name).filter(Boolean).join(', ') || tr('charts.trend');
   const lastIdx = n - 1;
-  const label = `${name}: ${n} Tage${base.points[0].label ? ` von ${base.points[0].label} bis ${base.points[lastIdx].label}` : ''}; zuletzt ${clean.map((ser) => `${ser.name || ''} ${fmt(ser.points[ser.points.length - 1].value)}`.trim()).join(', ')}.`;
+  const label = tp('charts.multiSummary', n, {
+    name,
+    span: base.points[0].label ? ` ${tr('charts.range', { from: base.points[0].label, to: base.points[lastIdx].label })}` : '',
+    last: clean.map((ser) => `${ser.name || ''} ${fmt(ser.points[ser.points.length - 1].value)}`.trim()).join(', '),
+  });
 
   fitWidth(wrap, (W) => {
     const inner = W - padL - padR;
@@ -458,8 +463,12 @@ export function barChart(points, opts = {}) {
   const svg = s('svg', { class: 'chart chart--bars', role: 'img' });
   const last = vals[vals.length - 1];
   svg.setAttribute('aria-label', vals.length
-    ? `${opts.label || 'Balkendiagramm'}: ${vals.length} Werte${points[0]?.label ? ` von ${points[0].label} bis ${points[points.length - 1].label}` : ''}; höchster ${fmt(Math.max(...vals.map((p) => p.value)))}${unit}, zuletzt ${fmt(last.value)}${unit}${last.label ? ` (${last.label})` : ''}.`
-    : `${opts.label || 'Balkendiagramm'}: keine Daten`);
+    ? tp('charts.barSummary', vals.length, {
+      name: opts.label || tr('charts.barChart'),
+      span: points[0]?.label ? ` ${tr('charts.range', { from: points[0].label, to: points[points.length - 1].label })}` : '',
+      hi: `${fmt(Math.max(...vals.map((p) => p.value)))}${unit}`, last: `${fmt(last.value)}${unit}`, lastLabel: last.label ? ` (${last.label})` : '',
+    })
+    : tr('charts.noDataNamed', { name: opts.label || tr('charts.barChart') }));
 
   let geo = null;   // aktuelle Geometrie für den Tipp-Hinweis
   const tipG = s('g', { class: 'chart-bartip', opacity: 0, 'pointer-events': 'none' });
@@ -534,7 +543,7 @@ export function donut(segments, opts = {}) {
   const circ = 2 * Math.PI * r;
   const total = segments.reduce((a, b) => a + (b.value || 0), 0) || 1;
   const parts = segments.filter((sg) => sg.value > 0).map((sg) => `${sg.label}: ${sg.value}`).join(', ');
-  const svg = s('svg', { viewBox: `0 0 ${size} ${size}`, style: `width:${size}px;height:${size}px`, role: 'img', 'aria-label': `${opts.label || 'Verteilung'}${opts.centerValue != null ? ` (${opts.centerValue}${opts.centerLabel ? ` ${opts.centerLabel}` : ''})` : ''}: ${parts || 'keine Daten'}` });
+  const svg = s('svg', { viewBox: `0 0 ${size} ${size}`, style: `width:${size}px;height:${size}px`, role: 'img', 'aria-label': `${opts.label || tr('charts.distribution')}${opts.centerValue != null ? ` (${opts.centerValue}${opts.centerLabel ? ` ${opts.centerLabel}` : ''})` : ''}: ${parts || tr('charts.noDataShort')}` });
   svg.appendChild(s('circle', { class: 'chart-track', cx, cy, r, fill: 'none', 'stroke-width': 14 }));
   let offset = 0;
   segments.forEach((seg) => {
@@ -591,12 +600,16 @@ export function heatmap(matrix, opts = {}) {
   const totalMin = active.reduce((a, d) => a + (d.minutes || 0), 0);
   const svg = s('svg', {
     viewBox: `0 0 ${W} ${H}`, style: `width:${W}px;height:${H}px;max-width:none`, role: 'img',
-    'aria-label': `${opts.label || 'Trainingsjahr'}: ${active.length} Trainingstage in ${cols.length} Wochen, zusammen ${Math.round(totalMin / 60)} Stunden.`,
+    'aria-label': tp('charts.heatmapSummary', active.length, {
+      name: opts.label || tr('charts.trainingYear'),
+      weeks: tp('charts.weeksCount', cols.length), hours: tp('charts.hoursCount', Math.round(totalMin / 60)),
+    }),
   });
 
   // Wochentag-Labels (Mo/Mi/Fr)
-  [[0, 'Mo'], [2, 'Mi'], [4, 'Fr']].forEach(([d, lbl]) =>
-    svg.appendChild(txt(lbl, { class: 'chart-axis', x: 0, y: padT + d * (cell + gap) + cell - 1, 'font-size': 9 })));
+  const dayNames = weekdayNames();
+  [[0, 1], [2, 3], [4, 5]].forEach(([d, wd]) =>
+    svg.appendChild(txt(dayNames[wd], { class: 'chart-axis', x: 0, y: padT + d * (cell + gap) + cell - 1, 'font-size': 9 })));
 
   let prevMonth = null;
   cols.forEach((col, c) => {
@@ -604,7 +617,7 @@ export function heatmap(matrix, opts = {}) {
     // Monatslabel beim Monatswechsel
     const month = parseInt(col.weekStart.slice(5, 7), 10) - 1;
     if (month !== prevMonth) {
-      svg.appendChild(txt(MONTHS_SHORT[month], { class: 'chart-axis', x, y: 10, 'font-size': 9 }));
+      svg.appendChild(txt(monthNames(false)[month], { class: 'chart-axis', x, y: 10, 'font-size': 9 }));
       prevMonth = month;
     }
     col.days.forEach((day, d) => {
@@ -615,7 +628,7 @@ export function heatmap(matrix, opts = {}) {
         class: lvl === 0 ? 'chart-cell chart-cell--empty' : 'chart-cell',
         style: lvl === 0 ? null : `${paint('fill', ACCENT)};fill-opacity:${OP[lvl]}`,
       });
-      const t = s('title'); t.textContent = `${dateLabel(day.date, true)}: ${day.minutes ? day.minutes + ' min' : 'kein Training'}`;
+      const t = s('title'); t.textContent = `${dateLabel(day.date, true)}: ${day.minutes ? day.minutes + ' min' : tr('charts.noTraining')}`;
       rect.appendChild(t);
       svg.appendChild(rect);
     });
@@ -628,11 +641,11 @@ export function heatmapLegend() {
   const OP = [0, 0.28, 0.5, 0.74, 1];
   const W = 5 * 15 + 80;
   const svg = s('svg', { viewBox: `0 0 ${W} 16`, style: `width:${W}px;height:16px`, 'aria-hidden': 'true' });
-  svg.appendChild(txt('weniger', { class: 'chart-axis', x: 0, y: 12, 'font-size': 9.5 }));
+  svg.appendChild(txt(tr('charts.less'), { class: 'chart-axis', x: 0, y: 12, 'font-size': 9.5 }));
   for (let l = 0; l <= 4; l++) {
     svg.appendChild(s('rect', { x: 46 + l * 15, y: 3, width: 11, height: 11, rx: 2.5, class: l === 0 ? 'chart-cell chart-cell--empty' : 'chart-cell', style: l === 0 ? null : `${paint('fill', ACCENT)};fill-opacity:${OP[l]}` }));
   }
-  svg.appendChild(txt('mehr', { class: 'chart-axis', x: 46 + 5 * 15 + 3, y: 12, 'font-size': 9.5 }));
+  svg.appendChild(txt(tr('charts.more'), { class: 'chart-axis', x: 46 + 5 * 15 + 3, y: 12, 'font-size': 9.5 }));
   return svg;
 }
 
@@ -673,7 +686,7 @@ export function routeMap(route, { distanceKm = null, ascentM = null, decode } = 
     const offX = (W - (maxX - minX) * scale) / 2, offY = (H - (maxY - minY) * scale) / 2;
     const P = ([x, y]) => [Math.round((offX + (x - minX) * scale) * 10) / 10, Math.round((offY + (y - minY) * scale) * 10) / 10];
     const d = xy.map((p, i) => `${i ? 'L' : 'M'}${P(p).join(' ')}`).join('');
-    const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, class: 'route-map__track', role: 'img', 'aria-label': `Strecke${distanceKm ? ` über ${fmtNum(distanceKm, 1)} km` : ''} – ohne Karte gezeichnet` });
+    const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, class: 'route-map__track', role: 'img', 'aria-label': distanceKm ? tr('charts.routeDistance', { km: fmtNum(distanceKm, 1) }) : tr('charts.route') });
     svg.appendChild(s('path', { d, fill: 'none', style: paint('stroke', ACCENT), 'stroke-width': 3.5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
     const [sx, sy] = P(xy[0]), [ex, ey] = P(xy[xy.length - 1]);
     svg.appendChild(s('circle', { cx: ex, cy: ey, r: 5.5, style: `${paint('fill', 'var(--surface)')};${paint('stroke', 'var(--text)')}`, 'stroke-width': 2.5 }));
@@ -689,12 +702,14 @@ export function routeMap(route, { distanceKm = null, ascentM = null, decode } = 
     const y = (v) => Math.round((TOP + (1 - (v - min) / rng) * (H - TOP - BOT)) * 10) / 10;
     let last = vals[0];
     const line = ele.map((e, i) => { if (e != null) last = e; return `${x(i)},${y(last)}`; });
-    const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, class: 'route-map__ele', role: 'img', 'aria-label': `Höhenprofil: ${Math.round(min)} bis ${Math.round(max)} m${ascentM ? `, ${ascentM} Höhenmeter bergauf` : ''}` });
+    const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, class: 'route-map__ele', role: 'img', 'aria-label': ascentM
+      ? tr('charts.elevationAscent', { min: Math.round(min), max: Math.round(max), ascent: ascentM })
+      : tr('charts.elevation', { min: Math.round(min), max: Math.round(max) }) });
     svg.appendChild(s('polygon', { points: `0,${H - BOT} ${line.join(' ')} ${W},${H - BOT}`, style: paint('fill', 'color-mix(in srgb, var(--accent) 18%, transparent)') }));
     svg.appendChild(s('polyline', { points: line.join(' '), fill: 'none', style: paint('stroke', ACCENT), 'stroke-width': 2, 'stroke-linejoin': 'round' }));
     svg.appendChild(txt(`${Math.round(max)} m`, { class: 'chart-axis', x: 2, y: TOP + 8, 'font-size': AXIS_FS }));
     svg.appendChild(txt(`${Math.round(min)} m`, { class: 'chart-axis', x: 2, y: H - BOT - 3, 'font-size': AXIS_FS }));
-    svg.appendChild(txt('Start', { class: 'chart-axis', x: 0, y: H - 4, 'font-size': AXIS_FS }));
+    svg.appendChild(txt(tr('charts.start'), { class: 'chart-axis', x: 0, y: H - 4, 'font-size': AXIS_FS }));
     if (distanceKm) svg.appendChild(txt(`${fmtNum(distanceKm, 1)} km`, { class: 'chart-axis', x: W, y: H - 4, 'text-anchor': 'end', 'font-size': AXIS_FS }));
     wrap.appendChild(svg);
   }
