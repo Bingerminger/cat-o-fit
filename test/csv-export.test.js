@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import { toCsv, sessionsCsv, healthCsv, labsCsv, diaryCsv } from '../js/csv-export.js';
 import * as store from '../js/storage.js';
 import * as settings from '../js/settings.js';
+import { setLocale } from '../js/i18n.js';
 
 const lines = (csv) => csv.replace(/^﻿/, '').trimEnd().split('\r\n');
 
@@ -19,6 +20,17 @@ test('Format: BOM, semicolon, decimal comma, CRLF line endings', () => {
   assert.equal(rows.length, 3, 'header + two entries, deleted ones not');
   assert.match(rows[1], /^2026-09-01;Radtour;Radtour;90,0;40,00;/, 'sorted by date');
   assert.match(rows[2], /^2026-09-02;Lockerer Lauf;Lauf;50,0;9,25;5:24;148;;4;200;/);
+});
+
+test('Format follows the language: English uses a comma separator and a decimal point', async () => {
+  await setLocale('en');
+  try {
+    const csv = sessionsCsv([{ id: 'b', date: '2026-09-02', type: 'easy', title: 'Run, easy', durationSec: 3000, distanceKm: 9.25, avgHr: 148 }]);
+    assert.ok(csv.startsWith('﻿Date,'), csv.slice(0, 40));
+    assert.match(lines(csv)[1], /^2026-09-02,[^,]+,"Run, easy",50\.0,9\.25,,148,/);
+  } finally {
+    await setLocale('de');
+  }
 });
 
 test('Texts: separators and quotation marks escaped, formulas defused', () => {

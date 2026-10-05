@@ -153,9 +153,9 @@ Unter **Einstellungen → Daten & Sicherung** sicherst du deine Daten – ganz o
 > auf; sie enthalten die Daten aller Mitglieder.
 
 **Als Tabelle exportieren (CSV):** Trainings, Körperwerte, Laborwerte oder das Ess-Tagebuch als Tabelle
-für Excel, Numbers, deine Ärztin oder eine andere App – mit Semikolon und Dezimalkomma, wie deutsche
-Tabellenprogramme es erwarten. Wiederherstellen lässt sich nur das Backup; die Tabellen sind zum
-Weiterarbeiten.
+für Excel, Numbers, deine Ärztin oder eine andere App – im Format, das Tabellenprogramme für die
+Sprache der App erwarten: auf Deutsch mit Semikolon und Dezimalkomma, auf Englisch mit Komma und
+Dezimalpunkt. Wiederherstellen lässt sich nur das Backup; die Tabellen sind zum Weiterarbeiten.
 
 **Lesezugang für eigene Werkzeuge** (standardmäßig aus): Betreibst du selbst einen KI-Assistenten oder
 ein Auswertungsskript, bekommt es mit diesem Schlüssel **nur lesend** deine Trainings, Pläne,

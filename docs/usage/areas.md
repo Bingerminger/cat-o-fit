@@ -153,9 +153,10 @@ Under **Settings → Data & backup** you back up your data – with no third-par
 > backups safe; they contain the data of all members.
 
 **Export as a spreadsheet (CSV):** Sessions, body values, lab values or the food diary as a table for
-Excel, Numbers, your doctor or another app – with a semicolon as separator and a decimal comma, as
-spreadsheet programs in Germany expect it (the format is the same whatever language the app is set
-to). Only the backup can be restored; the tables are for further work.
+Excel, Numbers, your doctor or another app – in the format spreadsheet programs expect for the app's
+language: in English comma-separated with a decimal point, in languages with a decimal comma
+(German, French, …) semicolon-separated. Only the backup can be restored; the tables are for further
+work.
 
 **Read access for your own tools** (off by default): If you run an AI assistant or an analysis script
 of your own, this key gives it **read-only** access to your sessions, plans, body values and nutrition

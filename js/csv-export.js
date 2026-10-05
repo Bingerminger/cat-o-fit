@@ -2,8 +2,9 @@
    csv-export.js — your own data as a table (CSV) for Excel, Numbers, your doctor
    or another app. DOM-free; the settings offer the download.
 
-   Format for German spreadsheet programs: semicolon as separator, decimal comma,
-   UTF-8 with BOM (otherwise Excel shows umlauts wrongly), date as YYYY-MM-DD.
+   Format follows the active language, as spreadsheet programs there expect it: with a
+   decimal comma (German, French, …) semicolon-separated, with a decimal point (English)
+   comma-separated. UTF-8 with BOM (otherwise Excel shows umlauts wrongly), date as YYYY-MM-DD.
    Text that begins with = + - @ gets a leading apostrophe – otherwise a spreadsheet
    would read a note such as "=HYPERLINK(…)" as a formula.
    The JSON backup remains the complete format; the CSV is for further work.
@@ -14,28 +15,32 @@ import { typeMeta } from './ui.js';
 import { sessionLoad } from './load.js';
 
 import { t } from './i18n.js';
+import { decimalSeparator } from './format.js';
 
 const BOM = '﻿';
+/** Field separator for the active language: ";" next to a decimal comma, "," next to a decimal point. */
+const fieldSeparator = () => (decimalSeparator() === ',' ? ';' : ',');
 
-/** Number with decimal comma; empty for missing values. */
+/** Number with the language's decimal separator; empty for missing values. */
 function numCell(v, digits = null) {
   if (v == null || v === '' || !Number.isFinite(Number(v))) return '';
   const n = Number(v);
   const s = digits == null ? String(n) : n.toFixed(digits);
-  return s.replace('.', ',');
+  return s.replace('.', decimalSeparator());
 }
 /** Text cell: double the quotation marks, enclose when it contains a separator/line break, defuse formulas. */
 function textCell(v) {
   if (v == null) return '';
   let s = String(v);
   if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
-  return /[;"\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  return /["\n\r]/.test(s) || s.includes(fieldSeparator()) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 
 /** Table from columns `[heading, (row) => cell]` – cells already as text. */
 export function toCsv(rows, columns) {
-  const head = columns.map(([h]) => textCell(h)).join(';');
-  const body = rows.map((r) => columns.map(([, f]) => f(r)).join(';'));
+  const sep = fieldSeparator();
+  const head = columns.map(([h]) => textCell(h)).join(sep);
+  const body = rows.map((r) => columns.map(([, f]) => f(r)).join(sep));
   return BOM + [head, ...body].join('\r\n') + '\r\n';
 }
 
