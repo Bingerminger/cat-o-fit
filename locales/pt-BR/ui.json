@@ -4459,5 +4459,26 @@
     "bar": "Demo – nada é salvo; ao recarregar, tudo recomeça.",
     "pin": "PIN: {pin}",
     "get": "Obter o Cat-O-Fit"
+  },
+  "strengthImport": {
+    "heading": "Musculação de outros apps",
+    "intro": "Traga seu histórico do Strong, Hevy ou FitNotes: exporte lá como CSV e escolha o arquivo aqui. Os exercícios que a biblioteca conhece são associados; os outros mantêm o próprio nome.",
+    "pick": "Escolher arquivo CSV",
+    "unrecognised": "Este arquivo não é uma exportação CSV do Strong, Hevy ou FitNotes.",
+    "found": {
+      "one": "{count} treino de musculação do {app}",
+      "other": "{count} treinos de musculação do {app}"
+    },
+    "exercises": "{known} de {total} exercícios associados à biblioteca; os outros com o próprio nome",
+    "unit": "Pesos no arquivo",
+    "skipped": {
+      "one": "{count} linha sem repetições ignorada",
+      "other": "{count} linhas sem repetições ignoradas"
+    },
+    "done": {
+      "one": "{count} treino de musculação importado",
+      "other": "{count} treinos de musculação importados"
+    },
+    "sessionTitle": "Musculação ({app})"
   }
 }

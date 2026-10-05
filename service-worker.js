@@ -10,7 +10,7 @@
  * On every version increase the old cache is discarded.
  */
 
-const VERSION = 'catofit-v116';
+const VERSION = 'catofit-v117';
 // Cache name unique per deployment path: production (/cat-o-fit/) and acceptance
 // (/cat-o-fit-acc/) live on the SAME origin and would otherwise share the
 // CacheStorage – then the app shell of one environment ends up in the other.
@@ -86,6 +86,7 @@ const SHELL_ASSETS = [
   './js/fit.js',
   './js/zip.js',
   './js/activity-import.js',
+  './js/strength-import.js',
   './js/csv-export.js',
   './js/strength.js',
   './js/barcode.js',
@@ -148,12 +149,14 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(SHELL_CACHE).then(async (cache) => {
       // Add individually so that a missing asset does not kill the install.
-      await Promise.allSettled(SHELL_ASSETS.map((url) => cache.add(url)));
+      // Past the HTTP cache (reload): a new shell must never store an older file.
+      const fresh = (url) => cache.add(new Request(url, { cache: 'reload' }));
+      await Promise.allSettled(SHELL_ASSETS.map(fresh));
       // The ui catalog of every language, so a language switch also works offline;
       // the list comes from languages.json, so a new language needs no change here.
       try {
         const langs = Object.keys(await (await fetch('./locales/languages.json', { cache: 'no-cache' })).json());
-        await Promise.allSettled(langs.flatMap((l) => ['ui', 'exercises', 'help', 'recipes'].map((a) => cache.add(`./locales/${l}/${a}.json`))));
+        await Promise.allSettled(langs.flatMap((l) => ['ui', 'exercises', 'help', 'recipes'].map((a) => fresh(`./locales/${l}/${a}.json`))));
       } catch { /* offline install: catalogs come with the runtime cache */ }
     }).then(() => self.skipWaiting())
   );

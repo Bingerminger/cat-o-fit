@@ -4459,5 +4459,26 @@
     "bar": "Demo – non viene salvato nulla; ricaricando si riparte da capo.",
     "pin": "PIN: {pin}",
     "get": "Scarica Cat-O-Fit"
+  },
+  "strengthImport": {
+    "heading": "Allenamento di forza da altre app",
+    "intro": "Porta qui la tua cronologia da Strong, Hevy o FitNotes: esportala lì in CSV e scegli il file qui. Gli esercizi che la libreria conosce vengono abbinati; gli altri mantengono il loro nome.",
+    "pick": "Scegli file CSV",
+    "unrecognised": "Questo file non è un’esportazione CSV di Strong, Hevy o FitNotes.",
+    "found": {
+      "one": "{count} allenamento di forza da {app}",
+      "other": "{count} allenamenti di forza da {app}"
+    },
+    "exercises": "{known} esercizi su {total} abbinati alla libreria, gli altri con il loro nome",
+    "unit": "Pesi nel file",
+    "skipped": {
+      "one": "{count} riga senza ripetizioni saltata",
+      "other": "{count} righe senza ripetizioni saltate"
+    },
+    "done": {
+      "one": "{count} allenamento di forza importato",
+      "other": "{count} allenamenti di forza importati"
+    },
+    "sessionTitle": "Forza ({app})"
   }
 }

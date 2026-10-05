@@ -115,3 +115,16 @@ test('"Save the route too" off: import without the line, elevation gain and valu
   const two = saveImportedActivity({ date: '2026-09-28', durationSec: 1800, distanceKm: 5, route: { poly: '_p~iF~ps|U' } }, 'run', { link: false });
   assert.equal(two.session.route.poly, '_p~iF~ps|U', 'switched on: route included');
 });
+
+test('strength history from another app: sessions with sets, own title, a second import adds nothing', async () => {
+  const { importStrength } = await import('../js/health-import.js');
+  const { readStrengthCsv, alreadyImported } = await import('../js/strength-import.js');
+  const csv = 'Date,Exercise,Category,Weight (kgs),Reps\n2026-09-20,Flat Barbell Bench Press,Chest,60,8\n2026-09-20,Pull Up,Back,,6\n';
+  const { workouts } = readStrengthCsv(csv);
+  assert.equal(importStrength(workouts, 'fitnotes'), 1);
+  const s = store.get('sessions').find((x) => x.source === 'fitnotes');
+  assert.equal(s.type, 'strength');
+  assert.equal(s.title, 'Kraft (FitNotes)');
+  assert.deepEqual(s.strengthSets.map((x) => x.exerciseId || x.name), ['Flat Barbell Bench Press', 'pullup']);
+  assert.equal(workouts.filter((w) => !alreadyImported(w, 'fitnotes', store.get('sessions'))).length, 0);
+});

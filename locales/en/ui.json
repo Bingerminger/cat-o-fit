@@ -4459,5 +4459,26 @@
     "bar": "Demo – nothing you enter is saved; a reload starts over.",
     "pin": "PIN: {pin}",
     "get": "Get Cat-O-Fit"
+  },
+  "strengthImport": {
+    "heading": "Strength training from other apps",
+    "intro": "Bring your history from Strong, Hevy or FitNotes: export it there as CSV and choose the file here. Exercises the library knows are matched; all others are kept under their own name.",
+    "pick": "Choose CSV file",
+    "unrecognised": "This file is not a CSV export from Strong, Hevy or FitNotes.",
+    "found": {
+      "one": "{count} strength workout from {app}",
+      "other": "{count} strength workouts from {app}"
+    },
+    "exercises": "{known} of {total} exercises matched to the library, the others kept by name",
+    "unit": "Weights in the file",
+    "skipped": {
+      "one": "{count} row without repetitions skipped",
+      "other": "{count} rows without repetitions skipped"
+    },
+    "done": {
+      "one": "{count} strength workout imported",
+      "other": "{count} strength workouts imported"
+    },
+    "sessionTitle": "Strength ({app})"
   }
 }

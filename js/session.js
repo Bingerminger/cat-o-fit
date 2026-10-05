@@ -311,7 +311,8 @@ function renderEvaluation(view, plan, unit, ex) {
       const vol = volume(x.sets);
       list.appendChild(el('button', { class: 'list-item', type: 'button', style: { width: '100%', textAlign: 'left' }, onclick: () => e && openExercise(e.id) }, [
         el('div', { class: 'list-item__body' }, [
-          el('div', { class: 'list-item__title', text: e ? e.name : x.exerciseId }),
+          // An exercise imported from another app that the library does not know keeps its own name.
+          el('div', { class: 'list-item__title', text: e ? e.name : (x.name || x.exerciseId) }),
           el('div', { class: 'list-item__sub', style: { whiteSpace: 'normal' }, text: `${x.sets.map(fmtSet).join(' · ')}${vol ? ` · ${t('session.volumeMoved', { kg: fmtInt(vol) })}` : ''}` }),
         ]),
       ]));

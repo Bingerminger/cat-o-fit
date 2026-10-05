@@ -4459,5 +4459,26 @@
     "bar": "Demo – er wordt niets opgeslagen; herladen begint opnieuw.",
     "pin": "Pincode: {pin}",
     "get": "Cat-O-Fit installeren"
+  },
+  "strengthImport": {
+    "heading": "Krachttraining uit andere apps",
+    "intro": "Haal je geschiedenis uit Strong, Hevy of FitNotes: exporteer die daar als CSV en kies hier het bestand. Oefeningen die de bibliotheek kent worden gekoppeld; alle andere houden hun eigen naam.",
+    "pick": "CSV-bestand kiezen",
+    "unrecognised": "Dit bestand is geen CSV-export uit Strong, Hevy of FitNotes.",
+    "found": {
+      "one": "{count} krachttraining uit {app}",
+      "other": "{count} krachttrainingen uit {app}"
+    },
+    "exercises": "{known} van {total} oefeningen gekoppeld aan de bibliotheek, de rest met eigen naam",
+    "unit": "Gewichten in het bestand",
+    "skipped": {
+      "one": "{count} regel zonder herhalingen overgeslagen",
+      "other": "{count} regels zonder herhalingen overgeslagen"
+    },
+    "done": {
+      "one": "{count} krachttraining geïmporteerd",
+      "other": "{count} krachttrainingen geïmporteerd"
+    },
+    "sessionTitle": "Kracht ({app})"
   }
 }

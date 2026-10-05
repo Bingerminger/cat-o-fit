@@ -4459,5 +4459,26 @@
     "bar": "Demo – nichts wird gespeichert, Neuladen fängt von vorn an.",
     "pin": "PIN: {pin}",
     "get": "Cat-O-Fit holen"
+  },
+  "strengthImport": {
+    "heading": "Krafttraining aus anderen Apps",
+    "intro": "Hol deinen Trainingsverlauf aus Strong, Hevy oder FitNotes: dort als CSV exportieren und die Datei hier wählen. Übungen, die die Bibliothek kennt, werden zugeordnet; alle anderen bleiben unter ihrem eigenen Namen.",
+    "pick": "CSV-Datei wählen",
+    "unrecognised": "Diese Datei ist kein CSV-Export aus Strong, Hevy oder FitNotes.",
+    "found": {
+      "one": "{count} Krafttraining aus {app}",
+      "other": "{count} Krafttrainings aus {app}"
+    },
+    "exercises": "{known} von {total} Übungen der Bibliothek zugeordnet, die übrigen mit eigenem Namen",
+    "unit": "Gewichte in der Datei",
+    "skipped": {
+      "one": "{count} Zeile ohne Wiederholungen übersprungen",
+      "other": "{count} Zeilen ohne Wiederholungen übersprungen"
+    },
+    "done": {
+      "one": "{count} Krafttraining übernommen",
+      "other": "{count} Krafttrainings übernommen"
+    },
+    "sessionTitle": "Kraft ({app})"
   }
 }

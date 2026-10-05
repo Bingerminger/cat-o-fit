@@ -9,7 +9,7 @@
 import * as store from './storage.js';
 import {
   el, icon, iconSvg, uid, navigate, typeMeta, fmtKm, fmtDuration, sectionHead, toast, todayStr, addDays,
-  input, select, openSheet, closeSheet, confirmDialog, fmtDate, fmtNum, toggle,
+  input, select, openSheet, closeSheet, confirmDialog, fmtDate, fmtNum, toggle, segmented,
 } from './ui.js';
 import { setHeader } from './router.js';
 import { uploadHealthExport } from './api-client.js';
@@ -17,6 +17,7 @@ import { completeUnit } from './unit-actions.js';
 import { activitiesFrom, parseActivityBytes, sameActivity, guessType, ROUTE_DAYS } from './activity-import.js';
 import { isZip, isGzip } from './zip.js';
 import { findPlannedMatch } from './planflow.js';
+import { readStrengthCsv, toSession, alreadyImported } from './strength-import.js';
 
 import { t, tp } from './i18n.js';
 
@@ -118,6 +119,20 @@ export function render(view) {
   view.appendChild(actBtn);
   view.appendChild(actInput);
   view.appendChild(actStatus);
+
+  // Strength history from other apps (CSV from Strong, Hevy or FitNotes)
+  view.appendChild(sectionHead(t('strengthImport.heading')));
+  view.appendChild(el('div', { class: 'muted mb-2', style: { fontSize: '.84rem' }, text: t('strengthImport.intro') }));
+  const strStatus = el('div', { class: 'card', hidden: true });
+  const strInput = el('input', { type: 'file', accept: '.csv,text/csv', style: { display: 'none' } });
+  strInput.addEventListener('change', async () => {
+    const f = strInput.files && strInput.files[0];
+    strInput.value = '';
+    if (f) strengthPreview(await f.text(), strStatus);
+  });
+  view.appendChild(el('button', { class: 'btn btn--soft btn--block', onclick: () => strInput.click() }, [icon('upload'), t('strengthImport.pick')]));
+  view.appendChild(strInput);
+  view.appendChild(strStatus);
 
   // Note
   view.appendChild(el('div', { class: 'dim mt-6', style: { fontSize: '.78rem' }, text: t('healthImport.bottomNote') }));
@@ -315,6 +330,51 @@ export function importActivities(items = [], today = todayStr()) {
   }
   if (fresh.length && store.upsertMany('sessions', fresh).length) added += fresh.length;
   return { added, matched, dup };
+}
+
+const STRENGTH_APPS = { strong: 'Strong', hevy: 'Hevy', fitnotes: 'FitNotes' };
+
+/** Overview of a strength CSV: workouts, period, matched exercises, kg/lb where the file does not say. */
+function strengthPreview(text, status, unit = 'kg') {
+  status.hidden = false; status.innerHTML = '';
+  const r = readStrengthCsv(text, { unit });
+  if (!r.format || !r.workouts.length) {
+    const why = !r.format ? t('strengthImport.unrecognised') : r.skipped ? tp('strengthImport.skipped', r.skipped) : t('healthImport.noneRecognised');
+    status.appendChild(el('div', { class: 'muted', style: { fontSize: '.86rem' }, text: why }));
+    return;
+  }
+  const app = STRENGTH_APPS[r.format];
+  const fresh = r.workouts.filter((w) => !alreadyImported(w, r.format, store.get('sessions')));
+  const dups = r.workouts.length - fresh.length;
+  const names = new Map();
+  r.workouts.forEach((w) => w.exercises.forEach((x) => names.set(x.name, !!x.exerciseId)));
+  const known = [...names.values()].filter(Boolean).length;
+  const first = r.workouts[0].date, last = r.workouts[r.workouts.length - 1].date;
+  status.appendChild(el('div', { class: 'col gap-2' }, [
+    el('div', { style: { fontWeight: '700' }, text: tp('strengthImport.found', r.workouts.length, { app }) }),
+    el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: `${first === last ? fmtDate(first) : t('healthImport.dateRange', { from: fmtDate(first), to: fmtDate(last) })} · ${t('strengthImport.exercises', { known, total: names.size })}` }),
+    r.unitKnown ? null : el('div', { class: 'row gap-2', style: { alignItems: 'center' } }, [
+      el('span', { class: 'muted', style: { fontSize: '.84rem' }, text: t('strengthImport.unit') }),
+      segmented([{ value: 'kg', label: 'kg' }, { value: 'lb', label: 'lb' }], unit, (v) => strengthPreview(text, status, v), { label: t('strengthImport.unit') }),
+    ]),
+    dups || r.skipped ? el('div', { class: 'dim', style: { fontSize: '.8rem' }, text: [dups ? tp('healthImport.alreadyThere', dups) : null, r.skipped ? tp('strengthImport.skipped', r.skipped) : null].filter(Boolean).join(' · ') }) : null,
+    el('button', { class: 'btn btn--primary btn--block', onclick: () => {
+      const added = importStrength(fresh, r.format);
+      status.innerHTML = '';
+      status.appendChild(el('div', { style: { fontWeight: '700' }, text: `${tp('strengthImport.done', added)} ✓` }));
+      toast(tp('strengthImport.done', added), added ? 'good' : '');
+    } }, [icon('check'), fresh.length ? t('healthImport.importN', { n: fresh.length }) : t('healthImport.takeOver')]),
+  ]));
+}
+
+/** Saves strength workouts from another app as free sessions in ONE write; returns how many. */
+export function importStrength(workouts, format) {
+  const app = STRENGTH_APPS[format] || format;
+  const recs = workouts.map((w) => ({
+    id: uid('ses'), plannedId: null, eventId: null, feeling: null, notes: '',
+    ...toSession(w, format), title: w.title || t('strengthImport.sessionTitle', { app }),
+  }));
+  return recs.length && store.upsertMany('sessions', recs).length ? recs.length : 0;
 }
 
 /** We do not read an archive larger than this in one go – the browser would hold everything in memory. */

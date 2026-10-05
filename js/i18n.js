@@ -29,7 +29,8 @@ let current = SOURCE_LANGUAGE;
 
 /** Reads a file below locales/ (e.g. 'de/ui.json'). Tests swap it for a file-system reader. */
 let loader = async (path) => {
-  const res = await fetch(`locales/${path}`);
+  // Revalidate: a catalog from the HTTP cache could be older than the scripts (raw keys after an update).
+  const res = await fetch(`locales/${path}`, { cache: 'no-cache' });
   if (!res.ok) throw new Error(`HTTP ${res.status} for locales/${path}`);
   return res.json();
 };
