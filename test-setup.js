@@ -283,20 +283,20 @@ function createFakeServer() {
       const rec = op.record || {}; const prev = s.records[rec.id]; const exists = !!(prev && !prev.deleted);
       const kind = rec._kind || (exists ? (prev._kind || 'member') : 'member');
       if (kind === 'member') {
-        if (!exists && !trusted) return 'Neue Mitglieder nur mit Admin-Sitzung.';
+        if (!exists && !trusted) return 'admin_add_member';
         const oldRole = exists ? (prev.role === 'admin' ? 'admin' : 'user') : null;
         const newRole = (rec.role ?? oldRole ?? 'user') === 'admin' ? 'admin' : 'user';
-        if (exists && oldRole !== newRole && !trusted) return 'Rollen nur mit Admin-Sitzung.';
+        if (exists && oldRole !== newRole && !trusted) return 'admin_change_role';
       }
       return { ...op, record: clean(rec) };
     }
     if (op.op === 'delete') {
       const prev = s.records[op.id];
-      if (prev && !prev.deleted && (prev._kind || 'member') === 'member' && !admin) return 'Entfernen nur mit Admin-Sitzung.';
+      if (prev && !prev.deleted && (prev._kind || 'member') === 'member' && !admin) return 'admin_remove_member';
       return op;
     }
     if (op.op === 'replace') {
-      if (!trusted) return 'Ersetzen nur mit Admin-Sitzung.';
+      if (!trusted) return 'admin_replace_family';
       return { ...op, records: (op.records || []).map(clean) };
     }
     return op;
@@ -409,7 +409,8 @@ function createFakeServer() {
         const rejected = []; const applied = [];
         for (const op of ops) {
           const checked = familyGuard(op, s);
-          if (typeof checked === 'string') rejected.push({ op: op.op, id: (op.record && op.record.id) || op.id || '', reason: checked });
+          // Like api.php: a code (the app translates it) plus an English reason as fallback.
+          if (typeof checked === 'string') rejected.push({ op: op.op, id: (op.record && op.record.id) || op.id || '', code: checked, reason: 'Only an admin with a server connection can do this.' });
           else applied.push(...applyOps(s, [checked]));
         }
         return resp({ ok: true, area, rev: s.rev, records: out(applied), ...(rejected.length ? { rejected } : {}) });

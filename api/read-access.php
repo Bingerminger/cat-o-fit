@@ -26,7 +26,7 @@ $user  = isset($_GET['user']) ? (string) $_GET['user'] : '';
 $token = (string) ($_SERVER['HTTP_X_CATOFIT_TOKEN'] ?? ($_GET['token'] ?? ''));
 
 if ($user === '' || !is_valid_user($user)) {
-    fail('Ungültige oder fehlende Nutzer-ID.', 400);
+    fail('Invalid or missing user ID.', 400, 'invalid_or_missing_user');
 }
 $profileStore = read_store('profile', 'user', $user);
 $profile = $profileStore['records']['profile'] ?? [];
@@ -34,7 +34,7 @@ $expected = is_array($profile) ? (string) ($profile['readToken'] ?? '') : '';
 // Ohne eingeschalteten Zugang dieselbe Antwort wie bei falschem Schlüssel: Von außen soll
 // nicht erkennbar sein, wer den Zugang nutzt.
 if ($expected === '' || $token === '' || !hash_equals($expected, $token)) {
-    fail('Ungültiger oder ausgeschalteter Zugang.', 401);
+    fail('Invalid or disabled access.', 401, 'invalid_access');
 }
 
 $wanted = READ_AREAS;
@@ -67,7 +67,7 @@ respond([
     'ok' => true,
     'user' => $user,
     'generatedAt' => date('c'),
-    'note' => 'Nur lesend. Ohne Zyklus, Labor und Ergänzungen. Werte sind Orientierung, keine Diagnose.',
+    'note' => 'Read only. Without cycle, lab values and supplements. Values are for orientation, not a diagnosis.',
     'profile' => (object) $safe,
     'data' => (object) $out,
 ]);

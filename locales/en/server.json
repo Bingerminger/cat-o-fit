@@ -1,0 +1,57 @@
+{
+  "ics": {
+    "calendarName": "Catofit Training",
+    "training": "Training",
+    "race": "Race",
+    "distance": "Distance: {km} km",
+    "pace": "Target pace: {pace} min/km",
+    "hrZone": "HR zone: Z{zone}",
+    "openInApp": "Open in the app: {url}",
+    "raceDistance": "Distance: {distance}",
+    "raceDistanceKm": "Distance: {distance} ({km} km)",
+    "targetTime": "Target time: {time}",
+    "priority": "Priority: {priority}",
+    "alarmHour": "{title} in 1 hour",
+    "alarmTomorrow": "Tomorrow: {title}",
+    "alarmRace": "Race in 2 hours – warm up!",
+    "alarmRaceTomorrow": "Race tomorrow: {name}",
+    "file": {
+      "session": "session",
+      "race": "race",
+      "plan": "plan"
+    },
+    "error": {
+      "missingId": "Parameter \"id\" is missing.",
+      "invalidUser": "Parameter \"user\" is missing or invalid.",
+      "linkInvalid": "This calendar link is no longer valid. Please export the date again from the app.",
+      "linkExpired": "Calendar links without a key are no longer valid. Please export the date again from the app.",
+      "unitNotFound": "Session not found.",
+      "eventNotFound": "Event not found."
+    }
+  },
+  "import": {
+    "title": "{type} ({source})",
+    "type": {
+      "easy": "Run",
+      "walk": "Walk",
+      "hike": "Hike",
+      "cross_bike": "Bike ride",
+      "swim": "Swim",
+      "strength": "Strength",
+      "rowing": "Rowing",
+      "tennis": "Tennis",
+      "tabletennis": "Table tennis",
+      "cross_football": "Football",
+      "mobility": "Mobility",
+      "other": "Training"
+    },
+    "source": {
+      "appleHealth": "Apple Health",
+      "healthConnect": "Health Connect",
+      "healthImport": "Health import"
+    }
+  },
+  "food": {
+    "product": "Product {code}"
+  }
+}

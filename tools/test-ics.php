@@ -12,6 +12,7 @@
 declare(strict_types=1);
 
 require __DIR__ . '/../api/icstz.php';
+require __DIR__ . '/../api/i18n.php';
 
 $pass = 0;
 $fail = 0;
@@ -69,6 +70,17 @@ check('unbekannte Zone wird vor dem Konstruieren abgewiesen', preg_match(
 $src = file_get_contents(__DIR__ . '/../api/ics.php');
 check('ics.php nutzt die Zone für DTSTART', substr_count($src, "'DTSTART;TZID=' . ics_timezone() . ':'") === 2);
 check('ics.php schreibt keine feste Zone mehr', !str_contains($src, 'TZID=Europe/Berlin:'));
+
+// --- Texte und Zahlen je Sprache (api/i18n.php) ------------------------------
+check('Sprache: genau, über die Grundsprache oder keine', server_match_language('de-AT') === 'de' && server_match_language('pt') === 'pt-BR'
+    && server_match_language('PT_br') === 'pt-BR' && server_match_language('xx') === null && server_match_language(null) === null);
+check('Text: Platzhalter, deutsch wie bisher', server_text('de', 'ics.distance', ['km' => '10,5']) === 'Distanz: 10,5 km');
+check('Text: englisch', server_text('en', 'ics.alarmTomorrow', ['title' => 'Long run']) === 'Tomorrow: Long run');
+check('Text: Sprache ohne Katalog → englisch, unbekannter Schlüssel → der Schlüssel', server_text('fr', 'ics.race') === 'Race'
+    && server_text('de', 'ics.nope') === 'ics.nope');
+check('Zahl: Dezimalkomma (de, fr), Dezimalpunkt (en), ohne Nullen am Ende', server_number(21.0975, 2, 'de') === '21,1'
+    && server_number(21.0975, 2, 'en') === '21.1' && server_number(10.0, 1, 'fr') === '10' && server_number(8.25, 2, 'nl') === '8,25',
+    [server_number(21.0975, 2, 'de'), server_number(21.0975, 2, 'en'), server_number(10.0, 1, 'fr')]);
 
 echo "\nics: {$pass} ok, {$fail} fehlgeschlagen\n";
 exit($fail === 0 ? 0 : 1);

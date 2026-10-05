@@ -168,6 +168,15 @@ check('HC: unbekannte Zeitzone → Europe/Berlin statt Absturz', ($r2['healthByD
     && ($bike2['date'] ?? null) === '2026-09-28', $bike2);
 check('HC: unbekannte Trainingsart übersprungen', $r['skippedUnmappedType'] === 1 && count($r['newSessions']) === 2, $r['warnings']);
 check('HC: Titel nennt die Quelle', str_ends_with((string) ($run['title'] ?? ''), '(Health Connect)'), $run['title'] ?? null);
+// Titles in the person's language (locales/<lang>/server.json); without one: English.
+check('HC: Titel ohne Sprache englisch', ($run['title'] ?? null) === 'Run (Health Connect)', $run['title'] ?? null);
+$runDe = array_values(array_filter(hi_parse_hcw($hc, 'Europe/Berlin', 'de')['newSessions'], fn ($s) => $s['type'] === 'easy'))[0] ?? [];
+check('HC: Titel für eine deutschsprachige Person wie bisher', ($runDe['title'] ?? null) === 'Lauf (Health Connect)', $runDe['title'] ?? null);
+$aw = ['workouts' => [['name' => 'Outdoor Cycling', 'start' => '2026-07-02 07:00:00 +0200', 'end' => '2026-07-02 08:00:00 +0200']]];
+$t = static fn (array $r) => array_values($r['newSessions'])[0]['title'] ?? null;
+check('Apple: Titel je Sprache (de wie bisher, en, fr ohne Katalog → englisch)', $t(hi_parse($aw, 'de')) === 'Radtour (Apple Health)'
+    && $t(hi_parse($aw, 'en')) === 'Bike ride (Apple Health)' && $t(hi_parse($aw, 'fr')) === 'Bike ride (Apple Health)', [$t(hi_parse($aw, 'de')), $t(hi_parse($aw, 'fr'))]);
+check('Kurzbefehl-Format reicht die Sprache an die Trainings weiter', $t(hi_parse_simple(['date' => '2026-07-02'] + $aw, 'de')) === 'Radtour (Apple Health)');
 check('HC: Periode aus dem Zeitraum (Beginn + Länge)', $r['periods'] === [['start' => '2026-09-20', 'length' => 5]], $r['periods']);
 
 // --- 11) Zyklus aus Apple Health (Health Auto Export) -----------------------

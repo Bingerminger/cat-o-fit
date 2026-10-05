@@ -39,6 +39,7 @@ file_put_contents($file, $xml);
 // Server-Zeitzone absichtlich weit weg: Das Datum muss trotzdem der Tag der Messung sein.
 date_default_timezone_set('America/Los_Angeles');
 $r = hx_parse_file($file);
+$rDe = hx_parse_file($file, 'de');
 @unlink($file);
 $byDate = [];
 foreach ($r['health'] as $h) $byDate[$h['date']] = $h;
@@ -55,6 +56,8 @@ $w = $r['workouts'][0] ?? [];
 check('Lauf übernommen', ($w['distanceKm'] ?? null) === 10.0 && ($w['durationSec'] ?? null) === 3000, $w);
 check('Workout-Energie in kJ -> kcal (2500 kJ ≈ 598 kcal)', ($w['kcal'] ?? null) === 598, $w['kcal'] ?? null);
 check('Lauf-Datum aus der Ortszeit', ($w['date'] ?? null) === '2026-09-21', $w['date'] ?? null);
+check('Titel in der Sprache der Person (ohne: englisch, de wie bisher)', ($w['title'] ?? null) === 'Run (Health import)'
+    && ($rDe['workouts'][0]['title'] ?? null) === 'Lauf (Health-Import)', [$w['title'] ?? null, $rDe['workouts'][0]['title'] ?? null]);
 
 // Unmöglicher Schlaf (über 24 h aus einer Quelle) wird verworfen.
 $xml2 = <<<XML

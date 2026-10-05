@@ -19,7 +19,7 @@
 
 import {
   pushOps, pullChanges, pullAllChanges, serverHas, apiGet, isOnline, onStatus, ping, REACH_TIMEOUT, deleteUserData,
-  serverLogin, serverLogout, serverSession, serverSetPin,
+  serverLogin, serverLogout, serverSession, serverSetPin, serverError,
 } from './api-client.js';
 import { uid, nowIso, debounce, todayStr, addDays, weekStartMonday, diffDays, scopeKey } from './ui.js';
 import { sha256Hex } from './sha256.js';
@@ -1039,7 +1039,8 @@ function dropRejectedFamilyOps(rejected) {
   familyStore.rev = 0;
   rebuildFamily(); writeFamilyStoreLS();
   try {
-    window.dispatchEvent(new CustomEvent('catofit:ops-rejected', { detail: { count: rejected.length, reason: rejected[0].reason || '' } }));
+    const first = rejected[0] || {};
+    window.dispatchEvent(new CustomEvent('catofit:ops-rejected', { detail: { count: rejected.length, reason: serverError({ code: first.code, error: first.reason }) } }));
   } catch { /* ohne DOM */ }
 }
 

@@ -1,0 +1,57 @@
+{
+  "ics": {
+    "calendarName": "Catofit Training",
+    "training": "Training",
+    "race": "Wettkampf",
+    "distance": "Distanz: {km} km",
+    "pace": "Zielpace: {pace} min/km",
+    "hrZone": "HF-Zone: Z{zone}",
+    "openInApp": "In der App öffnen: {url}",
+    "raceDistance": "Distanz: {distance}",
+    "raceDistanceKm": "Distanz: {distance} ({km} km)",
+    "targetTime": "Zielzeit: {time}",
+    "priority": "Priorität: {priority}",
+    "alarmHour": "{title} in 1 Stunde",
+    "alarmTomorrow": "Morgen: {title}",
+    "alarmRace": "Wettkampf in 2 Stunden – Aufwärmen!",
+    "alarmRaceTomorrow": "Morgen Wettkampf: {name}",
+    "file": {
+      "session": "einheit",
+      "race": "wettkampf",
+      "plan": "plan"
+    },
+    "error": {
+      "missingId": "Parameter \"id\" fehlt.",
+      "invalidUser": "Parameter \"user\" fehlt oder ist ungültig.",
+      "linkInvalid": "Dieser Kalender-Link ist nicht (mehr) gültig. Bitte den Termin in der App neu exportieren.",
+      "linkExpired": "Kalender-Links ohne Schlüssel gelten nicht mehr. Bitte den Termin in der App neu exportieren.",
+      "unitNotFound": "Einheit nicht gefunden.",
+      "eventNotFound": "Event nicht gefunden."
+    }
+  },
+  "import": {
+    "title": "{type} ({source})",
+    "type": {
+      "easy": "Lauf",
+      "walk": "Gehen",
+      "hike": "Wandern",
+      "cross_bike": "Radtour",
+      "swim": "Schwimmen",
+      "strength": "Kraft",
+      "rowing": "Rudern",
+      "tennis": "Tennis",
+      "tabletennis": "Tischtennis",
+      "cross_football": "Fußball",
+      "mobility": "Mobility",
+      "other": "Training"
+    },
+    "source": {
+      "appleHealth": "Apple Health",
+      "healthConnect": "Health Connect",
+      "healthImport": "Health-Import"
+    }
+  },
+  "food": {
+    "product": "Produkt {code}"
+  }
+}

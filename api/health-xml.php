@@ -70,15 +70,15 @@ function hx_set(array &$store, ?string $date, string $field, $value): void
 }
 
 /**
- * Wertet eine export.xml aus.
+ * Wertet eine export.xml aus; $lang ist die Sprache der Trainingstitel.
  * @return array{workouts: array, health: array, sleepNights: int}
  * @throws RuntimeException wenn die Datei nicht geöffnet werden kann
  */
-function hx_parse_file(string $xmlPath): array
+function hx_parse_file(string $xmlPath, string $lang = SERVER_SOURCE_LANGUAGE): array
 {
     $reader = new XMLReader();
     if (!@$reader->open($xmlPath, null, LIBXML_NONET)) {
-        throw new RuntimeException('export.xml konnte nicht geöffnet werden.');
+        throw new RuntimeException('export.xml could not be opened.');
     }
 
     $workouts = [];
@@ -195,7 +195,7 @@ function hx_parse_file(string $xmlPath): array
                     'date'        => hx_date($startStr),
                     'isoStart'    => date('c', $start),
                     'type'        => $wtype,          // Läufe als „easy“ – beim Zuordnen gilt der geplante Typ
-                    'title'       => preg_replace('/\(Apple Health\)$/', '(Health-Import)', hi_title($wtype)),
+                    'title'       => hi_title($wtype, 'healthImport', $lang),
                     'distanceKm'  => $distKm,
                     'durationSec' => $durSec,
                     'paceSecPerKm'=> $paceSec,

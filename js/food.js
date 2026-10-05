@@ -19,8 +19,17 @@ const UNIT_CANON = {
   el: 'EL', tl: 'TL', prise: 'Prise', bund: 'Bund', zehe: 'Zehe', zehen: 'Zehe',
   stück: 'Stück', stk: 'Stück', scheibe: 'Scheibe', scheiben: 'Scheibe',
   dose: 'Dose', dosen: 'Dose', packung: 'Packung', becher: 'Becher', glas: 'Glas',
+  // English unit words -> the same canonical (stored) codes.
+  gram: 'g', grams: 'g', kilogram: 'g', kilograms: 'g',
+  litre: 'ml', litres: 'ml', liters: 'ml',
+  tbsp: 'EL', tablespoon: 'EL', tablespoons: 'EL', tsp: 'TL', teaspoon: 'TL', teaspoons: 'TL',
+  pinch: 'Prise', pinches: 'Prise', bunch: 'Bund', bunches: 'Bund', clove: 'Zehe', cloves: 'Zehe',
+  piece: 'Stück', pieces: 'Stück', pc: 'Stück', pcs: 'Stück', slice: 'Scheibe', slices: 'Scheibe',
+  can: 'Dose', cans: 'Dose', tin: 'Dose', tins: 'Dose', pack: 'Packung', packs: 'Packung',
+  packet: 'Packung', packets: 'Packung', pot: 'Becher', pots: 'Becher', tub: 'Becher', tubs: 'Becher',
+  jar: 'Glas', jars: 'Glas',
 };
-const UNIT_FACTOR = { kg: 1000, l: 1000, liter: 1000 }; // -> g / ml
+const UNIT_FACTOR = { kg: 1000, l: 1000, liter: 1000, kilogram: 1000, kilograms: 1000, litre: 1000, litres: 1000, liters: 1000 }; // -> g / ml
 
 /** "1/2", "1 1/2", "250", "1,5" -> Zahl (oder null). */
 export function parseAmount(str) {
@@ -61,11 +70,17 @@ export function parseIngredient(raw) {
   return { name: name.replace(/\s+/g, ' ').trim(), amount: amt, unit, raw: s };
 }
 
+// Category values stay German (stored in the pantry); English keywords sit next to the German ones.
+// 'eggplant'/'veggie' come first so the dairy keyword 'egg' does not catch them.
 const CAT_KW = [
-  ['Obst & Gemüse', ['tomate', 'avocado', 'brokkoli', 'paprika', 'spinat', 'beere', 'banane', 'süßkartoffel', 'bohne', 'zitrone', 'salat', 'apfel', 'zwiebel', 'knoblauch', 'gemüse', 'obst', 'kartoffel']],
-  ['Milchprodukte', ['skyr', 'quark', 'joghurt', 'milch', 'feta', 'käse', 'butter', 'sahne', 'ei', 'eier']],
-  ['Fleisch & Fisch', ['hähnchen', 'lachs', 'fisch', 'rind', 'pute', 'thunfisch', 'hack']],
-  ['Trockenwaren', ['haferflocken', 'quinoa', 'reis', 'linse', 'nudel', 'mehl', 'honig', 'kakao', 'protein', 'brot', 'mandel', 'walnuss']],
+  ['Obst & Gemüse', ['tomate', 'avocado', 'brokkoli', 'paprika', 'spinat', 'beere', 'banane', 'süßkartoffel', 'bohne', 'zitrone', 'salat', 'apfel', 'zwiebel', 'knoblauch', 'gemüse', 'obst', 'kartoffel',
+    'tomato', 'broccoli', 'pepper', 'spinach', 'berry', 'berries', 'banana', 'sweet potato', 'bean', 'lemon', 'salad', 'lettuce', 'apple', 'onion', 'garlic', 'vegetable', 'veggie', 'eggplant', 'fruit', 'potato']],
+  ['Milchprodukte', ['skyr', 'quark', 'joghurt', 'milch', 'feta', 'käse', 'butter', 'sahne', 'ei', 'eier',
+    'yoghurt', 'yogurt', 'milk', 'cheese', 'cream', 'egg']],
+  ['Fleisch & Fisch', ['hähnchen', 'lachs', 'fisch', 'rind', 'pute', 'thunfisch', 'hack',
+    'chicken', 'salmon', 'fish', 'beef', 'turkey', 'tuna', 'mince']],
+  ['Trockenwaren', ['haferflocken', 'quinoa', 'reis', 'linse', 'nudel', 'mehl', 'honig', 'kakao', 'protein', 'brot', 'mandel', 'walnuss',
+    'oats', 'rice', 'lentil', 'noodle', 'pasta', 'flour', 'honey', 'cocoa', 'bread', 'almond', 'walnut']],
 ];
 export function guessCategory(name) {
   const n = String(name).toLowerCase();

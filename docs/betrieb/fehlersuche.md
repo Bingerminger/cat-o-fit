@@ -89,7 +89,7 @@ Die Meldung nennt meist die Datei, die nicht geladen wurde. Häufige Ursachen:
 
 ## Apple-Health-Import
 
-- **401 „Ungültiges Token“:** Der Schlüssel passt nicht – nach „neu erzeugen“ den Header-Wert ersetzen.
+- **401 „Invalid token“ (`code: invalid_token`):** Der Schlüssel passt nicht – nach „neu erzeugen“ den Header-Wert ersetzen.
 - **403:** Unter Health-Import zuerst „Auto-Import aktivieren“.
 - **ZIP wird abgelehnt:** Auf dem Server fehlt die PHP-Erweiterung `zip` – die `export.xml` aus dem ZIP
   einzeln hochladen, oder die Erweiterung aktivieren.

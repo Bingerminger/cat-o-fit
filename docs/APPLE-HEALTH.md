@@ -216,7 +216,7 @@ Verlauf, Ziele und Bereitschaft nur innerhalb einer Messart.
 
 ## Fehlersuche
 
-- **401 „Ungültiges Token“** – der Schlüssel passt nicht (nach „neu erzeugen“ den Header-Wert ersetzen).
+- **401 „Invalid token“** (`code: invalid_token`) – der Schlüssel passt nicht (nach „neu erzeugen“ den Header-Wert ersetzen).
 - **403 „kein Token“** – in Cat-O-Fit erst unter **Health-Import** „Auto-Import aktivieren“.
 - **Es kommt gar nichts an** – URL exakt kopiert? Server von unterwegs erreichbar? Kommt ein 401 von
   einer vorgeschalteten Anmeldung (nicht von Cat-O-Fit), fehlt der `Authorization`-Header.

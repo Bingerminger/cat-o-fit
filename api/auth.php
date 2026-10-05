@@ -137,9 +137,24 @@ function public_family_record(array $r): array
     return $r;
 }
 
+/** Reasons for rejected family ops: code => English text (the app translates the code, server.<code>). */
+const FAMILY_REJECTIONS = [
+    'admin_add_member' => 'Only an admin with a server connection can add new members.',
+    'admin_change_role' => 'Only an admin with a server connection can change roles.',
+    'admin_remove_member' => 'Only an admin with a server connection can remove members.',
+    'admin_replace_family' => 'Only an admin with a server connection can replace the whole family.',
+];
+
+/** Rejected op from apply_ops (reason = code from family_guard) as sent to clients: {op, id, code, reason}. */
+function family_rejection(array $r): array
+{
+    $code = (string) ($r['reason'] ?? '');
+    return ['op' => $r['op'] ?? '', 'id' => $r['id'] ?? '', 'code' => $code, 'reason' => FAMILY_REJECTIONS[$code] ?? $code];
+}
+
 /**
  * Prüft eine eingehende Familien-Op und bereinigt Mitglieds-Datensätze. Liefert die
- * anzuwendende Op oder einen Ablehnungsgrund (string). Regeln:
+ * anzuwendende Op oder einen Ablehnungscode (string, siehe FAMILY_REJECTIONS). Regeln:
  *  - Neues Mitglied, Rollenwechsel, Mitglied löschen und `replace` brauchen eine
  *    Admin-Sitzung – außer bei der Ersteinrichtung (noch keine Admin-Person).
  *  - Ein PIN-Hash wird nur mit Admin-Sitzung (bzw. bei der Ersteinrichtung)
@@ -178,12 +193,12 @@ function family_guard(array $op, array $store, ?array $session): array|string
         $kind = $rec['_kind'] ?? ($exists ? ($prev['_kind'] ?? 'member') : 'member');
         if ($kind === 'member') {
             if (!$exists && !$trusted) {
-                return 'Neue Mitglieder kann nur eine Admin-Person mit Serververbindung anlegen.';
+                return 'admin_add_member';
             }
             $oldRole = $exists ? (($prev['role'] ?? 'user') === 'admin' ? 'admin' : 'user') : null;
             $newRole = (($rec['role'] ?? $oldRole ?? 'user') === 'admin') ? 'admin' : 'user';
             if ($exists && $oldRole !== $newRole && !$trusted) {
-                return 'Rollen kann nur eine Admin-Person mit Serververbindung ändern.';
+                return 'admin_change_role';
             }
         }
         $op['record'] = $clean($rec);
@@ -193,13 +208,13 @@ function family_guard(array $op, array $store, ?array $session): array|string
         $id = (string) ($op['id'] ?? '');
         $prev = $store['records'][$id] ?? null;
         if (is_array($prev) && empty($prev['deleted']) && ($prev['_kind'] ?? 'member') === 'member' && !$isAdmin) {
-            return 'Mitglieder kann nur eine Admin-Person mit Serververbindung entfernen.';
+            return 'admin_remove_member';
         }
         return $op;
     }
     if ($type === 'replace') {
         if (!$trusted) {
-            return 'Die ganze Familie kann nur eine Admin-Person mit Serververbindung ersetzen.';
+            return 'admin_replace_family';
         }
         $op['records'] = array_map(static fn($r) => $clean((array) $r), is_array($op['records'] ?? null) ? $op['records'] : []);
         return $op;
@@ -215,7 +230,7 @@ function set_member_pin_hash(string $userId, string $hash): void
         $store = read_store('family', 'family', null);
         $r = family_member($userId, $store);
         if ($r === null) {
-            throw new RuntimeException('Mitglied nicht gefunden.');
+            throw new RuntimeException('Member not found.');
         }
         $r['pinHash'] = $hash;
         $r['updatedAt'] = date('c');
@@ -417,7 +432,7 @@ function ics_token(string $userId, bool $rotate = false): string
         }
         $t = bin2hex(random_bytes(24));
         if (file_put_contents(ics_token_path($userId), $t, LOCK_EX) === false) {
-            throw new RuntimeException('Kalender-Schlüssel konnte nicht gespeichert werden.');
+            throw new RuntimeException('Could not save the calendar key.');
         }
     }
     return $t;

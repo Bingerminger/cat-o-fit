@@ -1,4 +1,4 @@
-import { t } from './i18n.js';
+import { t, has, locale } from './i18n.js';
 /* =========================================================================
    api-client.js — HTTP-Zugriff auf die PHP-API mit Retry.
    Seit v3.0.0 ist der Server die Merge-Autorität: Der Client schickt
@@ -23,6 +23,20 @@ window.addEventListener('online', () => { online = true; emitStatus('online'); }
 window.addEventListener('offline', () => { online = false; emitStatus('offline'); });
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/** Text of a server error: the translation of its `code` (server.<code>, placeholders from the
+    response), else the server's own (English) text, else the fallback. */
+export function serverError(json, fallback = '') {
+  const code = json && typeof json.code === 'string' ? json.code : '';
+  if (code && has(`server.${code}`)) return t(`server.${code}`, json);
+  return (json && json.error) || fallback;
+}
+
+/** Language (and country, if the language names one) for Open Food Facts: lc=de, lc=pt&cc=br. */
+function foodLocaleQuery() {
+  const [lc, cc] = locale().toLowerCase().split('-');
+  return `&lc=${encodeURIComponent(lc)}${cc ? `&cc=${encodeURIComponent(cc)}` : ''}`;
+}
 
 /** Client-Fehler (4xx) werden nicht wiederholt – sie werden beim nächsten Versuch
     nicht besser (z. B. 413 „zu viele Operationen“). Ausnahmen: 408 und 429. */
@@ -69,7 +83,7 @@ export async function pullChanges(area, opts = {}) {
     method: 'GET', headers: { Accept: 'application/json' },
   });
   const json = await res.json();
-  if (!json.ok) throw new Error(json.error || t('errors.load'));
+  if (!json.ok) throw new Error(serverError(json, t('errors.load')));
   return { rev: json.rev || 0, records: Array.isArray(json.records) ? json.records : [] };
 }
 
@@ -87,7 +101,7 @@ export async function pushOps(area, ops, opts = {}) {
     body: JSON.stringify(since != null ? { ops, since } : { ops }),
   });
   const json = await res.json();
-  if (!json.ok) throw new Error(json.error || t('errors.save'));
+  if (!json.ok) throw new Error(serverError(json, t('errors.save')));
   const ch = json.changes;
   return {
     rev: json.rev || 0,
@@ -101,7 +115,7 @@ export async function pushOps(area, ops, opts = {}) {
 export async function apiGet(area, opts = {}) {
   const res = await request(endpoint(area, opts), { method: 'GET', headers: { Accept: 'application/json' } });
   const json = await res.json();
-  if (!json.ok) throw new Error(json.error || t('errors.load'));
+  if (!json.ok) throw new Error(serverError(json, t('errors.load')));
   return json.data;
 }
 
@@ -114,7 +128,7 @@ export async function foodfactsLookup(name) {
   const q = String(name || '').trim();
   if (!q || !online) return null;
   try {
-    const res = await request(`${API}?action=foodfacts&q=${encodeURIComponent(q)}`,
+    const res = await request(`${API}?action=foodfacts&q=${encodeURIComponent(q)}${foodLocaleQuery()}`,
       { method: 'GET', headers: { Accept: 'application/json' } }, { retries: 0, timeout: 6500 });
     const j = await res.json();
     return (j && j.found) ? { kcal100: j.kcal100, protein100: j.protein100 } : null;
@@ -129,7 +143,7 @@ export async function foodfactsBarcode(code) {
   const c = String(code || '').replace(/\D/g, '');
   if (!c || !online) return null;
   try {
-    const res = await request(`${API}?action=foodfacts&code=${encodeURIComponent(c)}`,
+    const res = await request(`${API}?action=foodfacts&code=${encodeURIComponent(c)}${foodLocaleQuery()}`,
       { method: 'GET', headers: { Accept: 'application/json' } }, { retries: 0, timeout: 6500 });
     const j = await res.json();
     return (j && j.found) ? { name: j.name, kcal100: j.kcal100 ?? null, protein100: j.protein100 ?? null } : null;
@@ -173,7 +187,7 @@ async function postAction(action, body, { timeout = 9000 } = {}) {
 /** Antwort als Ergebnis { ok, … } oder null, wenn sie nicht zur Aktion passt. */
 function actionResult({ json }, check) {
   if (json.ok === true && check(json)) return { ok: true, ...json };
-  if (json.ok === false && json.code) return { ok: false, code: json.code, error: json.error || '', left: json.left, retryAfter: json.retryAfter };
+  if (json.ok === false && json.code) return { ok: false, code: json.code, error: serverError(json), left: json.left, retryAfter: json.retryAfter };
   return null;
 }
 
@@ -245,7 +259,7 @@ export async function pullAllChanges(user, since) {
     method: 'GET', headers: { Accept: 'application/json' },
   });
   const json = await res.json();
-  if (!json.ok) throw new Error(json.error || t('errors.load'));
+  if (!json.ok) throw new Error(serverError(json, t('errors.load')));
   return { revs: json.revs || {}, changes: json.changes || {}, locked: Array.isArray(json.locked) ? json.locked : [] };
 }
 
@@ -264,7 +278,7 @@ export async function uploadHealthExport(file, onProgress) {
     xhr.onload = () => {
       try {
         const json = JSON.parse(xhr.responseText);
-        if (!json.ok) reject(new Error(json.error || t('errors.importFailed')));
+        if (!json.ok) reject(new Error(serverError(json, t('errors.importFailed'))));
         else resolve(json);
       } catch (e) { reject(new Error(t('errors.badResponse'))); }
     };

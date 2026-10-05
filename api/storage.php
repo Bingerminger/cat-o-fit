@@ -107,10 +107,10 @@ function area_path(string $area, string $scope, ?string $userId): string
 function assert_area(string $area, string $scope, ?string $userId): void
 {
     if (!is_valid_area($area, $scope)) {
-        throw new InvalidArgumentException("Unbekannter Bereich: {$area}");
+        throw new InvalidArgumentException("Unknown area: {$area}");
     }
     if ($scope === 'user' && ($userId === null || !is_valid_user($userId))) {
-        throw new InvalidArgumentException('Ungültige oder fehlende Nutzer-ID.');
+        throw new InvalidArgumentException('Invalid or missing user ID.');
     }
 }
 
@@ -134,7 +134,7 @@ function read_store(string $area, string $scope, ?string $userId): array
         // Store weiterzuarbeiten hieße, dass der nächste Schreibvorgang den ganzen
         // Bestand durch die eine neue Änderung ersetzt. Deshalb laut scheitern.
         throw new RuntimeException(
-            "Datenbestand '{$area}' ist nicht lesbar (Dateirechte?). Es wurde nichts verändert."
+            "Data store '{$area}' is not readable (file permissions?). Nothing was changed."
         );
     }
     if (trim($raw) === '') {
@@ -150,8 +150,8 @@ function read_store(string $area, string $scope, ?string $userId): array
             @copy($path, $backup);
         }
         throw new RuntimeException(
-            "Datenbestand '{$area}' ist beschädigt und wurde als " . basename($backup)
-            . ' gesichert. Bitte aus einem Backup wiederherstellen.'
+            "Data store '{$area}' is damaged and was saved as " . basename($backup)
+            . '. Please restore it from a backup.'
         );
     }
     // Bereits Store-Format?
@@ -231,18 +231,18 @@ function write_store(string $area, array $store, string $scope, ?string $userId)
     $payload = ['rev' => (int) $store['rev'], 'records' => (object) $store['records']];
     $json = json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     if ($json === false) {
-        throw new RuntimeException('JSON-Kodierung fehlgeschlagen: ' . json_last_error_msg());
+        throw new RuntimeException('JSON encoding failed: ' . json_last_error_msg());
     }
 
     $target = area_path($area, $scope, $userId);
     $tmp = tempnam($dir, '.tmp_' . $area . '_');
     if ($tmp === false) {
-        throw new RuntimeException('Temp-Datei konnte nicht erstellt werden.');
+        throw new RuntimeException('Could not create the temp file.');
     }
     $fp = fopen($tmp, 'wb');
     if ($fp === false) {
         @unlink($tmp);
-        throw new RuntimeException('Temp-Datei konnte nicht geöffnet werden.');
+        throw new RuntimeException('Could not open the temp file.');
     }
     try {
         $written = fwrite($fp, $json);
@@ -258,11 +258,11 @@ function write_store(string $area, array $store, string $scope, ?string $userId)
     // atomar am Ziel – und beim nächsten Lesen wäre der Bereich unbrauchbar.
     if ($written === false || $written !== strlen($json)) {
         @unlink($tmp);
-        throw new RuntimeException('Schreiben in Temp-Datei unvollständig (Speicherplatz?).');
+        throw new RuntimeException('Writing the temp file was incomplete (disk space?).');
     }
     if (!rename($tmp, $target)) {
         @unlink($tmp);
-        throw new RuntimeException('Atomares Umbenennen fehlgeschlagen.');
+        throw new RuntimeException('Atomic rename failed.');
     }
     @chmod($target, 0664);
 }
@@ -501,7 +501,7 @@ function load_area(string $area, string $scope = 'user', ?string $userId = null)
 function delete_user(string $userId): bool
 {
     if (!is_valid_user($userId)) {
-        throw new InvalidArgumentException('Ungültige Nutzer-ID.');
+        throw new InvalidArgumentException('Invalid user ID.');
     }
     $dir = DATA_DIR . '/users/' . $userId;
     if (!is_dir($dir)) {

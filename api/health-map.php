@@ -12,8 +12,12 @@
  *   - Schlaf in STUNDEN (totalSleep/asleep …); Workout-`duration` in SEKUNDEN.
  *   - Distanz/Energie/HF sind Objekte { qty, units } (Distanz mi oder km);
  *     Energie heißt in v2 `activeEnergyBurned`, in v1 `activeEnergy` (beide gemappt).
+ *
+ * Titles of imported sessions come in the language passed as $lang (locales/<lang>/server.json).
  */
 declare(strict_types=1);
+
+require_once __DIR__ . '/i18n.php';
 
 /** Datum (YYYY-MM-DD) aus einem Auto-Export-Datumsstring – TZ-sicher über den Datums-Teil. */
 function hi_date($s): ?string {
@@ -102,11 +106,12 @@ function hi_wtype(string $act): ?string {
     if ($h('tennis')) return 'tennis';
     return null;
 }
-function hi_title(string $type): string {
-    static $L = ['easy' => 'Lauf', 'walk' => 'Gehen', 'hike' => 'Wandern', 'cross_bike' => 'Radtour',
-        'swim' => 'Schwimmen', 'strength' => 'Kraft', 'rowing' => 'Rudern', 'tennis' => 'Tennis',
-        'tabletennis' => 'Tischtennis', 'cross_football' => 'Fußball', 'mobility' => 'Mobility'];
-    return ($L[$type] ?? 'Training') . ' (Apple Health)';
+/** Title of an imported session, e.g. "Run (Apple Health)"; $source: appleHealth, healthConnect, healthImport. */
+function hi_title(string $type, string $source = 'appleHealth', string $lang = SERVER_SOURCE_LANGUAGE): string {
+    return server_text($lang, 'import.title', [
+        'type' => server_lookup($lang, "import.type.{$type}") ?? server_text($lang, 'import.type.other'),
+        'source' => server_text($lang, "import.source.{$source}"),
+    ]);
 }
 /** Herzfrequenz aus dem v1-`heartRateData`-Array ableiten (Fallback, wenn avg/max fehlen). */
 function hi_hr_from_series(array $w): array {
@@ -148,7 +153,7 @@ function hi_simple_num($v): ?float {
     return (float) str_replace(',', '.', $m[0]);
 }
 
-function hi_parse_simple(array $data): array {
+function hi_parse_simple(array $data, string $lang = SERVER_SOURCE_LANGUAGE): array {
     $days = isset($data['days']) && is_array($data['days']) ? $data['days'] : [$data];
     $healthByDate = [];
     $warnings = [];
@@ -156,7 +161,7 @@ function hi_parse_simple(array $data): array {
     foreach ($days as $day) {
         if (!is_array($day)) continue;
         $date = hi_date($day['date'] ?? '');
-        if ($date === null) { if (count($warnings) < 8) $warnings[] = 'Tag ohne gültiges Datum übersprungen'; continue; }
+        if ($date === null) { if (count($warnings) < 8) $warnings[] = 'Day without a valid date skipped'; continue; }
         foreach ($day as $key => $raw) {
             if ($key === 'date' || $key === 'hrvMethod' || $key === 'weightUnit') continue;
             if (!isset(HI_SIMPLE_FIELDS[$key])) {
@@ -169,7 +174,7 @@ function hi_parse_simple(array $data): array {
             if ($key === 'weight' && strtolower((string) ($day['weightUnit'] ?? '')) === 'lb') $v *= 0.453592;
             if ($key === 'bodyFat' && $v > 0 && $v <= 1) $v *= 100;            // 0,185 → 18,5 %
             if ($v < $min || $v > $max) {
-                if (count($warnings) < 8) $warnings[] = "{$key} am {$date} unplausibel ({$v}) – verworfen";
+                if (count($warnings) < 8) $warnings[] = "{$key} on {$date} implausible ({$v}) – discarded";
                 continue;
             }
             $healthByDate[$date][$key] = match ($tag) {
@@ -185,7 +190,7 @@ function hi_parse_simple(array $data): array {
     }
     // Trainings dürfen im selben Paket mitkommen (Felder wie bei Health Auto Export:
     // name, start, end oder duration in Sekunden, distance in km, avgHeartRate …).
-    $w = is_array($data['workouts'] ?? null) ? hi_parse(['workouts' => $data['workouts']]) : null;
+    $w = is_array($data['workouts'] ?? null) ? hi_parse(['workouts' => $data['workouts']], $lang) : null;
     return [
         'healthByDate'        => $healthByDate,
         'newSessions'         => $w ? $w['newSessions'] : [],
@@ -257,7 +262,7 @@ function hi_day(int $ts, string $tz): string {
     return (new DateTimeImmutable('@' . $ts))->setTimezone(new DateTimeZone($tz))->format('Y-m-d');
 }
 
-function hi_parse_hcw(array $data, string $tz = 'Europe/Berlin'): array {
+function hi_parse_hcw(array $data, string $tz = 'Europe/Berlin', string $lang = SERVER_SOURCE_LANGUAGE): array {
     // Nur bekannte Zonen – eine unbekannte ließe DateTimeZone mitten im Import scheitern.
     if (!in_array($tz, timezone_identifiers_list(), true)) $tz = 'Europe/Berlin';
     $list =fn (string $k) => array_values(array_filter(is_array($data[$k] ?? null) ? $data[$k] : [], 'is_array'));
@@ -282,7 +287,7 @@ function hi_parse_hcw(array $data, string $tz = 'Europe/Berlin'): array {
             $ts = hi_ts($r['time'] ?? ($r['start_time'] ?? null));
             $v = hi_num($r, $fields);
             if ($ts === null || $v === null) continue;
-            if ($v < $min || $v > $max) { if (count($warnings) < 8) $warnings[] = "{$target} unplausibel ({$v}) – verworfen"; continue; }
+            if ($v < $min || $v > $max) { if (count($warnings) < 8) $warnings[] = "{$target} implausible ({$v}) – discarded"; continue; }
             $put(hi_day($ts, $tz), $target, $dec ? round($v, $dec) : (int) round($v), $ts);
         }
     }
@@ -344,7 +349,7 @@ function hi_parse_hcw(array $data, string $tz = 'Europe/Berlin'): array {
         $type = hi_wtype($act);
         $start = hi_ts($e['start_time'] ?? null);
         $end = hi_ts($e['end_time'] ?? null);
-        if ($type === null || $start === null) { $skipped++; if ($type === null && count($warnings) < 8) $warnings[] = "Trainingsart nicht zugeordnet: {$act}"; continue; }
+        if ($type === null || $start === null) { $skipped++; if ($type === null && count($warnings) < 8) $warnings[] = "Exercise type not mapped: {$act}"; continue; }
         $dur = hi_num($e, ['duration_seconds', 'duration']);
         $durSec = $dur !== null ? (int) round($dur) : (($end !== null && $end > $start) ? $end - $start : null);
         $m = hi_num($e, ['distance_meters']);
@@ -357,7 +362,7 @@ function hi_parse_hcw(array $data, string $tz = 'Europe/Berlin'): array {
         $id = 'hc-' . ($meta !== '' ? preg_replace('/[^A-Za-z0-9_-]/', '', $meta) : ($date . '-' . $type . '-' . $start));
         $sessions[$id] = [
             'id' => $id, 'plannedId' => null, 'eventId' => null, 'date' => $date,
-            'type' => $type, 'title' => preg_replace('/\(Apple Health\)$/', '(Health Connect)', hi_title($type)),
+            'type' => $type, 'title' => hi_title($type, 'healthConnect', $lang),
             'distanceKm' => $km, 'durationSec' => $durSec,
             'paceSecPerKm' => ($km && $durSec) ? (int) round($durSec / $km) : null,
             'avgHr' => $avgHr, 'maxHr' => $maxHr, 'kcal' => null,
@@ -399,7 +404,7 @@ function hi_parse_hcw(array $data, string $tz = 'Europe/Berlin'): array {
  *   newSessions:  [ 'hk-…' => record ]              (vor Dedup gegen bestehende Daten)
  *   ignoredMetrics, skippedUnmappedType, warnings, received
  */
-function hi_parse(array $data): array {
+function hi_parse(array $data, string $lang = SERVER_SOURCE_LANGUAGE): array {
     $metrics  = is_array($data['metrics']  ?? null) ? $data['metrics']  : [];
     $workouts = is_array($data['workouts'] ?? null) ? $data['workouts'] : [];
 
@@ -471,7 +476,7 @@ function hi_parse(array $data): array {
         if (!is_array($w)) continue;
         $act  = hi_norm_activity($w['name'] ?? ($w['type'] ?? ($w['activityType'] ?? ($w['workoutActivityType'] ?? ''))));
         $type = hi_wtype($act);
-        if ($type === null) { $skippedWorkouts++; if (count($warnings) < 8) $warnings[] = "Workout-Typ nicht zugeordnet: {$act}"; continue; }
+        if ($type === null) { $skippedWorkouts++; if (count($warnings) < 8) $warnings[] = "Workout type not mapped: {$act}"; continue; }
 
         $startStr = (string) ($w['start'] ?? ($w['startDate'] ?? ''));
         $endStr   = (string) ($w['end'] ?? ($w['endDate'] ?? ''));
@@ -504,7 +509,7 @@ function hi_parse(array $data): array {
         $id = 'hk-' . ($uuid !== '' ? $uuid : ($date . '-' . $type . '-' . (int) $tsA));
         $newSessions[$id] = [
             'id' => $id, 'plannedId' => null, 'eventId' => null, 'date' => $date,
-            'type' => $type, 'title' => hi_title($type),
+            'type' => $type, 'title' => hi_title($type, 'appleHealth', $lang),
             'distanceKm' => $distKm, 'durationSec' => $durSec, 'paceSecPerKm' => $paceSec,
             'avgHr' => $avgHr !== null ? (int) round($avgHr) : null,
             'maxHr' => $maxHr !== null ? (int) round($maxHr) : null,

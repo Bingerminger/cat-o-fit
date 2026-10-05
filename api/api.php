@@ -55,7 +55,11 @@ function respond(mixed $payload, int $status = 200): never
     exit;
 }
 
-/** Fehlerantwort im einheitlichen Format (optional mit maschinenlesbarem `code`). */
+/**
+ * Error response in the uniform format. `code` is the stable, machine-readable reason; the app
+ * translates it (server.<code> in locales/<lang>/ui.json, placeholders filled from the other
+ * fields). The English `error` text is only a fallback for API clients.
+ */
 function fail(string $message, int $status = 400, ?string $code = null, array $extra = []): never
 {
     respond(['ok' => false, 'error' => $message] + ($code !== null ? ['code' => $code] : []) + $extra, $status);
@@ -72,7 +76,7 @@ if ($allowedHosts !== '') {
     $allowed = array_filter(array_map(static fn($h) => strtolower(trim($h)), explode(',', $allowedHosts)));
     $allowed = array_merge($allowed, ['localhost', '127.0.0.1', '[::1]']);
     if (!in_array($reqHost, $allowed, true) && !in_array($bareHost, $allowed, true)) {
-        fail('Unbekannter Host.', 421, 'host');
+        fail('Unknown host.', 421, 'host');
     }
 }
 
@@ -86,17 +90,17 @@ $user   = isset($_GET['user']) ? (string) $_GET['user'] : null;
 function require_write_request(): void
 {
     if (request_cross_site()) {
-        fail('Anfrage von einer fremden Seite abgelehnt.', 403, 'origin');
+        fail('Request from another site rejected.', 403, 'origin');
     }
     if (!request_is_json()) {
-        fail('Erwartet Content-Type application/json.', 415, 'content-type');
+        fail('Expected Content-Type application/json.', 415, 'content-type');
     }
 }
 
 function require_post(string $action, string $method): void
 {
     if ($method !== 'POST') {
-        fail("{$action} erwartet POST.", 405);
+        fail("{$action} expects POST.", 405, 'method_not_allowed', ['action' => $action, 'expected' => 'POST']);
     }
 }
 
@@ -105,7 +109,7 @@ function require_session(): array
 {
     $s = current_session();
     if ($s === null) {
-        fail('Bitte melde dich an – die Anmeldung am Server fehlt oder ist abgelaufen.', 401, 'session');
+        fail('Please sign in – the sign-in at the server is missing or has expired.', 401, 'session');
     }
     return $s;
 }
@@ -130,23 +134,23 @@ if ($action === 'login') {
     $uid = (string) ($body['user'] ?? '');
     $pin = (string) ($body['pin'] ?? '');
     if (!is_valid_user($uid)) {
-        fail('Ungültige Nutzer-ID.', 400);
+        fail('Invalid user ID.', 400, 'invalid_user');
     }
     $member = family_member($uid);
     if ($member === null) {
-        fail('Dieses Profil gibt es nicht (mehr).', 404, 'unknown');
+        fail('This profile does not exist (any more).', 404, 'unknown');
     }
     if (member_has_pin($member)) {
         $wait = fails_locked($uid);
         if ($wait > 0) {
-            fail('Zu viele Fehlversuche – bitte kurz warten.', 429, 'locked', ['retryAfter' => $wait]);
+            fail('Too many failed attempts – please wait a moment.', 429, 'locked', ['retryAfter' => $wait]);
         }
         if (!pin_matches($member, $uid, $pin)) {
             $left = fails_register($uid);
             if ($left > 0) {
-                fail('Falsche PIN.', 401, 'pin', ['left' => $left]);
+                fail('Wrong PIN.', 401, 'pin', ['left' => $left]);
             }
-            fail('Zu viele Fehlversuche – bitte kurz warten.', 429, 'locked', ['retryAfter' => fails_locked($uid)]);
+            fail('Too many failed attempts – please wait a moment.', 429, 'locked', ['retryAfter' => fails_locked($uid)]);
         }
         fails_reset($uid);
     }
@@ -177,11 +181,11 @@ if ($action === 'set-pin') {
     $uid = (string) ($body['user'] ?? '');
     $pin = (string) ($body['pin'] ?? '');
     if (!is_valid_user($uid)) {
-        fail('Ungültige Nutzer-ID.', 400);
+        fail('Invalid user ID.', 400, 'invalid_user');
     }
     $member = family_member($uid);
     if ($member === null) {
-        fail('Dieses Profil gibt es nicht (mehr).', 404, 'unknown');
+        fail('This profile does not exist (any more).', 404, 'unknown');
     }
     $self = $session['user'] === $uid;
     if ($self) {
@@ -189,18 +193,18 @@ if ($action === 'set-pin') {
         if (member_has_pin($member)) {
             $wait = fails_locked($uid);
             if ($wait > 0) {
-                fail('Zu viele Fehlversuche – bitte kurz warten.', 429, 'locked', ['retryAfter' => $wait]);
+                fail('Too many failed attempts – please wait a moment.', 429, 'locked', ['retryAfter' => $wait]);
             }
             if (!pin_matches($member, $uid, (string) ($body['old'] ?? ''))) {
                 $left = fails_register($uid);
-                fail('Die bisherige PIN stimmt nicht.', 401, 'pin', ['left' => $left]);
+                fail('The current PIN is wrong.', 401, 'pin', ['left' => $left]);
             }
         }
     } elseif ($session['role'] !== 'admin') {
-        fail('Die PIN einer anderen Person darf nur eine Admin-Person neu setzen.', 403, 'admin');
+        fail("Only an admin can set another person's PIN.", 403, 'admin');
     }
     if (!valid_new_pin($pin)) {
-        fail('Die PIN braucht 4 bis 8 Ziffern und darf nicht 0000 sein.', 400, 'weak');
+        fail('The PIN needs 4 to 8 digits and must not be 0000.', 400, 'weak');
     }
     set_member_pin_hash($uid, pin_hash($uid, $pin));
     fails_reset($uid);
@@ -216,15 +220,15 @@ if ($action === 'ics-token') {
     $body = request_json();
     $uid = (string) ($body['user'] ?? '');
     if (!is_valid_user($uid) || family_member($uid) === null) {
-        fail('Dieses Profil gibt es nicht (mehr).', 404, 'unknown');
+        fail('This profile does not exist (any more).', 404, 'unknown');
     }
     if ($session['user'] !== $uid && $session['role'] !== 'admin') {
-        fail('Kalender-Links anderer Personen erstellt nur eine Admin-Person.', 403, 'admin');
+        fail('Only an admin can create calendar links for other people.', 403, 'admin');
     }
     try {
         respond(['ok' => true, 'token' => ics_token($uid, !empty($body['rotate']))]);
     } catch (Throwable $e) {
-        fail('Serverfehler: ' . $e->getMessage(), 500);
+        fail('Server error: ' . $e->getMessage(), 500, 'server_error', ['detail' => $e->getMessage()]);
     }
 }
 
@@ -244,9 +248,9 @@ if ($action === 'health-import') {
     require_post('health-import', $method);
     // Datei-Upload (multipart) – nur aus der eigenen App mit gültiger Anmeldung.
     if (request_cross_site()) {
-        fail('Anfrage von einer fremden Seite abgelehnt.', 403, 'origin');
+        fail('Request from another site rejected.', 403, 'origin');
     }
-    require_session();
+    $session = require_session();
     require __DIR__ . '/health-import.php';
     exit;
 }
@@ -261,7 +265,7 @@ if ($action === 'health-ingest') {
 if ($action === 'read') {
     // Lesezugang für eigene Werkzeuge (per Schlüssel, standardmäßig aus; siehe read-access.php).
     if ($method !== 'GET') {
-        fail('read erwartet GET.', 405);
+        fail('read expects GET.', 405, 'method_not_allowed', ['action' => 'read', 'expected' => 'GET']);
     }
     require __DIR__ . '/read-access.php';
     exit;
@@ -272,10 +276,10 @@ if ($action === 'delete-user') {
     require_write_request();
     $session = require_session();
     if ($session['role'] !== 'admin') {
-        fail('Nur eine Admin-Person darf Mitglieder löschen.', 403, 'admin');
+        fail('Only an admin can delete members.', 403, 'admin');
     }
     if ($user === null || !is_valid_user($user)) {
-        fail('Ungültige oder fehlende Nutzer-ID.', 400);
+        fail('Invalid or missing user ID.', 400, 'invalid_or_missing_user');
     }
     try {
         delete_user($user);
@@ -283,7 +287,7 @@ if ($action === 'delete-user') {
         fails_reset($user);
         respond(['ok' => true, 'deleted' => $user]);
     } catch (Throwable $e) {
-        fail('Löschen fehlgeschlagen: ' . $e->getMessage(), 500);
+        fail('Deleting failed: ' . $e->getMessage(), 500, 'delete_failed', ['detail' => $e->getMessage()]);
     }
 }
 
@@ -298,11 +302,11 @@ if ($action === 'delete-user') {
 // ---------------------------------------------------------------------------
 if ($action === 'changes-all') {
     if ($method !== 'GET') {
-        fail('changes-all erwartet GET.', 405);
+        fail('changes-all expects GET.', 405, 'method_not_allowed', ['action' => 'changes-all', 'expected' => 'GET']);
     }
     ensure_bootstrap();
     if ($user === null || !is_valid_user($user)) {
-        fail('Ungültige oder fehlende Nutzer-ID.', 400);
+        fail('Invalid or missing user ID.', 400, 'invalid_or_missing_user');
     }
     $since = [];
     foreach (explode(',', (string) ($_GET['since'] ?? '')) as $pair) {
@@ -311,7 +315,7 @@ if ($action === 'changes-all') {
         }
     }
     if (!$since) {
-        fail('Parameter "since" fehlt (z. B. since=sessions:0,health:0).', 400);
+        fail('Parameter "since" is missing (e.g. since=sessions:0,health:0).', 400, 'missing_since');
     }
     $sess = current_session();
     $own = $sess !== null && ($sess['user'] ?? null) === $user;
@@ -326,7 +330,7 @@ if ($action === 'changes-all') {
             if ($res['records']) $changes[$a] = $res['records'];
         }
     } catch (Throwable $e) {
-        fail('Serverfehler: ' . $e->getMessage(), 500);
+        fail('Server error: ' . $e->getMessage(), 500, 'server_error', ['detail' => $e->getMessage()]);
     }
     respond(['ok' => true, 'revs' => (object) $revs, 'changes' => (object) $changes, 'locked' => $locked]);
 }
@@ -338,17 +342,17 @@ if ($action === 'changes-all') {
 ensure_bootstrap();
 
 if ($area === '') {
-    fail('Parameter "area" oder "action" fehlt.', 400);
+    fail('Parameter "area" or "action" is missing.', 400, 'missing_area');
 }
 if (!is_valid_area($area, $scope)) {
-    fail("Unbekannter Bereich: {$area}", 404);
+    fail("Unknown area: {$area}", 404, 'unknown_area', ['area' => $area]);
 }
 
 // Private Bereiche: lesen und schreiben nur die angemeldete Person selbst.
 if ($scope === 'user' && in_array($area, PRIVATE_AREAS, true)) {
     $session = require_session();
     if ($user === null || $session['user'] !== $user) {
-        fail('Dieser Bereich ist privat.', 403, 'private');
+        fail('This area is private.', 403, 'private');
     }
 }
 
@@ -356,7 +360,7 @@ try {
     // Inkrementelle Änderungen holen: ?action=changes&since=<rev>
     if ($action === 'changes') {
         if ($method !== 'GET') {
-            fail('changes erwartet GET.', 405);
+            fail('changes expects GET.', 405, 'method_not_allowed', ['action' => 'changes', 'expected' => 'GET']);
         }
         $since = isset($_GET['since']) ? max(0, (int) $_GET['since']) : 0;
         $res = changes_since($area, $scope, $user, $since);
@@ -370,14 +374,14 @@ try {
         require_write_request();
         $raw = file_get_contents('php://input');
         if ($raw === false || trim($raw) === '') {
-            fail('Leerer Request-Body.', 400);
+            fail('Empty request body.', 400, 'empty_body');
         }
         $decoded = json_decode($raw, true);
         if (!is_array($decoded) || !isset($decoded['ops']) || !is_array($decoded['ops'])) {
-            fail('Erwartet {"ops": [...]}.', 400);
+            fail('Expected {"ops": [...]}.', 400, 'invalid_ops');
         }
         if (count($decoded['ops']) > 2000) {
-            fail('Zu viele Operationen in einem Batch.', 413);
+            fail('Too many operations in one batch.', 413, 'too_many_ops');
         }
         $guard = null;
         if ($scope === 'family') {
@@ -388,7 +392,7 @@ try {
         $records = $scope === 'family' ? array_map('public_family_record', $res['records']) : $res['records'];
         $out = ['ok' => true, 'area' => $area, 'rev' => $res['rev'], 'records' => $records];
         if (!empty($res['rejected'])) {
-            $out['rejected'] = $res['rejected'];
+            $out['rejected'] = array_map('family_rejection', $res['rejected']);
         }
         // Optional (additiv): Mit {"since": <rev>} kommen alle Änderungen seit dieser rev mit –
         // eigene und fremde. Der anschließende Abruf entfällt dann.
@@ -408,7 +412,7 @@ try {
         respond(['ok' => true, 'area' => $area, 'data' => $data]);
     }
 
-    fail('Unbekannte Aktion. Nutze ?action=changes (GET) oder ?action=ops (POST).', 400);
+    fail('Unknown action. Use ?action=changes (GET) or ?action=ops (POST).', 400, 'unknown_action');
 } catch (Throwable $e) {
-    fail('Serverfehler: ' . $e->getMessage(), 500);
+    fail('Server error: ' . $e->getMessage(), 500, 'server_error', ['detail' => $e->getMessage()]);
 }

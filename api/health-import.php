@@ -17,7 +17,7 @@
  *      den lokalen Bestand und das Übernehmen passiert "local-first" im Client
  *      (health-import.js), damit der LocalStorage die führende Quelle bleibt.
  *
- * Die Funktion respond() stammt aus api.php (bereits geladen).
+ * Die Funktionen respond()/fail() und $session stammen aus api.php (bereits geladen).
  */
 
 declare(strict_types=1);
@@ -34,14 +34,14 @@ const HX_DISK_RESERVE = 256 * 1024 * 1024;         // so viel muss danach frei b
 libxml_set_external_entity_loader(static fn() => null);
 
 if (!class_exists('XMLReader')) {
-    respond(['ok' => false, 'error' => 'Auf dem Server fehlt die XMLReader-Erweiterung.'], 500);
+    fail('The XMLReader extension is missing on the server.', 500, 'xmlreader_missing');
 }
 
 // ---------------------------------------------------------------------------
 // 1) Upload ermitteln.
 // ---------------------------------------------------------------------------
 if (empty($_FILES['file']['tmp_name']) || !is_uploaded_file($_FILES['file']['tmp_name'])) {
-    respond(['ok' => false, 'error' => 'Keine Datei empfangen (erwartet Feld "file").'], 400);
+    fail('No file received (expected field "file").', 400, 'no_file');
 }
 
 $uploadTmp  = $_FILES['file']['tmp_name'];
@@ -67,15 +67,12 @@ if (!$isZip) {
 
 if ($isZip) {
     if (!class_exists('ZipArchive')) {
-        respond([
-            'ok' => false,
-            'error' => 'ZIP-Upload erkannt, aber ZipArchive ist auf dem Server nicht verfügbar. '
-                     . 'Bitte das ZIP lokal entpacken und nur die Datei export.xml hochladen.',
-        ], 500);
+        fail('ZIP upload detected, but ZipArchive is not available on the server. '
+           . 'Please unzip the archive locally and upload only the file export.xml.', 500, 'zip_unavailable');
     }
     $zip = new ZipArchive();
     if ($zip->open($uploadTmp) !== true) {
-        respond(['ok' => false, 'error' => 'ZIP konnte nicht geöffnet werden.'], 400);
+        fail('The ZIP could not be opened.', 400, 'zip_unreadable');
     }
     // export.xml im Archiv finden (liegt meist unter apple_health_export/export.xml).
     $entry = null;
@@ -88,7 +85,7 @@ if ($isZip) {
     }
     if ($entry === null) {
         $zip->close();
-        respond(['ok' => false, 'error' => 'Im ZIP wurde keine export.xml gefunden.'], 400);
+        fail('No export.xml found in the ZIP.', 400, 'zip_no_export');
     }
     // Angegebene Größe vorab prüfen (Grenze und Packverhältnis) – beim Entpacken zählt
     // zusätzlich der tatsächliche Inhalt, falls die Angaben im Archiv nicht stimmen.
@@ -97,12 +94,12 @@ if ($isZip) {
     $packed = is_array($stat) ? max(1, (int) ($stat['comp_size'] ?? 0)) : 1;
     if ($declared > HX_MAX_XML_BYTES || $declared / $packed > HX_MAX_RATIO) {
         $zip->close();
-        respond(['ok' => false, 'error' => 'Die export.xml im Archiv ist unplausibel groß – Import abgebrochen.'], 413);
+        fail('The export.xml in the archive is implausibly large – import cancelled.', 413, 'export_too_large');
     }
     $free = @disk_free_space(sys_get_temp_dir());
     if ($free !== false && $declared + HX_DISK_RESERVE > $free) {
         $zip->close();
-        respond(['ok' => false, 'error' => 'Auf dem Server ist nicht genug Platz, um den Export zu entpacken.'], 507);
+        fail('There is not enough space on the server to unpack the export.', 507, 'disk_full');
     }
     $extracted = tempnam(sys_get_temp_dir(), 'hx_');
     $cleanup[] = $extracted;
@@ -110,7 +107,7 @@ if ($isZip) {
     if ($stream === false) {
         $zip->close();
         foreach ($cleanup as $f) { @unlink($f); }
-        respond(['ok' => false, 'error' => 'export.xml konnte nicht gelesen werden.'], 500);
+        fail('export.xml could not be read.', 500, 'export_unreadable');
     }
     $out = fopen($extracted, 'wb');
     $written = 0;
@@ -132,7 +129,7 @@ if ($isZip) {
     $zip->close();
     if ($tooBig) {
         foreach ($cleanup as $f) { @unlink($f); }
-        respond(['ok' => false, 'error' => 'Die export.xml im Archiv ist unplausibel groß – Import abgebrochen.'], 413);
+        fail('The export.xml in the archive is implausibly large – import cancelled.', 413, 'export_too_large');
     }
     $xmlPath = $extracted;
 }
@@ -145,10 +142,11 @@ if ($isZip) {
 require_once __DIR__ . '/health-xml.php';
 
 try {
-    $parsed = hx_parse_file($xmlPath);
+    // Session titles in the language of the signed-in person (who sees the import).
+    $parsed = hx_parse_file($xmlPath, person_language($session['user'] ?? null));
 } catch (RuntimeException $e) {
     foreach ($cleanup as $f) { @unlink($f); }
-    respond(['ok' => false, 'error' => $e->getMessage()], 500);
+    fail($e->getMessage(), 500, 'export_open_failed');
 }
 foreach ($cleanup as $f) { @unlink($f); }
 

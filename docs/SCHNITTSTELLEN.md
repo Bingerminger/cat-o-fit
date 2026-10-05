@@ -9,7 +9,9 @@ Monitoring, Docker-Healthcheck) oder ältere App-Versionen auf den Geräten. Fü
   Seite beschreibt `apiVersion` **1**. Zusätzliche Fähigkeiten meldet `ping` seit v3.21.0 in
   `features` (z. B. `changes-all`, `ops-since`) – Clients nutzen sie nur, wenn sie dort stehen.
 - Alle Endpunkte liegen unter `…/api/api.php`. Fehler kommen einheitlich als
-  `{"ok": false, "error": "<Text>", "code": "<Grund>"}` mit passendem HTTP-Status.
+  `{"ok": false, "error": "<Text>", "code": "<Grund>"}` mit passendem HTTP-Status. Maßgeblich ist
+  `code` (stabil, snake_case; ältere Codes wie `content-type` bleiben); `error` ist seit v4.0.0
+  englisch und nur ein Rückfall – die App übersetzt den Code.
 
 ## Für externe Programme
 
@@ -46,9 +48,14 @@ schickt; schon erfasste Beginne ± 3 Tage bleiben).
 **Strichcode-Nachschlagen** (seit v3.21.0): `GET ?action=foodfacts&code=<EAN>` liefert wie die
 Textsuche `{found, name, kcal100, protein100}`; nur gültige Strichcodes (8, 12, 13 oder 14 Ziffern
 mit Prüfziffer) gehen an Open Food Facts, alles andere antwortet sofort mit `found: false`.
+Seit v4.0.0 fragt der Server `world.openfoodfacts.org` mit `lc=<Sprache>` (die App schickt ihre
+Sprache, optional `cc=<Land>`); ohne `lc` gilt die Sprache der Instanz.
 
 **Kalender-Zeitzone:** `DTSTART;TZID=…` und die `VTIMEZONE` richten sich nach `CATOFIT_TZ` bzw. `TZ`
 des Servers; ohne gültige Angabe bleibt es bei `Europe/Berlin` (Ausgabe dann unverändert wie vor v3.21.0).
+
+**Kalender-Sprache** (seit v4.0.0): Beschriftungen, Erinnerungen und Dateiname folgen der Sprache der
+Person (eigene Wahl, sonst Standard der Instanz, bei Instanzen von vor v4.0.0 Deutsch).
 
 Kalender-Links ohne `token` (aus Versionen vor 3.20.0) gelten noch bis **30.11.2026**.
 Die App erzeugt sie seitdem nur noch mit Schlüssel; wer einen alten Link abonniert hat,

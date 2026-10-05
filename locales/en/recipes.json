@@ -1,0 +1,418 @@
+{
+  "overnight-oats-mit-beeren": {
+    "title": "Overnight oats with berries",
+    "ingredients": [
+      "60 g rolled oats",
+      "150 g skyr",
+      "150 ml milk",
+      "100 g berries",
+      "1 tbsp honey"
+    ]
+  },
+  "ruehrei-mit-vollkornbrot-avocado": {
+    "title": "Scrambled eggs with wholemeal bread & avocado",
+    "ingredients": [
+      "3 eggs",
+      "2 slices wholemeal bread",
+      "1/2 avocado",
+      "spinach"
+    ]
+  },
+  "protein-porridge-mit-banane": {
+    "title": "Protein porridge with banana",
+    "ingredients": [
+      "60 g rolled oats",
+      "30 g protein powder",
+      "250 ml milk",
+      "1 banana"
+    ]
+  },
+  "quark-mit-nuessen-apfel": {
+    "title": "Quark with nuts & apple",
+    "ingredients": [
+      "250 g low-fat quark",
+      "20 g walnuts",
+      "1 apple",
+      "1 tsp honey"
+    ]
+  },
+  "vollkorn-pancakes-mit-quark": {
+    "title": "Wholemeal pancakes with quark",
+    "ingredients": [
+      "60 g rolled oats",
+      "2 eggs",
+      "150 g low-fat quark",
+      "1 banana",
+      "1 tsp baking powder"
+    ]
+  },
+  "chia-pudding-mit-mango": {
+    "title": "Chia pudding with mango",
+    "ingredients": [
+      "30 g chia seeds",
+      "200 ml oat milk",
+      "100 g mango",
+      "1 tsp agave syrup"
+    ]
+  },
+  "bircher-muesli": {
+    "title": "Bircher muesli",
+    "ingredients": [
+      "50 g rolled oats",
+      "150 g yoghurt",
+      "1 apple",
+      "20 g almonds",
+      "100 ml milk"
+    ]
+  },
+  "avocado-brot-mit-ei": {
+    "title": "Avocado toast with egg",
+    "ingredients": [
+      "2 slices wholemeal bread",
+      "1/2 avocado",
+      "2 eggs"
+    ]
+  },
+  "griessbrei-mit-beeren": {
+    "title": "Semolina pudding with berries",
+    "ingredients": [
+      "50 g semolina",
+      "300 ml milk",
+      "100 g berries",
+      "1 tsp honey"
+    ]
+  },
+  "skyr-bowl-mit-granola": {
+    "title": "Skyr bowl with granola",
+    "ingredients": [
+      "200 g skyr",
+      "40 g granola",
+      "1 banana",
+      "10 g walnuts"
+    ]
+  },
+  "tofu-ruehrei-mit-brot": {
+    "title": "Tofu scramble with bread",
+    "ingredients": [
+      "200 g tofu",
+      "2 slices wholemeal bread",
+      "1 tomato"
+    ]
+  },
+  "erdnussbutter-toast-mit-banane": {
+    "title": "Peanut butter toast with banana",
+    "ingredients": [
+      "2 slices wholemeal bread",
+      "20 g peanut butter",
+      "1 banana"
+    ]
+  },
+  "haehnchen-reis-bowl-mit-brokkoli": {
+    "title": "Chicken & rice bowl with broccoli",
+    "ingredients": [
+      "150 g chicken",
+      "80 g rice",
+      "200 g broccoli",
+      "1 tbsp oil"
+    ]
+  },
+  "lachs-mit-suesskartoffel-spinat": {
+    "title": "Salmon with sweet potato & spinach",
+    "ingredients": [
+      "150 g salmon",
+      "250 g sweet potato",
+      "spinach",
+      "1 tbsp oil"
+    ]
+  },
+  "linsen-dal-mit-reis": {
+    "title": "Lentil dal with rice",
+    "ingredients": [
+      "120 g lentils",
+      "80 g rice",
+      "1 onion",
+      "200 g tomatoes"
+    ]
+  },
+  "pute-quinoa-pfanne": {
+    "title": "Turkey & quinoa stir-fry",
+    "ingredients": [
+      "150 g turkey",
+      "80 g quinoa",
+      "1 bell pepper",
+      "1 courgette"
+    ]
+  },
+  "rindergeschnetzeltes-mit-reis": {
+    "title": "Sliced beef with rice",
+    "ingredients": [
+      "150 g beef",
+      "80 g rice",
+      "1 bell pepper",
+      "1 onion"
+    ]
+  },
+  "kichererbsen-bowl-mit-quinoa": {
+    "title": "Chickpea bowl with quinoa",
+    "ingredients": [
+      "150 g chickpeas",
+      "80 g quinoa",
+      "100 g broccoli",
+      "1 carrot"
+    ]
+  },
+  "vollkorn-spaghetti-bolognese": {
+    "title": "Wholemeal spaghetti bolognese",
+    "ingredients": [
+      "100 g wholemeal pasta",
+      "150 g mince",
+      "200 g tomatoes",
+      "1 onion"
+    ]
+  },
+  "gefuellte-suesskartoffel-mit-huettenkaese": {
+    "title": "Stuffed sweet potato with cottage cheese",
+    "ingredients": [
+      "250 g sweet potato",
+      "150 g cottage cheese",
+      "100 g spinach"
+    ]
+  },
+  "couscous-salat-mit-feta": {
+    "title": "Couscous salad with feta",
+    "ingredients": [
+      "80 g couscous",
+      "50 g feta",
+      "1 bell pepper",
+      "1 cucumber",
+      "1 tbsp oil"
+    ]
+  },
+  "haehnchen-wrap-mit-gemuese": {
+    "title": "Chicken wrap with vegetables",
+    "ingredients": [
+      "1 wrap",
+      "150 g chicken",
+      "lettuce",
+      "1 tomato",
+      "50 g yoghurt"
+    ]
+  },
+  "kabeljau-mit-kartoffeln-brokkoli": {
+    "title": "Cod with potatoes & broccoli",
+    "ingredients": [
+      "180 g cod",
+      "250 g potatoes",
+      "150 g broccoli",
+      "1 tbsp oil"
+    ]
+  },
+  "gemuesecurry-mit-kichererbsen": {
+    "title": "Vegetable curry with chickpeas",
+    "ingredients": [
+      "150 g chickpeas",
+      "80 g rice",
+      "200 ml coconut milk",
+      "1 bell pepper"
+    ]
+  },
+  "magerquark-mit-gemuesesticks": {
+    "title": "Low-fat quark with vegetable sticks",
+    "ingredients": [
+      "250 g low-fat quark",
+      "1 bell pepper",
+      "1 cucumber"
+    ]
+  },
+  "omelett-mit-feta-tomaten": {
+    "title": "Omelette with feta & tomatoes",
+    "ingredients": [
+      "3 eggs",
+      "50 g feta",
+      "200 g tomatoes",
+      "spinach"
+    ]
+  },
+  "thunfisch-vollkornwrap": {
+    "title": "Tuna wholemeal wrap",
+    "ingredients": [
+      "1 wrap",
+      "150 g tuna",
+      "lettuce",
+      "50 g yoghurt"
+    ]
+  },
+  "ofengemuese-mit-haehnchen": {
+    "title": "Roast vegetables with chicken",
+    "ingredients": [
+      "150 g chicken",
+      "1 courgette",
+      "1 bell pepper",
+      "1 sweet potato",
+      "1 tbsp oil"
+    ]
+  },
+  "gebratener-tofu-mit-gemuese": {
+    "title": "Fried tofu with vegetables",
+    "ingredients": [
+      "200 g tofu",
+      "1 bell pepper",
+      "100 g broccoli",
+      "1 tbsp soy sauce"
+    ]
+  },
+  "haehnchensalat-mit-avocado": {
+    "title": "Chicken salad with avocado",
+    "ingredients": [
+      "150 g chicken",
+      "1/2 avocado",
+      "lettuce",
+      "1 tomato",
+      "1 tbsp oil"
+    ]
+  },
+  "linsensuppe": {
+    "title": "Lentil soup",
+    "ingredients": [
+      "200 g lentils",
+      "1 carrot",
+      "1 onion",
+      "1 potato"
+    ]
+  },
+  "caprese-mit-mozzarella": {
+    "title": "Caprese salad with mozzarella",
+    "ingredients": [
+      "125 g mozzarella",
+      "200 g tomatoes",
+      "basil",
+      "1 tbsp oil"
+    ]
+  },
+  "garnelen-zucchini-pfanne": {
+    "title": "Prawn & courgette stir-fry",
+    "ingredients": [
+      "150 g prawns",
+      "1 courgette",
+      "1 clove garlic",
+      "1 tbsp oil"
+    ]
+  },
+  "putenbrust-mit-ofengemuese": {
+    "title": "Turkey breast with roast vegetables",
+    "ingredients": [
+      "150 g turkey",
+      "1 courgette",
+      "1 bell pepper",
+      "100 g mushrooms",
+      "1 tbsp oil"
+    ]
+  },
+  "vollkorn-pizza-mit-gemuese": {
+    "title": "Wholemeal pizza with vegetables",
+    "ingredients": [
+      "1/2 pizza dough",
+      "100 g tomatoes",
+      "80 g mozzarella",
+      "1 bell pepper"
+    ]
+  },
+  "joghurt-bowl-mit-gurke-fladenbrot": {
+    "title": "Yoghurt bowl with cucumber & flatbread",
+    "ingredients": [
+      "200 g yoghurt",
+      "1 cucumber",
+      "1 clove garlic",
+      "1/2 flatbread"
+    ]
+  },
+  "skyr-mit-beeren": {
+    "title": "Skyr with berries",
+    "ingredients": [
+      "150 g skyr",
+      "100 g berries"
+    ]
+  },
+  "handvoll-mandeln-apfel": {
+    "title": "A handful of almonds & an apple",
+    "ingredients": [
+      "30 g almonds",
+      "1 apple"
+    ]
+  },
+  "protein-shake-mit-banane": {
+    "title": "Protein shake with banana",
+    "ingredients": [
+      "30 g protein powder",
+      "250 ml milk",
+      "1 banana"
+    ]
+  },
+  "huettenkaese-auf-knaeckebrot": {
+    "title": "Cottage cheese on crispbread",
+    "ingredients": [
+      "150 g cottage cheese",
+      "2 slices crispbread"
+    ]
+  },
+  "energy-balls": {
+    "title": "Energy balls",
+    "ingredients": [
+      "40 g dates",
+      "30 g rolled oats",
+      "15 g almonds",
+      "1 tsp cocoa"
+    ]
+  },
+  "gemuesesticks-mit-hummus": {
+    "title": "Vegetable sticks with hummus",
+    "ingredients": [
+      "100 g hummus",
+      "1 carrot",
+      "1 bell pepper"
+    ]
+  },
+  "reiswaffeln-mit-frischkaese": {
+    "title": "Rice cakes with cream cheese",
+    "ingredients": [
+      "2 rice cakes",
+      "50 g cream cheese"
+    ]
+  },
+  "beeren-quark": {
+    "title": "Berry quark",
+    "ingredients": [
+      "200 g low-fat quark",
+      "100 g berries"
+    ]
+  },
+  "studentenfutter": {
+    "title": "Trail mix",
+    "ingredients": [
+      "25 g almonds",
+      "15 g cashews",
+      "20 g raisins"
+    ]
+  },
+  "banane-mit-erdnussbutter": {
+    "title": "Banana with peanut butter",
+    "ingredients": [
+      "1 banana",
+      "20 g peanut butter"
+    ]
+  },
+  "edamame-mit-meersalz": {
+    "title": "Edamame with sea salt",
+    "ingredients": [
+      "150 g edamame",
+      "1 pinch sea salt"
+    ]
+  },
+  "huettenkaese-mit-ananas": {
+    "title": "Cottage cheese with pineapple",
+    "ingredients": [
+      "150 g cottage cheese",
+      "100 g pineapple"
+    ]
+  }
+}

@@ -4,12 +4,15 @@
 
    GET ?action=foodfacts&q=<Zutat>     ->  { found, name, kcal100, protein100 }
    GET ?action=foodfacts&code=<EAN>    ->  dasselbe für ein Produkt (Strichcode, 8–14 Ziffern)
+   Optional: &lc=<Sprache> (ISO 639-1; die App schickt ihre Sprache) und &cc=<Land> (ISO 3166-1
+   Alpha-2) – Namen in dieser Sprache, Produkte aus diesem Land. Ohne lc gilt die Sprache der
+   Instanz (ältere App-Versionen waren deutsch).
 
    Liefert grobe Nährwerte je 100 g/ml zu einem Zutatennamen. Die Anfrage geht
    ausschließlich vom Server (Synology) an Open Food Facts – nie von den Clients –
    und ohne API-Key. Treffer werden in data/foodfacts.json gecacht, daher sind
    Wiederholungen schnell und funktionieren offline. Wird von api.php eingebunden;
-   respond() stammt von dort, DATA_DIR aus storage.php.
+   respond() stammt von dort, DATA_DIR aus storage.php, person_language() aus i18n.php.
 
    Open Food Facts ist eine offene, gemeinnützige Datenbank (ODbL). Wir schicken
    nur den generischen Zutatennamen (z. B. „Haferflocken“) – keinerlei Nutzerdaten.
@@ -31,7 +34,7 @@ $q = isset($_GET['q']) ? trim((string) $_GET['q']) : '';
 if ($code !== '') {
     // Nur echte Strichcodes gehen nach außen – keine beliebigen Zeichenketten in der Adresse.
     if (!ff_valid_gtin($code)) {
-        respond(['found' => false, 'error' => 'Ungültiger Strichcode']);
+        respond(['found' => false, 'error' => 'Invalid barcode']);
     }
     $key = 'ean:' . $code;
 } else {
@@ -39,6 +42,16 @@ if ($code !== '') {
         respond(['found' => false]);
     }
     $key = mb_strtolower($q);
+}
+
+require_once __DIR__ . '/i18n.php';
+$param = static fn(string $name): string => strtolower(trim((string) ($_GET[$name] ?? '')));
+$lc = preg_match('/^[a-z]{2}$/', $param('lc')) === 1 ? $param('lc') : explode('-', strtolower(person_language(null)))[0];
+$cc = preg_match('/^[a-z]{2}$/', $param('cc')) === 1 ? $param('cc') : '';
+// Results depend on language and country. German without a country keeps the keys from
+// before v4.0.0 (then always de.openfoodfacts.org), so the existing cache stays valid.
+if ($lc !== 'de' || $cc !== '') {
+    $key = "{$lc}-{$cc}:{$key}";
 }
 
 $cacheFile = DATA_DIR . '/foodfacts.json';
@@ -65,7 +78,7 @@ if (isset($cache[$key])) {
 /** Holt eine URL (curl bevorzugt, sonst file_get_contents). null bei Fehler. */
 function ff_fetch(string $url): ?string
 {
-    $ua = 'Cat-O-Fit/1.0 (lokales Familien-Fitness-Tool; Open-Food-Facts-Nährwert-Lookup)';
+    $ua = 'Cat-O-Fit/1.0 (self-hosted family fitness app; Open Food Facts nutrition lookup)';
     if (function_exists('curl_init')) {
         $ch = curl_init($url);
         curl_setopt_array($ch, [
@@ -102,15 +115,16 @@ $result = ['found' => false];
 // Nährwerten nehmen – das Top-1-Produkt hat oft keine energy-kcal_100g.
 // Nach Beliebtheit sortiert mehrere Treffer holen -> repräsentiert das echte
 // generische Lebensmittel besser als ein zufälliges Marken­produkt.
-$url = 'https://de.openfoodfacts.org/cgi/search.pl?' . http_build_query([
+$url = 'https://world.openfoodfacts.org/cgi/search.pl?' . http_build_query([
     'search_terms'  => $q,
+    'lc'            => $lc,
     'search_simple' => 1,
     'action'        => 'process',
     'json'          => 1,
     'page_size'     => 30,
     'sort_by'       => 'unique_scans_n',
     'fields'        => 'product_name,nutriments',
-]);
+] + ($cc !== '' ? ['cc' => $cc] : []));
 
 /** kcal je 100 g aus den Nährwerten – nutzt notfalls kJ (÷ 4,184). null wenn unplausibel. */
 function ff_kcal100(array $nut): ?float
@@ -135,16 +149,17 @@ function ff_median(array $xs): float
 }
 
 if ($code !== '') {
-    // Ein bestimmtes Produkt: Name (deutsch bevorzugt), Marke, Nährwerte je 100 g.
+    // Ein bestimmtes Produkt: Name (in der Sprache lc bevorzugt), Marke, Nährwerte je 100 g.
     $raw = ff_fetch('https://world.openfoodfacts.org/api/v2/product/' . $code . '.json?' . http_build_query([
-        'fields' => 'product_name,product_name_de,brands,nutriments',
-    ]));
+        'fields' => "product_name,product_name_{$lc},brands,nutriments",
+        'lc'     => $lc,
+    ] + ($cc !== '' ? ['cc' => $cc] : [])));
     $j = $raw !== null ? json_decode($raw, true) : null;
     $p = is_array($j) && (int) ($j['status'] ?? 0) === 1 && is_array($j['product'] ?? null) ? $j['product'] : null;
     if ($p !== null) {
         $nut = is_array($p['nutriments'] ?? null) ? $p['nutriments'] : [];
         $k = ff_kcal100($nut);
-        $name = trim((string) ($p['product_name_de'] ?? ''));
+        $name = trim((string) ($p["product_name_{$lc}"] ?? ''));
         if ($name === '') $name = trim((string) ($p['product_name'] ?? ''));
         $brand = trim(explode(',', (string) ($p['brands'] ?? ''))[0]);
         if ($brand !== '' && $name !== '' && !str_contains(mb_strtolower($name), mb_strtolower($brand))) $name .= " ({$brand})";
@@ -152,7 +167,7 @@ if ($code !== '') {
         if ($name !== '' || $k !== null) {
             $result = [
                 'found'      => true,
-                'name'       => mb_substr($name !== '' ? $name : "Produkt {$code}", 0, 80),
+                'name'       => mb_substr($name !== '' ? $name : server_text(server_match_language($lc) ?? person_language(null), 'food.product', ['code' => $code]), 0, 80),
                 'kcal100'    => $k !== null ? (int) round($k) : null,
                 'protein100' => $pr !== null && $pr >= 0 && $pr < 100 ? round($pr, 1) : null,
                 'source'     => 'off',

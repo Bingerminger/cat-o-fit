@@ -186,7 +186,10 @@ test('Familie: Rollenwechsel ohne Admin-Sitzung lehnt der Server ab, das Gerät 
   srv.auth.session = null;                       // z. B. Sitzung abgelaufen
   const seen = [];
   const onEv = (e) => seen.push(e.detail && e.detail.count);
+  const reasons = [];
+  const onReason = (e) => reasons.push(e.detail && e.detail.reason);
   window.addEventListener('catofit:ops-rejected', onEv);
+  window.addEventListener('catofit:ops-rejected', onReason);
   try {
     store.updateMember('u-2', { role: 'admin' });
     await store.syncNow();
@@ -194,7 +197,8 @@ test('Familie: Rollenwechsel ohne Admin-Sitzung lehnt der Server ab, das Gerät 
     assert.equal(srv.store('family', { scope: 'family' }).records['u-2'].role, 'user', 'Server unverändert');
     assert.equal(store.members().find((m) => m.id === 'u-2').role, 'user', 'Gerät zeigt wieder den Server-Stand');
     assert.deepEqual(seen, [1], 'Oberfläche erfährt von der Ablehnung');
-  } finally { window.removeEventListener('catofit:ops-rejected', onEv); }
+    assert.deepEqual(reasons, ['Rollen kann nur eine Admin-Person mit Serververbindung ändern.'], 'Grund aus dem Code übersetzt, nicht der englische Server-Text');
+  } finally { window.removeEventListener('catofit:ops-rejected', onEv); window.removeEventListener('catofit:ops-rejected', onReason); }
 });
 
 test('Gemeinsames Gerät: Abmelden räumt Personendaten ab, Ungesendetes bleibt', async () => {

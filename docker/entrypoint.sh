@@ -21,7 +21,7 @@ PASSWD=/etc/apache2/cat-o-fit.passwd
 case "${CATOFIT_BASIC_AUTH:-}" in
   1|true|yes|on)
     if [ -z "${CATOFIT_AUTH_USER:-}" ] || [ -z "${CATOFIT_AUTH_PASSWORD:-}" ]; then
-      echo "CATOFIT_BASIC_AUTH ist gesetzt, aber CATOFIT_AUTH_USER/CATOFIT_AUTH_PASSWORD fehlen – Start abgebrochen." >&2
+      echo "CATOFIT_BASIC_AUTH is set, but CATOFIT_AUTH_USER/CATOFIT_AUTH_PASSWORD are missing – start aborted." >&2
       exit 1
     fi
     # bcrypt-Hash über PHP (kein zusätzliches Paket nötig); Apache 2.4 versteht $2y$.
@@ -43,7 +43,7 @@ case "${CATOFIT_BASIC_AUTH:-}" in
     </RequireAny>
 </Location>
 EOF
-    echo "Cat-O-Fit: Anmeldung vor der App (Basic-Auth) ist aktiv."
+    echo "Cat-O-Fit: sign-in in front of the app (Basic Auth) is active."
     ;;
   *)
     rm -f "$AUTH_CONF" "$PASSWD"
@@ -58,7 +58,7 @@ if [ -n "${TZ:-}" ] && php -r 'exit(in_array(getenv("TZ"), timezone_identifiers_
 else
   rm -f "$TZ_INI"
   if [ -n "${TZ:-}" ]; then
-    echo "Cat-O-Fit: TZ=${TZ} ist keine gültige Zeitzone – es bleibt Europe/Berlin." >&2
+    echo "Cat-O-Fit: TZ=${TZ} is not a valid time zone – staying with Europe/Berlin." >&2
   fi
 fi
 

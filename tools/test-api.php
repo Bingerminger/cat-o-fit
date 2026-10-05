@@ -18,6 +18,13 @@ $tmp = sys_get_temp_dir() . '/catofit-api-test-' . getmypid();
 foreach (glob($root . '/api/*.php') as $f) {
     copy($f, $tmp . '/api/' . basename($f));
 }
+// Server texts (calendar, import titles) come from locales/<lang>/server.json.
+@mkdir($tmp . '/locales', 0775, true);
+copy($root . '/locales/languages.json', $tmp . '/locales/languages.json');
+foreach (glob($root . '/locales/*/server.json') as $f) {
+    @mkdir($tmp . '/locales/' . basename(dirname($f)), 0775, true);
+    copy($f, $tmp . '/locales/' . basename(dirname($f)) . '/server.json');
+}
 
 function rrmdir(string $dir): void {
     foreach (glob($dir . '/{,.}*', GLOB_BRACE) ?: [] as $f) {
@@ -88,6 +95,8 @@ $late = http('POST', '?action=ops&area=family&scope=family', ['ops' => [
     ['op' => 'upsert', 'record' => ['id' => 'u-x', '_kind' => 'member', 'name' => 'Fremd', 'role' => 'admin', 'pinHash' => $H('u-x', '1111')]],
 ]], $nobody);
 check('Danach: neues Mitglied ohne Admin-Sitzung abgelehnt', count($late['json']['rejected'] ?? []) === 1, $late['json']);
+check('… mit Code (die App übersetzt ihn) und englischem Grund', ($late['json']['rejected'][0]['code'] ?? '') === 'admin_add_member'
+    && str_starts_with((string) ($late['json']['rejected'][0]['reason'] ?? ''), 'Only an admin'), $late['json']['rejected'] ?? null);
 
 $fam = http('GET', '?action=changes&area=family&scope=family&since=0', null, $nobody);
 $raw = $fam['body'];
@@ -100,6 +109,14 @@ check('Familien-Antwort: hasPin + Platzhalter', ($ua['hasPin'] ?? null) === true
 $admin = [];
 $bad = http('POST', '?action=login', ['user' => 'u-a', 'pin' => '0000'], $admin);
 check('Falsche PIN → 401 code pin', $bad['status'] === 401 && ($bad['json']['code'] ?? '') === 'pin', $bad['json']);
+$r = http('POST', '?action=login', ['user' => '../x', 'pin' => '1'], $nobody);
+check('Ungültige Nutzer-ID → 400 code invalid_user (Text englisch)', $r['status'] === 400 && ($r['json']['code'] ?? '') === 'invalid_user'
+    && ($r['json']['error'] ?? '') === 'Invalid user ID.', $r['json']);
+$r = http('GET', '?action=login', null, $nobody);
+check('Falsche Methode → 405 code method_not_allowed mit action/expected', $r['status'] === 405 && ($r['json']['code'] ?? '') === 'method_not_allowed'
+    && ($r['json']['action'] ?? '') === 'login' && ($r['json']['expected'] ?? '') === 'POST', $r['json']);
+$r = http('GET', '?area=gibtsnicht&user=u-a', null, $nobody);
+check('Unbekannter Bereich → 404 code unknown_area mit area', $r['status'] === 404 && ($r['json']['code'] ?? '') === 'unknown_area' && ($r['json']['area'] ?? '') === 'gibtsnicht', $r['json']);
 $ok = http('POST', '?action=login', ['user' => 'u-a', 'pin' => '2468'], $admin);
 check('Richtige PIN → Sitzung', $ok['status'] === 200 && isset($admin['catofit_sid']), $ok['json']);
 $cookieLine = implode(' ', $ok['cookies']);
@@ -184,6 +201,34 @@ check('Kalender-Link mit Schlüssel → .ics', $r['status'] === 200 && str_conta
 check('Ohne TZ-Angabe bleibt die Kalender-Zone Europe/Berlin (bestehende Abos unverändert)', str_contains($r['body'], "TZID:Europe/Berlin\r\n") && str_contains($r['body'], 'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU'), substr($r['body'], 0, 300));
 $r = http('GET', '?action=ics&scope=race&id=e1&user=u-a&token=' . str_repeat('0', 48), null, $nobody);
 check('Falscher Schlüssel → 403', $r['status'] === 403, $r['status']);
+// Sprache des Kalenders: eigene Wahl → Standard der Instanz → Deutsch für Instanzen von vor v4.0.0 → Englisch.
+$icsBody = static function () use ($token, $nobody): string {
+    $n = $nobody;
+    return http('GET', "?action=ics&scope=race&id=e1&user=u-a&token={$token}", null, $n)['body'];
+};
+$setLang = static function (?string $person, ?string $instance) use ($admin): void {
+    $a = $admin;
+    http('POST', '?action=ops&area=profile&user=u-a', ['ops' => [['op' => 'upsert', 'record' => ['id' => 'profile', 'name' => 'Admin', 'settings' => $person ? ['language' => $person] : []]]]], $a);
+    http('POST', '?action=ops&area=family&scope=family', ['ops' => [['op' => 'upsert', 'record' => ['id' => '__settings', '_kind' => 'settings'] + ($instance ? ['language' => $instance] : [])]]], $a);
+};
+http('POST', '?action=ops&area=events&user=u-a', ['ops' => [['op' => 'upsert', 'record' => ['id' => 'e1', 'name' => 'Stadtlauf', 'date' => '2026-10-10', 'location' => 'Dresden', 'distanceType' => 'HM', 'distanceKm' => 21.0975, 'priority' => 'A']]]], $admin);
+$b = $icsBody();
+check('Kalender: Instanz von vor v4.0.0 (Mitglieder, keine Sprache) → Deutsch wie bisher', str_contains($b, "CATEGORIES:Wettkampf\r\n")
+    && str_contains($b, 'Distanz: HM (21\\,1 km)') && str_contains($b, 'Priorität: A') && str_contains($b, 'DESCRIPTION:Morgen Wettkampf: Stadtlauf')
+    && str_contains($b, 'X-WR-CALNAME:Catofit Training'), $b);
+$r = http('GET', '?action=ics&scope=race&id=e1&user=u-a&token=' . str_repeat('0', 48), null, $nobody);
+check('… auch die Fehlermeldung eines ungültigen Links', str_contains($r['body'], 'Dieser Kalender-Link ist nicht (mehr) gültig'), $r['body']);
+$setLang('en', null);
+$b = $icsBody();
+check('Kalender: Person mit Englisch → englische Beschriftung und Dezimalpunkt', str_contains($b, "CATEGORIES:Race\r\n")
+    && str_contains($b, 'Distance: HM (21.1 km)') && str_contains($b, 'Priority: A') && str_contains($b, 'DESCRIPTION:Race tomorrow: Stadtlauf')
+    && !str_contains($b, 'Wettkampf'), $b);
+$setLang('de', 'en');
+check('Kalender: eigene Wahl (Deutsch) vor dem Standard der Instanz (Englisch)', str_contains($icsBody(), "CATEGORIES:Wettkampf\r\n"));
+$setLang(null, 'en');
+check('Kalender: ohne eigene Wahl gilt der Standard der Instanz', str_contains($icsBody(), "CATEGORIES:Race\r\n"));
+$setLang('fr', 'en');
+check('Kalender: Sprache ohne Katalog (fr) → englische Texte, Dezimalkomma', str_contains($b = $icsBody(), "CATEGORIES:Race\r\n") && str_contains($b, '(21\\,1 km)'), $b);
 $r = http('POST', '?action=ics-token', ['user' => 'u-a'], $kid);
 check('Schlüssel einer anderen Person als Mitglied → 403', $r['status'] === 403 || $r['status'] === 401, $r['json']);
 
@@ -250,7 +295,7 @@ check('ops ohne since: Antwort wie bisher', !isset($r['json']['changes']), array
 
 // --- Strichcode-Abfrage (MKT-18): nur gültige GTIN gehen nach außen ---
 $r = http('GET', '?action=foodfacts&code=' . rawurlencode('4006381333932'), null, $nobody);
-check('Strichcode mit falscher Prüfziffer wird ohne Abfrage abgelehnt', ($r['json']['found'] ?? null) === false && ($r['json']['error'] ?? '') === 'Ungültiger Strichcode', $r['json']);
+check('Strichcode mit falscher Prüfziffer wird ohne Abfrage abgelehnt', ($r['json']['found'] ?? null) === false && ($r['json']['error'] ?? '') === 'Invalid barcode', $r['json']);
 $r = http('GET', '?action=foodfacts&code=' . rawurlencode('../../etc/passwd'), null, $nobody);
 check('… Unsinn im Code-Parameter ebenso', ($r['json']['found'] ?? null) === false && isset($r['json']['error']), $r['json']);
 
@@ -287,6 +332,7 @@ check('… wiederholte Sendung legt nichts doppelt an', ($r2['json']['cycle']['p
 $s = http('GET', '?area=sessions&user=u-a', null, $admin);
 $hcs = array_values(array_filter($s['json']['data'] ?? [], fn ($x) => ($x['source'] ?? '') === 'health-connect'));
 check('… ein Training mit Ø-HF, Herkunft Health Connect', count($hcs) === 1 && ($hcs[0]['avgHr'] ?? null) === 148 && ($hcs[0]['date'] ?? '') === '2026-09-25', $hcs);
+check('… Titel in der Sprache der Person (hier: Standard der Instanz, Englisch)', ($hcs[0]['title'] ?? '') === 'Run (Health Connect)', $hcs[0]['title'] ?? null);
 $c = http('GET', '?area=cycle&user=u-a', null, $admin);
 $per = array_values(array_filter($c['json']['data'] ?? [], fn ($x) => ($x['startDate'] ?? '') === '2026-09-10'));
 check('… Periode im privaten Zyklus-Bereich (4 Tage)', count($per) === 1 && ($per[0]['periodLength'] ?? null) === 4, $c['json']['data'] ?? null);

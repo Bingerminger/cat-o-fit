@@ -23,22 +23,27 @@ declare(strict_types=1);
 require_once __DIR__ . '/storage.php';
 require_once __DIR__ . '/auth.php';
 require_once __DIR__ . '/icstz.php';
+require_once __DIR__ . '/i18n.php';
 
 $scope = isset($_GET['scope']) ? (string) $_GET['scope'] : 'event';
 $id    = isset($_GET['id']) ? (string) $_GET['id'] : '';
 $user  = isset($_GET['user']) ? (string) $_GET['user'] : null;
+// Texts in the person's language (without a valid person: the instance default).
+$lang  = person_language($user !== null && is_valid_user($user) ? $user : null);
+
+/** Plain-text error – the link opens in a browser or calendar, not in the app. */
+$icsError = static function (int $status, string $key) use ($lang): never {
+    http_response_code($status);
+    header('Content-Type: text/plain; charset=utf-8');
+    echo server_text($lang, $key);
+    exit;
+};
 
 if ($id === '') {
-    http_response_code(400);
-    header('Content-Type: text/plain; charset=utf-8');
-    echo 'Parameter "id" fehlt.';
-    exit;
+    $icsError(400, 'ics.error.missingId');
 }
 if ($user === null || !is_valid_user($user)) {
-    http_response_code(400);
-    header('Content-Type: text/plain; charset=utf-8');
-    echo 'Parameter "user" fehlt oder ist ungültig.';
-    exit;
+    $icsError(400, 'ics.error.invalidUser');
 }
 
 // Zugriff (seit v3.20.0): Kalender-Links tragen einen Schlüssel je Mitglied
@@ -48,22 +53,16 @@ if ($user === null || !is_valid_user($user)) {
 // ICS_LEGACY_UNTIL; danach muss der Termin einmal neu aus der App exportiert werden.
 const ICS_LEGACY_UNTIL = '2026-11-30';
 $token = isset($_GET['token']) ? (string) $_GET['token'] : '';
-$icsDenied = static function (string $msg): never {
-    http_response_code(403);
-    header('Content-Type: text/plain; charset=utf-8');
-    echo $msg;
-    exit;
-};
 if ($token !== '') {
     $stored = ics_token_read($user);
     if ($stored === null || !hash_equals($stored, $token)) {
-        $icsDenied('Dieser Kalender-Link ist nicht (mehr) gültig. Bitte den Termin in der App neu exportieren.');
+        $icsError(403, 'ics.error.linkInvalid');
     }
 } else {
     $session = current_session();
     $own = $session !== null && ($session['user'] === $user || $session['role'] === 'admin');
     if (!$own && date('Y-m-d') > ICS_LEGACY_UNTIL) {
-        $icsDenied('Kalender-Links ohne Schlüssel gelten nicht mehr. Bitte den Termin in der App neu exportieren.');
+        $icsError(403, 'ics.error.linkExpired');
     }
 }
 
@@ -201,13 +200,13 @@ function targettime_minutes(?string $t): int
 // ---------------------------------------------------------------------------
 
 /** Baut ein VEVENT für eine geplante Trainingseinheit. */
-function vevent_unit(object $u, ?object $event, string $appUrl, string $host): array
+function vevent_unit(object $u, ?object $event, string $appUrl, string $host, string $lang): array
 {
     $type = $u->type ?? 'easy';
     $time = !empty($u->time) ? (string) $u->time : default_time($type);
     $mins = estimate_minutes($u);
 
-    $title = $u->title ?? 'Training';
+    $title = $u->title ?? server_text($lang, 'ics.training');
     $summary = $title;
 
     // DESCRIPTION mit Zielwerten + Deep-Link in die App.
@@ -218,18 +217,18 @@ function vevent_unit(object $u, ?object $event, string $appUrl, string $host): a
         $descParts[] = (string) $u->desc;   // Programmeinheit aus früheren Versionen
     }
     if (!empty($u->targetDistanceKm)) {
-        $descParts[] = 'Distanz: ' . rtrim(rtrim(number_format((float) $u->targetDistanceKm, 1, ',', '.'), '0'), ',') . ' km';
+        $descParts[] = server_text($lang, 'ics.distance', ['km' => server_number((float) $u->targetDistanceKm, 1, $lang)]);
     }
     if (!empty($u->targetPaceSecPerKm)) {
         $pmin = sec_to_pace((int) $u->targetPaceSecPerKm);
         $pmax = !empty($u->targetPaceMaxSecPerKm) ? '–' . sec_to_pace((int) $u->targetPaceMaxSecPerKm) : '';
-        $descParts[] = 'Zielpace: ' . $pmin . $pmax . ' min/km';
+        $descParts[] = server_text($lang, 'ics.pace', ['pace' => $pmin . $pmax]);
     }
     if (!empty($u->targetHrZone)) {
-        $descParts[] = 'HF-Zone: Z' . (int) $u->targetHrZone;
+        $descParts[] = server_text($lang, 'ics.hrZone', ['zone' => (int) $u->targetHrZone]);
     }
     $descParts[] = '';
-    $descParts[] = 'In der App öffnen: ' . $appUrl . '/#/session/' . ($u->id ?? '');
+    $descParts[] = server_text($lang, 'ics.openInApp', ['url' => $appUrl . '/#/session/' . ($u->id ?? '')]);
     $description = implode("\n", $descParts);
 
     $location = $event->location ?? '';
@@ -245,32 +244,34 @@ function vevent_unit(object $u, ?object $event, string $appUrl, string $host): a
     if ($location !== '') {
         $lines[] = 'LOCATION:' . ics_escape($location);
     }
-    $lines[] = 'CATEGORIES:' . ics_escape('Training');
+    $lines[] = 'CATEGORIES:' . ics_escape(server_text($lang, 'ics.training'));
     // Erinnerung 1 Stunde vorher.
-    $lines = array_merge($lines, valarm('-PT1H', $summary . ' in 1 Stunde'));
+    $lines = array_merge($lines, valarm('-PT1H', server_text($lang, 'ics.alarmHour', ['title' => $summary])));
     // Erinnerung am Vorabend (gleiche Uhrzeit, ein Tag vorher).
-    $lines = array_merge($lines, valarm('-P1D', 'Morgen: ' . $summary));
+    $lines = array_merge($lines, valarm('-P1D', server_text($lang, 'ics.alarmTomorrow', ['title' => $summary])));
     $lines[] = 'END:VEVENT';
     return $lines;
 }
 
 /** Baut ein VEVENT für den Wettkampf selbst. */
-function vevent_race(object $event, string $appUrl, string $host): array
+function vevent_race(object $event, string $appUrl, string $host, string $lang): array
 {
     $time = '10:00';
     $mins = targettime_minutes($event->targetTime ?? null) + 30; // Puffer
-    $summary = '🏁 ' . ($event->name ?? 'Wettkampf');
+    $summary = '🏁 ' . ($event->name ?? server_text($lang, 'ics.race'));
 
     $desc = [];
-    $desc[] = 'Distanz: ' . ($event->distanceType ?? '') . (isset($event->distanceKm) ? ' (' . rtrim(rtrim(number_format((float) $event->distanceKm, 2, ',', '.'), '0'), ',') . ' km)' : '');
+    $desc[] = isset($event->distanceKm)
+        ? server_text($lang, 'ics.raceDistanceKm', ['distance' => $event->distanceType ?? '', 'km' => server_number((float) $event->distanceKm, 2, $lang)])
+        : server_text($lang, 'ics.raceDistance', ['distance' => $event->distanceType ?? '']);
     if (!empty($event->targetTime)) {
-        $desc[] = 'Zielzeit: ' . $event->targetTime;
+        $desc[] = server_text($lang, 'ics.targetTime', ['time' => $event->targetTime]);
     }
     if (!empty($event->priority)) {
-        $desc[] = 'Priorität: ' . $event->priority;
+        $desc[] = server_text($lang, 'ics.priority', ['priority' => $event->priority]);
     }
     $desc[] = '';
-    $desc[] = 'In der App öffnen: ' . $appUrl . '/#/event/' . ($event->id ?? '');
+    $desc[] = server_text($lang, 'ics.openInApp', ['url' => $appUrl . '/#/event/' . ($event->id ?? '')]);
     $description = implode("\n", $desc);
 
     $lines = [];
@@ -284,9 +285,9 @@ function vevent_race(object $event, string $appUrl, string $host): array
     if (!empty($event->location)) {
         $lines[] = 'LOCATION:' . ics_escape((string) $event->location);
     }
-    $lines[] = 'CATEGORIES:Wettkampf';
-    $lines = array_merge($lines, valarm('-PT2H', 'Wettkampf in 2 Stunden – Aufwärmen!'));
-    $lines = array_merge($lines, valarm('-P1D', 'Morgen Wettkampf: ' . ($event->name ?? '')));
+    $lines[] = 'CATEGORIES:' . ics_escape(server_text($lang, 'ics.race'));
+    $lines = array_merge($lines, valarm('-PT2H', server_text($lang, 'ics.alarmRace')));
+    $lines = array_merge($lines, valarm('-P1D', server_text($lang, 'ics.alarmRaceTomorrow', ['name' => $event->name ?? ''])));
     $lines[] = 'END:VEVENT';
     return $lines;
 }
@@ -316,6 +317,9 @@ function sec_to_pace(int $sec): string
 // ---------------------------------------------------------------------------
 $body = [];
 $filename = 'training.ics';
+/** File name in the person's language (ASCII only – it goes into a header). */
+$fileName = static fn(string $kind): string =>
+    (trim((string) preg_replace('/[^A-Za-z0-9_-]+/', '-', server_text($lang, 'ics.file.' . $kind)), '-') ?: $kind) . '-' . $id . '.ics';
 
 if ($scope === 'session') {
     // Einzelne geplante Einheit in allen Plänen suchen.
@@ -331,23 +335,17 @@ if ($scope === 'session') {
         }
     }
     if ($unit === null) {
-        http_response_code(404);
-        header('Content-Type: text/plain; charset=utf-8');
-        echo 'Einheit nicht gefunden.';
-        exit;
+        $icsError(404, 'ics.error.unitNotFound');
     }
-    $body = vevent_unit($unit, $event, $appUrl, $host);
-    $filename = 'einheit-' . $id . '.ics';
+    $body = vevent_unit($unit, $event, $appUrl, $host, $lang);
+    $filename = $fileName('session');
 } elseif ($scope === 'race') {
     $event = find_event($events, $id);
     if ($event === null) {
-        http_response_code(404);
-        header('Content-Type: text/plain; charset=utf-8');
-        echo 'Event nicht gefunden.';
-        exit;
+        $icsError(404, 'ics.error.eventNotFound');
     }
-    $body = vevent_race($event, $appUrl, $host);
-    $filename = 'wettkampf-' . $id . '.ics';
+    $body = vevent_race($event, $appUrl, $host, $lang);
+    $filename = $fileName('race');
 } else {
     // scope=event: kompletter Plan + Wettkampf.
     $event = find_event($events, $id);
@@ -358,14 +356,14 @@ if ($scope === 'session') {
                 if (($u->type ?? '') === 'rest') {
                     continue;
                 }
-                $body = array_merge($body, vevent_unit($u, $event, $appUrl, $host));
+                $body = array_merge($body, vevent_unit($u, $event, $appUrl, $host, $lang));
             }
         }
     }
     if ($event !== null) {
-        $body = array_merge($body, vevent_race($event, $appUrl, $host));
+        $body = array_merge($body, vevent_race($event, $appUrl, $host, $lang));
     }
-    $filename = 'plan-' . $id . '.ics';
+    $filename = $fileName('plan');
 }
 
 // ---------------------------------------------------------------------------
@@ -377,7 +375,7 @@ $cal[] = 'VERSION:2.0';
 $cal[] = 'PRODID:-//Cat-O-Fit//Lauftraining//DE';
 $cal[] = 'CALSCALE:GREGORIAN';
 $cal[] = 'METHOD:PUBLISH';
-$cal[] = 'X-WR-CALNAME:Catofit Training';
+$cal[] = 'X-WR-CALNAME:' . ics_escape(server_text($lang, 'ics.calendarName'));
 // VTIMEZONE der Kalender-Zone (Europe/Berlin byte-gleich wie bisher, andere Zonen je
 // Umstellung im Zeitraum vom Vorjahr bis zwei Jahre voraus).
 $cal = array_merge($cal, vtimezone_lines(ics_timezone(), (int) gmdate('Y') - 1, (int) gmdate('Y') + 2));

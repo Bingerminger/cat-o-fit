@@ -35,28 +35,28 @@ $token = isset($_GET['token']) ? (string) $_GET['token']
        : (string) ($_SERVER['HTTP_X_CATOFIT_TOKEN'] ?? '');
 
 if ($user === '' || !is_valid_user($user)) {
-    fail('Ungültige oder fehlende Nutzer-ID.', 400);
+    fail('Invalid or missing user ID.', 400, 'invalid_or_missing_user');
 }
 $profileStore = read_store('profile', 'user', $user);
 $expected = (string) ($profileStore['records']['profile']['healthToken'] ?? '');
 if ($expected === '') {
-    fail('Für diesen Nutzer ist noch kein Health-Token hinterlegt (App → Health-Import → Apple Health).', 403);
+    fail('No health token has been set up for this user yet (app → Health import → Apple Health).', 403, 'no_health_token');
 }
 if ($token === '' || !hash_equals($expected, $token)) {
-    fail('Ungültiges Token.', 401);
+    fail('Invalid token.', 401, 'invalid_token');
 }
 
 // --- Body lesen -----------------------------------------------------------
 $raw = file_get_contents('php://input');
 if ($raw === false || $raw === '') {
-    fail('Leerer Request-Body.', 400);
+    fail('Empty request body.', 400, 'empty_body');
 }
 if (strlen($raw) > 24 * 1024 * 1024) {   // Sicherheitslimit; Aggregat-Payloads sind KB-groß (Batches nutzen).
-    fail('Payload zu groß – „Batch requests" aktivieren oder kleinere Zeiträume senden.', 413);
+    fail('Payload too large – turn on "Batch requests" or send shorter periods.', 413, 'payload_too_large');
 }
 $in = json_decode($raw, true);
 if (!is_array($in)) {
-    fail('Erwartet JSON.', 400);
+    fail('Expected JSON.', 400, 'invalid_json');
 }
 // Health Auto Export kapselt unter "data"; tolerant bleiben.
 $data = is_array($in['data'] ?? null) ? $in['data'] : $in;
@@ -64,9 +64,11 @@ $data = is_array($in['data'] ?? null) ? $in['data'] : $in;
 // --- Reine Umwandlung (health-map.php) ------------------------------------
 // Health Connect (Android-Brücke), schlankes Tagesformat (Kurzbefehl, eigene Skripte)
 // oder Health-Auto-Export-Paket.
+// Session titles in the person's language.
 require_once __DIR__ . '/icstz.php';
-$parsed = hi_is_hcw($data) ? hi_parse_hcw($data, ics_timezone())
-    : (hi_is_simple($data) ? hi_parse_simple($data) : hi_parse($data));
+$lang = person_language($user);
+$parsed = hi_is_hcw($data) ? hi_parse_hcw($data, ics_timezone(), $lang)
+    : (hi_is_simple($data) ? hi_parse_simple($data, $lang) : hi_parse($data, $lang));
 $ingestSource = $parsed['source'] ?? 'apple-health';
 
 // --- health: nach Datum mergen (ein Eintrag/Tag; Nutzerfelder erhalten) ---

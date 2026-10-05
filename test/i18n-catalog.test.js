@@ -32,10 +32,15 @@ const TRANSLATED_MODULES = [
   'js/motion-figure.js', 'js/coach-figure.js', 'js/audio.js',
 ];
 /** Internal values (compared in code, never shown) that happen to be German words. */
-const INTERNAL_VALUES = ["'erhöht'", "'Obst & Gemüse'", "'Stück'", "'Rückschlag'", "'geschätzt'"];
+const INTERNAL_VALUES = ["'erhöht'", "'Obst & Gemüse'", "'Stück'", "'Rückschlag'", "'geschätzt'", "'Entzündung'", "'Getränke'", "'Meißen'"];
 /** Key prefixes the code builds at run time (e.g. `format.${x}`); listed here so they count as used. */
 const DYNAMIC_PREFIXES = ['format.', 'sessionTypes.', 'feelings.', 'priorities.', 'status.', 'rpe.',
-  'exerciseNames.', 'exerciseAliases.', 'exerciseLib.level.', 'exercises.', 'workoutCatalog.', 'showProgram.parse.', 'motion.breath.', 'plangen.raceLabel.', 'help.sections.', 'help.articles.', 'food.unit.'];
+  'exerciseNames.', 'exerciseAliases.', 'exerciseLib.level.', 'exercises.', 'workoutCatalog.', 'showProgram.parse.', 'motion.breath.', 'plangen.raceLabel.', 'help.sections.', 'help.articles.', 'food.unit.', 'recipes.',
+  'server.'];
+/** Areas only the server reads (api/i18n.php) – their keys are checked against api/*.php. */
+const SERVER_AREAS = ['server'];
+/** Key prefixes api/*.php builds at run time (e.g. "import.type.{$type}"). */
+const SERVER_DYNAMIC_PREFIXES = ['import.type.', 'import.source.', 'ics.file.'];
 /** Languages that must have every key. The others fall back to English until their
     translation pass (package P3); before the v4.0.0 release this list holds all languages. */
 const COMPLETE_LANGUAGES = ['en', 'de'];
@@ -126,7 +131,7 @@ function usedKeys() {
 }
 function enKeys() {
   const all = new Map();
-  for (const area of AREAS) {
+  for (const area of AREAS.filter((a) => !SERVER_AREAS.includes(a))) {
     for (const [k, v] of catalog(SOURCE_LANGUAGE, area)) all.set(area === 'ui' ? k : `${area}.${k}`, v);
   }
   return all;
@@ -143,6 +148,23 @@ test('no catalog key goes unused', () => {
     const base = pluralBase(key);
     const k = base ? `${base}.other` : key;
     assert.ok(used.has(k) || DYNAMIC_PREFIXES.some((p) => key.startsWith(p)), `locales/en: ${key} is never used`);
+  }
+});
+
+test('server catalog: every key api/*.php uses exists in English, none goes unused', () => {
+  const en = catalog(SOURCE_LANGUAGE, 'server');
+  const used = new Set();
+  for (const f of readdirSync(new URL('api/', ROOT)).filter((n) => n.endsWith('.php'))) {
+    // server_text($lang, 'key'), server_lookup($lang, 'key') and ics.php's $icsError(<status>, 'key').
+    const calls = /(?:server_(?:text|lookup)\(\s*[^,]+|\$icsError\(\s*\d+),\s*'([A-Za-z0-9_.]+)'/g;
+    for (const m of read(`api/${f}`).matchAll(calls)) used.add(m[1]);
+  }
+  // A key ending in a dot is the start of keys built at run time ('ics.file.' . $kind).
+  for (const key of used) {
+    assert.ok(key.endsWith('.') ? [...en.keys()].some((k) => k.startsWith(key)) : en.has(key), `api: key ${key} is missing in locales/en/server.json`);
+  }
+  for (const key of en.keys()) {
+    assert.ok(used.has(key) || SERVER_DYNAMIC_PREFIXES.some((p) => key.startsWith(p)), `locales/en/server.json: ${key} is never used`);
   }
 });
 

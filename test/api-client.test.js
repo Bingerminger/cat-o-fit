@@ -5,7 +5,7 @@
    ========================================================================= */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { pullChanges, pullAllChanges, pushOps, apiGet, ping, icsUrl, isOnline, serverHas } from '../js/api-client.js';
+import { pullChanges, pullAllChanges, pushOps, apiGet, ping, icsUrl, isOnline, serverHas, serverError } from '../js/api-client.js';
 
 // Kontrollierbarer fetch-Mock: merkt sich den letzten Aufruf, liefert eine Skript-Antwort.
 let lastCall = null;
@@ -71,6 +71,15 @@ test('apiGet: liefert json.data', async () => {
 test('pullChanges: Serverfehler (ok:false) wirft mit Server-Meldung', async () => {
   respond({ ok: false, error: 'kaputt' });
   await assert.rejects(() => pullChanges('events', { user: 'u-1', since: 0 }), /kaputt/);
+});
+
+test('Server-Fehler: der Code wird übersetzt (Platzhalter aus der Antwort), sonst gilt der Server-Text', async () => {
+  respond({ ok: false, error: 'Unknown area: x', code: 'unknown_area', area: 'x' });
+  await assert.rejects(() => pullChanges('events', { user: 'u-1', since: 0 }), { message: 'Unbekannter Bereich: x' });
+  assert.equal(serverError({ ok: false, error: 'Invalid user ID.', code: 'invalid_user' }), 'Ungültige Nutzer-ID.');
+  assert.equal(serverError({ ok: false, error: 'GET expected.', code: 'method_not_allowed', action: 'changes', expected: 'GET' }), 'changes erwartet GET.');
+  assert.equal(serverError({ ok: false, error: 'Something new', code: 'brand_new_code' }), 'Something new', 'unbekannter Code → Server-Text');
+  assert.equal(serverError({ ok: false }, 'Laden fehlgeschlagen'), 'Laden fehlgeschlagen', 'ohne Code und Text → Rückfall');
 });
 
 test('ping: true bei ok, false bei HTTP-Fehler', async () => {
