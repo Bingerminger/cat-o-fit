@@ -1,0 +1,94 @@
+name: "🐛 Report a bug"
+description: "Describe a reproducible bug"
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time! Please check the [troubleshooting page](https://github.com/Bingerminger/cat-o-fit/blob/main/docs/operations/troubleshooting.md) first – it answers many common problems (update does not appear, white page, forgotten PIN, server errors).
+
+        **Privacy:** please do **not** paste real health, cycle or lab data, PINs or passwords. Blur screenshots if needed. Security problems do not belong here – report them confidentially (see the links when you open a new issue, or [SECURITY.md](https://github.com/Bingerminger/cat-o-fit/blob/main/SECURITY.md)).
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before you start
+      options:
+        - label: "I searched the existing issues and did not find this bug."
+          required: true
+        - label: "My report contains no real health data, PINs or passwords."
+          required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: "What did you see, and what did you expect instead?"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Tap ...
+        3. See ...
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: App version
+      description: "Shown at the very bottom of Settings, or at the top of the sidebar (iPad / computer)."
+      options:
+        - "4.0.0"
+        - "Newer than the versions listed (built from main)"
+        - "Older than 4.0.0 (3.x)"
+        - "I do not know"
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: How do you run Cat-O-Fit?
+      options:
+        - "Docker (docker run / Docker Compose)"
+        - "Synology Container Manager"
+        - "Unraid template"
+        - "CasaOS"
+        - "Web hosting / Synology Web Station / plain PHP"
+        - "The public demo on GitHub Pages"
+        - "Other"
+    validations:
+      required: true
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      description: "The one where the problem appears. If you installed the app on the home screen, pick the browser it is built on (Safari on iPhone and iPad)."
+      options:
+        - "Safari"
+        - "Chrome"
+        - "Edge"
+        - "Firefox"
+        - "Samsung Internet"
+        - "Other"
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and system
+      description: "Optional, but often decisive."
+      placeholder: "e.g. iPhone 14, iOS 18 – or Windows 11 laptop"
+  - type: input
+    id: route
+    attributes:
+      label: View or address
+      description: "Optional. Where in the app does it happen?"
+      placeholder: "e.g. #/stats (Progress, Training tab)"
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error message, console output or screenshot
+      description: "Optional. Paste text or drag screenshots into this field."

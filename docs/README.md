@@ -39,7 +39,7 @@ For the person who sets up and looks after the server.
 
 | Page | Contents |
 |---|---|
-| [Installation](operations/installation.md) | Requirements, Docker, Synology, Web Station, environment variables, running outside the home network |
+| [Installation](operations/installation.md) | Requirements, Docker, Synology, Unraid, CasaOS, Web Station, environment variables, running outside the home network |
 | [Update](operations/update.md) | Install a new version without losing data; going back to the previous version |
 | [Backup](operations/backup.md) | Three levels, the 3-2-1 rule, backing up and restoring |
 | [Privacy](operations/privacy.md) | What is stored where, what leaves the house, who can read what |

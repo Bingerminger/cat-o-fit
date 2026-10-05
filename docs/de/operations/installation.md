@@ -12,6 +12,8 @@ Eine Datenbank, ein Build-Schritt oder Node.js sind nicht nötig.
 - [Voraussetzungen](#voraussetzungen)
 - [Weg 1: Docker](#weg-1-docker)
 - [Weg 2: Synology Container Manager](#weg-2-synology-container-manager)
+- [Unraid](#unraid)
+- [CasaOS](#casaos)
 - [Weg 3: Webspace oder Synology Web Station](#weg-3-webspace-oder-synology-web-station)
 - [Umgebungsvariablen](#umgebungsvariablen)
 - [HTTPS und „Zum Home-Bildschirm“](#https-und-zum-home-bildschirm)
@@ -24,7 +26,7 @@ Eine Datenbank, ein Build-Schritt oder Node.js sind nicht nötig.
 
 | Was | Mindestens | Wofür |
 |---|---|---|
-| **Docker** | aktuelle Version, amd64 oder arm64 | Weg 1 und 2 – alles Weitere bringt das Image mit |
+| **Docker** | aktuelle Version, amd64 oder arm64 | Weg 1 und 2, Unraid und CasaOS – alles Weitere bringt das Image mit |
 | **oder PHP** | **8.1** (getestet mit 8.4) | Weg 3. Mit PHP 8.0 scheitert jedes Speichern mit „Serverfehler“ (die Speicherung braucht `fsync`, das es erst ab 8.1 gibt). |
 | PHP-Erweiterungen | `json` (Standard); für den Apple-Health-Voll-Import `XMLReader`, für ZIP-Uploads `zip` (ZipArchive); für die Nährwertsuche im Netz `curl` und `mbstring` | Die App startet auch ohne `XMLReader`/`zip` – nur der jeweilige Import meldet dann, was fehlt. |
 | Schreibrechte | auf den Ordner `data/` | Dort liegen alle Daten als JSON-Dateien. |
@@ -79,6 +81,57 @@ gegen direkten Webzugriff und einen leeren Erststart mit der Ersteinrichtung.
 
 ---
 
+## Unraid
+
+Im Repo liegt eine fertige Vorlage für den Docker-Tab:
+[`deploy/unraid/cat-o-fit.xml`](../../../deploy/unraid/cat-o-fit.xml). Sie folgt dem Format der Community
+Applications und füllt Image, Port, Datenordner und die Umgebungsvariablen vor.
+
+1. Das Unraid-Terminal (oder SSH) öffnen und die Vorlage in die Benutzervorlagen laden:
+
+   ```bash
+   wget -O /boot/config/plugins/dockerMan/templates-user/my-cat-o-fit.xml \
+     https://raw.githubusercontent.com/Bingerminger/cat-o-fit/main/deploy/unraid/cat-o-fit.xml
+   ```
+
+2. Reiter **Docker** → **Add Container** → in der Liste **Template** den Eintrag Cat-O-Fit unter
+   *User templates* wählen.
+3. Die vorbelegten Werte prüfen: Port der Weboberfläche **8080** (der Container lauscht auf 80),
+   Datenordner `/mnt/user/appdata/cat-o-fit` (wird im Container zu `/var/www/html/data`) und deine
+   Zeitzone. Die Anmelde-Variablen (`CATOFIT_BASIC_AUTH` und Co.) stehen unter **Show more settings**.
+4. **Apply.** Die App öffnest du unter `http://<ip-deines-unraid>:8080` oder über den Eintrag *WebUI*
+   des Containers im Docker-Tab.
+
+Lieber von Hand ausfüllen? Repository `ghcr.io/bingerminger/cat-o-fit:latest`, ein Port (Host
+8080 → Container 80), ein Pfad (`/mnt/user/appdata/cat-o-fit` → `/var/www/html/data`) und die Variable
+`TZ` – mehr braucht es nicht. Den Besitzer des Datenordners setzt der Container bei jedem Start
+selbst. Updates: im Docker-Tab nach Updates suchen und das Update einspielen – der Datenordner bleibt.
+Nimm `/mnt/user/appdata/cat-o-fit` in deine Appdata-Sicherung auf (siehe [Backup](backup.md)).
+
+---
+
+## CasaOS
+
+Für CasaOS (und ZimaOS) gibt es eine Compose-Datei mit den App-Store-Angaben (Icon, Screenshots,
+Beschreibungen auf Englisch und Deutsch, Hinweise zu den Umgebungsvariablen):
+[`deploy/casaos/docker-compose.yml`](../../../deploy/casaos/docker-compose.yml). Sie läuft auf amd64 und arm64.
+
+1. Die Datei im Repo öffnen und den ganzen Inhalt kopieren (am einfachsten in der Ansicht *Raw*).
+2. In CasaOS: **App Store** → **Custom Install** → **Import**, den Inhalt einfügen und bestätigen.
+3. Die Werte prüfen: Port der Weboberfläche **8080** (der Container lauscht auf 80), Datenordner
+   `/DATA/AppData/cat-o-fit/data` (wird im Container zu `/var/www/html/data`) und die Zeitzone `TZ`.
+   Die `CATOFIT_…`-Variablen sind optional; der Installationsdialog beschreibt jede davon.
+4. **Install**, dann die App über ihre Kachel oder unter `http://<ip-deines-casaos>:8080` öffnen.
+
+Zum Aktualisieren lässt du CasaOS das neue Image ziehen (App-Menü → **Update**, wo vorhanden) – der
+Datenordner bleibt. Nimm `/DATA/AppData/cat-o-fit/data` in deine reguläre Sicherung auf (siehe
+[Backup](backup.md)).
+
+Beide Plattformen sind für das eigene Heimnetz gedacht. Bevor du die App ins Internet öffnest, lies
+[Betrieb außerhalb des Heimnetzes](#betrieb-außerhalb-des-heimnetzes).
+
+---
+
 ## Weg 3: Webspace oder Synology Web Station
 
 1. **Web Station und PHP installieren** (Paket-Zentrum → Web Station, dazu PHP 8.1 oder neuer, z. B. 8.4).
@@ -121,6 +174,9 @@ Alle optional (Docker; bei Weg 3 über die Server-Konfiguration):
 | `CATOFIT_TZ` | wie `TZ`, nur für die Kalender-Dateien – hat Vorrang, falls `TZ` auf dem Host etwas anderes bedeutet. |
 | `CATOFIT_BASIC_AUTH=1` mit `CATOFIT_AUTH_USER` und `CATOFIT_AUTH_PASSWORD` | Anmeldung (Basic Auth) vor der ganzen App. Der Health-Eingang (eigener Schlüssel) und der Healthcheck bleiben erreichbar. |
 | `CATOFIT_ALLOWED_HOSTS` | kommagetrennte Hostnamen, z. B. `fit.example.org` – Anfragen an andere Namen lehnt die API ab (Schutz vor DNS-Rebinding). |
+
+Bei [Unraid](#unraid) und [CasaOS](#casaos) sind dieselben Variablen Felder der Vorlage (die Anmelde-
+und Host-Variablen als optionale bzw. erweiterte Einstellungen).
 
 ---
 

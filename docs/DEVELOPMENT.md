@@ -569,6 +569,7 @@ cat-o-fit/
   test-setup.js           Mini DOM + localStorage shim for the tests
   docs/                   Documentation by audience (map in docs/README.md; German copies in docs/de/), architecture, development
   tools/                  PHP tests, load test, demo seeds, render script, movement contact sheets, music listening tests, reset-pin.php
+  deploy/                 Unraid template (unraid/) and CasaOS compose file (casaos/), not part of the image
 ```
 
 ## Deployment
@@ -594,6 +595,14 @@ the app; the entrypoint creates the Apache configuration), `CATOFIT_ALLOWED_HOST
 (time zone for PHP and the calendar files).
 
 There is no build step – the files are served unchanged.
+
+**Unraid and CasaOS templates** (`deploy/unraid/cat-o-fit.xml`, `deploy/casaos/docker-compose.yml`;
+usage under [Installation](operations/installation.md#unraid)): they repeat the image name, the
+container port, the data path and the environment variables of `docker-compose.yml` and
+`docker/entrypoint.sh`. **When the image, the port, the data volume or an environment variable
+changes, change both templates in the same commit** (and their descriptions); the Unraid template is
+checked with `xmllint --noout`, the CasaOS file with `ruby -ryaml -e 'YAML.load_file(ARGV[0])'`. The
+`deploy/` folder stays out of the image (`.dockerignore`).
 
 **Public demo** (GitHub Pages, `.github/workflows/pages.yml`): `node tools/build-demo.mjs` copies the
 app shell without `api/` and `data/` into `dist/demo` and marks `index.html` with `data-demo`. That

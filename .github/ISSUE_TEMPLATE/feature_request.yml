@@ -1,0 +1,53 @@
+name: "💡 Idea / feature"
+description: "Suggest an improvement or a new feature"
+title: "[Idea]: "
+labels: ["idea"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Cat-O-Fit stays **dependency-free, local-first, without a build step and without a database**. Ideas that preserve this are easier to implement – see the principles in [CONTRIBUTING.md](https://github.com/Bingerminger/cat-o-fit/blob/main/CONTRIBUTING.md#principles). The [roadmap](https://github.com/Bingerminger/cat-o-fit/blob/main/docs/ROADMAP.md) shows what is already planned.
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before you start
+      options:
+        - label: "I searched the existing issues and the roadmap and did not find this idea."
+          required: true
+  - type: textarea
+    id: need
+    attributes:
+      label: What is it about?
+      description: "Which need or problem is behind this? Describe the situation, not only the solution."
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: "What could the solution look like? Sketches and examples help."
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - "Plans and planning"
+        - "Workouts and exercises"
+        - "Coach, load and form"
+        - "Health, body values and labs"
+        - "Nutrition and shopping"
+        - "Team and family"
+        - "Import, export and calendar"
+        - "Installation, hosting and updates"
+        - "Languages and translations"
+        - "Other"
+  - type: textarea
+    id: audience
+    attributes:
+      label: Who would find it useful?
+      description: "For example individual users, a family or team, admins, a particular sport."
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives and context
+      description: "Are there workarounds? Related issues or apps that do this well?"

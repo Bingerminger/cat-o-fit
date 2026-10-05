@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!--
+  Cat-O-Fit – template for Unraid (Docker tab / Community Applications).
+  Keep it in step with docker-compose.yml, docker/entrypoint.sh and
+  docs/operations/installation.md: image, port, data path and environment variables.
+  How to use it: docs/operations/installation.md#unraid
+-->
+<Container version="2">
+  <Name>Cat-O-Fit</Name>
+  <Repository>ghcr.io/bingerminger/cat-o-fit:latest</Repository>
+  <Registry>https://github.com/Bingerminger/cat-o-fit/pkgs/container/cat-o-fit</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>bash</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/Bingerminger/cat-o-fit/issues</Support>
+  <Project>https://github.com/Bingerminger/cat-o-fit</Project>
+  <Overview>Self-hosted training planner for the whole family: periodized plans for running, strength and team sport, load and form tracking, nutrition, body values and a shared dashboard. A web app (PWA) in seven languages that works offline on every device. No database and no subscription: all data stays as plain files in the appdata folder. Built for your own, trusted network. Before you make it reachable from the internet, put a login in front of it (see the advanced settings and the installation guide).</Overview>
+  <Description>Cat-O-Fit is training planning for the whole family. It creates periodized plans from 5 km to the marathon (and programmes without a race), manages training load with one daily coach recommendation, and brings in body values from Apple Health, Health Connect or activity files.
+
+Strength and mobility sessions come with animated exercises you can follow along. Every person has their own goals and plan; cycle, lab values and supplements stay private, also on the server.
+
+Open the web interface on your phone, tablet or computer and add it to the home screen. The first start walks you through a short setup (create the admin, start empty or with demo data).
+
+The data lives as JSON files in the appdata folder: back it up like any other share. Documentation, update and backup guides: https://github.com/Bingerminger/cat-o-fit/tree/main/docs</Description>
+  <Category>Productivity:</Category>
+  <WebUI>http://[IP]:[PORT:80]/</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/Bingerminger/cat-o-fit/main/deploy/unraid/cat-o-fit.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/Bingerminger/cat-o-fit/main/assets/icons/icon-512.png</Icon>
+  <License>https://github.com/Bingerminger/cat-o-fit/blob/main/LICENSE</License>
+  <Screenshot>https://raw.githubusercontent.com/Bingerminger/cat-o-fit/main/docs/assets/en/01-dashboard.png</Screenshot>
+  <Screenshot>https://raw.githubusercontent.com/Bingerminger/cat-o-fit/main/docs/assets/en/04-plan.png</Screenshot>
+  <Screenshot>https://raw.githubusercontent.com/Bingerminger/cat-o-fit/main/docs/assets/en/06-session.png</Screenshot>
+  <Screenshot>https://raw.githubusercontent.com/Bingerminger/cat-o-fit/main/docs/assets/en/09-statistics.png</Screenshot>
+  <ExtraParams/>
+  <PostArgs/>
+  <CPUset/>
+  <DonateText/>
+  <DonateLink/>
+  <Requires/>
+  <Config Name="WebUI port" Target="80" Default="8080" Mode="tcp" Description="Port of the web interface. Change the host port if 8080 is already in use; the container always listens on 80." Type="Port" Display="always" Required="true" Mask="false">8080</Config>
+  <Config Name="Data" Target="/var/www/html/data" Default="/mnt/user/appdata/cat-o-fit" Mode="rw" Description="All data (people, plans, trainings, body values) as JSON files. Keep this path stable and include it in your backups." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/cat-o-fit</Config>
+  <Config Name="Time zone (TZ)" Target="TZ" Default="Europe/Berlin" Mode="" Description="Time zone for PHP and the times in the calendar files, for example Europe/Vienna or America/New_York. Invalid values fall back to Europe/Berlin." Type="Variable" Display="always" Required="false" Mask="false">Europe/Berlin</Config>
+  <Config Name="Basic auth (CATOFIT_BASIC_AUTH)" Target="CATOFIT_BASIC_AUTH" Default="" Mode="" Description="Optional. Set to 1 to put a sign-in (basic auth) in front of the whole app; then user name and password below are required, otherwise the container refuses to start. Recommended if the app is reachable from outside your home network." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Basic auth user (CATOFIT_AUTH_USER)" Target="CATOFIT_AUTH_USER" Default="" Mode="" Description="Optional. User name for the basic auth sign-in. Only used when Basic auth is set to 1." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+  <Config Name="Basic auth password (CATOFIT_AUTH_PASSWORD)" Target="CATOFIT_AUTH_PASSWORD" Default="" Mode="" Description="Optional. Password for the basic auth sign-in; please use a long one. Only used when Basic auth is set to 1." Type="Variable" Display="advanced" Required="false" Mask="true"></Config>
+  <Config Name="Allowed hosts (CATOFIT_ALLOWED_HOSTS)" Target="CATOFIT_ALLOWED_HOSTS" Default="" Mode="" Description="Optional. Comma-separated host names the API accepts, for example fit.example.org (protection against DNS rebinding). Leave empty to accept all; if you set it, include every name or address you use to open the app." Type="Variable" Display="advanced" Required="false" Mask="false"></Config>
+</Container>

@@ -4,8 +4,9 @@
 .gitignore
 .editorconfig
 
-# Docs, tests and developer tools (not part of the running app)
+# Docs, tests, developer tools and the Unraid/CasaOS templates (not part of the running app)
 docs
+deploy
 test
 test-setup.js
 tools

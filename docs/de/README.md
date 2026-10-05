@@ -43,7 +43,7 @@ Für die Person, die den Server einrichtet und pflegt.
 
 | Seite | Inhalt |
 |---|---|
-| [Installation](operations/installation.md) | Voraussetzungen, Docker, Synology, Web Station, Umgebungsvariablen, Betrieb außerhalb des Heimnetzes |
+| [Installation](operations/installation.md) | Voraussetzungen, Docker, Synology, Unraid, CasaOS, Web Station, Umgebungsvariablen, Betrieb außerhalb des Heimnetzes |
 | [Update](operations/update.md) | Neue Version einspielen, ohne Daten zu verlieren; zurück zur Vorversion |
 | [Backup](operations/backup.md) | Drei Ebenen, 3-2-1-Regel, sichern und wiederherstellen |
 | [Datenschutz](operations/privacy.md) | Was liegt wo, was verlässt das Haus, wer kann was lesen |

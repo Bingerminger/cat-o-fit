@@ -1,0 +1,109 @@
+# =============================================================================
+# Cat-O-Fit for CasaOS / ZimaOS – runs on amd64 and arm64.
+#
+# Use: CasaOS → App Store → "+" (Custom Install) → Import → paste this file.
+# Keep it in step with docker-compose.yml, docker/entrypoint.sh and
+# docs/operations/installation.md: image, port, data path and environment variables.
+# $AppID and $TZ are filled in by CasaOS itself.
+# =============================================================================
+name: cat-o-fit
+services:
+  cat-o-fit:
+    image: ghcr.io/bingerminger/cat-o-fit:latest
+    container_name: cat-o-fit
+    restart: unless-stopped
+    ports:
+      - target: 80
+        published: "8080"
+        protocol: tcp
+    environment:
+      TZ: $TZ
+      # Optional: sign-in in front of the whole app. Set CATOFIT_BASIC_AUTH to 1 and fill in user and password.
+      CATOFIT_BASIC_AUTH: ""
+      CATOFIT_AUTH_USER: ""
+      CATOFIT_AUTH_PASSWORD: ""
+      # Optional: accept only these host names (comma-separated), e.g. fit.example.org.
+      CATOFIT_ALLOWED_HOSTS: ""
+    volumes:
+      - type: bind
+        source: /DATA/AppData/$AppID/data
+        target: /var/www/html/data
+    x-casaos:
+      envs:
+        - container: TZ
+          description:
+            en_US: Time zone for the app and the calendar files, for example Europe/Vienna or America/New_York.
+            de_DE: Zeitzone für die App und die Kalender-Dateien, z. B. Europe/Vienna oder America/New_York.
+        - container: CATOFIT_BASIC_AUTH
+          description:
+            en_US: Optional. Set to 1 to put a sign-in (basic auth) in front of the whole app. User and password below are then required. Recommended if the app is reachable from outside your home network.
+            de_DE: Optional. Auf 1 setzen, um eine Anmeldung (Basic Auth) vor die ganze App zu legen. Benutzer und Passwort unten sind dann Pflicht. Empfohlen, wenn die App von außerhalb des Heimnetzes erreichbar ist.
+        - container: CATOFIT_AUTH_USER
+          description:
+            en_US: Optional. User name for the sign-in; only used when CATOFIT_BASIC_AUTH is 1.
+            de_DE: Optional. Benutzername für die Anmeldung; nur wirksam, wenn CATOFIT_BASIC_AUTH auf 1 steht.
+        - container: CATOFIT_AUTH_PASSWORD
+          description:
+            en_US: Optional. Password for the sign-in (please use a long one); only used when CATOFIT_BASIC_AUTH is 1.
+            de_DE: Optional. Passwort für die Anmeldung (bitte ein langes); nur wirksam, wenn CATOFIT_BASIC_AUTH auf 1 steht.
+        - container: CATOFIT_ALLOWED_HOSTS
+          description:
+            en_US: Optional. Comma-separated host names the API accepts, e.g. fit.example.org (protection against DNS rebinding). Leave empty to accept all; if you set it, include every name you use to open the app.
+            de_DE: Optional. Kommagetrennte Hostnamen, die die API annimmt, z. B. fit.example.org (Schutz vor DNS-Rebinding). Leer lassen, um alle zuzulassen; wenn gesetzt, jeden Namen aufführen, unter dem du die App öffnest.
+      ports:
+        - container: "80"
+          description:
+            en_US: Web interface (the container always listens on port 80).
+            de_DE: Weboberfläche (der Container lauscht immer auf Port 80).
+      volumes:
+        - container: /var/www/html/data
+          description:
+            en_US: All data (people, plans, trainings, body values) as JSON files. Include this folder in your backups.
+            de_DE: Alle Daten (Personen, Pläne, Trainings, Körperwerte) als JSON-Dateien. Diesen Ordner in die Datensicherung aufnehmen.
+x-casaos:
+  id: io.github.bingerminger.cat-o-fit
+  architectures:
+    - amd64
+    - arm64
+  main: cat-o-fit
+  index: /
+  port_map: "8080"
+  scheme: http
+  category: Productivity
+  author: Bingerminger
+  developer: Bingerminger
+  icon: https://raw.githubusercontent.com/Bingerminger/cat-o-fit/main/assets/icons/icon-512.png
+  thumbnail: https://raw.githubusercontent.com/Bingerminger/cat-o-fit/main/docs/assets/promo/banner.png
+  screenshot_link:
+    - https://raw.githubusercontent.com/Bingerminger/cat-o-fit/main/docs/assets/en/ipad-01-dashboard.png
+    - https://raw.githubusercontent.com/Bingerminger/cat-o-fit/main/docs/assets/en/04-plan.png
+    - https://raw.githubusercontent.com/Bingerminger/cat-o-fit/main/docs/assets/en/ipad-42-non-stop.png
+    - https://raw.githubusercontent.com/Bingerminger/cat-o-fit/main/docs/assets/en/09-statistics.png
+    - https://raw.githubusercontent.com/Bingerminger/cat-o-fit/main/docs/assets/en/51-team-dashboard.png
+  title:
+    en_US: Cat-O-Fit
+    de_DE: Cat-O-Fit
+  tagline:
+    en_US: The subscription-free, self-hosted training planner for the whole family.
+    de_DE: Der abofreie, selbst gehostete Trainingsplaner für die ganze Familie.
+  description:
+    en_US: |
+      Cat-O-Fit plans and steers the training of your whole family: periodized plans from 5 km to the marathon, strength and mobility sessions with animated exercises you can follow along, load and form tracking with one coach recommendation per day, and nutrition, body values and lab values in the context of training.
+
+      It is a web app (PWA) in seven languages that works offline on every device. No database, no subscription, no cloud: all data stays as plain files in the app data folder. Cycle, lab values and supplements stay private, also on the server.
+
+      The first start walks you through a short setup: create the admin, then start empty or with demo data.
+    de_DE: |
+      Cat-O-Fit plant und steuert das Training deiner ganzen Familie: periodisierte Pläne vom 5-km-Lauf bis zum Marathon, Kraft- und Mobility-Einheiten mit animierten Übungen zum Mitmachen, Belastungs- und Formsteuerung mit einer Coach-Empfehlung pro Tag sowie Ernährung, Körperwerte und Laborwerte im Trainingskontext.
+
+      Eine Web-App (PWA) in sieben Sprachen, die auf jedem Gerät auch offline funktioniert. Keine Datenbank, kein Abo, keine Cloud: Alle Daten bleiben als normale Dateien im App-Datenordner. Zyklus, Laborwerte und Ergänzungen bleiben privat, auch auf dem Server.
+
+      Der erste Start führt durch eine kurze Einrichtung: Admin-Person anlegen, dann leer oder mit Demodaten starten.
+  tips:
+    before_install:
+      en_US: Cat-O-Fit is built for your own, trusted network. Before you make it reachable from the internet, put a login in front of it – a VPN, a reverse proxy with sign-in, or the built-in basic auth (CATOFIT_BASIC_AUTH).
+      de_DE: Cat-O-Fit ist für das eigene, vertrauenswürdige Netz gebaut. Bevor du es aus dem Internet erreichbar machst, setze eine Anmeldung davor – ein VPN, einen Reverse-Proxy mit Anmeldung oder die eingebaute Basic Auth (CATOFIT_BASIC_AUTH).
+  website: https://github.com/Bingerminger/cat-o-fit
+  repo: https://github.com/Bingerminger/cat-o-fit
+  support: https://github.com/Bingerminger/cat-o-fit/issues
+  docs: https://github.com/Bingerminger/cat-o-fit/tree/main/docs

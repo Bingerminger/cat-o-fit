@@ -136,8 +136,34 @@ plurals, formats), see [Translations in the development guide](docs/DEVELOPMENT.
 
 ## Reporting bugs and ideas
 
-Use the [issue templates](.github/ISSUE_TEMPLATE/): **Bug** for reproducible bugs, **Feature**
-for suggestions. Please report anything security-relevant confidentially via [SECURITY.md](SECURITY.md).
+Use the [issue forms](.github/ISSUE_TEMPLATE/): **Bug** for reproducible bugs (they ask for the app
+version, how you run it and your browser), **Idea** for suggestions, **Translation** for a wrong or
+odd text in one of the seven languages. Questions and open-ended ideas are welcome in GitHub
+Discussions. Please report anything security-relevant confidentially via [SECURITY.md](SECURITY.md).
+
+### Labels
+
+| Label | Used for |
+|---|---|
+| `bug` | Something does not work as documented (set by the bug form) |
+| `idea` | A suggestion for a new or changed feature (set by the idea form) |
+| `translation` | A wrong, odd or missing text in a language (set by the translation form) |
+| `good first issue` | A small, well-described task for a first contribution – for example checking one area of a language, a documentation fix, or a missing test |
+
+## Release rhythm
+
+Cat-O-Fit is maintained in spare time, so the rhythm is a plan, not a promise:
+
+- **Roughly one release a month** (4.1, 4.2 …) with new features, fixes and updated translations.
+  Everything merged into `main` goes out with the next one; a month without anything worth
+  shipping is skipped.
+- **Hotfixes when needed** (4.0.1 …): as soon as possible for bugs that lose or corrupt data, break
+  saving or sign-in, or have a security impact – without waiting for the monthly release.
+- Every release is a `vX.Y.Z` tag. It builds the multi-arch Docker image (`X.Y.Z`, `X.Y` and
+  `latest`) and comes with a GitHub release.
+- For maintainers, per release: add the new version to the version list of the bug form
+  (`.github/ISSUE_TEMPLATE/bug_report.yml`) and keep the Unraid and CasaOS templates in
+  `deploy/` in step with the image (see the [development guide](docs/DEVELOPMENT.md#deployment)).
 
 By contributing, you agree that your contribution is published under the project's licence
 ([AGPL-3.0-or-later](LICENSE)).

@@ -3,6 +3,9 @@ contact_links:
   - name: "🔒 Report a security vulnerability"
     url: https://github.com/Bingerminger/cat-o-fit/security/advisories/new
     about: "Please report security issues confidentially – not as a public issue (see SECURITY.md)."
+  - name: "💬 Ask a question or share an idea"
+    url: https://github.com/Bingerminger/cat-o-fit/discussions
+    about: "Questions, setup help and open-ended ideas belong in Discussions; bugs, concrete feature requests and translation fixes in an issue."
   - name: "📖 Documentation"
     url: https://github.com/Bingerminger/cat-o-fit/blob/main/docs/README.md
     about: "The user guide and the troubleshooting page already answer many questions."

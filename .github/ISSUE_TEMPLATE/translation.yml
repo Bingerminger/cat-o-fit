@@ -1,0 +1,76 @@
+name: "🌍 Translation correction"
+description: "A wrong, odd or missing text in one of the seven languages"
+title: "[Translation]: "
+labels: ["translation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Cat-O-Fit speaks seven languages. French, Spanish, Italian, Brazilian Portuguese and Dutch were machine-translated with a fixed glossary and have not been reviewed by native speakers yet – **every correction helps**, even a single word. The tone and fixed terms per language are in the [glossary](https://github.com/Bingerminger/cat-o-fit/blob/main/locales/GLOSSARY.md).
+
+        Prefer to fix it yourself? Edit the value in `locales/<language>/*.json` and open a pull request – see [Translations](https://github.com/Bingerminger/cat-o-fit/blob/main/CONTRIBUTING.md#translations).
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Before you start
+      options:
+        - label: "I searched the existing issues and did not find this correction."
+          required: true
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language
+      options:
+        - "English"
+        - "Deutsch (German)"
+        - "Français (French)"
+        - "Español (Spanish)"
+        - "Italiano (Italian)"
+        - "Português do Brasil (Brazilian Portuguese)"
+        - "Nederlands (Dutch)"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where in the app?
+      options:
+        - "Screens, menus and buttons"
+        - "Help articles"
+        - "Exercise names and instructions"
+        - "Recipes and food"
+        - "Texts written by the server (for example calendar files)"
+        - "Voice cues in workouts (audio)"
+        - "Documentation"
+        - "Other"
+    validations:
+      required: true
+  - type: input
+    id: screen
+    attributes:
+      label: Screen or menu path
+      description: "Optional. Helps to find the text quickly."
+      placeholder: "e.g. Settings, Appearance, Language"
+  - type: textarea
+    id: current
+    attributes:
+      label: Current text
+      description: "Copy the text as it appears now. For a voice cue, name the exercise or announcement."
+    validations:
+      required: true
+  - type: textarea
+    id: suggested
+    attributes:
+      label: Suggested text
+      description: "How should it read? A short reason helps if the term is a matter of taste."
+    validations:
+      required: true
+  - type: dropdown
+    id: native
+    attributes:
+      label: Is this your first language?
+      description: "Optional. It tells us how much weight the language review can give your correction."
+      options:
+        - "Yes, I am a native speaker"
+        - "No, but I speak it fluently"
+        - "No"
