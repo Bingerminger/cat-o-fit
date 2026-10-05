@@ -1,40 +1,39 @@
-# Verhaltenskodex
+# Code of Conduct
 
-## Unser Versprechen
+## Our pledge
 
-Im Interesse einer offenen und einladenden Umgebung verpflichten wir uns als
-Mitwirkende und Verwaltende, die Teilnahme an diesem Projekt für alle frei von
-Belästigung zu gestalten – unabhängig von Alter, Körpergröße, Behinderung,
-ethnischer Zugehörigkeit, Geschlechtsidentität und -ausdruck, Erfahrungsgrad,
-Nationalität, Aussehen, Religion oder sexueller Identität und Orientierung.
+In the interest of fostering an open and welcoming environment, we as contributors and
+maintainers pledge to make participation in this project a harassment-free experience for
+everyone, regardless of age, body size, disability, ethnicity, gender identity and
+expression, level of experience, nationality, personal appearance, religion, or sexual
+identity and orientation.
 
-## Unsere Standards
+## Our standards
 
-Verhalten, das zu einem positiven Umfeld beiträgt:
+Behaviour that contributes to a positive environment:
 
-- Freundliche und einladende Sprache verwenden
-- Unterschiedliche Sichtweisen und Erfahrungen respektieren
-- Konstruktive Kritik würdevoll annehmen
-- Das Wohl der Gemeinschaft in den Vordergrund stellen
+- Using welcoming and friendly language
+- Respecting differing viewpoints and experiences
+- Accepting constructive criticism gracefully
+- Putting the good of the community first
 
-Inakzeptables Verhalten:
+Unacceptable behaviour:
 
-- Beleidigende, abwertende oder herabsetzende Kommentare; persönliche oder
-  politische Angriffe
-- Öffentliche oder private Belästigung
-- Veröffentlichen privater Informationen anderer ohne deren Erlaubnis
-- Sonstiges Verhalten, das in einem professionellen Umfeld als unangemessen gilt
+- Insulting, demeaning or derogatory comments; personal or political attacks
+- Public or private harassment
+- Publishing others' private information without their permission
+- Other conduct that would reasonably be considered inappropriate in a professional
+  setting
 
-## Durchsetzung
+## Enforcement
 
-Verstöße können vertraulich gemeldet werden – über denselben Weg wie
-Sicherheitsmeldungen (siehe [SECURITY.md](SECURITY.md): GitHub-Funktion „Report a
-vulnerability“ bzw. ein Issue ohne Details mit der Bitte um vertraulichen Kontakt).
-Alle Beschwerden werden geprüft und führen zu einer als angemessen erachteten
-Reaktion. Die Verwaltenden sind verpflichtet, die Vertraulichkeit der meldenden
-Person zu wahren.
+Violations can be reported confidentially – through the same route as security reports
+(see [SECURITY.md](SECURITY.md): GitHub's "Report a vulnerability" feature, or an issue
+without details asking for a confidential contact). All complaints will be reviewed and
+will lead to a response that is deemed appropriate. The maintainers are obliged to respect
+the confidentiality of the person who reports an incident.
 
-## Grundlage
+## Attribution
 
-Dieser Verhaltenskodex ist angelehnt an den
-[Contributor Covenant](https://www.contributor-covenant.org), Version 2.1.
+This Code of Conduct is adapted from the
+[Contributor Covenant](https://www.contributor-covenant.org), version 2.1.

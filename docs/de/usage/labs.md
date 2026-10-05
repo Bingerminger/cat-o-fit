@@ -1,5 +1,7 @@
 # Labor & Ergänzung
 
+[English](../../usage/labs.md) · **Deutsch**
+
 Laborwerte erfassen, sportbezogen einordnen und allgemeine Informationen zur Ergänzung.
 
 > Teil der [Dokumentation](../README.md) · [Alle Seiten der Nutzung](../README.md#nutzen)
@@ -8,7 +10,7 @@ Laborwerte erfassen, sportbezogen einordnen und allgemeine Informationen zur Erg
 
 ## Labor & Ergänzung
 
-<img src="../assets/60-labor.png" width="260" align="right" alt="Labor & Ergänzung: Energieversorgung und Werte-Übersicht" />
+<img src="../../assets/de/60-labs.png" width="260" align="right" alt="Labor & Ergänzung: Energieversorgung und Werte-Übersicht" />
 
 Wer viel trainiert, lässt oft regelmäßig Blut abnehmen – und legt den Befund
 danach in eine Schublade. Hier kannst du die Werte erfassen, ihren **Verlauf** verfolgen und
@@ -20,7 +22,7 @@ knapp, und das kostet Leistung, lange bevor eine Blutarmut entsteht. Cat-O-Fit z
 **beide** Korridore: den Referenzbereich des Labors und den für Training günstigen.
 
 1. **Einrichten:** Beim ersten Öffnen beantwortest du ein paar kurze Fragen zur Abgrenzung –
-   sie gelten für die ganze App (siehe [Gesundheit & Eignung](gesundheit.md#gesundheit--eignung)). Die App
+   sie gelten für die ganze App (siehe [Gesundheit & Eignung](health.md#gesundheit--eignung)). Die App
    ist für **gesunde Erwachsene** gedacht – wer in ärztlicher Behandlung ist, Medikamente
    nimmt, schwanger ist oder stillt oder eine Essstörung hat, nutzt das Modul nur zum
    **Dokumentieren**. Erfassen und Verlauf ansehen geht weiterhin, Empfehlungen gibt es dann
@@ -84,7 +86,7 @@ du Trends erkennst, ohne etwas zu öffnen. Beim Antippen erscheint die volle Kur
 **Referenz- und Sport-Zielbereich** sowie der Änderung pro Monat. Nimmst du etwas regelmäßig
 ein, zeigt ein Balkendiagramm deine **Einnahmetreue** der letzten drei Wochen.
 
-<p><img src="../assets/61-labor-detail.png" width="260" alt="Laborwert-Verlauf mit Referenz- und Sport-Zielbereich" /></p>
+<p><img src="../../assets/de/61-lab-detail.png" width="260" alt="Laborwert-Verlauf mit Referenz- und Sport-Zielbereich" /></p>
 
 Im Beispiel oben liegt das **Ferritin bei 47 µg/l** – noch im Sport-Zielbereich (40–200), aber
 die Kurve fällt seit Monaten um knapp 4 µg/l pro Monat. Die Tendenz rechnet das weiter: In etwa
@@ -139,7 +141,7 @@ einen deutschen Standard, international **HL7 FHIR**; über die **elektronische 
 (etwa Ferritin über 40 statt über 15), stammt aus sportmedizinischer Fachliteratur und
 internationalen Positionspapieren – nicht aus einer deutschen Norm. Die Quelle je Wert zeigt die
 Detailansicht unter „Grundlage der Bereiche“; die Liste steht unter
-[Methodik & Quellen](../wissen/methodik-und-quellen.md#laborwerte).
+[Methodik & Quellen](../knowledge/methods-and-sources.md#laborwerte).
 
 > 🔒 **Privat wie der Zyklus:** Laborwerte und Ergänzungen sieht in der App **nur du** – auch
 > Admins nicht –, und der Server gibt sie nur nach deiner PIN-Anmeldung heraus. Sie bleiben aus dem

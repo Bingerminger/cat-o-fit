@@ -77,9 +77,9 @@ test('DOC-12: all relative links and images in the documentation point to existi
     for (const target of linksOf(read(file))) {
       const [path, anchor] = target.split('#');
       const dest = path ? join(dirname(file), decodeURIComponent(path)) : file;
-      if (!existsSync(dest)) { broken.push(`${rel(file)} → ${target} (Datei fehlt)`); continue; }
+      if (!existsSync(dest)) { broken.push(`${rel(file)} → ${target} (file missing)`); continue; }
       if (anchor && dest.endsWith('.md') && !anchorsOf(dest).has(decodeURIComponent(anchor))) {
-        broken.push(`${rel(file)} → ${target} (Anker fehlt)`);
+        broken.push(`${rel(file)} → ${target} (anchor missing)`);
       }
     }
   }
@@ -102,17 +102,22 @@ test('DOC-12: numbers in the documentation match the code', async () => {
   const { SUGGESTED_MEALS } = await import('../js/nutrition.js');
   const { ANALYTES } = await import('../js/labs.js');
   const { MAX_MEMBERS } = await import('../js/storage.js');
-  const sources = [...mdFiles.filter((f) => !f.endsWith('CHANGELOG.md')), join(ROOT, 'js', 'helpcontent.js')].map((f) => [rel(f), read(f)]);
+  const help = ['de', 'en'].map((l) => join(ROOT, 'locales', l, 'help.json'));
+  const sources = [...mdFiles.filter((f) => !f.endsWith('CHANGELOG.md')), ...help].map((f) => [rel(f), read(f)]);
   const wrong = [];
   const expect = (re, actual, what) => {
     for (const [name, text] of sources) {
-      for (const m of text.matchAll(re)) if (Number(m[1]) !== actual) wrong.push(`${name}: „${m[0]}“ – im Code ${actual} ${what}`);
+      for (const m of text.matchAll(re)) if (Number(m[1]) !== actual) wrong.push(`${name}: "${m[0]}" – the code has ${actual} ${what}`);
     }
   };
-  expect(/(\d+) Übungen/g, EXERCISES.length, 'Übungen');
-  expect(/(\d+) (?:Rezepte|Gerichte)\b/g, SUGGESTED_MEALS.length, 'Rezepte');
-  expect(/(\d+) sportrelevante/g, Object.keys(ANALYTES).length, 'Analyte');
-  expect(/bis zu (\d+) Personen/g, MAX_MEMBERS, 'Personen');
+  expect(/(?<![\d.,])(\d+) Übungen/g, EXERCISES.length, 'exercises');
+  expect(/(?<![\d.,])(\d+) exercises\b/g, EXERCISES.length, 'exercises');
+  expect(/(?<![\d.,])(\d+) (?:Rezepte|Gerichte)\b/g, SUGGESTED_MEALS.length, 'recipes');
+  expect(/(?<![\d.,])(\d+) (?:recipes|meals)\b/g, SUGGESTED_MEALS.length, 'recipes');
+  expect(/(?<![\d.,])(\d+) sportrelevante/g, Object.keys(ANALYTES).length, 'analytes');
+  expect(/(?<![\d.,])(\d+) sport-relevant/g, Object.keys(ANALYTES).length, 'analytes');
+  expect(/bis zu (\d+) Personen/g, MAX_MEMBERS, 'people');
+  expect(/up to (\d+) people/g, MAX_MEMBERS, 'people');
   assert.deepEqual(wrong, [], wrong.join('\n'));
 });
 
@@ -135,32 +140,60 @@ test('DOC-12: version identical in version.js, package.json and topmost CHANGELO
   assert.match(read(join(ROOT, 'service-worker.js')), /const VERSION = 'catofit-v\d+';/);
 });
 
-test('DOC-12: menu paths in the documentation and help really exist', async () => {
+test('DOC-12: menu paths in the documentation and help really exist (German and English)', async () => {
   const { MORE_GROUPS, PROGRESS_TABS } = await import('../js/nav.js');
-  const more = MORE_GROUPS.flatMap((g) => g.items.map((i) => i.label));
-  const progress = PROGRESS_TABS.map((t) => t.label);
-  // Settings section headings: keys in settings.js, German text from the catalog.
-  const deUi = JSON.parse(read(join(ROOT, 'locales', 'de', 'ui.json')));
-  const heading = (key) => key.split('.').reduce((o, k) => (o == null ? o : o[k]), deUi);
-  const settings = [...read(join(ROOT, 'js', 'settings.js')).matchAll(/sectionHead\(t\('([\w.]+)'\)/g)].map((m) => heading(m[1])).filter(Boolean);
-  // The German help texts live in the catalog since v4.0.0.
-  const files = [...mdFiles.filter((f) => /docs[\\/](nutzung|betrieb|wissen)|APPLE-HEALTH|README/.test(f)), join(ROOT, 'locales', 'de', 'help.json')];
-  const bad = [];
-  const check = (text, name, re, allowed, what) => {
-    for (const m of text.matchAll(re)) {
-      const seg = m[1].replace(/[*„“"]/g, '').trim();
-      if (!allowed.some((a) => seg.startsWith(a))) bad.push(`${name}: ${what} → „${seg}“`);
-    }
+  const { setLocale } = await import('../js/i18n.js');
+  const settingsKeys = [...read(join(ROOT, 'js', 'settings.js')).matchAll(/sectionHead\(t\('([\w.]+)'\)/g)].map((m) => m[1]);
+  // German: docs/de/, README.de.md and the German help; English: the English user docs, README.md
+  // and the English help. "iOS-Einstellungen → …" / "iPhone Settings → …" are the system settings.
+  const PAGES = {
+    de: { pages: (f) => /^docs\/de\/|^README\.de\.md$/.test(f), quote: '„“', before: '(?<![\\w-])' },
+    en: { pages: (f) => /^docs\/(usage|operations|knowledge)\/|^README\.md$/.test(f), quote: '“”', before: '(?<![\\w-])(?<!(?:iOS|iPhone|iPad|Android|system|phone) )' },
   };
-  for (const f of files) {
-    // Treat line breaks in running text (Markdown) and indentation like a single space.
-    const text = read(f).replace(/\*\*/g, '').replace(/\s*\n\s*(?:>\s*)?/g, ' ');
-    check(text, rel(f), /(?<![\w-])Mehr → „?([^„“,.;)]+)/g, [...more, 'Abmelden'], 'Mehr');
-    check(text, rel(f), /(?<![\w-])Fortschritt → „?([A-ZÄÖÜ][^„“,.;)→]*)/g, progress, 'Fortschritt');
-    // "iOS Settings → …" means the iPhone system settings, not the app.
-    check(text, rel(f), /(?<![\w-])Einstellungen → „?([A-ZÄÖÜ][^„“,.;)→]*)/g, settings, 'Einstellungen');
+  const bad = [];
+  for (const [lang, cfg] of Object.entries(PAGES)) {
+    await setLocale(lang);
+    try {
+      const ui = JSON.parse(read(join(ROOT, 'locales', lang, 'ui.json')));
+      const get = (key) => key.split('.').reduce((o, k) => (o == null ? o : o[k]), ui);
+      const more = [...MORE_GROUPS.flatMap((g) => g.items.map((i) => i.label)), get('account.signOut')];
+      const progress = PROGRESS_TABS.map((x) => x.label);
+      const settings = settingsKeys.map(get).filter(Boolean);
+      const files = [...mdFiles.filter((f) => cfg.pages(rel(f).split('\\').join('/'))), join(ROOT, 'locales', lang, 'help.json')];
+      const q = cfg.quote;
+      const path = (word) => new RegExp(`${cfg.before}${word} → [${q}]?([A-ZÄÖÜ][^${q}",.;)→]*)`, 'g');
+      for (const f of files) {
+        // Treat line breaks in running text (Markdown) and indentation like a single space.
+        const text = read(f).replace(/\*\*/g, '').replace(/\s*\n\s*(?:>\s*)?/g, ' ');
+        for (const [word, allowed] of [[get('nav.more'), more], [get('nav.progress'), progress], [get('nav.settings'), settings]]) {
+          for (const m of text.matchAll(path(word))) {
+            const seg = m[1].replace(/[*„“”"]/g, '').trim();
+            if (!allowed.some((a) => seg.startsWith(a))) bad.push(`${rel(f)}: ${word} → "${seg}"`);
+          }
+        }
+      }
+    } finally {
+      await setLocale('de');
+    }
   }
   assert.deepEqual(bad, [], bad.join('\n'));
+});
+
+test('DOC-30: every user page exists in English and German, and each links to its counterpart', () => {
+  const pages = mdFiles.map((f) => rel(f).split('\\').join('/'));
+  const de = pages.filter((f) => f.startsWith('docs/de/'));
+  const en = pages.filter((f) => /^docs\/(usage|operations|knowledge)\//.test(f) || f === 'docs/README.md');
+  const problems = [];
+  const pair = (from, to) => {
+    if (!pages.includes(to)) { problems.push(`${from}: counterpart ${to} missing`); return; }
+    const link = relative(dirname(join(ROOT, from)), join(ROOT, to)).split('\\').join('/');
+    if (!read(join(ROOT, from)).includes(`](${link})`)) problems.push(`${from}: no link to ${link}`);
+  };
+  for (const f of de) pair(f, f.replace('docs/de/', 'docs/'));
+  for (const f of en) pair(f, f.replace('docs/', 'docs/de/'));
+  pair('README.md', 'README.de.md');
+  pair('README.de.md', 'README.md');
+  assert.deepEqual(problems, [], problems.join('\n'));
 });
 
 test('DOC-21: German quotation marks close at the top (no „…" with a straight character)', () => {

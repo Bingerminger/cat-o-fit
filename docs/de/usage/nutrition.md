@@ -1,5 +1,7 @@
 # Ernährung & Einkauf
 
+[English](../../usage/nutrition.md) · **Deutsch**
+
 Rezepte, Kalorienbilanz, Ess-Tagebuch, Einkaufsliste und gemeinsames Lager.
 
 > Teil der [Dokumentation](../README.md) · [Alle Seiten der Nutzung](../README.md#nutzen)
@@ -13,7 +15,7 @@ Rezepte, Kalorienbilanz, Ess-Tagebuch, Einkaufsliste und gemeinsames Lager.
 
 ## Ernährung & Listen lernen mit
 
-<img src="../assets/15-ernaehrung-lernen.png" width="260" align="right" alt="Ernährung mit Lieblingsgerichten" />
+<img src="../../assets/de/15-nutrition-learning.png" width="260" align="right" alt="Ernährung mit Lieblingsgerichten" />
 
 **Schnell starten:** Beim ersten Öffnen ist die Liste leer – tippe auf **„Rezept-Ideen laden“** und du
 hast mit einem Schlag **~48 fertige Gerichte** (Frühstück, Mittag, Abend, Snack: vegetarisch, vegan,
@@ -61,7 +63,7 @@ im **Profil** Größe, Gewicht, Geburtsjahr und (optional) Geschlecht ein.
 
 ## Einkaufsliste & gemeinsames Lager (Team/Familie)
 
-<img src="../assets/32-einkauf-familie.png" width="420" align="right" alt="Gemeinsame Einkaufsliste" />
+<img src="../../assets/de/32-family-shopping.png" width="420" align="right" alt="Gemeinsame Einkaufsliste" />
 
 Die Einkaufsliste ist **gemeinsam** und entsteht **automatisch aus den Speiseplänen aller
 Mitglieder** – niemand pflegt sie von Hand.

@@ -1,5 +1,7 @@
 # Gesundheit
 
+[English](../../usage/health.md) · **Deutsch**
+
 Körperwerte, Apple Health, Gesundheitsziele, Gesundheit & Eignung und der Zykluskalender.
 
 > Teil der [Dokumentation](../README.md) · [Alle Seiten der Nutzung](../README.md#nutzen)
@@ -16,7 +18,7 @@ Körperwerte, Apple Health, Gesundheitsziele, Gesundheit & Eignung und der Zyklu
 
 ## Körperwerte pflegen
 
-<img src="../assets/08-koerperwerte.png" width="270" align="right" alt="Körperwerte mit Trend-Charts" />
+<img src="../../assets/de/08-body-values.png" width="270" align="right" alt="Körperwerte mit Trend-Charts" />
 
 Unter **Fortschritt → Körper** verfolgst du deine Entwicklung – ruhig und ohne Druck:
 
@@ -51,8 +53,8 @@ und Bereitschaft vergleichen nur Werte derselben Messart. Beim Erfassen wählst 
 
 Uhren und Waagen (Apple Watch, Garmin, Withings …) schreiben nach Apple Health. Von dort kommen die
 Werte auf drei Wegen zu Cat-O-Fit – die Einrichtung steht ausführlich unter
-[Apple Health](../APPLE-HEALTH.md). Auf **Android** schickt eine Brücken-App die Werte aus
-Health Connect an dieselbe Adresse (siehe [Android: Health Connect](../APPLE-HEALTH.md#android-health-connect)).
+[Apple Health](apple-health.md). Auf **Android** schickt eine Brücken-App die Werte aus
+Health Connect an dieselbe Adresse (siehe [Android: Health Connect](apple-health.md#android-health-connect)).
 
 | Weg | Kosten | Was kommt an |
 |---|---|---|
@@ -92,7 +94,7 @@ ohne doppelte Belastung.
 
 ## Gesundheitsziele mit Fortschritt
 
-<img src="../assets/42-gesundheitsziele-coach.png" width="260" align="right" alt="Gesundheitsziele mit Fortschritt" />
+<img src="../../assets/de/42-health-goals-coach.png" width="260" align="right" alt="Gesundheitsziele mit Fortschritt" />
 
 Neben den **Wochenzielen** (aktive Minuten & Trainingstage) kannst du **dedizierte Zielwerte** für deine
 Körperwerte festlegen: **Gewicht, Körperfett, Ruhepuls, HRV** oder **VO₂max** – jeweils mit optionaler
@@ -144,7 +146,7 @@ Antwort. Lange Zyklen zählen dabei als echte Zyklen, statt still mit 28 Tagen w
 
 ## Zykluskalender
 
-<img src="../assets/18-zyklus.png" width="260" align="right" alt="Zykluskalender mit Phasen" />
+<img src="../../assets/de/18-cycle.png" width="260" align="right" alt="Zykluskalender mit Phasen" />
 
 Eine zyklusbewusste, rücksichtsvolle Trainingsplanung. Das Modul ist anfangs eingeschaltet; wer es
 nicht braucht, schaltet es unter **Einstellungen → Module** aus (dann verschwinden Menüpunkt und
@@ -171,6 +173,6 @@ Eintrag unter „＋ Erfassen“).
 
 > 🔒 **Datenschutz:** Zyklusdaten sieht nur die Person selbst – auch Admins beim Verwalten nicht, und
 > der Server gibt sie nur nach ihrer PIN-Anmeldung heraus. Sie liegen auf eurem eigenen Server
-> (siehe [Privat bleibt privat](familie.md#privat-bleibt-privat)).
+> (siehe [Privat bleibt privat](family.md#privat-bleibt-privat)).
 
 <br clear="all" />

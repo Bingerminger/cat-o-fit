@@ -32,7 +32,7 @@ declare(strict_types=1);
 require __DIR__ . '/storage.php';
 require __DIR__ . '/auth.php';
 
-/** Version of the interface (docs/SCHNITTSTELLEN.md). Only raise on incompatible changes. */
+/** Version of the interface (docs/API.md). Only raise on incompatible changes. */
 const API_VERSION = 1;
 /** Additive capabilities (older clients ignore them): bulk fetch, "since" in the ops response. */
 const API_FEATURES = ['changes-all', 'ops-since'];

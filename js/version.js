@@ -1,6 +1,6 @@
 /* =========================================================================
-   version.js — zentrale App-Version (Single Source of Truth).
-   Wird neben dem Logo und im Einstellungen-Footer angezeigt. Beim Versions-
-   sprung hier, in package.json und im Service-Worker-Cache-Namen mitziehen.
+   version.js — central app version (single source of truth).
+   Shown next to the logo and in the settings footer. On a version bump,
+   update it here, in package.json and in the service worker cache name.
    ========================================================================= */
 export const APP_VERSION = '3.23.0';

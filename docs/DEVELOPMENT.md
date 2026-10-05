@@ -1,48 +1,47 @@
-# Entwicklung
+# Development
 
-Praktischer Leitfaden zum lokalen Arbeiten an Cat-O-Fit. Architektur-Hintergrund in
-[ARCHITEKTUR.md](ARCHITEKTUR.md), Beitrags-Etikette in
+Practical guide to working on Cat-O-Fit locally. Architecture background in
+[ARCHITECTURE.md](ARCHITECTURE.md), contribution etiquette in
 [../CONTRIBUTING.md](../CONTRIBUTING.md).
 
-## Voraussetzungen
+## Requirements
 
-- **Node.js ≥ 22** – nur für die Tests (keine Laufzeit-Abhängigkeit der App; `node --test` mit Glob-Muster braucht Node 21+, die CI prüft 22 und 24).
-- **PHP ≥ 8.1** – für das Backend (Persistenz, Anmeldung, `.ics`, Health-Import; die Speicherung braucht `fsync`, das es erst ab 8.1 gibt). Für reines
-  Frontend-Stöbern genügt ein beliebiger statischer Server, aber ohne PHP gibt es kein
-  Speichern.
+- **Node.js ≥ 22** – only for the tests (not a runtime dependency of the app; `node --test` with a glob pattern needs Node 21+, CI checks 22 and 24).
+- **PHP ≥ 8.1** – for the backend (persistence, sign-in, `.ics`, health import; storage needs `fsync`, which only exists from 8.1). For browsing the
+  frontend alone any static server will do, but without PHP nothing can be saved.
 
-Es gibt **kein** `npm install` – `package.json` enthält nur das Test-Skript.
+There is **no** `npm install` – `package.json` only holds the test script.
 
-## Lokal starten
+## Running locally
 
 ```bash
 git clone https://github.com/Bingerminger/cat-o-fit.git
 cd cat-o-fit
 
-# Variante A: voll (Frontend + PHP-Backend)
+# Option A: full (frontend + PHP backend)
 php -S localhost:8000
-# -> http://localhost:8000 öffnen
+# -> open http://localhost:8000
 
-# Variante B: nur Tests
+# Option B: tests only
 npm test
 ```
 
-Mit leerem `data/` (so liegt es im Repo, nur mit `.htaccess`) startet die App in der
-**Ersteinrichtung** (Admin mit eigener PIN anlegen, optional Demodaten). Für eine Instanz im
-Altformat gibt es Entwickler-Seeds unter `tools/seed/` (erzeugt mit `tools/gen-demo-seeds.mjs`):
-`cp tools/seed/*.json data/` vor dem ersten Start – `ensure_bootstrap()` migriert sie dann zum
-ersten Admin `u-1` **ohne PIN** (nur lokal verwenden). Die Laufzeit-Ordner (`data/users`,
-`data/family`, `data/auth`) sind in `.gitignore`.
+With an empty `data/` (as it ships in the repo, containing only a `.htaccess`) the app starts in
+**first-time setup** (create an admin with their own PIN, optionally demo data). For an instance in
+the old format there are developer seeds under `tools/seed/` (generated with `tools/gen-demo-seeds.mjs`):
+`cp tools/seed/*.json data/` before the first start – `ensure_bootstrap()` then migrates them to the
+first admin `u-1` **without a PIN** (use locally only). The runtime folders (`data/users`,
+`data/family`, `data/auth`) are in `.gitignore`.
 
-### Sauberer Zustand / Reset
+### Clean state / reset
 
 ```bash
-# Server-Laufzeitdaten zurücksetzen (danach wieder Ersteinrichtung)
+# Reset the server runtime data (afterwards the app is back in first-time setup)
 rm -rf data/users data/family data/auth data/.bootstrap.lock data/*.json
 ```
 
-Im Browser zusätzlich `localStorage.clear()` und ggf. den Service-Worker-Cache leeren
-(DevTools → Application → Storage), damit die frische Shell geladen wird.
+In the browser also run `localStorage.clear()` and, if necessary, empty the service-worker cache
+(DevTools → Application → Storage) so that the fresh shell is loaded.
 
 ## Tests
 
@@ -50,66 +49,65 @@ Im Browser zusätzlich `localStorage.clear()` und ggf. den Service-Worker-Cache 
 npm test     # node --import ./test-setup.js --test "test/**/*.test.js"
 ```
 
-- Runner: eingebautes **`node:test`**.
-- `test-setup.js` stellt ein **Mini-DOM** und einen `localStorage`-Shim bereit (kein
-  jsdom). Damit laufen sowohl reine Logik-Tests als auch View-Render-Tests
-  (`test/views.test.js`) im Node.
-- Neue Logik in einem DOM-freien Modul kapseln und unter `test/<modul>.test.js` testen.
-- **Sync gegen einen protokolltreuen Test-Server (seit v3.20.0):** `globalThis.__fakeServer.install()`
-  ersetzt `fetch` durch einen In-Memory-Server, der `apply_ops` nachbildet (globale Bereichs-`rev`,
-  Tombstones, `replace` mit `baseRev`, 2000-Ops-Grenze → `413`). Stellschrauben über `srv.opts`:
-  `latencyMs` (Zahl oder Funktion je Anfrage), `offline`, `failStatus`, `failWhen`, `opLimit`;
-  `srv.requests` protokolliert jede Anfrage, `srv.store(area, {user|scope})` zeigt den Serverstand.
-  Opt-in: ohne `install()` bleibt der einfache Erfolgs-Mock aktiv. Beispiel: `test/sync-integrity.test.js`.
-- **Voller Gerätespeicher:** `localStorage.__setQuota(n)` begrenzt den Shim auf `n` Zeichen
-  (`setItem` wirft dann `QuotaExceededError`), `localStorage.__used()` liefert den Füllstand.
-- **PHP-API über HTTP:** `php tools/test-api.php` startet einen eigenen PHP-Testserver auf einer
-  Kopie von `api/` mit leerem Temp-Datenverzeichnis und prüft Anmeldung/Sitzung, private Bereiche,
-  Schutz vor fremden Seiten, Familienregeln, PIN-Regeln und Fehlversuchssperre, Kalender-Schlüssel,
-  Health-Import-Grenzen, den Health-Eingang im Kurzbefehl-Format, `tools/reset-pin.php` und die
-  Host-Liste.
-- **PHP-Tests ohne Server:** `php tools/test-health-ingest.php` (Apple-Health-Mapping inkl.
-  Tagesformat), `php tools/test-health-xml.php` (Voll-Import), `php tools/test-ics.php`
-  (Kalender-Zeitzone) und `php tools/test-storage.php` (Persistenz: unlesbare/leere/beschädigte Datei,
-  `replace` mit `baseRev`; arbeitet auf einer Kopie von `storage.php` in einem Temp-Verzeichnis).
-- **Doku-Tests:** `test/docs.test.js` prüft Links und Anker aller Markdown-Dateien, Bildverweise,
-  Zahlen im README, die Versionsgleichheit (version.js, package.json, CHANGELOG) und die
-  Hilfe-Verweise; `test/help-context.test.js` die Hilfeartikel, `test/ui-texts.test.js` Begriffe und
-  Zahlenformat der Ansichten.
-- Eine **GitHub-Actions-CI** (`.github/workflows/ci.yml`) führt die Tests bei jedem Push
-  und Pull Request aus.
+- Runner: the built-in **`node:test`**.
+- `test-setup.js` provides a **mini DOM** and a `localStorage` shim (no jsdom). With it, both pure
+  logic tests and view render tests (`test/views.test.js`) run in Node.
+- Put new logic in a DOM-free module and test it under `test/<module>.test.js`.
+- **Sync against a protocol-faithful test server (since v3.20.0):** `globalThis.__fakeServer.install()`
+  replaces `fetch` with an in-memory server that reproduces `apply_ops` (global area `rev`,
+  tombstones, `replace` with `baseRev`, 2000-op limit → `413`). Knobs via `srv.opts`:
+  `latencyMs` (a number or a function per request), `offline`, `failStatus`, `failWhen`, `opLimit`;
+  `srv.requests` logs every request, `srv.store(area, {user|scope})` shows the server state.
+  Opt-in: without `install()` the simple success mock stays active. Example: `test/sync-integrity.test.js`.
+- **Full device storage:** `localStorage.__setQuota(n)` limits the shim to `n` characters
+  (`setItem` then throws `QuotaExceededError`), `localStorage.__used()` returns the fill level.
+- **PHP API over HTTP:** `php tools/test-api.php` starts its own PHP test server on a copy of `api/`
+  with an empty temporary data directory and checks sign-in/session, private areas, protection against
+  foreign sites, family rules, PIN rules and the lockout after failed attempts, calendar keys,
+  health-import limits, the health intake in the Shortcuts format, `tools/reset-pin.php` and the
+  host list.
+- **PHP tests without a server:** `php tools/test-health-ingest.php` (Apple Health mapping incl.
+  the daily format), `php tools/test-health-xml.php` (full import), `php tools/test-ics.php`
+  (calendar time zone) and `php tools/test-storage.php` (persistence: unreadable/empty/corrupt file,
+  `replace` with `baseRev`; works on a copy of `storage.php` in a temporary directory).
+- **Documentation tests:** `test/docs.test.js` checks links and anchors of all Markdown files, image
+  references, the numbers quoted in the docs and README, version equality (version.js, package.json,
+  CHANGELOG) and the help links; `test/help-context.test.js` checks the help articles,
+  `test/ui-texts.test.js` the terms and number format of the views.
+- A **GitHub Actions CI** (`.github/workflows/ci.yml`) runs the tests on every push
+  and pull request.
 
-### PHP-API isoliert testen (ohne echte Daten zu berühren)
+### Testing the PHP API in isolation (without touching real data)
 
-Die `node:test`-Suite mockt `fetch` – die **echte** PHP-Seite (`apply_ops`/`changes`/`load_area`/
-`ics`/`health-import`) prüft man am besten gegen einen isolierten Server mit eigenem `data/`.
-`DATA_DIR` ist fest `__DIR__/../data`, daher eine Kopie der App:
+The `node:test` suite mocks `fetch` – the **real** PHP side (`apply_ops`/`changes`/`load_area`/
+`ics`/`health-import`) is best checked against an isolated server with its own `data/`.
+`DATA_DIR` is fixed to `__DIR__/../data`, so use a copy of the app:
 
 ```bash
 QA=$(mktemp -d)
 rsync -a --exclude='.git/' --exclude='node_modules/' --exclude='/data/' ./ "$QA/"
-mkdir "$QA/data"                                  # leeres, isoliertes Datenverzeichnis
+mkdir "$QA/data"                                  # empty, isolated data directory
 php -S 127.0.0.1:8077 -t "$QA" &
 curl "http://127.0.0.1:8077/api/api.php?action=ping"
 ```
 
-So lassen sich Ops, .ics-Erzeugung (gegen `?action=ics&scope=event&id=…&user=u-1`), Parallelzugriffe
-(flock) und der Health-Import durchspielen, **ohne** echte Daten zu verändern. Vor destruktiven
-Tests gegen `data/` immer snapshotten und danach wiederherstellen.
+This lets you play through ops, `.ics` generation (against `?action=ics&scope=event&id=…&user=u-1`),
+parallel access (flock) and the health import **without** changing real data. Before destructive
+tests against `data/`, always take a snapshot and restore it afterwards.
 
-## Lasttest & Performance
+## Load test & performance
 
-Verifiziert, dass die dateibasierte Persistenz (`flock` + atomares Temp→`rename`) **unter paralleler
-Last dateninteger** bleibt und die Latenzen nutzbar sind. Wichtig: `php -S` ist standardmäßig
-single-threaded – echte flock-Contention nur mit mehreren Workern (`PHP_CLI_SERVER_WORKERS`).
+Verifies that the file-based persistence (`flock` + atomic temp→`rename`) **stays data-intact under
+parallel load** and that the latencies are usable. Important: `php -S` is single-threaded by
+default – real flock contention only shows with several workers (`PHP_CLI_SERVER_WORKERS`).
 
-**Methode:** isolierte App-Kopie mit leerem `data/`, 8-Worker-PHP, Lastgenerator `tools/loadtest.py`
-(python3-stdlib, `ThreadPoolExecutor`): 10 Nutzer, paralleler Mix aus **Write** (Einzel-Upsert),
-**Read** (`changes`), **Backup** (alle Bereiche lesen) und **Import** (`replace` mit N Sätzen).
-Geprüfte Integrität: keine verlorenen Updates, `rev` eindeutig, JSON auf Platte valide, Nutzer-Isolation,
-Import-Konsistenz. Ausgabe als Tabelle. Der Dauerlauf prüft die Writes über **ID-Mengen** (jede bestätigte
-ID liegt am Server, dort liegt nichts, was nie gesendet wurde) statt über eine Zählersumme – unter Last kann
-eine Anfrage am Server ankommen, deren Antwort den Client nicht mehr erreicht.
+**Method:** an isolated app copy with an empty `data/`, 8-worker PHP, load generator `tools/loadtest.py`
+(python3 stdlib, `ThreadPoolExecutor`): 10 users, a parallel mix of **write** (single upsert),
+**read** (`changes`), **backup** (read all areas) and **import** (`replace` with N records).
+Integrity checked: no lost updates, `rev` unique, JSON on disk valid, user isolation,
+import consistency. Output as a table. The soak run checks the writes by **sets of IDs** (every acknowledged
+ID is on the server, and nothing is there that was never sent) instead of by a counter total – under load
+a request can reach the server whose response never reaches the client.
 
 ```bash
 QA=scratch/lt-app
@@ -119,456 +117,476 @@ PHP_CLI_SERVER_WORKERS=8 php -S 127.0.0.1:8078 -t "$QA" &
 python3 tools/loadtest.py http://127.0.0.1:8078/api/api.php "$QA/data" 10 300 80 5 3 100 100
 #         BASE_URL                              DATA_DIR    NUSERS·WRITES·READS·BACKUPS·IMPORTS·IMPORT_RECS·CONCURRENCY
 
-# Dauerlast („Soak“): konstante Last über N Sekunden – zeigt, ob die Latenz mit
-# wachsenden JSON-Dateien wegläuft. Misst je 10-Sekunden-Fenster (Zeile
-# „Dauerlauf 60 s“ in der Tabelle unten).
+# Sustained load ("soak"): constant load for N seconds – shows whether the latency
+# runs away as the JSON files grow. Measured per 10-second window (row
+# "Soak run 60 s" in the table below).
 python3 tools/loadtest_soak.py http://127.0.0.1:8078/api/api.php "$QA/data" 10 5000 500 60 100
-#         BASE_URL                                   DATA_DIR    NUSERS·MAXWRITES·CONCURRENCY·DAUER·IMPORT_RECS
+#         BASE_URL                                   DATA_DIR    NUSERS·MAXWRITES·CONCURRENCY·DURATION·IMPORT_RECS
 
-lsof -ti :8078 | xargs kill   # Server stoppen
+lsof -ti :8078 | xargs kill   # stop the server
 ```
 
-Beide Skripte prüfen alle **13** Nutzer-Bereiche auf Integrität (inkl. `labs` und
-`supplements` seit v3.17.0).
+Both scripts check all **13** user areas for integrity (including `labs` and
+`supplements` since v3.17.0).
 
-**Referenz-Plattform** (anonymisiert – nur als Anhaltspunkt; auf der Synology bzw. anderer Hardware
-fallen die Zahlen anders aus): **Apple M1 Max · 10 Kerne · 64 GB RAM · macOS 26.5.1 · PHP 8.5.7**
-(Built-in-Server, 8 Worker) · Python 3.14. Synthetische, anonyme Testdaten (`u-load-NN`).
+**Reference platform** (anonymised – only a rough guide; on the Synology or other hardware
+the numbers will differ): **Apple M1 Max · 10 cores · 64 GB RAM · macOS 26.5.1 · PHP 8.5.7**
+(built-in server, 8 workers) · Python 3.14. Synthetic, anonymous test data (`u-load-NN`).
 
-| Last | Anfragen | Parallel | Dauer | Durchsatz | Write p95 | Backup p95 | Fehler | Integrität |
+| Load | Requests | Concurrent | Duration | Throughput | Write p95 | Backup p95 | Errors | Integrity |
 |---|--:|--:|--:|--:|--:|--:|--:|:--:|
-| leicht | 900 | 40 | 0,31 s | 2.908/s | 17 ms | 110 ms | 0 | ✓ |
-| schwer | 3.880 | 100 | 1,13 s | 3.421/s | 42 ms | 290 ms | 0 | ✓ |
-| sehr schwer | 11.580 | 200 | 3,81 s | 3.039/s | 94 ms | 836 ms | 0 | ✓ |
-| Dauerlauf 60 s | 60.277 (45.161 Writes) | 500 | 60 s | 1.002/s | 478 ms | 4.426 ms | 0 | ✓ |
+| light | 900 | 40 | 0.31 s | 2,908/s | 17 ms | 110 ms | 0 | ✓ |
+| heavy | 3,880 | 100 | 1.13 s | 3,421/s | 42 ms | 290 ms | 0 | ✓ |
+| very heavy | 11,580 | 200 | 3.81 s | 3,039/s | 94 ms | 836 ms | 0 | ✓ |
+| Soak run 60 s | 60,277 (45,161 writes) | 500 | 60 s | 1,002/s | 478 ms | 4,426 ms | 0 | ✓ |
 
-**Einordnung:**
-- **Integrität: felsenfest** – selbst bei 10.000 nebenläufigen Writes bzw. 45.000 Writes / 13 MB im
-  Dauerlauf kein verlorener Update, keine Korruption.
-- **Durchsatz-Decke ≈ 3.400 req/s** beim Einzelhost (gesättigt um ~100 parallel). Mehr Parallelität
-  bringt nur Latenz, keine Fehler.
-- **Teuerster Pfad: das Voll-Backup** (liest alle Bereiche) – wächst mit der Datenmenge; ebenso die
-  Writes (jeder schreibt die ganze Bereichs-JSON neu → ~O(n)). Für eine Familie (≤10 Nutzer, kaum
-  Gleichzeitigkeit, Hunderte Sätze über Jahre) ist das **riesige Reserve**. Erster Skalierungs-Hebel
-  wäre ein inkrementelles statt „alle Bereiche lesen“-Backup.
+**Assessment:**
+- **Integrity: rock solid** – even with 10,000 concurrent writes or 45,000 writes / 13 MB in the
+  soak run, no lost update and no corruption.
+- **Throughput ceiling ≈ 3,400 req/s** on a single host (saturated at ~100 concurrent). More
+  concurrency only brings latency, not errors.
+- **Most expensive path: the full backup** (reads all areas) – it grows with the amount of data; so
+  do the writes (each one rewrites the whole area JSON → ~O(n)). For a family (≤ 10 users, hardly any
+  concurrency, hundreds of records over the years) this is a **huge reserve**. The first scaling lever
+  would be an incremental backup instead of "read all areas".
 
-## Browser-Verifikation
+## Browser verification
 
-Die App nach Änderungen kurz im Browser prüfen (gerade UI-nahe Änderungen):
+After changes, check the app briefly in the browser (especially for changes close to the UI):
 
-- Login lokal: Ein **Reload behält die Sitzung** (sessionStorage, seit v3.4.0); ein echter Neustart
-  (leerer sessionStorage / neuer Tab) verlangt wieder eine Anmeldung. In der DevTools-Konsole anmelden:
+- Local sign-in: a **reload keeps the session** (sessionStorage, since v3.4.0); a real restart
+  (empty sessionStorage / new tab) asks for a sign-in again. Sign in from the DevTools console:
   `const s = await import('./js/storage.js'); await s.refreshFamily(); await s.login('<id>','<pin>'); location.hash = '#/';`
-  (ID und PIN der in der Ersteinrichtung angelegten Admin-Person). Oder einfach im UI auf die
-  Profil-Kachel tippen. `php -S` wertet `.htaccess` nicht aus – die Content-Security-Policy greift
-  trotzdem, weil `index.html` sie zusätzlich als `<meta>` trägt.
-- Nach jeder Shell-Änderung den **Service-Worker-Cache** beachten – `VERSION` in
-  `service-worker.js` erhöhen oder den Cache in den DevTools leeren.
+  (ID and PIN of the admin person created in the first-time setup). Or simply tap the
+  profile tile in the UI. `php -S` does not evaluate `.htaccess` – the Content Security Policy still
+  applies, because `index.html` carries it additionally as a `<meta>` tag.
+- After every shell change, mind the **service-worker cache** – raise `VERSION` in
+  `service-worker.js` or empty the cache in the DevTools.
 
-## Datensicherheit & Sync (Invarianten, server-autoritativ seit v3.0.0)
+## Data safety & sync (invariants, server-authoritative since v3.0.0)
 
-Diese Regeln im Store (`storage.js`) und Backend (`storage.php`) **nicht** brechen:
+Do **not** break these rules in the store (`storage.js`) and backend (`storage.php`):
 
-- **Der Server vergibt die `rev`.** Jede angewandte Op erhöht eine monotone Bereichs-`rev`
-  und stempelt einen Server-Zeitstempel. Clients setzen NIE selbst eine maßgebliche `rev`.
-  Konflikte werden über die server-`rev` entschieden (nicht über die Geräte-Uhr).
-- **Erst pushen, dann pullen.** `syncPass` schickt je Bereich zuerst die eigenen Ops, dann
-  `pullChanges(since=rev)`. So überschreibt ein Pull nie un­gepushte lokale Edits; ein Pull
-  gewinnt nur, wenn `record.rev` höher ist.
-- **Die Pull-Marke rückt nur durch einen Pull vor (seit v3.20.0).** Die Push-Antwort trägt die
-  GLOBALE Bereichs-`rev` – als Marke übernommen, übersprang sie fremde Änderungen dazwischen
-  (zweites Gerät, Health-Ingest). `pushAreaNow`/`pushFamilyNow` fassen `revs` deshalb nicht an.
-  Eine einmalige Heilung (`syncHeal` = `3.20`) setzt alle Marken beim ersten Start zurück, damit
-  früher übersprungene Datensätze nachgeladen werden.
-- **Keine Op geht still verloren (seit v3.20.0).** Ops tragen eine `opId` und werden nach dem
-  Senden per Identität entfernt (nie per Anzahl/Position). Gesendet wird in Stücken ≤ 500 Ops
-  (`PUSH_CHUNK`; bei `413` halbiert). Je Nutzer und Bereich läuft höchstens ein Push (`inflight`).
-  `commitLocal` schreibt erst die Queue, dann den Bereich, und rollt bei vollem Speicher beides
-  zurück (Ereignis `catofit:storage-full`, Toast in `app.js`). Massenimporte nutzen `upsertMany`
-  (ein Schreibvorgang). Die Queue wird verdichtet (`replace` ersetzt alles davor, je ID zählt die
-  letzte Op). Tabs vereinigen ihre Queues über das `storage`-Event (`adoptForeignOps`).
-- **Server-Rücksprung konservativ behandeln.** Ist die Server-`rev` kleiner als die Marke, folgt
-  `resyncArea` mit `mergeConservative`: Server gewinnt bei gleichem/neuerem `updatedAt`, lokal
-  Neueres bleibt (mit `rev` 0, wird erneut gesendet), lokal wird nichts gelöscht. Dazu einmal pro
-  Woche ein Voll-Abgleich je Bereich ohne offene Ops (`<user>:__fullSync`).
-- **Verwaltete Mitglieder hinterlassen keinen Ballast.** `setActiveUser`/`logout` verwerfen die
-  zwischengespeicherten Bereiche eines verwalteten Mitglieds (`evictUserCache`); offene Ops bleiben
-  im `__meta` und werden beim nächsten Sync nachgesendet (`pushForeignQueues`).
-- **Nutzer fixieren / Pushes binden.** `syncNow()` fixiert den Nutzer (In-Flight-Guard +
-  einmaliger Nachlauf); `pushArea(area, user)` ist an den Nutzer gebunden – nie Ops am
-  falschen Nutzer abladen.
-- **Familie als Datensätze.** Mitglieder/Settings/Lager sind einzelne Records (`_kind`).
-  Schreibzugriffe erzeugen **Einzel-Ops** – nie das ganze `family`-Objekt überschreiben,
-  sonst kehrt der stille Mitglieder-Verlust zurück (Regressionstest: `test/sync.test.js`
-  „zwei Admins legen je ein Mitglied an“).
-- **Migration ist deterministisch.** `read_store` migriert Altformat in `{rev, records}` mit
-  identischer rev-Vergabe bei Lese- und Schreibzugriff. Beim Ändern eines Records-Formats die
-  Migration mitziehen.
-- **`load_area` liefert OBJEKTE.** Intern arbeitet `read_store` mit assoziativen Arrays; `load_area`
-  wandelt die logische Sicht per JSON-Roundtrip zurück in `stdClass`-Objekte. PHP-Konsumenten wie
-  `ics.php` greifen per Objekt-Syntax zu (`$e->id`, `$u->type`) – das **nicht** auf Array-Zugriff
-  umstellen, sonst entstehen leere `.ics` (Regression aus v3.0.0, behoben in v3.0.2).
-- **Versiegelt/privat respektieren.** `SEALED_AREAS` (Reports) nur über `addReport`;
-  `PRIVATE_AREAS` (Zyklus) nie in einen Fremd-/Admin-Export und nie beim Verwalten anzeigen.
-  **Härtung seit v3.12.0:** `store.areaAllowed(area)` (= `!(isManaging() && PRIVATE_AREAS.includes(area))`)
-  ist die zentrale Schranke. `get('cycle')` liefert beim Verwalten `[]`, und die Nav blendet private Module
-  aus (`app.js navVisible` → `areaAllowed`; Nav wird bei Managing-Wechsel über das `catofit:nav`-Event neu
-  gebaut). Die Person selbst (`!isManaging`) sieht ihren Zyklus normal. Getestet in `test/storage.test.js`.
-  **Seit v3.20.0 auch am Server:** `cycle`, `labs`, `supplements` nur mit Sitzung der Person selbst
-  (siehe „Sicherheitsmodell“); der Client fragt sie ohne eigene Sitzung gar nicht erst an.
-  **Demo:** Alle Mitglieder haben vollständige Stammdaten (individuelles Profil + Einstellungen); die
-  weiblichen Mitglieder haben eigene, private Zyklusdaten (`demoMemberProfile`, `data.cycle` je Frau).
-  Diese privaten Demo-Daten warten in der Queue des Mitglieds auf diesem Gerät und gehen an den
-  Server, sobald sich das Mitglied hier anmeldet (der Admin darf sie nicht schreiben).
-- **Sitzung pro Browser-Sitzung (seit v3.4.0; davor „kein Auto-Login“ seit v3.2.0).** `login()` und
-  `createFirstAdmin()` merken die Identität in **`sessionStorage`** (`catofit:session`); `init()` stellt
-  sie daraus wieder her. Die Anmeldung **übersteht Reloads** (Theme-/Profil-/Plan-Änderungen laden die
-  Seite neu → melden nicht mehr ab), aber **nicht** den App-Neustart/das Schließen → beim echten Start
-  gilt weiter „immer neu anmelden“. Der LEGACY-Schlüssel `catofit:identity` (dauerhaft, vor v3.2.0) wird
-  weiterhin verworfen. Ohne aktiven Nutzer ist nur `#/login` erreichbar, Menüs aus – Logik DOM-frei in
-  `js/session-gate.js` (`gate()`/`menusVisible()`/`needsSetup()`, getestet in `test/session-gate.test.js`).
-  `logout()`/`resetApp()` flushen offene Ops (online) und räumen `sessionStorage` weg; `logout()` beendet
-  seit v3.20.0 auch die Server-Sitzung und räumt bei **„Gemeinsames Gerät“** (`isSharedDevice`) alle
-  Personendaten aus dem Browserspeicher (`wipePersonalData`; ungesendete Ops bleiben). Nach einem Reload
-  prüft `syncNow` per `?action=session`, ob das Cookie noch gilt.
-- **Module: Standard-an, abschaltbar (seit v3.4.1).** Einheitliche Schranke ist `settings().modules[k] !== false`
-  (auch für den Zyklus – nicht mehr Opt-in `=== true`). Die Navigation filtert modulgebundene Einträge über
-  `navVisible()` und baut sich bei `catofit:nav` sofort neu (Sidebar + „Mehr“). Modul-/Metrik-Toggles lesen
-  den **frischen** `modules`-Stand (kein Render-Snapshot), sonst überschreiben sich zwei Toggles
-  nacheinander (Bug aus < v3.4.1).
-- **Ersteinrichtung statt Auto-Anlage (seit v3.3.0).** Bei **leerer** Familie zeigt `/login` (`login.js`)
-  die Ersteinrichtung: `createFirstAdmin({name,pin})` umgeht die `isAdmin()`-Schranke (es gibt noch keinen
-  Admin) und meldet direkt an; `seedDemo(today)` füllt Beispiel-Daten (`js/demo.js`, DOM-frei + getestet).
-  `resetApp()` (Admin) löscht Familie + alle Nutzer (Server & lokal) und führt zurück zur Ersteinrichtung.
-  Testen ohne Neuinstallation: in den Einstellungen (Admin) **„App zurücksetzen“** – oder den isolierten
-  PHP-Server mit leerem `data/` (siehe oben), dann landet die App im Setup-Assistenten.
-- **Umgebungs-Namespace (seit v3.5.0).** Mehrere Deployments auf DERSELBEN Origin (etwa PROD
-  `/cat-o-fit/` und ACC `/cat-o-fit-acc/`) dürfen sich Client-Speicher NICHT teilen. `APP_NS`/`scopeKey`
-  (`js/ui.js`) leiten aus dem Auslieferungspfad einen Präfix ab; **alle** LocalStorage-/SessionStorage-Keys
-  laufen darüber (Familie, Sitzung, Nutzerdaten, Meta, Feature-Caches). Der Service-Worker-Cache ist
-  pfad-eindeutig, `resetApp` löscht nur die eigene Umgebung, und `createFirstAdmin` gleicht online erst
-  den Server ab (kein zweiter Admin). Sonst kehren „doppelte Nutzer“ zurück (Regression: `test/env-isolation.test.js`).
-  `pinHash` bleibt bewusst OHNE Namespace (sonst würden alle PINs ungültig).
-- **Automatischer Health-Ingest (seit v3.6.0).** `api/health-ingest.php` (`?action=health-ingest&user=&token=`)
-  nimmt kleine JSON-Payloads von „Health Auto Export“ entgegen und schreibt SERVER-SEITIG per `apply_ops`:
-  health (ein Eintrag/Tag, **feldweise gemergt** – Nutzerfelder mood/energy/notes bleiben) und sessions
-  (Workouts, **dedupliziert per `hk-<UUID>`**, plus Skip gegen deckungsgleiche manuelle Einheiten),
-  `source: 'apple-health'`. Auth: hinter `.htpasswd` **plus** per-Nutzer-Token (`profile.healthToken`,
-  in der Health-Import-Ansicht erzeugt). Die REINE Mapping-Logik liegt in `api/health-map.php` (`hi_parse`,
-  ohne DB/Netz – Format **JSON v2**) und ist automatisiert getestet: **`php tools/test-health-ingest.php`**
-  (Namen inkl. `weight_&_body_mass`, Schlaf-Plausibilitätsgrenze >24 h, mi→km, `duration` in Sekunden,
-  v1/v2-Energie/HF, `ignoredMetrics`). `health-ingest.php` ergänzt nur Auth + Merge/Dedup + Schreiben.
-  Metrik-Mapping ist tolerant (exakt + Heuristik) gegen App-Versionen; Unbekanntes kommt als `ignoredMetrics`
-  zurück. Kein Client-Sync-Umbau – der Client zieht per Pull. Die Übersicht „Zuletzt importiert“ in der
-  Health-Import-Ansicht ist in `test/views.test.js` getestet. Anleitung: [APPLE-HEALTH.md](APPLE-HEALTH.md).
-- **Belastungssteuerung & feste Termine (seit v3.7.0).** Die Trainingslast beruht auf der sRPE-Methode
-  (`load.js sessionLoad` = Minuten × RPE; RPE auf 1–10 geklemmt, Dauer erfasst → Strecke je Sportart →
-  `plannedDurationMin` → 30 min, Deckel 24 h). ALLE Belastungskennzahlen liegen in `js/load.js` (eine
-  Quelle): **Lastverhältnis** (ACWR entkoppelt: letzte 7 Tage gegen Tag 8–28; Stufe „aufbau“ unter 28 Tagen
-  Historie), **Fitness/Ermüdung/Form** (CTL/ATL/TSB als Banister-EWMA, τ 42/7; `formState` relativ zur
-  CTL, erst ab `FORM_MIN_DAYS` = 90 Tagen bewertet) und **Monotonie/Strain** (Foster; RPE ≤ 3 zählt nicht,
-  Hinweis nur bei Woche ≥ 1,1 × eigene Wochenlast). Texte ohne Verletzungs- oder Schutzversprechen.
-  `fitness.loadBalance` (Statistik-Ampel) baut auf `acwr()` auf. Dashboard-Karte „Belastung & Form“
-  (`dashboard.js loadFormCard`) über `charts.js multiLineChart`; getestet in `test/load.test.js` und
-  `test/train-assumptions.test.js`. — **Feste Termine** (`js/commitments.js`):
-  Fußball ist NICHT im `DEFAULT_WEEK_TEMPLATE` verdrahtet, sondern in `plan.commitments`. Seit der
-  Planüberarbeitung gibt es **keine Standardtermine** mehr: neue Pläne starten mit `commitments: []`, die
-  Einrichtung fragt danach. Der Generator (`plangen.js buildWeekUnits`) plant **um** die Verpflichtungen
-  herum – Schlüsseleinheiten weichen aus, Lockeres entfällt; Spiele mit Datumsbereich (`commitmentDates`).
-  Qualität und Long Run liegen nie direkt neben einem harten festen Termin (auch Sonntag davor/Montag
-  danach und Termine anderer Pläne): Ausweichen auf einen ruhigen Tag, sonst „Locker mit Steigerungen“
+- **The server assigns the `rev`.** Every applied op raises a monotonic area `rev`
+  and stamps a server timestamp. Clients NEVER set an authoritative `rev` themselves.
+  Conflicts are decided by the server `rev` (not by the device clock).
+- **Push first, then pull.** For each area, `syncPass` first sends its own ops, then
+  `pullChanges(since=rev)`. This way a pull never overwrites unpushed local edits; a pull
+  only wins if `record.rev` is higher.
+- **The pull marker only advances through a pull (since v3.20.0).** The push response carries the
+  GLOBAL area `rev` – taken over as the marker, it skipped other people's changes in between
+  (second device, health ingest). `pushAreaNow`/`pushFamilyNow` therefore do not touch `revs`.
+  A one-off heal (`syncHeal` = `3.20`) resets all markers on first start so that records
+  skipped earlier are fetched again.
+- **No op is lost silently (since v3.20.0).** Ops carry an `opId` and are removed after sending by
+  identity (never by count/position). They are sent in chunks of ≤ 500 ops
+  (`PUSH_CHUNK`; halved on `413`). At most one push runs per user and area (`inflight`).
+  `commitLocal` writes the queue first, then the area, and rolls both back when storage is full
+  (event `catofit:storage-full`, toast in `app.js`). Bulk imports use `upsertMany`
+  (a single write). The queue is compacted (`replace` supersedes everything before it, per ID the
+  last op counts). Tabs merge their queues via the `storage` event (`adoptForeignOps`).
+- **Treat a server rollback conservatively.** If the server `rev` is lower than the marker,
+  `resyncArea` follows with `mergeConservative`: the server wins on an equal or newer `updatedAt`, newer
+  local data stays (with `rev` 0, so it is sent again), nothing local is deleted. In addition, once a
+  week, a full reconciliation per area without pending ops (`<user>:__fullSync`).
+- **Managed members leave nothing behind.** `setActiveUser`/`logout` discard the cached areas of a
+  managed member (`evictUserCache`); pending ops stay in `__meta` and are sent on the next
+  sync (`pushForeignQueues`).
+- **Pin the user / bind pushes.** `syncNow()` pins the user (in-flight guard plus one
+  follow-up run); `pushArea(area, user)` is bound to the user – never dump ops on the
+  wrong user.
+- **Family as records.** Members/settings/pantry are individual records (`_kind`).
+  Writes produce **single ops** – never overwrite the whole `family` object, or the silent
+  member loss returns (regression test: `test/sync.test.js`,
+  “two admins each add a member”).
+- **Migration is deterministic.** `read_store` migrates the old format into `{rev, records}` with
+  identical `rev` assignment for reads and writes. When you change a record format, update the
+  migration too.
+- **`load_area` returns OBJECTS.** Internally `read_store` works with associative arrays; `load_area`
+  converts the logical view back into `stdClass` objects via a JSON round trip. PHP consumers such as
+  `ics.php` access them with object syntax (`$e->id`, `$u->type`) – do **not** change that to
+  array access, or empty `.ics` files appear (regression from v3.0.0, fixed in v3.0.2).
+- **Respect sealed/private.** `SEALED_AREAS` (reports) only via `addReport`;
+  `PRIVATE_AREAS` (cycle) never into a foreign/admin export and never shown while managing.
+  **Hardening since v3.12.0:** `store.areaAllowed(area)` (= `!(isManaging() && PRIVATE_AREAS.includes(area))`)
+  is the central barrier. `get('cycle')` returns `[]` while managing, and the nav hides private modules
+  (`app.js navVisible` → `areaAllowed`; the nav is rebuilt via the `catofit:nav` event when managing changes).
+  The person themself (`!isManaging`) sees their cycle as usual. Tested in `test/storage.test.js`.
+  **Since v3.20.0 on the server too:** `cycle`, `labs`, `supplements` only with the session of the person
+  themself (see “Security model”); the client does not even request them without its own session.
+  **Demo:** all members have complete master data (individual profile + settings); the female members
+  have their own, private cycle data (`demoMemberProfile`, `data.cycle` per woman).
+  These private demo data wait in the member's queue on this device and go to the
+  server as soon as the member signs in here (the admin may not write them).
+- **Sign-in lasts for the browser session (since v3.4.0; before that “no auto-login” since v3.2.0).** `login()` and
+  `createFirstAdmin()` keep the identity in **`sessionStorage`** (`catofit:session`); `init()` restores
+  it from there. The sign-in **survives reloads** (theme/profile/plan changes reload the page – they no
+  longer sign you out), but **not** an app restart/closing → on a real start “always sign in again” still
+  applies. The LEGACY key `catofit:identity` (persistent, before v3.2.0) is still discarded. Without an
+  active user only `#/login` is reachable and the menus are off – logic DOM-free in
+  `js/session-gate.js` (`gate()`/`menusVisible()`/`needsSetup()`, tested in `test/session-gate.test.js`).
+  `logout()`/`resetApp()` flush pending ops (online) and clear `sessionStorage`; since v3.20.0 `logout()`
+  also ends the server session and, with **“Shared device”** (`isSharedDevice`), clears all personal data
+  from the browser storage (`wipePersonalData`; unsent ops stay). After a reload
+  `syncNow` checks via `?action=session` whether the cookie is still valid.
+- **Modules: on by default, can be switched off (since v3.4.1).** The uniform barrier is `settings().modules[k] !== false`
+  (also for the cycle – no longer opt-in `=== true`). The navigation filters module-bound entries via
+  `navVisible()` and rebuilds immediately on `catofit:nav` (sidebar + “More”). Module/metric toggles read
+  the **fresh** `modules` state (no render snapshot), otherwise two toggles in a row overwrite each other
+  (bug from before v3.4.1).
+- **First-time setup instead of auto-creation (since v3.3.0).** With an **empty** family, `/login` (`login.js`)
+  shows the first-time setup: `createFirstAdmin({name,pin})` bypasses the `isAdmin()` barrier (there is no
+  admin yet) and signs in directly; `seedDemo(today)` fills in example data (`js/demo.js`, DOM-free + tested).
+  `resetApp()` (admin) deletes the family + all users (server & local) and leads back to the first-time setup.
+  Testing without a reinstall: in the settings (admin) use **“Reset app”** – or the isolated
+  PHP server with an empty `data/` (see above), and the app lands in the setup wizard.
+- **Environment namespace (since v3.5.0).** Several deployments on the SAME origin (for example PROD
+  `/cat-o-fit/` and ACC `/cat-o-fit-acc/`) must NOT share client storage. `APP_NS`/`scopeKey`
+  (`js/ui.js`) derive a prefix from the delivery path; **all** localStorage/sessionStorage keys
+  go through it (family, session, user data, meta, feature caches). The service-worker cache is
+  unique per path, `resetApp` only deletes its own environment, and `createFirstAdmin` first checks
+  the server when online (no second admin). Otherwise “duplicate users” return (regression: `test/env-isolation.test.js`).
+  `pinHash` deliberately stays WITHOUT a namespace (otherwise all PINs would become invalid).
+- **Automatic health ingest (since v3.6.0).** `api/health-ingest.php` (`?action=health-ingest&user=&token=`)
+  accepts small JSON payloads from “Health Auto Export” and writes SERVER-SIDE via `apply_ops`:
+  health (one entry/day, **merged field by field** – the user's fields mood/energy/notes stay) and sessions
+  (workouts, **deduplicated by `hk-<UUID>`**, plus a skip against matching manual sessions),
+  `source: 'apple-health'`. Auth: behind `.htpasswd` **plus** a per-user token (`profile.healthToken`,
+  created in the health import view). The PURE mapping logic lives in `api/health-map.php` (`hi_parse`,
+  without DB/network – format **JSON v2**) and is tested automatically: **`php tools/test-health-ingest.php`**
+  (names incl. `weight_&_body_mass`, sleep plausibility limit > 24 h, mi→km, `duration` in seconds,
+  v1/v2 energy/HR, `ignoredMetrics`). `health-ingest.php` only adds auth + merge/dedup + writing.
+  The metric mapping is tolerant (exact + heuristic) towards app versions; unknown things come back as
+  `ignoredMetrics`. No client sync rework – the client pulls. The “Recently imported (automatic)” overview in the
+  health import view is tested in `test/views.test.js`. Guide: [Apple Health](usage/apple-health.md).
+- **Load control & fixed appointments (since v3.7.0).** Training load rests on the sRPE method
+  (`load.js sessionLoad` = minutes × RPE; RPE clamped to 1–10, duration recorded → distance per sport →
+  `plannedDurationMin` → 30 min, cap 24 h). ALL load figures live in `js/load.js` (one
+  source): **load ratio** (ACWR, uncoupled: last 7 days against days 8–28; level `aufbau` (build-up) below 28 days of
+  history), **fitness/fatigue/form** (CTL/ATL/TSB as Banister EWMA, τ 42/7; `formState` relative to the
+  CTL, rated only from `FORM_MIN_DAYS` = 90 days) and **monotony/strain** (Foster; RPE ≤ 3 does not count,
+  a hint only for a week ≥ 1.1 × one's own weekly load). Texts make no injury or protection promises.
+  `fitness.loadBalance` (statistics traffic light) builds on `acwr()`. The dashboard card “Load & form”
+  (`dashboard.js loadFormCard`) uses `charts.js multiLineChart`; tested in `test/load.test.js` and
+  `test/train-assumptions.test.js`. — **Fixed appointments** (`js/commitments.js`):
+  Football is NOT wired into the `DEFAULT_WEEK_TEMPLATE` but lives in `plan.commitments`. Since the
+  plan overhaul there are **no default appointments** any more: new plans start with `commitments: []`, the
+  setup asks about them. The generator (`plangen.js buildWeekUnits`) plans **around** the commitments –
+  key sessions move aside, easy ones drop out; games with a date range (`commitmentDates`).
+  Quality and long run are never placed directly next to a hard fixed appointment (also the Sunday before/Monday
+  after, and appointments of other plans): they move to a calm day, otherwise “Easy with strides”
   (`downgradedFrom: 'quality'`).
-  Fehlt `plan.commitments` (Pläne vor v3.7.0), liest `plangen.planCommitments` Mo/Mi-Fußball mit stabilen
-  IDs (`c-legacy-mo/-mi`) – NUR für Lauf-Gerüste (`isRunTemplate`). Derselbe Termin in zwei Plänen erscheint
-  einmal (`coveredFixed`). Neu berechnet wird immer nur ab heute (`planflow.mergeFromDate`).
-  Getestet in `test/commitments.test.js` und `test/plangen.test.js`.
-- **Plan-Generator (`plangen.js`, rein).** Umfang nach Niveau (Einsteiger/Fortgeschritten/Leistung) und
-  Lauftagen (3–6): Einstieg aus `trainingHistory` (auch nach unten), +8/10/12 % je Woche gegenüber der
-  letzten vollen Woche, jede 4. Woche 85 %, Taper 70/50 % (bei langen Taperphasen zusätzlich 85 %). Long
-  Run: Anteil 33 % (5/10 km), 38 % (HM), 40 % (Marathon) der tatsächlichen Wochensumme, Zeitdeckel 150/180
-  min, im Taper ≤ 75/55 % der Spitze. Rennwoche nach Tagesabstand (−1 Shakeout, −2 frei, −3…−6
-  Aktivierung/kurz), Renneinheit an jedem Wochentag. Triathlon/Hyrox mit eigenen Gerüsten (Ruhetage,
-  Formate, Stationsprogression). Getestet in `test/plangen.test.js`, Workout-Phasen in `test/workout-engine.test.js`.
-- **Geglättete Form-Schätzung (`vdot.js estimateVdot`, seit v3.10.0).** Die „aktuelle Form“ ist NICHT mehr
-  ein einzelner Lauf (ausreißer-empfindlich), sondern robust geglättet: (1) **Wochenbestwert** je Kalenderwoche
-  (filtert lockere Läufe, dämpft Intra-Wochen-Ausreißer), (2) **Ausreißer-Kappung** der Wochenwerte auf
-  Median ± 3·MAD, (3) **rezenzgewichtetes Mittel** (exponentiell, Halbwertszeit 2 Wochen – gleiche EWMA-Idee
-  wie CTL/ATL). Fallback auf den besten Einzellauf bei < 3 Wochen Historie (jüngste Einheit als Basis). Seit
-  der Planüberarbeitung zählen nur **harte Läufe** (Wettkampf/Tempo/Intervall, RPE ≥ 7, Ø-HF ab Zone 4);
-  lockere Läufe sind Untergrenze bzw. bei fehlenden harten Läufen eine gekennzeichnete Schätzung
-  (`onlyEasy`). Rückgabe `{ vdot, basis, weeks, onlyEasy, hardCount }`. `applyFormPaces` schreibt die
-  Form-Paces in `profile.paceZones`, `plan.paces` und die offenen künftigen Lauf-Einheiten – über den
-  Zonenschlüssel `paceKey` (`planflow.repaceUnits`), nicht über die HF-Zone. Renntempi kommen aus der
-  Äquivalenzzeit (`racePaceFromVdot`). Getestet in `test/vdot.test.js`, `test/sollist.test.js`,
+  If `plan.commitments` is missing (plans from before v3.7.0), `plangen.planCommitments` reads Mon/Wed
+  football with stable IDs (`c-legacy-mo/-mi`) – ONLY for running templates (`isRunTemplate`). The same appointment in two plans appears
+  once (`coveredFixed`). Recalculation always starts from today only (`planflow.mergeFromDate`).
+  Tested in `test/commitments.test.js` and `test/plangen.test.js`.
+- **Plan generator (`plangen.js`, pure).** Volume by level (beginner/intermediate/advanced) and
+  running days (3–6): starting point from `trainingHistory` (also downwards), +8/10/12 % per week over the
+  last full week, every 4th week 85 %, taper 70/50 % (an extra 85 % for long taper phases). Long
+  run: share of 33 % (5/10 km), 38 % (half marathon), 40 % (marathon) of the actual weekly total, time cap 150/180
+  min, in the taper ≤ 75/55 % of the peak. Race week by days to the race (−1 shakeout, −2 rest, −3…−6
+  activation/short), race session on any weekday. Triathlon/Hyrox with their own frameworks (rest days,
+  formats, station progression). Tested in `test/plangen.test.js`, workout phases in `test/workout-engine.test.js`.
+- **Smoothed form estimate (`vdot.js estimateVdot`, since v3.10.0).** The “current form” is NO longer
+  a single run (sensitive to outliers) but robustly smoothed: (1) **weekly best** per calendar week
+  (filters easy runs, dampens intra-week outliers), (2) **outlier capping** of the weekly values to
+  median ± 3·MAD, (3) **recency-weighted mean** (exponential, half-life 2 weeks – the same EWMA idea
+  as CTL/ATL). Fallback to the best single run with < 3 weeks of history (the most recent session as the basis). Since
+  the plan overhaul only **hard runs** count (race/tempo/interval, RPE ≥ 7, average HR from zone 4);
+  easy runs are a lower bound or, when there are no hard runs, a flagged estimate
+  (`onlyEasy`). Return value `{ vdot, basis, weeks, onlyEasy, hardCount }`. `applyFormPaces` writes the
+  form paces into `profile.paceZones`, `plan.paces` and the open future running sessions – via the
+  zone key `paceKey` (`planflow.repaceUnits`), not via the HR zone. Race paces come from the
+  equivalent time (`racePaceFromVdot`). Tested in `test/vdot.test.js`, `test/sollist.test.js`,
   `test/train-assumptions.test.js`.
-- **Übungs-Bibliothek: Regionen, Nutzungszähler & Einheiten-Vorschläge (seit v3.11.0).** `js/exercises.js`
-  bleibt DOM-frei: neben `category` gibt es einen **Körperregion-Filter** (`EX_REGIONS` + `exerciseRegions(id)`
-  aus `REGION_BY_ID`), `suggestedExercisesFor(type)` (Kraft → Kraft/Rumpf, Mobility/Recovery → Beweglichkeit)
-  und `sortByUsage(list, usage)`. Der **Nutzungszähler** liegt pro Nutzer in `profile.settings.exerciseUsage`
-  (`storage.exerciseUsage`/`bumpExerciseUsage`) – erhöht per „Gemacht (+1)“ im Katalog ODER automatisch beim
-  Erledigen einer Einheit für deren `unit.exerciseIds` (`session.js logWorkout`). `renderPlanned` blendet bei
-  Kraft-/Mobility-Einheiten die nach Nutzung sortierten Vorschläge ein (Toggle schreibt `unit.exerciseIds`);
-  seit v3.14.0 sind sie auch im Vollbild-**Workout** erreichbar (`workout-mode.js renderWorkoutExercises`).
-  Seit v3.22.0 stehen in Einheiten zuerst die Übungen, die Titel/Beschreibung nennen (`exercisesInText`:
-  Name + `ALIASES`, nur am Wortanfang – „Sprungkniebeuge“ ist keine „Kniebeuge“; `exercisesForUnit`
-  liefert `{ named, suggested, all }`). `test/exercises.test.js` erzwingt `caution` und `progression`
-  (aus `DETAIL_BY_ID`). 93 Übungen, davon 8 Präventionsübungen als Fußball-Vorschlag (`PREVENTION_IDS`).
-- **Animierte Übungen (seit v3.22.0).** Jede Übung hat einen Bewegungsablauf in `js/exercise-motions.js`
-  (`MOTIONS`, Schlüssel = Übungs-ID; `test/exercise-motions.test.js` erzwingt die Zuordnung in beide
-  Richtungen). Ein Ablauf ist reine Daten: Ansicht (`side`/`front`), Schlüsselposen (`keys`), Startpose,
-  Phasen (`seq`: Pose, Dauer in Sekunden, Bezeichnung, Hinweis ≤ 44 Zeichen, Atmung), optional Einstieg
-  (`intro`), Seiten (`alternate`/`each`), Hilfsmittel (`props`) und die hervorgehobenen Glieder
-  (`focus`). Genau eines von `reps` (Wiederholungen) oder `holdS` (Halteübung – daraus folgt
-  `exercise.hold`). Jeder Durchgang endet in der Startpose. Die Posen löst `js/motion-rig.js` (rein,
-  DOM-frei): feste Gliedlängen (`BODY`), Boden bei y = 0, zweigliedrige inverse Kinematik für Ziele
-  (`at`) oder feste Winkel (`a`); beim Überblenden bleiben aufgesetzte Hände und Füße stehen.
-  `js/motion-figure.js` zeichnet daraus Kachel-Standbilder (Start blass, Zielpose kräftig) als
-  SVG-String und die Animation als DOM, das einmal gebaut und je Bild nur umgesetzt wird;
-  `js/motion-player.js` steuert Vorschau und „Mitmachen“ (`buildPlan`/`stateAt`: Einstieg,
-  Wiederholungen bzw. Zeit, Seitenwechsel, Pausen; Ton per WebAudio, Wake Lock, reduzierte Bewegung →
-  Standbild). Neue Übung = Katalogeintrag + Ablauf; prüfen mit
-  `node tools/motion-sheet.mjs --only <id>` (HTML-Kontaktbogen mit Einzelbildern beider Seiten unter
-  `.playwright-mcp/motion-sheet/`; mit `PLAYWRIGHT_MODULE` wie beim Render-Skript zusätzlich als PNG).
-  Seit v3.23.0 zeichnet `js/coach-figure.js` die Pose als Vorturnerin (Körper mit Volumen, Kleidung,
-  Zopf mit Nachschwung, Schatten; nur Formen, gezeichnet in `motion-figure.js`). `style: 'line'`
-  liefert weiter die Linienfigur. `viewBoxFor(m, aspect)` passt den Ausschnitt an eine Bühne an.
-- **Durchgehend mitmachen (seit v3.23.0).** `js/show-program.js` (rein): `dosesFromText` liest Mengen,
-  Runden und Rundenpause aus der Einheitsbeschreibung (`unit.description`; Textstück je Übung bis „·“
-  bzw. Satzende, „A & B 8×/Seite“ teilt die Menge), `programForUnit`/`programForWorkout` bilden das
-  Programm, `buildShow` die Zeitleiste (ready · work · switch · rest · roundRest). `beatPlan` legt
-  jede Bewegungsphase auf halbe (schnelle auf Viertel-)Schläge und jede Wiederholung auf ganze Schläge
-  im Tempobereich des Stils; Pausen dauern ganze Takte. `js/workout-show.js` ist die Vollbild-Ansicht.
-  **Regeln aus dem iPad-Test:** Die Uhr ist immer die Bildschirm-Uhr (die Audio-Uhr steht auf iOS bei
-  jeder Unterbrechung still – das Bild fror ein). Die Musik spielt vorab gerechnete Schleifen
-  (`music.js renderLoop`, vier Takte, Ausklang vorn eingemischt) und rastet je Abschnitt phasengenau
-  ein; ein Wächter weckt alle 0,5 s den AudioContext (`wakeAudio`) und zieht den Takt nach (> 80 ms
-  Versatz). Ansagen nur in Pausen – die Sprachausgabe unterbricht auf iOS die Musik; Ansagen bleiben
-  referenziert, nach `cancel()` wartet `speak()` kurz (sonst verschluckt Safari sie). Kein Vollbild
-  (Safari legt ein eigenes Schließen-Kreuz über die Bühne). Töne werden kurz vor ihrem Zeitpunkt auf
-  die Audio-Uhr gelegt, um die Ausgabeverzögerung früher. `js/audio.js` schaltet Ton und
-  Sprachausgabe in der Nutzergeste frei und meldet die Audio-Sitzung als Wiedergabe an
-  (`navigator.audioSession`, sonst stummes `assets/audio/silence.wav`) – sonst bleibt Web Audio auf
-  iPhone/iPad im Lautlos-Modus stumm. Fertige Workouts stehen in
-  `js/workouts.js` (Katalog mit `cat` für die Filter). Ansagen kommen aus Sprachbausteinen
-  (`js/voice.js`: `voiceTexts` listet alle, `assets/voice/<schlüssel>.m4a`), abgespielt über die
-  Audio-Uhr – speechSynthesis nur als Rückfall, weil sie auf iOS neben Web Audio stumm bleibt. Neue
-  Übung oder neuer Text → Bausteine neu erzeugen: `node --import ./test-setup.js tools/voice-texts.mjs`
-  und `tools/voice-clips.py` (Piper + Stimme Thorsten, Anleitung im Kopf der Datei); ein Test prüft,
-  dass zu jedem Baustein eine Datei existiert. Hörproben mit Pegeln: `node tools/music-preview.mjs` (Playwright wie oben).
-- **Rollierende Planung, Triage & Dual-Goal (seit v3.8.0).** Reine Module, alle auf `today`-Basis
-  und per node:test abgedeckt: `js/rolling.js` (Erholungstag-Erkennung aus ACWR/harten Tagen/Form; nur
-  offene, NICHT-fixe fordernde Einheiten werden entlastet; Transparenz-Log `plan.adaptLog` mit
-  Rückgängig-Snapshot – der zentrale Anwende-/Undo-Kern `applyAdapt`/`undoAdapt` liegt seit v3.14.0 in
-  `js/adapt.js`, damit auch `cycle.js` protokolliert), `js/triage.js` (Wochen-Kollisionen
-  + Prioritätsordnung feste Termine → Schlüssel → Kraft → Umfang → Erholung; `destackSuggestion` entzerrt
-  Zwei-Ziele-Stapel), `js/whatif.js`
-  (Vorher/Nachher der Wochenbelastung beim Hinzufügen/Verschieben – im Verschieben-Dialog & Unit-Creator),
-  `js/dualgoal.js` (phasenabhängiger Schwerpunkt Leistung↔Abnehmen + gedeckelte Defizit-Empfehlung +
-  ehrlicher Reiz-Check gegen „Ruhetag-Schönrechnerei“). Das Ziel-Cockpit (`dashboard.js goalCockpitCard`)
-  koppelt Laufprognose, Gewichtsziel, Phase und Ernährung. Wichtig: Die Belastungs-Signale reagieren nur
-  auf ABWEICHUNGEN vom Plan (`rolling.restDaySuggestion`: Ist-Last der letzten 7 Tage > 1,15 × Soll aus
-  `whatif.unitLoad`, oder ≥ 3 harte Tage mit mindestens einem ungeplanten – `hardStreakInfo`); die Form nur
-  mit eingeschwungener Fitnesskurve. Ziel ist nur eine harte Einheit der nächsten 2 Tage (Horizont 2) –
-  liegen lockere Tage davor, wird nichts gestrichen. `footballFollowupEase` zählt nur tatsächlich gespielten Fußball. Feste
-  Termine sind für alle Automatiken tabu (auch `weekDeloadCandidates`).
-- **Die eine Tagesempfehlung (`js/coach.js`).** `coachDecision` sammelt alle Kandidaten und wählt nach
-  fester Priorität genau einen (`primary`), der Rest steht in `suppressed` (Begründung via `coachWhy`).
-  EIN RPE-Fenster (`planflow.rpeProgression`, 21 Tage, ≥ 4 Einheiten); `adaptive.recentLoadFeedback` gibt
-  es nicht mehr – ein Belastungsurteil fällt nur `load.js`. Nach Krankheit/Verletzung (`returnPhase`,
-  14 Tage): Wiedereinstieg, kein Nachholen, kein Umfangsausgleich, keine Steigerung. Getestet in
+- **Exercise library: regions, usage counter & session suggestions (since v3.11.0).** `js/exercises.js`
+  stays DOM-free: besides `category` there is a **body-region filter** (`EX_REGIONS` + `exerciseRegions(id)`
+  from `REGION_BY_ID`), `suggestedExercisesFor(type)` (strength → strength/core, mobility/recovery → mobility)
+  and `sortByUsage(list, usage)`. The **usage counter** lives per user in `profile.settings.exerciseUsage`
+  (`storage.exerciseUsage`/`bumpExerciseUsage`) – raised by “Done (+1)” in the catalogue OR automatically when
+  a session is completed, for its `unit.exerciseIds` (`session.js logWorkout`). `renderPlanned` shows the
+  suggestions sorted by usage for strength/mobility sessions (the toggle writes `unit.exerciseIds`);
+  since v3.14.0 they are also reachable in the full-screen **workout** (`workout-mode.js renderWorkoutExercises`).
+  Since v3.22.0, sessions list first the exercises named in the title/description (`exercisesInText`:
+  name + `ALIASES`, only at the start of a word – a “jump squat” is not a “squat”; `exercisesForUnit`
+  returns `{ named, suggested, all }`). `test/exercises.test.js` enforces `caution` and `progression`
+  (from `DETAIL_BY_ID`). 93 exercises, of which 8 prevention exercises as a football suggestion (`PREVENTION_IDS`).
+- **Animated exercises (since v3.22.0).** Every exercise has a movement sequence in `js/exercise-motions.js`
+  (`MOTIONS`, key = exercise ID; `test/exercise-motions.test.js` enforces the mapping in both
+  directions). A sequence is pure data: view (`side`/`front`), key poses (`keys`), start pose,
+  phases (`seq`: pose, duration in seconds, label, hint ≤ 44 characters, breathing), optionally an intro
+  (`intro`), sides (`alternate`/`each`), equipment (`props`) and the highlighted limbs
+  (`focus`). Exactly one of `reps` (repetitions) or `holdS` (hold exercise – which implies
+  `exercise.hold`). Every pass ends in the start pose. The poses are resolved by `js/motion-rig.js` (pure,
+  DOM-free): fixed limb lengths (`BODY`), floor at y = 0, two-segment inverse kinematics for targets
+  (`at`) or fixed angles (`a`); while blending, planted hands and feet stay put.
+  `js/motion-figure.js` draws tile still images from it (start faint, target pose strong) as an
+  SVG string and the animation as DOM that is built once and only repositioned per frame;
+  `js/motion-player.js` drives the preview and “Follow along” (`buildPlan`/`stateAt`: intro,
+  repetitions or time, side changes, pauses; sound via WebAudio, wake lock, reduced motion →
+  still image). A new exercise = catalogue entry + sequence; check it with
+  `node tools/motion-sheet.mjs --only <id>` (HTML contact sheet with single frames of both sides under
+  `.playwright-mcp/motion-sheet/`; with `PLAYWRIGHT_MODULE`, as for the render script, additionally as PNG).
+  Since v3.23.0 `js/coach-figure.js` draws the pose as an instructor figure (body with volume, clothing,
+  ponytail with follow-through, shadow; only shapes, drawn in `motion-figure.js`). `style: 'line'`
+  still gives the line figure. `viewBoxFor(m, aspect)` fits the frame to a stage.
+- **Follow along non-stop (since v3.23.0).** `js/show-program.js` (pure): `dosesFromText` reads amounts,
+  rounds and round rest from the session description (`unit.description`; the text piece per exercise up to “·”
+  or the end of the sentence, “A & B 8×/side” splits the amount), `programForUnit`/`programForWorkout` build the
+  programme, `buildShow` the timeline (ready · work · switch · rest · roundRest). `beatPlan` puts
+  every movement phase on half beats (fast ones on quarter beats) and every repetition on whole beats
+  in the tempo range of the style; pauses last whole bars. `js/workout-show.js` is the full-screen view.
+  **Rules from the iPad test:** the clock is always the screen clock (the audio clock stands still on iOS at
+  every interruption – the picture froze). The music plays pre-computed loops
+  (`music.js renderLoop`, four bars, tail mixed in at the front) and locks in per section with the correct phase;
+  a watchdog wakes the AudioContext every 0.5 s (`wakeAudio`) and pulls the beat back in (> 80 ms
+  offset). Announcements only in pauses – speech output interrupts the music on iOS; announcements stay
+  referenced, and after `cancel()` `speak()` waits briefly (otherwise Safari swallows them). No full screen
+  (Safari puts its own close cross over the stage). Sounds are placed on the audio clock shortly before
+  their time, to compensate for the output delay. `js/audio.js` unlocks sound and
+  speech output in the user gesture and registers the audio session as playback
+  (`navigator.audioSession`, otherwise a silent `assets/audio/silence.wav`) – otherwise Web Audio stays
+  silent on iPhone/iPad in silent mode. Ready-made workouts are in
+  `js/workouts.js` (catalogue with `cat` for the filters). Announcements come from voice clips
+  (`js/voice.js`: `voiceTexts` lists them all, `assets/voice/<key>.m4a`), played through the
+  audio clock – speechSynthesis only as a fallback, because on iOS it stays silent next to Web Audio. New
+  exercise or new text → regenerate the clips: `node --import ./test-setup.js tools/voice-texts.mjs`
+  and `tools/voice-clips.py` (Piper + voice Thorsten, instructions at the top of the file); a test checks
+  that a file exists for every clip. Listening tests with levels: `node tools/music-preview.mjs` (Playwright as above).
+- **Rolling planning, triage & dual goal (since v3.8.0).** Pure modules, all based on `today`
+  and covered by node:test: `js/rolling.js` (rest-day detection from ACWR/hard days/form; only
+  open, NON-fixed demanding sessions are eased; transparency log `plan.adaptLog` with an
+  undo snapshot – the central apply/undo core `applyAdapt`/`undoAdapt` lives in
+  `js/adapt.js` since v3.14.0, so `cycle.js` logs too), `js/triage.js` (week collisions
+  + priority order fixed appointments → key sessions → strength → volume → recovery; `destackSuggestion` untangles
+  two-goal stacks), `js/whatif.js`
+  (before/after of the weekly load when adding/moving – in the move dialog & unit creator),
+  `js/dualgoal.js` (phase-dependent emphasis performance↔weight loss + capped deficit recommendation +
+  an honest stimulus check against “rest-day cosmetics”). The goal cockpit (`dashboard.js goalCockpitCard`)
+  couples the race forecast, weight goal, phase and nutrition. Important: the load signals react only
+  to DEVIATIONS from the plan (`rolling.restDaySuggestion`: actual load of the last 7 days > 1.15 × planned from
+  `whatif.unitLoad`, or ≥ 3 hard days with at least one unplanned – `hardStreakInfo`); the form only
+  with a settled fitness curve. The target is only one hard session within the next 2 days (horizon 2) –
+  if easy days come before it, nothing is cancelled. `footballFollowupEase` counts only football actually played. Fixed
+  appointments are taboo for all automations (also `weekDeloadCandidates`).
+- **The one daily recommendation (`js/coach.js`).** `coachDecision` collects all candidates and picks
+  exactly one by a fixed priority (`primary`); the rest goes into `suppressed` (reason via `coachWhy`).
+  ONE RPE window (`planflow.rpeProgression`, 21 days, ≥ 4 sessions); `adaptive.recentLoadFeedback` no
+  longer exists – only `load.js` passes a load verdict. After illness/injury (`returnPhase`,
+  14 days): return to training, no catching up, no volume compensation, no increase. Tested in
   `test/coach.test.js`.
-- **Eine Zahl überall.** Plan-Einhaltung nur über `fitness.adherence` (heute erst erledigt fällig,
-  Gesundheitsausfälle und geschützte Zyklustage neutral; Monatsbericht mit `to = min(Monatsende, heute)`),
-  Lauf-km nur über `fitness.runKm`, Serien als Wochen-Serie (`badges.weekStreak`, ≥ 3 Trainingstage,
-  Krankheitswochen pausieren), Momentum mit Krankheitspause und höchstens 5 Tagen je Woche. Das
-  Team-Dashboard zählt nur Trainings-Abzeichen (`TRAINING_BADGE_CATS`) und rechnet ohne Zyklusdaten
-  anderer. Getestet in `test/consistency.test.js`.
-- **Bedienung (seit v3.20.0).** Menü und aktive Markierung nur über `nav.js` (`TAB_ITEMS`,
-  `MORE_GROUPS`, `navMatches`, `navVisible`); Konto-Anzeigen nur über `accountBlock()` – immer die
-  **angemeldete** Person (`identityMember`), nie das verwaltete Mitglied. Nach dem Speichern
-  `refreshView()`/`goOrRefresh()` statt `location.reload()` (Test `test/refresh.test.js` erlaubt reload
-  nur an vier Stellen). Knopfgruppen über `field()` (benannte Gruppe), Umschalter über `segmented()`
-  (Radiogruppe), RPE/Gefühl/Dauer über `rpeScale`/`feelingPicker`/`durationFields`, Dateien über
-  `saveFile()`. Text in Akzent- und Statusfarben nur über `--accent-text`/`--*-text` (Test
-  `test/contrast.test.js`); Diagramme färben über CSS-Klassen. Neue Module ohne statische Zyklen
-  (Test `test/import-graph.test.js`). Getestet außerdem in `test/nav.test.js`, `test/a11y.test.js`,
+- **One number everywhere.** Plan adherence only via `fitness.adherence` (today only counts once it is done,
+  health absences and protected cycle days neutral; monthly report with `to = min(month end, today)`),
+  running km only via `fitness.runKm`, streaks as a weekly streak (`badges.weekStreak`, ≥ 3 training days,
+  illness weeks pause), momentum with an illness pause and at most 5 days per week. The
+  team dashboard counts only training badges (`TRAINING_BADGE_CATS`) and works without other
+  people's cycle data. Tested in `test/consistency.test.js`.
+- **Usability conventions (since v3.20.0).** Menu and active highlight only via `nav.js` (`TAB_ITEMS`,
+  `MORE_GROUPS`, `navMatches`, `navVisible`); account displays only via `accountBlock()` – always the
+  **signed-in** person (`identityMember`), never the managed member. After saving use
+  `refreshView()`/`goOrRefresh()` instead of `location.reload()` (the test `test/refresh.test.js` allows reload
+  in only four places). Button groups via `field()` (named group), switches via `segmented()`
+  (radio group), RPE/feeling/duration via `rpeScale`/`feelingPicker`/`durationFields`, files via
+  `saveFile()`. Text in accent and status colours only via `--accent-text`/`--*-text` (test
+  `test/contrast.test.js`); charts are coloured via CSS classes. New modules without static cycles
+  (test `test/import-graph.test.js`). Also tested in `test/nav.test.js`, `test/a11y.test.js`,
   `test/boot-check.test.js`.
-- **Gemeinsame Helfer statt Kopien (seit v3.21.1).** Zahlen mit Komma über `fmtNum(n, stellen)` bzw.
-  `fmtDec(bereitsGerundet)`, Mitgliedsfarben über `safeAccent`/`colorTint`, Neuzeichnen einer Ansicht
-  über `rerenderView(render)` – alles aus `ui.js`. Zwischen Zahl und Einheit setzt `el()` beim Anzeigen
-  selbst ein geschütztes Leerzeichen (`keepUnits`); gespeicherte Werte, CSV und Kalender bleiben mit
-  normalem Leerzeichen. Tests auf angezeigte Texte erwarten deshalb `\u00a0` zwischen Zahl und Einheit.
-  Ein Wächter (`test/shared-helpers.test.js`) verhindert, dass Kopien zurückkehren.
-- **Adaptiv-Erweiterungen (seit v3.14.0), alle über `adapt.js` protokolliert & rückgängig:**
-  (1) **Zyklus** – beim Eintragen eines Periodenbeginns für heute/morgen fragt `cycle.js askAboutFirstDay`
-  nach dem Befinden; nur bei „Lockerer machen“ entschärft `applyCycleEasing` die Einheiten am 1. Tag
-  (`cycleSoftenTargets` + `cycleEaseVariant`, typ-bewusst via `rolling.js gentleVariant`). Phasentipps
-  neutral (`phaseTip`), Einstellung `cycleHormonal` (Phase `neutral` außer Blutungstagen, keine
-  Ausbleiben-Frage), keine Phasen/Prognose über `PREDICTION_MAX_AGE_DAYS` hinaus.
-  (2) **Zwei Ziele** – `restDayApply` nimmt planübergreifend den GANZEN Tag zurück (`planflow.js dayLoadUnits`);
-  `triage.js destackSuggestion` + `findMakeupDay` bieten das Verschieben einer Einheit auf einen freien Tag an.
-  (3) **Fußball** – `cross_football` trägt eine **Intensität** (leicht/normal/intensiv, `commitments.js`),
-  zählt ab „normal“ als hart (`planflow.isHard`, `rolling.dayIsHard`), fließt über `fitness.footballRpe`/
-  `sessionLoad` in die Last ein, und `rolling.footballFollowupEase` schlägt den lockeren Folgetag vor.
-- **Teams (seit v3.9.0).** Teams sind zusätzliche `_kind:'team'`-Records in `family.json`
-  (`{id, name, emoji, color, memberIds}`) – NEBEN Mitgliedern/`__settings`/`__pantry`; sie syncen
-  record-agnostisch mit (kein Sync-Umbau). Ein Mitglied kann in MEHREREN Teams sein (Mehrfach-Mitgliedschaft:
-  überschneidende `memberIds`), manche in keinem. Store-API (nur Admin): `teams`/`teamsOf`/`teamMembers`/
-  `addTeam`/`updateTeam`/`removeTeam`/`setMemberTeams` (Zuordnung & Teamwechsel). `removeMember` räumt
-  Team-Mitgliedschaften auf (keine „Geister“), `saveFamily` setzt/leert Teams beim autoritativen Reset.
-  Die Aggregation bleibt team-AGNOSTISCH: `teamstats.js` bekommt einfach eine gefilterte Mitgliederliste
-  (`filterTeamMembers`/`teamlessMembers`); das `#/family`-Dashboard schaltet oben zwischen Alle/Team/Ohne
-  Team um, verwaltet wird in `#/familie-verwalten`. `MAX_MEMBERS = 32`. Getestet: `test/teams.test.js`;
-  Demo: 11 Personen (eine davon 12 Jahre alt – Kinder- und Jugendprofil), 3 Teams, Henriette in 2, Horst ohne (`seedDemo` löst `team.memberNames` → IDs auf,
-  `__self__` = Admin).
+- **Shared helpers instead of copies (since v3.21.1).** Numbers with the language's decimal separator via `fmtNum(n, digits)` or
+  `fmtDec(alreadyRounded)`, member colours via `safeAccent`/`colorTint`, redrawing a view
+  via `rerenderView(render)` – all available from `ui.js`. Between a number and its unit, `el()` itself inserts a
+  non-breaking space when displaying (`keepUnits`); stored values, CSV and calendar keep a
+  normal space. Tests on displayed text therefore expect ` ` between number and unit.
+  A guard (`test/shared-helpers.test.js`) prevents copies from coming back.
+- **Adaptive extensions (since v3.14.0), all logged & undoable via `adapt.js`:**
+  (1) **Cycle** – when a period start is entered for today/tomorrow, `cycle.js askAboutFirstDay`
+  asks how the person feels; only on “Take it easier” does `applyCycleEasing` soften the sessions on day 1
+  (`cycleSoftenTargets` + `cycleEaseVariant`, type-aware via `rolling.js gentleVariant`). Phase tips
+  neutral (`phaseTip`), setting `cycleHormonal` (phase `neutral` except on bleeding days, no
+  missed-period question), no phases/forecast beyond `PREDICTION_MAX_AGE_DAYS`.
+  (2) **Two goals** – `restDayApply` takes back the WHOLE day across plans (`planflow.js dayLoadUnits`);
+  `triage.js destackSuggestion` + `findMakeupDay` offer moving a session to a free day.
+  (3) **Football** – `cross_football` carries an **intensity** (light/normal/intense, `commitments.js`),
+  counts as hard from “normal” (`planflow.isHard`, `rolling.dayIsHard`), flows into the load via `fitness.footballRpe`/
+  `sessionLoad`, and `rolling.footballFollowupEase` suggests the easy following day.
+- **Teams (since v3.9.0).** Teams are additional `_kind:'team'` records in `family.json`
+  (`{id, name, emoji, color, memberIds}`) – ALONGSIDE members/`__settings`/`__pantry`; they sync
+  along record-agnostically (no sync rework). A member can be in SEVERAL teams (multiple membership:
+  overlapping `memberIds`), some in none. Store API (admin only): `teams`/`teamsOf`/`teamMembers`/
+  `addTeam`/`updateTeam`/`removeTeam`/`setMemberTeams` (assignment & team change). `removeMember` cleans up
+  team memberships (no “ghosts”), `saveFamily` sets/clears teams on the authoritative reset.
+  The aggregation stays team-AGNOSTIC: `teamstats.js` simply gets a filtered member list
+  (`filterTeamMembers`/`teamlessMembers`); the `#/family` dashboard switches at the top between All / a team / No
+  team, management happens in `#/familie-verwalten`. `MAX_MEMBERS = 32`. Tested: `test/teams.test.js`;
+  demo: 11 people (one of them 12 years old – child and youth profile), 3 teams, one member in 2 of them, one in none (`seedDemo` resolves `team.memberNames` → IDs,
+  `__self__` = admin).
 
-## Sicherheitsmodell (seit v3.20.0: Server-Sitzung für das Private)
+## Security model (since v3.20.0: server session for private data)
 
-Die App läuft im **vertrauenswürdigen Heimnetz**. Seit v3.20.0 gibt es eine schlanke
-**Server-Sitzung nach PIN-Prüfung** (`api/auth.php`) – bewusst nur dort, wo es nötig ist, damit
-bestehende Geräte, der Health-Eingang und `.ics`-Links weiter funktionieren:
+The app runs on a **trusted home network**. Since v3.20.0 there is a lean
+**server session after a PIN check** (`api/auth.php`) – deliberately only where it is needed, so that
+existing devices, the health intake and `.ics` links keep working:
 
-- **PIN-Prüfung am Server:** `?action=login` prüft SHA-256 (`catofit:<id>:<pin>`, identisch zu
-  `js/sha256.js`) und das alte djb2-Format, begrenzt Fehlversuche (5 in 15 min je Mitglied, dann
-  `429`) und setzt das Cookie `catofit_sid` (HttpOnly, SameSite=Strict, Pfad = API-Verzeichnis,
-  also getrennt für mehrere Installationen auf derselben Origin). Sitzungen liegen als
-  `data/auth/sessions/<sha256(token)>.json` und verfallen nach 30 Tagen ohne Nutzung.
-  **PIN-Hashes verlassen den Server nicht:** Familien-Antworten tragen `hasPin` plus den
-  Platzhalter `pinHash: "server"`, an dem ältere App-Versionen scheitern (statt ein Profil ohne
-  PIN zu öffnen). Der Client speichert nie einen PIN-Hash (`localFamilyRecord` räumt alte
-  Zwischenspeicher beim Start auf).
-- **Offline-Anmeldung:** Der Client merkt sich nach einer erfolgreichen Server-Anmeldung einen
-  Prüfwert mit eigenem Geräte-Salz (`pinLocal`). Ohne Server geht die Anmeldung nur damit – also
-  nur auf Geräten, auf denen die Person schon online angemeldet war. Die PIN bleibt dann bis zur
-  nachgeholten Server-Anmeldung im Arbeitsspeicher (`pendingServerPin`, `catchUpServerLogin`).
-  Begründung: Die erste Anmeldung braucht ohnehin den Server (die App-Shell kommt von dort);
-  danach soll das Training offline weitergehen.
-- **Private Bereiche** (`cycle`, `labs`, `supplements`): lesen und schreiben nur mit Sitzung
-  derselben Person (`401`/`403`). Der Client synchronisiert sie nur, wenn `privateAllowed(user)`
-  gilt; sonst bleiben Ops in der Queue. Verliert der Server die Sitzung, fragt die App per
-  `catofit:session-required` nach der PIN (`reauth`), ohne abzumelden. Dasselbe gilt, wenn der
-  Server beim ersten Abgleich nach dem Neuladen gar keine Sitzung dieser Person kennt (Update von
-  v3.19.0, 30 Tage Leerlauf) – einmal je Seitenaufruf (`sessionAsked`), „Später“ wird respektiert.
-- **Admin-Aktionen:** `delete-user` und Familien-Ops, die Mitglieder anlegen, Rollen ändern,
-  Mitglieder löschen oder die Familie ersetzen, brauchen eine Admin-Sitzung (`family_guard`).
-  Ausnahme: die Ersteinrichtung (noch keine Admin-Person). Abgelehnte Ops kommen als `rejected`
-  zurück; der Client verwirft seine Fassung und holt den Server-Stand (`catofit:ops-rejected`).
-  PIN-Hashes übernimmt der Server nur von einer Admin-Sitzung; `set-pin` ändert die eigene PIN
-  nur mit der bisherigen.
-- **Alle anderen Bereiche** bleiben im bisherigen Vertrauensmodell (jedes Gerät im Netz kann sie
-  lesen und schreiben). Für den Betrieb außerhalb des Heimnetzes ist eine Anmeldung davor Pflicht
-  (README; optional `CATOFIT_BASIC_AUTH` im Docker-Image).
-- **Schutz vor fremden Seiten (CSRF):** schreibende Aktionen nur mit `Content-Type:
-  application/json` (Formulare fremder Seiten können das nicht senden, `fetch` bräuchte einen
-  CORS-Preflight, den der Server nicht beantwortet) und nicht bei `Sec-Fetch-Site: cross-site`
-  bzw. `same-site`. Der Multipart-Upload `health-import` verlangt eine Sitzung (SameSite-Cookie).
-- **Weitere Schichten:** optionale Host-Liste `CATOFIT_ALLOWED_HOSTS` (DNS-Rebinding),
-  Sicherheits-Header und CSP (`.htaccess`, zusätzlich `<meta>` in `index.html`; darum kein
-  Inline-Skript – siehe `js/boot-check.js`), Sperren für `tools/`, `test/`, `docs/` und
-  Repo-Dateien, ZIP-Grenzen beim Health-Import, `LIBXML_NONET` + Entity-Loader aus.
-- **Backend-Validierung:** `userId`-Whitelist (`^[A-Za-z0-9_-]{1,64}$`), Area-Whitelist,
-  `scope ∈ {user, family}`, atomare Schreibvorgänge (`flock`, Temp→`rename`), `Cache-Control:
-  no-store`. Kein Path-Traversal über `area`/`user`.
-- **PIN-Regeln:** Admin-PIN in der Ersteinrichtung Pflicht; neue PINs 4–8 Ziffern und nicht
-  `0000` (`pinProblem` im Client, `valid_new_pin` am Server). Neue Mitglieder starten mit `0000`
-  und sehen auf „Heute“ einen Hinweis, bis sie eine eigene festlegen. Der Hash bleibt **in jedem
-  Kontext identisch** (reiner SHA-256, nicht an `crypto.subtle` koppeln – sonst Aussperr-Gefahr
-  zwischen http und https).
-- **Kein XSS-Einfallstor durch Freitext:** Benutzertexte (Namen, Notizen, Titel, Werte) werden über
-  `el({ text })` → `textContent` gesetzt; `el({ html })` ist ausschließlich internen, festen
-  SVG-/Markup-Schnipseln vorbehalten. Akzent- und Mitgliedsfarben nur als Hex (`safeAccent`).
-  Abgesichert durch `test/xss-sweep.test.js` (präparierter Text in allen Feldern, alle Ansichten).
+- **PIN check on the server:** `?action=login` checks SHA-256 (`catofit:<id>:<pin>`, identical to
+  `js/sha256.js`) and the old djb2 format, limits failed attempts (5 in 15 min per member, then
+  `429`) and sets the cookie `catofit_sid` (HttpOnly, SameSite=Strict, path = API directory,
+  hence separate for several installations on the same origin). Sessions are stored as
+  `data/auth/sessions/<sha256(token)>.json` and expire after 30 days without use.
+  **PIN hashes do not leave the server:** family responses carry `hasPin` plus the
+  placeholder `pinHash: "server"`, on which older app versions fail (instead of opening a profile without a
+  PIN). The client never stores a PIN hash (`localFamilyRecord` cleans up old
+  caches at start).
+- **Offline sign-in:** after a successful server sign-in the client remembers a
+  check value with its own device salt (`pinLocal`). Without the server, signing in works only with it – so
+  only on devices where the person has already signed in online. Until the server sign-in is
+  caught up, the PIN stays in working memory (`pendingServerPin`, `catchUpServerLogin`).
+  Rationale: the first sign-in needs the server anyway (the app shell comes from there);
+  after that, training should be able to continue offline.
+- **Private areas** (`cycle`, `labs`, `supplements`): read and write only with the session
+  of the same person (`401`/`403`). The client only synchronises them when `privateAllowed(user)`
+  holds; otherwise ops stay in the queue. If the server loses the session, the app asks for the PIN via
+  `catofit:session-required` (`reauth`) without signing out. The same applies if the
+  server knows no session of this person at all at the first reconciliation after a reload (update from
+  v3.19.0, 30 days idle) – once per page load (`sessionAsked`), “Later” is respected.
+- **Admin actions:** `delete-user` and family ops that create members, change roles,
+  delete members or replace the family need an admin session (`family_guard`).
+  Exception: the first-time setup (no admin person yet). Rejected ops come back as `rejected`;
+  the client discards its version and fetches the server state (`catofit:ops-rejected`).
+  The server accepts PIN hashes only from an admin session; `set-pin` changes one's own PIN
+  only with the previous one.
+- **All other areas** stay in the previous trust model (any device on the network can
+  read and write them). For operation outside the home network, a sign-in in front is mandatory
+  (README; optionally `CATOFIT_BASIC_AUTH` in the Docker image).
+- **Protection against foreign sites (CSRF):** writing actions only with `Content-Type:
+  application/json` (forms on foreign sites cannot send that, `fetch` would need a
+  CORS preflight, which the server does not answer) and not with `Sec-Fetch-Site: cross-site`
+  or `same-site`. The multipart upload `health-import` requires a session (SameSite cookie).
+- **Further layers:** optional host list `CATOFIT_ALLOWED_HOSTS` (DNS rebinding),
+  security headers and CSP (`.htaccess`, additionally a `<meta>` tag in `index.html`; hence no
+  inline script – see `js/boot-check.js`), blocks for `tools/`, `test/`, `docs/` and
+  repo files, ZIP limits in the health import, `LIBXML_NONET` + entity loader off.
+- **Backend validation:** `userId` whitelist (`^[A-Za-z0-9_-]{1,64}$`), area whitelist,
+  `scope ∈ {user, family}`, atomic writes (`flock`, temp→`rename`), `Cache-Control:
+  no-store`. No path traversal via `area`/`user`.
+- **PIN rules:** admin PIN mandatory in the first-time setup; new PINs 4–8 digits and not
+  `0000` (`pinProblem` in the client, `valid_new_pin` on the server). New members start with `0000`
+  and see a hint on “Today” until they set their own. The hash stays **identical in every
+  context** (plain SHA-256, do not tie it to `crypto.subtle` – otherwise there is a risk of lock-out
+  between http and https).
+- **No XSS entry point through free text:** user texts (names, notes, titles, values) are set via
+  `el({ text })` → `textContent`; `el({ html })` is reserved exclusively for internal, fixed
+  SVG/markup snippets. Accent and member colours only as hex (`safeAccent`).
+  Secured by `test/xss-sweep.test.js` (prepared text in all fields, all views).
 
 ## Translations (i18n, since v4.0.0)
 
-Development is in English from v4.0.0 on; this guide moves to English as a whole with v4.0.0.
+Development is in English: code, comments, test names, commit messages and these developer docs.
+The app itself speaks seven languages (`de`, `en`, `fr`, `es`, `it`, `pt-BR`, `nl`), chosen per person.
 
 - **Catalogs:** `locales/<lang>/<area>.json`, nested keys, placeholders `{name}`, plurals
   `key.one` / `key.other` (plus the `Intl.PluralRules` forms a language needs). English is the
   source; lookup goes active language → English → key. The language list is
   `locales/languages.json` (code → endonym): a new language is a folder plus one entry there.
+  Areas: `ui` (everything on screen), `help`, `exercises`, `recipes` and `server` (the text the PHP
+  backend writes into calendar files and import titles, read by `api/i18n.php`; error messages stay
+  English with a stable `code` that the app translates as `server.<code>` in `ui.json`).
 - **Code:** `t('section.key', params)`, `tp('section.key', count)`, `tList(…)` from `js/i18n.js`.
-  `ui` is loaded at start; bigger areas (`help`, `exercises`, `workouts`, `recipes`, `health`) via
-  `loadArea()`, and their keys start with the area name. Text is set with `el({ text })` as before –
-  a catalog string goes into `html` only if it is fixed markup without user data.
+  `ui` is loaded at start; bigger areas (`LAZY_AREAS` in `js/i18n.js`: `help`, `exercises`, `workouts`,
+  `recipes`, `health`) via `loadArea()`, and their keys start with the area name. Text is set with
+  `el({ text })` as before – a catalog string goes into `html` only if it is fixed markup without user data.
 - **Formats:** `js/format.js` (re-exported by `ui.js`) – weekday/month names and date patterns from
-  the catalog (`format.*`), separators from `Intl`. Never build dates or decimals by hand.
+  the catalog (`format.*`), separators from `Intl`. Never build dates or decimals by hand. Units stay
+  metric (imperial units come with 4.1).
 - **Which language:** `js/language.js` – the person's `settings.language`, else the instance default
   (`familySettings().language`, written at first setup), else German for instances set up before
   v4.0.0, else the browser. While an admin manages someone else, the admin's language stays.
 - **Stored data stay as they are:** internal values (`erledigt`, categories …) are keys; only
-  their display is translated. No data migration.
+  their display is translated. No data migration. Plan texts written before v4.0.0 stay German;
+  `js/exercise-terms-de.js` (and the matching vocabularies in `energy.js`/`food.js`) recognise them.
 - **Tests run in German** (`test-setup.js`): the de catalog holds the texts shown before v4.0.0, so
   existing assertions guard against regressions; switch with `await setLocale('en')`.
-  `test/i18n-catalog.test.js` checks keys, placeholders, plural forms, unknown and unused keys,
-  and keeps the modules in `TRANSLATED_MODULES` free of German literals – add each module there
-  once its text lives in the catalogs.
+  `test/i18n-catalog.test.js` checks keys, placeholders, plural forms, unknown and unused keys (for
+  the `server` catalog against `api/*.php`), and keeps every module in `js/` free of German
+  literals except a short allow-list (`GERMAN_ALLOWED`: the matching vocabularies for German plan
+  texts, the German voice's phonetic help and the start-up diagnosis). It also fails when a module
+  calls `t()` while it is being imported (the catalogs load later in the browser – look keys up inside
+  a function) or hides `t` with a local variable. Every language in `languages.json` must be complete
+  (`COMPLETE_LANGUAGES`); a language added later may start with fewer keys (it falls back to
+  English) if you take it out of that list until its translation is done.
 - **Translators:** `locales/GLOSSARY.md` (tone, address, fixed terms), `locales/REVIEW.md`.
+- **Documentation:** the English pages live in `docs/usage`, `docs/operations` and `docs/knowledge`
+  (map: `docs/README.md`); the German copies of these pages are under `docs/de/`. The developer
+  docs (this guide, `ARCHITECTURE.md`, `API.md`) are English only. Screenshots are kept per
+  language in `docs/assets/de/` and `docs/assets/en/`, with identical file names.
 
-## Eine Änderung veröffentlichen (Checkliste)
+## Publishing a change (checklist)
 
-1. `js/version.js` **und** `package.json` `version` anheben (SemVer).
-2. `service-worker.js` `VERSION` (Cache-Name) bumpen.
-3. Neue Frontend-Datei? In `service-worker.js` `SHELL_ASSETS` eintragen.
-4. Neue Daten-Area? In `js/storage.js` (`AREAS`/`ARRAY_AREAS`), `api/storage.php`
-   (`user_areas`) und in `tools/loadtest.py`/`tools/loadtest_soak.py` (`USER_AREAS`) eintragen.
-5. Tests grün halten / ergänzen: `npm test` (JS) **und** die PHP-Tests `php tools/test-health-ingest.php`,
-   `php tools/test-health-xml.php`, `php tools/test-storage.php`, `php tools/test-api.php` und
+1. Raise `js/version.js` **and** `package.json` `version` (SemVer).
+2. Bump `VERSION` (cache name) in `service-worker.js`.
+3. New frontend file? Add it to `SHELL_ASSETS` in `service-worker.js`.
+4. New data area? Add it in `js/storage.js` (`AREAS`/`ARRAY_AREAS`), `api/storage.php`
+   (`user_areas`) and in `tools/loadtest.py`/`tools/loadtest_soak.py` (`USER_AREAS`).
+5. Keep the tests green / extend them: `npm test` (JS) **and** the PHP tests `php tools/test-health-ingest.php`,
+   `php tools/test-health-xml.php`, `php tools/test-storage.php`, `php tools/test-api.php` and
    `php tools/test-ics.php`.
-6. `CHANGELOG.md` und ggf. `docs/ROADMAP.md`, die Seiten unter `docs/` und die In-App-Hilfe
-   (`js/helpcontent.js`) aktualisieren.
-7. Doku-Bilder neu erzeugen: `node tools/render-screenshots.mjs` (einmalig
-   `npm install --no-save playwright`). Das Skript startet eine frische Instanz mit leerem `data/`,
-   einem festen Demo-Tag und der Persona „Alex“ und schreibt alle Bilder nach `docs/assets`
-   (einzelne mit `--only 05,16`, das Banner mit `--only promo`). Texte, die Werte aus den Bildern
-   zitieren – „Aktuelle Form“ in `docs/nutzung/coach-und-belastung.md`, das Ferritin-Beispiel in
-   `docs/nutzung/labor.md` –, danach gegenlesen.
+6. Update `CHANGELOG.md` and, where needed, `docs/ROADMAP.md`, the pages under `docs/` (the English
+   pages and their German copies under `docs/de/`) and the in-app help (structure in
+   `js/helpcontent.js`, texts in `locales/<lang>/help.json`). New or changed UI texts go into the
+   catalogs of every language (see “Translations” above).
+7. Re-render the documentation images: `node tools/render-screenshots.mjs` (once
+   `npm install --no-save playwright`). The script starts a fresh instance with an empty `data/`,
+   a fixed demo day and the persona “Alex” and writes all images to `docs/assets` (individual ones with
+   `--only 05,16`, the banner with `--only promo`); the images are kept per language in `docs/assets/de/` and
+   `docs/assets/en/` under identical names. Texts that quote values from the images –
+   “Current form” in `docs/usage/coach-and-load.md`, the ferritin example in
+   `docs/usage/labs.md` (and their German copies under `docs/de/usage/`) – must be proofread afterwards.
 
-## Projektstruktur (Kurz)
+## Project structure (short)
 
 ```
 cat-o-fit/
-  index.html              App-Shell (PWA, iOS-Meta)
-  manifest.webmanifest    PWA-Manifest
-  service-worker.js       Offline-Shell (network-first)
+  index.html              App shell (PWA, iOS meta)
+  manifest.webmanifest    PWA manifest
+  service-worker.js       Offline shell (network-first)
   js/
-    app.js router.js      Bootstrap & Hash-Routing
-    storage.js api-client.js   Datenschicht & Sync
-    ui.js charts.js       UI-Bausteine
-    plangen.js program.js Plan-Generatoren (Wettkampf / Programm), rein
-    plans.js              Plan-Einrichtung, -Aktualisierung und -Ansicht
-    load.js coach.js      Belastung (eine Quelle) und die eine Tagesempfehlung, rein
-    fitness.js            gemeinsame Kennzahlen (Plan-Einhaltung, Lauf-km, Ampel), rein
-    …                     weitere View- und Logik-Module
-  api/                    PHP-Backend (Persistenz, Anmeldung, .ics, Health-Eingang und -Import)
-  data/                   JSON-Daten (durch .htaccess geschützt)
+    app.js router.js      Bootstrap & hash routing
+    storage.js api-client.js   Data layer & sync
+    ui.js charts.js       UI building blocks
+    i18n.js language.js format.js   Translations, language choice, number/date formats
+    plangen.js program.js Plan generators (race / programme), pure
+    plans.js              Plan setup, update and view
+    load.js coach.js      Load (one source) and the one daily recommendation, pure
+    fitness.js            Shared figures (plan adherence, running km, traffic light), pure
+    …                     further view and logic modules
+  api/                    PHP backend (persistence, sign-in, .ics, health intake and import, i18n.php)
+  locales/                Translation catalogs (<lang>/<area>.json, languages.json, GLOSSARY.md, REVIEW.md)
+  data/                   JSON data (protected by .htaccess)
   css/                    Stylesheets
   test/                   node:test (*.test.js)
-  test-setup.js           Mini-DOM + localStorage-Shim für die Tests
-  docs/                   Doku nach Zielgruppen (Landkarte docs/README.md), Architektur, Entwicklung
-  tools/                  PHP-Tests, Lasttest, Demo-Seeds, Render-Skript, Bewegungs-Kontaktbögen, Musik-Hörproben, reset-pin.php
+  test-setup.js           Mini DOM + localStorage shim for the tests
+  docs/                   Documentation by audience (map in docs/README.md; German copies in docs/de/), architecture, development
+  tools/                  PHP tests, load test, demo seeds, render script, movement contact sheets, music listening tests, reset-pin.php
 ```
 
 ## Deployment
 
-**Synology Web Station** – Kurzfassung, Details unter
-[Installation](betrieb/installation.md#weg-3-webspace-oder-synology-web-station):
+**Synology Web Station** – short version, details under
+[Installation](operations/installation.md#option-3-web-hosting-or-synology-web-station):
 
-1. Web Station + PHP installieren, Projekt nach `/web/cat-o-fit` kopieren.
-2. Dem Webserver-Nutzer (`http`) Schreibrechte auf `data/` geben.
-3. Per HTTPS aufrufen; `api/api.php?action=ping` muss `{"ok":true}` liefern.
+1. Install Web Station + PHP, copy the project to `/web/cat-o-fit`.
+2. Give the web server user (`http`) write permission on `data/`.
+3. Open it over HTTPS; `api/api.php?action=ping` must return `{"ok":true}`.
 
-**Docker** (Multi-Arch: amd64 + arm64) – Details unter [Installation](betrieb/installation.md#weg-1-docker):
+**Docker** (multi-arch: amd64 + arm64) – details under [Installation](operations/installation.md#option-1-docker):
 
 ```bash
-docker compose up -d                          # fertiges Image ziehen; App auf Port 8080
-docker compose build && docker compose up -d  # selbst bauen
+docker compose up -d                          # pull the ready-made image; app on port 8080
+docker compose build && docker compose up -d  # build it yourself
 ```
 
-Der Container startet bewusst mit **leerer Instanz** (Ersteinrichtungs-Assistent);
-Entwickler-Seeds (`tools/seed/`) und Laufzeitdaten kommen nicht ins Image (`.dockerignore`).
-Optional: `CATOFIT_BASIC_AUTH=1` mit `CATOFIT_AUTH_USER`/`CATOFIT_AUTH_PASSWORD` (Anmeldung vor
-der App; der Entrypoint legt die Apache-Konfiguration an), `CATOFIT_ALLOWED_HOSTS` und `TZ`
-(Zeitzone für PHP und die Kalender-Dateien).
+The container deliberately starts with an **empty instance** (first-time setup wizard);
+developer seeds (`tools/seed/`) and runtime data do not go into the image (`.dockerignore`).
+Optional: `CATOFIT_BASIC_AUTH=1` with `CATOFIT_AUTH_USER`/`CATOFIT_AUTH_PASSWORD` (sign-in in front of
+the app; the entrypoint creates the Apache configuration), `CATOFIT_ALLOWED_HOSTS` and `TZ`
+(time zone for PHP and the calendar files).
 
-Es gibt keinen Build-Schritt – die Dateien werden unverändert ausgeliefert.
+There is no build step – the files are served unchanged.

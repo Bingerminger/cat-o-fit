@@ -1,10 +1,12 @@
 # Trainingswissen
 
+[English](../../knowledge/training-science.md) · **Deutsch**
+
 Periodisierung, Zonen, Tempo, Belastung und Energie – das Wissen hinter den Plänen, mit den Formeln,
 die Cat-O-Fit tatsächlich rechnet.
 
 > Teil der [Dokumentation](../README.md) · [Verstehen](../README.md#verstehen) ·
-> Quellen: [Methodik & Quellen](methodik-und-quellen.md)
+> Quellen: [Methodik & Quellen](methods-and-sources.md)
 
 **Auf dieser Seite:**
 

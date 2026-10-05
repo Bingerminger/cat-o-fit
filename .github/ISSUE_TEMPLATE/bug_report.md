@@ -1,29 +1,29 @@
 ---
-name: "🐛 Fehler melden"
-about: "Einen reproduzierbaren Fehler beschreiben"
+name: "🐛 Report a bug"
+about: "Describe a reproducible bug"
 title: "[Bug] "
 labels: ["bug"]
 ---
 
-## Beschreibung
-<!-- Was ist passiert? Was hast du stattdessen erwartet? -->
+## Description
+<!-- What happened? What did you expect instead? -->
 
-## Schritte zur Reproduktion
+## Steps to reproduce
 1.
 2.
 3.
 
-## Erwartetes Verhalten
-<!-- Was sollte passieren? -->
+## Expected behaviour
+<!-- What should happen? -->
 
-## Umgebung
-- Gerät / Browser: <!-- z. B. iPhone 14, Safari -->
-- Ansicht / Route: <!-- z. B. #/stats (Fortschritt → Training) -->
-- App-Version: <!-- steht ganz unten in den Einstellungen bzw. oben in der Seitenleiste (iPad/Mac) -->
-- Betrieb: <!-- Docker / Synology Container Manager / Web Station / lokal (php -S) / sonstiges -->
+## Environment
+- Device / browser: <!-- e.g. iPhone 14, Safari -->
+- View / route: <!-- e.g. #/stats (Progress → Training) -->
+- App version: <!-- shown at the very bottom of Settings, or at the top of the sidebar (iPad/Mac) -->
+- Hosting: <!-- Docker / Synology Container Manager / Web Station / local (php -S) / other -->
 
-## Konsole / Fehlermeldung
-<!-- Falls vorhanden: Konsolenausgabe oder Screenshot -->
+## Console / error message
+<!-- If available: console output or a screenshot -->
 
-## Datenschutz
-<!-- Bitte KEINE echten Gesundheits-/Zyklusdaten oder PINs einfügen. -->
+## Privacy
+<!-- Please do NOT paste real health/cycle data or PINs. -->

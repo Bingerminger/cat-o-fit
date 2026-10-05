@@ -1,5 +1,7 @@
 # Erste Schritte
 
+[English](../../usage/getting-started.md) · **Deutsch**
+
 Was Cat-O-Fit macht, wie du dich zurechtfindest und wie du Diagramme liest.
 
 > Teil der [Dokumentation](../README.md) · [Alle Seiten der Nutzung](../README.md#nutzen)
@@ -38,7 +40,7 @@ auch mitten im Lauf.
    und eigene PIN (4 bis 8 Ziffern, nicht `0000`). Danach wählst du **„Mit Demodaten starten“**
    (eine Beispiel-Familie zum Ausprobieren) oder **„Leer starten“**.
 2. **Anmelden:** Kachel antippen, PIN eingeben. Mehr dazu unter
-   [Team & Familie](familie.md#teamfamilie--anmeldung).
+   [Team & Familie](family.md#teamfamilie--anmeldung).
 3. **Ziel anlegen:** Mehr → „Ziele & Pläne“ → „+“ → **Wettkampf** oder **Trainingsprogramm** –
    siehe [Training planen](training.md#wettkampf-anlegen--plan-erstellen).
 4. **Trainieren:** Auf „Heute“ steht die Einheit des Tages; ▶ startet den Workout-Modus,
@@ -99,7 +101,7 @@ Artikel. Am Ende der Hilfe steht ein **Glossar** mit allen Begriffen.
 
 ## Werte aus einem Diagramm ablesen
 
-<img src="../assets/08-koerperwerte.png" width="260" align="right" alt="Körperwerte mit Scrubber-Tooltip" />
+<img src="../../assets/de/08-body-values.png" width="260" align="right" alt="Körperwerte mit Scrubber-Tooltip" />
 
 Jede Kurve in Cat-O-Fit gibt dir **konkrete Zahlen** – du musst nicht schätzen, was sie
 gerade zeigt.

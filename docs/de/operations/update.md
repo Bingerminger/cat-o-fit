@@ -1,5 +1,7 @@
 # Update
 
+[English](../../operations/update.md) · **Deutsch**
+
 Ein Update tauscht die Programmdateien – deine Daten im Ordner `data/` bleiben unangetastet. Ältere
 Datensätze liest jede neue Version weiter (Lese-Migration statt Umschreiben).
 
@@ -20,7 +22,7 @@ Datensätze liest jede neue Version weiter (Lese-Migration statt Umschreiben).
 
 1. Den Ordner **`data/` sichern** (siehe [Backup](backup.md)) – das ist die einzige Vorbereitung, die
    wirklich zählt.
-2. Den [CHANGELOG](../../CHANGELOG.md) der neuen Version lesen: Dort steht, ob Nutzerinnen und Nutzer
+2. Den [CHANGELOG](../../../CHANGELOG.md) der neuen Version lesen: Dort steht, ob Nutzerinnen und Nutzer
    danach etwas tun müssen (z. B. Kalender-Abos neu einrichten).
 
 ---

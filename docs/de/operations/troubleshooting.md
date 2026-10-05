@@ -1,5 +1,7 @@
 # Fehlersuche
 
+[English](../../operations/troubleshooting.md) · **Deutsch**
+
 Die häufigsten Stolpersteine – erst für alle, dann für die Person, die den Server betreibt.
 
 > Teil der [Dokumentation](../README.md) · [Betreiben](../README.md#betreiben)
@@ -95,7 +97,7 @@ Die Meldung nennt meist die Datei, die nicht geladen wurde. Häufige Ursachen:
   einzeln hochladen, oder die Erweiterung aktivieren.
 - **Upload bricht bei großen Dateien ab:** Bei Weg 3 `upload_max_filesize` und `post_max_size` erhöhen
   (das Docker-Image erlaubt 1 GB).
-- Mehr unter [Apple Health](../APPLE-HEALTH.md#fehlersuche).
+- Mehr unter [Apple Health](../usage/apple-health.md#fehlersuche).
 
 ---
 
@@ -105,6 +107,6 @@ Die Meldung nennt meist die Datei, die nicht geladen wurde. Häufige Ursachen:
   30.11.2026 – im Plan „…“ → „In Kalender übernehmen (.ics)“ → „Abo-Link kopieren“ und neu abonnieren.
 - **Abo bleibt von Anfang an leer:** iCloud, Google und Outlook holen Abos über das Internet ab und
   erreichen einen Server nur im Heimnetz nicht. Das Abo dann direkt aufs Gerät legen, siehe
-  [Kalender abonnieren](../nutzung/training.md#kalender-abonnieren).
+  [Kalender abonnieren](../usage/training.md#kalender-abonnieren).
 - **Uhrzeiten um Stunden verschoben:** Die Kalender-Zeitzone ist `Europe/Berlin`, solange `TZ` bzw.
   `CATOFIT_TZ` nichts anderes sagt – siehe [Umgebungsvariablen](installation.md#umgebungsvariablen).

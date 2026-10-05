@@ -1,5 +1,7 @@
 # Backup
 
+[English](../../operations/backup.md) · **Deutsch**
+
 Cat-O-Fit speichert alles als JSON-Dateien im Ordner `data/` auf eurem Server. Eine gute Sicherung
 braucht keine Datenbank-Werkzeuge – aber eine Regel.
 

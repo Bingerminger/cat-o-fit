@@ -1,22 +1,22 @@
 ---
-name: "💡 Idee / Feature"
-about: "Eine Verbesserung oder neue Funktion vorschlagen"
-title: "[Idee] "
+name: "💡 Idea / feature"
+about: "Suggest an improvement or a new feature"
+title: "[Idea] "
 labels: ["enhancement"]
 ---
 
-## Worum geht es?
-<!-- Welches Bedürfnis oder Problem steckt dahinter? -->
+## What is it about?
+<!-- Which need or problem is behind this? -->
 
-## Vorschlag
-<!-- Wie könnte die Lösung aussehen? -->
+## Proposal
+<!-- What could the solution look like? -->
 
-## Für wen ist das nützlich?
-<!-- z. B. Einzelnutzer, Team/Familie, Admin, bestimmte Sportart -->
+## Who would find it useful?
+<!-- e.g. individual users, team/family, admins, a particular sport -->
 
-## Passt es zur Ausrichtung?
-<!-- Cat-O-Fit bleibt abhängigkeitsfrei, local-first, ohne Build-Schritt und
-     ohne Datenbank. Ideen, die das wahren, lassen sich leichter umsetzen. -->
+## Does it fit the project's direction?
+<!-- Cat-O-Fit stays dependency-free, local-first, without a build step and
+     without a database. Ideas that preserve this are easier to implement. -->
 
-## Alternativen / Kontext
-<!-- Gibt es Workarounds? Verwandte Issues? -->
+## Alternatives / context
+<!-- Are there workarounds? Related issues? -->

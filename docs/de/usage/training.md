@@ -1,5 +1,7 @@
 # Training planen und durchführen
 
+[English](../../usage/training.md) · **Deutsch**
+
 Wettkämpfe und Programme, Plan, Kalender, Workout-Modus, Erinnerungen, Übungen und Wetter.
 
 > Teil der [Dokumentation](../README.md) · [Alle Seiten der Nutzung](../README.md#nutzen)
@@ -23,7 +25,7 @@ Wettkämpfe und Programme, Plan, Kalender, Workout-Modus, Erinnerungen, Übungen
 
 ## Wettkampf anlegen & Plan erstellen
 
-<img src="../assets/03-event-detail.png" width="270" align="right" alt="Wettkampf mit Countdown und Prognose" />
+<img src="../../assets/de/03-event-detail.png" width="270" align="right" alt="Wettkampf mit Countdown und Prognose" />
 
 So legst du dein Ziel an:
 
@@ -76,7 +78,7 @@ neu berechnen“ und das Speichern fester Termine rühren nichts vor heute an.
 
 ## Trainingsprogramm ohne Wettkampf
 
-<img src="../assets/34-programm.png" width="270" align="right" alt="Trainingsprogramm-Detailansicht" />
+<img src="../../assets/de/34-programme.png" width="270" align="right" alt="Trainingsprogramm-Detailansicht" />
 
 Du willst einfach **fit, kräftig oder gesünder** werden – ganz ohne Wettkampf? Dann lege
 statt eines Wettkampfs ein **Trainingsprogramm** an:
@@ -113,7 +115,7 @@ Erledigtes bleibt stehen. Über den Status setzt du ein Programm auf **abgeschlo
 
 ## Ein Training durchführen
 
-<img src="../assets/06-session.png" width="270" align="right" alt="Geplante Einheit mit Soll-Werten" />
+<img src="../../assets/de/06-session.png" width="270" align="right" alt="Geplante Einheit mit Soll-Werten" />
 
 Jede Einheit hat eine eigene Seite mit dem **Soll**: Distanz, Zielpace und Herzfrequenz-Zone.
 
@@ -139,7 +141,7 @@ Jede Einheit hat eine eigene Seite mit dem **Soll**: Distanz, Zielpace und Herzf
 
 ### Trinkpausen im Long Run
 
-<img src="../assets/07-workout-trinkpause.png" width="270" align="right" alt="Workout-Modus mit Trinkpausen-Banner" />
+<img src="../../assets/de/07-workout-drink-break.png" width="270" align="right" alt="Workout-Modus mit Trinkpausen-Banner" />
 
 Bei langen Läufen erinnert dich Cat-O-Fit **automatisch ans Trinken** – mit eingeblendetem
 Banner und Ton – wo das Gerät es kann, auch mit Vibration (Long Run alle 20 Minuten, Wettkampf/Radtour alle 25 Minuten).
@@ -213,13 +215,13 @@ die letzten 90 Tage, damit der Gerätespeicher nicht vollläuft.
 **Wie hart war's?** Dateien und Uhren kennen dein Empfinden nicht. Fehlt die Anstrengung, schätzt die
 App sie aus deiner Herzfrequenz, und „Heute“ fragt bei frisch importierten Trainings kurz nach – ein
 Tipp auf „leicht“, „mittel“, „hart“ oder „sehr hart“ genügt (siehe
-[Coach & Belastung](coach-und-belastung.md#prüfen-ob-deine-belastung-gesund-ist)).
+[Coach & Belastung](coach-and-load.md#prüfen-ob-deine-belastung-gesund-ist)).
 
 ---
 
 ## Eine Einheit verschieben
 
-<img src="../assets/05-kalender.png" width="270" align="right" alt="Kalender-Wochenansicht" />
+<img src="../../assets/de/05-calendar.png" width="270" align="right" alt="Kalender-Wochenansicht" />
 
 Das Leben kommt dazwischen – verschiebe Einheiten einfach:
 
@@ -250,7 +252,7 @@ trotzdem, wenn du möchtest.
 
 ## Einheiten anpassen, ergänzen & aufholen
 
-<img src="../assets/14-einheit-bearbeiten.png" width="270" align="right" alt="Einheit bearbeiten" />
+<img src="../../assets/de/14-edit-session.png" width="270" align="right" alt="Einheit bearbeiten" />
 
 Dein Plan gehört dir – passe ihn jederzeit an:
 
@@ -334,7 +336,7 @@ bei Outlook kann eine Änderung laut Microsoft über 24 Stunden brauchen. Links 
 
 ## Deinen Fortschritt verstehen
 
-<img src="../assets/09-statistik.png" width="270" align="right" alt="Fortschritt: Training mit Plan-Einhaltung und Prognose" />
+<img src="../../assets/de/09-statistics.png" width="270" align="right" alt="Fortschritt: Training mit Plan-Einhaltung und Prognose" />
 
 Unter **Fortschritt → Training** siehst du auf einen Blick, wo du stehst:
 
@@ -372,7 +374,7 @@ Konsistenz zählt mehr als einzelne Top-Tage.
 
 ## Übungs-Bibliothek
 
-<img src="../assets/40-uebungen.png" width="260" align="right" alt="Übungs-Bibliothek" />
+<img src="../../assets/de/40-exercises.png" width="260" align="right" alt="Übungs-Bibliothek" />
 
 Unter **Mehr → Übungs-Bibliothek** findest du **93 Übungen** für **Kraft, Rumpf, Beweglichkeit,
 Kondition und Prävention** – als Begleitung zu den Kraft- und Mobility-Einheiten deines Plans: von
@@ -420,7 +422,7 @@ Lauf-ABC, Fußgelenksprünge und das **Fußball-Aufwärmen nach FIFA 11+**).
 
 ## Durchgehend mitmachen – mit Musik und Ansagen
 
-<img src="../assets/ipad-42-durchgehend.png" width="420" alt="Durchgehend mitmachen auf dem iPad: die Vorturnerin bei der Kniebeuge, daneben Zeit, Hinweis und die nächste Übung" />
+<img src="../../assets/de/ipad-42-non-stop.png" width="420" alt="Durchgehend mitmachen auf dem iPad: die Vorturnerin bei der Kniebeuge, daneben Zeit, Hinweis und die nächste Übung" />
 
 Statt Übung für Übung anzutippen, spielst du eine ganze Einheit **am Stück** ab – wie ein Video zum
 Mitmachen, gedacht fürs iPad oder Handy ein, zwei Meter entfernt auf dem Boden:
@@ -464,7 +466,7 @@ Vor dem Start siehst du alle Übungen mit Menge und Dauer und stellst **Runden**
 
 ## Wetter im Plan
 
-<img src="../assets/16-kalender-wetter.png" width="260" align="right" alt="Kalender mit Wettersymbolen" />
+<img src="../../assets/de/16-calendar-weather.png" width="260" align="right" alt="Kalender mit Wettersymbolen" />
 
 Hinterlege deinen **Standort** in den Einstellungen (→ „Standort & Wetter“, Stadt suchen). Bei
 mehrdeutigen Namen (Neustadt, Frankfurt, Halle) wählst du aus bis zu fünf Treffern mit Region und

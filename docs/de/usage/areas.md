@@ -1,5 +1,7 @@
 # Die Bereiche im Detail
 
+[English](../../usage/areas.md) · **Deutsch**
+
 Jede Ansicht der App kurz erklärt – von „Heute“ bis zu den Einstellungen.
 
 > Teil der [Dokumentation](../README.md) · [Alle Seiten der Nutzung](../README.md#nutzen)
@@ -20,7 +22,7 @@ Jede Ansicht der App kurz erklärt – von „Heute“ bis zu den Einstellungen.
 
 ## Heute
 
-<img src="../assets/01-dashboard.png" width="260" align="right" alt="„Heute“ mit Countdown und Einheit des Tages" />
+<img src="../../assets/de/01-dashboard.png" width="260" align="right" alt="„Heute“ mit Countdown und Einheit des Tages" />
 
 Dein Startbildschirm für das, was **heute** zählt: persönliche Begrüßung, **Countdown** zum nächsten
 Wettkampf, die **heutige Einheit** (der ▶ startet sie direkt), ein Tipp, **ein** Coach-Hinweis (weitere
@@ -36,7 +38,7 @@ alles in zwei Spalten.
 
 ## Ziele & Pläne
 
-<img src="../assets/02-events.png" width="260" align="right" alt="Ziele mit Wettkämpfen und Programmen" />
+<img src="../../assets/de/02-events.png" width="260" align="right" alt="Ziele mit Wettkämpfen und Programmen" />
 
 Deine **Trainingsprogramme** und **Wettkämpfe** an einem Ort (Mehr → „Ziele & Pläne“).
 Wettkampf-Karten zeigen Countdown, Distanz und Priorität (A – Saisonhöhepunkt, B – wichtig,
@@ -50,7 +52,7 @@ oder ein **Trainingsprogramm** werden soll.
 
 ## Trainingsplan
 
-<img src="../assets/04-plan.png" width="260" align="right" alt="Trainingsplan mit Phasen" />
+<img src="../../assets/de/04-plan.png" width="260" align="right" alt="Trainingsplan mit Phasen" />
 
 Der Plan eines Wettkampfs oder Programms: ein **Phasen-Zeitstrahl**, Kennzahlen (geplante km,
 Einheiten, Erledigtes), die Eckdaten (Niveau, Lauftage, Zielpaces) und die **Wochenübersicht** zum
@@ -89,11 +91,11 @@ ihn ab.
 
 ## Einstellungen
 
-<img src="../assets/10-einstellungen.png" width="260" align="right" alt="Einstellungen" />
+<img src="../../assets/de/10-settings.png" width="260" align="right" alt="Einstellungen" />
 
 Hier passt du alles an: **Konto** (PIN, Abmelden, „Gemeinsames Gerät“), **Profil**, **Gesundheit &
 Eignung** (Abgrenzung und „Kalorienzahlen ausblenden“, siehe
-[Gesundheit & Eignung](gesundheit.md#gesundheit--eignung)), **Wochen- und Gesundheitsziele**,
+[Gesundheit & Eignung](health.md#gesundheit--eignung)), **Wochen- und Gesundheitsziele**,
 **Herzfrequenz-Zonen** (aus deiner Max-HF – oder als markierte Schätzung aus dem Alter; wahlweise über
 die HF-Reserve mit Ruhepuls oder aus deiner **Schwellen-HF** aus Leistungsdiagnostik oder
 30-Minuten-Feldtest), **Trainingsbereiche (Pace)**, **Darstellung** (Theme & Akzentfarbe),
@@ -126,14 +128,14 @@ Mitglieds bleiben Zyklus und Labor ohnehin verborgen – sie sind privat.
 
 ## Daten & Sicherung
 
-<img src="../assets/35-backup-recovery.png" width="260" align="right" alt="Daten & Sicherung" />
+<img src="../../assets/de/35-backup-recovery.png" width="260" align="right" alt="Daten & Sicherung" />
 
 Unter **Einstellungen → Daten & Sicherung** sicherst du deine Daten – ganz ohne fremde Cloud. Es gibt
 **drei Ebenen**:
 
 1. **Der Server-Ordner `data/`** – die vollständige Sicherung aller Personen, auch der privaten
    Bereiche. Um ihn kümmert sich, wer den Server betreibt (siehe
-   [Backup im Betrieb](../betrieb/backup.md)).
+   [Backup im Betrieb](../operations/backup.md)).
 2. **Vollbackup (nur Admins):** sichert die **gesamte Familie** in einer Datei – alle Mitglieder,
    Rollen, Teams, Einstellungen und sämtliche Daten **inkl. Urkunden und Berichte**. Aus
    Datenschutzgründen **ohne die privaten Bereiche** (Zyklus, Labor, Ergänzungen) und ohne PINs.
@@ -159,7 +161,7 @@ Weiterarbeiten.
 ein Auswertungsskript, bekommt es mit diesem Schlüssel **nur lesend** deine Trainings, Pläne,
 Körperwerte und Ernährung – nie Zyklus, Labor oder Ergänzungen. Cat-O-Fit selbst nutzt keine KI.
 Ausschalten macht den Schlüssel sofort ungültig; Aufruf und Parameter stehen in den
-[Schnittstellen](../SCHNITTSTELLEN.md#für-externe-programme).
+[Schnittstellen](../../API.md#for-external-programs).
 
 **Jetzt synchronisieren** stößt den Abgleich mit dem Server von Hand an – normalerweise läuft er von
 selbst im Hintergrund.
@@ -170,7 +172,7 @@ selbst im Hintergrund.
 
 ## Hilfe & Wissen
 
-<img src="../assets/11-hilfe.png" width="260" align="right" alt="Hilfe & Wissen in der App" />
+<img src="../../assets/de/11-help.png" width="260" align="right" alt="Hilfe & Wissen in der App" />
 
 Unter **Mehr → Hilfe & Wissen** findest du Anleitungen, Trainingswissen und ein Glossar – durchsuchbar
 (auch nach Fachbegriffen wie „RED-S“ oder „sRPE“) und mit aufklappbaren Schritt-für-Schritt-Anleitungen.

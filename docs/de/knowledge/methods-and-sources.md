@@ -1,11 +1,13 @@
 # Methodik & Quellen
 
+[English](../../knowledge/methods-and-sources.md) · **Deutsch**
+
 Welche Methode hinter welcher Zahl steckt – und woher sie stammt. Cat-O-Fit rechnet mit
 veröffentlichten, nachprüfbaren Verfahren; wo die Forschung weniger trägt als der Ruf einer
 Kennzahl, sagt die App das.
 
 > Teil der [Dokumentation](../README.md) · [Verstehen](../README.md#verstehen) ·
-> Die Formeln stehen unter [Trainingswissen](trainingswissen.md).
+> Die Formeln stehen unter [Trainingswissen](training-science.md).
 
 **Auf dieser Seite:**
 
@@ -50,7 +52,7 @@ Kennzahl, sagt die App das.
 | Eiweiß 1,2–2,0 g je kg | Richtwert für Sporttreibende | Thomas DT, Erdman KA, Burke LM: Nutrition and Athletic Performance (Positionspapier ACSM, Academy of Nutrition and Dietetics, Dietitians of Canada). *J Acad Nutr Diet* 116 (2016), 501–528 |
 | Trainingsverbrauch (in der Bilanz netto, in der Anzeige brutto) | Läufe über die Strecke (rund 1 kcal je kg und km), andere Sportarten über MET-Werte × Körpergewicht × Dauer, angelehnt an das Kompendium; netto ohne den Alltagsumsatz derselben Zeit | Ainsworth BE et al.: 2011 Compendium of Physical Activities. *Med Sci Sports Exerc* 43 (2011), 1575–1581 |
 | Trainingsverbrauch aus der Uhr | wo Apple Health aktive Kalorien liefert, zählen diese statt der Schätzung (netto wie oben); die Energieverfügbarkeit sagt, ob gemessen, teils gemessen oder geschätzt | Uhren schätzen selbst – mit spürbarer Abweichung: Shcherbina A et al.: Accuracy in wrist-worn, sensor-based measurements of heart rate and energy expenditure in a diverse cohort. *J Pers Med* 7 (2017), 3 |
-| Nährwerte der Zutaten | kuratierte, gerundete Durchschnittswerte je 100 g bzw. ml; optional Open Food Facts (auch per Strichcode) | Open Food Facts (ODbL), siehe [CREDITS](../../CREDITS.md) |
+| Nährwerte der Zutaten | kuratierte, gerundete Durchschnittswerte je 100 g bzw. ml; optional Open Food Facts (auch per Strichcode) | Open Food Facts (ODbL), siehe [CREDITS](../../../CREDITS.md) |
 
 ---
 

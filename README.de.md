@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/assets/promo/banner.png" alt="Cat-O-Fit – Trainingsplanung für die ganze Familie" width="860" />
+<img src="docs/assets/promo/banner.de.png" alt="Cat-O-Fit – Trainingsplanung für die ganze Familie" width="860" />
 
 # Cat-O-Fit
 
@@ -11,12 +11,26 @@ deinem eigenen Server.
 [![CI](https://github.com/Bingerminger/cat-o-fit/actions/workflows/ci.yml/badge.svg)](https://github.com/Bingerminger/cat-o-fit/actions/workflows/ci.yml)
 [![License: AGPL-3.0-or-later](https://img.shields.io/badge/Lizenz-AGPL--3.0--or--later-success.svg)](LICENSE)
 [![dependencies: 0](https://img.shields.io/badge/Abh%C3%A4ngigkeiten-0-success.svg)](package.json)
-[![Docker](https://img.shields.io/badge/Docker-amd64%20%7C%20arm64-2496ed.svg)](docs/betrieb/installation.md)
+[![Docker](https://img.shields.io/badge/Docker-amd64%20%7C%20arm64-2496ed.svg)](docs/de/operations/installation.md)
 [![PWA](https://img.shields.io/badge/PWA-installierbar-3d8bff.svg)](manifest.webmanifest)
+[![Sprachen: 7](https://img.shields.io/badge/Sprachen-7-blue.svg)](#sprachen)
 
 [English](README.md) · **Deutsch**
 
 </div>
+
+## Sprachen
+
+Die App spricht **Deutsch, English, Français, Español, Italiano, Português (Brasil) und Nederlands**.
+Sie startet in der Sprache deines Browsers, und jede Person in der Familie wählt in den Einstellungen
+ihre eigene. Kalenderdateien und importierte Trainings folgen der Sprache der Person. Die Doku gibt es
+auf [Deutsch](docs/de/README.md) und [Englisch](docs/README.md).
+
+Französisch, Spanisch, Italienisch, Portugiesisch und Niederländisch sind maschinell übersetzt und gegen
+die App geprüft, aber noch nicht von Muttersprachlern gegengelesen – Korrekturen sind sehr willkommen
+([so hilfst du](CONTRIBUTING.md#translations)). Die aufgenommenen Ansagen im Workout sind vorerst
+deutsch; in den anderen Sprachen liest die Sprachausgabe deines Geräts sie vor. Einheiten sind metrisch
+(imperiale sind geplant).
 
 ## Warum Cat-O-Fit?
 
@@ -39,18 +53,18 @@ deinem eigenen Server.
 - **Die Küche gehört dazu.** Rezepte, Kalorienbilanz, Ess-Tagebuch mit Strichcode-Suche und eine
   gemeinsame Einkaufsliste mit Vorrat.
 - **Wirklich deins.** JSON-Dateien auf deinem Server, Export als Tabelle, offline-fähig auf jedem
-  Gerät, keine Abhängigkeiten, kein Build-Schritt, keine Datenbank, über 700 automatisierte Tests,
+  Gerät, keine Abhängigkeiten, kein Build-Schritt, keine Datenbank, über 850 automatisierte Tests,
   AGPL-3.0-or-later.
 
 <p align="center">
-  <img src="docs/assets/01-dashboard.png" width="200" alt="„Heute“ mit Countdown und Einheit des Tages" />
-  <img src="docs/assets/04-plan.png" width="200" alt="Trainingsplan mit Phasen" />
-  <img src="docs/assets/60-labor.png" width="200" alt="Labor & Ergänzung: Energieversorgung und Werte" />
-  <img src="docs/assets/51-team-dashboard.png" width="200" alt="Team/Familie-Dashboard" />
+  <img src="docs/assets/de/01-dashboard.png" width="200" alt="„Heute“ mit Countdown und Einheit des Tages" />
+  <img src="docs/assets/de/04-plan.png" width="200" alt="Trainingsplan mit Phasen" />
+  <img src="docs/assets/de/60-labs.png" width="200" alt="Labor & Ergänzung: Energieversorgung und Werte" />
+  <img src="docs/assets/de/51-team-dashboard.png" width="200" alt="Team/Familie-Dashboard" />
 </p>
 <p align="center">
-  <img src="docs/assets/ipad-01-dashboard.png" width="390" alt="„Heute“ am iPad mit Seitenleiste" />
-  <img src="docs/assets/ipad-50-team-dashboard.png" width="390" alt="Team/Familie am iPad" />
+  <img src="docs/assets/de/ipad-01-dashboard.png" width="390" alt="„Heute“ am iPad mit Seitenleiste" />
+  <img src="docs/assets/de/ipad-50-team-dashboard.png" width="390" alt="Team/Familie am iPad" />
 </p>
 
 > **Zweckbestimmung:** Cat-O-Fit dient der **Dokumentation und allgemeinen Information für gesunde
@@ -70,16 +84,16 @@ docker run -d --name cat-o-fit -p 8080:80 \
 
 Dann **http://localhost:8080** öffnen – die Ersteinrichtung legt die Admin-Person mit eigener PIN an
 und lädt auf Wunsch eine Beispiel-Familie. **Synology** (Container Manager oder Web Station) und jeder
-andere PHP-Host: Schritt für Schritt unter [Installation](docs/betrieb/installation.md).
+andere PHP-Host: Schritt für Schritt unter [Installation](docs/de/operations/installation.md).
 
 > ⚠️ **Sicherheit:** Cat-O-Fit ist für das eigene, vertrauenswürdige Netz gebaut. Die PIN schützt die
 > Profile und die privaten Bereiche; alles andere (Trainings, Pläne, Körperwerte) kann jedes Gerät
 > lesen, das den Server erreicht. Aus dem Internet nur mit Anmeldung davor (VPN, Reverse-Proxy mit
 > Anmeldung oder die eingebaute Basic-Auth) und HTTPS – siehe
-> [Betrieb außerhalb des Heimnetzes](docs/betrieb/installation.md#betrieb-außerhalb-des-heimnetzes).
+> [Betrieb außerhalb des Heimnetzes](docs/de/operations/installation.md#betrieb-außerhalb-des-heimnetzes).
 >
 > 💾 **Sicherung:** Den Server-Ordner `data/` nach der 3-2-1-Regel sichern – das Vollbackup in der App
-> lässt die privaten Bereiche bewusst aus und ersetzt das nicht ([Backup](docs/betrieb/backup.md)).
+> lässt die privaten Bereiche bewusst aus und ersetzt das nicht ([Backup](docs/de/operations/backup.md)).
 
 **Anforderungen:** Docker (amd64/arm64) oder PHP ab 8.1 mit Schreibrechten auf `data/`; ein aktuelles
 Safari (iPhone/iPad), Chrome, Edge oder Firefox. Aufs iPhone: Safari → Teilen → „Zum Home-Bildschirm“.
@@ -210,21 +224,21 @@ Etwas veraltet? Bitte [ein Issue anlegen](https://github.com/Bingerminger/cat-o-
 
 ## Dokumentation
 
-Alles auf einen Blick: **[Dokumentation](docs/README.md)** – nach Zielgruppen sortiert.
+Alles auf einen Blick: **[Dokumentation](docs/de/README.md)** – nach Zielgruppen sortiert.
 
-- **Nutzen:** [Erste Schritte](docs/nutzung/erste-schritte.md) · [Training](docs/nutzung/training.md) ·
-  [Coach & Belastung](docs/nutzung/coach-und-belastung.md) · [Gesundheit](docs/nutzung/gesundheit.md) ·
-  [Labor](docs/nutzung/labor.md) · [Ernährung](docs/nutzung/ernaehrung.md) ·
-  [Team & Familie](docs/nutzung/familie.md) · [Apple Health](docs/APPLE-HEALTH.md) ·
-  [Häufige Fragen](docs/nutzung/faq.md)
-- **Verstehen:** [Trainingswissen](docs/wissen/trainingswissen.md) ·
-  [Methodik & Quellen](docs/wissen/methodik-und-quellen.md)
-- **Betreiben:** [Installation](docs/betrieb/installation.md) · [Update](docs/betrieb/update.md) ·
-  [Backup](docs/betrieb/backup.md) · [Datenschutz](docs/betrieb/datenschutz.md) ·
-  [Fehlersuche](docs/betrieb/fehlersuche.md)
-- **Mitentwickeln:** [Architektur](docs/ARCHITEKTUR.md) · [Entwicklung](docs/ENTWICKLUNG.md) ·
-  [Mitwirken](CONTRIBUTING.md) · [Schnittstellen](docs/SCHNITTSTELLEN.md) · [Changelog](CHANGELOG.md) ·
-  [Roadmap](docs/ROADMAP.md)
+- **Nutzen:** [Erste Schritte](docs/de/usage/getting-started.md) · [Training](docs/de/usage/training.md) ·
+  [Coach & Belastung](docs/de/usage/coach-and-load.md) · [Gesundheit](docs/de/usage/health.md) ·
+  [Labor](docs/de/usage/labs.md) · [Ernährung](docs/de/usage/nutrition.md) ·
+  [Team & Familie](docs/de/usage/family.md) · [Apple Health](docs/de/usage/apple-health.md) ·
+  [Häufige Fragen](docs/de/usage/faq.md)
+- **Verstehen:** [Trainingswissen](docs/de/knowledge/training-science.md) ·
+  [Methodik & Quellen](docs/de/knowledge/methods-and-sources.md)
+- **Betreiben:** [Installation](docs/de/operations/installation.md) · [Update](docs/de/operations/update.md) ·
+  [Backup](docs/de/operations/backup.md) · [Datenschutz](docs/de/operations/privacy.md) ·
+  [Fehlersuche](docs/de/operations/troubleshooting.md)
+- **Mitentwickeln** (englisch, wie Code und Commits): [Architecture](docs/ARCHITECTURE.md) ·
+  [Development](docs/DEVELOPMENT.md) · [Contributing](CONTRIBUTING.md) · [API](docs/API.md) ·
+  [Changelog](CHANGELOG.md) · [Roadmap](docs/ROADMAP.md)
 - **In der App:** Mehr → Hilfe & Wissen, dazu das ⓘ neben jeder Kennzahl.
 
 ## Datenschutz und externe Dienste
@@ -233,14 +247,15 @@ Kein Konto, kein Tracking. Nach außen gehen nur zwei abschaltbare Dienste: die 
 Open-Meteo** (vom Gerät, mit Ort bzw. Koordinaten; die kostenlose Schnittstelle ist nur für
 nicht-kommerzielle Nutzung) und die **Nährwertsuche bei Open Food Facts** (vom Server, nur mit dem
 Zutatennamen bzw. Strichcode; für neue Profile anfangs aus; Daten unter ODbL). Was wo liegt und wer was lesen kann:
-[Datenschutz im Betrieb](docs/betrieb/datenschutz.md).
+[Datenschutz im Betrieb](docs/de/operations/privacy.md).
 
 ## Tests und Qualität
 
-Logik **und** Ansichten sind durch über 700 automatisierte Tests abgesichert – mit dem Node-eigenen
+Logik **und** Ansichten sind durch über 850 automatisierte Tests abgesichert – mit dem Node-eigenen
 Test-Runner, ohne Abhängigkeiten (`npm test`), dazu PHP-Tests für Speicherung, Schnittstelle,
-Health-Import und Kalender. Die CI führt alles bei jedem Push aus; ein Lasttest der PHP-Persistenz ist
-in der [Entwicklungsdoku](docs/ENTWICKLUNG.md#lasttest--performance) beschrieben.
+Health-Import und Kalender. Die Sprachkataloge prüft die Testsuite mit: jeder Schlüssel, jeder
+Platzhalter und jede Pluralform in allen sieben Sprachen, dazu Trainingspläne und Rezepte je Sprache. Die CI führt alles bei jedem Push aus; ein Lasttest der PHP-Persistenz ist
+in der [Entwicklungsdoku](docs/DEVELOPMENT.md#load-test--performance) beschrieben.
 
 ## Open Source – und das ernst gemeint
 

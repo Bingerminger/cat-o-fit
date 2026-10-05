@@ -1,11 +1,13 @@
 # Datenschutz im Betrieb
 
+[English](../../operations/privacy.md) · **Deutsch**
+
 Was liegt wo, was verlässt das Haus, wer kann was lesen – ehrlich, ohne Werbesprache. Wer Cat-O-Fit
 für die Familie oder ein Team betreibt, trägt die Verantwortung für die Daten der anderen mit; diese
 Seite hilft, das richtig einzuschätzen.
 
 > Teil der [Dokumentation](../README.md) · [Betreiben](../README.md#betreiben) ·
-> Sicherheitslücken bitte vertraulich melden: [SECURITY.md](../../SECURITY.md)
+> Sicherheitslücken bitte vertraulich melden: [SECURITY.md](../../../SECURITY.md)
 
 **Auf dieser Seite:**
 
@@ -38,7 +40,7 @@ Nur zwei **abschaltbare** Zusatzdienste; kein Konto, keine Werbung, keine Teleme
 Rechtliches zu den Diensten: Die kostenlose Schnittstelle von Open-Meteo ist nur für nicht-kommerzielle
 Nutzung gedacht (unter 10 000 Aufrufen am Tag); wer Cat-O-Fit kommerziell betreibt, braucht dort einen
 eigenen Tarif. Nährwertdaten von Open Food Facts stehen unter der Open Database License (ODbL) – die
-App nennt die Quelle. Details in [CREDITS](../../CREDITS.md).
+App nennt die Quelle. Details in [CREDITS](../../../CREDITS.md).
 
 Die **Kamera** zum Strichcode-Scannen startet nur auf Tipp; das Bild wertet der Browser selbst aus, es
 verlässt das Gerät nicht. Auch **Aktivitätsdateien** (GPX, TCX, FIT, ZIP) liest das Gerät – zum Server

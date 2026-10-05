@@ -1,5 +1,7 @@
 # Coach & Belastung
 
+[English](../../usage/coach-and-load.md) · **Deutsch**
+
 Die Tagesempfehlung, Belastung & Form, feste Termine, rollierende Planung und zwei Ziele in einem Plan.
 
 > Teil der [Dokumentation](../README.md) · [Alle Seiten der Nutzung](../README.md#nutzen)
@@ -14,7 +16,7 @@ Die Tagesempfehlung, Belastung & Form, feste Termine, rollierende Planung und zw
 
 ## Prüfen, ob deine Belastung gesund ist
 
-<img src="../assets/45-belastung-form.png" width="260" align="right" alt="Karte „Belastung & Form“ auf „Heute“" />
+<img src="../../assets/de/45-load-form.png" width="260" align="right" alt="Karte „Belastung & Form“ auf „Heute“" />
 
 Die Karte **„Belastung & Form“** auf „Heute“ beantwortet drei Fragen – als Klartext statt als
 Zahlenfriedhof. Das ⓘ in der Karte öffnet die Erklärung.
@@ -48,7 +50,7 @@ Zahlenfriedhof. Das ⓘ in der Karte öffnet die Erklärung.
 
 ## Dein Coach & deine Erfolge
 
-<img src="../assets/13-dashboard-coach.png" width="260" align="right" alt="„Heute“ mit Coach und Momentum" />
+<img src="../../assets/de/13-dashboard-coach.png" width="260" align="right" alt="„Heute“ mit Coach und Momentum" />
 
 **Der Coach** gibt dir auf „Heute“ **genau eine Empfehlung** – nach fester Reihenfolge, damit sich zwei
 Karten nie widersprechen:
@@ -80,7 +82,7 @@ Vergleich zur Zielzeit, die Herzfrequenz deiner lockeren Läufe und die **Anstre
 Einheiten** (Ø RPE). Die **Aktuelle Form (VDOT)** mit passenden Trainings-Paces erklärt
 **[Aktuelle Form & Zielpaces anpassen](#aktuelle-form--zielpaces-anpassen)**.
 
-<p><img src="../assets/43-coach-rpe.png" width="260" alt="Coach-Hinweise: Wochenumfang & Progression" /></p>
+<p><img src="../../assets/de/43-coach-rpe.png" width="260" alt="Coach-Hinweise: Wochenumfang & Progression" /></p>
 
 Das sind **Empfehlungen**, keine Vorschriften – Änderungen am Plan passieren nur, wenn du sie auslöst.
 
@@ -88,7 +90,7 @@ Das sind **Empfehlungen**, keine Vorschriften – Änderungen am Plan passieren 
 
 ### Aktuelle Form & Zielpaces anpassen
 
-<img src="../assets/44-aktuelle-form.png" width="240" align="right" alt="Karten „Deine Trainingsbereiche“ und „Aktuelle Form“" />
+<img src="../../assets/de/44-current-form.png" width="240" align="right" alt="Karten „Deine Trainingsbereiche“ und „Aktuelle Form“" />
 
 Unter **Fortschritt → Training** gehören zwei Karten zusammen (auf „Heute“ erscheint die Form nur,
 wenn es etwas anzupassen gibt):
@@ -131,7 +133,7 @@ Vorbereitung erreichbar“, und der Coach rät dann nicht, die Zielzeit zu schä
 
 ### Erfolge & Momentum
 
-<img src="../assets/12-erfolge.png" width="260" align="right" alt="Erfolge und Momentum" />
+<img src="../../assets/de/12-achievements.png" width="260" align="right" alt="Erfolge und Momentum" />
 
 Für durchgeführte Trainings und erreichte Ziele schaltest du **Abzeichen** frei – automatisch und mit
 einer kleinen Feier. Dein **Momentum** ist die „Schwung-Flamme“: Sie **wächst**, wenn du dranbleibst,
@@ -153,7 +155,7 @@ Training erfasst hast; alle Abzeichen mit Fortschritt findest du unter **Fortsch
 ## Belastungssteuerung, feste Termine & zwei Ziele
 
 Cat-O-Fit plant **rollierend** und steuert die Belastung mit Methoden aus der Sportwissenschaft – die
-Formeln und Quellen stehen unter [Methodik & Quellen](../wissen/methodik-und-quellen.md).
+Formeln und Quellen stehen unter [Methodik & Quellen](../knowledge/methods-and-sources.md).
 
 ### Belastung & Form (Karte auf „Heute“)
 
@@ -222,7 +224,7 @@ kleiner (rund 300 kcal), in der **Spitzenphase** klein und im **Tapering** null,
 **Defizit-Empfehlung** ist dieselbe wie in der Ernährung und hat Untergrenzen: nie unter dem Grundumsatz
 und nie so tief, dass nach dem Training weniger als 30 kcal je kg fettfreier Masse bleiben (ohne
 Körperfettwert höchstens 15 % Defizit). Ein **Reiz-Check** warnt, wenn zu wenig Trainingsreiz gesetzt wird.
-Solange die Abgrenzung (siehe [Gesundheit & Eignung](gesundheit.md#gesundheit--eignung)) nicht beantwortet ist, schlägt
+Solange die Abgrenzung (siehe [Gesundheit & Eignung](health.md#gesundheit--eignung)) nicht beantwortet ist, schlägt
 das Cockpit kein Defizit vor.
 
 <br clear="all" />

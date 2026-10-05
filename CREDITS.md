@@ -1,83 +1,80 @@
-# Danksagungen & Drittanbieter-Hinweise
+# Credits & third-party notices
 
-Cat-O-Fit ist bewusst **abhängigkeitsfrei** gebaut: Es gibt keine npm-Pakete,
-kein Build-Tool und keine eingebundenen Fremd-Bibliotheken. Der gesamte
-Anwendungs-Code (JavaScript, PHP, CSS) ist eigenständig geschrieben und steht
-unter der [GNU AGPL v3.0 oder neuer](LICENSE).
+Cat-O-Fit is deliberately built **without dependencies**: there are no npm packages, no
+build tool and no bundled third-party libraries. All application code (JavaScript, PHP,
+CSS) is written from scratch and licensed under the
+[GNU AGPL v3.0 or later](LICENSE).
 
-Trotzdem stützt sich das Projekt auf einige externe Dienste und Ideen, die hier
-gewürdigt werden.
+Even so, the project relies on a few external services and ideas, which are acknowledged
+here.
 
-## Laufzeit-Dienste
+## Runtime services
 
 ### Open-Meteo
-Wetter- und Geocoding-Daten stammen von **[Open-Meteo](https://open-meteo.com/)**.
-Die Daten stehen unter der Lizenz
+Weather and geocoding data come from **[Open-Meteo](https://open-meteo.com/)**.
+The data is licensed under
 [Creative Commons Attribution 4.0 (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
 
 > Weather data by Open-Meteo.com (CC BY 4.0)
 
-Open-Meteo wird ausschließlich zur Laufzeit für die optionale Wetter-Anzeige
-aufgerufen (direkt vom Gerät, mit Ort bzw. Koordinaten). Es werden keine
-Open-Meteo-Daten mit Cat-O-Fit ausgeliefert, daher berührt diese Attribution nicht
-die Lizenz des Quellcodes.
+Open-Meteo is called only at runtime, for the optional weather display (directly from the
+device, with the place or coordinates). No Open-Meteo data ships with Cat-O-Fit, so this
+attribution does not affect the licence of the source code.
 
-**Nutzungsbedingungen:** Die kostenlose Schnittstelle von Open-Meteo ist laut ihren
-[Bedingungen](https://open-meteo.com/en/terms) nur für **nicht-kommerzielle** Nutzung
-gedacht (unter 10 000 Aufrufen am Tag). Wer Cat-O-Fit kommerziell betreibt – etwa als
-bezahlten Dienst für einen Verein –, braucht einen eigenen Open-Meteo-Tarif oder schaltet
-das Wetter ab.
+**Terms of use:** According to its
+[terms](https://open-meteo.com/en/terms), the free Open-Meteo interface is intended for
+**non-commercial** use only (under 10,000 calls a day). Anyone who runs Cat-O-Fit
+commercially – for example as a paid service for a club – needs their own Open-Meteo plan
+or must switch the weather off.
 
 ### Open Food Facts
-Nährwerte je Zutat für die optionale „schätzen“-Hilfe stammen – nur wenn
-„Nährwerte online ergänzen“ eingeschaltet ist (für neue Profile standardmäßig aus) –
-aus **[Open Food Facts](https://openfoodfacts.org)**, einer offenen, gemeinnützigen
-Datenbank. Die Datenbank steht unter der
-[Open Database License (ODbL)](https://opendatacommons.org/licenses/odbl/1-0/), die
-einzelnen Inhalte unter der
+Nutrition values per ingredient for the optional "estimate" helper come – only when
+"Fill in nutrition values online" is switched on (off by default for new profiles) –
+from **[Open Food Facts](https://openfoodfacts.org)**, an open, non-profit database. The
+database is licensed under the
+[Open Database License (ODbL)](https://opendatacommons.org/licenses/odbl/1-0/), the
+individual contents under the
 [Database Contents License (DbCL)](https://opendatacommons.org/licenses/dbcl/1-0/).
 
-> Nährwertdaten: Open Food Facts – openfoodfacts.org (ODbL/DbCL)
+> Nutrition data: Open Food Facts – openfoodfacts.org (ODbL/DbCL)
 
-Die Anfrage stellt der eigene Server und schickt dabei nur den Zutatennamen; die
-Ergebnisse werden dort bis zu 90 Tage zwischengespeichert. Mit Cat-O-Fit werden keine
-Open-Food-Facts-Daten ausgeliefert; die App nennt die Quelle neben dem Schalter und unter
-„Über & Rechtliches“.
+The request is made by your own server and sends only the ingredient name; the results are
+cached there for up to 90 days. No Open Food Facts data ships with Cat-O-Fit; the app names
+the source next to the switch and under "About & legal".
 
-## Mitgelieferte Inhalte
+## Bundled content
 
-| Inhalt | Herkunft | Lizenz |
+| Content | Origin | Licence |
 |---|---|---|
-| Rezept-Ideen (48 Gerichte) | für Cat-O-Fit zusammengestellt; Nährwerte aus den Zutaten gerechnet | AGPL-3.0-or-later (wie der Code) |
-| Nährwerttabelle der „schätzen“-Hilfe | gerundete Durchschnittswerte je 100 g bzw. ml, für Cat-O-Fit zusammengestellt | AGPL-3.0-or-later |
-| Übungsgrafiken | selbst gezeichnete, symbolische Strichfiguren | AGPL-3.0-or-later |
-| Icons | selbst gezeichnet (siehe unten) | AGPL-3.0-or-later |
-| Bildschirmfotos in `docs/assets` | aus der App mit Beispieldaten erzeugt | AGPL-3.0-or-later |
-| Laborbereiche und Zielkorridore | aus Fachliteratur und Laborangaben, Quelle je Wert in der App und unter [Methodik & Quellen](docs/wissen/methodik-und-quellen.md) | Angaben zur Orientierung |
+| Recipe ideas (48 dishes) | compiled for Cat-O-Fit; nutrition values calculated from the ingredients | AGPL-3.0-or-later (like the code) |
+| Nutrition table of the "estimate" helper | rounded averages per 100 g or ml, compiled for Cat-O-Fit | AGPL-3.0-or-later |
+| Exercise graphics | self-drawn, symbolic stick figures | AGPL-3.0-or-later |
+| Icons | self-drawn (see below) | AGPL-3.0-or-later |
+| Screenshots in `docs/assets` | generated from the app with sample data | AGPL-3.0-or-later |
+| Lab ranges and target corridors | from specialist literature and laboratory information; source per value in the app and under [Methods & sources](docs/knowledge/methods-and-sources.md) | information for orientation only |
 
-## Gestalterische Inspiration
+## Design inspiration
 
 ### Icons
-Das SVG-Icon-Set ist selbst gezeichnet, orientiert sich aber stilistisch an den
-quelloffenen Icon-Bibliotheken **[Feather Icons](https://feathericons.com/)**
-(MIT-Lizenz) und **[Lucide](https://lucide.dev/)** (ISC-Lizenz). Es wurden keine
-Original-Pfaddaten kopiert; die Anlehnung beschränkt sich auf Strichstärke,
-Raster (24×24) und visuelle Sprache.
+The SVG icon set is self-drawn, but stylistically inspired by the open-source icon
+libraries **[Feather Icons](https://feathericons.com/)** (MIT licence) and
+**[Lucide](https://lucide.dev/)** (ISC licence). No original path data was copied; the
+inspiration is limited to stroke width, grid (24×24) and visual language.
 
-## Trainingswissenschaftliche Methoden
+## Training-science methods
 
-Die in der App verwendeten Berechnungsmethoden beruhen auf öffentlich
-publizierten, frei anwendbaren Verfahren, unter anderem:
+The calculation methods used in the app are based on publicly published, freely
+applicable methods, including:
 
-- **VDOT- / Pace-Schätzung** nach den Trainingsprinzipien von **Jack Daniels**
-  (*Daniels' Running Formula*). Siehe auch [TRADEMARKS.md](TRADEMARKS.md).
-- **Wettkampfzeit-Hochrechnung** nach der **Riegel-Formel** (Peter Riegel, 1977/1981).
-- **Fitness, Ermüdung und Form** nach dem Modell von **Eric Banister**.
-- **Belastungspunkte (Session-RPE)** sowie **Monotonie und Strain** nach **Carl Foster**.
-- **Maximale Herzfrequenz** nach **Tanaka**, **Herzfrequenzreserve** nach **Karvonen**.
-- **Grundumsatz** nach der **Mifflin-St-Jeor-Gleichung**.
+- **VDOT / pace estimation** based on the training principles of **Jack Daniels**
+  (*Daniels' Running Formula*). See also [TRADEMARKS.md](TRADEMARKS.md).
+- **Race-time projection** using the **Riegel formula** (Peter Riegel, 1977/1981).
+- **Fitness, fatigue and form** based on the model of **Eric Banister**.
+- **Load points (session RPE)** as well as **monotony and strain** after **Carl Foster**.
+- **Maximum heart rate** after **Tanaka**, **heart rate reserve** after **Karvonen**.
+- **Basal metabolic rate** using the **Mifflin-St Jeor equation**.
 
-Die vollständige Liste mit Literaturangaben – auch für Energieverfügbarkeit, Laborwerte
-und Ergänzung – steht unter [Methodik & Quellen](docs/wissen/methodik-und-quellen.md).
-Diese Methoden sind Allgemeingut der Trainings- und Sportwissenschaft; lediglich einzelne
-Bezeichnungen sind markenrechtlich geschützt (siehe TRADEMARKS.md).
+The complete list with references – also for energy availability, lab values and
+supplements – is under [Methods & sources](docs/knowledge/methods-and-sources.md).
+These methods are common property of training and sport science; only some individual
+names are protected by trademark law (see TRADEMARKS.md).

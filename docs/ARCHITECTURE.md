@@ -1,381 +1,447 @@
-# Architektur
+# Architecture
 
-Dieses Dokument beschreibt den Aufbau von Cat-O-Fit für Entwickler:innen. Für die
-Einrichtung und den Arbeitsablauf siehe [ENTWICKLUNG.md](ENTWICKLUNG.md), für die
-Bedienung die [Dokumentation](README.md).
+This document describes how Cat-O-Fit is built, for developers. For setup and workflow see
+[DEVELOPMENT.md](DEVELOPMENT.md), for using the app see the [documentation](README.md).
 
-## Leitplanken
+## Principles
 
-- **Keine Abhängigkeiten, kein Build.** Vanilla JS (ES-Module), CSS, schlankes PHP.
-  Was im Repo liegt, läuft direkt im Browser.
-- **Local-first.** Jede Änderung landet sofort im LocalStorage; ein Hintergrund-Sync
-  schreibt sie auf den Server. Die App ist offline voll bedienbar.
-- **Keine Datenbank.** Persistenz sind JSON-Dateien unter `data/`.
-- **Reine Logik ist DOM-frei und testbar.** Berechnungen leben in Modulen ohne
-  DOM-Zugriff und werden per `node:test` abgedeckt.
-- **Datenschutz ist Teil der Architektur.** Die privaten Bereiche – Zyklus (`cycle`), Labor
-  (`labs`) und Ergänzung (`supplements`) – sind strikt privat: nie im Team-/Familien-Dashboard, nie
-  für Admins, nicht im Vollbackup, und der Server gibt sie nur an die angemeldete Person heraus.
+- **No dependencies, no build.** Vanilla JS (ES modules), CSS, lean PHP.
+  What is in the repo runs directly in the browser.
+- **Local-first.** Every change lands in LocalStorage immediately; a background sync
+  writes it to the server. The app is fully usable offline.
+- **No database.** Persistence is JSON files under `data/`.
+- **Pure logic is DOM-free and testable.** Calculations live in modules without
+  DOM access and are covered by `node:test`.
+- **Privacy is part of the architecture.** The private areas – cycle (`cycle`), labs
+  (`labs`) and supplements (`supplements`) – are strictly private: never on the team/family
+  dashboard, never visible to admins, not in the full backup, and the server hands them out only
+  to the signed-in person.
+- **Texts live in catalogs, not in code.** Everything the user reads comes from
+  `locales/<lang>/*.json` (see [Internationalisation (i18n)](#internationalisation-i18n)).
 
-## Schichten
+## Layers
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  index.html  ·  App-Shell (PWA, iOS-Meta, lädt js/app.js)    │
-├─────────────────────────────────────────────────────────────┤
-│  app.js · router.js        Bootstrap, Hash-Routing, Guard    │
-├─────────────────────────────────────────────────────────────┤
-│  View-Module (rendern ins #view-Element)                     │
-│  dashboard · calendar · events · plans · session · workout   │
-│  dashboard-goals · dashboard-coach                           │
-│  health · statistics · nutrition · shopping · checklist      │
-│  cycle · labs-view · settings · family · family-admin        │
-│  badges · reports · help (+ helpcontent) · login · capture   │
-├─────────────────────────────────────────────────────────────┤
-│  Reine Logik (DOM-frei, unit-getestet)                       │
-│  load · coach · fitness · vdot · plangen · planflow · program │
-│  energy · eligibility · labs · supplements · redflags · gpx   │
-│  fit · zip · activity-import · strength · barcode             │
-│  csv-export · workout-engine · sollist · helpcontent          │
-│  labsources · nav · unit-actions …                            │
-├─────────────────────────────────────────────────────────────┤
-│  UI-Bausteine        ui.js (el, Icons, Helfer) · charts.js   │
-├─────────────────────────────────────────────────────────────┤
-│  Datenschicht        storage.js (State, Sync) · api-client   │
-├─────────────────────────────────────────────────────────────┤
-│  Backend (PHP)       api/api.php · storage.php · auth.php ·  │
-│                      ics.php (+ icstz) · health-ingest/-map · │
-│                      health-import/-xml · foodfacts.php ·    │
-│                      read-access.php                         │
-├─────────────────────────────────────────────────────────────┤
-│  Persistenz          data/users/<id>/<area>.json             │
-│                      data/family/<area>.json · data/auth/    │
-└─────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────┐
+│  index.html  ·  App shell (PWA, iOS meta, loads js/app.js)     │
+├────────────────────────────────────────────────────────────────┤
+│  app.js · router.js        Bootstrap, hash routing, guard      │
+├────────────────────────────────────────────────────────────────┤
+│  View modules (render into the #view element)                  │
+│  dashboard · calendar · events · plans · session · workout     │
+│  dashboard-goals · dashboard-coach                             │
+│  health · statistics · nutrition · shopping · checklist        │
+│  cycle · labs-view · settings · family · family-admin          │
+│  badges · reports · help (+ helpcontent) · login · capture     │
+├────────────────────────────────────────────────────────────────┤
+│  Pure logic (DOM-free, unit-tested)                            │
+│  load · coach · fitness · vdot · plangen · planflow · program  │
+│  energy · eligibility · labs · supplements · redflags · gpx    │
+│  fit · zip · activity-import · strength · barcode              │
+│  csv-export · workout-engine · sollist · helpcontent           │
+│  labsources · nav · unit-actions …                             │
+├────────────────────────────────────────────────────────────────┤
+│  UI building blocks  ui.js (el, icons, helpers) · charts.js    │
+├────────────────────────────────────────────────────────────────┤
+│  Language            i18n.js (t, tp) · language.js · format.js │
+│                      locales/<lang>/<area>.json                │
+├────────────────────────────────────────────────────────────────┤
+│  Data layer          storage.js (state, sync) · api-client     │
+├────────────────────────────────────────────────────────────────┤
+│  Backend (PHP)       api/api.php · storage.php · auth.php ·    │
+│                      ics.php (+ icstz) · health-ingest/-map ·  │
+│                      health-import/-xml · foodfacts.php ·      │
+│                      read-access.php · i18n.php                │
+├────────────────────────────────────────────────────────────────┤
+│  Persistence         data/users/<id>/<area>.json               │
+│                      data/family/<area>.json · data/auth/      │
+└────────────────────────────────────────────────────────────────┘
 ```
 
-## Routing & Bootstrap
+## Routing & bootstrap
 
-- `app.js` bootet die App: lädt den **lokalen** Stand, zeichnet sofort und startet den Abgleich
-  im Hintergrund (seit v3.20.0; vorher wartete der Start auf den Server). Es registriert die
-  Routen, baut Tab-Leiste, Mehr-Sheet und Seitenleiste und setzt den Router-Guard.
-- **Menüstruktur (`nav.js`, seit v3.20.0):** `TAB_ITEMS` (Heute · Kalender · ＋ Erfassen ·
-  Fortschritt · Mehr), `PROGRESS_TABS` (Reiter über die Routen `/stats`, `/health`, `/badges`,
-  `/reports`), `MORE_GROUPS` (gegliedertes „Mehr“), `navMatches()` (Route → Eintrag für die aktive
-  Markierung), `navVisible()` (Module, Admin, Verwalten) und `accountBlock()` (immer die
-  **angemeldete** Person, beim Verwalten „verwaltet gerade: …“ samt „Zurück zu mir“).
-  `capture.js` ist das Erfassen-Sheet; die Formulare gehören weiter ihren Modulen.
-- `router.js` ist ein **Hash-Router** (`#/pfad`). `register(path, handler)` bindet eine
-  View, `setGuard(fn)` schützt Routen (z. B. erzwingt Login → `#/family`). Parameter wie
-  `#/session/:id` werden an den Handler übergeben. Ein Handler darf ein Promise liefern: Selten
-  genutzte Ansichten (Hilfe, Labor, Berichte, Import, Team-Verwaltung, Workout) lädt `app.js` erst
-  bei Bedarf per `import()`.
-- Views bekommen das `#view`-Element und füllen es; der Header wird über `setHeader(...)`
-  gesetzt (Titel, Untertitel, Zurück, Aktionen – mit `title` als Tooltip).
-- **Neu zeichnen statt neu laden (seit v3.20.0):** Nach dem Speichern ruft eine View
-  `refreshView()` bzw. `goOrRefresh(hash)` (`ui.js`; die Views nutzen dafür `rerenderView(render)`); `app.js` verbindet das mit
-  `router.refresh()`, das die aktuelle Route neu zeichnet und die Scrollposition behält.
-  `location.reload()` bleibt nur für App-Reset, Backup-Einspielen, Service-Worker-Update und den
-  Diagnose-Knopf (Test `refresh.test.js`). Der Hintergrund-Sync meldet nur echte
-  Inhaltsänderungen (`mergeRecords` → `{ changed, visible }`), kehrt die eigene Änderung nur mit
-  neuer `rev` zurück, zeichnet nichts neu.
-- **Dialoge (`openSheet`):** benannt über den Titel (`aria-labelledby`), Escape schließt, der Fokus
-  wandert hinein und zurück zum Auslöser, der Hintergrund ist `inert`. Knopfgruppen stehen in
-  `field()` als benannte Gruppe (nicht in `<label>`), Segmente sind Radiogruppen.
-- **Anmelde-Gate (seit v3.2.0, erweitert v3.3.0):** Ohne angemeldeten Nutzer ist nur `#/login`
-  erreichbar und die Menüs sind ausgeblendet (`body.is-anon`). Die reine Entscheidung liegt DOM-frei in
-  `js/session-gate.js` (`gate()`, `menusVisible()`, `needsSetup()`); `app.js` setzt sie im Guard und per
-  `onAfterRender` (`applyAuthChrome`) um. **Kein Auto-Login** – beim Start ist niemand angemeldet.
-- **Login vs. Dashboard getrennt (v3.3.0):** `js/login.js` (`/login`, abgemeldet) zeigt entweder die
-  **Ersteinrichtung** (leere Familie → `createFirstAdmin`, optional `seedDemo`) oder die **Profilauswahl**.
-  `js/family.js` (`/family`, Menü „Team/Familie“) ist das **angemeldete Team-Dashboard** mit Team-Badges
-  (`js/teamstats.js`, DOM-frei). Verwaltung/Reset liegen admin-only in den Einstellungen.
+- `app.js` boots the app: it loads the **local** state, draws immediately and starts the sync
+  in the background (since v3.20.0; before that the start waited for the server). It registers the
+  routes, builds the tab bar, the More sheet and the sidebar, and sets the router guard.
+- **Menu structure (`nav.js`, since v3.20.0):** `TAB_ITEMS` (Today · Calendar · ＋ Log ·
+  Progress · More), `PROGRESS_TABS` (tabs over the routes `/stats`, `/health`, `/badges`,
+  `/reports`), `MORE_GROUPS` (the grouped “More”), `navMatches()` (route → entry for the active
+  highlight), `navVisible()` (modules, admin, managing) and `accountBlock()` (always the
+  **signed-in** person; while managing, “now managing: …” together with “Back to me”).
+  `capture.js` is the Log sheet; the forms still belong to their modules.
+- `router.js` is a **hash router** (`#/path`). `register(path, handler)` binds a
+  view, `setGuard(fn)` protects routes (e.g. forces login → `#/family`). Parameters such as
+  `#/session/:id` are passed to the handler. A handler may return a promise: `app.js` loads rarely
+  used views (help, labs, reports, import, team administration, workout) only on demand via `import()`.
+- Views receive the `#view` element and fill it; the header is set via `setHeader(...)`
+  (title, subtitle, back, actions – with `title` as tooltip).
+- **Redraw instead of reload (since v3.20.0):** After saving, a view calls
+  `refreshView()` or `goOrRefresh(hash)` (`ui.js`; the views use `rerenderView(render)` for this); `app.js` connects this to
+  `router.refresh()`, which redraws the current route and keeps the scroll position.
+  `location.reload()` remains only for app reset, restoring a backup, service-worker update and the
+  diagnostics button (test `refresh.test.js`). The background sync reports only real
+  content changes (`mergeRecords` → `{ changed, visible }`); it does not redraw when the
+  device's own change comes back with a new `rev`.
+- **Dialogs (`openSheet`):** named by their title (`aria-labelledby`), Escape closes, focus
+  moves in and back to the trigger, the background is `inert`. Button groups sit in
+  `field()` as a named group (not in `<label>`), segments are radio groups.
+- **Sign-in gate (since v3.2.0, extended in v3.3.0):** Without a signed-in user only `#/login`
+  is reachable and the menus are hidden (`body.is-anon`). The pure decision lives DOM-free in
+  `js/session-gate.js` (`gate()`, `menusVisible()`, `needsSetup()`); `app.js` applies it in the guard and via
+  `onAfterRender` (`applyAuthChrome`). **No auto-login** – nobody is signed in at start.
+- **Login and dashboard separated (v3.3.0):** `js/login.js` (`/login`, signed out) shows either the
+  **first-time setup** (empty family → `createFirstAdmin`, optionally `seedDemo`) or the **profile picker**.
+  `js/family.js` (`/family`, menu “Team/family”) is the **signed-in team dashboard** with team badges
+  (`js/teamstats.js`, DOM-free). Administration/reset live in the settings, admin only.
 
-## Datenschicht (`storage.js`)
+## Data layer (`storage.js`)
 
-Das Herzstück. Hält den State je **Bereich** (Area) und kümmert sich um LocalStorage,
-Sync und Mehrbenutzer-Kontext.
+The heart of the app. It holds the state per **area** and takes care of LocalStorage,
+sync and the multi-user context.
 
-- **Bereiche (`AREAS`, 13):** `profile` (Objekt) plus die Listen-Bereiche `events`, `plans`,
+- **Areas (`AREAS`, 13):** `profile` (object) plus the list areas `events`, `plans`,
   `sessions`, `health`, `nutrition`, `diary`, `shopping`, `checklist`, `cycle`, `reports`, `labs`,
-  `supplements` (`ARRAY_AREAS`). **Invariante:** `ARRAY_AREAS` = `AREAS` ohne `profile`. Eine neue Area
-  muss in `storage.js`, in `api/storage.php` (`user_areas`) und in den Lasttest-Werkzeugen
-  (`USER_AREAS`) eingetragen werden.
-- **Versiegelte Bereiche (`SEALED_AREAS`, z. B. `reports`):** append-only. `upsert/patch/
-  remove` sind wirkungslos; der einzige Schreibweg ist `addReport()` – für Urkunden/Reports,
-  die als Beleg unveränderlich bleiben müssen.
-- **Strikt private Bereiche (`PRIVATE_AREAS` = `cycle`, `labs`, `supplements`):** nie im Vollbackup,
-  nie für eine verwaltende Admin-Person sichtbar, am Server nur mit Sitzung derselben Person.
-- **CRUD:** `get/find/upsert/patch/remove/replaceArea`. Records tragen `id`, Löschungen
-  sind **Tombstones** (`deleted: true`) für den Sync.
-- **Mehrbenutzer:** `identity` = angemeldete Person (gemerkt in `sessionStorage`: übersteht ein
-  Neuladen, nicht das Schließen der App; kein Auto-Login), `activeUser` = gerade betrachtete Person.
-  Sind sie verschieden, **verwaltet** ein Admin ein Mitglied (`isManaging()`), und Privates (Zyklus,
-  Labor, Ergänzungen) bleibt verborgen. `login()` prüft die PIN am Server (Sitzung, seit v3.20.0) bzw.
-  offline gegen den Prüfwert des Geräts und setzt `identity`; `logout()` beendet die Server-Sitzung
-  und verwirft den geladenen Speicher (bei „Gemeinsames Gerät“ auch den Browserspeicher).
-- **Familienweite Daten:** Die Sicht `family` (Mitglieder, `pantry`, `settings`) wird aus den
-  Familien-Datensätzen **abgeleitet** (`members/familyPantry/familySettings`); Schreibzugriffe
-  (`addMember/updateMember/removeMember/setFamilyPantry/setFamilySetting`) erzeugen
-  Einzel-Ops (per-Mitglied-Merge, s. u.).
-- **Persönliches Backup:** `exportAll()` (mit App-Kennung, Version, Profilbezug) und
-  `importAll()` (validiert App/Version/Typen, private Bereiche bleiben beim Verwalten außen vor).
-  Sichert die Daten der **aktiven Person** – inkl. ihrer privaten Zyklusdaten.
-- **Admin-Vollbackup (Notfall-Recovery):** `exportFamilyAll()` / `importFamilyAll()` (nur
-  Admin). Bündelt die Familienkonfiguration (inkl. **Teams**, seit v3.20.0) **und** je Mitglied
-  alle Bereiche – außer den strikt privaten (`cycle`, `labs`, `supplements`). Die Wiederherstellung
-  setzt Familie und alle enthaltenen Mitglieder-Bereiche server- und lokalseitig (per **`replace`-Op**
-  je Nutzer). Seit v3.20.0 trägt die `replace`-Op den Server-Stand beim Einspielen als `baseRev`:
-  wird sie erst später gesendet (offline), überschreibt sie keine jüngeren Eingaben. Die
-  Wiederherstellung wartet auf den Server und meldet Bereiche, die noch nachgereicht werden
-  (`pending`). Schutz: das Backup muss mindestens eine Admin-Person enthalten (kein Aussperren);
-  private Daten bleiben dabei **unangetastet** erhalten.
+  `supplements` (`ARRAY_AREAS`). **Invariant:** `ARRAY_AREAS` = `AREAS` without `profile`. A new area
+  must be entered in `storage.js`, in `api/storage.php` (`user_areas`) and in the load-test tools
+  (`USER_AREAS`).
+- **Sealed areas (`SEALED_AREAS`, e.g. `reports`):** append-only. `upsert/patch/
+  remove` have no effect; the only way to write is `addReport()` – for certificates/reports
+  that must stay unchangeable as proof.
+- **Strictly private areas (`PRIVATE_AREAS` = `cycle`, `labs`, `supplements`):** never in the full backup,
+  never visible to a managing admin, on the server only with a session of the same person.
+- **CRUD:** `get/find/upsert/patch/remove/replaceArea`. Records carry an `id`; deletions
+  are **tombstones** (`deleted: true`) for the sync.
+- **Multi-user:** `identity` = signed-in person (remembered in `sessionStorage`: survives a
+  reload, not closing the app; no auto-login), `activeUser` = the person currently viewed.
+  If they differ, an admin is **managing** a member (`isManaging()`), and private data (cycle,
+  labs, supplements) stays hidden. `login()` checks the PIN at the server (session, since v3.20.0) or,
+  offline, against the device's check value, and sets `identity`; `logout()` ends the server session
+  and discards the loaded store (with “Shared device” also the browser storage).
+- **Family-wide data:** The `family` view (members, `pantry`, `settings`) is **derived** from the
+  family records (`members/familyPantry/familySettings`); writes
+  (`addMember/updateMember/removeMember/setFamilyPantry/setFamilySetting`) produce
+  single ops (per-member merge, see below).
+- **Personal backup:** `exportAll()` (with app identifier, version, profile reference) and
+  `importAll()` (validates app/version/types, private areas are left out while managing).
+  Backs up the data of the **active person** – including their private cycle data.
+- **Admin full backup (emergency recovery):** `exportFamilyAll()` / `importFamilyAll()` (admin
+  only). Bundles the family configuration (including **teams**, since v3.20.0) **and** all areas of
+  every member – except the strictly private ones (`cycle`, `labs`, `supplements`). The restore
+  sets the family and all contained member areas on the server and locally (via a **`replace` op**
+  per user). Since v3.20.0 the `replace` op carries the server state at the time of restoring as `baseRev`:
+  if it is sent later (offline), it does not overwrite newer entries. The
+  restore waits for the server and reports areas that are still to be delivered
+  (`pending`). Safeguard: the backup must contain at least one admin (no lock-out);
+  private data is **left untouched**.
 
-### Sync-Modell (server-autoritativ, seit v3.0.0)
+### Sync model (server-authoritative, since v3.0.0)
 
-Der **Server ist die Merge-Autorität** (Option B). Clients schicken **Operationen** statt
-ganzer Arrays; der Server vergibt je Datensatz eine streng monotone **`rev`** und einen
-Server-Zeitstempel. Das beseitigt Geräte-Uhr-Abhängigkeit und Ganzarray-Races.
+The **server is the merge authority** (option B). Clients send **operations** instead of
+whole arrays; the server assigns each record a strictly monotonic **`rev`** and a
+server timestamp. This removes the dependence on device clocks and whole-array races.
 
-- `api-client.js` kapselt **`pushOps(area, ops, {user|scope})`** und
-  **`pullChanges(area, {user|scope, since})`**; `apiGet` liefert nur noch die logische Sicht
-  (Backup/Peek). Die persistente **Op-Queue** lebt im Store (pro Nutzer+Bereich), nicht im
+- `api-client.js` wraps **`pushOps(area, ops, {user|scope})`** and
+  **`pullChanges(area, {user|scope, since})`**; `apiGet` returns only the logical view
+  (backup/peek). The persistent **op queue** lives in the store (per user + area), not in the
   api-client.
-- **Schreiben:** `upsert/patch/remove/replaceArea` ändern den State optimistisch und legen
-  eine Op (`upsert`/`delete`/`replace`) in die Queue. **Löschungen** sind Tombstones.
-- **Sync je Bereich:** **erst eigene Ops PUSHEN** (lokale Edits bekommen eine `rev`), **dann
-  Änderungen seit der bekannten `rev` PULLEN**. Beim Pull gewinnt ein Datensatz nur, wenn die
-  server-`rev` höher ist → konkurrierende Edits **verschiedener** Datensätze gehen nie
-  verloren; beim **selben** Datensatz gewinnt deterministisch der zuletzt am Server
-  angekommene Schreibvorgang.
-- **Pull-Marke nur aus dem Pull (seit v3.20.0):** Die Antwort auf einen Push trägt die
-  **globale** Bereichs-`rev`. Sie als Marke zu übernehmen, würde fremde Änderungen
-  (zweites Gerät, Health-Ingest) dazwischen überspringen – die Marke `revs[area]` rückt
-  deshalb ausschließlich durch einen Pull vor.
-- **Queue ohne stillen Verlust (seit v3.20.0):** Jede Op trägt eine `opId`; gesendete Ops
-  werden per Identität aus der Queue entfernt, nicht per Anzahl. Gesendet wird in Stücken
-  zu höchstens 500 Ops (Server-Grenze 2000 je Anfrage, bei `413` halbiert der Client).
-  Queue und Bereich werden gemeinsam geschrieben oder gemeinsam zurückgerollt – ist der
-  Gerätespeicher voll, meldet die App das (`catofit:storage-full`) statt Daten nur im
-  Arbeitsspeicher zu halten. Mehrere Tabs vereinigen ihre Queues über das `storage`-Event.
-- **Rücksprung der Server-`rev`:** Ist die Server-`rev` kleiner als die eigene Marke (Server
-  aus einer Sicherung zurückgespielt), folgt ein **konservativer Voll-Abgleich**: die
-  Server-Version gewinnt bei gleichem oder neuerem `updatedAt`, lokal Neueres bleibt und
-  wird erneut gesendet, gelöscht wird lokal nichts. Zusätzlich gleicht jedes Gerät einmal
-  pro Woche jeden Bereich ohne offene Ops vollständig ab.
-- **Wechsel-Sicherheit (Mehrbenutzer):** `syncNow()` **fixiert den Nutzer** je Durchlauf
-  (In-Flight-Guard, einmaliger Nachlauf); `pushArea` ist **an den Nutzer gebunden**, läuft
-  je Nutzer und Bereich höchstens einmal gleichzeitig und schreibt dessen Ops nutzergenau
-  (auch nach einem Sichtwechsel). Die Daten eines verwalteten Mitglieds werden beim
-  Zurückwechseln aus dem Gerätespeicher entfernt; offene Ops bleiben und werden nachgesendet.
-- **Sammelabgleich (seit v3.21.0):** Der `ping` nennt die Merkmale des Servers (`features`,
-  `serverHas()`); `API_VERSION` bleibt 1. Mit `changes-all` sendet ein Durchlauf erst die offenen
-  Ops und holt dann die Änderungen **aller** Bereiche einer Person mit einer Anfrage
-  (`pullAllChanges(user, since)`, `since` als `bereich:rev`-Paare) – statt einer je Bereich. Private
-  Bereiche ohne eigene Sitzung meldet der Server als `locked`. Mit `ops-since` bringt schon die
-  Antwort auf einen Push die Änderungen seit der eigenen Marke mit (`pushOps(area, ops, {since})`
-  → `changes`); die Marke rückt damit wie bei einem Pull vor. Ältere Server bedient der Client wie
-  bisher, der wöchentliche Voll-Abgleich bleibt der Einzelweg (Test `sync-bulk.test.js`).
-- **Familien-Merge pro Datensatz:** Die Familie ist eine Sammlung von Datensätzen – je
-  Mitglied ein Record, plus `__settings` und `__pantry`. Mitglieder mischen daher **pro
-  Mitglied**: Legen zwei Admins gleichzeitig auf zwei Geräten je ein Mitglied an, bleiben
-  **beide** erhalten (früher konnte das Ganzobjekt-LWW eines still verlieren).
-- **Private Bereiche nur mit eigener Server-Sitzung (seit v3.20.0):** `cycle`, `labs` und
-  `supplements` gleicht der Client nur ab, wenn die Server-Sitzung zur angemeldeten Person gehört
-  (`privateAllowed`); sonst bleiben ihre Ops in der Queue und die App fragt einmal nach der PIN
-  (`catofit:session-required`). Der Server erzwingt dasselbe (`api/auth.php`).
-- **Persistenz lokal:** `catofit:<user>:<area>` (Datensätze), `catofit:<user>:__meta`
-  (`{revs, ops}`), `catofit:familyStore` (`{rev, records, ops}`, ohne PIN-Hashes – nur `hasPin`),
-  `pinLocal`/`deviceSalt` (Prüfwerte für die Offline-Anmeldung). Die Anmeldung liegt nur in
-  `sessionStorage` (kein Auto-Login); ein evtl. alter `catofit:identity` wird beim Start verworfen.
+- **Writing:** `upsert/patch/remove/replaceArea` change the state optimistically and put
+  an op (`upsert`/`delete`/`replace`) into the queue. **Deletions** are tombstones.
+- **Sync per area:** **first PUSH own ops** (local edits get a `rev`), **then PULL
+  changes since the known `rev`**. On a pull, a record wins only if the
+  server `rev` is higher → concurrent edits to **different** records are never
+  lost; for the **same** record, the write that reached the server last wins, deterministically.
+- **Pull marker only from the pull (since v3.20.0):** The response to a push carries the
+  **global** area `rev`. Adopting it as the marker would skip other people's changes
+  (second device, health ingest) in between – the marker `revs[area]` therefore
+  advances only through a pull.
+- **Queue without silent loss (since v3.20.0):** Every op carries an `opId`; ops that were sent
+  are removed from the queue by identity, not by count. Ops are sent in chunks
+  of at most 500 (server limit 2000 per request; on `413` the client halves the chunk).
+  Queue and area are written together or rolled back together – if the device storage is full,
+  the app reports it (`catofit:storage-full`) instead of keeping data only
+  in memory. Several tabs merge their queues via the `storage` event.
+- **Server `rev` going backwards:** If the server `rev` is smaller than the own marker (server
+  restored from a backup), a **conservative full reconcile** follows: the
+  server version wins with an equal or newer `updatedAt`, anything newer locally stays and
+  is sent again, nothing is deleted locally. In addition, every device reconciles each area without
+  open ops completely once a week.
+- **Switch safety (multi-user):** `syncNow()` **pins the user** per run
+  (in-flight guard, a single follow-up run); `pushArea` is **bound to the user**, runs
+  at most once at a time per user and area, and writes that user's ops per user
+  (even after a view switch). The data of a managed member is removed from the
+  device storage when switching back; open ops remain and are sent afterwards.
+- **Bulk sync (since v3.21.0):** The `ping` names the server's features (`features`,
+  `serverHas()`); `API_VERSION` stays 1. With `changes-all`, a run first sends the open
+  ops and then fetches the changes of **all** areas of a person with one request
+  (`pullAllChanges(user, since)`, `since` as `area:rev` pairs) – instead of one per area. Private
+  areas without their own session are reported by the server as `locked`. With `ops-since`, even the
+  response to a push brings the changes since the own marker (`pushOps(area, ops, {since})`
+  → `changes`); the marker advances this way just as with a pull. The client serves older servers as
+  before; the weekly full reconcile remains the single-area path (test `sync-bulk.test.js`).
+- **Family merge per record:** The family is a collection of records – one per
+  member, plus `__settings` and `__pantry`. Members therefore merge **per
+  member**: if two admins each add a member on two devices at the same time, **both** are kept
+  (previously the whole-object LWW could silently lose one).
+- **Private areas only with the person's own server session (since v3.20.0):** The client syncs `cycle`, `labs` and
+  `supplements` only if the server session belongs to the signed-in person
+  (`privateAllowed`); otherwise their ops stay in the queue and the app asks once for the PIN
+  (`catofit:session-required`). The server enforces the same (`api/auth.php`).
+- **Local persistence:** `catofit:<user>:<area>` (records), `catofit:<user>:__meta`
+  (`{revs, ops}`), `catofit:familyStore` (`{rev, records, ops}`, without PIN hashes – only `hasPin`),
+  `pinLocal`/`deviceSalt` (check values for the offline sign-in). The sign-in lives only in
+  `sessionStorage` (no auto-login); a possibly old `catofit:identity` is discarded at start.
 
-## Trainingspläne: zwei Generatoren
+## Internationalisation (i18n)
 
-- **Wettkampf:** Der Generator liegt rein in `plangen.js` (Periodisierung `makePhases`, Wochengerüste je
-  Sportart und Lauftagen, Umfangsmodell `volumeConfig`/`weekVolumes`, Einheiten `buildWeekUnits`,
-  Rennwoche nach Tagesabstand, Vorbereitungscheck `planReadiness`). `plans.js` bindet Store,
-  Trainingshistorie und Paces an: `createPlanForEvent(event, { level, daysPerWeek, commitments })` und
-  `updatePlanFromToday` (neu ab heute, Vergangenes unverändert über `planflow.mergeFromDate`). Die
-  Paces kommen aus `vdot.planPaces` (Zielzeit + Form) und liegen je Plan in `plan.paces`; jede
-  Laufeinheit trägt ihren Zonenschlüssel `paceKey`. `plan.gen` markiert den Generatorstand.
-- **Programm** (`program.js`): `createProgramPlan(program, today)` erzeugt einen Wochenplan ohne
-  Wettkampf (Fitness/Kraft/Abnehmen/Beweglichkeit) mit Ausdauerminuten-Progression und Krafttagen.
-- Beide liefern **dasselbe Plan-/Unit-Format** (`planId`, `date`, `type`, `targetDurationMin`,
-  `description`, Paces …). Programmeinheiten älterer Versionen (`dur`/`desc`) deutet
-  `program.migratePlan` beim Lesen um (`store.get('plans')`). Unterschieden wird über `plan.kind === 'program'`.
-- **Distanzspezifisch:** `distanceEmphasis(raceKm)` (plangen.js) steuert die Schlüsseleinheiten je
-  Distanz (5 km → kurze VO₂max-Reize, Marathon → Schwelle/Renntempo …).
-- **Workout-Modus:** `workout-engine.js` baut die Phasen (Einlaufen, Belastungen, Pausen, Auslaufen;
-  Strecken über die Zielpace) und rechnet sie nach echter Zeit weiter (`advance`); `workout-mode.js` ist die Ansicht.
-- **Soll-Ist:** `sollist.js compareToPlan` (lockere Einheiten zweiseitig, strukturierte ohne Schnitt-Urteil).
+The app speaks seven languages (`locales/languages.json`: en, de, fr, es, it, pt-BR, nl) without a
+library. English is the source language; the other catalogs follow its keys.
 
-## Adaptiver Coach & weitere Module (DOM-frei + getestet)
+- **`js/i18n.js` – core.** Catalogs are nested JSON objects with dot keys, `{name}` placeholders
+  and plurals as `key.one` / `key.other` (plus the other `Intl.PluralRules` categories where a
+  language needs them). `t(key, params)` returns a text; `tp(key, count, params)` picks the plural
+  form and fills `{count}`, formatted for the language; `tList`, `has`, `hasOwnText` and `tVariants`
+  cover lists (weekday names), existence checks and text that may have been written in either
+  language. **Lookup order: active language → English → the key itself** (an unknown key comes
+  back unchanged, so a gap is visible rather than empty). `setLocale(lang)` loads the catalogs, sets
+  `<html lang>` and notifies the `onLocaleChange` listeners; `matchLanguage(tags)` maps BCP-47
+  tags to a supported language (`de-AT` → `de`, `pt` → `pt-BR`).
+- **`js/language.js` – which language is shown.** Order: the signed-in person's choice
+  (`settings.language`) → the instance default (family setting `language`) → German for instances
+  set up before v4.0.0 (they already have members and were German-only) → the browser language →
+  English. While an admin manages another member, the admin's own language stays.
+  `applyLanguage()` runs before the first render and again when profile or family data change
+  through the sync (e.g. a language picked on another device); `translateStatic()` fills the fixed
+  texts of `index.html` (`data-i18n`, `data-i18n-aria`, title, description).
+- **`js/format.js` – dates and numbers.** Weekday and month names and the date patterns come from
+  the catalog (`format.*` in `ui.json`), so every browser shows exactly the same text; `Intl` only
+  fills in when a catalog entry is missing. Number separators come from `Intl`; units stay metric.
+- **Catalogs `locales/<lang>/<area>.json`.** `ui.json` (everything on screen) is loaded at start.
+  Bigger areas are loaded on demand with `loadArea(area)` for the active language and for English
+  (`LAZY_AREAS` in `js/i18n.js`: `help`, `exercises`, `workouts`, `recipes`, `health`; catalogs
+  exist today for `help`, `exercises` and `recipes`). A key whose first segment names such an area is
+  looked up there (`help.loadForm.title` → `help.json`, key `loadForm.title`); every other key lives
+  in `ui.json`, whose top-level sections therefore never use an area name. A new language needs a
+  catalog folder and one entry in `locales/languages.json`, no code. `locales/GLOSSARY.md` keeps the
+  translations consistent, `locales/REVIEW.md` tracks the review state per language.
+- **Offline.** The service worker caches `locales/languages.json` and the `ui`, `exercises`, `help`
+  and `recipes` catalogs of every listed language, so a language switch also works offline.
+- **Server side – `api/i18n.php`.** Text the server writes into results itself (calendar files,
+  import titles) comes from `locales/<lang>/server.json`: `server_text($lang, $key, $params)` with
+  the same fallback as the app (language → English → key), `server_number()` for the decimal
+  separator. `person_language($userId)` follows the order of the app, except that the browser
+  language only counts there: the person's own choice (`settings.language` in the profile) → the
+  instance default (`language` in the family `__settings`) → German if the instance already has
+  members → English. It is used by `ics.php` (labels, reminders, file name), `health-ingest.php`,
+  `health-import.php` / `health-map.php` (titles of imported activities) and `foodfacts.php`
+  (language of the Open Food Facts query).
+- **Error messages.** The server's `error` text is English and every error carries a stable
+  `code`. The app translates the code: `serverError(json, fallback)` in `api-client.js` looks up
+  `server.<code>` in `ui.json` and fills its placeholders from the other fields of the response
+  (for rejected family ops, from `{op, id, code, reason}`); an unknown code falls back to the
+  English text. See [API.md](API.md).
+- **Stored data stay as written.** Plan texts written before v4.0.0 are German;
+  `js/exercise-terms-de.js` only recognises the exercises in them, the names shown come from the
+  catalogs.
+- **Guard rails.** `test/i18n-catalog.test.js` checks that every language has the same keys,
+  placeholders and plural forms as English, that every key used in code exists and no catalog key
+  goes unused, and that translated modules contain no hard-coded German text (a short list of
+  matching vocabularies is exempt).
 
-Reine Logik in argument-basierten, testbaren Modulen; die Views konsumieren sie nur:
+## Training plans: two generators
 
-- **planflow.js:** adaptive Vorschläge – u. a. `weekVolumeBalance` (automatischer Wochenumfang-Ausgleich)
-  und `rpeProgression` (Progressionssteuerung aus dem RPE-Trend). Surfacing als Coach-Karten in `dashboard.js`
-  (mit „Übernehmen“ via `saveUnitPatch`).
-- **load.js:** EINZIGE Quelle für Belastungsurteile – `sessionLoad`/`sessionRpe`/`loadMinutes` (sRPE,
-  RPE 1–10 geklemmt, Dauer erfasst → Strecke → geplant → 30 min), **Lastverhältnis** (ACWR entkoppelt:
-  7 Tage vs. Tag 8–28), **CTL/ATL/TSB** (Banister/PMC, `formState` relativ zur CTL, bewertet ab 90 Tagen)
-  und **Monotonie/Strain** (Foster, nur mit Woche über dem eigenen Schnitt). `fitness.js` reicht die
-  Belastungsfunktionen für bestehende Importe weiter. Dashboard-Karte „Belastung & Form“ (`charts.js multiLineChart`).
-  Fehlt die eigene Angabe, schätzt `sessionRpeInfo` die Anstrengung aus der Herzfrequenz (`rpeFromHr`;
-  Bezug: Max-HF aus dem Profil, von `app.js` über `useHrReference` gesetzt) – nur als Eingangswert,
-  harte Einheitstypen nie unter ihrer Voreinstellung; `planflow.rpeAskList` fragt danach nach.
-- **coach.js:** die EINE Tagesempfehlung für „Heute“ (`coachDecision`, feste Priorität: Wiedereinstieg →
-  Erholungstag → heute lockerer → nach Fußball → Entlastung → entzerren → nachholen → Umfang ausgleichen →
-  steigern; `coachWhy` für die Begründung). Nutzt `rolling`, `planflow`, `triage`, `load` – die Karten selbst
-  baut `dashboard.js`.
-- **fitness.js:** gemeinsame Definitionen für alle Ansichten – `adherence` (Plan-Einhaltung), `runKm`
-  (Lauf-km), `isHealthMiss`; Statistik-Ampel (`planStatus`) auf `load.acwr`.
-- **hrzones.js:** HF-Zonen (% HFmax, Karvonen oder aus der Schwellen-HF nach Friel, `method: 'lthr'`) und
-  HFmax-Schätzung aus dem Alter (Tanaka).
-- **commitments.js:** feste Termine – konfigurierbare Fußballtage (Tage/Dauer/**Intensität**) + wiederkehrende
-  Spiele mit Datumsbereich; der Generator (`plans.js`) plant **um** sie herum. Fußball zählt ab „normal“ als
-  fordernd (`fitness.footballRpe`, `planflow.isHard`), fließt voll in die Last ein und entlastet den Folgetag.
-- **rolling.js:** rollierende Planung – automatischer Erholungstag aus der Belastung; `gentleVariant`
-  (typ-bewusste Entschärfung) und `footballFollowupEase`. Bei zwei Zielen nimmt der Vorschlag den **ganzen Tag**
-  zurück (`planflow.dayLoadUnits`); `triage.destackSuggestion` entzerrt Stapel auf einen freien Tag.
-- **adapt.js:** zentraler Anwende-/Rückgängig-Kern (`applyAdapt`/`undoAdapt`) mit Transparenz-Log `plan.adaptLog`
-  – genutzt von Dashboard-Karten **und** `cycle.js` (Entschärfung des 1. Periodentags nur auf Wunsch). Das
-  Log speichert die geänderten Felder; `undoUnits` stellt nur offene Einheiten und nur diese Felder wieder her.
-- **triage.js + whatif.js:** Wochen-Check (Kollisionen priorisieren: feste Termine → Schlüssel-Läufe → Kraft
-  → Umfang) bzw. What-if-Vorschau der Auswirkung auf die Wochenbelastung vor dem Hinzufügen/Verschieben.
-- **dualgoal.js:** Ziel-Cockpit (Halbmarathon-Leistung + Abnehmen) mit phasenabhängigem Schwerpunkt,
-  Defizit-Empfehlung (Ernährungskopplung) und ehrlichem Reiz-Check.
-- **teamstats.js:** Team-/Familien-Aggregation (DOM-frei) – Kennzahlen je Team über `filterTeamMembers`/
-  `teamlessMembers`; Teams sind `_kind:'team'`-Records in `family.json` mit Mehrfach-Mitgliedschaft
-  (`MAX_MEMBERS = 32` seit v3.13.0 — bewusste Obergrenze des vertrauensbasierten Modells: Familie/kleines
-  Team mit PIN-Login statt echter Auth, Admin verwaltet/„öffnet“ alle, Team-Aggregation client-seitig. Das
-  trägt komfortabel bis ~32 (großer Haushalt + Freunde, oder Verein mit Sub-Teams). Darüber wird es eine
-  **Organisation** — dann braucht es echte Authentifizierung, verbindliche Privacy-Grenzen und skalierbare
-  Aggregation; dieser Modellwechsel ist für **v5.0.0** vorgesehen, siehe `docs/ROADMAP.md`).
-- **goals.js:** dedizierte Gesundheits-/Gewichtsziele (`goalProgress`/`goalsProgress`/`latestMetric`),
-  gespeichert in `profile.settings.healthGoals`; Fortschrittskarte auf „Heute“, Verwaltung in `settings.js`.
-- **unit-actions.js (seit v3.21.1):** Aktionen an geplanten Einheiten ohne Oberfläche – `findUnit`,
-  `saveUnitPatch`, `completeUnit`, `linkSession`, `nextFreeDay`, Verpasst-Gründe. Genutzt von Heute,
-  Kalender, Plan, Workout-Modus und Import; `session.js` reicht die Namen weiter.
-- **„Heute“ in drei Modulen (seit v3.21.1):** `dashboard.js` (Aufbau, Training, Belastung & Form),
-  `dashboard-goals.js` (Ziel-Cockpit, Wochen- und Gesundheitsziele) und `dashboard-coach.js` (die
-  Coach-Karten samt Übernehmen/Rückgängig und den Nachfragen). Die Entscheidung trifft `coach.js`.
-- **exercises.js + exercise-art.js:** Übungs-Bibliothek – Katalog + Filter (DOM-frei) und Standbilder für
-  Kacheln. View unter `#/uebungen`.
-- **Animierte Übungen (seit v3.22.0):** `exercise-motions.js` (Bewegungsabläufe als Daten),
-  `motion-rig.js` (Gelenkfigur mit inverser Kinematik, rein), `motion-figure.js` (SVG-Standbild und
-  Animation) und `motion-player.js` (Vorschau und „Mitmachen“ mit Sätzen, Takt, Hinweisen und Pausen).
-- **Durchgehend mitmachen (seit v3.23.0):** `coach-figure.js` (die Vorturnerin), `show-program.js`
-  (Plantext → Programm → Zeitleiste im Takt, rein), `workout-show.js` (Vollbild-Session),
-  `music.js` (Trainingsmusik, live erzeugt), `audio.js` (Freischalten, Töne, Ansagen, Wake Lock) und
-  `workouts.js` (fertige Workouts).
-- **Aktivitäten aus Dateien (seit v3.21.0):** `gpx.js` (GPX/TCX → `buildActivity`: Splits, Zeit in
-  HF-Zonen, Höhenmeter mit 3-m-Hysterese, vereinfachte Strecke – Douglas-Peucker auf höchstens 150
-  Punkte, als Polyline kodiert), `fit.js` (binäres FIT: Definitionen, komprimierte Zeitstempel, beide
-  Byte-Reihenfolgen, Sportarten), `zip.js` (ZIP-Verzeichnis und gzip über `DecompressionStream`, mit
-  Obergrenzen) und `activity-import.js` (`activitiesFrom` für ganze Exporte samt ZIP im ZIP,
-  `sameActivity` gegen Doppelte, `guessType`). Alles läuft im Browser; `health-import.js`
-  speichert in einem Schreibvorgang, Strecken nur auf Wunsch (`settings.activityRoutes`).
-  `charts.js routeMap` zeichnet Strecke und Höhenprofil ohne Kartendienst.
-- **strength.js:** Kraftsätze (Wiederholungen × kg), Volumen, letzte Sätze je Übung und
-  Steigerungshinweis (doppelte Progression); erfasst im Workout-Modus, gespeichert als
-  `strengthSets` an der Einheit.
-- **barcode.js:** Prüfziffer (GTIN) und Portion aus den Werten je 100 g; nachgeschlagen wird über
-  `api/foodfacts.php` und nur mit „Nährwerte online ergänzen“ (`store.foodLookupEnabled()`).
-- **csv-export.js:** Tabellen für Trainings, Körperwerte, Labor und Ess-Tagebuch (Semikolon,
-  Dezimalkomma, BOM, Schutz vor Formeln in Zellen).
-- **teamstats.js `teamLoad`:** Trainer-Sicht – Belastung und Befinden nur der Personen mit
-  `shareLoad`, je mit der eigenen Max-HF als Bezug.
+- **Competition:** The generator lives purely in `plangen.js` (periodisation `makePhases`, week skeletons per
+  sport and running days, volume model `volumeConfig`/`weekVolumes`, units `buildWeekUnits`,
+  race week by day distance, readiness check `planReadiness`). `plans.js` connects store,
+  training history and paces: `createPlanForEvent(event, { level, daysPerWeek, commitments })` and
+  `updatePlanFromToday` (new from today, the past unchanged via `planflow.mergeFromDate`). The
+  paces come from `vdot.planPaces` (target time + form) and are stored per plan in `plan.paces`; every
+  running unit carries its zone key `paceKey`. `plan.gen` marks the generator version.
+- **Programme** (`program.js`): `createProgramPlan(program, today)` creates a weekly plan without a
+  competition (fitness/strength/weight loss/mobility) with endurance-minute progression and strength days.
+- Both deliver **the same plan/unit format** (`planId`, `date`, `type`, `targetDurationMin`,
+  `description`, paces …). Programme units of older versions (`dur`/`desc`) are converted by
+  `program.migratePlan` on reading (`store.get('plans')`). The two are told apart by `plan.kind === 'program'`.
+- **Distance-specific:** `distanceEmphasis(raceKm)` (plangen.js) controls the key sessions per
+  distance (5 km → short VO₂max stimuli, marathon → threshold/race pace …).
+- **Workout mode:** `workout-engine.js` builds the phases (warm-up, efforts, rests, cool-down;
+  distances via the target pace) and advances them by real time (`advance`); `workout-mode.js` is the view.
+- **Planned vs. actual:** `sollist.js compareToPlan` (easy units two-sided, structured ones without an average verdict).
+
+## Adaptive coach & other modules (DOM-free and tested)
+
+Pure logic in argument-based, testable modules; the views only consume it:
+
+- **planflow.js:** adaptive suggestions – among others `weekVolumeBalance` (automatic weekly volume balancing)
+  and `rpeProgression` (progression control from the RPE trend). Surfaced as coach cards in `dashboard.js`
+  (with an apply action via `saveUnitPatch`).
+- **load.js:** the ONLY source for load verdicts – `sessionLoad`/`sessionRpe`/`loadMinutes` (sRPE,
+  RPE 1–10 clamped, duration logged → distance → planned → 30 min), **load ratio** (ACWR decoupled:
+  7 days vs. days 8–28), **CTL/ATL/TSB** (Banister/PMC, `formState` relative to CTL, rated from 90 days)
+  and **monotony/strain** (Foster, only with a week above the person's own average). `fitness.js` passes the
+  load functions on for existing imports. Dashboard card “Load & form” (`charts.js multiLineChart`).
+  If the person's own rating is missing, `sessionRpeInfo` estimates the effort from heart rate (`rpeFromHr`;
+  reference: max HR from the profile, set by `app.js` via `useHrReference`) – only as an input value,
+  hard session types never below their default; `planflow.rpeAskList` then asks for it.
+- **coach.js:** the ONE daily recommendation for “Today” (`coachDecision`, fixed priority: return to training →
+  rest day → easier today → after football → unload → de-stack → catch up → balance volume →
+  progress; `coachWhy` for the reasoning). Uses `rolling`, `planflow`, `triage`, `load` – the cards themselves are
+  built by `dashboard.js`.
+- **fitness.js:** shared definitions for all views – `adherence` (plan adherence), `runKm`
+  (running km), `isHealthMiss`; statistics traffic light (`planStatus`) on `load.acwr`.
+- **hrzones.js:** HR zones (% HRmax, Karvonen or from the threshold HR after Friel, `method: 'lthr'`) and
+  HRmax estimate from age (Tanaka).
+- **commitments.js:** fixed appointments – configurable football days (days/duration/**intensity**) + recurring
+  matches with a date range; the generator (`plans.js`) plans **around** them. From “normal” on, football counts as
+  demanding (`fitness.footballRpe`, `planflow.isHard`), goes fully into the load and relieves the following day.
+- **rolling.js:** rolling planning – automatic rest day from the load; `gentleVariant`
+  (type-aware easing) and `footballFollowupEase`. With two goals, the suggestion takes back the **whole day**
+  (`planflow.dayLoadUnits`); `triage.destackSuggestion` spreads stacks onto a free day.
+- **adapt.js:** central apply/undo core (`applyAdapt`/`undoAdapt`) with the transparency log `plan.adaptLog`
+  – used by dashboard cards **and** `cycle.js` (easing the first period day only on request). The
+  log stores the changed fields; `undoUnits` restores only open units and only those fields.
+- **triage.js + whatif.js:** week check (prioritising collisions: fixed appointments → key runs → strength
+  → volume) and what-if preview of the effect on the weekly load before adding/moving something.
+- **dualgoal.js:** goal cockpit (half-marathon performance + weight loss) with a phase-dependent focus,
+  deficit recommendation (nutrition coupling) and an honest stimulus check.
+- **teamstats.js:** team/family aggregation (DOM-free) – figures per team via `filterTeamMembers`/
+  `teamlessMembers`; teams are `_kind:'team'` records in `family.json` with multiple membership
+  (`MAX_MEMBERS = 32` since v3.13.0 — a deliberate upper limit of the trust-based model: family/small
+  team with PIN login instead of real auth, an admin manages/“opens” everyone, team aggregation on the client. This
+  carries comfortably up to about 32 members (a large household plus friends, or a club with sub-teams). Beyond that it becomes an
+  **organisation** — which needs real authentication, binding privacy boundaries and scalable
+  aggregation; this change of model is planned for **v5.0.0**, see `docs/ROADMAP.md`).
+- **goals.js:** dedicated health/weight goals (`goalProgress`/`goalsProgress`/`latestMetric`),
+  stored in `profile.settings.healthGoals`; progress card on “Today”, management in `settings.js`.
+- **unit-actions.js (since v3.21.1):** actions on planned units without a UI – `findUnit`,
+  `saveUnitPatch`, `completeUnit`, `linkSession`, `nextFreeDay`, reasons for missed sessions. Used by Today,
+  Calendar, Plan, workout mode and import; `session.js` re-exports the names.
+- **“Today” in three modules (since v3.21.1):** `dashboard.js` (layout, training, load & form),
+  `dashboard-goals.js` (goal cockpit, weekly and health goals) and `dashboard-coach.js` (the
+  coach cards including apply/undo and the follow-up questions). The decision is made by `coach.js`.
+- **exercises.js + exercise-art.js:** exercise library – catalogue + filter (DOM-free) and still images for
+  tiles. View at `#/uebungen`.
+- **Animated exercises (since v3.22.0):** `exercise-motions.js` (movement sequences as data),
+  `motion-rig.js` (joint figure with inverse kinematics, pure), `motion-figure.js` (SVG still and
+  animation) and `motion-player.js` (preview and “follow along” with sets, beat, cues and rests).
+- **Follow along throughout (since v3.23.0):** `coach-figure.js` (the lead exerciser), `show-program.js`
+  (plan text → programme → timeline in beat, pure), `workout-show.js` (full-screen session),
+  `music.js` (training music, generated live), `audio.js` (unlocking, tones, announcements, wake lock) and
+  `workouts.js` (ready-made workouts).
+- **Activities from files (since v3.21.0):** `gpx.js` (GPX/TCX → `buildActivity`: splits, time in
+  HR zones, elevation gain with 3 m hysteresis, simplified route – Douglas-Peucker down to at most 150
+  points, encoded as a polyline), `fit.js` (binary FIT: definitions, compressed timestamps, both
+  byte orders, sports), `zip.js` (ZIP directory and gzip via `DecompressionStream`, with
+  upper limits) and `activity-import.js` (`activitiesFrom` for whole exports including ZIP in ZIP,
+  `sameActivity` against duplicates, `guessType`). Everything runs in the browser; `health-import.js`
+  saves in a single write, routes only on request (`settings.activityRoutes`).
+  `charts.js routeMap` draws route and elevation profile without a map service.
+- **strength.js:** strength sets (repetitions × kg), volume, last sets per exercise and
+  an increase hint (double progression); recorded in workout mode, stored as
+  `strengthSets` on the unit.
+- **barcode.js:** check digit (GTIN) and portion from the values per 100 g; lookups go through
+  `api/foodfacts.php` and only with “Fill in nutrition values online” (`store.foodLookupEnabled()`).
+- **csv-export.js:** tables for sessions, body values, labs and food diary (semicolon,
+  decimal comma, BOM, protection against formulas in cells).
+- **teamstats.js `teamLoad`:** coach view – load and wellbeing only of the people with
+  `shareLoad`, each with their own max HR as reference.
 
 ## Backend (PHP)
 
-Bewusst minimal, aber seit v3.0.0 **Merge-Autorität** – nur Persistenz, Op-Anwendung und
-zwei Importe/Exporte:
+Deliberately minimal, but the **merge authority** since v3.0.0 – only persistence, op application and
+two imports/exports:
 
-- `api/api.php` – Routing: `?action=changes` (GET, inkrementelle Datensätze ab `since`-rev),
-  `?action=ops` (POST `{ops:[…]}`, wendet `upsert`/`delete`/`replace` an), `?area=` (GET,
-  logische Sicht für Debug/`.ics`), plus `ping`, `delete-user`, `ics`, `health-import`,
-  `health-ingest`, seit v3.20.0 `login`, `logout`, `session`, `set-pin`, `ics-token` und seit
-  v3.21.0 `changes-all` (alle Bereiche einer Person in einer Antwort) und `read` (Lesezugang).
-  `ping` nennt die Merkmale (`features`: `changes-all`, `ops-since`).
-  `userId`-Whitelist (`^[A-Za-z0-9_-]{1,64}$`), Datensatz-ID-Whitelist, schreibende Aufrufe nur als
-  JSON und nicht von fremden Seiten, optionale Host-Liste. Übersicht und Zusagen:
-  [SCHNITTSTELLEN.md](SCHNITTSTELLEN.md).
-- `api/auth.php` – Server-Sitzung nach PIN-Prüfung (Cookie, Fehlversuchssperre), Sperre der
-  privaten Bereiche, Familienregeln (`family_guard`: Admin-Sitzung für Mitglieder/Rollen/Ersetzen,
-  PIN-Hashes nie in Antworten), Kalender-Schlüssel je Mitglied.
-- `api/storage.php` – Store-Format `{rev, records:{id→record}}` je Area. `apply_ops()` läuft
-  unter exklusivem Lock, vergibt je Op eine **monotone `rev`** + Server-Zeitstempel und schreibt
-  **atomar** (Temp-Datei → `rename`). `changes_since()` liefert alle Datensätze mit `rev>since`.
-  Eine **unlesbare** Datei (Rechte, I/O) bricht mit Fehler ab, statt als leerer Bereich zu
-  gelten; `replace` kennt das optionale `baseRev` (jüngere Datensätze bleiben).
-  Getestet ohne Server: `php tools/test-storage.php`.
-  **Migration** (alt→Store) erfolgt deterministisch beim ersten Lesen; `ensure_bootstrap()`
-  migriert vorhandene **Legacy-Single-User-Daten** zum ersten Admin – legt aber bei einer **frischen**
-  Installation (ab v3.3.0) **niemanden** mehr automatisch an (leere Familie → Ersteinrichtung im Client).
-- `api/ics.php` – `.ics`-Kalenderexport (RFC 5545, VALARM) je Nutzer; die Zeitzone kommt aus
-  `api/icstz.php` (`CATOFIT_TZ`/`TZ`, sonst Europe/Berlin – für Berlin byte-gleich wie früher; Test
+- `api/api.php` – routing: `?action=changes` (GET, incremental records from the `since` rev),
+  `?action=ops` (POST `{ops:[…]}`, applies `upsert`/`delete`/`replace`), `?area=` (GET,
+  logical view for debug/`.ics`), plus `ping`, `delete-user`, `ics`, `health-import`,
+  `health-ingest`, since v3.20.0 `login`, `logout`, `session`, `set-pin`, `ics-token` and since
+  v3.21.0 `changes-all` (all areas of a person in one response) and `read` (read access).
+  `ping` names the features (`features`: `changes-all`, `ops-since`).
+  `userId` whitelist (`^[A-Za-z0-9_-]{1,64}$`), record-ID whitelist, writing calls only as
+  JSON and not from other sites, optional host list. Errors come as `{ok: false, error, code}` –
+  `error` in English, `code` stable (translated by the app, see
+  [Internationalisation](#internationalisation-i18n)). Overview and guarantees:
+  [API.md](API.md).
+- `api/auth.php` – server session after the PIN check (cookie, lock after failed attempts), lock on the
+  private areas, family rules (`family_guard`: admin session for members/roles/replace,
+  PIN hashes never in responses), calendar key per member.
+- `api/storage.php` – store format `{rev, records:{id→record}}` per area. `apply_ops()` runs
+  under an exclusive lock, assigns each op a **monotonic `rev`** + server timestamp and writes
+  **atomically** (temp file → `rename`). `changes_since()` returns all records with `rev>since`.
+  An **unreadable** file (permissions, I/O) aborts with an error instead of counting as an empty area;
+  `replace` knows the optional `baseRev` (newer records stay).
+  Tested without a server: `php tools/test-storage.php`.
+  **Migration** (old → store) happens deterministically on first read; `ensure_bootstrap()`
+  migrates existing **legacy single-user data** to the first admin – but on a **fresh**
+  installation (from v3.3.0) it no longer creates **anyone** automatically (empty family → first-time setup in the client).
+- `api/i18n.php` – texts the server writes itself (calendar files, import titles) from
+  `locales/<lang>/server.json`; `person_language()` picks the language of a person (see
+  [Internationalisation](#internationalisation-i18n)).
+- `api/ics.php` – `.ics` calendar export (RFC 5545, VALARM) per user, in the language of the person; the
+  time zone comes from `api/icstz.php` (`CATOFIT_TZ`/`TZ`, otherwise Europe/Berlin – byte-identical to before for Berlin; test
   `php tools/test-ics.php`).
-- `api/health-ingest.php` + `api/health-map.php` – automatischer Health-Eingang (Schlüssel je Person):
-  Pakete von Health Auto Export (`hi_parse`), das schlanke Tagesformat einer Kurzbefehl-Vorlage
-  (`hi_parse_simple`, auch mit Workouts) oder Health-Connect-Datensätze einer Android-Brücke
-  (`hi_parse_hcw`, Zeitstempel in die Zeitzone der Instanz); Periodenbeginne werden zu Zyklus-
-  Einträgen. Reine Umwandlung in `health-map.php` (Test `php tools/test-health-ingest.php`).
-- `api/health-import.php` + `api/health-xml.php` – Voll-Import des Apple-Health-Exports
-  (XMLReader-Streaming; alle zuordenbaren Sportarten über dieselbe Tabelle wie der Eingang, Perioden;
-  reine Umwandlung in `health-xml.php`, Test `php tools/test-health-xml.php`).
-- `api/foodfacts.php` – optionale Nährwertsuche bei Open Food Facts (serverseitig, Zwischenspeicher
-  `data/foodfacts.json`), nach Namen oder – seit v3.21.0 – nach Strichcode (`?code=`, Prüfziffer
-  vor jeder Anfrage).
-- `api/read-access.php` – Lesezugang für eigene Werkzeuge (seit v3.21.0): Schlüssel je Person
-  (`profile.readToken`, nur als Header sinnvoll), ausschließlich lesend und nur die gemeinsamen
-  Bereiche – nie `cycle`, `labs`, `supplements`, nie Schlüssel aus dem Profil.
-- `tools/reset-pin.php` – Notfall-Werkzeug für die Kommandozeile (vergessene Admin-PIN), nie per Web.
+- `api/health-ingest.php` + `api/health-map.php` – automatic health intake (key per person):
+  packages from Health Auto Export (`hi_parse`), the lean daily format of a Shortcuts template
+  (`hi_parse_simple`, also with workouts) or Health Connect records of an Android bridge
+  (`hi_parse_hcw`, timestamps in the time zone of the instance); period starts become cycle
+  entries. Pure conversion in `health-map.php` (test `php tools/test-health-ingest.php`).
+- `api/health-import.php` + `api/health-xml.php` – full import of the Apple Health export
+  (XMLReader streaming; all assignable sports through the same table as the intake, periods;
+  pure conversion in `health-xml.php`, test `php tools/test-health-xml.php`).
+- `api/foodfacts.php` – optional nutrition search at Open Food Facts (server side, cache
+  `data/foodfacts.json`), by name or – since v3.21.0 – by barcode (`?code=`, check digit
+  before every request); the query language comes from the app (`lc`, `cc`), else from the instance.
+- `api/read-access.php` – read access for your own tools (since v3.21.0): key per person
+  (`profile.readToken`, sensible only as a header), read-only and only the shared
+  areas – never `cycle`, `labs`, `supplements`, never keys from the profile.
+- `tools/reset-pin.php` – emergency command-line tool (forgotten admin PIN), never via the web.
 
-`data/.htaccess` (Deny from all) schützt die JSON-Dateien vor direktem Webzugriff;
-Laufzeit-Ordner (`data/users`, `data/family`, `data/auth`, `.bootstrap.lock`) sind in `.gitignore`.
+`data/.htaccess` (Deny from all) protects the JSON files from direct web access;
+runtime folders (`data/users`, `data/family`, `data/auth`, `.bootstrap.lock`) are in `.gitignore`.
 
-## Projektstruktur
+## Project structure
 
 ```
 cat-o-fit/
-  index.html              App-Shell (PWA, Apple-Meta-Tags, keine Inline-Skripte)
-  manifest.webmanifest    PWA-Manifest
-  service-worker.js       Offline-Shell (network-first, nach 3 s aus dem Cache)
-  api/                    PHP-Backend (siehe „Backend“)
-  data/                   JSON-Daten (nur .htaccess im Repo; Laufzeit-Ordner gitignoriert)
+  index.html              App shell (PWA, Apple meta tags, no inline scripts)
+  manifest.webmanifest    PWA manifest
+  service-worker.js       Offline shell (network-first, from the cache after 3 s)
+  api/                    PHP backend (see “Backend”)
+  data/                   JSON data (only .htaccess in the repo; runtime folders git-ignored)
   css/                    style, cards, dashboard, calendar, session, workout-mode, family, report, responsive
-  js/                     app, router, storage, api-client, ui, charts, nav + View- und Logik-Module
-  assets/icons/           App-Symbole (SVG + PNG)
-  docs/                   Dokumentation (Landkarte: docs/README.md), Bilder unter docs/assets
-  test/                   node:test-Tests (*.test.js), Mini-DOM in test-setup.js
-  tools/                  PHP-Tests, Lasttest, Demo-Seeds (tools/seed), Render-Skript, reset-pin.php
-  Dockerfile, docker/     Image (Apache + PHP, amd64/arm64), Entrypoint, Apache-/PHP-Konfiguration
-  .github/workflows/      ci.yml (Tests) + docker.yml (Image nach GHCR)
+  js/                     app, router, storage, api-client, ui, charts, nav, i18n, language, format + view and logic modules
+  locales/                Translation catalogs: <lang>/{ui,help,exercises,recipes,server}.json, languages.json
+  assets/icons/           App icons (SVG + PNG)
+  docs/                   Documentation (map: docs/README.md), images under docs/assets
+  test/                   node:test tests (*.test.js), mini DOM in test-setup.js
+  tools/                  PHP tests, load test, demo seeds (tools/seed), render script, reset-pin.php
+  Dockerfile, docker/     Image (Apache + PHP, amd64/arm64), entrypoint, Apache/PHP configuration
+  .github/workflows/      ci.yml (tests) + docker.yml (image to GHCR)
 ```
 
-## Service Worker & PWA
+## Service worker & PWA
 
-- `service-worker.js` cacht die **App-Shell** (`SHELL_ASSETS`, samt App-Symbolen) – network-first
-  mit Revalidierung. Antwortet der Server nicht binnen **3 s**, startet die App aus dem Cache; die
-  späte Antwort frischt ihn trotzdem auf (seit v3.20.0). Beim Veröffentlichen einer Änderung die
-  `VERSION` (Cache-Name) erhöhen. Neue Module gehören in `SHELL_ASSETS` (Test `sw-assets.test.js`) –
-  auch die bei Bedarf geladenen.
-- **Start ohne Server (seit v3.20.0):** `store.init()` wartet nur auf dem ganz neuen Gerät (noch
-  keine Familie lokal) höchstens 6 s auf die Mitgliederliste; sonst läuft der Abgleich im
-  Hintergrund. Jeder Abgleich und die Server-Anmeldung fragen zuerst per `ping` (2,5 s), ob der
-  Server antwortet – sonst gilt der Durchlauf als offline, statt 13 Bereiche nacheinander in
-  Timeouts laufen zu lassen. `syncNow()` wartet auf einen laufenden Abgleich. Die Startdiagnose
-  (`boot-check.js`) erscheint nur bei echtem Fehler und verschwindet, wenn die App doch startet.
-- **Farben & Kontrast (`contrast.js`):** errechnet je Akzent und Theme die Schrift auf dem Akzent
-  (`--accent-contrast`), den Akzent als Text (`--accent-text`, `--accent-strong`) und das Ende der
-  Hero-Verläufe – jeweils mit ≥ 4,5:1 (WCAG AA). Statusfarben haben feste Textvarianten
-  (`--good-text` usw.) in `style.css`; Diagramme färben über CSS-Klassen, ein Wechsel Hell/Dunkel
-  wirkt sofort.
-- **Single Source of Truth** der App-Version: `js/version.js` (parallel `package.json`).
+- `service-worker.js` caches the **app shell** (`SHELL_ASSETS`, including the app icons) – network-first
+  with revalidation. If the server does not answer within **3 s**, the app starts from the cache; the
+  late response refreshes it anyway (since v3.20.0). When publishing a change, raise
+  `VERSION` (the cache name). New modules belong in `SHELL_ASSETS` (test `sw-assets.test.js`) –
+  including those loaded on demand. The translation catalogs are cached on install (see
+  [Internationalisation](#internationalisation-i18n)).
+- **Start without a server (since v3.20.0):** `store.init()` waits for the member list for at most 6 s, and only on a
+  brand-new device (no family locally yet); otherwise the sync runs in the
+  background. Every sync and the server sign-in first ask via `ping` (2.5 s) whether the
+  server answers – otherwise the run counts as offline, instead of letting 13 areas run
+  into timeouts one after another. `syncNow()` waits for a sync that is already running. The start-up
+  diagnosis (`boot-check.js`) appears only on a real error and disappears if the app starts after all.
+- **Colours & contrast (`contrast.js`):** computes, per accent and theme, the text on the accent
+  (`--accent-contrast`), the accent as text (`--accent-text`, `--accent-strong`) and the end of the
+  hero gradients – each with ≥ 4.5:1 (WCAG AA). Status colours have fixed text variants
+  (`--good-text` etc.) in `style.css`; charts are coloured via CSS classes, so a switch between light and dark
+  takes effect immediately.
+- **Single source of truth** for the app version: `js/version.js` (in parallel `package.json`).
 
 ## Tests
 
-`node:test` (kein Fremd-Runner). `test-setup.js` stellt ein abhängigkeitsfreies
-**Mini-DOM** und `localStorage`-Shim bereit, sodass sowohl reine Logik als auch ganze
-`render()`-Funktionen getestet werden. Siehe `test/*.test.js` und
-[ENTWICKLUNG.md](ENTWICKLUNG.md#tests).
+`node:test` (no third-party runner). `test-setup.js` provides a dependency-free
+**mini DOM** and a `localStorage` shim, so that both pure logic and whole
+`render()` functions can be tested. See `test/*.test.js` and
+[DEVELOPMENT.md](DEVELOPMENT.md#tests).

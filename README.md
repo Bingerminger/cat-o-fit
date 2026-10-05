@@ -11,18 +11,24 @@ AGPL licensed, on your own hardware.
 [![CI](https://github.com/Bingerminger/cat-o-fit/actions/workflows/ci.yml/badge.svg)](https://github.com/Bingerminger/cat-o-fit/actions/workflows/ci.yml)
 [![License: AGPL-3.0-or-later](https://img.shields.io/badge/License-AGPL--3.0--or--later-success.svg)](LICENSE)
 [![dependencies: 0](https://img.shields.io/badge/dependencies-0-success.svg)](package.json)
-[![Docker](https://img.shields.io/badge/Docker-amd64%20%7C%20arm64-2496ed.svg)](docs/en/installation.md)
-[![UI: German](https://img.shields.io/badge/UI-German-lightgrey.svg)](#language)
+[![Docker](https://img.shields.io/badge/Docker-amd64%20%7C%20arm64-2496ed.svg)](docs/operations/installation.md)
+[![Languages: 7](https://img.shields.io/badge/languages-7-blue.svg)](#languages)
 
 **English** · [Deutsch](README.de.md)
 
 </div>
 
-## Language
+## Languages
 
-The app's **user interface and user guide are German**. Installation and operation are documented in
-English: this README and the [installation guide](docs/en/installation.md). If a German UI is a problem
-for your household, Cat-O-Fit is not the right fit today.
+The app speaks **English, Deutsch, Français, Español, Italiano, Português (Brasil) and Nederlands**. It
+starts in your browser's language, and every person in the family can pick their own in the settings.
+Calendar files and imported workouts follow that person's language, too. The documentation is in
+[English](docs/README.md) and [German](docs/de/README.md).
+
+French, Spanish, Italian, Portuguese and Dutch were machine-translated and checked against the app,
+but not yet by native speakers – corrections are very welcome ([how to help](CONTRIBUTING.md#translations)).
+Recorded voice cues during workouts are German for now; in the other languages your device's own
+speech output reads them. Units are metric (imperial is planned).
 
 ## Why Cat-O-Fit?
 
@@ -45,12 +51,12 @@ for your household, Cat-O-Fit is not the right fit today.
 - **Kitchen included.** Recipes, calorie balance, a food diary with barcode lookup and a shared shopping
   list with pantry.
 - **Truly yours.** JSON files on your own server, CSV export, offline-first on every device, zero
-  dependencies, no build step, no database, 700+ automated tests, AGPL-3.0-or-later.
+  dependencies, no build step, no database, 850+ automated tests, AGPL-3.0-or-later.
 
 <div align="center">
-<img src="docs/assets/ipad-01-dashboard.png" width="390" alt="“Today” on iPad: countdown, today's session, coach and load & form" />
-<img src="docs/assets/ipad-60-labor.png" width="390" alt="Lab values on iPad: energy availability, values with reference and sports corridor" />
-<br><sub>“Heute” (today) and lab values on an iPad – the UI is German.</sub>
+<img src="docs/assets/en/ipad-01-dashboard.png" width="390" alt="“Today” on iPad: countdown, today's session, coach and load & form" />
+<img src="docs/assets/en/ipad-60-labs.png" width="390" alt="Lab values on iPad: energy availability, values with reference and sports corridor" />
+<br><sub>“Today” and lab values on an iPad.</sub>
 </div>
 
 ## Quick start
@@ -64,7 +70,7 @@ docker run -d --name cat-o-fit -p 8080:80 \
 
 Open **http://localhost:8080** – a setup wizard creates the first admin (with PIN) and optionally loads
 a demo family. Synology Container Manager, plain PHP hosts (Web Station) and all options:
-[installation guide](docs/en/installation.md).
+[installation guide](docs/operations/installation.md).
 
 > ⚠️ **Security:** Cat-O-Fit is built for your own, trusted network. PINs protect profiles and the
 > private areas; everything else (training, plans, body metrics) can be read by any device that
@@ -201,12 +207,21 @@ Found something outdated? Please [open an issue](https://github.com/Bingerminger
 
 ## Documentation
 
-- **English:** [Installation & operation](docs/en/installation.md)
-- **German user guide:** [documentation map](docs/README.md) – getting started, training, coach & load,
-  health, lab values, nutrition, family, [Apple Health](docs/APPLE-HEALTH.md), methods & sources, and
-  the operating pages (install, update, backup, privacy, troubleshooting)
-- **Developers:** [architecture](docs/ARCHITEKTUR.md) · [development](docs/ENTWICKLUNG.md) ·
-  [contributing](CONTRIBUTING.md) · [interfaces](docs/SCHNITTSTELLEN.md) · [changelog](CHANGELOG.md) ·
+Everything at a glance: **[documentation](docs/README.md)**, sorted by what you want to do
+([Deutsch](docs/de/README.md)).
+
+- **Use:** [getting started](docs/usage/getting-started.md) · [training](docs/usage/training.md) ·
+  [coach & load](docs/usage/coach-and-load.md) · [health](docs/usage/health.md) ·
+  [labs](docs/usage/labs.md) · [nutrition](docs/usage/nutrition.md) ·
+  [team & family](docs/usage/family.md) · [Apple Health](docs/usage/apple-health.md) ·
+  [FAQ](docs/usage/faq.md)
+- **Understand:** [training science](docs/knowledge/training-science.md) ·
+  [methods & sources](docs/knowledge/methods-and-sources.md)
+- **Run:** [installation](docs/operations/installation.md) · [update](docs/operations/update.md) ·
+  [backup](docs/operations/backup.md) · [privacy](docs/operations/privacy.md) ·
+  [troubleshooting](docs/operations/troubleshooting.md)
+- **Develop:** [architecture](docs/ARCHITECTURE.md) · [development](docs/DEVELOPMENT.md) ·
+  [contributing](CONTRIBUTING.md) · [API](docs/API.md) · [changelog](CHANGELOG.md) ·
   [roadmap](docs/ROADMAP.md)
 
 ## Privacy and external services
@@ -214,8 +229,7 @@ Found something outdated? Please [open an issue](https://github.com/Bingerminger
 No account, no telemetry. Only two optional services leave your home, both can be switched off:
 **Open-Meteo** for the weather (the device asks with a place name or coordinates; the free API is for
 non-commercial use) and **Open Food Facts** for nutrition values (your server sends only the
-ingredient name or a barcode; data under the ODbL). Details: [privacy in operation](docs/betrieb/datenschutz.md)
-(German).
+ingredient name or a barcode; data under the ODbL). Details: [privacy in operation](docs/operations/privacy.md).
 
 ## Intended purpose
 

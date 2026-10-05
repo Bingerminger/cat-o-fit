@@ -1,5 +1,7 @@
 # Team & Familie
 
+[English](../../usage/family.md) · **Deutsch**
+
 Anmelden, PIN, Rollen, Teams und das gemeinsame Dashboard.
 
 > Teil der [Dokumentation](../README.md) · [Alle Seiten der Nutzung](../README.md#nutzen)
@@ -16,7 +18,7 @@ Anmelden, PIN, Rollen, Teams und das gemeinsame Dashboard.
 
 ## Team/Familie & Anmeldung
 
-<img src="../assets/51-team-dashboard.png" width="400" align="right" alt="Team/Familie-Dashboard mit Team-Abzeichen" />
+<img src="../../assets/de/51-team-dashboard.png" width="400" align="right" alt="Team/Familie-Dashboard mit Team-Abzeichen" />
 
 Cat-O-Fit ist für dein **ganzes Team oder deine Familie** (bis zu 32 Personen) – ob Laufgruppe,
 Sportmannschaft oder Familie. Jede Person hat eigene Ziele, Pläne, Trainings und Körperwerte.
@@ -57,8 +59,8 @@ mit Meilenstein, „wer war diese Woche aktiv“ samt aktivster Person, anstehen
 Kennzahlen.
 
 <p align="center">
-  <img src="../assets/50-ersteinrichtung.png" width="240" alt="Ersteinrichtung: Admin anlegen" />
-  <img src="../assets/51-team-dashboard.png" width="240" alt="Team/Familie-Dashboard mit Team-Abzeichen" />
+  <img src="../../assets/de/50-first-setup.png" width="240" alt="Ersteinrichtung: Admin anlegen" />
+  <img src="../../assets/de/51-team-dashboard.png" width="240" alt="Team/Familie-Dashboard mit Team-Abzeichen" />
 </p>
 
 ---
@@ -72,7 +74,7 @@ starten mit der PIN `0000` – bis sie eine eigene festlegen, erinnert „Heute�
 **PIN vergessen:** Eine Admin-Person öffnet das Mitglied (Mehr → „Team verwalten“ → „Öffnen“) und
 tippt in Einstellungen → Konto auf **„PIN für … setzen“**. Hat die **einzige Admin-Person** ihre PIN
 vergessen, hilft nur der Betrieb am Server – siehe
-[Fehlersuche: PIN vergessen](../betrieb/fehlersuche.md#pin-vergessen).
+[Fehlersuche: PIN vergessen](../operations/troubleshooting.md#pin-vergessen).
 
 Die PIN wird nur als Prüfwert (Hash) auf dem Server gespeichert und funktioniert gleichermaßen über
 die lokale Adresse (`http://…`) oder über HTTPS.
@@ -95,7 +97,7 @@ werden **alle** Mitglieder und Daten gelöscht, und die Ersteinrichtung startet 
 das Team zu planen. Oben im Kopf steht dann **„Du verwaltest gerade …“** mit **„Zurück zu mir“**;
 „Heute“ heißt entsprechend z. B. „Leas Übersicht“.
 
-<img src="../assets/31-familie-verwalten.png" width="420" alt="Team-/Familienverwaltung" />
+<img src="../../assets/de/31-manage-family.png" width="420" alt="Team-/Familienverwaltung" />
 
 ---
 
@@ -105,7 +107,7 @@ das Team zu planen. Oben im Kopf steht dann **„Du verwaltest gerade …“** m
 für Admins beim Verwalten, und sie beeinflussen dann auch keine Kennzahlen. Auch der Server gibt sie
 nur nach der PIN-Anmeldung der Person selbst heraus. Wer den Server betreibt, kann die gespeicherten
 Dateien allerdings lesen (sie liegen unverschlüsselt) – mehr unter
-[Datenschutz im Betrieb](../betrieb/datenschutz.md).
+[Datenschutz im Betrieb](../operations/privacy.md).
 
 In **Einstellungen → Konto → „Sichtbarkeit im Team/Familie-Dashboard“** bestimmst du selbst, ob dein
 **Hauptziel** und deine **Kennzahlen** (Momentum, Wochen-km aller Sportarten, Wochen-Serie) für die

@@ -1,23 +1,23 @@
-## Was ändert dieser PR?
-<!-- Kurze Zusammenfassung der Änderung und des Motivs. -->
+## What does this PR change?
+<!-- A short summary of the change and the reason for it. -->
 
-## Art der Änderung
-- [ ] 🐛 Bugfix
-- [ ] ✨ Neue Funktion
-- [ ] 🧹 Refactoring / Aufräumen
-- [ ] 📖 Dokumentation
-- [ ] 🔒 Sicherheit
+## Type of change
+- [ ] 🐛 Bug fix
+- [ ] ✨ New feature
+- [ ] 🧹 Refactoring / clean-up
+- [ ] 📖 Documentation
+- [ ] 🔒 Security
 
-## Checkliste
-- [ ] `npm test` und die PHP-Tests (`php tools/test-*.php`) laufen grün
-- [ ] Neue/angepasste Logik ist durch Tests abgedeckt
-- [ ] Bei veröffentlichter Änderung: `js/version.js` **und** `package.json` angehoben
-      und `service-worker.js` (`VERSION`) gebumpt
-- [ ] Neue Daten-Area? In `js/storage.js` (`AREAS`) **und** `api/storage.php`
-      (`user_areas`) eingetragen
-- [ ] `CHANGELOG.md` und ggf. `docs/ROADMAP.md`, die Seiten unter `docs/` und die In-App-Hilfe (`js/helpcontent.js`) aktualisiert
-- [ ] Datenschutz gewahrt: private Bereiche (Zyklus, Labor, Ergänzung) bleiben privat
-- [ ] Keine neuen externen Abhängigkeiten / kein Build-Schritt eingeführt
+## Checklist
+- [ ] `npm test` and the PHP tests (`php tools/test-*.php`) pass
+- [ ] New/changed logic is covered by tests
+- [ ] For a released change: `js/version.js` **and** `package.json` raised
+      and `service-worker.js` (`VERSION`) bumped
+- [ ] New data area? Added to `js/storage.js` (`AREAS`) **and** `api/storage.php`
+      (`user_areas`)
+- [ ] `CHANGELOG.md` and, where relevant, `docs/ROADMAP.md`, the pages under `docs/` and the in-app help (`js/helpcontent.js`, `locales/*/help.json`) updated
+- [ ] Privacy preserved: private areas (cycle, labs, supplements) stay private
+- [ ] No new external dependencies / no build step introduced
 
-## Test-Hinweise
-<!-- Wie wurde getestet? Geräte/Ansichten? -->
+## Testing notes
+<!-- How was it tested? Which devices/views? -->

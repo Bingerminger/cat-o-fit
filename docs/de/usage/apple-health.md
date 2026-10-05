@@ -1,5 +1,7 @@
 # Apple Health übernehmen
 
+[English](../../usage/apple-health.md) · **Deutsch**
+
 Cat-O-Fit übernimmt **Gewicht, Körperfett, fettfreie Masse, Ruhepuls, HRV, VO₂max, Schlaf, Schritte,
 aktive Energie und Workouts** aus Apple Health – dorthin schreiben Apple Watch, Garmin, Withings & Co.
 Es gibt drei Wege:
@@ -12,10 +14,10 @@ Es gibt drei Wege:
 
 Aufzeichnungen deiner Uhr (Garmin, COROS, Polar, Suunto, Wahoo …) lädst du außerdem als **GPX-, TCX-
 oder FIT-Datei** hoch – einzeln oder als ganzen Export im ZIP (siehe
-[Training](nutzung/training.md#aktivitäten-aus-dateien-übernehmen)). Auf **Android** übernimmt eine
+[Training](training.md#aktivitäten-aus-dateien-übernehmen)). Auf **Android** übernimmt eine
 Brücken-App die Werte aus Health Connect – siehe [Android: Health Connect](#android-health-connect).
 
-<p align="center"><img src="assets/apple-health-settings.png" width="300" alt="Health-Import → Apple Health: Auto-Import aktivieren und Endpunkt-URL kopieren" /></p>
+<p align="center"><img src="../../assets/de/apple-health-settings.png" width="300" alt="Health-Import → Apple Health: Auto-Import aktivieren und Endpunkt-URL kopieren" /></p>
 
 ---
 
@@ -169,7 +171,7 @@ Nach „Run now“ bzw. dem ersten Kurzbefehl antwortet der Endpunkt mit einer Z
 - In Cat-O-Fit zeigt **Health-Import → „Zuletzt importiert“** die übernommenen Tageswerte und Workouts;
   die Werte erscheinen außerdem unter **Fortschritt → Körper** bzw. im **Kalender**.
 
-<p align="center"><img src="assets/apple-health-import.png" width="300" alt="Health-Import: „Zuletzt importiert“ – Übersicht der übernommenen Apple-Health-Werte" /></p>
+<p align="center"><img src="../../assets/de/apple-health-import.png" width="300" alt="Health-Import: „Zuletzt importiert“ – Übersicht der übernommenen Apple-Health-Werte" /></p>
 
 ---
 

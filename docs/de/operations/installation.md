@@ -1,10 +1,11 @@
 # Installation
 
+[English](../../operations/installation.md) · **Deutsch**
+
 Cat-O-Fit läuft auf eigener Hardware: per Docker (amd64 und arm64) oder auf jedem Webserver mit PHP.
 Eine Datenbank, ein Build-Schritt oder Node.js sind nicht nötig.
 
-> Teil der [Dokumentation](../README.md) · [Betreiben](../README.md#betreiben) ·
-> English: [Installation guide](../en/installation.md)
+> Teil der [Dokumentation](../README.md) · [Betreiben](../README.md#betreiben)
 
 **Auf dieser Seite:**
 
@@ -158,5 +159,5 @@ Pflicht** – sonst kann jede Person mit der Adresse diese Daten lesen und ände
   **„Mit Demodaten starten“** oder **„Leer starten“**.
 - Zurück zum Anfang: In der App ganz unten in den Einstellungen **„App zurücksetzen“** (nur Admins).
 
-Weiter: [Update](update.md) · [Backup](backup.md) · [Datenschutz](datenschutz.md) ·
-[Fehlersuche](fehlersuche.md)
+Weiter: [Update](update.md) · [Backup](backup.md) · [Datenschutz](privacy.md) ·
+[Fehlersuche](troubleshooting.md)
