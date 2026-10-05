@@ -328,7 +328,7 @@ const matchKcal = (name, table, fallback) => {
 };
 // Ganzes Wort (auch in Zusammensetzungen am Wortanfang/-ende nicht): „Ei“ ist nicht
 // „Reiswaffel“ oder „Pizzateig“. JS-\b kennt keine Umlaute, daher eigene Grenzen.
-const wordRe = (k) => new RegExp(`(^|[^a-zäöüß])${k}($|[^a-zäöüß])`);
+const wordRe = (k) => new RegExp(`(^|[^\\p{L}])${k}($|[^\\p{L}])`, 'u');
 const matchWord = (name, table, fallback) => {
   const n = name.toLowerCase();
   for (const [kws, v] of table) if (kws.some((k) => wordRe(k).test(n))) return v;

@@ -47,7 +47,7 @@ export function parseAmount(str) {
 export function parseIngredient(raw) {
   const s = String(raw || '').trim();
   if (!s) return { name: '', amount: null, unit: null, raw: s };
-  const m = s.match(/^(\d+\s+\d+\/\d+|\d+\/\d+|\d+[.,]?\d*)\s*([a-zA-ZäöüÄÖÜß]+)?\.?\s*(.*)$/);
+  const m = s.match(/^(\d+\s+\d+\/\d+|\d+\/\d+|\d+[.,]?\d*)\s*(\p{L}+)?\.?\s*(.*)$/u);
   if (!m) return { name: s, amount: null, unit: null, raw: s };
 
   const amount = parseAmount(m[1]);
