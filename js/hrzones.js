@@ -10,14 +10,22 @@
      Eingabe gar keine Zonen, obwohl das Alter bekannt war.
    ========================================================================= */
 
-/** Zonen-Grenzen in % (HFmax bzw. HF-Reserve), Name und Farbe. */
+import { t } from './i18n.js';
+
+/** Zonen-Grenzen in % (HFmax bzw. HF-Reserve), Name (als Funktion – der Text hängt von der Sprache ab) und Farbe. */
 export const ZONE_DEFS = [
-  [50, 60, 'Regeneration', '#7fb8ff'],
-  [60, 70, 'Grundlage (GA1)', '#43c59e'],
-  [70, 80, 'Tempo (GA2)', '#f5c451'],
-  [80, 90, 'Schwelle', '#f59145'],
-  [90, 100, 'VO2max', '#ef5d6c'],
+  [50, 60, () => t('hrZones.recovery'), '#7fb8ff'],
+  [60, 70, () => t('hrZones.base'), '#43c59e'],
+  [70, 80, () => t('hrZones.steady'), '#f5c451'],
+  [80, 90, () => t('hrZones.threshold'), '#f59145'],
+  [90, 100, () => t('hrZones.vo2max'), '#ef5d6c'],
 ];
+
+/** Name der Zone 1–5 in der aktiven Sprache (gespeicherte Zonen tragen den Namen ihrer Entstehung). */
+export function zoneName(zone) {
+  const def = ZONE_DEFS[Number(zone) - 1];
+  return def ? def[2]() : '';
+}
 
 /** Geschätzte maximale Herzfrequenz aus dem Alter (Tanaka) – null ohne Alter. */
 export function estimateMaxHr(age) {
@@ -38,10 +46,10 @@ export function hrZonesFrom({ maxHr, restHr = null, method = 'hfmax', lthr = nul
   const lt = Number(lthr);
   if (method === 'lthr' && Number.isFinite(lt) && lt >= 100 && lt <= 220) {
     const cap = Number(maxHr) > lt ? Number(maxHr) : null;
-    return ZONE_DEFS.map(([, , name, color], i) => {
+    return ZONE_DEFS.map(([, , nameOf, color], i) => {
       const [a, b] = LTHR_DEFS[i];
       const max = Math.round(lt * b / 100);
-      return { zone: i + 1, name, minPct: a, maxPct: b, min: Math.round(lt * a / 100), max: i === 4 && cap ? Math.max(cap, max) : max, color, basis: 'lthr' };
+      return { zone: i + 1, name: nameOf(), minPct: a, maxPct: b, min: Math.round(lt * a / 100), max: i === 4 && cap ? Math.max(cap, max) : max, color, basis: 'lthr' };
     });
   }
   const mh = Number(maxHr);
@@ -49,7 +57,7 @@ export function hrZonesFrom({ maxHr, restHr = null, method = 'hfmax', lthr = nul
   const rh = Number(restHr);
   const karvonen = method === 'karvonen' && Number.isFinite(rh) && rh >= 30 && rh < mh - 20;
   const at = (pct) => Math.round(karvonen ? rh + (mh - rh) * pct / 100 : mh * pct / 100);
-  return ZONE_DEFS.map(([a, b, name, color], i) => ({
-    zone: i + 1, name, minPct: a, maxPct: b, min: at(a), max: at(b), color, basis: karvonen ? 'hfr' : 'hfmax',
+  return ZONE_DEFS.map(([a, b, nameOf, color], i) => ({
+    zone: i + 1, name: nameOf(), minPct: a, maxPct: b, min: at(a), max: at(b), color, basis: karvonen ? 'hfr' : 'hfmax',
   }));
 }

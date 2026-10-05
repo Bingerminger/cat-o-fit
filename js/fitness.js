@@ -9,6 +9,8 @@ import { diffDays, fmtPace, weekStartMonday, addDays, typeMeta, fmtDec } from '.
 import { weightGoalStatus } from './energy.js';
 import { acwr, sessionLoad, trainingLoad, loadMinutes, RPE_BY_TYPE, FOOTBALL_RPE, footballRpe } from './load.js';
 
+import { t } from './i18n.js';
+
 // Die Belastung je Einheit lebt in load.js (eine Quelle für alle Belastungsurteile);
 // hier für bestehende Importe weitergereicht.
 export { sessionLoad, trainingLoad, RPE_BY_TYPE, FOOTBALL_RPE, footballRpe };
@@ -123,27 +125,27 @@ export function planStatus({ plans = [], sessions = [], today, isProtectedDay = 
   const bump = (lvl) => { li = Math.max(li, LEVELS.indexOf(lvl)); };
   const reasons = [];
 
-  if (adh.pct == null) reasons.push({ ok: null, text: 'Noch keine fälligen Einheiten zum Bewerten.' });
-  else if (adh.pct >= 80) reasons.push({ ok: true, text: `Plan zu ${adh.pct} % eingehalten.` });
-  else if (adh.pct >= 50) { reasons.push({ ok: false, text: `Plan zu ${adh.pct} % eingehalten – ein paar Einheiten fehlen.` }); bump('gelb'); }
-  else { reasons.push({ ok: false, text: `Nur ${adh.pct} % der fälligen Einheiten erledigt.` }); bump('rot'); }
+  if (adh.pct == null) reasons.push({ ok: null, text: t('fitness.noDueSessions') });
+  else if (adh.pct >= 80) reasons.push({ ok: true, text: t('fitness.planKept', { pct: adh.pct }) });
+  else if (adh.pct >= 50) { reasons.push({ ok: false, text: t('fitness.planKeptSome', { pct: adh.pct }) }); bump('gelb'); }
+  else { reasons.push({ ok: false, text: t('fitness.planKeptFew', { pct: adh.pct }) }); bump('rot'); }
 
   // Dieselben Stufen und Worte wie die Karte „Belastung & Form“ (erhöht / deutlich).
   if (load.level === 'hoch') {
-    reasons.push({ ok: false, text: load.zone === 'hoch' ? 'Belastung deutlich über deinem Schnitt – Erholung einplanen.' : 'Belastung erhöht – behutsam steigern und auf Erholung achten.' });
+    reasons.push({ ok: false, text: load.zone === 'hoch' ? t('fitness.loadHigh') : t('fitness.loadRaised') });
     bump(load.ratio > 1.5 ? 'rot' : 'gelb');
   }
-  else if (load.level === 'niedrig') reasons.push({ ok: null, text: 'Ruhigere Phase – gut zur Regeneration.' });
-  else if (load.level === 'ok') reasons.push({ ok: true, text: 'Belastung im üblichen Rahmen.' });
-  else if (load.level === 'aufbau') reasons.push({ ok: null, text: 'Die Belastung wird ab 4 Wochen Trainingshistorie bewertet – die Datenbasis wächst noch.' });
+  else if (load.level === 'niedrig') reasons.push({ ok: null, text: t('fitness.loadQuiet') });
+  else if (load.level === 'ok') reasons.push({ ok: true, text: t('fitness.loadOk') });
+  else if (load.level === 'aufbau') reasons.push({ ok: null, text: t('fitness.loadBuilding') });
 
   // Gesundheitsbedingte Ausfälle sind neutral: Sie färben die Ampel nicht und
   // zählen nicht gegen die Einhaltung – nur der Hinweis bleibt.
-  if (missed.byReason.injured > 0) reasons.push({ ok: null, text: `${missed.byReason.injured}× verletzungsbedingt ausgefallen – zählt nicht gegen dich. Steig vorsichtig wieder ein.` });
-  else if (missed.byReason.sick > 0) reasons.push({ ok: null, text: `${missed.byReason.sick}× krankheitsbedingt ausgefallen – zählt nicht gegen dich.` });
+  if (missed.byReason.injured > 0) reasons.push({ ok: null, text: t('fitness.missedInjured', { n: missed.byReason.injured }) });
+  else if (missed.byReason.sick > 0) reasons.push({ ok: null, text: t('fitness.missedSick', { n: missed.byReason.sick }) });
 
   const level = LEVELS[li];
-  const title = level === 'gruen' ? 'Du bist auf Kurs' : level === 'gelb' ? 'Etwas aus dem Tritt' : 'Achtung – nachjustieren';
+  const title = level === 'gruen' ? t('fitness.titleGreen') : level === 'gelb' ? t('fitness.titleYellow') : t('fitness.titleRed');
   return { level, title, adherence: adh.pct, due, done, load, missed, reasons };
 }
 
@@ -235,15 +237,15 @@ export function keyMetrics({ profile = {}, health = [], sessions = [], today, no
     const cur7 = smoothVal(h, 'weight', today, 7) ?? w;
     const prev = smoothVal(h, 'weight', addDays(today, -28), 10) ?? valBefore(h, 'weight', today, 21);
     const dir = dirOf(cur7, prev, 0.3);
-    let good = null, goal = null, hint = 'aktueller Wert';
+    let good = null, goal = null, hint = t('fitness.currentValue');
     // Dieselbe Zieldefinition wie Ernährung, Cockpit und Wochenziele (energy.js).
     const gs = target != null ? weightGoalStatus({ current: cur7, target, start: profile.targetWeightStartKg != null ? profile.targetWeightStartKg : profile.weightKg }) : null;
     if (gs) {
       goal = gs.status === 'halten' ? 'halten' : 'verbessern';
-      if (goal === 'halten') { good = true; hint = gs.beyond ? `${gs.gap > 0 ? 'über' : 'unter'} dem Ziel – halten` : 'am Zielgewicht'; }
-      else { good = prev == null ? null : (gs.direction === 'down' ? dir === 'down' : dir === 'up'); hint = `${fmt1(gs.remaining)} kg ${gs.gap > 0 ? 'über' : 'unter'} Ziel`; }
+      if (goal === 'halten') { good = true; hint = gs.beyond ? (gs.gap > 0 ? t('fitness.holdAbove') : t('fitness.holdBelow')) : t('fitness.atTarget'); }
+      else { good = prev == null ? null : (gs.direction === 'down' ? dir === 'down' : dir === 'up'); hint = gs.gap > 0 ? t('fitness.kgAbove', { kg: fmt1(gs.remaining) }) : t('fitness.kgBelow', { kg: fmt1(gs.remaining) }); }
     }
-    push({ key: 'weight', label: 'Gewicht', value: w, unit: 'kg', target, dir, good, goal, hint, fmt: fmt1 });
+    push({ key: 'weight', label: t('fitness.weight'), value: w, unit: 'kg', target, dir, good, goal, hint, fmt: fmt1 });
   }
 
   // Wochenumfang — Aufbau gilt als Fortschritt
@@ -251,7 +253,7 @@ export function keyMetrics({ profile = {}, health = [], sessions = [], today, no
   if (km4 > 0) {
     const kmPrev = sumKm(sessions, today, 28, 56) / 4;
     const dir = dirOf(km4, kmPrev > 0 ? kmPrev : null, 1);
-    push({ key: 'weeklyKm', label: 'Wochenumfang', value: km4, unit: 'km/Wo', dir, good: goodOf(dir, 'up'), goal: 'verbessern', hint: 'Ø Lauf-km der letzten 4 Wochen', fmt: fmt0 });
+    push({ key: 'weeklyKm', label: t('fitness.weeklyKm'), value: km4, unit: t('fitness.kmPerWeek'), dir, good: goodOf(dir, 'up'), goal: 'verbessern', hint: t('fitness.weeklyKmHint'), fmt: fmt0 });
   }
 
   // Lockeres Tempo — schneller bei gleicher Lockerheit ist besser. „Gleiche
@@ -262,12 +264,12 @@ export function keyMetrics({ profile = {}, health = [], sessions = [], today, no
   const z2Pace = z2 ? avgPaceSec(sessions, today, 0, 28, z2.max) : null;
   if (z2Pace != null) {
     const dir = dirOf(z2Pace, avgPaceSec(sessions, today, 28, 56, z2.max), 3);
-    push({ key: 'easyPace', label: 'Lockeres Tempo', value: z2Pace, unit: 'min/km', dir, good: goodOf(dir, 'down'), goal: 'verbessern', hint: 'Ø Grundlagenläufe in Z2', fmt: fmtPace });
+    push({ key: 'easyPace', label: t('fitness.easyPace'), value: z2Pace, unit: 'min/km', dir, good: goodOf(dir, 'down'), goal: 'verbessern', hint: t('fitness.easyPaceHint'), fmt: fmtPace });
   } else {
     const pace = avgPaceSec(sessions, today, 0, 28);
     if (pace != null) {
       const dir = dirOf(pace, avgPaceSec(sessions, today, 28, 56), 3);
-      push({ key: 'easyPace', label: 'Lockeres Tempo', value: pace, unit: 'min/km', dir, good: null, goal: 'verbessern', hint: 'Ø Grundlagenläufe · ohne Herzfrequenz nicht bewertet', fmt: fmtPace });
+      push({ key: 'easyPace', label: t('fitness.easyPace'), value: pace, unit: 'min/km', dir, good: null, goal: 'verbessern', hint: t('fitness.easyPaceNoHr'), fmt: fmtPace });
     }
   }
 
@@ -277,14 +279,14 @@ export function keyMetrics({ profile = {}, health = [], sessions = [], today, no
     const cur7 = smoothVal(h, 'restingHr', today, 7) ?? rhr;
     const prevR = smoothVal(h, 'restingHr', addDays(today, -28), 10) ?? valBefore(h, 'restingHr', today, 21);
     const dir = dirOf(cur7, prevR, 1);
-    push({ key: 'restingHr', label: 'Ruhepuls', value: rhr, unit: 'bpm', dir, good: goodOf(dir, 'down'), goal: 'verbessern', hint: 'niedriger ist fitter', fmt: fmt0 });
+    push({ key: 'restingHr', label: t('fitness.restingHr'), value: rhr, unit: 'bpm', dir, good: goodOf(dir, 'down'), goal: 'verbessern', hint: t('fitness.restingHrHint'), fmt: fmt0 });
   }
 
   // VO₂max — höher heißt mehr Ausdauerleistung
   const vo2 = lastVal(h, 'vo2max');
   if (vo2 != null) {
     const dir = dirOf(vo2, valBefore(h, 'vo2max', today, 21), 0.5);
-    push({ key: 'vo2max', label: 'VO₂max', value: vo2, unit: '', dir, good: goodOf(dir, 'up'), goal: 'verbessern', hint: 'Ausdauer-Leistung', fmt: fmt1 });
+    push({ key: 'vo2max', label: 'VO₂max', value: vo2, unit: '', dir, good: goodOf(dir, 'up'), goal: 'verbessern', hint: t('fitness.vo2Hint'), fmt: fmt1 });
   }
 
   return out;

@@ -1,3 +1,4 @@
+import { t } from './i18n.js';
 /* =========================================================================
    sollist.js — Soll-Ist-Vergleich einer erledigten Einheit. Rein und testbar.
 
@@ -34,23 +35,23 @@ export function compareToPlan(unit, ex, { hrZones = [] } = {}) {
   const easy = !structured && EASY_TYPES.includes(unit.type);
 
   if (unit.targetDistanceKm && ex.distanceKm != null) {
-    rows.push({ key: 'distance', label: 'Distanz', plan: unit.targetDistanceKm, real: ex.distanceKm, ok: ex.distanceKm >= unit.targetDistanceKm * 0.97 });
+    rows.push({ key: 'distance', label: t('sollist.distance'), plan: unit.targetDistanceKm, real: ex.distanceKm, ok: ex.distanceKm >= unit.targetDistanceKm * 0.97 });
   } else if (unit.targetDurationMin && ex.durationSec) {
-    rows.push({ key: 'duration', label: 'Dauer', plan: unit.targetDurationMin * 60, real: ex.durationSec, ok: ex.durationSec >= unit.targetDurationMin * 60 * 0.9 });
+    rows.push({ key: 'duration', label: t('sollist.duration'), plan: unit.targetDurationMin * 60, real: ex.durationSec, ok: ex.durationSec >= unit.targetDurationMin * 60 * 0.9 });
   }
 
   if (unit.targetPaceSecPerKm && ex.paceSecPerKm) {
     const min = unit.targetPaceSecPerKm, max = unit.targetPaceMaxSecPerKm || min;
     if (structured) {
-      note = 'Bei Intervallen und Tempoblöcken zählt das Tempo der Belastungsabschnitte. Der Schnitt über die ganze Einheit – mit Ein-/Auslaufen und Trabpausen – sagt darüber nichts, deshalb gibt es hier kein Pace-Urteil.';
+      note = t('sollist.structuredNote');
     } else if (easy) {
       tooFast = ex.paceSecPerKm < min - 10;
       const tooSlow = ex.paceSecPerKm > max + 20;
-      rows.push({ key: 'pace', label: 'Pace', plan: [min, max], real: ex.paceSecPerKm, ok: !tooFast && !tooSlow, verdict: tooFast ? 'zu schnell' : tooSlow ? 'langsamer als geplant' : 'im Zielbereich' });
-      if (tooFast) note = 'Zu schnell für eine lockere Einheit. Lockere Läufe bringen am meisten, wenn sie wirklich locker sind (Plaudertempo) – das Tempo gehört in die Schlüsseleinheiten.';
+      rows.push({ key: 'pace', label: t('sollist.pace'), plan: [min, max], real: ex.paceSecPerKm, ok: !tooFast && !tooSlow, verdict: tooFast ? t('sollist.tooFast') : tooSlow ? t('sollist.slowerThanPlanned') : t('sollist.inTargetRange') });
+      if (tooFast) note = t('sollist.tooFastNote');
     } else {
       const ok = ex.paceSecPerKm <= max + 8;
-      rows.push({ key: 'pace', label: 'Pace', plan: [min, max], real: ex.paceSecPerKm, ok, verdict: ok ? 'im Ziel' : 'langsamer als geplant' });
+      rows.push({ key: 'pace', label: t('sollist.pace'), plan: [min, max], real: ex.paceSecPerKm, ok, verdict: ok ? t('sollist.onTarget') : t('sollist.slowerThanPlanned') });
     }
   }
 
@@ -59,8 +60,8 @@ export function compareToPlan(unit, ex, { hrZones = [] } = {}) {
     if (z) {
       const tooHigh = ex.avgHr > z.max + 5, tooLow = ex.avgHr < z.min - 5;
       const ok = easy ? !tooHigh : (!tooHigh && !tooLow);
-      rows.push({ key: 'hr', label: 'HF-Zone', plan: unit.targetHrZone, real: ex.avgHr, ok, verdict: tooHigh ? 'zu hoch' : tooLow ? (easy ? 'schön locker' : 'niedriger') : 'in der Zone' });
-      if (easy && tooHigh && !note) note = 'Die Herzfrequenz lag über der Zielzone – lockere Einheiten bewusst langsamer angehen.';
+      rows.push({ key: 'hr', label: t('sollist.hrZone'), plan: unit.targetHrZone, real: ex.avgHr, ok, verdict: tooHigh ? t('sollist.tooHigh') : tooLow ? (easy ? t('sollist.nicelyEasy') : t('sollist.lower')) : t('sollist.inZone') });
+      if (easy && tooHigh && !note) note = t('sollist.hrNote');
     }
   }
 

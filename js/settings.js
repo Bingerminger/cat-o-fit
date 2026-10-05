@@ -23,7 +23,7 @@ import { currentEligibility, openGateSheet } from './wellness.js';
 import { ageOf, weightGoalBlockReason } from './eligibility.js';
 import { weightNow, bmiFor } from './energy.js';
 import { currentHrvMethod, hrvLabel } from './healthdata.js';
-import { hrZonesFrom, estimateMaxHr } from './hrzones.js';
+import { hrZonesFrom, estimateMaxHr, zoneName } from './hrzones.js';
 import { t, tp, languages, locale } from './i18n.js';
 import { applyLanguage, instanceLanguage } from './language.js';
 import { weekdayNames } from './format.js';
@@ -243,7 +243,7 @@ export function render(view) {
     card.appendChild(el('div', { class: 'dim mt-1', style: { fontSize: '.76rem' }, text: t('settings.hrZones.karvonenHint') }));
   }
   (p.hrZones || []).forEach((z) => card.appendChild(el('div', { class: 'row row--between', style: { padding: '6px 0', borderTop: '1px solid var(--border)' } }, [
-    el('span', { class: 'row gap-2' }, [el('span', { class: 'zones-legend__sw', style: { background: z.color } }), `Z${z.zone} · ${z.name}`]),
+    el('span', { class: 'row gap-2' }, [el('span', { class: 'zones-legend__sw', style: { background: z.color } }), `Z${z.zone} · ${zoneName(z.zone) || z.name}`]),
     el('span', { class: 'num muted', text: `${z.min}–${z.max} bpm` }),
   ])));
   view.appendChild(card);

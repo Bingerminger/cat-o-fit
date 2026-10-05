@@ -7,7 +7,9 @@
 import * as store from './storage.js';
 import { el, icon, iconSvg, navigate, debounce, openSheet, closeSheet } from './ui.js';
 import { setHeader } from './router.js';
-import { helpSections, findArticle, articleText } from './helpcontent.js';
+import { helpSections, findArticle, articleText, loadHelpTexts } from './helpcontent.js';
+
+import { t } from './i18n.js';
 
 /** Anzeigename der aktiven Person; ohne Namen spricht die Hilfe neutral an. */
 function userName() {
@@ -23,7 +25,8 @@ export function openHelp(query = '') {
 }
 
 /** ⓘ an einer Kennzahl: den Artikel als Sheet zeigen – mit Sprung in die ganze Hilfe. */
-export function openHelpArticle(id) {
+export async function openHelpArticle(id) {
+  await loadHelpTexts();
   const hit = findArticle(helpSections(userName()), id);
   if (!hit) { openHelp(''); return; }
   openSheet({
@@ -33,14 +36,17 @@ export function openHelpArticle(id) {
       el('button', {
         class: 'btn btn--ghost btn--block mt-3', type: 'button',
         onclick: () => { closeSheet(); navigate(`#/hilfe/${id}`); },
-      }, [el('span', { text: 'In der Hilfe öffnen' }), icon('arrowRight')]),
+      }, [el('span', { text: t('helpView.openInHelp') }), icon('arrowRight')]),
     ]),
   });
 }
 
-export function render(view, articleId = null) {
+export async function render(view, articleId = null) {
+  const at = location.hash;
+  await loadHelpTexts();
+  if (location.hash !== at) return;   // navigated away while the texts were loading
   const name = userName();
-  setHeader({ title: 'Hilfe & Wissen' });
+  setHeader({ title: t('nav.help') });
   const data = helpSections(name);
   const initialQuery = pendingQuery;
   pendingQuery = '';
@@ -51,14 +57,14 @@ export function render(view, articleId = null) {
     el('div', { class: 'row gap-3', style: { alignItems: 'center' } }, [
       el('span', { html: iconSvg('sparkles'), style: { width: '26px', flex: '0 0 auto' } }),
       el('div', {}, [
-        el('div', { style: { fontWeight: '800', fontSize: '1.1rem' }, text: name ? `Hallo ${name} 👋` : 'Hallo 👋' }),
-        el('div', { style: { opacity: '0.9', fontSize: '0.88rem' }, text: 'Hier findest du Anleitungen, Erklärungen und Trainingswissen – ganz in Ruhe.' }),
+        el('div', { style: { fontWeight: '800', fontSize: '1.1rem' }, text: name ? t('helpView.hello', { name }) : t('helpView.helloAnon') }),
+        el('div', { style: { opacity: '0.9', fontSize: '0.88rem' }, text: t('helpView.intro') }),
       ]),
     ]),
   ]));
 
   // Suche
-  const searchInput = el('input', { class: 'input', type: 'search', 'aria-label': 'Hilfe durchsuchen', placeholder: 'Suchen … (z. B. „Plan“, „RED-S“, „Zonen“)', style: { marginTop: '16px' } });
+  const searchInput = el('input', { class: 'input', type: 'search', 'aria-label': t('helpView.searchLabel'), placeholder: t('helpView.searchPlaceholder'), style: { marginTop: '16px' } });
   view.appendChild(searchInput);
 
   const container = el('div', { class: 'help-container mt-4' });
@@ -87,8 +93,8 @@ export function render(view, articleId = null) {
     if (!hits) {
       container.appendChild(el('div', { class: 'empty' }, [
         el('div', { class: 'empty__icon', html: iconSvg('info') }),
-        el('div', { class: 'empty__title', text: 'Nichts gefunden' }),
-        el('div', { class: 'muted', text: 'Versuch es mit einem anderen Begriff.' }),
+        el('div', { class: 'empty__title', text: t('helpView.nothingFound') }),
+        el('div', { class: 'muted', text: t('helpView.tryAnother') }),
       ]));
     }
   };

@@ -151,7 +151,7 @@ self.addEventListener('install', (event) => {
       // the list comes from languages.json, so a new language needs no change here.
       try {
         const langs = Object.keys(await (await fetch('./locales/languages.json', { cache: 'no-cache' })).json());
-        await Promise.allSettled(langs.flatMap((l) => ['ui', 'exercises', 'help'].map((a) => cache.add(`./locales/${l}/${a}.json`))));
+        await Promise.allSettled(langs.flatMap((l) => ['ui', 'exercises', 'help', 'recipes'].map((a) => cache.add(`./locales/${l}/${a}.json`))));
       } catch { /* offline install: catalogs come with the runtime cache */ }
     }).then(() => self.skipWaiting())
   );

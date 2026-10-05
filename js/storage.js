@@ -26,7 +26,7 @@ import { sha256Hex } from './sha256.js';
 import { migrateHealth } from './healthdata.js';
 import { migrateLabs } from './labs.js';
 import { migratePlans } from './program.js';
-import { locale } from './i18n.js';
+import { locale, t as tr } from './i18n.js';
 
 const AREAS = ['profile', 'events', 'plans', 'sessions', 'health', 'nutrition', 'diary', 'shopping', 'checklist', 'cycle', 'reports', 'labs', 'supplements'];
 const ARRAY_AREAS = ['events', 'plans', 'sessions', 'health', 'nutrition', 'diary', 'shopping', 'checklist', 'cycle', 'reports', 'labs', 'supplements'];
@@ -73,7 +73,7 @@ let syncState = 'idle'; // idle | syncing | offline | error
 // und die Oberfläche zeigt einen Hinweis (Event 'catofit:storage-full').
 let storageFullAt = 0;
 function reportStorageFull(e) {
-  console.warn('Gerätespeicher voll?', e);
+  console.warn('Device storage full?', e);
   setSyncState('full');
   const now = Date.now();
   if (now - storageFullAt < 3000) return;          // nicht für jeden Einzelschreibvorgang
@@ -187,7 +187,7 @@ function setSyncState(s) {
   if (ind) {
     ind.dataset.state = s;
     ind.hidden = (s === 'idle');
-    const label = { syncing: 'Sync …', offline: 'Offline', error: 'Sync-Fehler', full: 'Speicher voll' }[s] || '';
+    const label = { syncing: tr('storage.syncing'), offline: tr('storage.offline'), error: tr('storage.syncError'), full: tr('storage.full') }[s] || '';
     ind.innerHTML = `<span class="sync-indicator__dot"></span><span>${label}</span>`;
   }
 }
@@ -296,7 +296,7 @@ function pushArea(area, user) {
   const running = inflight.get(key);
   if (running) return running.then(() => pushArea(area, user));
   const p = pushAreaNow(area, user)
-    .catch((e) => { console.warn('Push fehlgeschlagen', e); setSyncState('error'); })
+    .catch((e) => { console.warn('Push failed', e); setSyncState('error'); })
     .finally(() => inflight.delete(key));
   inflight.set(key, p);
   return p;
@@ -447,7 +447,7 @@ export function foodLookupEnabled() {
 /* ------------------------------- Schreiben ------------------------------ */
 /** Fügt einen Datensatz ein oder ersetzt ihn (per id). */
 export function upsert(area, record) {
-  if (SEALED_AREAS.includes(area)) { console.warn(`Bereich „${area}“ ist versiegelt – nur addReport.`); return record; }
+  if (SEALED_AREAS.includes(area)) { console.warn(`Area “${area}” is sealed – addReport only.`); return record; }
   if (!record.id) record.id = uid(area.slice(0, 3));
   record.updatedAt = nowIso();
   if (!record.createdAt) record.createdAt = record.updatedAt;
@@ -491,7 +491,7 @@ export function upsertMany(area, records) {
 
 /** Aktualisiert Felder eines Datensatzes. */
 export function patch(area, id, fields) {
-  if (SEALED_AREAS.includes(area)) { console.warn(`Bereich „${area}“ ist versiegelt – nicht editierbar.`); return null; }
+  if (SEALED_AREAS.includes(area)) { console.warn(`Area “${area}” is sealed – not editable.`); return null; }
   const arr = state[area];
   const i = arr.findIndex((r) => r.id === id);
   if (i < 0) return null;
@@ -509,7 +509,7 @@ export function patch(area, id, fields) {
 
 /** Soft-Delete (Tombstone). */
 export function remove(area, id) {
-  if (SEALED_AREAS.includes(area)) { console.warn(`Bereich „${area}“ ist versiegelt – nicht löschbar.`); return; }
+  if (SEALED_AREAS.includes(area)) { console.warn(`Area “${area}” is sealed – cannot be deleted.`); return; }
   const arr = state[area];
   const i = arr.findIndex((r) => r.id === id);
   if (i < 0) return;
@@ -539,8 +539,8 @@ export function addReport(rec) {
     Versiegelte Bereiche (Urkunden) und beim Verwalten gesperrte private Bereiche
     lassen sich so nicht überschreiben. Liefert, ob ersetzt wurde. */
 export function replaceArea(area, records) {
-  if (SEALED_AREAS.includes(area)) { console.warn(`Bereich „${area}“ ist versiegelt – nur addReport.`); return false; }
-  if (!areaAllowed(area)) { console.warn(`Bereich „${area}“ ist privat und beim Verwalten gesperrt.`); return false; }
+  if (SEALED_AREAS.includes(area)) { console.warn(`Area “${area}” is sealed – addReport only.`); return false; }
+  if (!areaAllowed(area)) { console.warn(`Area “${area}” is private and locked while managing.`); return false; }
   const prev = state[area];
   state[area] = (records || []).map((r) => ({ ...r }));
   const ok = commitLocal(area, [{ op: 'replace', records: state[area].map(stripRev) }], () => { state[area] = prev; });
@@ -689,8 +689,8 @@ export async function reauth(pin) {
     syncNow();
     return true;
   }
-  lastLoginErr = r ? { code: r.code, message: r.error || 'Falsche PIN.', left: r.left, retryAfter: r.retryAfter }
-    : { code: 'offline', message: 'Der Server ist gerade nicht erreichbar.' };
+  lastLoginErr = r ? { code: r.code, message: r.error || tr('reauth.wrongPin'), left: r.left, retryAfter: r.retryAfter }
+    : { code: 'offline', message: tr('storage.serverUnreachable') };
   return false;
 }
 
@@ -809,9 +809,9 @@ export function exportAll() {
 
 /** Spielt ein persönliches Backup ein (für den aktiven Nutzer, autoritativ). */
 export function importAll(dump) {
-  if (!dump || typeof dump !== 'object' || Array.isArray(dump)) throw new Error('Keine gültige Backup-Datei.');
-  if (dump.app != null && dump.app !== 'catofit') throw new Error('Diese Datei stammt nicht aus Cat-O-Fit.');
-  if (typeof dump.version === 'number' && dump.version > EXPORT_VERSION) throw new Error('Das Backup wurde mit einer neueren App-Version erstellt.');
+  if (!dump || typeof dump !== 'object' || Array.isArray(dump)) throw new Error(tr('storage.backupInvalid'));
+  if (dump.app != null && dump.app !== 'catofit') throw new Error(tr('storage.notFromApp'));
+  if (typeof dump.version === 'number' && dump.version > EXPORT_VERSION) throw new Error(tr('storage.backupNewer'));
   const imported = [];
   const skipped = [];
   const privateSkipped = [];
@@ -848,7 +848,7 @@ function fullBackupAreas() { return AREAS.filter((a) => !PRIVATE_AREAS.includes(
 
 /** Vollständiges Familien-Backup (nur Admin) – ohne private Zyklusdaten. */
 export async function exportFamilyAll() {
-  if (!isAdmin()) throw new Error('Nur Administrator:innen dürfen ein Vollbackup erstellen.');
+  if (!isAdmin()) throw new Error(tr('storage.fullExportAdminOnly'));
   if (isOnline()) await syncFamily();   // Mitgliederliste frisch holen
   const dump = {
     app: 'catofit', kind: 'family-full', version: FULL_EXPORT_VERSION, exportedAt: nowIso(),
@@ -872,13 +872,13 @@ export async function exportFamilyAll() {
 
 /** Vollständiges Familien-Backup einspielen (nur Admin, autoritativ). */
 export async function importFamilyAll(dump) {
-  if (!isAdmin()) throw new Error('Nur Administrator:innen dürfen ein Vollbackup einspielen.');
+  if (!isAdmin()) throw new Error(tr('storage.fullImportAdminOnly'));
   if (!dump || typeof dump !== 'object' || dump.app !== 'catofit' || dump.kind !== 'family-full'
       || !dump.family || !Array.isArray(dump.family.members) || typeof dump.users !== 'object') {
-    throw new Error('Keine gültige Vollbackup-Datei.');
+    throw new Error(tr('storage.fullBackupInvalid'));
   }
-  if (typeof dump.version === 'number' && dump.version > FULL_EXPORT_VERSION) throw new Error('Das Vollbackup stammt aus einer neueren App-Version.');
-  if (!dump.family.members.some((m) => m && m.role === 'admin')) throw new Error('Das Vollbackup enthält keine Admin-Person – Wiederherstellung abgebrochen.');
+  if (typeof dump.version === 'number' && dump.version > FULL_EXPORT_VERSION) throw new Error(tr('storage.fullBackupNewer'));
+  if (!dump.family.members.some((m) => m && m.role === 'admin')) throw new Error(tr('storage.fullBackupNoAdmin'));
 
   const areas = fullBackupAreas();
   let usersRestored = 0; let areasRestored = 0;
@@ -1459,8 +1459,8 @@ export function memberHasPin(userId) {
 /** PIN-Regeln (gelten auch am Server): 4 bis 8 Ziffern, nicht die Standard-PIN 0000. */
 export function pinProblem(pin) {
   const p = String(pin ?? '');
-  if (!/^\d{4,8}$/.test(p)) return 'Die PIN braucht 4 bis 8 Ziffern.';
-  if (p === DEFAULT_PIN) return '0000 ist die Standard-PIN – bitte eine eigene wählen.';
+  if (!/^\d{4,8}$/.test(p)) return tr('storage.pinLength');
+  if (p === DEFAULT_PIN) return tr('storage.pinDefault');
   return null;
 }
 
@@ -1472,11 +1472,11 @@ export function pinProblem(pin) {
 export async function setMemberPin(userId, pin, oldPin = null) {
   const problem = pinProblem(pin);
   if (problem) return { ok: false, code: 'weak', message: problem };
-  if (!isOnline()) return { ok: false, code: 'offline', message: 'Die PIN lässt sich nur mit Verbindung zum Server ändern.' };
+  if (!isOnline()) return { ok: false, code: 'offline', message: tr('storage.pinNeedsServer') };
   const self = userId === identity;
   const r = await serverSetPin(userId, String(pin), self ? String(oldPin ?? '') : null);
-  if (!r) return { ok: false, code: 'offline', message: 'Der Server ist gerade nicht erreichbar.' };
-  if (!r.ok) return { ok: false, code: r.code, message: r.error || 'Die PIN konnte nicht gespeichert werden.', left: r.left, retryAfter: r.retryAfter };
+  if (!r) return { ok: false, code: 'offline', message: tr('storage.serverUnreachable') };
+  if (!r.ok) return { ok: false, code: r.code, message: r.error || tr('storage.pinNotSaved'), left: r.left, retryAfter: r.retryAfter };
   const rec = familyStore.records[userId];
   if (rec) { familyStore.records[userId] = { ...rec, hasPin: true }; rebuildFamily(); writeFamilyStoreLS(); }
   if (self) { rememberDevicePin(userId, String(pin)); setWeakPin(userId, false); serverUser = identity; }
@@ -1495,7 +1495,7 @@ export function lastLoginError() { return lastLoginErr; }
 export async function login(userId, pin) {
   lastLoginErr = null;
   const m = (family.members || []).find((x) => x.id === userId);
-  if (!m) { lastLoginErr = { code: 'unknown', message: 'Dieses Profil gibt es nicht (mehr).' }; return false; }
+  if (!m) { lastLoginErr = { code: 'unknown', message: tr('storage.profileGone') }; return false; }
   const p = String(pin ?? '');
   const hasPin = memberHasPin(userId);
   // Antwortet der Server nicht binnen 2,5 s, gilt die Anmeldung offline (PIN-Prüfung am
@@ -1519,16 +1519,16 @@ export async function login(userId, pin) {
     if (hasPin) rememberDevicePin(userId, p);
     setWeakPin(userId, !!r.weakPin);
   } else if (r) {
-    lastLoginErr = { code: r.code, message: r.error || 'Falsche PIN.', left: r.left, retryAfter: r.retryAfter };
+    lastLoginErr = { code: r.code, message: r.error || tr('reauth.wrongPin'), left: r.left, retryAfter: r.retryAfter };
     return false;
   } else {
     if (hasPin) {
       const local = readPinLocal()[userId];
       if (!local) {
-        lastLoginErr = { code: 'offline-first', message: 'Die erste Anmeldung auf diesem Gerät braucht eine Verbindung zum Server.' };
+        lastLoginErr = { code: 'offline-first', message: tr('login.firstNeedsServer') };
         return false;
       }
-      if (local !== devicePinHash(userId, p)) { lastLoginErr = { code: 'pin', message: 'Falsche PIN.' }; return false; }
+      if (local !== devicePinHash(userId, p)) { lastLoginErr = { code: 'pin', message: tr('reauth.wrongPin') }; return false; }
     }
     pendingServerPin = { user: userId, pin: p };
     setWeakPin(userId, !hasPin || p === DEFAULT_PIN);
@@ -1580,7 +1580,7 @@ export async function addMember({ name, role = 'user', emoji = '🙂', color = '
   // Start-PIN (Standard 0000): Der Hash geht nur an den Server, der ihn von einer
   // Admin-Sitzung annimmt; lokal steht nur `hasPin`.
   familyUpsert({
-    id, _kind: 'member', name: (name || 'Mitglied').trim(),
+    id, _kind: 'member', name: (name || tr('account.member')).trim(),
     role: role === 'admin' ? 'admin' : 'user', emoji, color, createdAt: nowIso(),
   }, { pinHash: pinHash(id, (pin || DEFAULT_PIN)) });
   return (family.members || []).find((m) => m.id === id) || null;
@@ -1635,7 +1635,7 @@ export function teamMembers(teamId) {
 export function addTeam({ name, emoji = '👥', color = '#3d8bff', memberIds = [] } = {}) {
   if (!isAdmin()) return null;
   const id = uid('t');
-  familyUpsert({ id, _kind: 'team', name: (name || 'Team').trim(), emoji, color, memberIds: [...new Set(memberIds)], createdAt: nowIso() });
+  familyUpsert({ id, _kind: 'team', name: (name || tr('storage.defaultTeam')).trim(), emoji, color, memberIds: [...new Set(memberIds)], createdAt: nowIso() });
   return (family.teams || []).find((t) => t.id === id) || null;
 }
 export function updateTeam(teamId, fields = {}) {
@@ -1691,7 +1691,7 @@ export async function createFirstAdmin({ name, pin } = {}) {
     familyUpsert({ id: '__settings', _kind: 'settings', ...(family.settings || {}), language: locale() });
   }
   familyUpsert({
-    id, _kind: 'member', name: (name || 'Admin').trim(), role: 'admin',
+    id, _kind: 'member', name: (name || tr('account.admin')).trim(), role: 'admin',
     emoji: '🏃', color: '#18b48a', createdAt: nowIso(),
   }, { pinHash: pinHash(id, p) });
   if (isOnline()) { try { await pushFamily(); } catch { /* bleibt in der Queue */ } }
@@ -1703,7 +1703,7 @@ export async function createFirstAdmin({ name, pin } = {}) {
   if (r && r.ok) serverUser = id; else pendingServerPin = { user: id, pin: p };
   rememberDevicePin(id, p);
   await setActiveUser(id);
-  setProfile({ name: (name || 'Admin').trim() });   // Profilname = Anzeigename (Begrüßung etc.)
+  setProfile({ name: (name || tr('account.admin')).trim() });   // Profilname = Anzeigename (Begrüßung etc.)
   return id;
 }
 

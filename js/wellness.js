@@ -14,6 +14,8 @@ import { energyTargets } from './energy.js';
 import { leanMassNow } from './redflags.js';
 import { phaseEmphasis } from './dualgoal.js';
 
+import { t, tp } from './i18n.js';
+
 /** Eignungsstatus der gerade betrachteten Person. */
 export function currentEligibility(today = todayStr()) {
   return eligibilityFor({ profile: store.profile(), settings: store.settings(), today });
@@ -24,13 +26,13 @@ export function currentEnergyTargets(today = todayStr()) {
   const profile = store.profile();
   const health = store.get('health');
   const elig = currentEligibility(today);
-  const t = energyTargets({
+  const targets = energyTargets({
     profile, health, sessions: store.get('sessions'), diary: store.get('diary'),
     plans: store.get('plans'), events: store.get('events'), today, elig,
     ffm: leanMassNow({ profile, health, today }).ffm,
     phaseDeficit: (plan, day) => phaseEmphasis(plan, day).kcal,
   });
-  return { ...t, elig };
+  return { ...targets, elig };
 }
 
 /**
@@ -43,17 +45,17 @@ export function openGateSheet({ onSaved = null } = {}) {
   const prev = store.settings().labsGate || {};
   const cur = {};
   questions.forEach((q) => { if (typeof prev[q.key] === 'boolean') cur[q.key] = prev[q.key]; });
-  const saveBtn = el('button', { class: 'btn btn--primary btn--block' }, [icon('check'), 'Speichern']);
+  const saveBtn = el('button', { class: 'btn btn--primary btn--block' }, [icon('check'), t('wellness.save')]);
   const hint = el('div', { class: 'dim', style: { fontSize: '.76rem', textAlign: 'center', marginTop: '6px' } });
   const refresh = () => {
     const open = questions.filter((q) => typeof cur[q.key] !== 'boolean').length;
     saveBtn.disabled = open > 0;
-    hint.textContent = open ? `Noch ${open} ${open === 1 ? 'Frage' : 'Fragen'} offen.` : '';
+    hint.textContent = open ? tp('wellness.questionsOpen', open) : '';
   };
   const rows = questions.map((q, i) => {
     const qid = `gate-q-${i}`;
     const group = el('div', { class: 'segmented', role: 'radiogroup', 'aria-labelledby': qid });
-    const buttons = [['nein', 'Nein', false], ['ja', 'Ja', true]].map(([key, label, val]) => {
+    const buttons = [['nein', t('wellness.no'), false], ['ja', t('wellness.yes'), true]].map(([key, label, val]) => {
       const b = el('button', {
         class: 'segmented__opt', type: 'button', role: 'radio',
         'aria-checked': cur[q.key] === val ? 'true' : 'false',
@@ -76,16 +78,16 @@ export function openGateSheet({ onSaved = null } = {}) {
     if (questions.some((q) => typeof cur[q.key] !== 'boolean')) return;
     store.setSetting('labsGate', { ...prev, ...cur });
     closeSheet();
-    toast('Gespeichert', 'good');
+    toast(t('wellness.saved'), 'good');
     if (onSaved) onSaved();
   };
   refresh();
   openSheet({
-    title: 'Kurze Abgrenzung',
+    title: t('wellness.title'),
     body: el('div', {}, [
-      el('div', { class: 'muted mb-3', style: { fontSize: '.84rem' }, text: 'Cat-O-Fit ist für gesunde Erwachsene gedacht. Trifft eines davon auf dich zu, gibt die App keine Einnahme-Empfehlungen; bei Schwangerschaft, Stillzeit oder Essstörung rechnet sie außerdem keine Abnehmziele. Erfassen und ansehen kannst du weiterhin alles.' }),
+      el('div', { class: 'muted mb-3', style: { fontSize: '.84rem' }, text: t('wellness.intro') }),
       ...rows,
-      profile.birthYear ? el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: 'Dein Alter kennt die App aus dem Geburtsjahr im Profil.' }) : null,
+      profile.birthYear ? el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: t('wellness.ageHint') }) : null,
     ]),
     footer: el('div', { style: { width: '100%' } }, [saveBtn, hint]),
   });
@@ -95,6 +97,6 @@ export function openGateSheet({ onSaved = null } = {}) {
 export function gatePromptCard(text, onSaved) {
   return el('div', { class: 'card card--flat mt-2' }, [
     el('div', { class: 'muted', style: { fontSize: '.84rem' }, text }),
-    el('button', { class: 'btn btn--soft mt-2', onclick: () => openGateSheet({ onSaved }) }, [icon('check'), 'Jetzt beantworten']),
+    el('button', { class: 'btn btn--soft mt-2', onclick: () => openGateSheet({ onSaved }) }, [icon('check'), t('wellness.answerNow')]),
   ]);
 }

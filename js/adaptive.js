@@ -9,9 +9,11 @@
    Alles als Orientierung, ohne Druck und ohne Versprechen.
    ========================================================================= */
 
-import { diffDays, fmtDuration, parseHms } from './ui.js';
+import { diffDays, fmtDec, fmtDuration, parseHms } from './ui.js';
 import { predictRace } from './suggestions.js';
 import { hrvMethodOf } from './healthdata.js';
+
+import { t } from './i18n.js';
 
 /**
  * HRV-Lage: ln(HRV) im 7-Tage-Mittel gegen die Normalbandbreite (Mittel ± 0,5 SD) der Tageswerte
@@ -55,7 +57,7 @@ export function readinessScore(health, today) {
   if (last.restingHr != null && rhrAvg) {
     const d = last.restingHr - rhrAvg;
     score -= d * 3;
-    factors.push(d <= 0 ? 'Ruhepuls niedrig' : 'Ruhepuls erhöht');
+    factors.push(d <= 0 ? t('adaptive.rhrLow') : t('adaptive.rhrRaised'));
   }
   // HRV (TRAIN-48): nicht der Einzelwert gegen einen Schnitt, sondern ln(HRV) als 7-Tage-Mittel
   // gegen die eigene Normalbandbreite der letzten 28 Tage (Mittel ± 0,5 SD, nach Plews/Buchheit).
@@ -63,17 +65,17 @@ export function readinessScore(health, today) {
   // DERSELBEN Messart (SDNN ≠ RMSSD) – ein Wechsel der Uhr wäre sonst ein scheinbarer Sprung.
   const hrv = hrvBand(sorted, last, today || last.date);
   if (hrv) {
-    if (hrv.state === 'low') { score -= 10; factors.push('HRV unter deinem Normalbereich (7-Tage-Mittel)'); }
-    else if (hrv.state === 'high') { score += 5; factors.push('HRV über deinem Normalbereich'); }
-    else factors.push('HRV im Normalbereich');
+    if (hrv.state === 'low') { score -= 10; factors.push(t('adaptive.hrvLow')); }
+    else if (hrv.state === 'high') { score += 5; factors.push(t('adaptive.hrvHigh')); }
+    else factors.push(t('adaptive.hrvNormal'));
   }
   if (last.sleepHours != null) {
     if (last.sleepHours >= 7.5) score += 8;
     else if (last.sleepHours < 6.5) score -= 10;
-    factors.push(`Schlaf ${last.sleepHours} h`);
+    factors.push(t('adaptive.sleep', { hours: fmtDec(last.sleepHours) }));
   }
   score = Math.max(5, Math.min(100, Math.round(score)));
-  const label = score >= 75 ? 'hoch' : score >= 55 ? 'solide' : score >= 40 ? 'mäßig' : 'niedrig';
+  const label = score >= 75 ? t('adaptive.readyHigh') : score >= 55 ? t('adaptive.readySolid') : score >= 40 ? t('adaptive.readyModerate') : t('adaptive.readyLow');
   return { score, label, factors, date: last.date };
 }
 
@@ -90,8 +92,8 @@ export function paceHrFeedback(sessions, profile, today) {
   if (median <= z2.max + 3) return null;
   return {
     icon: 'heart', tone: 'warn',
-    title: 'Locker läuft zu hoch',
-    text: `Bei deinen lockeren Läufen liegt die Herzfrequenz im Schnitt bei ~${median} – über der Grundlagenzone Z2 (≤ ${z2.max}). Sehr häufig: Geh die lockeren Einheiten bewusst langsamer an – das Tempo ist egal, die HF zählt. Wirken die Zonen unrealistisch, prüfe Max-HF und Ruhepuls in den Einstellungen.`,
+    title: t('adaptive.easyTooHighTitle'),
+    text: t('adaptive.easyTooHighText', { median, max: z2.max }),
   };
 }
 
@@ -110,13 +112,13 @@ export function adaptiveInsights({ sessions = [], health = [], events = [], prof
   if (r) {
     const tone = r.score >= 70 ? 'good' : r.score >= 50 ? 'neutral' : 'warn';
     let rec;
-    if (r.score < 50) rec = 'Deine Erholung zeigt sich gedämpft – heute lieber locker oder eine Pause.';
-    else if (coachWarning === 'return') rec = 'Deine Erholungswerte sehen ordentlich aus – nach dem Ausfall trotzdem behutsam wieder einsteigen (siehe oben).';
-    else if (coachWarning) rec = 'Deine Erholungswerte sehen ordentlich aus – die Empfehlung oben richtet sich nach deiner Belastung der letzten Tage.';
-    else if (loadWarning) rec = 'Deine Erholungswerte sehen ordentlich aus – deine Belastung war zuletzt trotzdem hoch (siehe „Belastung & Form“). Trainiere wie geplant und hör auf deinen Körper.';
-    else if (r.score >= 70) rec = 'Gute Bereitschaft – ein anspruchsvolles Training ist heute gut drin.';
-    else rec = 'Solide Bereitschaft – trainiere wie geplant und hör auf deinen Körper.';
-    out.push({ icon: 'heart', title: `Bereitschaft heute: ${r.label} (${r.score})`, text: rec, tone, factors: r.factors });
+    if (r.score < 50) rec = t('adaptive.recoveryLow');
+    else if (coachWarning === 'return') rec = t('adaptive.recoveryOkReturn');
+    else if (coachWarning) rec = t('adaptive.recoveryOkCoach');
+    else if (loadWarning) rec = t('adaptive.recoveryOkLoad');
+    else if (r.score >= 70) rec = t('adaptive.readinessGood');
+    else rec = t('adaptive.readinessSolid');
+    out.push({ icon: 'heart', title: t('adaptive.readinessToday', { label: r.label, score: r.score }), text: rec, tone, factors: r.factors });
   }
 
   const ev = events.filter((e) => e.status !== 'abgeschlossen' && e.date >= today).sort((a, b) => a.date.localeCompare(b.date))[0];
@@ -131,14 +133,14 @@ export function adaptiveInsights({ sessions = [], health = [], events = [], prof
       const solid = !pred.onlyEasy && !pred.caveat;
       out.push({
         icon: 'target',
-        title: `Formprognose: ${fmtDuration(pred.seconds)}`,
+        title: t('adaptive.formForecast', { time: fmtDuration(pred.seconds) }),
         text: ahead && solid
-          ? `Du bist aktuell schneller unterwegs als dein Ziel ${ev.targetTime}! Überlege, die Zielzeit zu schärfen – dann ziehen auch deine Trainingspaces automatisch mit.`
+          ? t('adaptive.fasterThanGoal', { target: ev.targetTime })
           : ahead
-            ? `Die Formäquivalenz liegt unter deinem Ziel ${ev.targetTime}. ${pred.note || 'Sie stammt aus lockeren Läufen und ist noch unsicher.'} Bleib beim Ziel und sammle Umfang.`
+            ? t('adaptive.belowGoal', { target: ev.targetTime, note: pred.note || t('adaptive.noteDefault') })
             : onTrack
-              ? `Du bist auf Kurs Richtung ${ev.targetTime || 'Ziel'} – dranbleiben!`
-              : `Aktuell noch über dem Ziel ${ev.targetTime} – die nächsten Tempo-/Intervalleinheiten zahlen darauf ein.`,
+              ? t('adaptive.onTrack', { target: ev.targetTime || t('adaptive.goalWord') })
+              : t('adaptive.aboveGoal', { target: ev.targetTime }),
         tone: onTrack ? 'good' : 'neutral',
       });
     }

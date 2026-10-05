@@ -19,6 +19,8 @@
    Frontansicht zeigt 90 nach rechts (+x).
    ========================================================================= */
 
+import { t as tr } from './i18n.js';
+
 export const BODY = Object.freeze({
   torso: 38, thigh: 32, shin: 31, upper: 23, fore: 21,
   foot: 12, heel: 3, head: 9, neck: 8, ankle: 4, wrist: 3.5,
@@ -262,7 +264,7 @@ function phasesOf(seq, from, pass, out) {
       from: cur, to, pass,
       dur: ph.hold != null ? ph.hold : ph.s,
       hold: ph.hold != null,
-      label: ph.label || (ph.hold != null ? 'Halten' : ''),
+      label: ph.label || (ph.hold != null ? tr('motionRig.hold') : ''),
       cue: ph.cue || '', breath: ph.breath || '',
     });
     cur = to;
@@ -276,7 +278,7 @@ export function cycleDuration(m) { return cycleOf(m).reduce((s, p) => s + p.dur,
 /** Pose eines Schlüssels für einen Durchgang (Seite b = gespiegelt). */
 export function keyPose(m, key, pass = 'a') {
   const p = m.keys[key];
-  if (!p) throw new Error(`Pose „${key}“ fehlt`);
+  if (!p) throw new Error(`Pose “${key}” is missing`);
   return pass === 'b' ? otherSide(p, m.view, m.cx || 0) : p;
 }
 

@@ -12,13 +12,15 @@
 import { weightNow, weightGoalStatus } from './energy.js';
 import { withHrvMethod } from './healthdata.js';
 
+import { t } from './i18n.js';
+
 /** Unterstützte Metriken (aus den Körperwerten). */
 export const GOAL_METRICS = [
-  { key: 'weight', label: 'Gewicht', unit: 'kg', field: 'weight', digits: 1, hint: 'runter oder rauf' },
-  { key: 'bodyFat', label: 'Körperfett', unit: '%', field: 'bodyFat', digits: 1, hint: 'meist runter' },
-  { key: 'restingHr', label: 'Ruhepuls', unit: 'bpm', field: 'restingHr', digits: 0, hint: 'meist runter' },
-  { key: 'hrv', label: 'HRV', unit: 'ms', field: 'hrv', digits: 0, hint: 'meist rauf' },
-  { key: 'vo2max', label: 'VO₂max', unit: '', field: 'vo2max', digits: 0, hint: 'rauf' },
+  { key: 'weight', get label() { return t('goals.weight'); }, unit: 'kg', field: 'weight', digits: 1, get hint() { return t('goals.hintDownOrUp'); } },
+  { key: 'bodyFat', get label() { return t('goals.bodyFat'); }, unit: '%', field: 'bodyFat', digits: 1, get hint() { return t('goals.hintUsuallyDown'); } },
+  { key: 'restingHr', get label() { return t('goals.restingHr'); }, unit: 'bpm', field: 'restingHr', digits: 0, get hint() { return t('goals.hintUsuallyDown'); } },
+  { key: 'hrv', label: 'HRV', unit: 'ms', field: 'hrv', digits: 0, get hint() { return t('goals.hintUsuallyUp'); } },
+  { key: 'vo2max', label: 'VO₂max', unit: '', field: 'vo2max', digits: 0, get hint() { return t('goals.hintUp'); } },
 ];
 export function metricMeta(key) { return GOAL_METRICS.find((m) => m.key === key) || null; }
 

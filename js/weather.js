@@ -8,6 +8,7 @@
 
 import { typeMeta } from './ui.js';
 import { lsGet, lsSet } from './env.js';
+import { locale, t } from './i18n.js';
 
 const GEO_URL = 'https://geocoding-api.open-meteo.com/v1/search';
 const FC_URL = 'https://api.open-meteo.com/v1/forecast';
@@ -17,7 +18,7 @@ const CACHE_TTL = 60 * 60 * 1000; // 1 Stunde
 /** Bis zu fünf Treffer mit Region und Land – bei mehrdeutigen Namen (Neustadt, Frankfurt,
     Halle) wählt die Person selbst; vorher galt ungefragt der erste Treffer (UI-40). */
 export async function geocode(name) {
-  const r = await fetch(`${GEO_URL}?name=${encodeURIComponent(name)}&count=5&language=de&format=json`);
+  const r = await fetch(`${GEO_URL}?name=${encodeURIComponent(name)}&count=5&language=${locale().split('-')[0]}&format=json`);
   const j = await r.json();
   return (j.results || []).map((g) => ({
     name: g.name, region: g.admin1 || '', country: g.country_code || g.country || '',
@@ -84,16 +85,16 @@ export function weatherForDate(dateStr) {
 
 /** WMO-Wettercode -> Emoji + Label. */
 export function wmo(code) {
-  if (code === 0) return { emoji: '☀️', label: 'klar' };
-  if (code <= 2) return { emoji: '🌤️', label: 'heiter' };
-  if (code === 3) return { emoji: '☁️', label: 'bewölkt' };
-  if (code <= 48) return { emoji: '🌫️', label: 'Nebel' };
-  if (code <= 57) return { emoji: '🌦️', label: 'Niesel' };
-  if (code <= 67) return { emoji: '🌧️', label: 'Regen' };
-  if (code <= 77) return { emoji: '❄️', label: 'Schnee' };
-  if (code <= 82) return { emoji: '🌦️', label: 'Schauer' };
-  if (code <= 86) return { emoji: '🌨️', label: 'Schneeschauer' };
-  return { emoji: '⛈️', label: 'Gewitter' };
+  if (code === 0) return { emoji: '☀️', label: t('weather.wmo.clear') };
+  if (code <= 2) return { emoji: '🌤️', label: t('weather.wmo.fair') };
+  if (code === 3) return { emoji: '☁️', label: t('weather.wmo.cloudy') };
+  if (code <= 48) return { emoji: '🌫️', label: t('weather.wmo.fog') };
+  if (code <= 57) return { emoji: '🌦️', label: t('weather.wmo.drizzle') };
+  if (code <= 67) return { emoji: '🌧️', label: t('weather.wmo.rain') };
+  if (code <= 77) return { emoji: '❄️', label: t('weather.wmo.snow') };
+  if (code <= 82) return { emoji: '🌦️', label: t('weather.wmo.showers') };
+  if (code <= 86) return { emoji: '🌨️', label: t('weather.wmo.snowShowers') };
+  return { emoji: '⛈️', label: t('weather.wmo.thunderstorm') };
 }
 
 /**
@@ -102,9 +103,9 @@ export function wmo(code) {
  * lieber etwas langsamer als am Ende einbrechen.
  */
 export function heatSlowdownPct(tMax) {
-  const t = Number(tMax);
-  if (!Number.isFinite(t) || t < 20) return 0;
-  return Math.min(8, Math.round((t - 15) * 0.4));
+  const temp = Number(tMax);
+  if (!Number.isFinite(temp) || temp < 20) return 0;
+  return Math.min(8, Math.round((temp - 15) * 0.4));
 }
 
 /**
@@ -115,14 +116,14 @@ export function weatherHint(unit, w) {
   if (!w || !unit || typeMeta(unit.type).cat !== 'run') return null;
   if (unit.type === 'rest') return null;
   const slow = heatSlowdownPct(w.tMax);
-  if (w.code >= 95) return { text: 'Gewitter möglich – bitte nicht ins Freie, plane eine Indoor-Alternative.', tone: 'warn' };
-  if (w.code >= 71 && w.code <= 77) return { text: 'Schnee/Glätte – vorsichtig laufen oder drinnen trainieren.', tone: 'warn' };
-  if (w.wind >= 45) return { text: 'Stürmisch – Gegenwind einplanen oder Indoor-Alternative.', tone: 'warn' };
-  if (w.tMax >= 28) return { text: `Heiß (${w.tMax} °C) – früh oder spät laufen, rund ${slow} % langsamer als geplant, viel trinken.`, tone: 'warn' };
-  if ((w.precip != null && w.precip >= 70) || (w.code >= 61 && w.code <= 67) || (w.code >= 80 && w.code <= 82)) return { text: 'Regen wahrscheinlich – Regenjacke einpacken oder Indoor erwägen.', tone: 'neutral' };
-  if (w.tMax <= 0) return { text: `Frostig (${w.tMax} °C) – warm anziehen, Aufwärmen nicht vergessen.`, tone: 'neutral' };
-  if (w.tMax >= 24) return { text: `Warm (${w.tMax} °C) – rund ${slow} % langsamer als geplant laufen und mehr trinken.`, tone: 'neutral' };
-  if (w.code <= 2 && w.tMax >= 8 && w.tMax <= 22) return { text: 'Perfektes Laufwetter – viel Spaß!', tone: 'good' };
+  if (w.code >= 95) return { text: t('weather.thunder'), tone: 'warn' };
+  if (w.code >= 71 && w.code <= 77) return { text: t('weather.snowIce'), tone: 'warn' };
+  if (w.wind >= 45) return { text: t('weather.stormy'), tone: 'warn' };
+  if (w.tMax >= 28) return { text: t('weather.hot', { temp: w.tMax, slow }), tone: 'warn' };
+  if ((w.precip != null && w.precip >= 70) || (w.code >= 61 && w.code <= 67) || (w.code >= 80 && w.code <= 82)) return { text: t('weather.rainLikely'), tone: 'neutral' };
+  if (w.tMax <= 0) return { text: t('weather.freezing', { temp: w.tMax }), tone: 'neutral' };
+  if (w.tMax >= 24) return { text: t('weather.warm', { temp: w.tMax, slow }), tone: 'neutral' };
+  if (w.code <= 2 && w.tMax >= 8 && w.tMax <= 22) return { text: t('weather.perfect'), tone: 'good' };
   return null;
 }
 

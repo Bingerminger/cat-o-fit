@@ -18,7 +18,7 @@
 
 import { el, icon, segmented, toast } from './ui.js';
 import * as store from './storage.js';
-import { categoryMeta } from './exercises.js';
+import { categoryMeta, loadExerciseTexts } from './exercises.js';
 import { exerciseArt } from './exercise-art.js';
 import { mountFigure } from './motion-figure.js';
 import { buildShow, showStateAt, doseLabel, nextWorkAfter } from './show-program.js';
@@ -26,16 +26,22 @@ import { createMusic } from './music.js';
 import { unlockAudio, releaseAudio, tone, speak, speaking, stopSpeaking, wakeAudio, canSpeak, keepAwake, audioContext } from './audio.js';
 import { doseKeys, preloadClips, sayClips } from './voice.js';
 
+import { t, tp } from './i18n.js';
+
 const SVGNS = 'http://www.w3.org/2000/svg';
 const mmss = (s) => { const v = Math.max(0, Math.ceil(s)); return `${Math.floor(v / 60)}:${String(v % 60).padStart(2, '0')}`; };
+
+/** "12 min · 5 exercises · 3 rounds" – the rounds only when there is more than one. */
+const summaryLine = (time, exercises, rounds) => (rounds > 1
+  ? t('workoutShow.summaryRounds', { time, exercises: tp('workoutShow.exercises', exercises), rounds: tp('workoutShow.rounds', rounds) })
+  : t('workoutShow.summary', { time, exercises: tp('workoutShow.exercises', exercises) }));
 
 /** Menge zum Vorlesen: „12 Wiederholungen pro Seite“, „40 Sekunden“. */
 export function spokenDose(it, program) {
   const label = doseLabel(it, program);
   return label
-    .replace(/^(\d+)×/, (_, n) => `${n} Wiederholungen`)
-    .replace(/^(\d+) s/, (_, n) => `${n} Sekunden`)
-    .replace(' je Seite', ' pro Seite');
+    .replace(/^(\d+)(×| s)/, (_, n, unit) => (unit === '×' ? tp('workoutShow.spokenReps', Number(n)) : tp('workoutShow.spokenSeconds', Number(n))))
+    .replace(` ${t('showProgram.perSide')}`, ` ${t('workoutShow.spokenPerSide')}`);
 }
 
 /**
@@ -48,14 +54,14 @@ export function voiceLines(seg, show) {
   const name = it.ex.name.replace(/\s*\(.*\)\s*$/, '');
   const ex = `ex-${it.id}`;
   const dose = doseKeys(doseLabel(it, p));
-  if (seg.kind === 'ready') return [{ at: 0.6, keys: ['intro', ex, ...dose], text: `Los geht's! Zuerst: ${name}, ${spokenDose(it, p)}.` }];
+  if (seg.kind === 'ready') return [{ at: 0.6, keys: ['intro', ex, ...dose], text: t('workoutShow.sayReady', { name, dose: spokenDose(it, p) }) }];
   if (seg.kind === 'rest') {
     return [seg.dur >= 7
-      ? { at: 0.7, keys: ['next', ex, ...dose], text: `Pause. Als Nächstes: ${name}, ${spokenDose(it, p)}.` }
-      : { at: 0.5, keys: ['next-short', ex], text: `Als Nächstes: ${name}.` }];
+      ? { at: 0.7, keys: ['next', ex, ...dose], text: t('workoutShow.sayNext', { name, dose: spokenDose(it, p) }) }
+      : { at: 0.5, keys: ['next-short', ex], text: t('workoutShow.sayNextShort', { name }) }];
   }
-  if (seg.kind === 'roundRest') return [{ at: 0.7, keys: [`round-${Math.min(5, seg.round - 1)}`, ex], text: `Runde ${seg.round - 1} geschafft. Durchatmen. Gleich Runde ${seg.round}: ${name}.` }];
-  if (seg.kind === 'switch') return [{ at: 0.5, keys: ['switch'], text: 'Seitenwechsel.' }];
+  if (seg.kind === 'roundRest') return [{ at: 0.7, keys: [`round-${Math.min(5, seg.round - 1)}`, ex], text: t('workoutShow.sayRound', { done: seg.round - 1, next: seg.round, name }) }];
+  if (seg.kind === 'switch') return [{ at: 0.5, keys: ['switch'], text: t('workoutShow.saySwitch') }];
   return [];
 }
 
@@ -126,44 +132,46 @@ export function openShow(program, { onFinish = null } = {}) {
     const total = el('span', { class: 'show-ov__total' });
     const paint = () => {
       const s = buildShow(current());
-      total.textContent = `≈ ${Math.max(1, Math.round(s.total / 60))} min · ${program.items.length} Übungen${rounds > 1 ? ` · ${rounds} Runden` : ''}`;
+      total.textContent = `≈ ${summaryLine(Math.max(1, Math.round(s.total / 60)), program.items.length, rounds)}`;
     };
     const stepper = (label, get, set, step, min, max, unit = '') => {
       const val = el('span', { class: 'show-ov__val' });
       const show = () => { val.textContent = `${get()}${unit}`; paint(); };
       const btn = (d, txt, aria) => el('button', { class: 'show-ov__step', type: 'button', 'aria-label': aria, onclick: () => { set(Math.min(max, Math.max(min, get() + d))); show(); } }, txt);
       show();
-      return el('div', { class: 'show-ov__stepper' }, [el('span', { class: 'show-ov__label', text: label }), btn(-step, '−', `${label} weniger`), val, btn(step, '+', `${label} mehr`)]);
+      return el('div', { class: 'show-ov__stepper' }, [el('span', { class: 'show-ov__label', text: label }), btn(-step, '−', t('motion.less', { label })), val, btn(step, '+', t('motion.more', { label }))]);
     };
     const list = el('ol', { class: 'show-ov__list' }, program.items.map((it) => el('li', { class: 'show-ov__item' }, [
       el('span', { class: 'show-ov__art', html: exerciseArt(it.id, { color: categoryMeta(it.ex.category).color }) }),
       el('span', { class: 'show-ov__name', text: it.ex.name }),
       el('span', { class: 'show-ov__dose', text: doseLabel(it, program) }),
     ])));
-    const music = segmented([{ value: 'app', label: 'Musik' }, { value: 'own', label: 'Eigene Musik' }, { value: 'off', label: 'Aus' }], musicMode,
-      (v) => { musicMode = v; store.setSetting('showMusic', v); hint.textContent = musicHint(); }, { label: 'Musik' });
+    const music = segmented([{ value: 'app', label: t('workoutShow.music') }, { value: 'own', label: t('workoutShow.ownMusic') }, { value: 'off', label: t('workoutShow.musicOff') }], musicMode,
+      (v) => { musicMode = v; store.setSetting('showMusic', v); hint.textContent = musicHint(); }, { label: t('workoutShow.music') });
     const hint = el('p', { class: 'show-ov__hint', text: musicHint() });
     const voice = el('button', { class: `show-ov__toggle${voiceOn ? ' is-on' : ''}`, type: 'button', 'aria-pressed': String(voiceOn), disabled: !canSpeak(), onclick: () => {
       voiceOn = !voiceOn; store.setSetting('showVoice', voiceOn);
       voice.classList.toggle('is-on', voiceOn); voice.setAttribute('aria-pressed', String(voiceOn));
-    } }, [icon('mic'), el('span', { text: 'Ansagen in den Pausen' })]);
-    const go = el('button', { class: 'show-ov__go', type: 'button', onclick: () => {
+    } }, [icon('mic'), el('span', { text: t('workoutShow.voiceDuringRests') })]);
+    const go = el('button', { class: 'show-ov__go', type: 'button', onclick: async () => {
       // In der Nutzergeste: Ton und Sprachausgabe freischalten (iPad/iPhone auch auf „lautlos“).
       // Kein Vollbild: Safari legt dort ein eigenes Schließen-Kreuz über die Bühne.
       unlockAudio({ mix: musicMode === 'own' });
+      await loadExerciseTexts();   // the steps are a lazily loaded catalog area
+      if (root.isConnected === false || run) return;   // closed meanwhile, or tapped twice
       run = startRun(current());
-    } }, [icon('play'), el('span', { text: 'Los geht’s' })]);
+    } }, [icon('play'), el('span', { text: t('workoutShow.letsGo') })]);
     root.appendChild(el('div', { class: 'show-ov' }, [
       el('div', { class: 'show-ov__head' }, [
-        el('div', {}, [el('div', { class: 'show-ov__kicker', text: 'Durchgehend mitmachen' }), el('h2', { class: 'show-ov__title', text: program.title }), total]),
-        el('button', { class: 'show__close', type: 'button', 'aria-label': 'Schließen', onclick: close }, [icon('x')]),
+        el('div', {}, [el('div', { class: 'show-ov__kicker', text: t('workoutShow.kicker') }), el('h2', { class: 'show-ov__title', text: program.title }), total]),
+        el('button', { class: 'show__close', type: 'button', 'aria-label': t('common.close'), onclick: close }, [icon('x')]),
       ]),
       el('div', { class: 'show-ov__body' }, [
         list,
         el('div', { class: 'show-ov__side' }, [
           el('div', { class: 'show-ov__steppers' }, [
-            stepper('Runden', () => rounds, (v) => { rounds = v; }, 1, 1, 6),
-            stepper('Pause', () => rest, (v) => { rest = v; }, 5, 5, 90, ' s'),
+            stepper(t('workoutShow.roundsLabel'), () => rounds, (v) => { rounds = v; }, 1, 1, 6),
+            stepper(t('motion.rest'), () => rest, (v) => { rest = v; }, 5, 5, 90, ' s'),
           ]),
           music, hint, voice, go,
         ]),
@@ -173,9 +181,9 @@ export function openShow(program, { onFinish = null } = {}) {
   }
 
   function musicHint() {
-    if (musicMode === 'app') return 'Beat im Takt der Übung – jede Bewegung auf dem Beat. Lauter stellen nicht vergessen.';
-    if (musicMode === 'own') return 'Deine Musik (z. B. Spotify) läuft weiter; Ansagen und Zähltöne kommen dazu. Dafür darf das Gerät nicht auf „lautlos“ stehen.';
-    return 'Ohne Musik – nur Ansagen und Zähltöne.';
+    if (musicMode === 'app') return t('workoutShow.musicHintApp');
+    if (musicMode === 'own') return t('workoutShow.musicHintOwn');
+    return t('workoutShow.musicHintOff');
   }
 
   /* ------------------------------ Ablauf ------------------------------ */
@@ -223,25 +231,25 @@ export function openShow(program, { onFinish = null } = {}) {
     const breath = el('span', { class: 'show__breath' });
     const nextName = el('span', { class: 'show__next-name' });
     const nextArt = el('span', { class: 'show__next-art' });
-    const next = el('div', { class: 'show__next' }, [nextArt, el('span', {}, [el('span', { class: 'show__next-label', text: 'Danach' }), nextName])]);
+    const next = el('div', { class: 'show__next' }, [nextArt, el('span', {}, [el('span', { class: 'show__next-label', text: t('workoutShow.upNext') }), nextName])]);
     const info = el('div', { class: 'show__info' }, [meta, name, dose, counter, el('div', { class: 'show__cue-row' }, [cue, breath]), next]);
     const chapters = el('div', { class: 'show__chapters' }, show.segs.map((s, k) => el('button', {
-      class: `show__chapter show__chapter--${s.kind}`, type: 'button', style: { flexGrow: String(s.dur) }, 'aria-label': `Abschnitt ${k + 1}`,
+      class: `show__chapter show__chapter--${s.kind}`, type: 'button', style: { flexGrow: String(s.dur) }, 'aria-label': t('workoutShow.chapter', { n: k + 1 }),
       onclick: () => seek(s.t0 + 0.001),
     }, [el('span', { class: 'show__chapter-fill' })])));
     const left = el('span', { class: 'show__left' });
     const playBtn = el('button', { class: 'show__ctl show__ctl--main', type: 'button', onclick: () => toggle() });
-    const musicBtn = el('button', { class: 'show__ctl', type: 'button', title: 'Musik', onclick: () => toggleMusic() }, [icon('music')]);
-    const voiceBtn = el('button', { class: 'show__ctl', type: 'button', title: 'Ansagen', disabled: !canSpeak(), onclick: () => toggleVoice() }, [icon('mic')]);
+    const musicBtn = el('button', { class: 'show__ctl', type: 'button', title: t('workoutShow.music'), onclick: () => toggleMusic() }, [icon('music')]);
+    const voiceBtn = el('button', { class: 'show__ctl', type: 'button', title: t('workoutShow.voice'), disabled: !canSpeak(), onclick: () => toggleVoice() }, [icon('mic')]);
     const controls = el('div', { class: 'show__controls' }, [
-      el('button', { class: 'show__ctl', type: 'button', title: 'Zurück', 'aria-label': 'Zurück', onclick: () => skip(-1) }, [icon('back')]),
+      el('button', { class: 'show__ctl', type: 'button', title: t('workoutShow.previous'), 'aria-label': t('workoutShow.previous'), onclick: () => skip(-1) }, [icon('back')]),
       playBtn,
-      el('button', { class: 'show__ctl', type: 'button', title: 'Weiter', 'aria-label': 'Weiter', onclick: () => skip(1) }, [icon('skip')]),
+      el('button', { class: 'show__ctl', type: 'button', title: t('common.next'), 'aria-label': t('common.next'), onclick: () => skip(1) }, [icon('skip')]),
       el('span', { class: 'show__spacer' }),
       left, musicBtn, voiceBtn,
-      el('button', { class: 'show__ctl', type: 'button', title: 'Beenden', 'aria-label': 'Beenden', onclick: close }, [icon('x')]),
+      el('button', { class: 'show__ctl', type: 'button', title: t('workoutShow.end'), 'aria-label': t('workoutShow.end'), onclick: close }, [icon('x')]),
     ]);
-    const paused = el('button', { class: 'show__paused', type: 'button', onclick: () => toggle() }, [icon('play'), el('span', { text: 'Pausiert – weiter' })]);
+    const paused = el('button', { class: 'show__paused', type: 'button', onclick: () => toggle() }, [icon('play'), el('span', { text: t('workoutShow.pausedResume') })]);
     const runEl = el('div', { class: 'show__run' }, [stage, info, chapters, controls, paused]);
     root.appendChild(runEl);
     root.addEventListener('pointerdown', wake);
@@ -256,7 +264,7 @@ export function openShow(program, { onFinish = null } = {}) {
     function paintButtons() {
       playBtn.innerHTML = '';
       playBtn.appendChild(icon(playing ? 'pause' : 'play'));
-      playBtn.setAttribute('aria-label', playing ? 'Pause' : 'Weiter');
+      playBtn.setAttribute('aria-label', playing ? t('motion.pause') : t('motion.resume'));
       const on = musicMode === 'app';
       musicBtn.classList.toggle('is-on', on);
       musicBtn.setAttribute('aria-pressed', String(on));
@@ -274,7 +282,7 @@ export function openShow(program, { onFinish = null } = {}) {
     const now = () => (typeof performance !== 'undefined' ? performance.now() : Date.now()) / 1000;
     const latency = () => (music ? music.latency : 0);
     /** Audio-Zeit eines Show-Zeitpunkts – um die Ausgabeverzögerung früher, damit Ton und Bild zusammenpassen. */
-    const audioAt = (t) => (ctx ? ctx.currentTime + (t - T) - latency() : null);
+    const audioAt = (when) => (ctx ? ctx.currentTime + (when - T) - latency() : null);
     const specOf = (s) => ({ style: s.style, bpm: s.bpm, intensity: s.intensity });
 
     /** Schleife des Abschnitts k – ihr Taktanfang liegt auf dem Beginn des Abschnitts. */
@@ -311,21 +319,23 @@ export function openShow(program, { onFinish = null } = {}) {
       } else fig.setSide(seg.side);
       runEl.dataset.kind = seg.kind;
       kicker.textContent = {
-        ready: 'Gleich geht’s los', rest: 'Pause · als Nächstes', roundRest: `Runde ${seg.round - 1} geschafft`, switch: 'Seitenwechsel', work: 'Jetzt',
+        ready: t('workoutShow.getReady'), rest: t('workoutShow.restNext'), roundRest: t('workoutShow.roundDone', { round: seg.round - 1 }), switch: t('motion.switchSides'), work: t('workoutShow.now'),
       }[seg.kind];
-      const sl = it.m.sides ? (seg.side === 'b' ? 'links' : 'rechts') : '';
-      side.textContent = it.m.sides === 'each' ? `Seite ${sl}` : '';
+      const sl = it.m.sides ? (seg.side === 'b' ? t('workoutShow.sideLeft') : t('workoutShow.sideRight')) : '';
+      side.textContent = it.m.sides === 'each' ? sl : '';
       side.hidden = it.m.sides !== 'each';
       name.textContent = it.ex.name;
       dose.textContent = doseLabel(it, prog);
-      meta.textContent = `Übung ${seg.i + 1} von ${n}${prog.rounds > 1 ? ` · Runde ${seg.round} von ${prog.rounds}` : ''}`;
+      meta.textContent = prog.rounds > 1
+        ? t('workoutShow.exerciseOfRound', { i: seg.i + 1, n, round: seg.round, rounds: prog.rounds })
+        : t('workoutShow.exerciseOf', { i: seg.i + 1, n });
       const nx = seg.kind === 'work' ? nextWorkAfter(show, st.index) : null;
       next.hidden = seg.kind !== 'work';
       if (nx) {
         const ni = prog.items[nx.i];
         nextName.textContent = ni.ex.name;
         nextArt.innerHTML = exerciseArt(ni.id, { color: categoryMeta(ni.ex.category).color });
-      } else { nextName.textContent = 'Geschafft!'; nextArt.innerHTML = ''; }
+      } else { nextName.textContent = t('workoutShow.done'); nextArt.innerHTML = ''; }
       lastCue = '';
       // Musik: kurz vorher eingeplant? Sonst jetzt (Start, Springen, Fortsetzen).
       if (cued !== st.index) playSeg(st.index);
@@ -350,8 +360,8 @@ export function openShow(program, { onFinish = null } = {}) {
       const fr = fig.update(st.anim.t, st.anim.list);
       // Zähler
       let bigTxt = ''; let unitTxt = '';
-      if (seg.kind === 'work' && !seg.timed) { bigTxt = `${st.rep}`; unitTxt = `von ${seg.reps}`; }
-      else { bigTxt = seg.kind === 'work' ? mmss(st.left) : `${Math.ceil(st.left)}`; unitTxt = seg.kind === 'rest' || seg.kind === 'roundRest' ? 'Sekunden Pause' : 'Sekunden'; }
+      if (seg.kind === 'work' && !seg.timed) { bigTxt = `${st.rep}`; unitTxt = t('workoutShow.ofReps', { reps: seg.reps }); }
+      else { bigTxt = seg.kind === 'work' ? mmss(st.left) : `${Math.ceil(st.left)}`; unitTxt = seg.kind === 'rest' || seg.kind === 'roundRest' ? t('workoutShow.secondsOfRest') : t('workoutShow.seconds'); }
       if (big.textContent !== bigTxt) big.textContent = bigTxt;
       if (unit.textContent !== unitTxt) unit.textContent = unitTxt;
       ringFill.setAttribute('stroke-dasharray', `${(Math.min(1, st.local / seg.dur) * 326.7).toFixed(1)} 326.7`);
@@ -359,11 +369,11 @@ export function openShow(program, { onFinish = null } = {}) {
       if (fr.phase.cue) lastCue = fr.phase.cue;
       const c = seg.kind === 'work' ? lastCue : ((prog.items[seg.i].ex.steps || [])[0] || lastCue || '');
       if (cue.textContent !== c) cue.textContent = c;
-      const b = seg.kind === 'work' ? ({ ein: 'Einatmen', aus: 'Ausatmen' }[fr.phase.breath] || '') : '';
+      const b = seg.kind === 'work' ? (fr.phase.breath === 'ein' ? t('motion.breath.ein') : fr.phase.breath === 'aus' ? t('motion.breath.aus') : '') : '';
       if (breath.textContent !== b) breath.textContent = b;
       breath.hidden = !b;
       // Fortschritt
-      const lt = `noch ${mmss(show.total - T)}`;
+      const lt = t('workoutShow.timeLeft', { time: mmss(show.total - T) });
       if (left.textContent !== lt) left.textContent = lt;
       chapters.childNodes.forEach((ch, k) => {
         const s = show.segs[k];
@@ -402,9 +412,9 @@ export function openShow(program, { onFinish = null } = {}) {
     function frame() {
       raf = 0;
       if (!root.isConnected || finished) return;
-      const t = now();
-      let dt = lastNow == null ? 0 : t - lastNow;
-      lastNow = t;
+      const clock = now();
+      let dt = lastNow == null ? 0 : clock - lastNow;
+      lastNow = clock;
       if (dt < 0 || dt > 1) dt = 0;            // nach einer Unterbrechung nicht springen
       if (playing && !document.hidden) T += dt;
       // Ein Fehler in einem Bild darf die Session nie anhalten.
@@ -412,8 +422,8 @@ export function openShow(program, { onFinish = null } = {}) {
       if (!finished) raf = requestAnimationFrame(frame);
     }
 
-    function seek(t) {
-      T = Math.max(0, Math.min(show.total - 0.01, t));
+    function seek(to) {
+      T = Math.max(0, Math.min(show.total - 0.01, to));
       segIndex = -1; cued = -1; phase = null; pending = [];
       stopSpeaking();
       lastNow = null;
@@ -468,22 +478,22 @@ export function openShow(program, { onFinish = null } = {}) {
       if (music) music.stop(2.5);
       keepAwake(false);
       tone(784, { ms: 160, gain: 0.3 }); tone(1047, { ms: 420, gain: 0.32, when: 0.18 });
-      if (voiceOn) announce({ keys: ['done'], text: 'Geschafft! Stark gemacht.' }, ctx ? ctx.currentTime + 0.5 : null);
+      if (voiceOn) announce({ keys: ['done'], text: t('workoutShow.sayDone') }, ctx ? ctx.currentTime + 0.5 : null);
       const ids = prog.items.map((it) => it.id);
       try { store.bumpExerciseUsage(ids); } catch { /* Zähler optional */ }
       const durationSec = Math.round(show.total);
       root.innerHTML = '';
       root.appendChild(el('div', { class: 'show-done' }, [
         el('div', { class: 'show-done__kicker', text: prog.title }),
-        el('h2', { class: 'show-done__title', text: 'Geschafft!' }),
-        el('p', { class: 'show-done__stats', text: `${mmss(durationSec)} min · ${n} Übungen${prog.rounds > 1 ? ` · ${prog.rounds} Runden` : ''}` }),
+        el('h2', { class: 'show-done__title', text: t('workoutShow.done') }),
+        el('p', { class: 'show-done__stats', text: summaryLine(mmss(durationSec), n, prog.rounds) }),
         el('div', { class: 'show-done__actions' }, [
-          onFinish ? el('button', { class: 'show-ov__go', type: 'button', onclick: () => { close(); onFinish({ durationSec, ids }); } }, [icon('check'), el('span', { text: 'Als erledigt erfassen' })]) : null,
-          el('button', { class: 'show-done__btn', type: 'button', onclick: () => { stopRun(); run = null; overview(); } }, [icon('refresh'), el('span', { text: 'Noch einmal' })]),
-          el('button', { class: 'show-done__btn', type: 'button', onclick: close }, [icon('x'), el('span', { text: 'Schließen' })]),
+          onFinish ? el('button', { class: 'show-ov__go', type: 'button', onclick: () => { close(); onFinish({ durationSec, ids }); } }, [icon('check'), el('span', { text: t('workoutShow.logDone') })]) : null,
+          el('button', { class: 'show-done__btn', type: 'button', onclick: () => { stopRun(); run = null; overview(); } }, [icon('refresh'), el('span', { text: t('motion.again') })]),
+          el('button', { class: 'show-done__btn', type: 'button', onclick: close }, [icon('x'), el('span', { text: t('common.close') })]),
         ]),
       ]));
-      toast('Als gemacht gezählt', 'good');
+      toast(t('workoutShow.counted'), 'good');
     }
 
     function stopRun() {

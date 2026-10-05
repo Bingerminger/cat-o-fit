@@ -18,6 +18,8 @@
 
 import { addDays, diffDays, fmtDec } from './ui.js';
 
+import { t, tp } from './i18n.js';
+
 const r1 = (v) => Math.round(v * 10) / 10;
 /** Zahl mit deutschem Dezimalkomma (z. B. 1,24). */
 export function fmtRatio(v) {
@@ -250,11 +252,11 @@ export function formToday(sessions = [], today, opts = {}) {
  */
 export function formState(form = {}, hist = 0) {
   const rel = form.ctl > 0 ? form.form / form.ctl : null;
-  if (hist < FORM_MIN_DAYS || rel == null) return { key: 'einschwingen', label: 'schwingt noch ein', rel, reliable: false };
-  if (rel >= 0.1) return { key: 'frisch', label: 'frisch', rel, reliable: true };
-  if (rel >= -0.1) return { key: 'ausgeglichen', label: 'ausgeglichen', rel, reliable: true };
-  if (rel >= -0.3) return { key: 'training', label: 'im Training', rel, reliable: true };
-  return { key: 'ermuedet', label: 'deutlich ermüdet', rel, reliable: true };
+  if (hist < FORM_MIN_DAYS || rel == null) return { key: 'einschwingen', label: t('load.formSettling'), rel, reliable: false };
+  if (rel >= 0.1) return { key: 'frisch', label: t('load.formFresh'), rel, reliable: true };
+  if (rel >= -0.1) return { key: 'ausgeglichen', label: t('load.formBalanced'), rel, reliable: true };
+  if (rel >= -0.3) return { key: 'training', label: t('load.formTraining'), rel, reliable: true };
+  return { key: 'ermuedet', label: t('load.formTired'), rel, reliable: true };
 }
 
 /**
@@ -308,45 +310,45 @@ export function loadSummary(sessions = [], today) {
   if (!hasData) {
     tone = 'neutral';
     if (!ac.historyDays) {
-      headline = 'Noch zu wenig Daten';
-      advice = 'Trage ein paar Einheiten ein – dann zeigt dir die Kurve deine Fitness, Ermüdung und Form.';
+      headline = t('load.headlineNoData');
+      advice = t('load.adviceNoData');
     } else if (ac.sparse) {
-      headline = 'Datenbasis wächst noch';
-      advice = `Für eine Bewertung der Belastung braucht es 4 Wochen Historie – du hast ${ac.historyDays} Tag${ac.historyDays === 1 ? '' : 'e'}. Bis dahin zeigt die Kurve schon den Verlauf, aber noch keine Bewertung.`;
+      headline = t('load.headlineSparse');
+      advice = t('load.adviceSparse', { days: tp('load.days', ac.historyDays) });
     } else {
-      headline = 'Wiedereinstieg nach Pause';
-      advice = 'In den drei Wochen davor ist keine Belastung erfasst – ein Verhältnis lässt sich nicht bilden. Beginne locker und steigere behutsam.';
+      headline = t('load.headlineReturn');
+      advice = t('load.adviceReturn');
     }
   } else if (ac.zone === 'hoch') {
-    headline = 'Belastung deutlich gestiegen';
+    headline = t('load.headlineHigh');
     tone = 'bad';
-    advice = `Deine letzten 7 Tage waren deutlich fordernder als dein Schnitt der drei Wochen davor (Verhältnis ${r}). Plane 1–2 lockere Tage ein und steigere danach behutsam.`;
+    advice = t('load.adviceHigh', { ratio: r });
   } else if (ac.zone === 'erhöht') {
-    headline = 'Belastung erhöht';
+    headline = t('load.headlineRaised');
     tone = 'warn';
-    advice = `Verhältnis ${r} – mehr als in den Wochen davor. Steigere behutsam und achte auf gute Erholung.`;
+    advice = t('load.adviceRaised', { ratio: r });
   } else if (mono.tone === 'warn') {
-    headline = 'Training sehr gleichförmig';
+    headline = t('load.headlineUniform');
     tone = 'warn';
-    advice = 'Deine Trainingstage ähneln sich stark, und die Woche war fordernder als dein Schnitt. Setze harte und ganz lockere Tage bewusster im Wechsel.';
+    advice = t('load.adviceUniform');
   } else if (fstate.key === 'ermuedet') {
-    headline = 'Deutlich ermüdet';
+    headline = t('load.headlineTired');
     tone = 'warn';
-    advice = `Deine Ermüdung liegt klar über deiner Fitness (Form ${Math.round(fstate.rel * 100)} %). In Aufbauwochen kommt das vor – achte auf Schlaf und ganz lockere Tage; fühlst du dich ausgelaugt, gönn dir einen Ruhetag.`;
+    advice = t('load.adviceTired', { pct: Math.round(fstate.rel * 100) });
   } else if (fstate.key === 'frisch') {
-    headline = 'Gut erholt – Form frisch';
+    headline = t('load.headlineFresh');
     tone = 'good';
-    advice = 'Deine Ermüdung liegt deutlich unter deiner Fitness. Ein guter Zeitpunkt für eine Schlüsseleinheit oder einen kleinen Test.';
+    advice = t('load.adviceFresh');
   } else if (ac.zone === 'niedrig') {
-    headline = 'Ruhige Phase';
+    headline = t('load.headlineLow');
     tone = 'neutral';
-    advice = `Deine Last liegt unter deinem Schnitt (Verhältnis ${r}). Gut zur Erholung – oder Zeit, wieder etwas aufzubauen.`;
+    advice = t('load.adviceLow', { ratio: r });
   } else {
-    headline = 'Belastung im üblichen Rahmen';
+    headline = t('load.headlineOptimal');
     tone = 'good';
-    advice = `Verhältnis ${r} – im Bereich 0,8–1,3, also nah an deinem Schnitt. Gleichmäßig weiter aufbauen.`;
+    advice = t('load.adviceOptimal', { ratio: r });
   }
   const formNote = fstate.reliable ? null
-    : `Die Fitnesskurve schwingt noch ein – die Form bewerten wir erst ab rund drei Monaten Daten (du hast ${ac.historyDays} Tag${ac.historyDays === 1 ? '' : 'e'}).`;
+    : t('load.formNote', { days: tp('load.days', ac.historyDays) });
   return { acwr: ac, form, formState: fstate, formNote, mono, series, headline, tone, advice, hasData };
 }

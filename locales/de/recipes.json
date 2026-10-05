@@ -1,0 +1,418 @@
+{
+  "overnight-oats-mit-beeren": {
+    "title": "Overnight Oats mit Beeren",
+    "ingredients": [
+      "60 g Haferflocken",
+      "150 g Skyr",
+      "150 ml Milch",
+      "100 g Beeren",
+      "1 EL Honig"
+    ]
+  },
+  "ruehrei-mit-vollkornbrot-avocado": {
+    "title": "Rührei mit Vollkornbrot & Avocado",
+    "ingredients": [
+      "3 Eier",
+      "2 Scheiben Vollkornbrot",
+      "1/2 Avocado",
+      "Spinat"
+    ]
+  },
+  "protein-porridge-mit-banane": {
+    "title": "Protein-Porridge mit Banane",
+    "ingredients": [
+      "60 g Haferflocken",
+      "30 g Proteinpulver",
+      "250 ml Milch",
+      "1 Banane"
+    ]
+  },
+  "quark-mit-nuessen-apfel": {
+    "title": "Quark mit Nüssen & Apfel",
+    "ingredients": [
+      "250 g Magerquark",
+      "20 g Walnuss",
+      "1 Apfel",
+      "1 TL Honig"
+    ]
+  },
+  "vollkorn-pancakes-mit-quark": {
+    "title": "Vollkorn-Pancakes mit Quark",
+    "ingredients": [
+      "60 g Haferflocken",
+      "2 Eier",
+      "150 g Magerquark",
+      "1 Banane",
+      "1 TL Backpulver"
+    ]
+  },
+  "chia-pudding-mit-mango": {
+    "title": "Chia-Pudding mit Mango",
+    "ingredients": [
+      "30 g Chiasamen",
+      "200 ml Hafermilch",
+      "100 g Mango",
+      "1 TL Agavendicksaft"
+    ]
+  },
+  "bircher-muesli": {
+    "title": "Bircher Müsli",
+    "ingredients": [
+      "50 g Haferflocken",
+      "150 g Joghurt",
+      "1 Apfel",
+      "20 g Mandeln",
+      "100 ml Milch"
+    ]
+  },
+  "avocado-brot-mit-ei": {
+    "title": "Avocado-Brot mit Ei",
+    "ingredients": [
+      "2 Scheiben Vollkornbrot",
+      "1/2 Avocado",
+      "2 Eier"
+    ]
+  },
+  "griessbrei-mit-beeren": {
+    "title": "Grießbrei mit Beeren",
+    "ingredients": [
+      "50 g Grieß",
+      "300 ml Milch",
+      "100 g Beeren",
+      "1 TL Honig"
+    ]
+  },
+  "skyr-bowl-mit-granola": {
+    "title": "Skyr-Bowl mit Granola",
+    "ingredients": [
+      "200 g Skyr",
+      "40 g Granola",
+      "1 Banane",
+      "10 g Walnuss"
+    ]
+  },
+  "tofu-ruehrei-mit-brot": {
+    "title": "Tofu-Rührei mit Brot",
+    "ingredients": [
+      "200 g Tofu",
+      "2 Scheiben Vollkornbrot",
+      "1 Tomate"
+    ]
+  },
+  "erdnussbutter-toast-mit-banane": {
+    "title": "Erdnussbutter-Toast mit Banane",
+    "ingredients": [
+      "2 Scheiben Vollkornbrot",
+      "20 g Erdnussbutter",
+      "1 Banane"
+    ]
+  },
+  "haehnchen-reis-bowl-mit-brokkoli": {
+    "title": "Hähnchen-Reis-Bowl mit Brokkoli",
+    "ingredients": [
+      "150 g Hähnchen",
+      "80 g Reis",
+      "200 g Brokkoli",
+      "1 EL Öl"
+    ]
+  },
+  "lachs-mit-suesskartoffel-spinat": {
+    "title": "Lachs mit Süßkartoffel & Spinat",
+    "ingredients": [
+      "150 g Lachs",
+      "250 g Süßkartoffel",
+      "Spinat",
+      "1 EL Öl"
+    ]
+  },
+  "linsen-dal-mit-reis": {
+    "title": "Linsen-Dal mit Reis",
+    "ingredients": [
+      "120 g Linsen",
+      "80 g Reis",
+      "1 Zwiebel",
+      "200 g Tomaten"
+    ]
+  },
+  "pute-quinoa-pfanne": {
+    "title": "Pute-Quinoa-Pfanne",
+    "ingredients": [
+      "150 g Pute",
+      "80 g Quinoa",
+      "1 Paprika",
+      "1 Zucchini"
+    ]
+  },
+  "rindergeschnetzeltes-mit-reis": {
+    "title": "Rindergeschnetzeltes mit Reis",
+    "ingredients": [
+      "150 g Rind",
+      "80 g Reis",
+      "1 Paprika",
+      "1 Zwiebel"
+    ]
+  },
+  "kichererbsen-bowl-mit-quinoa": {
+    "title": "Kichererbsen-Bowl mit Quinoa",
+    "ingredients": [
+      "150 g Kichererbsen",
+      "80 g Quinoa",
+      "100 g Brokkoli",
+      "1 Karotte"
+    ]
+  },
+  "vollkorn-spaghetti-bolognese": {
+    "title": "Vollkorn-Spaghetti Bolognese",
+    "ingredients": [
+      "100 g Vollkornnudeln",
+      "150 g Hackfleisch",
+      "200 g Tomaten",
+      "1 Zwiebel"
+    ]
+  },
+  "gefuellte-suesskartoffel-mit-huettenkaese": {
+    "title": "Gefüllte Süßkartoffel mit Hüttenkäse",
+    "ingredients": [
+      "250 g Süßkartoffel",
+      "150 g Hüttenkäse",
+      "100 g Spinat"
+    ]
+  },
+  "couscous-salat-mit-feta": {
+    "title": "Couscous-Salat mit Feta",
+    "ingredients": [
+      "80 g Couscous",
+      "50 g Feta",
+      "1 Paprika",
+      "1 Gurke",
+      "1 EL Öl"
+    ]
+  },
+  "haehnchen-wrap-mit-gemuese": {
+    "title": "Hähnchen-Wrap mit Gemüse",
+    "ingredients": [
+      "1 Wrap",
+      "150 g Hähnchen",
+      "Salat",
+      "1 Tomate",
+      "50 g Joghurt"
+    ]
+  },
+  "kabeljau-mit-kartoffeln-brokkoli": {
+    "title": "Kabeljau mit Kartoffeln & Brokkoli",
+    "ingredients": [
+      "180 g Kabeljau",
+      "250 g Kartoffeln",
+      "150 g Brokkoli",
+      "1 EL Öl"
+    ]
+  },
+  "gemuesecurry-mit-kichererbsen": {
+    "title": "Gemüsecurry mit Kichererbsen",
+    "ingredients": [
+      "150 g Kichererbsen",
+      "80 g Reis",
+      "200 ml Kokosmilch",
+      "1 Paprika"
+    ]
+  },
+  "magerquark-mit-gemuesesticks": {
+    "title": "Magerquark mit Gemüsesticks",
+    "ingredients": [
+      "250 g Magerquark",
+      "1 Paprika",
+      "1 Gurke"
+    ]
+  },
+  "omelett-mit-feta-tomaten": {
+    "title": "Omelett mit Feta & Tomaten",
+    "ingredients": [
+      "3 Eier",
+      "50 g Feta",
+      "200 g Tomaten",
+      "Spinat"
+    ]
+  },
+  "thunfisch-vollkornwrap": {
+    "title": "Thunfisch-Vollkornwrap",
+    "ingredients": [
+      "1 Wrap",
+      "150 g Thunfisch",
+      "Salat",
+      "50 g Joghurt"
+    ]
+  },
+  "ofengemuese-mit-haehnchen": {
+    "title": "Ofengemüse mit Hähnchen",
+    "ingredients": [
+      "150 g Hähnchen",
+      "1 Zucchini",
+      "1 Paprika",
+      "1 Süßkartoffel",
+      "1 EL Öl"
+    ]
+  },
+  "gebratener-tofu-mit-gemuese": {
+    "title": "Gebratener Tofu mit Gemüse",
+    "ingredients": [
+      "200 g Tofu",
+      "1 Paprika",
+      "100 g Brokkoli",
+      "1 EL Sojasauce"
+    ]
+  },
+  "haehnchensalat-mit-avocado": {
+    "title": "Hähnchensalat mit Avocado",
+    "ingredients": [
+      "150 g Hähnchen",
+      "1/2 Avocado",
+      "Salat",
+      "1 Tomate",
+      "1 EL Öl"
+    ]
+  },
+  "linsensuppe": {
+    "title": "Linsensuppe",
+    "ingredients": [
+      "200 g Linsen",
+      "1 Karotte",
+      "1 Zwiebel",
+      "1 Kartoffel"
+    ]
+  },
+  "caprese-mit-mozzarella": {
+    "title": "Caprese mit Mozzarella",
+    "ingredients": [
+      "125 g Mozzarella",
+      "200 g Tomaten",
+      "Basilikum",
+      "1 EL Öl"
+    ]
+  },
+  "garnelen-zucchini-pfanne": {
+    "title": "Garnelen-Zucchini-Pfanne",
+    "ingredients": [
+      "150 g Garnelen",
+      "1 Zucchini",
+      "1 Zehe Knoblauch",
+      "1 EL Öl"
+    ]
+  },
+  "putenbrust-mit-ofengemuese": {
+    "title": "Putenbrust mit Ofengemüse",
+    "ingredients": [
+      "150 g Pute",
+      "1 Zucchini",
+      "1 Paprika",
+      "100 g Champignons",
+      "1 EL Öl"
+    ]
+  },
+  "vollkorn-pizza-mit-gemuese": {
+    "title": "Vollkorn-Pizza mit Gemüse",
+    "ingredients": [
+      "1/2 Pizzateig",
+      "100 g Tomaten",
+      "80 g Mozzarella",
+      "1 Paprika"
+    ]
+  },
+  "joghurt-bowl-mit-gurke-fladenbrot": {
+    "title": "Joghurt-Bowl mit Gurke & Fladenbrot",
+    "ingredients": [
+      "200 g Joghurt",
+      "1 Gurke",
+      "1 Zehe Knoblauch",
+      "1/2 Fladenbrot"
+    ]
+  },
+  "skyr-mit-beeren": {
+    "title": "Skyr mit Beeren",
+    "ingredients": [
+      "150 g Skyr",
+      "100 g Beeren"
+    ]
+  },
+  "handvoll-mandeln-apfel": {
+    "title": "Handvoll Mandeln & Apfel",
+    "ingredients": [
+      "30 g Mandeln",
+      "1 Apfel"
+    ]
+  },
+  "protein-shake-mit-banane": {
+    "title": "Protein-Shake mit Banane",
+    "ingredients": [
+      "30 g Proteinpulver",
+      "250 ml Milch",
+      "1 Banane"
+    ]
+  },
+  "huettenkaese-auf-knaeckebrot": {
+    "title": "Hüttenkäse auf Knäckebrot",
+    "ingredients": [
+      "150 g Hüttenkäse",
+      "2 Scheiben Knäckebrot"
+    ]
+  },
+  "energy-balls": {
+    "title": "Energy Balls",
+    "ingredients": [
+      "40 g Datteln",
+      "30 g Haferflocken",
+      "15 g Mandeln",
+      "1 TL Kakao"
+    ]
+  },
+  "gemuesesticks-mit-hummus": {
+    "title": "Gemüsesticks mit Hummus",
+    "ingredients": [
+      "100 g Hummus",
+      "1 Karotte",
+      "1 Paprika"
+    ]
+  },
+  "reiswaffeln-mit-frischkaese": {
+    "title": "Reiswaffeln mit Frischkäse",
+    "ingredients": [
+      "2 Reiswaffeln",
+      "50 g Frischkäse"
+    ]
+  },
+  "beeren-quark": {
+    "title": "Beeren-Quark",
+    "ingredients": [
+      "200 g Magerquark",
+      "100 g Beeren"
+    ]
+  },
+  "studentenfutter": {
+    "title": "Studentenfutter",
+    "ingredients": [
+      "25 g Mandeln",
+      "15 g Cashews",
+      "20 g Rosinen"
+    ]
+  },
+  "banane-mit-erdnussbutter": {
+    "title": "Banane mit Erdnussbutter",
+    "ingredients": [
+      "1 Banane",
+      "20 g Erdnussbutter"
+    ]
+  },
+  "edamame-mit-meersalz": {
+    "title": "Edamame mit Meersalz",
+    "ingredients": [
+      "150 g Edamame",
+      "1 Prise Meersalz"
+    ]
+  },
+  "huettenkaese-mit-ananas": {
+    "title": "Hüttenkäse mit Ananas",
+    "ingredients": [
+      "150 g Hüttenkäse",
+      "100 g Ananas"
+    ]
+  }
+}

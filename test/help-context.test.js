@@ -98,7 +98,7 @@ test('DOC-06/DOC-07: Apple Health nennt Premium-Kosten und den Header nur als Au
 test('DOC-19: #/hilfe/<id> öffnet genau diesen Artikel', async () => {
   const view = shell();
   const help = await import('../js/help.js');
-  help.render(view, 'bereitschaft');
+  await help.render(view, 'bereitschaft');
   const card = view.querySelector('#hilfe-bereitschaft');
   assert.ok(card, 'Artikel hat eine Adresse im DOM');
   assert.ok(card.classList.contains('help-article--focus'));

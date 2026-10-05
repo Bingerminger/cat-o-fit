@@ -19,13 +19,15 @@
    Antworten gelten weiter), dazu `settings.hideCalorieNumbers`.
    ========================================================================= */
 
+import { t, tp } from './i18n.js';
+
 /** Fragen zur Abgrenzung. `minor` wird nur gefragt, wenn kein Geburtsjahr bekannt ist. */
 export const GATE_QUESTIONS = [
-  { key: 'chronicCondition', label: 'Behandlungsbedürftige Erkrankung (z. B. Niere, Leber, Herz, Schilddrüse, Diabetes)' },
-  { key: 'medication', label: 'Regelmäßige Einnahme von Medikamenten' },
-  { key: 'pregnancy', label: 'Schwangerschaft oder Stillzeit' },
-  { key: 'eatingDisorder', label: 'Aktuelle oder frühere Essstörung' },
-  { key: 'minor', label: 'Unter 18 Jahre alt' },
+  { key: 'chronicCondition', get label() { return t('eligibility.chronicCondition'); } },
+  { key: 'medication', get label() { return t('eligibility.medication'); } },
+  { key: 'pregnancy', get label() { return t('eligibility.pregnancy'); } },
+  { key: 'eatingDisorder', get label() { return t('eligibility.eatingDisorder'); } },
+  { key: 'minor', get label() { return t('eligibility.minor'); } },
 ];
 
 /** Alter in Jahren aus dem Geburtsjahr (Stichtag `today`) – oder null. */
@@ -55,7 +57,7 @@ export function eligibilityFor({ profile = {}, settings = {}, today = null } = {
   const questions = gateQuestionsFor(profile, today);
   const answered = questions.every((q) => typeof gate[q.key] === 'boolean');
   const reasons = questions.filter((q) => gate[q.key] === true).map((q) => q.label);
-  if (minor && age != null) reasons.push(`Unter 18 Jahre (laut Geburtsjahr ${age} Jahre)`);
+  if (minor && age != null) reasons.push(tp('eligibility.minorByYear', age));
   const pregnancy = gate.pregnancy === true;
   const eatingDisorder = gate.eatingDisorder === true;
   return {
@@ -72,8 +74,8 @@ export function eligibilityFor({ profile = {}, settings = {}, today = null } = {
 /** Kurzer, freundlicher Grund, warum keine Abnehmziele gerechnet werden (oder null). */
 export function weightGoalBlockReason(elig) {
   if (!elig) return null;
-  if (elig.minor) return 'Für Kinder und Jugendliche rechnet Cat-O-Fit keine Kalorien- oder Gewichtsziele. Wichtig ist, genug und abwechslungsreich zu essen – besonders an Trainingstagen.';
-  if (elig.pregnancy) return 'In Schwangerschaft und Stillzeit rechnet Cat-O-Fit keine Abnehm- oder Defizitziele. Besprich Ernährungsfragen mit deiner Ärztin, deinem Arzt oder deiner Hebamme.';
-  if (elig.eatingDisorder) return 'Du hast eine (frühere) Essstörung angegeben – Cat-O-Fit rechnet deshalb keine Abnehm- oder Defizitziele. Iss nach Hunger und Bedarf und besprich Ziele mit deiner Behandlerin oder deinem Behandler.';
+  if (elig.minor) return t('eligibility.blockMinor');
+  if (elig.pregnancy) return t('eligibility.blockPregnancy');
+  if (elig.eatingDisorder) return t('eligibility.blockEatingDisorder');
   return null;
 }

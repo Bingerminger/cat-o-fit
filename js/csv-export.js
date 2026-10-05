@@ -13,6 +13,8 @@ import { ANALYTES } from './labs.js';
 import { typeMeta } from './ui.js';
 import { sessionLoad } from './load.js';
 
+import { t } from './i18n.js';
+
 const BOM = '﻿';
 
 /** Zahl mit Dezimalkomma; leer für fehlende Werte. */
@@ -42,64 +44,64 @@ const live = (list) => (list || []).filter((x) => x && !x.deleted && !x._kind &&
 /** Trainings mit Dauer, Strecke, Herzfrequenz, Anstrengung und Belastungspunkten. */
 export function sessionsCsv(sessions) {
   return toCsv(live(sessions), [
-    ['Datum', (s) => s.date],
-    ['Sportart', (s) => textCell(typeMeta(s.type).label)],
-    ['Titel', (s) => textCell(s.title || '')],
-    ['Dauer (min)', (s) => numCell(s.durationSec ? s.durationSec / 60 : null, 1)],
-    ['Distanz (km)', (s) => numCell(s.distanceKm, 2)],
+    [t('csvExport.date'), (s) => s.date],
+    [t('csvExport.sport'), (s) => textCell(typeMeta(s.type).label)],
+    [t('csvExport.title'), (s) => textCell(s.title || '')],
+    [t('csvExport.durationMin'), (s) => numCell(s.durationSec ? s.durationSec / 60 : null, 1)],
+    [t('csvExport.distanceKm'), (s) => numCell(s.distanceKm, 2)],
     ['Pace (min/km)', (s) => (s.paceSecPerKm ? `${Math.floor(s.paceSecPerKm / 60)}:${String(Math.round(s.paceSecPerKm % 60)).padStart(2, '0')}` : '')],
-    ['Ø-HF', (s) => numCell(s.avgHr)],
-    ['Max-HF', (s) => numCell(s.maxHr)],
-    ['Anstrengung (RPE)', (s) => numCell(s.rpe)],
-    ['Belastungspunkte', (s) => numCell(sessionLoad(s))],
-    ['Höhenmeter', (s) => numCell(s.ascentM)],
+    [t('csvExport.avgHr'), (s) => numCell(s.avgHr)],
+    [t('csvExport.maxHr'), (s) => numCell(s.maxHr)],
+    [t('csvExport.effortRpe'), (s) => numCell(s.rpe)],
+    [t('csvExport.loadPoints'), (s) => numCell(sessionLoad(s))],
+    [t('csvExport.ascent'), (s) => numCell(s.ascentM)],
     ['kcal', (s) => numCell(s.kcal)],
-    ['Quelle', (s) => textCell(s.source || '')],
-    ['Notizen', (s) => textCell(s.notes || '')],
+    [t('csvExport.source'), (s) => textCell(s.source || '')],
+    [t('csvExport.notes'), (s) => textCell(s.notes || '')],
   ]);
 }
 
 /** Körperwerte je Tag. */
 export function healthCsv(health) {
   return toCsv(live(health), [
-    ['Datum', (h) => h.date],
-    ['Gewicht (kg)', (h) => numCell(h.weight)],
-    ['Körperfett (%)', (h) => numCell(h.bodyFat)],
-    ['Muskelmasse (kg)', (h) => numCell(h.muscleMass)],
-    ['Fettfreie Masse (kg)', (h) => numCell(h.leanMass)],
-    ['Viszeralfett', (h) => numCell(h.visceralFat)],
-    ['Ruhepuls', (h) => numCell(h.restingHr)],
+    [t('csvExport.date'), (h) => h.date],
+    [t('csvExport.weightKg'), (h) => numCell(h.weight)],
+    [t('csvExport.bodyFatPct'), (h) => numCell(h.bodyFat)],
+    [t('csvExport.muscleMassKg'), (h) => numCell(h.muscleMass)],
+    [t('csvExport.leanMassKg'), (h) => numCell(h.leanMass)],
+    [t('csvExport.visceralFat'), (h) => numCell(h.visceralFat)],
+    [t('csvExport.restingHr'), (h) => numCell(h.restingHr)],
     ['HRV (ms)', (h) => numCell(h.hrv)],
-    ['HRV-Messart', (h) => textCell(h.hrvMethod ? String(h.hrvMethod).toUpperCase() : '')],
+    [t('csvExport.hrvMethod'), (h) => textCell(h.hrvMethod ? String(h.hrvMethod).toUpperCase() : '')],
     ['VO2max', (h) => numCell(h.vo2max)],
-    ['Schlaf (h)', (h) => numCell(h.sleepHours)],
-    ['Schritte', (h) => numCell(h.steps)],
-    ['Energie (1–10)', (h) => numCell(h.energy)],
-    ['Stimmung (1–10)', (h) => numCell(h.mood)],
-    ['Notizen', (h) => textCell(h.notes || '')],
+    [t('csvExport.sleepH'), (h) => numCell(h.sleepHours)],
+    [t('csvExport.steps'), (h) => numCell(h.steps)],
+    [t('csvExport.energy'), (h) => numCell(h.energy)],
+    [t('csvExport.mood'), (h) => numCell(h.mood)],
+    [t('csvExport.notes'), (h) => textCell(h.notes || '')],
   ]);
 }
 
 /** Laborwerte mit Einheit und dem Referenzbereich des eigenen Labors (roh, ohne Bewertung). */
 export function labsCsv(labs) {
   return toCsv(live(labs), [
-    ['Datum', (l) => l.date],
-    ['Wert', (l) => textCell((ANALYTES[l.analyte] && ANALYTES[l.analyte].label) || l.analyte || '')],
-    ['Messwert', (l) => numCell(l.value)],
-    ['Einheit', (l) => textCell(l.unit || (ANALYTES[l.analyte] && ANALYTES[l.analyte].unit) || '')],
-    ['Referenz von', (l) => numCell(l.refLow)],
-    ['Referenz bis', (l) => numCell(l.refHigh)],
-    ['Notiz', (l) => textCell(l.note || '')],
+    [t('csvExport.date'), (l) => l.date],
+    [t('csvExport.analyte'), (l) => textCell((ANALYTES[l.analyte] && ANALYTES[l.analyte].label) || l.analyte || '')],
+    [t('csvExport.result'), (l) => numCell(l.value)],
+    [t('csvExport.unit'), (l) => textCell(l.unit || (ANALYTES[l.analyte] && ANALYTES[l.analyte].unit) || '')],
+    [t('csvExport.refFrom'), (l) => numCell(l.refLow)],
+    [t('csvExport.refTo'), (l) => numCell(l.refHigh)],
+    [t('csvExport.note'), (l) => textCell(l.note || '')],
   ]);
 }
 
 /** Ess-Tagebuch (ohne die „Tag vollständig“-Markierungen). */
 export function diaryCsv(diary) {
   return toCsv(live(diary), [
-    ['Datum', (d) => d.date],
-    ['Mahlzeit', (d) => textCell(d.title || '')],
+    [t('csvExport.date'), (d) => d.date],
+    [t('csvExport.meal'), (d) => textCell(d.title || '')],
     ['kcal', (d) => numCell(d.kcal)],
-    ['Eiweiß (g)', (d) => numCell(d.protein)],
-    ['Quelle', (d) => textCell(d.source || '')],
+    [t('csvExport.proteinG'), (d) => numCell(d.protein)],
+    [t('csvExport.source'), (d) => textCell(d.source || '')],
   ]);
 }

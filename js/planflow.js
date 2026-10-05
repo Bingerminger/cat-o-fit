@@ -9,6 +9,8 @@
 
 import { weekStartMonday, addDays, diffDays } from './ui.js';
 
+import { t } from './i18n.js';
+
 /** Belastungsklasse eines Einheiten-Typs (für „ähnliche Intensität“). */
 export function loadClass(type) {
   if (['tempo', 'interval', 'race', 'match', 'camp'].includes(type)) return 'quality';
@@ -266,7 +268,7 @@ export function deloadVariant(unit) {
   } else if (iv && iv.rounds > 2) {
     patch.intervals = { ...iv, rounds: Math.max(2, Math.round(iv.rounds * 2 / 3)) };
   }
-  if (patch.intervals) patch.title = `${unit.title} (verkürzt)`;
+  if (patch.intervals) patch.title = t('planflow.shortened', { title: unit.title });
   return patch;
 }
 
@@ -306,14 +308,14 @@ export function easierVariant(unit, easyPace) {
   const km = unit.targetDistanceKm ? Math.max(4, Math.round(unit.targetDistanceKm * 0.6)) : null;
   return {
     type: 'easy',
-    title: 'Locker (an Bereitschaft angepasst)',
+    title: t('planflow.easierTitle'),
     targetDistanceKm: km,
     targetDurationMin: km ? null : (unit.targetDurationMin ? Math.round(unit.targetDurationMin * 0.7) : null),
     targetPaceSecPerKm: easyPace?.min ?? null,
     targetPaceMaxSecPerKm: easyPace?.max ?? null,
     targetHrZone: easyPace?.hrZone ?? 2,
     intervals: null,
-    description: 'Heute bewusst lockerer wegen niedriger Bereitschaft. Ganz entspannt in Z2 – die Schlüsseleinheit holst du nach, wenn du erholter bist.',
+    description: t('planflow.easierDescription'),
     softened: true,
     originalType: unit.originalType || unit.type,
   };

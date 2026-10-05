@@ -7,6 +7,8 @@
    höchstens 5 000 Einträge. ZIP64 und verschlüsselte Einträge werden übersprungen.
    ========================================================================= */
 
+import { t } from './i18n.js';
+
 const MAX_ENTRY = 64 * 1024 * 1024;
 const MAX_TOTAL = 512 * 1024 * 1024;
 const MAX_ENTRIES = 5000;
@@ -24,7 +26,7 @@ async function inflate(bytes, format, limit = MAX_ENTRY) {
     const { value, done } = await reader.read();
     if (done) break;
     size += value.length;
-    if (size > limit) { await reader.cancel(); throw new Error('Datei zu groß'); }
+    if (size > limit) { await reader.cancel(); throw new Error(t('zip.tooLarge')); }
     parts.push(value);
   }
   const out = new Uint8Array(size);
@@ -48,10 +50,10 @@ export async function unzip(bytes, filter = () => true) {
   for (let i = b.length - 22; i >= Math.max(0, b.length - 22 - 0xffff); i--) {
     if (view.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
   }
-  if (eocd < 0) throw new Error('kein ZIP-Archiv');
+  if (eocd < 0) throw new Error(t('zip.notZip'));
   const count = view.getUint16(eocd + 10, true);
   let p = view.getUint32(eocd + 16, true);
-  if (p === 0xffffffff || p >= b.length) throw new Error('ZIP64 wird nicht unterstützt');
+  if (p === 0xffffffff || p >= b.length) throw new Error(t('zip.zip64'));
   const names = new TextDecoder();
   const out = [];
   let total = 0;

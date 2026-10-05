@@ -20,7 +20,7 @@ import { validGtin, portionFromProduct } from './barcode.js';
 import { currentEnergyTargets, currentEligibility, gatePromptCard } from './wellness.js';
 import { weightGoalBlockReason } from './eligibility.js';
 
-import { t, tp } from './i18n.js';
+import { t, tp, tList, hasArea, loadArea } from './i18n.js';
 
 const CATS = [
   { key: 'fruehstueck', get label() { return t('nutrition.catBreakfast'); } },
@@ -29,65 +29,70 @@ const CATS = [
   { key: 'snack', get label() { return t('nutrition.catSnack'); } },
 ];
 
-/* Rezept-Ideen für eine abwechslungsreiche 7-Tage-Planung (#25). Werden auf
-   Wunsch in den eigenen Bestand übernommen; bereits vorhandene Titel bleiben
-   außen vor. Kuratierter, deutschsprachiger Katalog (offline, ohne externe
-   Datenbank) – Zutaten in parsbarer „Menge Einheit Name“-Form für die
-   automatische Einkaufsliste. */
-export const SUGGESTED_MEALS = [
-  // ---- Frühstück ----
-  { category: 'fruehstueck', title: 'Overnight Oats mit Beeren', kcal: 520, protein: 30, tags: ['proteinreich', 'vegetarisch', 'meal-prep'], ingredients: ['60 g Haferflocken', '150 g Skyr', '150 ml Milch', '100 g Beeren', '1 EL Honig'] },
-  { category: 'fruehstueck', title: 'Rührei mit Vollkornbrot & Avocado', kcal: 600, protein: 31, tags: ['proteinreich', 'vegetarisch'], ingredients: ['3 Eier', '2 Scheiben Vollkornbrot', '1/2 Avocado', 'Spinat'] },
-  { category: 'fruehstueck', title: 'Protein-Porridge mit Banane', kcal: 600, protein: 39, tags: ['proteinreich', 'vegetarisch'], ingredients: ['60 g Haferflocken', '30 g Proteinpulver', '250 ml Milch', '1 Banane'] },
-  { category: 'fruehstueck', title: 'Quark mit Nüssen & Apfel', kcal: 400, protein: 33, tags: ['proteinreich', 'vegetarisch', 'low-carb'], ingredients: ['250 g Magerquark', '20 g Walnuss', '1 Apfel', '1 TL Honig'] },
-  { category: 'fruehstueck', title: 'Vollkorn-Pancakes mit Quark', kcal: 580, protein: 41, tags: ['proteinreich', 'vegetarisch'], ingredients: ['60 g Haferflocken', '2 Eier', '150 g Magerquark', '1 Banane', '1 TL Backpulver'] },
-  { category: 'fruehstueck', title: 'Chia-Pudding mit Mango', kcal: 320, protein: 8, tags: ['vegetarisch', 'vegan', 'meal-prep'], ingredients: ['30 g Chiasamen', '200 ml Hafermilch', '100 g Mango', '1 TL Agavendicksaft'] },
-  { category: 'fruehstueck', title: 'Bircher Müsli', kcal: 530, protein: 20, tags: ['vegetarisch', 'meal-prep'], ingredients: ['50 g Haferflocken', '150 g Joghurt', '1 Apfel', '20 g Mandeln', '100 ml Milch'] },
-  { category: 'fruehstueck', title: 'Avocado-Brot mit Ei', kcal: 480, protein: 24, tags: ['proteinreich', 'vegetarisch'], ingredients: ['2 Scheiben Vollkornbrot', '1/2 Avocado', '2 Eier'] },
-  { category: 'fruehstueck', title: 'Grießbrei mit Beeren', kcal: 430, protein: 16, tags: ['vegetarisch', 'schnell'], ingredients: ['50 g Grieß', '300 ml Milch', '100 g Beeren', '1 TL Honig'] },
-  { category: 'fruehstueck', title: 'Skyr-Bowl mit Granola', kcal: 480, protein: 28, tags: ['proteinreich', 'vegetarisch'], ingredients: ['200 g Skyr', '40 g Granola', '1 Banane', '10 g Walnuss'] },
-  { category: 'fruehstueck', title: 'Tofu-Rührei mit Brot', kcal: 470, protein: 35, tags: ['vegan', 'proteinreich'], ingredients: ['200 g Tofu', '2 Scheiben Vollkornbrot', '1 Tomate'] },
-  { category: 'fruehstueck', title: 'Erdnussbutter-Toast mit Banane', kcal: 440, protein: 14, tags: ['vegetarisch', 'schnell', 'vor-dem-training'], ingredients: ['2 Scheiben Vollkornbrot', '20 g Erdnussbutter', '1 Banane'] },
-  // ---- Mittag ----
-  { category: 'mittag', title: 'Hähnchen-Reis-Bowl mit Brokkoli', kcal: 600, protein: 46, tags: ['proteinreich', 'meal-prep'], ingredients: ['150 g Hähnchen', '80 g Reis', '200 g Brokkoli', '1 EL Öl'] },
-  { category: 'mittag', title: 'Lachs mit Süßkartoffel & Spinat', kcal: 620, protein: 35, tags: ['proteinreich', 'omega-3'], ingredients: ['150 g Lachs', '250 g Süßkartoffel', 'Spinat', '1 EL Öl'] },
-  { category: 'mittag', title: 'Linsen-Dal mit Reis', kcal: 490, protein: 19, tags: ['vegetarisch', 'vegan', 'ballaststoffreich'], ingredients: ['120 g Linsen', '80 g Reis', '1 Zwiebel', '200 g Tomaten'] },
-  { category: 'mittag', title: 'Pute-Quinoa-Pfanne', kcal: 530, protein: 51, tags: ['proteinreich', 'glutenfrei'], ingredients: ['150 g Pute', '80 g Quinoa', '1 Paprika', '1 Zucchini'] },
-  { category: 'mittag', title: 'Rindergeschnetzeltes mit Reis', kcal: 550, protein: 39, tags: ['proteinreich'], ingredients: ['150 g Rind', '80 g Reis', '1 Paprika', '1 Zwiebel'] },
-  { category: 'mittag', title: 'Kichererbsen-Bowl mit Quinoa', kcal: 550, protein: 27, tags: ['vegetarisch', 'vegan', 'ballaststoffreich'], ingredients: ['150 g Kichererbsen', '80 g Quinoa', '100 g Brokkoli', '1 Karotte'] },
-  { category: 'mittag', title: 'Vollkorn-Spaghetti Bolognese', kcal: 780, protein: 43, tags: ['proteinreich', 'meal-prep'], ingredients: ['100 g Vollkornnudeln', '150 g Hackfleisch', '200 g Tomaten', '1 Zwiebel'] },
-  { category: 'mittag', title: 'Gefüllte Süßkartoffel mit Hüttenkäse', kcal: 390, protein: 26, tags: ['proteinreich', 'vegetarisch'], ingredients: ['250 g Süßkartoffel', '150 g Hüttenkäse', '100 g Spinat'] },
-  { category: 'mittag', title: 'Couscous-Salat mit Feta', kcal: 590, protein: 22, tags: ['vegetarisch', 'meal-prep'], ingredients: ['80 g Couscous', '50 g Feta', '1 Paprika', '1 Gurke', '1 EL Öl'] },
-  { category: 'mittag', title: 'Hähnchen-Wrap mit Gemüse', kcal: 430, protein: 42, tags: ['proteinreich', 'schnell'], ingredients: ['1 Wrap', '150 g Hähnchen', 'Salat', '1 Tomate', '50 g Joghurt'] },
-  { category: 'mittag', title: 'Kabeljau mit Kartoffeln & Brokkoli', kcal: 460, protein: 42, tags: ['proteinreich', 'omega-3', 'low-carb'], ingredients: ['180 g Kabeljau', '250 g Kartoffeln', '150 g Brokkoli', '1 EL Öl'] },
-  { category: 'mittag', title: 'Gemüsecurry mit Kichererbsen', kcal: 880, protein: 23, tags: ['vegan', 'vegetarisch', 'ballaststoffreich'], ingredients: ['150 g Kichererbsen', '80 g Reis', '200 ml Kokosmilch', '1 Paprika'] },
-  // ---- Abend ----
-  { category: 'abend', title: 'Magerquark mit Gemüsesticks', kcal: 260, protein: 36, tags: ['proteinreich', 'low-carb', 'leicht'], ingredients: ['250 g Magerquark', '1 Paprika', '1 Gurke'] },
-  { category: 'abend', title: 'Omelett mit Feta & Tomaten', kcal: 440, protein: 30, tags: ['proteinreich', 'vegetarisch', 'low-carb'], ingredients: ['3 Eier', '50 g Feta', '200 g Tomaten', 'Spinat'] },
-  { category: 'abend', title: 'Thunfisch-Vollkornwrap', kcal: 410, protein: 43, tags: ['proteinreich', 'schnell'], ingredients: ['1 Wrap', '150 g Thunfisch', 'Salat', '50 g Joghurt'] },
-  { category: 'abend', title: 'Ofengemüse mit Hähnchen', kcal: 510, protein: 43, tags: ['proteinreich', 'low-carb', 'meal-prep'], ingredients: ['150 g Hähnchen', '1 Zucchini', '1 Paprika', '1 Süßkartoffel', '1 EL Öl'] },
-  { category: 'abend', title: 'Gebratener Tofu mit Gemüse', kcal: 330, protein: 31, tags: ['vegan', 'proteinreich', 'low-carb'], ingredients: ['200 g Tofu', '1 Paprika', '100 g Brokkoli', '1 EL Sojasauce'] },
-  { category: 'abend', title: 'Hähnchensalat mit Avocado', kcal: 440, protein: 37, tags: ['proteinreich', 'low-carb'], ingredients: ['150 g Hähnchen', '1/2 Avocado', 'Salat', '1 Tomate', '1 EL Öl'] },
-  { category: 'abend', title: 'Linsensuppe', kcal: 360, protein: 22, tags: ['vegan', 'vegetarisch', 'meal-prep'], ingredients: ['200 g Linsen', '1 Karotte', '1 Zwiebel', '1 Kartoffel'] },
-  { category: 'abend', title: 'Caprese mit Mozzarella', kcal: 440, protein: 25, tags: ['vegetarisch', 'low-carb', 'schnell'], ingredients: ['125 g Mozzarella', '200 g Tomaten', 'Basilikum', '1 EL Öl'] },
-  { category: 'abend', title: 'Garnelen-Zucchini-Pfanne', kcal: 260, protein: 33, tags: ['proteinreich', 'low-carb'], ingredients: ['150 g Garnelen', '1 Zucchini', '1 Zehe Knoblauch', '1 EL Öl'] },
-  { category: 'abend', title: 'Putenbrust mit Ofengemüse', kcal: 360, protein: 43, tags: ['proteinreich', 'low-carb', 'meal-prep'], ingredients: ['150 g Pute', '1 Zucchini', '1 Paprika', '100 g Champignons', '1 EL Öl'] },
-  { category: 'abend', title: 'Vollkorn-Pizza mit Gemüse', kcal: 630, protein: 27, tags: ['vegetarisch'], ingredients: ['1/2 Pizzateig', '100 g Tomaten', '80 g Mozzarella', '1 Paprika'] },
-  { category: 'abend', title: 'Joghurt-Bowl mit Gurke & Fladenbrot', kcal: 420, protein: 20, tags: ['vegetarisch', 'leicht'], ingredients: ['200 g Joghurt', '1 Gurke', '1 Zehe Knoblauch', '1/2 Fladenbrot'] },
-  // ---- Snack ----
-  { category: 'snack', title: 'Skyr mit Beeren', kcal: 140, protein: 18, tags: ['proteinreich', 'vegetarisch', 'schnell'], ingredients: ['150 g Skyr', '100 g Beeren'] },
-  { category: 'snack', title: 'Handvoll Mandeln & Apfel', kcal: 250, protein: 6, tags: ['vegetarisch', 'unterwegs'], ingredients: ['30 g Mandeln', '1 Apfel'] },
-  { category: 'snack', title: 'Protein-Shake mit Banane', kcal: 380, protein: 31, tags: ['proteinreich', 'nach-dem-training'], ingredients: ['30 g Proteinpulver', '250 ml Milch', '1 Banane'] },
-  { category: 'snack', title: 'Hüttenkäse auf Knäckebrot', kcal: 220, protein: 20, tags: ['proteinreich', 'vegetarisch'], ingredients: ['150 g Hüttenkäse', '2 Scheiben Knäckebrot'] },
-  { category: 'snack', title: 'Energy Balls', kcal: 320, protein: 8, tags: ['vegan', 'vegetarisch', 'unterwegs'], ingredients: ['40 g Datteln', '30 g Haferflocken', '15 g Mandeln', '1 TL Kakao'] },
-  { category: 'snack', title: 'Gemüsesticks mit Hummus', kcal: 310, protein: 9, tags: ['vegan', 'vegetarisch', 'low-carb'], ingredients: ['100 g Hummus', '1 Karotte', '1 Paprika'] },
-  { category: 'snack', title: 'Reiswaffeln mit Frischkäse', kcal: 180, protein: 4, tags: ['vegetarisch', 'schnell'], ingredients: ['2 Reiswaffeln', '50 g Frischkäse'] },
-  { category: 'snack', title: 'Beeren-Quark', kcal: 180, protein: 25, tags: ['proteinreich', 'vegetarisch', 'low-carb'], ingredients: ['200 g Magerquark', '100 g Beeren'] },
-  { category: 'snack', title: 'Studentenfutter', kcal: 290, protein: 9, tags: ['vegetarisch', 'unterwegs'], ingredients: ['25 g Mandeln', '15 g Cashews', '20 g Rosinen'] },
-  { category: 'snack', title: 'Banane mit Erdnussbutter', kcal: 230, protein: 6, tags: ['vegetarisch', 'vor-dem-training', 'schnell'], ingredients: ['1 Banane', '20 g Erdnussbutter'] },
-  { category: 'snack', title: 'Edamame mit Meersalz', kcal: 180, protein: 17, tags: ['vegan', 'proteinreich', 'low-carb'], ingredients: ['150 g Edamame', '1 Prise Meersalz'] },
-  { category: 'snack', title: 'Hüttenkäse mit Ananas', kcal: 200, protein: 19, tags: ['proteinreich', 'vegetarisch', 'schnell'], ingredients: ['150 g Hüttenkäse', '100 g Ananas'] },
+/* Recipe ideas for a varied 7-day plan (#25). On request they are copied into your own
+   collection – in the language active at that moment; titles already there are skipped.
+   Titles and ingredients live in the lazily loaded area 'recipes' (locales/<lang>/recipes.json),
+   ingredients in a parseable "amount unit name" form for the automatic shopping list.
+   Row: [id, category, kcal, protein, tags]. */
+const RECIPE_ROWS = [
+  ['overnight-oats-mit-beeren', 'fruehstueck', 520, 30, ['proteinreich', 'vegetarisch', 'meal-prep']],
+  ['ruehrei-mit-vollkornbrot-avocado', 'fruehstueck', 600, 31, ['proteinreich', 'vegetarisch']],
+  ['protein-porridge-mit-banane', 'fruehstueck', 600, 39, ['proteinreich', 'vegetarisch']],
+  ['quark-mit-nuessen-apfel', 'fruehstueck', 400, 33, ['proteinreich', 'vegetarisch', 'low-carb']],
+  ['vollkorn-pancakes-mit-quark', 'fruehstueck', 580, 41, ['proteinreich', 'vegetarisch']],
+  ['chia-pudding-mit-mango', 'fruehstueck', 320, 8, ['vegetarisch', 'vegan', 'meal-prep']],
+  ['bircher-muesli', 'fruehstueck', 530, 20, ['vegetarisch', 'meal-prep']],
+  ['avocado-brot-mit-ei', 'fruehstueck', 480, 24, ['proteinreich', 'vegetarisch']],
+  ['griessbrei-mit-beeren', 'fruehstueck', 430, 16, ['vegetarisch', 'schnell']],
+  ['skyr-bowl-mit-granola', 'fruehstueck', 480, 28, ['proteinreich', 'vegetarisch']],
+  ['tofu-ruehrei-mit-brot', 'fruehstueck', 470, 35, ['vegan', 'proteinreich']],
+  ['erdnussbutter-toast-mit-banane', 'fruehstueck', 440, 14, ['vegetarisch', 'schnell', 'vor-dem-training']],
+  ['haehnchen-reis-bowl-mit-brokkoli', 'mittag', 600, 46, ['proteinreich', 'meal-prep']],
+  ['lachs-mit-suesskartoffel-spinat', 'mittag', 620, 35, ['proteinreich', 'omega-3']],
+  ['linsen-dal-mit-reis', 'mittag', 490, 19, ['vegetarisch', 'vegan', 'ballaststoffreich']],
+  ['pute-quinoa-pfanne', 'mittag', 530, 51, ['proteinreich', 'glutenfrei']],
+  ['rindergeschnetzeltes-mit-reis', 'mittag', 550, 39, ['proteinreich']],
+  ['kichererbsen-bowl-mit-quinoa', 'mittag', 550, 27, ['vegetarisch', 'vegan', 'ballaststoffreich']],
+  ['vollkorn-spaghetti-bolognese', 'mittag', 780, 43, ['proteinreich', 'meal-prep']],
+  ['gefuellte-suesskartoffel-mit-huettenkaese', 'mittag', 390, 26, ['proteinreich', 'vegetarisch']],
+  ['couscous-salat-mit-feta', 'mittag', 590, 22, ['vegetarisch', 'meal-prep']],
+  ['haehnchen-wrap-mit-gemuese', 'mittag', 430, 42, ['proteinreich', 'schnell']],
+  ['kabeljau-mit-kartoffeln-brokkoli', 'mittag', 460, 42, ['proteinreich', 'omega-3', 'low-carb']],
+  ['gemuesecurry-mit-kichererbsen', 'mittag', 880, 23, ['vegan', 'vegetarisch', 'ballaststoffreich']],
+  ['magerquark-mit-gemuesesticks', 'abend', 260, 36, ['proteinreich', 'low-carb', 'leicht']],
+  ['omelett-mit-feta-tomaten', 'abend', 440, 30, ['proteinreich', 'vegetarisch', 'low-carb']],
+  ['thunfisch-vollkornwrap', 'abend', 410, 43, ['proteinreich', 'schnell']],
+  ['ofengemuese-mit-haehnchen', 'abend', 510, 43, ['proteinreich', 'low-carb', 'meal-prep']],
+  ['gebratener-tofu-mit-gemuese', 'abend', 330, 31, ['vegan', 'proteinreich', 'low-carb']],
+  ['haehnchensalat-mit-avocado', 'abend', 440, 37, ['proteinreich', 'low-carb']],
+  ['linsensuppe', 'abend', 360, 22, ['vegan', 'vegetarisch', 'meal-prep']],
+  ['caprese-mit-mozzarella', 'abend', 440, 25, ['vegetarisch', 'low-carb', 'schnell']],
+  ['garnelen-zucchini-pfanne', 'abend', 260, 33, ['proteinreich', 'low-carb']],
+  ['putenbrust-mit-ofengemuese', 'abend', 360, 43, ['proteinreich', 'low-carb', 'meal-prep']],
+  ['vollkorn-pizza-mit-gemuese', 'abend', 630, 27, ['vegetarisch']],
+  ['joghurt-bowl-mit-gurke-fladenbrot', 'abend', 420, 20, ['vegetarisch', 'leicht']],
+  ['skyr-mit-beeren', 'snack', 140, 18, ['proteinreich', 'vegetarisch', 'schnell']],
+  ['handvoll-mandeln-apfel', 'snack', 250, 6, ['vegetarisch', 'unterwegs']],
+  ['protein-shake-mit-banane', 'snack', 380, 31, ['proteinreich', 'nach-dem-training']],
+  ['huettenkaese-auf-knaeckebrot', 'snack', 220, 20, ['proteinreich', 'vegetarisch']],
+  ['energy-balls', 'snack', 320, 8, ['vegan', 'vegetarisch', 'unterwegs']],
+  ['gemuesesticks-mit-hummus', 'snack', 310, 9, ['vegan', 'vegetarisch', 'low-carb']],
+  ['reiswaffeln-mit-frischkaese', 'snack', 180, 4, ['vegetarisch', 'schnell']],
+  ['beeren-quark', 'snack', 180, 25, ['proteinreich', 'vegetarisch', 'low-carb']],
+  ['studentenfutter', 'snack', 290, 9, ['vegetarisch', 'unterwegs']],
+  ['banane-mit-erdnussbutter', 'snack', 230, 6, ['vegetarisch', 'vor-dem-training', 'schnell']],
+  ['edamame-mit-meersalz', 'snack', 180, 17, ['vegan', 'proteinreich', 'low-carb']],
+  ['huettenkaese-mit-ananas', 'snack', 200, 19, ['proteinreich', 'vegetarisch', 'schnell']],
 ];
+export const SUGGESTED_MEALS = RECIPE_ROWS.map(([id, category, kcal, protein, tags]) => ({
+  suggestionId: id, category, kcal, protein, tags,
+  get title() { return t(`recipes.${id}.title`); },
+  get ingredients() { return tList(`recipes.${id}.ingredients`) || []; },
+}));
+
+let recipesLoading = null;
+/** Loads recipe titles and ingredients (lazy catalog area). */
+export function loadRecipeTexts() { return (recipesLoading ||= loadArea('recipes')); }
 
 /* --------------------------- Vorlieben-Lernen --------------------------- */
 /** Gewichtet Tags nach Favorit-Status und Koch-Häufigkeit. */
@@ -124,6 +129,10 @@ export function render(view) {
   setHeader({ title: t('nav.nutrition'), actions: [{ icon: 'plus', label: t('nutrition.add'), onClick: () => openMealForm() }] });
 
   if (store.settings().modules?.nutrition === false) { view.appendChild(moduleOff(t('nav.nutrition'))); return; }
+  // Recipe ideas come with the recipes area; draw again once it is there.
+  if (!hasArea('recipes')) {
+    loadRecipeTexts().then(() => { if (hasArea('recipes') && /^#\/nutrition/.test(location.hash)) render(view); });
+  }
 
   const meals = store.get('nutrition');
   if (!meals.length) {
@@ -169,7 +178,7 @@ export function render(view) {
   });
 
   // Mehr Rezeptvielfalt für die 7-Tage-Planung (#25)
-  const fresh = SUGGESTED_MEALS.filter((s) => !meals.some((m) => m.title.toLowerCase() === s.title.toLowerCase()));
+  const fresh = SUGGESTED_MEALS.filter((s) => !meals.some((m) => m.suggestionId === s.suggestionId || m.title.toLowerCase() === s.title.toLowerCase()));
   if (fresh.length) {
     view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-4', onclick: () => addSuggestions(fresh) }, [
       icon('plus'), tp('nutrition.addIdeas', fresh.length),

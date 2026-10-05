@@ -322,7 +322,7 @@ async function doLogout() {
  */
 const lazy = (load, pick = (m, v) => m.render(v)) => (v, p) => {
   const at = location.hash;
-  return load().then((m) => { if (location.hash === at) pick(m, v, p); });
+  return load().then((m) => { if (location.hash === at) return pick(m, v, p); });
 };
 
 function registerRoutes() {

@@ -11,16 +11,18 @@ import {
 import { estimateVdot, pacesFromVdot, paceAdjustment, raceZone, racePaceFromVdot } from './vdot.js';
 import { repaceUnits } from './planflow.js';
 
+import { t } from './i18n.js';
+
 export function zonesCard() {
   const p = store.profile();
   const hz = p.hrZones || [];
   const pz = p.paceZones || {};
   if (!hz.length && !Object.keys(pz).length) return null;
   const paceLine = (key, label) => { const z = pz[key]; return z ? `${label} ${fmtPace(z.min)}–${fmtPace(z.max)}` : null; };
-  const paces = [paceLine('easy', 'Locker'), paceLine('threshold', 'Schwelle'), paceLine('race_hm', 'Wettkampf')].filter(Boolean);
+  const paces = [paceLine('easy', t('formCards.easy')), paceLine('threshold', t('formCards.threshold')), paceLine('race_hm', t('formCards.race'))].filter(Boolean);
   return el('a', { class: 'card card--link mt-2', href: '#/settings' }, [
     el('div', { class: 'row row--between mb-2' }, [
-      el('div', { class: 'card__title', text: 'Deine Trainingsbereiche' }),
+      el('div', { class: 'card__title', text: t('formCards.zonesTitle') }),
       el('span', { class: 'list-item__chev', html: iconSvg('chevronRight') }),
     ]),
     hz.length ? el('div', { class: 'row gap-1', style: { marginBottom: paces.length ? '8px' : '0' } }, hz.map((z) => el('div', { style: { flex: '1', textAlign: 'center' } }, [
@@ -44,20 +46,20 @@ export function formCard(today, { actionableOnly = false } = {}) {
   ]);
   const basisText = !est.basis ? null
     : est.onlyEasy
-      ? `aus lockeren Trainingsläufen geschätzt – eher zu niedrig. Ein Wettkampf, Tempolauf oder Intervalltraining macht die Schätzung genauer.`
+      ? t('formCards.onlyEasy')
       : (est.weeks >= 3)
-        ? `geglättet über ${est.weeks} Wochen · zuletzt ${fmtKm(est.basis.distanceKm, 1)} in ${fmtDuration(est.basis.durationSec)} am ${fmtDate(est.basis.date)}`
-        : `geschätzt aus ${fmtKm(est.basis.distanceKm, 1)} in ${fmtDuration(est.basis.durationSec)} · ${fmtDate(est.basis.date)}`;
+        ? t('formCards.basisSmoothed', { weeks: est.weeks, distance: fmtKm(est.basis.distanceKm, 1), time: fmtDuration(est.basis.durationSec), date: fmtDate(est.basis.date) })
+        : t('formCards.basisEstimated', { distance: fmtKm(est.basis.distanceKm, 1), time: fmtDuration(est.basis.durationSec), date: fmtDate(est.basis.date) });
   const card = el('div', { class: 'card mt-2' }, [
     el('div', { class: 'row row--between', style: { alignItems: 'baseline' } }, [
-      el('div', { class: 'card__title', text: 'Aktuelle Form' }),
+      el('div', { class: 'card__title', text: t('formCards.currentForm') }),
       el('div', { class: 'row gap-1', style: { alignItems: 'center' } }, [
         el('span', { class: 'chip chip--accent', text: `VDOT ${fmtNum(est.vdot)}` }),
-        infoButton('vdot', 'Aktuelle Form'),
+        infoButton('vdot', t('formCards.currentForm')),
       ]),
     ]),
     basisText ? el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '2px' }, text: basisText }) : null,
-    el('div', { class: 'mt-2' }, [paceRow('Locker', fresh.easy), paceRow('Schwelle', fresh.threshold), paceRow('Intervalle', fresh.vo2)]),
+    el('div', { class: 'mt-2' }, [paceRow(t('formCards.easy'), fresh.easy), paceRow(t('formCards.threshold'), fresh.threshold), paceRow(t('formCards.intervals'), fresh.vo2)]),
   ]);
   const faster = adj.deltaSec != null && adj.deltaSec >= 6;
   // Langsamer ansetzen nur, wenn die Form aus harten Läufen stammt – lockere Läufe
@@ -66,11 +68,11 @@ export function formCard(today, { actionableOnly = false } = {}) {
   if (actionableOnly && !faster && !slower) return null;
   if (faster || slower) {
     card.appendChild(el('div', { class: 'muted mt-2', style: { fontSize: '.8rem' }, text: faster
-      ? `Deine Form ist rund ${adj.deltaSec} s/km schneller als deine Plan-Zielpaces – Zeit, sie zu schärfen.`
-      : `Deine Plan-Zielpaces sind rund ${-adj.deltaSec} s/km schneller als deine jüngste Form – evtl. konservativer ansetzen.` }));
-    card.appendChild(el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => applyFormPaces(est.vdot) }, [icon('refresh'), 'Trainingsbereiche an deine Form anpassen']));
+      ? t('formCards.fasterThanPlan', { sec: adj.deltaSec })
+      : t('formCards.slowerThanPlan', { sec: -adj.deltaSec }) }));
+    card.appendChild(el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => applyFormPaces(est.vdot) }, [icon('refresh'), t('formCards.adjustZones')]));
   } else if (adj.deltaSec != null && !est.onlyEasy) {
-    card.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: 'Deine Plan-Zielpaces passen gut zu deiner aktuellen Form.' }));
+    card.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: t('formCards.pacesFit') }));
   }
   return card;
 }
@@ -92,6 +94,6 @@ function applyFormPaces(vdot) {
     if (plan.paces) patch.paces = { ...zones, race: race || plan.paces.race || null };
     if (Object.keys(patch).length) store.patch('plans', plan.id, patch);
   });
-  toast('Trainingsbereiche & offene Plan-Paces an deine Form angepasst', 'good', 3600);
+  toast(t('formCards.zonesAdjusted'), 'good', 3600);
   refreshView();
 }

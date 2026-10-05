@@ -12,6 +12,8 @@
 
 import { fmtDec } from './ui.js';
 
+import { t } from './i18n.js';
+
 /** Oberes Ende des Wiederholungsbereichs (8–12) für den Progressionshinweis. */
 export const REP_TOP = 12;
 
@@ -27,7 +29,7 @@ export function cleanSet(s) {
 /** „12 × 20 kg“ bzw. „12 Wdh.“ ohne Gewicht. */
 export function fmtSet(s) {
   if (!s) return '';
-  return s.kg != null ? `${s.reps} × ${fmtDec(s.kg)} kg` : `${s.reps} Wdh.`;
+  return s.kg != null ? `${s.reps} × ${fmtDec(s.kg)} kg` : t('strength.reps', { n: s.reps });
 }
 
 /** Trainingsvolumen (Σ Wiederholungen × kg) – ohne Gewicht zählt der Satz nicht. */
@@ -70,12 +72,12 @@ export function progressionHint(sets = []) {
   const kgs = list.map((s) => s.kg).filter((k) => k != null);
   if (!kgs.length) {
     return allTop
-      ? `Alle Sätze mit ${REP_TOP}+ Wiederholungen – Zeit für eine schwerere Variante oder etwas Zusatzgewicht.`
-      : `Nächstes Mal ein, zwei Wiederholungen mehr – bis ${REP_TOP} in jedem Satz.`;
+      ? t('strength.hintHarder', { top: REP_TOP })
+      : t('strength.hintMoreReps', { top: REP_TOP });
   }
   const top = Math.max(...kgs);
   const step = top < 10 ? 1 : 2.5;
   return allTop
-    ? `Alle Sätze mit ${REP_TOP}+ Wiederholungen – nächstes Mal etwa ${fmtDec(top + step)} kg.`
-    : `Beim selben Gewicht bleiben und die Wiederholungen steigern – bis ${REP_TOP} in jedem Satz.`;
+    ? t('strength.hintMoreWeight', { top: REP_TOP, kg: fmtDec(top + step) })
+    : t('strength.hintSameWeight', { top: REP_TOP });
 }

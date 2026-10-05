@@ -28,6 +28,8 @@ import { GATE_QUESTIONS } from './eligibility.js';
 import { periodStarts, periodSignal } from './cyclecalc.js';
 import { migrateHealth } from './healthdata.js';
 
+import { t, tp } from './i18n.js';
+
 /* --------------------------------- Gate ---------------------------------- */
 
 // Die Fragen gelten seit v3.20.0 für die ganze App (eligibility.js).
@@ -49,12 +51,12 @@ export function eligibility(gate = {}) {
 
 /** Werte, bei denen die App keine Empfehlung gibt, sondern zum Arzt schickt. */
 const CRITICAL = [
-  { key: 'hb', below: 11, text: 'Der Hämoglobin-Wert ist deutlich zu niedrig.' },
-  { key: 'sodium', below: 130, text: 'Der Natrium-Wert ist deutlich zu niedrig (Hyponatriämie).' },
-  { key: 'ck', above: 5000, text: 'Die Kreatinkinase ist extrem hoch – das kann auf eine erhebliche Muskelschädigung hinweisen.' },
-  { key: 'crp', above: 50, text: 'Das CRP ist stark erhöht – das spricht für eine relevante Entzündung.' },
-  { key: 'ferritin', above: 400, text: 'Das Ferritin ist deutlich erhöht – bitte abklären lassen, bevor irgendein eisenhaltiges Präparat genommen wird.' },
-  { key: 'tsh', above: 10, text: 'Der TSH-Wert ist deutlich erhöht.' },
+  { key: 'hb', below: 11, get text() { return t('redFlags.hbLow'); } },
+  { key: 'sodium', below: 130, get text() { return t('redFlags.sodiumLow'); } },
+  { key: 'ck', above: 5000, get text() { return t('redFlags.ckHigh'); } },
+  { key: 'crp', above: 50, get text() { return t('redFlags.crpHigh'); } },
+  { key: 'ferritin', above: 400, get text() { return t('redFlags.ferritinHigh'); } },
+  { key: 'tsh', above: 10, get text() { return t('redFlags.tshHigh'); } },
 ];
 
 /**
@@ -72,7 +74,7 @@ export function redFlags({ labs = [], cycle = [], today = null, gate = {}, cycle
     if ((c.below != null && v < c.below) || (c.above != null && v > c.above)) {
       out.push({
         severity: 'stop', text: c.text,
-        advice: 'Bitte ärztlich abklären. Cat-O-Fit gibt dazu bewusst keine Empfehlung.',
+        advice: t('redFlags.seeDoctor'),
       });
     }
   }
@@ -90,9 +92,9 @@ export function periodFlag(signal) {
   return {
     severity: 'stop',
     text: signal.state === 'missed'
-      ? `Deine Periode ist seit ${Math.round(signal.days / 7)} Wochen ausgeblieben.`
-      : `Seit ${Math.round(signal.days / 30)} Monaten ist keine Periode erfasst.`,
-    advice: 'Bleibt die Periode über Monate aus, kann ein Energiemangel dahinterstecken (RED-S). Das gehört ärztlich abgeklärt – und ist kein Fall für Nahrungsergänzung.',
+      ? tp('redFlags.periodMissedWeeks', Math.round(signal.days / 7))
+      : tp('redFlags.periodNoneMonths', Math.round(signal.days / 30)),
+    advice: t('redFlags.periodAdvice'),
   };
 }
 
@@ -114,7 +116,7 @@ export function energyAvailabilitySeries(args = {}, { weeks = 10 } = {}) {
     const ea = energyAvailability({ ...args, today: ref, days: 7, minDays: 3 });
     out.push({
       date: ref,
-      label: `${String(ref).slice(8, 10)}.${String(ref).slice(5, 7)}.`,
+      label: t('redFlags.shortDate', { dd: String(ref).slice(8, 10), mm: String(ref).slice(5, 7) }),
       value: ea && ea.level !== 'unklar' ? ea.ea : null,
     });
   }
@@ -219,7 +221,7 @@ export function energyAvailability({
       ea: null, eaRounded: null, range: null, days: byDay.size, confirmedDays: confirmed.length, ffmMeasured: !!measured, trainingSource: trainingSource(),
       intakeAvg: Math.round(iSum / byDay.size), trainingAvg: Math.round(tSum / byDay.size), ffm,
       level: 'unklar', lossBand: false,
-      hint: `Vollständig bestätigt: ${confirmed.length} von ${byDay.size} Tagen mit Mahlzeiten. Tippe in der Ernährung bei „Heute gegessen“ auf „Tag vollständig“, wenn du alles erfasst hast – ab ${minDays} bestätigten Tagen schätzt Cat-O-Fit deine Energieversorgung. Aus unvollständigen Tagen würde sie zu niedrig ausfallen.`,
+      hint: t('redFlags.eaConfirm', { confirmed: confirmed.length, days: byDay.size, minDays }),
     };
   }
 
@@ -239,12 +241,12 @@ export function energyAvailability({
   const level = ea < low ? 'kritisch' : ea < EA_OPTIMAL ? 'niedrig' : 'gut';
   const lossBand = level === 'niedrig' && lossGoal;
   const hint = level === 'kritisch'
-    ? `Hinweis: Rechnerisch bleiben dir rund ${eaRounded} kcal je kg fettfreier Masse (${approx}) – wenig für dein Training. Dauerhaft kann das zu Leistungsabfall, Verletzungen, Hormon- und Zyklusstörungen führen. Iss mehr, statt ein Präparat zu suchen – und sprich mit einer Ärztin oder einem Arzt.`
+    ? t('redFlags.eaCritical', { ea: eaRounded, approx })
     : lossBand
-      ? `Rund ${eaRounded} kcal je kg fettfreier Masse (${approx}) – im Bereich, der beim Abnehmen vorübergehend vertretbar ist (${low}–${EA_OPTIMAL}). Achte auf Schlaf und Regeneration; darunter wird es riskant.`
+      ? t('redFlags.eaLossBand', { ea: eaRounded, approx, low, optimal: EA_OPTIMAL })
       : level === 'niedrig'
-        ? `Rund ${eaRounded} kcal je kg fettfreier Masse (${approx}) – unter dem Richtwert von ${EA_OPTIMAL}. In harten Trainingsphasen solltest du bewusst mehr essen, sonst leiden Regeneration und Qualität der Einheiten.`
-        : `Rund ${eaRounded} kcal je kg fettfreier Masse (${approx}) – deine Energieversorgung passt zum Training.`;
+        ? t('redFlags.eaLow', { ea: eaRounded, approx, optimal: EA_OPTIMAL })
+        : t('redFlags.eaGood', { ea: eaRounded, approx });
 
   return { ea, eaRounded, range, days: byDay.size, confirmedDays: n, intakeAvg, trainingAvg, ffm, ffmMeasured: !!measured, trainingSource: trainingSource(), level, hint, lossBand };
 }

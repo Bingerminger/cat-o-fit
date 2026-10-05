@@ -13,6 +13,8 @@
 import { parseHms, fmtDuration, todayStr, diffDays, fmtNum, fmtDec } from './ui.js';
 import { estimateVdot, raceTimeFromVdot } from './vdot.js';
 
+import { t } from './i18n.js';
+
 /** Zielpace (Sek/km) aus Zielzeit "HH:MM:SS" und Distanz (km). */
 export function targetPaceSecPerKm(targetTime, distanceKm) {
   const sec = parseHms(targetTime);
@@ -68,7 +70,7 @@ export function volumeCaveat(distanceKm, vol) {
 export function predictRace(sessions, distanceKm, { hrZones = null, today = todayStr() } = {}) {
   if (!distanceKm) return null;
   const caveat = volumeCaveat(distanceKm, runVolume(sessions, today)) ? 'volume' : null;
-  const note = caveat ? 'Nur bei ausreichender Vorbereitung erreichbar – dein Wochenumfang bzw. dein längster Lauf ist dafür noch knapp.' : null;
+  const note = caveat ? t('suggestions.volumeNote') : null;
 
   // 1) Formbasiert (bevorzugt): identische Basis wie Trainingsbereiche & Formkarte.
   const form = estimateVdot(sessions || [], today, 42, { hrZones });
@@ -77,10 +79,10 @@ export function predictRace(sessions, distanceKm, { hrZones = null, today = toda
     if (seconds) {
       const v = fmtDec(form.vdot);
       const basis = form.onlyEasy
-        ? `lockeren Trainingsläufen (VDOT ${v}) – eher zu vorsichtig, ein Wettkampf oder Tempolauf verbessert die Schätzung`
+        ? t('suggestions.basisEasy', { v })
         : form.weeks >= 3
-          ? `deiner Form (VDOT ${v}, geglättet über ${form.weeks} Wochen)`
-          : `deiner Form (VDOT ${v})`;
+          ? t('suggestions.basisFormSmoothed', { v, weeks: form.weeks })
+          : t('suggestions.basisForm', { v });
       return { seconds: Math.round(seconds), basis, method: 'form', onlyEasy: !!form.onlyEasy, caveat, note };
     }
   }
@@ -101,7 +103,7 @@ export function predictRace(sessions, distanceKm, { hrZones = null, today = toda
   if (!pred) return null;
   return {
     seconds: Math.round(pred),
-    basis: `${fmtNum(best.distanceKm, 1)} km in ${fmtDuration(best.durationSec)} (Riegel-Schätzung)`,
+    basis: t('suggestions.basisRiegel', { km: fmtNum(best.distanceKm, 1), time: fmtDuration(best.durationSec) }),
     method: 'riegel', onlyEasy: false, caveat, note,
   };
 }
@@ -109,13 +111,13 @@ export function predictRace(sessions, distanceKm, { hrZones = null, today = toda
 /** Liefert einen kurzen, freundlichen Trainingstipp (ohne Druck). */
 export function trainingTip(ctx) {
   const { todaysUnits = [], streak = 0, weekKm = 0, hasPlan = true } = ctx;
-  if (todaysUnits.some((u) => u.type === 'race')) return 'Heute ist Wettkampf – viel Erfolg! 🏁';
-  if (todaysUnits.some((u) => u.type === 'long')) return 'Long Run heute: ruhig starten, Verpflegung & Trinken nicht vergessen.';
-  if (todaysUnits.some((u) => ['tempo', 'interval'].includes(u.type))) return 'Harte Einheit: gut einlaufen, sauber auslaufen.';
+  if (todaysUnits.some((u) => u.type === 'race')) return t('suggestions.tipRace');
+  if (todaysUnits.some((u) => u.type === 'long')) return t('suggestions.tipLong');
+  if (todaysUnits.some((u) => ['tempo', 'interval'].includes(u.type))) return t('suggestions.tipHard');
   // Ohne Plan ist nichts „eingeplant“ – kein Ruhetag-Spruch in einer leeren App (UI-13).
-  if (todaysUnits.length === 0 && !hasPlan) return 'Noch kein Plan? Ein Ziel oder Programm anlegen – oder einfach ein Training erfassen.';
-  if (todaysUnits.length === 0) return 'Ruhetag eingeplant – Erholung ist Teil des Trainings.';
+  if (todaysUnits.length === 0 && !hasPlan) return t('suggestions.tipNoPlan');
+  if (todaysUnits.length === 0) return t('suggestions.tipRest');
   // `streak` = Wochen-Serie (Wochen mit ≥ 3 Trainingstagen) – Ruhetage gehören dazu.
-  if (streak >= 3) return `Schöne Konstanz – ${streak} Wochen in Folge dran. Ruhetage gehören dazu – weiter so, ohne Druck.`;
-  return 'Bleib in Bewegung – Konsistenz schlägt einzelne Top-Einheiten.';
+  if (streak >= 3) return t('suggestions.tipStreak', { weeks: streak });
+  return t('suggestions.tipDefault');
 }
