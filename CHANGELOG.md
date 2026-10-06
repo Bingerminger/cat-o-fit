@@ -7,7 +7,7 @@ Cat-O-Fit was developed privately, in German, up to v3.23.x. This repository and
 with v4.0.0, the first public release. Copies of v3.23.x or earlier that were handed out stay under the
 MIT licence they came with.
 
-## [4.0.0] – unreleased
+## [4.0.0] – 2026-10-06
 
 The first public release: Cat-O-Fit speaks seven languages, is developed in English and is licensed
 under the GNU AGPL v3.0 or later.
