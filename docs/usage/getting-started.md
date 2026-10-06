@@ -36,8 +36,9 @@ a connection, simply later – even in the middle of a run.
 > yours is not among the seven). Each person can choose their own language under
 > **Settings → Appearance → Language** – it applies to you on every device. Admins also set the
 > instance's **Default language** (in the admin-only “Administration (admin)” section of Settings)
-> for the sign-in screen and for new people. Units are metric (kilometres, kilograms); imperial units
-> are planned for version 4.1.
+> for the sign-in screen and for new people. In the same section, under **Units**, everyone picks
+> kilometres or miles, kilograms or pounds, °C or °F, the first day of the week and the lab units – at
+> first the app follows your browser's region (miles, pounds and °F in the United States).
 
 ---
 

@@ -187,7 +187,7 @@
         "1": [
           "In automatico con “Health Auto Export – JSON+CSV” (App Store): l’app in sé è gratuita, ma il trasferimento automatico che serve (REST API) è disponibile solo con Premium – secondo l’App Store circa 8 € l’anno o 30 € una tantum. Configurazione: in Cat-O-Fit, in Importazione dati di salute, “Attiva l’importazione automatica” e copia l’URL dell’endpoint; in Health Auto Export, in Automations → + → “REST API”, incolla l’URL, metodo POST, formato JSON (export version 2), scegli metriche + allenamenti, aggregazione “daily”, periodo “Since last sync” → salva → “Run now”.",
           "Gratis e in automatico tramite un comando rapido: con l’app “Comandi rapidi” di Apple puoi leggere i valori di salute e inviarli allo stesso indirizzo – le istruzioni sono nella documentazione (Apple Health). Se l’automazione funzioni in modo affidabile con l’iPhone bloccato dipende da iOS.",
-          "Gratis, a mano: iPhone → app Salute → foto del profilo → “Esporta tutti i dati sanitari” e carica lo ZIP in Importazione dati di salute (importazione completa). Funzionano anche le singole registrazioni come file GPX o TCX (Garmin, Strava …) – con sport, tempo in movimento, parziali al chilometro e tempo nelle zone FC."
+          "Gratis, a mano: iPhone → app Salute → foto del profilo → “Esporta tutti i dati sanitari” e carica lo ZIP in Importazione dati di salute (importazione completa). Funzionano anche le singole registrazioni come file GPX o TCX (Garmin, Strava …) – con sport, tempo in movimento, parziali al chilometro o al miglio e tempo nelle zone FC."
         ],
         "2": "Ti serve un ulteriore accesso (intestazione “Authorization”) solo se la tua istanza sta dietro a un accesso a monte – la Basic Auth integrata nel container lascia comunque passare l’endpoint dei dati di salute. Verifica: in Importazione dati di salute, “Importati di recente (automatico)” mostra i valori giornalieri acquisiti; le voci inserite a mano vengono mantenute, gli allenamenti duplicati vengono riconosciuti.",
         "3": "Vai a Importazione dati di salute"
@@ -433,7 +433,7 @@
     "einstellungen": {
       "q": "Impostazioni",
       "blocks": {
-        "0": "Profilo, zone di frequenza cardiaca, intervalli di passo, tema e colore d’accento, moduli, valori visibili e “Dati e backup” (backup personale per tutti, backup completo della famiglia e ripristino per gli admin).",
+        "0": "Profilo, zone di frequenza cardiaca, intervalli di passo, tema e colore d’accento, lingua e unità, moduli, valori visibili e “Dati e backup” (backup personale per tutti, backup completo della famiglia e ripristino per gli admin).",
         "1": "Apri"
       }
     },
@@ -466,7 +466,7 @@
     "pace-bereiche": {
       "q": "Intervalli di passo (velocità)",
       "blocks": {
-        "0": "Ogni tipo di sessione ha un intervallo di passo in min/km, ricavato dal tuo tempo obiettivo. Sono un suggerimento, non un obbligo – conta come ti senti quel giorno."
+        "0": "Ogni tipo di sessione ha un intervallo di passo in min/km o min/mi, ricavato dal tuo tempo obiettivo. Sono un suggerimento, non un obbligo – conta come ti senti quel giorno."
       }
     },
     "rpe": {
@@ -487,7 +487,7 @@
     "trainingslast": {
       "q": "Carico di allenamento e recupero",
       "blocks": {
-        "0": "Le statistiche mostrano i tuoi chilometri di corsa degli ultimi 7 e 28 giorni – solo corsa; ciclismo, camminata e nuoto lì non contano. Se il carico sale molto in fretta, pianifica il recupero in modo deliberato. Cat-O-Fit non fa promesse di protezione dagli infortuni, dà solo indicazioni.",
+        "0": "Le statistiche mostrano la tua distanza di corsa degli ultimi 7 e 28 giorni – solo corsa; ciclismo, camminata e nuoto lì non contano. Se il carico sale molto in fretta, pianifica il recupero in modo deliberato. Cat-O-Fit non fa promesse di protezione dagli infortuni, dà solo indicazioni.",
         "1": "Il valore “Punti di carico · 7 giorni” calcola minuti × sforzo su tutti gli sport – quindi contano anche forza, calcio, ciclismo o una partita amichevole, non solo i km di corsa. Senza una durata registrata conta la durata pianificata e, solo in mancanza anche di quella, 30 minuti.",
         "2": "Il coach si adatta in entrambe le direzioni: se le tue sessioni sono state molto dure per settimane, Oggi propone una settimana più leggera (volume in calo, gli appuntamenti fissi restano); se erano piuttosto facili e nulla lo impedisce, puoi alzare un po’ la prossima settimana."
       }
@@ -814,6 +814,20 @@
         ],
         "2": "Gli interruttori valgono per persona. Quando gestisci un membro, ciclo ed esami restano comunque nascosti – sono privati.",
         "3": "Apri le Impostazioni"
+      }
+    },
+    "masseinheiten": {
+      "q": "Unità: miglia, libbre, °F e primo giorno della settimana",
+      "aliases": "unità|miglia|mi|libbre|lb|Fahrenheit|°F|imperiale|metrico|primo giorno della settimana|domenica|mg/dL|unità convenzionali",
+      "blocks": {
+        "0": "Cat-O-Fit mostra distanze e passi in chilometri o miglia, il peso in chilogrammi o libbre (l’altezza in centimetri o in piedi e pollici) e le temperature in °C o °F – ognuno sceglie per sé. I valori di laboratorio si vedono in unità SI o in unità convenzionali come mg/dL.",
+        "1": [
+          "Apri Impostazioni → Aspetto e scegli sotto “Unità”: distanza e passo, peso e altezza, temperatura, primo giorno della settimana e valori di laboratorio.",
+          "La scelta vale subito per tutto ciò che vedi e inserisci, piani, grafici, file di calendario ed esportazione CSV compresi.",
+          "Senza una scelta l’app usa le impostazioni della regione del browser: negli Stati Uniti miglia, libbre, °F, settimane dalla domenica e unità di laboratorio convenzionali; altrove sistema metrico, lunedì e SI."
+        ],
+        "2": "Tutto viene salvato nel sistema metrico, quindi cambiare unità non modifica i tuoi dati. I nuovi piani iniziano dal tuo primo giorno della settimana; quelli esistenti mantengono i loro giorni.",
+        "3": "Vai alle impostazioni"
       }
     },
     "backup": {

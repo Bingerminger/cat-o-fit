@@ -38,8 +38,9 @@ auch mitten im Lauf.
 > Sprache unter **Einstellungen → Darstellung → Sprache** wählen – sie gilt für dich auf allen
 > Geräten. Admins legen außerdem die **Standardsprache** der Instanz fest (im Abschnitt
 > „Verwaltung (Admin)“ der Einstellungen, den nur sie sehen) – für die Anmeldeseite und für neue
-> Personen. Einheiten sind metrisch (Kilometer, Kilogramm); imperiale Einheiten sind für Version 4.1
-> geplant.
+> Personen. Im selben Abschnitt wählt jede Person unter **Maßeinheiten** Kilometer oder Meilen,
+> Kilogramm oder Pfund, °C oder °F, den ersten Wochentag und die Laboreinheiten – anfangs richtet sich
+> die App nach der Region deines Browsers (in den USA Meilen, Pfund und °F).
 
 ---
 

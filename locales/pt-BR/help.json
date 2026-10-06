@@ -187,7 +187,7 @@
         "1": [
           "Automático com o “Health Auto Export – JSON+CSV” (App Store): o app em si é gratuito, mas a transferência automática de que você precisa (API REST) só existe no Premium – segundo a App Store, cerca de € 8 por ano ou € 30 em pagamento único. Configuração: no Cat-O-Fit, em Importação de saúde, “Ativar importação automática” e copie a URL do endpoint; no Health Auto Export, em Automations → + → “REST API”, cole a URL, método POST, formato JSON (export version 2), escolha métricas + treinos, agregação “daily”, período “Since last sync” → salve → “Run now”.",
           "Grátis e automático por um atalho: com o app “Atalhos” da Apple você pode ler valores de saúde e enviá-los para o mesmo endereço – as instruções estão na documentação (Apple Health). Se a automação roda de forma confiável com o iPhone bloqueado depende do iOS.",
-          "Grátis, à mão: iPhone → app Saúde → foto do perfil → “Exportar todos os dados de saúde” e envie o ZIP em Importação de saúde (importação completa). Gravações individuais em arquivo GPX ou TCX (Garmin, Strava …) também funcionam – com esporte, tempo em movimento, parciais por quilômetro e tempo nas zonas de FC."
+          "Grátis, à mão: iPhone → app Saúde → foto do perfil → “Exportar todos os dados de saúde” e envie o ZIP em Importação de saúde (importação completa). Gravações individuais em arquivo GPX ou TCX (Garmin, Strava …) também funcionam – com esporte, tempo em movimento, parciais por quilômetro ou por milha e tempo nas zonas de FC."
         ],
         "2": "Você só precisa de um login adicional (cabeçalho “Authorization”) se a sua instância estiver atrás de um login externo – o Basic Auth embutido no contêiner já deixa o endpoint de saúde passar. Para conferir: em Importação de saúde, “Importados recentemente (automático)” mostra os valores diários trazidos; lançamentos manuais são mantidos, treinos duplicados são detectados.",
         "3": "Ir para Importação de saúde"
@@ -433,7 +433,7 @@
     "einstellungen": {
       "q": "Configurações",
       "blocks": {
-        "0": "Perfil, zonas de frequência cardíaca, faixas de pace, tema e cor de destaque, módulos, valores visíveis e “Dados e backup” (backup pessoal para todos; backup completo da família e restauração para admins).",
+        "0": "Perfil, zonas de frequência cardíaca, faixas de pace, tema e cor de destaque, idioma e unidades, módulos, valores visíveis e “Dados e backup” (backup pessoal para todos; backup completo da família e restauração para admins).",
         "1": "Abrir"
       }
     },
@@ -466,7 +466,7 @@
     "pace-bereiche": {
       "q": "Faixas de pace (velocidade)",
       "blocks": {
-        "0": "Cada tipo de treino tem uma faixa de pace em min/km, derivada do seu tempo-alvo. É uma sugestão, não uma obrigação – o que conta é como você se sente no dia."
+        "0": "Cada tipo de treino tem uma faixa de pace em min/km ou min/mi, derivada do seu tempo-alvo. É uma sugestão, não uma obrigação – o que conta é como você se sente no dia."
       }
     },
     "rpe": {
@@ -487,7 +487,7 @@
     "trainingslast": {
       "q": "Carga de treino e recuperação",
       "blocks": {
-        "0": "As estatísticas mostram seus quilômetros de corrida dos últimos 7 e 28 dias – só corridas; ciclismo, caminhada e natação não contam ali. Se a carga sobe muito rápido, planeje a recuperação de propósito. O Cat-O-Fit não faz promessas de proteção contra lesões, só dá referências.",
+        "0": "As estatísticas mostram sua distância de corrida dos últimos 7 e 28 dias – só corridas; ciclismo, caminhada e natação não contam ali. Se a carga sobe muito rápido, planeje a recuperação de propósito. O Cat-O-Fit não faz promessas de proteção contra lesões, só dá referências.",
         "1": "O valor “Pontos de carga · 7 dias” calcula minutos × esforço em todos os esportes – então força, futebol, ciclismo ou um amistoso também contam, não só os km de corrida. Sem duração registrada, vale a duração planejada, e só então 30 minutos.",
         "2": "O coach se adapta nos dois sentidos: se seus treinos estiverem muito pesados há semanas, o painel sugere uma semana mais leve (volume menor, compromissos fixos continuam); se estiverem bem leves e nada impedir, você pode subir um pouco a próxima semana."
       }
@@ -814,6 +814,20 @@
         ],
         "2": "As chaves valem por pessoa. Quando você gerencia um membro, ciclo e exames continuam ocultos de qualquer forma – são privados.",
         "3": "Abrir Configurações"
+      }
+    },
+    "masseinheiten": {
+      "q": "Unidades: milhas, libras, °F e primeiro dia da semana",
+      "aliases": "unidades|milhas|mi|libras|lb|Fahrenheit|°F|imperial|métrico|primeiro dia da semana|domingo|mg/dL|unidades convencionais",
+      "blocks": {
+        "0": "O Cat-O-Fit mostra distâncias e ritmos em quilômetros ou milhas, o peso em quilos ou libras (a altura em centímetros ou em pés e polegadas) e as temperaturas em °C ou °F – cada pessoa escolhe. Os exames laboratoriais aparecem em unidades SI ou em unidades convencionais como mg/dL.",
+        "1": [
+          "Abra Configurações → Aparência e escolha em “Unidades”: distância e ritmo, peso e altura, temperatura, primeiro dia da semana e exames laboratoriais.",
+          "A escolha vale na hora para tudo o que você vê e digita – planos, gráficos, arquivos de calendário e exportação CSV incluídos.",
+          "Sem uma escolha, o app usa o padrão da região do seu navegador: nos Estados Unidos milhas, libras, °F, semanas a partir de domingo e unidades laboratoriais convencionais; nos outros lugares métrico, segunda-feira e SI."
+        ],
+        "2": "Tudo é salvo no sistema métrico, então trocar de unidade não muda nada nos seus dados. Planos novos começam no seu primeiro dia da semana; os existentes mantêm os dias.",
+        "3": "Ir para Configurações"
       }
     },
     "backup": {

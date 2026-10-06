@@ -399,7 +399,7 @@ Unter **Fortschritt → Training** siehst du auf einen Blick, wo du stehst:
   ist eine Einheit, wenn ihr Tag vorbei ist – die heutige zählt erst, wenn du sie erledigt hast. Ausfälle
   wegen Krankheit oder Verletzung und geschützte Zyklustage zählen nicht. Dieselbe Rechnung steht auf der
   Wettkampf- und Programmseite, bei den Erfolgen und im Monatsbericht.
-- **Wochenumfang & Trainingslast:** **Lauf-Kilometer** pro Woche und für 7 bzw. 28 Tage – nur Laufen;
+- **Wochenumfang & Trainingslast:** **Laufdistanz** pro Woche und für 7 bzw. 28 Tage – nur Laufen;
   Rad, Gehen, Wandern und Schwimmen zählen hier nicht. Dazu die **Belastungspunkte** (Minuten ×
   Anstrengung) über **alle Sportarten** – so zählen auch Kraft, Fußball, Rad oder ein Testspiel mit.
 - **Trainingsjahr:** eine **Heatmap** der letzten 12 Monate im GitHub-Stil – Wochen × Wochentage, je

@@ -98,8 +98,8 @@ Eignung** (Abgrenzung und „Kalorienzahlen ausblenden“, siehe
 [Gesundheit & Eignung](health.md#gesundheit--eignung)), **Wochen- und Gesundheitsziele**,
 **Herzfrequenz-Zonen** (aus deiner Max-HF – oder als markierte Schätzung aus dem Alter; wahlweise über
 die HF-Reserve mit Ruhepuls oder aus deiner **Schwellen-HF** aus Leistungsdiagnostik oder
-30-Minuten-Feldtest), **Trainingsbereiche (Pace)**, **Darstellung** (Theme, Akzentfarbe und
-**Sprache** – jede Person wählt ihre eigene), **Module**, sichtbare **Körperwerte**,
+30-Minuten-Feldtest), **Trainingsbereiche (Pace)**, **Darstellung** (Theme, Akzentfarbe,
+**Sprache** und **Maßeinheiten** – jede Person wählt selbst), **Module**, sichtbare **Körperwerte**,
 **Standort & Wetter**, **Ernährung** und **Daten & Sicherung**. Die Leiste ganz oben springt direkt
 zu Konto, Profil, Zielen, Training, Darstellung, Modulen und Daten & Backup. Admins sehen außerdem
 den Abschnitt **Verwaltung (Admin)** mit der Team-Verwaltung und der **Standardsprache** der Instanz

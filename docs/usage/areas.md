@@ -97,8 +97,8 @@ This is where you adjust everything: **Account** (PIN, sign out, “Shared devic
 [Health & suitability](health.md#health--suitability)), **Weekly goals** and **Health goals**,
 **Heart rate zones** (from your max HR – or as a marked estimate from your age; optionally via HR
 reserve with your resting heart rate, or from your **threshold HR** from performance testing or a
-30-minute field test), **Training zones (pace)**, **Appearance** (theme, accent colour and
-**language** – each person chooses their own), **Modules**, **Visible body values**, **Location &
+30-minute field test), **Training zones (pace)**, **Appearance** (theme, accent colour,
+**language** and **units** – each person chooses their own), **Modules**, **Visible body values**, **Location &
 weather**, **Nutrition** and **Data & backup**. The bar at the very top jumps straight to Account,
 Profile, Goals, Training, Appearance, Modules and Data & backup. Admins also see the section
 **Administration (admin)** with the team management and the instance's **Default language** (for the

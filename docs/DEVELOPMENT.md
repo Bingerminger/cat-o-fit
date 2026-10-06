@@ -496,8 +496,16 @@ The app itself speaks seven languages (`de`, `en`, `fr`, `es`, `it`, `pt-BR`, `n
   `recipes`, `health`) via `loadArea()`, and their keys start with the area name. Text is set with
   `el({ text })` as before – a catalog string goes into `html` only if it is fixed markup without user data.
 - **Formats:** `js/format.js` (re-exported by `ui.js`) – weekday/month names and date patterns from
-  the catalog (`format.*`), separators from `Intl`. Never build dates or decimals by hand. Units stay
-  metric (imperial units come with 4.1).
+  the catalog (`format.*`), separators from `Intl`. Never build dates or decimals by hand.
+- **Units (v4.1):** storage is always metric. `js/units.js` holds the person's choice (applied by
+  `js/unit-prefs.js` from the settings `distanceUnit`, `weightUnit`, `temperatureUnit`, `weekStart`,
+  `labUnits`) and the conversions. Display goes through the unit-aware formatters (`fmtKm`, `fmtPace`,
+  `fmtWeight`, `fmtHeight`, `fmtTemp`, `fmtElevation`); inputs convert back with `shownToKm`,
+  `shownToPace`, `shownToKg` and `feetInchesToCm`. Catalog strings never name a unit – they take
+  `{unit}`. Generated plan texts are stored metric and converted when shown (`localizeUnits`); the
+  calendar feed does the same on the server (`person_units()`, `server_localize_units()` in
+  `api/i18n.php`). Lab values stay canonical; `shownUnit()` and `toShown()` in `js/labs.js` give the
+  conventional units. Reports are sealed with the units of the day they were written.
 - **Which language:** `js/language.js` – the person's `settings.language`, else the instance default
   (`familySettings().language`, written at first setup), else German for instances set up before
   v4.0.0, else the browser. While an admin manages someone else, the admin's language stays.

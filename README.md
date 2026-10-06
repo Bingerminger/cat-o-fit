@@ -31,7 +31,8 @@ French, Spanish, Italian, Portuguese and Dutch were machine-translated and check
 but not yet by native speakers – corrections are very welcome ([how to help](CONTRIBUTING.md#translations)).
 The voice cues during workouts are recorded clips in every language, spoken by free synthetic voices
 ([credits](CREDITS.md#voice-clips)); no native speaker has listened to the new ones yet. Units are
-metric (imperial is planned).
+chosen per person: kilometres or miles, kilograms or pounds, °C or °F, Monday, Saturday or Sunday as
+the first day of the week, and lab values in SI or conventional units.
 
 ## Why Cat-O-Fit?
 

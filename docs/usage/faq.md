@@ -48,8 +48,16 @@ instance (…)” follows the instance's default language instead. Admins set th
 German until someone changes it. While an admin is managing another member, the admin's own language
 stays. German and English are written by the project; the other five are machine-translated with a
 fixed glossary and not yet reviewed by native speakers – corrections are very welcome (see
-[Translation review status](../../locales/REVIEW.md)). Units are metric (kilometres, kilograms);
-imperial units are planned for version 4.1.
+[Translation review status](../../locales/REVIEW.md)).
+
+**Can I use miles, pounds and °F?** Yes, since version 4.1 – each person chooses under
+**Settings → Appearance → Units**: kilometres or miles (and min/km or min/mi), kilograms or pounds
+(height in centimetres or feet and inches), °C or °F, the first day of the week and lab values in SI
+or conventional units such as mg/dL. Without a choice the app follows your browser's region – in the
+United States miles, pounds, °F, weeks from Sunday and conventional lab units. Everything is stored
+metric, so switching changes nothing in your data; plans you create afterwards start on your first
+day of the week, existing plans keep their days. Calendar files and the CSV export follow your units
+too.
 
 **Does Cat-O-Fit cost anything?** No – the app is open source (AGPL licence) and runs on your own
 hardware. Only an optional extra service can cost money, such as the premium tier of “Health Auto

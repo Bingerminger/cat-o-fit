@@ -187,7 +187,7 @@
         "1": [
           "Automatisch met “Health Auto Export – JSON+CSV” (App Store): de app zelf is gratis, maar de automatische overdracht die je nodig hebt (REST API) is alleen met Premium beschikbaar – volgens de App Store ongeveer €8 per jaar of €30 eenmalig. Instellen: klik in Cat-O-Fit bij Gezondheidsimport op “Automatische import inschakelen” en kopieer de endpoint-URL; kies in Health Auto Export bij Automations → + → “REST API”, plak de URL, methode POST, formaat JSON (exportversie 2), kies metrics + workouts, aggregatie “daily”, periode “Since last sync” → opslaan → “Run now”.",
           "Gratis en automatisch via een opdracht: met Apples app “Opdrachten” kun je gezondheidswaarden lezen en naar hetzelfde adres sturen – de instructies staan in de documentatie (Apple Health). Of de automatisering betrouwbaar draait terwijl de iPhone vergrendeld is, hangt van iOS af.",
-          "Gratis, met de hand: iPhone → app Gezondheid → profielfoto → “Exporteer alle gezondheidsgegevens” en upload de ZIP bij Gezondheidsimport (volledige import). Losse opnames als GPX- of TCX-bestand (Garmin, Strava …) werken ook – met sport, bewegingstijd, kilometertijden en tijd in hartslagzones."
+          "Gratis, met de hand: iPhone → app Gezondheid → profielfoto → “Exporteer alle gezondheidsgegevens” en upload de ZIP bij Gezondheidsimport (volledige import). Losse opnames als GPX- of TCX-bestand (Garmin, Strava …) werken ook – met sport, bewegingstijd, kilometer- of mijltijden en tijd in hartslagzones."
         ],
         "2": "Een extra aanmelding (header “Authorization”) heb je alleen nodig als je instantie achter een voorgeschakelde aanmelding zit – de ingebouwde Basic Auth van de container laat het gezondheidsendpoint hoe dan ook door. Controle: bij Gezondheidsimport toont “Onlangs geïmporteerd (automatisch)” de overgenomen dagwaarden; handmatige invoer blijft behouden, dubbele workouts worden herkend.",
         "3": "Naar Gezondheidsimport"
@@ -433,7 +433,7 @@
     "einstellungen": {
       "q": "Instellingen",
       "blocks": {
-        "0": "Profiel, hartslagzones, tempobereiken, thema & accentkleur, modules, zichtbare waarden en “Gegevens & back-up” (persoonlijke back-up voor iedereen, volledige gezinsback-up en herstel voor beheerders).",
+        "0": "Profiel, hartslagzones, tempobereiken, thema & accentkleur, taal & eenheden, modules, zichtbare waarden en “Gegevens & back-up” (persoonlijke back-up voor iedereen, volledige gezinsback-up en herstel voor beheerders).",
         "1": "Openen"
       }
     },
@@ -466,7 +466,7 @@
     "pace-bereiche": {
       "q": "Tempobereiken (snelheid)",
       "blocks": {
-        "0": "Elk trainingstype heeft een tempobereik in min/km, afgeleid van je streeftijd. Het is een suggestie, geen verplichting – hoe je je die dag voelt, telt."
+        "0": "Elk trainingstype heeft een tempobereik in min/km of min/mi, afgeleid van je streeftijd. Het is een suggestie, geen verplichting – hoe je je die dag voelt, telt."
       }
     },
     "rpe": {
@@ -487,7 +487,7 @@
     "trainingslast": {
       "q": "Trainingsbelasting & herstel",
       "blocks": {
-        "0": "De statistieken tonen je hardloopkilometers van de afgelopen 7 en 28 dagen – alleen hardlopen; fietsen, wandelen en zwemmen tellen daar niet mee. Stijgt de belasting erg snel, plan dan bewust herstel in. Cat-O-Fit doet geen beloften over blessurebescherming, maar geeft alleen aanwijzingen.",
+        "0": "De statistieken tonen je hardloopafstand van de afgelopen 7 en 28 dagen – alleen hardlopen; fietsen, wandelen en zwemmen tellen daar niet mee. Stijgt de belasting erg snel, plan dan bewust herstel in. Cat-O-Fit doet geen beloften over blessurebescherming, maar geeft alleen aanwijzingen.",
         "1": "De waarde “Belastingspunten · 7 dagen” berekent minuten × inspanning over alle sporten – dus kracht, voetbal, fietsen of een oefenwedstrijd tellen ook mee, niet alleen de loopkilometers. Zonder vastgelegde duur telt de geplande duur, en pas daarna 30 minuten.",
         "2": "De coach past zich in beide richtingen aan: waren je trainingen weken achtereen erg zwaar, dan stelt het dashboard een lichtere week voor (omvang omlaag, vaste afspraken blijven); waren ze eerder rustig en pleit niets ertegen, dan kun je de komende week iets opschroeven."
       }
@@ -814,6 +814,20 @@
         ],
         "2": "De schakelaars gelden per persoon. Als je een lid beheert, blijven cyclus en labwaarden hoe dan ook verborgen – ze zijn privé.",
         "3": "Instellingen openen"
+      }
+    },
+    "masseinheiten": {
+      "q": "Eenheden: mijlen, ponden, °F en de eerste dag van de week",
+      "aliases": "eenheden|mijlen|mi|ponden|lb|Fahrenheit|°F|imperiaal|metrisch|eerste dag van de week|zondag|mg/dL|conventionele eenheden",
+      "blocks": {
+        "0": "Cat-O-Fit toont afstanden en tempo in kilometers of mijlen, gewicht in kilogram of pond (lengte in centimeters of in voet en inch) en temperaturen in °C of °F – iedereen kiest zelf. Labwaarden zie je in SI-eenheden of in conventionele eenheden zoals mg/dL.",
+        "1": [
+          "Open Instellingen → Weergave en kies onder “Eenheden”: afstand en tempo, gewicht en lengte, temperatuur, eerste dag van de week en labwaarden.",
+          "De keuze geldt meteen voor alles wat je ziet en invoert – ook voor plannen, grafieken, agendabestanden en de CSV-export.",
+          "Zonder eigen keuze neemt de app de standaard van de regio van je browser: in de Verenigde Staten mijlen, ponden, °F, weken vanaf zondag en conventionele labeenheden; elders metrisch, maandag en SI."
+        ],
+        "2": "Alles wordt metrisch opgeslagen, dus heen en weer schakelen verandert niets aan je gegevens. Nieuwe plannen beginnen op je eerste dag van de week; bestaande plannen houden hun dagen.",
+        "3": "Naar de instellingen"
       }
     },
     "backup": {

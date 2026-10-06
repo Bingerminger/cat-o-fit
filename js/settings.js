@@ -264,7 +264,7 @@ export function render(view) {
   }
 
 /* ----- Appearance ----- */
-  view.appendChild(sectionHead(t('settings.sections.appearance')));
+  view.appendChild(sectionHead(t('settings.sections.appearance'), null, { help: 'masseinheiten' }));
   const disp = el('div', { class: 'card' });
   disp.appendChild(el('div', { class: 'row row--between wrap mb-4' }, [
     el('span', { text: t('settings.appearance.theme') }),

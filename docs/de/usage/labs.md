@@ -33,7 +33,9 @@ knapp, und das kostet Leistung, lange bevor eine Blutarmut entsteht. Cat-O-Fit z
    Magnesium als Vollblut- **und** Serumwert, B12 als Holo-TC **und** gesamt), Datum,
    Messwert und direkt daneben die **Einheit** – für fast jeden Wert die in Deutschland üblichen
    (CRP in mg/l oder mg/dl, Vitamin D in nmol/l oder ng/ml, Testosteron in nmol/l oder ng/ml
-   …). Die App rechnet um und zeigt den Wert so, wie er auf dem Befund stand. Liegt ein Wert
+   …). Die App rechnet um und zeigt den Wert so, wie er auf dem Befund stand –
+   oder, mit **konventionellen Laboreinheiten** (Einstellungen → Darstellung → Maßeinheiten,
+   Voreinstellung in den USA), in Einheiten wie ng/mL und mg/dL. Liegt ein Wert
    weit außerhalb des Üblichen, fragt sie „Stimmt die Einheit?“. Dazu der **Referenzbereich
    deines Labors** (siehe unten), optional die **Umstände der Blutentnahme** (harte Belastung in
    den 48 Stunden davor, nüchtern, Biotin, Zyklustag) und eine Notiz.

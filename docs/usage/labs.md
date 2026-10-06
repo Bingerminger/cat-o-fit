@@ -31,8 +31,9 @@ marginal, and that costs performance long before anaemia develops. Cat-O-Fit the
    magnesium as a whole-blood **and** a serum value, B12 as holo-TC **and** total), date, result and, right
    next to it, the **unit** – for almost every value the ones customary in Germany (CRP in mg/l or mg/dl,
    vitamin D in nmol/l or ng/ml, testosterone in nmol/l or ng/ml …). The app converts and shows the value
-   as it was on the report. If a value is far outside the usual range, it asks “Is the unit right?”. Then
-   comes **your lab’s reference range** (see below), optionally the **circumstances of the blood draw**
+   as it was on the report – or, with **conventional lab units** (Settings → Appearance → Units, the
+   default in the United States), in units such as ng/mL and mg/dL. If a value is far outside the usual
+   range, it asks “Is the unit right?”. Then comes **your lab’s reference range** (see below), optionally the **circumstances of the blood draw**
    (hard exercise in the 48 hours before, fasting, biotin, cycle day) and a note.
    **Whole report at once:** “Log a lab report with several values” below the list of values shows all
    values one under the other – you enter date and circumstances once, and per value the result, unit and

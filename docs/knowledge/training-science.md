@@ -31,9 +31,8 @@ clearly marked as an estimate, because in an individual case it is often 10 beat
 **resting heart rate** you can have the zones calculated from the **heart rate reserve** (Karvonen);
 for base endurance they are then usually somewhat higher.
 
-**Pace ranges.** Every session type has a pace range in min/km, derived from your goal time or your
-current form – a suggestion, not a must. Form on the day counts. (The app uses metric units; imperial
-units are planned for version 4.1.)
+**Pace ranges.** Every session type has a pace range in min/km (or min/mi, if you chose miles),
+derived from your goal time or your current form – a suggestion, not a must. Form on the day counts.
 
 **RPE (1–10).** Your subjective sense of effort complements heart rate and pace – especially on days
 when numbers “feel different”. 1 is very light, 3 easy, 5 medium, 7 hard, 10 maximal.

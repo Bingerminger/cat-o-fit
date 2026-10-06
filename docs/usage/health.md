@@ -76,7 +76,7 @@ watch – one at a time or as a whole export (more under
 [Importing activities from files](training.md#import-activities-from-files)). They are analysed right
 in the browser: **sport** (from the file; if it is missing, the app asks), **date in your time zone** (even
 for the New Year’s Day run at 00:30), **moving time** without pauses, distance, average and max heart rate,
-**kilometre splits** and – with your HR zones from the settings – the **time in each zone**. Before saving
+**kilometre and mile splits** and – with your HR zones from the settings – the **time in each zone**. Before saving
 you see a summary: if a planned session of the same day and the same sport fits, the activity is matched to
 it, otherwise it is saved as a free workout.
 

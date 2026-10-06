@@ -30,9 +30,9 @@ Max-HF nicht, schätzt Cat-O-Fit sie auf Wunsch aus dem Alter (208 − 0,7 × Al
 markiert, denn im Einzelfall liegt sie oft 10 Schläge daneben. Mit **Ruhepuls** kannst du die Zonen über die
 **Herzfrequenzreserve** (Karvonen) rechnen lassen; sie liegen dann für die Grundlage meist etwas höher.
 
-**Pace-Bereiche.** Jeder Einheitstyp hat einen Tempobereich in min/km, abgeleitet aus deiner
-Zielzeit bzw. deiner Form – ein Vorschlag, kein Muss. Tagesform zählt. (Die App rechnet metrisch;
-imperiale Einheiten sind für Version 4.1 geplant.)
+**Pace-Bereiche.** Jeder Einheitstyp hat einen Tempobereich in min/km (oder min/mi, wenn du Meilen
+gewählt hast), abgeleitet aus deiner Zielzeit bzw. deiner Form – ein Vorschlag, kein Muss. Tagesform
+zählt.
 
 **RPE (1–10).** Dein subjektives Belastungsempfinden ergänzt Herzfrequenz und Pace –
 besonders an Tagen, an denen sich Zahlen „anders anfühlen“. 1 ist sehr leicht, 3 locker, 5 mittel,

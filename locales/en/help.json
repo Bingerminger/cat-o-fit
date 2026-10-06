@@ -187,7 +187,7 @@
         "1": [
           "Automatically with “Health Auto Export – JSON+CSV” (App Store): the app itself is free, but the automatic transfer you need (REST API) is only available with Premium – according to the App Store about €8 a year or €30 one-off. Set-up: in Cat-O-Fit, under Health import, “Switch on auto-import” and copy the endpoint URL; in Health Auto Export, under Automations → + → “REST API”, paste the URL, method POST, format JSON (export version 2), choose metrics + workouts, aggregation “daily”, period “Since last sync” → save → “Run now”.",
           "Free and automatic via a shortcut: with Apple’s “Shortcuts” app you can read health values and send them to the same address – the instructions are in the docs (Apple Health). Whether the automation runs reliably while the iPhone is locked depends on iOS.",
-          "Free, by hand: iPhone → Health app → profile picture → “Export All Health Data” and upload the ZIP under Health import (full import). Individual recordings as a GPX or TCX file (Garmin, Strava …) work too – with sport, moving time, kilometre splits and time in HR zones."
+          "Free, by hand: iPhone → Health app → profile picture → “Export All Health Data” and upload the ZIP under Health import (full import). Individual recordings as a GPX or TCX file (Garmin, Strava …) work too – with sport, moving time, kilometre or mile splits and time in HR zones."
         ],
         "2": "You only need an additional login (“Authorization” header) if your instance sits behind an upstream login – the container’s built-in Basic Auth lets the health endpoint through anyway. Check: in Health import, “Recently imported (automatic)” shows the daily values taken over; manual entries are kept, duplicate workouts are detected.",
         "3": "Go to Health import"
@@ -433,7 +433,7 @@
     "einstellungen": {
       "q": "Settings",
       "blocks": {
-        "0": "Profile, heart rate zones, pace ranges, theme & accent colour, modules, visible values, and “Data & backup” (personal backup for everyone, full family backup & restore for admins).",
+        "0": "Profile, heart rate zones, pace ranges, theme & accent colour, language & units, modules, visible values, and “Data & backup” (personal backup for everyone, full family backup & restore for admins).",
         "1": "Open"
       }
     },
@@ -466,7 +466,7 @@
     "pace-bereiche": {
       "q": "Pace ranges (speed)",
       "blocks": {
-        "0": "Every session type has a pace range in min/km, derived from your target time. They are a suggestion, not a must – how you feel on the day counts."
+        "0": "Every session type has a pace range in min/km or min/mi, derived from your target time. They are a suggestion, not a must – how you feel on the day counts."
       }
     },
     "rpe": {
@@ -487,7 +487,7 @@
     "trainingslast": {
       "q": "Training load & recovery",
       "blocks": {
-        "0": "The statistics show your running kilometres for the last 7 and 28 days – runs only; cycling, walking and swimming don’t count there. If the load rises very quickly, deliberately plan recovery. Cat-O-Fit makes no promises about injury protection, only gives pointers.",
+        "0": "The statistics show your running distance for the last 7 and 28 days – runs only; cycling, walking and swimming don’t count there. If the load rises very quickly, deliberately plan recovery. Cat-O-Fit makes no promises about injury protection, only gives pointers.",
         "1": "The “Load points · 7 days” figure calculates minutes × effort across all sports – so strength, football, cycling or a practice match count too, not just the running km. Without a logged duration the planned duration counts, and only then 30 minutes.",
         "2": "The coach adapts in both directions: if your sessions have been very hard for weeks, the dashboard suggests a lighter week (volume down, fixed dates stay); if they were rather easy and nothing speaks against it, you can step up the coming week a little."
       }
@@ -814,6 +814,20 @@
         ],
         "2": "The switches apply per person. When you manage a member, cycle and labs stay hidden anyway – they are private.",
         "3": "Open Settings"
+      }
+    },
+    "masseinheiten": {
+      "q": "Units: miles, pounds, °F and the first day of the week",
+      "aliases": "units|miles|mi|pounds|lb|Fahrenheit|°F|imperial|metric|first day of the week|Sunday|mg/dL|conventional units",
+      "blocks": {
+        "0": "Cat-O-Fit shows distances and paces in kilometres or miles, weight in kilograms or pounds (height in centimetres or feet and inches) and temperatures in °C or °F – everyone chooses their own. Lab values can be shown in SI units or in conventional units such as mg/dL.",
+        "1": [
+          "Open Settings → Appearance and choose under “Units”: distance and pace, weight and height, temperature, first day of the week and lab values.",
+          "The choice applies right away to everything you see and enter – plans, charts, calendar files and the CSV export included.",
+          "Without a choice, the app takes the defaults of your browser’s region: in the United States miles, pounds, °F, weeks from Sunday and conventional lab units; elsewhere metric, Monday and SI."
+        ],
+        "2": "Everything is stored metric, so switching back and forth changes nothing in your data. Plans you create from now on start on your first day of the week; existing plans keep their days.",
+        "3": "Go to Settings"
       }
     },
     "backup": {

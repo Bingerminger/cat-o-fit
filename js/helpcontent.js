@@ -99,6 +99,7 @@ const STRUCTURE = [
     ['erinnerungen-zuverlaessig', ['p']],
     ['kalender-abo', ['p', 'steps', 'p', 'p', 'p', 'p', 'tip', 'tip', 'tip', ['link', '#/events']]],
     ['module', ['p', 'steps', 'tip', ['link', '#/settings']]],
+    ['masseinheiten', ['p', 'steps', 'tip', ['link', '#/settings']]],
     ['backup', ['steps', 'tip', ['link', '#/settings']]],
     ['fehlersuche', ['steps']],
   ]],

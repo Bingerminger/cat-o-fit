@@ -187,7 +187,7 @@
         "1": [
           "Automatisch per „Health Auto Export – JSON+CSV“ (App Store): Die App selbst ist kostenlos, die nötige automatische Übertragung (REST-API) gibt es aber nur mit Premium – laut App Store etwa 8 € im Jahr oder 30 € einmalig. Einrichtung: In Cat-O-Fit unter Health-Import „Auto-Import aktivieren“ und die Endpunkt-URL kopieren; in Health Auto Export unter Automations → + → „REST API“ die URL einfügen, Methode POST, Format JSON (Export-Version 2), Metriken + Workouts wählen, Aggregation „Daily“, Zeitraum „Since last sync“ → speichern → „Run now“.",
           "Kostenlos und automatisch per Kurzbefehl: Mit der Apple-App „Kurzbefehle“ lassen sich Gesundheitswerte lesen und an dieselbe Adresse schicken – die Anleitung steht in der Doku (Apple Health). Ob die Automation bei gesperrtem iPhone zuverlässig läuft, hängt von iOS ab.",
-          "Kostenlos von Hand: iPhone → Health-App → Profilbild → „Alle Gesundheitsdaten exportieren“ und die ZIP unter Health-Import hochladen (Voll-Import). Einzelne Aufzeichnungen als GPX- oder TCX-Datei (Garmin, Strava …) gehen ebenfalls – mit Sportart, Bewegungszeit, Kilometer-Splits und Zeit in HF-Zonen."
+          "Kostenlos von Hand: iPhone → Health-App → Profilbild → „Alle Gesundheitsdaten exportieren“ und die ZIP unter Health-Import hochladen (Voll-Import). Einzelne Aufzeichnungen als GPX- oder TCX-Datei (Garmin, Strava …) gehen ebenfalls – mit Sportart, Bewegungszeit, Kilometer- oder Meilen-Splits und Zeit in HF-Zonen."
         ],
         "2": "Eine zusätzliche Anmeldung („Authorization“-Header) brauchst du nur, falls deine Instanz hinter einer vorgeschalteten Anmeldung liegt – die eingebaute Basic-Auth des Containers lässt den Health-Eingang ohnehin durch. Kontrolle: In Health-Import zeigt „Zuletzt importiert (automatisch)“ die übernommenen Tageswerte; manuelle Einträge bleiben erhalten, doppelte Workouts werden erkannt.",
         "3": "Zum Health-Import"
@@ -433,7 +433,7 @@
     "einstellungen": {
       "q": "Einstellungen",
       "blocks": {
-        "0": "Profil, Herzfrequenz-Zonen, Pace-Bereiche, Theme & Akzentfarbe, Module, sichtbare Werte sowie „Daten & Sicherung“ (persönliches Backup für alle, Familien-Vollbackup & Wiederherstellung für Admins).",
+        "0": "Profil, Herzfrequenz-Zonen, Pace-Bereiche, Theme & Akzentfarbe, Sprache & Maßeinheiten, Module, sichtbare Werte sowie „Daten & Sicherung“ (persönliches Backup für alle, Familien-Vollbackup & Wiederherstellung für Admins).",
         "1": "Öffnen"
       }
     },
@@ -466,7 +466,7 @@
     "pace-bereiche": {
       "q": "Pace-Bereiche (Tempo)",
       "blocks": {
-        "0": "Jeder Einheitstyp hat einen Tempobereich in min/km, abgeleitet aus deiner Zielzeit. Sie sind ein Vorschlag, kein Muss – Tagesform zählt."
+        "0": "Jeder Einheitstyp hat einen Tempobereich in min/km oder min/mi, abgeleitet aus deiner Zielzeit. Sie sind ein Vorschlag, kein Muss – Tagesform zählt."
       }
     },
     "rpe": {
@@ -487,7 +487,7 @@
     "trainingslast": {
       "q": "Trainingslast & Erholung",
       "blocks": {
-        "0": "Die Statistik zeigt deine Lauf-Kilometer der letzten 7 und 28 Tage – nur Läufe; Rad, Gehen und Schwimmen zählen dort nicht. Steigt die Belastung sehr schnell, plane bewusst Erholung ein. Cat-O-Fit gibt keine Versprechen zu Verletzungsschutz, sondern Anhaltspunkte.",
+        "0": "Die Statistik zeigt deine Laufdistanz der letzten 7 und 28 Tage – nur Läufe; Rad, Gehen und Schwimmen zählen dort nicht. Steigt die Belastung sehr schnell, plane bewusst Erholung ein. Cat-O-Fit gibt keine Versprechen zu Verletzungsschutz, sondern Anhaltspunkte.",
         "1": "Die Kennzahl „Belastungspunkte · 7 Tage“ rechnet Minuten × Anstrengung über alle Sportarten – so zählen auch Kraft, Fußball, Rad oder ein Testspiel mit, nicht nur die Lauf-km. Ohne erfasste Dauer zählt die geplante Dauer, erst dann 30 Minuten.",
         "2": "Der Coach passt sich in beide Richtungen an: Waren deine Einheiten seit Wochen sehr anstrengend, schlägt das Dashboard eine Entlastungswoche vor (Umfang runter, feste Termine bleiben); waren sie eher locker und spricht nichts dagegen, kannst du die kommende Woche etwas steigern."
       }
@@ -814,6 +814,20 @@
         ],
         "2": "Die Schalter gelten pro Person. Beim Verwalten eines Mitglieds bleiben Zyklus und Labor ohnehin verborgen – sie sind privat.",
         "3": "Einstellungen öffnen"
+      }
+    },
+    "masseinheiten": {
+      "q": "Maßeinheiten: Meilen, Pfund, °F und der erste Wochentag",
+      "aliases": "Maßeinheiten|Einheiten|Meilen|mi|Pfund|lb|Fahrenheit|°F|imperial|metrisch|erster Wochentag|Sonntag|mg/dL|konventionelle Einheiten",
+      "blocks": {
+        "0": "Cat-O-Fit zeigt Distanzen und Pace in Kilometern oder Meilen, Gewicht in Kilogramm oder Pfund (Größe in Zentimetern oder Fuß und Zoll) und Temperaturen in °C oder °F – jede Person wählt selbst. Laborwerte gibt es in SI-Einheiten oder in konventionellen Einheiten wie mg/dL.",
+        "1": [
+          "Öffne Einstellungen → Darstellung und wähle unter „Maßeinheiten“: Distanz und Pace, Gewicht und Größe, Temperatur, erster Wochentag und Laborwerte.",
+          "Die Wahl gilt sofort für alles, was du siehst und eingibst – auch für Pläne, Diagramme, Kalenderdateien und den CSV-Export.",
+          "Ohne eigene Wahl nimmt die App die Voreinstellung der Region deines Browsers: in den USA Meilen, Pfund, °F, Wochen ab Sonntag und konventionelle Laboreinheiten; sonst metrisch, Montag und SI."
+        ],
+        "2": "Gespeichert wird immer metrisch, Hin- und Herschalten ändert an deinen Daten also nichts. Neue Pläne beginnen an deinem ersten Wochentag; bestehende Pläne behalten ihre Tage.",
+        "3": "Zu den Einstellungen"
       }
     },
     "backup": {

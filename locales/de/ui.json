@@ -414,7 +414,7 @@
       "failedMsg": "Das Backup konnte nicht erstellt werden."
     },
     "units": {
-      "title": "Einheiten",
+      "title": "Maßeinheiten",
       "distance": "Distanz und Pace",
       "weight": "Gewicht und Größe",
       "temperature": "Temperatur",

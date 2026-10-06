@@ -187,7 +187,7 @@
         "1": [
           "Automatiquement avec « Health Auto Export – JSON+CSV » (App Store) : l’app elle-même est gratuite, mais le transfert automatique dont tu as besoin (REST API) n’est disponible qu’avec Premium – environ 8 € par an ou 30 € en achat unique selon l’App Store. Mise en place : dans Cat-O-Fit, sous Import de données de santé, « Activer l’import automatique » et copie l’URL du point d’accès ; dans Health Auto Export, sous Automations → + → « REST API », colle l’URL, méthode POST, format JSON (export version 2), choisis les métriques + les entraînements, agrégation « daily », période « Since last sync » → enregistre → « Run now ».",
           "Gratuit et automatique via un raccourci : avec l’app « Raccourcis » d’Apple, tu peux lire des valeurs de santé et les envoyer à la même adresse – le mode d’emploi est dans la documentation (Apple Health). Que l’automatisation tourne de façon fiable quand l’iPhone est verrouillé dépend d’iOS.",
-          "Gratuit, à la main : iPhone → app Santé → photo de profil → « Exporter toutes les données de santé » et charge le ZIP sous Import de données de santé (import complet). Des enregistrements isolés au format GPX ou TCX (Garmin, Strava …) fonctionnent aussi – avec le sport, le temps en mouvement, les temps au kilomètre et le temps dans les zones de FC."
+          "Gratuit, à la main : iPhone → app Santé → photo de profil → « Exporter toutes les données de santé » et charge le ZIP sous Import de données de santé (import complet). Des enregistrements isolés au format GPX ou TCX (Garmin, Strava …) fonctionnent aussi – avec le sport, le temps en mouvement, les temps au kilomètre ou au mile et le temps dans les zones de FC."
         ],
         "2": "Tu n’as besoin d’une authentification supplémentaire (en-tête « Authorization ») que si ton instance se trouve derrière une connexion placée en amont – la Basic Auth intégrée du conteneur laisse de toute façon passer le point d’accès santé. Vérification : dans Import de données de santé, « Importés récemment (automatique) » affiche les valeurs quotidiennes reprises ; les saisies manuelles sont conservées, les entraînements en double sont détectés.",
         "3": "Aller à l’import de données de santé"
@@ -433,7 +433,7 @@
     "einstellungen": {
       "q": "Réglages",
       "blocks": {
-        "0": "Profil, zones de fréquence cardiaque, plages d’allure, thème & couleur d’accent, modules, valeurs visibles, et « Données & sauvegarde » (sauvegarde personnelle pour tout le monde, sauvegarde familiale complète et restauration pour les admins).",
+        "0": "Profil, zones de fréquence cardiaque, plages d’allure, thème & couleur d’accent, langue & unités, modules, valeurs visibles, et « Données & sauvegarde » (sauvegarde personnelle pour tout le monde, sauvegarde familiale complète et restauration pour les admins).",
         "1": "Ouvrir"
       }
     },
@@ -466,7 +466,7 @@
     "pace-bereiche": {
       "q": "Plages d’allure (vitesse)",
       "blocks": {
-        "0": "Chaque type de séance a une plage d’allure en min/km, déduite de ton temps cible. C’est une suggestion, pas une obligation – ce que tu ressens le jour même compte."
+        "0": "Chaque type de séance a une plage d’allure en min/km ou min/mi, déduite de ton temps cible. C’est une suggestion, pas une obligation – ce que tu ressens le jour même compte."
       }
     },
     "rpe": {
@@ -487,7 +487,7 @@
     "trainingslast": {
       "q": "Charge d’entraînement et récupération",
       "blocks": {
-        "0": "Les statistiques montrent tes kilomètres de course des 7 et 28 derniers jours – la course uniquement ; le vélo, la marche et la natation n’y comptent pas. Si la charge monte très vite, prévois volontairement de la récupération. Cat-O-Fit ne promet aucune protection contre les blessures, il donne seulement des repères.",
+        "0": "Les statistiques montrent ta distance de course des 7 et 28 derniers jours – la course uniquement ; le vélo, la marche et la natation n’y comptent pas. Si la charge monte très vite, prévois volontairement de la récupération. Cat-O-Fit ne promet aucune protection contre les blessures, il donne seulement des repères.",
         "1": "Le chiffre « Points de charge · 7 jours » calcule minutes × effort sur tous les sports – le renforcement, le football, le vélo ou un match amical comptent donc aussi, pas seulement les km de course. Sans durée saisie, c’est la durée prévue qui compte, et seulement ensuite 30 minutes.",
         "2": "Le coach s’adapte dans les deux sens : si tes séances sont très dures depuis des semaines, le tableau de bord propose une semaine plus légère (volume en baisse, les rendez-vous fixes restent) ; si elles étaient plutôt faciles et que rien ne s’y oppose, tu peux monter un peu la semaine à venir."
       }
@@ -814,6 +814,20 @@
         ],
         "2": "Les interrupteurs valent par personne. Quand tu gères un membre, le cycle et les analyses restent de toute façon masqués – ils sont privés.",
         "3": "Ouvrir les Réglages"
+      }
+    },
+    "masseinheiten": {
+      "q": "Unités : miles, livres, °F et premier jour de la semaine",
+      "aliases": "unités|miles|mi|livres|lb|Fahrenheit|°F|impérial|métrique|premier jour de la semaine|dimanche|mg/dL|unités conventionnelles",
+      "blocks": {
+        "0": "Cat-O-Fit affiche les distances et les allures en kilomètres ou en miles, le poids en kilogrammes ou en livres (la taille en centimètres ou en pieds et pouces) et les températures en °C ou °F – chacun choisit pour soi. Les valeurs de laboratoire s’affichent en unités SI ou en unités conventionnelles comme mg/dL.",
+        "1": [
+          "Ouvre Réglages → Apparence et choisis sous « Unités » : distance et allure, poids et taille, température, premier jour de la semaine et valeurs de laboratoire.",
+          "Le choix s’applique tout de suite à tout ce que tu vois et saisis – plans, graphiques, fichiers de calendrier et export CSV compris.",
+          "Sans choix, l’appli reprend les réglages de la région de ton navigateur : aux États-Unis miles, livres, °F, semaines à partir du dimanche et unités de labo conventionnelles ; ailleurs métrique, lundi et SI."
+        ],
+        "2": "Tout est enregistré en métrique : basculer d’une unité à l’autre ne change rien à tes données. Les nouveaux plans commencent à ton premier jour de la semaine ; les plans existants gardent leurs jours.",
+        "3": "Aller aux réglages"
       }
     },
     "backup": {

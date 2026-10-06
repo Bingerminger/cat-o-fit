@@ -77,7 +77,7 @@ deiner Uhr hoch – einzeln oder als ganzen Export (mehr unter
 [Aktivitäten aus Dateien übernehmen](training.md#aktivitäten-aus-dateien-übernehmen)). Sie werden
 direkt im Browser ausgewertet: **Sportart** (aus der Datei; fehlt sie, fragt die App nach),
 **Datum in deiner Zeitzone** (auch beim Neujahrslauf um 0:30 Uhr), **Bewegungszeit** ohne Pausen,
-Distanz, Ø- und Max-Herzfrequenz, **Kilometer-Splits** und – mit deinen HF-Zonen aus den Einstellungen –
+Distanz, Ø- und Max-Herzfrequenz, **Kilometer- und Meilen-Splits** und – mit deinen HF-Zonen aus den Einstellungen –
 die **Zeit in jeder Zone**. Vor dem Speichern siehst du eine Zusammenfassung: Passt eine geplante
 Einheit desselben Tages und derselben Sportart, wird die Aktivität ihr zugeordnet, sonst als freies
 Training gespeichert.

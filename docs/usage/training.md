@@ -395,7 +395,7 @@ Under **Progress → Training** you see at a glance where you stand:
   is due once its day has passed – today’s counts only once you have done it. Absences due to illness
   or injury and protected cycle days do not count. The same calculation appears on the race and
   programme page, in the badges and in the monthly report.
-- **Weekly volume & training load:** **run kilometres** per week and for 7 and 28 days – running only;
+- **Weekly volume & training load:** **running distance** per week and for 7 and 28 days – running only;
   cycling, walking, hiking and swimming do not count here. In addition the **load points** (minutes ×
   effort) across **all sports** – so strength, football, cycling or a practice match count too.
 - **Training year:** a **heatmap** of the last 12 months in GitHub style – weeks × weekdays, the

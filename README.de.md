@@ -32,7 +32,9 @@ Französisch, Spanisch, Italienisch, Portugiesisch und Niederländisch sind masc
 die App geprüft, aber noch nicht von Muttersprachlern gegengelesen – Korrekturen sind sehr willkommen
 ([so hilfst du](CONTRIBUTING.md#translations)). Die Ansagen im Workout sind in jeder Sprache
 aufgenommene Clips, gesprochen von freien synthetischen Stimmen ([Nachweise](CREDITS.md#voice-clips));
-die neuen hat noch keine Muttersprachlerin angehört. Einheiten sind metrisch (imperiale sind geplant).
+die neuen hat noch keine Muttersprachlerin angehört. Maßeinheiten wählt jede Person selbst: Kilometer
+oder Meilen, Kilogramm oder Pfund, °C oder °F, Montag, Samstag oder Sonntag als ersten Wochentag und
+Laborwerte in SI- oder konventionellen Einheiten.
 
 ## Warum Cat-O-Fit?
 

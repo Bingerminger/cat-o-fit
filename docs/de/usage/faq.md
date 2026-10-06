@@ -49,8 +49,16 @@ bleiben auf Deutsch, bis jemand es ändert. Verwaltet ein Admin gerade ein ander
 die Sprache des Admins. Deutsch und Englisch schreibt das Projekt selbst; die anderen fünf sind
 maschinell mit festem Glossar übersetzt und noch nicht von Muttersprachlerinnen und Muttersprachlern
 geprüft – Korrekturen sind sehr willkommen (siehe
-[Stand der Übersetzungsprüfung](../../../locales/REVIEW.md)). Einheiten sind metrisch (Kilometer,
-Kilogramm); imperiale Einheiten sind für Version 4.1 geplant.
+[Stand der Übersetzungsprüfung](../../../locales/REVIEW.md)).
+
+**Gehen auch Meilen, Pfund und °F?** Ja, seit Version 4.1 – jede Person wählt unter
+**Einstellungen → Darstellung → Maßeinheiten**: Kilometer oder Meilen (und min/km oder min/mi),
+Kilogramm oder Pfund (Größe in Zentimetern oder Fuß und Zoll), °C oder °F, den ersten Wochentag und
+Laborwerte in SI- oder konventionellen Einheiten wie mg/dL. Ohne eigene Wahl richtet sich die App nach
+der Region deines Browsers – in den USA Meilen, Pfund, °F, Wochen ab Sonntag und konventionelle
+Laboreinheiten. Gespeichert wird immer metrisch, Umschalten ändert an deinen Daten also nichts; neue
+Pläne beginnen an deinem ersten Wochentag, bestehende behalten ihre Tage. Auch Kalenderdateien und
+der CSV-Export folgen deinen Einheiten.
 
 **Kostet Cat-O-Fit etwas?** Nein – die App ist quelloffen (AGPL-Lizenz) und läuft auf eurer eigenen
 Hardware. Kosten kann nur ein optionaler Zusatzdienst verursachen, etwa die Premium-Stufe von
