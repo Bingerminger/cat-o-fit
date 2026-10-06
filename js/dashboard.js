@@ -6,7 +6,7 @@
 import * as store from './storage.js';
 import {
   el, icon, iconSvg, navigate, typeMeta, typeIcon, fmtKm, fmtPace, fmtDate, todayStr, addDays,
-  diffDays, weekStartMonday, fmtWeekday, sectionHead, isOverdue, toast, infoButton, localizeUnits, fmtKmAuto,
+  diffDays, weekStart, fmtWeekday, sectionHead, isOverdue, toast, infoButton, localizeUnits, fmtKmAuto,
 } from './ui.js';
 import { distanceUnit } from './units.js';
 import { fmtDayMonthNumeric } from './format.js';
@@ -362,7 +362,7 @@ function todayCard(u) {
 }
 
 function weekStrip(today) {
-  const start = weekStartMonday(today);
+  const start = weekStart(today);   // the week as the person counts it (units().weekStart)
   const strip = el('div', { class: 'week-strip' });
   for (let i = 0; i < 7; i++) {
     const date = addDays(start, i);
@@ -383,7 +383,7 @@ function weekStrip(today) {
 }
 
 function weekStats(today) {
-  const start = weekStartMonday(today);
+  const start = weekStart(today);   // same week as the strip above
   const end = addDays(start, 6);
   let planKm = 0, doneCount = 0, planCount = 0;
   store.get('plans').forEach((p) => (p.units || []).forEach((u) => {

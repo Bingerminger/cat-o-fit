@@ -15,7 +15,7 @@
    comes from spreading out the hard stimuli (see rolling.js).
    ========================================================================= */
 
-import { weekStartMonday, addDays, isoDow, localizeUnits as lu } from './ui.js';
+import { blockStart, addDays, isoDow, localizeUnits as lu } from './ui.js';
 import { loadClass, isHard, findMakeupDay, isOpen } from './planflow.js';
 import { weekdayNames } from './format.js';
 
@@ -24,11 +24,15 @@ import { t } from './i18n.js';
 /** Short weekday name; isoDow counts Mon = 1 … Sun = 7, weekdayNames() starts on Sunday. */
 export function dowShort(dateStr) { return weekdayNames()[isoDow(dateStr) % 7] || ''; }
 
-/** Load-relevant, non-missed sessions of the Mon–Sun week of dateStr.
+/** Load-relevant, non-missed sessions of the week of dateStr.
     Moved sessions count TOO: they stand in the plan on the new day and can
-    very well collide there (since v3.16.0, see planflow.js countsToLoad). */
-export function weekUnits(units = [], dateStr) {
-  const ws = weekStartMonday(dateStr), we = addDays(ws, 6);
+    very well collide there (since v3.16.0, see planflow.js countsToLoad).
+    `planStart`: the week is the PLAN week (7 days from plan.startDate) – the generator guarantees a
+    rest day and at most three hard sessions per plan week, so the check must use the same window,
+    also for an older plan that began on a Monday while the person now starts weeks on Sunday.
+    Without it: the person's week. */
+export function weekUnits(units = [], dateStr, planStart = null) {
+  const ws = blockStart(dateStr, planStart), we = addDays(ws, 6);
   return (units || []).filter((u) => u && !u.deleted && u.date >= ws && u.date <= we
     && u.type !== 'rest' && u.status !== 'verpasst');
 }
@@ -50,14 +54,14 @@ export function unitPriority(u) {
  * that touches the lower-priority session (key sessions/fixed commitments stay).
  * @returns {Array<{kind, severity, text, suggest, date?}>}
  */
-export function weekCollisions(units = [], dateStr) {
-  const list = weekUnits(units, dateStr).slice().sort((a, b) => a.date.localeCompare(b.date));
+export function weekCollisions(units = [], dateStr, planStart = null) {
+  const list = weekUnits(units, dateStr, planStart).slice().sort((a, b) => a.date.localeCompare(b.date));
   const out = [];
-  const ws = weekStartMonday(dateStr), we = addDays(ws, 6);
+  const ws = blockStart(dateStr, planStart), we = addDays(ws, 6);
   const inWeek = (d) => d >= ws && d <= we;
 
   // 1) Hard sessions on consecutive days (recovery missing between the stimuli) –
-  //    including the Sunday before and the Monday after: a match on Sunday → training on Monday
+  //    including the day before and the day after the week: a match on Sunday → training on Monday
   //    is the most common collision with club football and used to lie "between" two weeks.
   const ext = (units || []).filter((u) => u && !u.deleted && u.date >= addDays(ws, -1) && u.date <= addDays(we, 1)
     && u.type !== 'rest' && u.status !== 'verpasst').sort((a, b) => a.date.localeCompare(b.date));
@@ -122,9 +126,9 @@ export function weekCollisions(units = [], dateStr) {
  * Compact weekly triage: collisions + sessions ordered by priority
  * (transparent, how the app weighs things in a conflict).
  */
-export function weekTriage(units = [], dateStr) {
-  const list = weekUnits(units, dateStr);
-  const collisions = weekCollisions(units, dateStr);
+export function weekTriage(units = [], dateStr, planStart = null) {
+  const list = weekUnits(units, dateStr, planStart);
+  const collisions = weekCollisions(units, dateStr, planStart);
   const ranked = list.slice().sort((a, b) =>
     PRIORITY_RANK[unitPriority(b)] - PRIORITY_RANK[unitPriority(a)] || a.date.localeCompare(b.date));
   return { collisions, ranked, ok: collisions.length === 0, hardCount: list.filter(isHard).length };

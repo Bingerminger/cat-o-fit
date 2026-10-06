@@ -17,7 +17,7 @@
    Pure, DOM-free logic -> covered by node:test.
    ========================================================================= */
 
-import { uid, addDays, isoDow, nowIso } from './ui.js';
+import { uid, addDays, isoDow, nowIso, nextWeekStart, dateOfDow } from './ui.js';
 
 import { t } from './i18n.js';
 
@@ -221,7 +221,7 @@ export function buildProgramUnits(program, planId, startDate) {
     const cardioMin = Math.max(20, Math.min(90, r5(cardio[w] / cardioBlocks)));
     const phase = phases.find((p) => w >= p.startWeek && w <= p.endWeek) || phases.at(-1);
     for (const { dow, block, extra } of layout) {
-      const date = addDays(weekStart, dow - 1);
+      const date = dateOfDow(weekStart, dow);   // ISO weekday inside this 7-day week, from any first day
       for (const b of [block, ...extra]) {
         const u = blockUnit(b, { meta, week: w, weeks, cardioMin, weekCardio: cardio[w] });
         out.push({
@@ -265,18 +265,13 @@ export function migratePlan(plan) {
 
 export function migratePlans(list = []) { return (list || []).map(migratePlan); }
 
-/** Next Monday from `today` (or today, if it is a Monday). */
-function nextMonday(today) {
-  const dow = isoDow(today);
-  return dow === 1 ? today : addDays(today, 8 - dow);
-}
-
 /**
- * Creates a plan-compatible programme record including sessions.
+ * Creates a plan-compatible programme record including sessions. A new programme begins on the
+ * person's coming first day of the week (Monday by default); a running one keeps its startDate.
  * `program`: { id, name, programType, weeks, daysPerWeek }
  */
 export function createProgramPlan(program, today) {
-  const start = nextMonday(today);
+  const start = nextWeekStart(today);
   const weeks = Math.max(1, program.weeks | 0);
   const planId = uid('plan');
   const units = buildProgramUnits(program, planId, start);

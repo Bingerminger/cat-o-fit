@@ -7,7 +7,7 @@
    same week as a compensation.
    ========================================================================= */
 
-import { weekStartMonday, addDays, diffDays } from './ui.js';
+import { weekStart, addDays, diffDays } from './ui.js';
 
 import { t } from './i18n.js';
 
@@ -35,13 +35,15 @@ export function isOpen(u) {
     && (u.status === 'geplant' || u.status === 'verschoben' || u.status == null);
 }
 
-/** Mon–Sun window of a date. */
+/** Week window of a date as the person counts weeks (units().weekStart; Mon–Sun by default).
+    The person's week, not the ISO week: the session sheet and the coach call it "this week", and
+    new plans begin on the person's first day, so for them it is the plan week as well. */
 export function weekRange(dateStr) {
-  const ws = weekStartMonday(dateStr);
+  const ws = weekStart(dateStr);
   return { ws, we: addDays(ws, 6) };
 }
 
-/** Sessions of the same calendar week (Mon–Sun) as dateStr that count towards the load. */
+/** Sessions of the same calendar week (weekRange) as dateStr that count towards the load. */
 export function unitsInWeek(units = [], dateStr) {
   const { ws, we } = weekRange(dateStr);
   return units.filter((u) => u.date >= ws && u.date <= we && countsToLoad(u));

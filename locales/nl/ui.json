@@ -2957,7 +2957,7 @@
     "dueDone": "geplande trainingen (4 weken) gedaan",
     "consistency": "Regelmaat telt zwaarder dan een enkele topdag.",
     "weeklyVolume": "Weekomvang",
-    "weeklyAxis": "↕ Gelopen {unit} per week · → kalenderweek (ma–zo), laatste 8",
+    "weeklyAxis": "↕ Gelopen {unit} per week · → kalenderweek ({range}), laatste 8",
     "weeklyAria": "Hardloopafstand per week",
     "trainingYear": "Trainingsjaar",
     "hint": {

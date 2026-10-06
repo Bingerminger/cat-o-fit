@@ -6,7 +6,7 @@
 import * as store from './storage.js';
 import {
   el, iconSvg, typeMeta, typeIcon, fmtKm, fmtDuration, fmtDayMonth, todayStr, addDays,
-  diffDays, weekStartMonday, sectionHead, emptyState, fmtNum, fmtInt, fmtDec, localizeUnits,
+  diffDays, weekStart, weekRangeLabel, sectionHead, emptyState, fmtNum, fmtInt, fmtDec, localizeUnits,
 } from './ui.js';
 import { kmToShown, kgToShown, distanceUnit, weightUnit } from './units.js';
 import { setHeader } from './router.js';
@@ -19,6 +19,17 @@ import { planStatus, keyMetrics, activityMatrix, trainingLoad, runKm } from './f
 import { currentEligibility } from './wellness.js';
 
 import { t, tp } from './i18n.js';
+
+/** Running km of the last `n` weeks, oldest first – weeks as the person counts them
+    (units().weekStart), so the bars match the calendar. */
+export function weeklyRunKm(sessions, today, n = 8) {
+  const out = [];
+  for (let i = n - 1; i >= 0; i--) {
+    const ws = weekStart(addDays(today, -i * 7));
+    out.push({ ws, km: runKm(sessions, ws, addDays(ws, 6)) });
+  }
+  return out;
+}
 
 const AMPEL = { gruen: { c: '#2bb673', emoji: '🟢' }, gelb: { c: '#e8a13a', emoji: '🟡' }, rot: { c: '#e5594f', emoji: '🔴' } };
 
@@ -69,14 +80,10 @@ export function render(view) {
 
   /* ---- Weekly volume (last 8 weeks, running only – like "Run km" below) ---- */
   view.appendChild(sectionHead(t('statistics.weeklyVolume')));
-  const weeks = [];
-  for (let i = 7; i >= 0; i--) {
-    const ws = weekStartMonday(addDays(today, -i * 7));
-    const km = runKm(sessions, ws, addDays(ws, 6));
-    weeks.push({ label: t('statistics.weekLabel', { day: parseInt(ws.slice(-2)) }), value: Math.round(kmToShown(km)), ws });
-  }
+  const weeks = weeklyRunKm(sessions, today).map(({ ws, km }) =>
+    ({ label: t('statistics.weekLabel', { day: parseInt(ws.slice(-2)) }), value: Math.round(kmToShown(km)), ws }));
   view.appendChild(el('div', { class: 'card' }, [
-    el('div', { class: 'dim', style: { fontSize: '.74rem', marginBottom: '2px' }, text: t('statistics.weeklyAxis', { unit: distanceUnit() }) }),
+    el('div', { class: 'dim', style: { fontSize: '.74rem', marginBottom: '2px' }, text: t('statistics.weeklyAxis', { unit: distanceUnit(), range: weekRangeLabel() }) }),
     barChart(weeks, { showValues: true, height: 150, yUnit: distanceUnit(), label: t('statistics.weeklyAria') }),
   ]));
 

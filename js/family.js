@@ -9,7 +9,7 @@
 import * as store from './storage.js';
 import {
   el, icon, iconSvg, navigate, diffDays, todayStr, fmtDate,
-  weekStartMonday, addDays, fmtKm, sectionHead,
+  weekStart, addDays, fmtKm, sectionHead,
   fmtDec, fmtInt,
   safeAccent, colorTint,
 } from './ui.js';
@@ -119,7 +119,7 @@ export function render(view) {
 /** Collect the data of all members (active user locally, the rest read-only). */
 async function loadAll(members) {
   const today = todayStr();
-  const weekStart = weekStartMonday(today), weekEnd = addDays(weekStart, 6);
+  const weekFrom = weekStart(today), weekTo = addDays(weekFrom, 6);   // the viewer's week, as on their own pages
   const byId = {}; const buckets = [];
   await Promise.all(members.map(async (m) => {
     const isSelf = m.id === store.activeUserId();
@@ -139,7 +139,7 @@ async function loadAll(members) {
     const stats = computeStats(data, today);
     let weekKm = 0, weekSessions = 0;
     (sessions || []).forEach((s) => {
-      if (s && !s.deleted && s.date >= weekStart && s.date <= weekEnd) { weekKm += s.distanceKm || 0; weekSessions++; }
+      if (s && !s.deleted && s.date >= weekFrom && s.date <= weekTo) { weekKm += s.distanceKm || 0; weekSessions++; }
     });
     const g = nextGoal(events);
     byId[m.id] = {

@@ -17,7 +17,7 @@
    re-exported here so that existing imports from ui.js stay valid. */
 export { APP_NS, scopeKey } from './env.js';
 import { t } from './i18n.js';
-import { paceToShown, paceUnit } from './units.js';
+import { paceToShown, paceUnit, units } from './units.js';
 
 /* -------------------------------------------------------------------------
    DOM helpers
@@ -263,6 +263,7 @@ export function isOverdue(unit, todayString = todayStr()) { return effectiveStat
 import {
   parseDate, fmtWeekday, fmtDate, fmtDateLong, fmtDayMonth, monthName, fmtKm, fmtNum, fmtDec, fmtInt,
   fmtDistance, fmtKmAuto, fmtWeight, fmtWeightDec, fmtHeight, fmtTemp, fmtElevation, localizeUnits,
+  weekdayNames,
 } from './format.js';
 
 export {
@@ -285,8 +286,36 @@ export function diffDays(a, b) {
 }
 /** Weekday 1=Mon .. 7=Sun. */
 export function isoDow(dateStr) { const d = parseDate(dateStr).getDay(); return d === 0 ? 7 : d; }
-/** Monday of the week of a date. */
+/** Monday of the week of a date – the ISO week. What the person sees as "the week" uses weekStart(). */
 export function weekStartMonday(dateStr) { return addDays(dateStr, -(isoDow(dateStr) - 1)); }
+/** First day of the week containing the date, as the person counts weeks
+    (units().weekStart: 0 = Sunday … 6 = Saturday, default Monday). */
+export function weekStart(dateStr) {
+  return addDays(dateStr, -((parseDate(dateStr).getDay() - units().weekStart + 7) % 7));
+}
+/** ISO weekdays (Mon = 1 … Sun = 7) in the order of the person's week – [7, 1, 2, 3, 4, 5, 6] from Sunday. */
+export function weekDows() {
+  const first = units().weekStart || 7;
+  return Array.from({ length: 7 }, (_, i) => ((first - 1 + i) % 7) + 1);
+}
+/** The person's week as short weekday names: "Mon–Sun", "Sun–Sat", "Sat–Fri". */
+export function weekRangeLabel() {
+  const names = weekdayNames(), dows = weekDows();
+  return `${names[dows[0] % 7]}–${names[dows[6] % 7]}`;
+}
+/** Today if it is the person's first day of the week, else the next one – where new plans begin. */
+export function nextWeekStart(today) {
+  const ws = weekStart(today);
+  return ws === today ? today : addDays(ws, 7);
+}
+/** Date of ISO weekday `dow` within the seven days that begin on `start` (any weekday) –
+    places the weekly template of a plan in a plan week, whichever day the plan began on. */
+export function dateOfDow(start, dow) { return addDays(start, (((dow - isoDow(start)) % 7) + 7) % 7); }
+/** First day of the 7-day block containing dateStr, counted from `anchor` (plan week N = the
+    7 days from plan.startDate + 7·(N−1)); without an anchor the person's week. */
+export function blockStart(dateStr, anchor) {
+  return anchor ? addDays(dateStr, -(((diffDays(anchor, dateStr) % 7) + 7) % 7)) : weekStart(dateStr);
+}
 
 /** Seconds -> "m:ss" as they are (e.g. the time of one split). */
 export function fmtMinSec(sec) {

@@ -12,7 +12,7 @@
    ========================================================================= */
 
 import { fmtNum } from './ui.js';
-import { fmtDayMonth, monthNames, weekdayNames, fmtKm, fmtElevation } from './format.js';
+import { fmtDayMonth, monthNames, weekdayNames, fmtKm, fmtElevation, parseDate } from './format.js';
 import { t as tr, tp } from './i18n.js';
 
 const SVGNS = 'http://www.w3.org/2000/svg';
@@ -585,7 +585,7 @@ export function progressRing(pct, opts = {}) {
 /**
  * Activity heatmap in the GitHub contributions style.
  * matrix = { cols: [{ weekStart, days: [{date, minutes, level, future}×7] }] }
- * 7 rows (Mon–Sun) × N columns (weeks). Colour by level (0–4); future = empty.
+ * 7 rows (the person's week, e.g. Mon–Sun) × N columns (weeks). Colour by level (0–4); future = empty.
  * Summary for screen readers, day values on tap/hover (German date).
  */
 export function heatmap(matrix, opts = {}) {
@@ -606,10 +606,12 @@ export function heatmap(matrix, opts = {}) {
     }),
   });
 
-  // Weekday labels (Mon/Wed/Fri)
+  // Weekday labels on rows 1, 3, 5 (Mon/Wed/Fri for a week from Monday) – taken from the matrix,
+  // whose columns begin on the person's first day of the week (fitness.js activityMatrix).
   const dayNames = weekdayNames();
-  [[0, 1], [2, 3], [4, 5]].forEach(([d, wd]) =>
-    svg.appendChild(txt(dayNames[wd], { class: 'chart-axis', x: 0, y: padT + d * (cell + gap) + cell - 1, 'font-size': 9 })));
+  const firstDay = cols.length ? parseDate(cols[0].weekStart).getDay() : 1;
+  [0, 2, 4].forEach((d) =>
+    svg.appendChild(txt(dayNames[(firstDay + d) % 7], { class: 'chart-axis', x: 0, y: padT + d * (cell + gap) + cell - 1, 'font-size': 9 })));
 
   let prevMonth = null;
   cols.forEach((col, c) => {

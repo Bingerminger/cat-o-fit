@@ -12,7 +12,7 @@
    every trifle there (15 min mobility) reported "clearly more demanding".
    ========================================================================= */
 
-import { weekStartMonday, addDays } from './ui.js';
+import { weekStart, addDays } from './ui.js';
 import { sessionRpe, loadMinutes } from './load.js';
 import { isHard } from './planflow.js';
 
@@ -37,7 +37,7 @@ function relevant(units, from, to) {
 }
 
 /** Pairs of hard days directly after each other that touch the week – including
-    the Sunday before and the Monday after (game on Sunday → training on Monday). */
+    the day before and the day after (game on Sunday → training on Monday). */
 function hardPairs(units, ws, we) {
   const hardDays = new Set(relevant(units, addDays(ws, -1), addDays(we, 1)).filter(isHard).map((u) => u.date));
   let n = 0;
@@ -47,10 +47,11 @@ function hardPairs(units, ws, we) {
   return n;
 }
 
-/** Planned figures of the Mon–Sun week of dateStr: load, hard sessions,
-    count, hard consecutive days (across the week boundary). */
+/** Planned figures of the week of dateStr: load, hard sessions,
+    count, hard consecutive days (across the week boundary). The person's week (units().weekStart),
+    like planflow.weekRange – the preview says "this week" in the same sheet as the load offset. */
 export function weekPlan(units = [], dateStr) {
-  const ws = weekStartMonday(dateStr), we = addDays(ws, 6);
+  const ws = weekStart(dateStr), we = addDays(ws, 6);
   const list = relevant(units, ws, we);
   return {
     load: list.reduce((s, u) => s + unitLoad(u), 0),
@@ -85,7 +86,7 @@ export function simulateMove(units = [], unitId, newDate) {
   const u = (units || []).find((x) => x.id === unitId);
   if (!u || !newDate) return null;
   const moved = units.map((x) => (x.id === unitId ? { ...x, date: newDate } : x));
-  const sameWeek = weekStartMonday(u.date) === weekStartMonday(newDate);
+  const sameWeek = weekStart(u.date) === weekStart(newDate);
   const target = { date: newDate, before: weekPlan(units, newDate), after: weekPlan(moved, newDate) };
   target.deltaLoad = target.after.load - target.before.load;
   target.level = classify(target.before, target.after);

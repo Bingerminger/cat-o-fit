@@ -5,7 +5,7 @@
    everything stays testable — `today` is always passed in.
    ========================================================================= */
 
-import { diffDays, fmtPace, weekStartMonday, addDays, typeMeta, fmtDec } from './ui.js';
+import { diffDays, fmtPace, weekStart, addDays, typeMeta, fmtDec } from './ui.js';
 import { weightGoalStatus } from './energy.js';
 import { acwr, sessionLoad, trainingLoad, loadMinutes, RPE_BY_TYPE, FOOTBALL_RPE, footballRpe } from './load.js';
 import { kgToShown, kmToShown, weightUnit, paceUnit, distanceUnit } from './units.js';
@@ -309,7 +309,7 @@ function activityLevel(min) {
 }
 
 /**
- * Builds the week/weekday matrix of the last `weeks` weeks (Mon–Sun per column).
+ * Builds the week/weekday matrix of the last `weeks` weeks (one column per week, from the person's first day of the week).
  * Per day: { date, minutes, level (0–4), future }. Future days: level -1.
  * @returns {{cols: Array<{weekStart:string, days:Array}>, max:number, totalDays:number, activeDays:number}}
  */
@@ -319,7 +319,7 @@ export function activityMatrix({ sessions = [], today, weeks = 53 } = {}) {
     if (!s || s.deleted || !s.date) return;
     perDay[s.date] = (perDay[s.date] || 0) + sessionMinutes(s);
   });
-  const start = addDays(weekStartMonday(today), -(weeks - 1) * 7);
+  const start = addDays(weekStart(today), -(weeks - 1) * 7);
   const cols = [];
   let max = 0, activeDays = 0, totalDays = 0;
   for (let w = 0; w < weeks; w++) {

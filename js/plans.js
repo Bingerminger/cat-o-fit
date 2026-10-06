@@ -14,7 +14,7 @@ import {
   fmtPaceRange, fmtDate, fmtDayMonth, addDays, diffDays, todayStr, parseHms, fmtNum, fmtInt,
   sectionHead, emptyState, toast, confirmDialog, openSheet, closeSheet,
   effectiveStatus, STATUS_META, input, field, segmented,
-  goOrRefresh, actionSheet, localizeUnits, fmtKmAuto,
+  goOrRefresh, actionSheet, localizeUnits, fmtKmAuto, weekDows,
 } from './ui.js';
 import { kmToShown, distanceUnit } from './units.js';
 import { setHeader } from './router.js';
@@ -29,7 +29,7 @@ import { weekTriage } from './triage.js';
 import { estimateVdot, planPaces } from './vdot.js';
 import {
   PLAN_GEN, PLAN_LEVELS, RUN_DAYS, weekTemplateFor, planCommitments, generatePlanUnits, buildWeekUnits,
-  trainingHistory, suggestLevel, levelOf, planWindow, planReadiness, makePhases, coveredFixed, clampDays,
+  trainingHistory, suggestLevel, levelOf, planWindow, planReadiness, racePlanPhases, coveredFixed, clampDays,
   phaseForWeek,
 } from './plangen.js';
 
@@ -38,7 +38,7 @@ import { t, tp } from './i18n.js';
 // Public generator interface remains reachable via plans.js.
 export {
   PLAN_GEN, PLAN_LEVELS, DEFAULT_WEEK_TEMPLATE, RUN_TEMPLATES, TRIATHLON_TEMPLATE, HYROX_TEMPLATE,
-  STRENGTH_FOCUS, makePhases, longRunPeak, supportRunKm, pyramidSegments, alternatingSegments,
+  STRENGTH_FOCUS, makePhases, racePlanPhases, longRunPeak, supportRunKm, pyramidSegments, alternatingSegments,
   distanceEmphasis, buildWeekUnits, generatePlanUnits, planCommitments, planReadiness,
   weekVolumes, volumeConfig, trainingHistory, suggestLevel,
 } from './plangen.js';
@@ -99,7 +99,8 @@ export function createPlanForEvent(event, options = {}) {
     goalTime: event.targetTime, startDate: start, endDate: event.date, weeks,
     level, daysPerWeek, baseLongKm: hist.longKm, baseWeekKm: hist.weekKm,
     paces: pp ? pp.zones : null, paceInfo: paceInfoOf(pp),
-    phases: makePhases(weeks), weekTemplate: weekTemplateFor(sport, daysPerWeek),
+    phases: racePlanPhases(weeks, start, event.date, true), weekTemplate: weekTemplateFor(sport, daysPerWeek),
+    raceDayJoinsTaper: true,   // v4.1: see raceOnlyLastWeek – older plans keep their taper
     // No default appointments: fixed appointments only if they are chosen on creation.
     commitments: Array.isArray(options.commitments) ? options.commitments : [],
     sport, gen: PLAN_GEN,
@@ -129,7 +130,7 @@ export function updatePlanFromToday(plan, event, options = {}) {
   let { weeks, phases } = plan;
   if (incomplete || plan.endDate !== event.date) {
     weeks = Math.max(1, Math.ceil((diffDays(startDate, event.date) + 1) / 7));
-    phases = makePhases(weeks);
+    phases = racePlanPhases(weeks, startDate, event.date, plan.raceDayJoinsTaper);
   }
   const level = PLAN_LEVELS[options.level] ? options.level : levelOf(plan);
   const daysPerWeek = sport === 'run' ? clampDays(options.daysPerWeek || plan.daysPerWeek || 4) : null;
@@ -450,7 +451,7 @@ export function openCommitmentsEditor(plan, event) {
   let matchDur = matchC ? matchC.durationMin : 120;
 
   const dayRow = el('div', { class: 'row', style: { gap: '6px', flexWrap: 'wrap' } });
-  for (let d = 1; d <= 7; d++) {
+  for (const d of weekDows()) {   // in the order of the person's week; the values stay ISO (Mon = 1)
     const chip = el('button', {
       class: `chip ${footballDays.has(d) ? 'chip--accent' : ''}`, type: 'button',
       style: { cursor: 'pointer', minWidth: '40px' }, text: dowLabel(d),
@@ -508,7 +509,7 @@ export function openCommitmentsEditor(plan, event) {
 
 /** Week check (R3): collisions of the current week + transparent prioritisation. */
 function triageCard(plan) {
-  const tri = weekTriage(plan.units || [], todayStr());
+  const tri = weekTriage(plan.units || [], todayStr(), plan.startDate);   // the plan week, see triage.weekUnits
   if (!tri.collisions.length) return null;
   const items = tri.collisions.slice(0, 4).map((c) => el('div', { style: { padding: '6px 0 4px', borderTop: '1px solid var(--border)' } }, [
     el('div', { style: { fontWeight: '650', fontSize: '.82rem' }, text: c.text }),

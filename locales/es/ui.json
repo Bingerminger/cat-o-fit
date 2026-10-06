@@ -2957,7 +2957,7 @@
     "dueDone": "sesiones previstas (4 semanas) completadas",
     "consistency": "La constancia vale más que algún día excepcional.",
     "weeklyVolume": "Volumen semanal",
-    "weeklyAxis": "↕ {unit} corridos por semana · → semana natural (lun–dom), últimas 8",
+    "weeklyAxis": "↕ {unit} corridos por semana · → semana natural ({range}), últimas 8",
     "weeklyAria": "Distancia corrida por semana",
     "trainingYear": "Año de entrenamiento",
     "hint": {

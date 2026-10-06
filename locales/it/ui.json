@@ -2957,7 +2957,7 @@
     "dueDone": "sessioni previste (4 settimane) svolte",
     "consistency": "La costanza conta più del singolo giorno eccezionale.",
     "weeklyVolume": "Volume settimanale",
-    "weeklyAxis": "↕ {unit} corsi a settimana · → settimana di calendario (lun–dom), ultime 8",
+    "weeklyAxis": "↕ {unit} corsi a settimana · → settimana di calendario ({range}), ultime 8",
     "weeklyAria": "Distanza di corsa a settimana",
     "trainingYear": "Anno di allenamento",
     "hint": {

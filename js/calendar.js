@@ -6,7 +6,7 @@
 import * as store from './storage.js';
 import {
   el, icon, iconSvg, navigate, typeMeta, typeIcon, fmtKm, fmtPace, fmtWeekday,
-  todayStr, addDays, parseDate, toDateStr, monthName, weekStartMonday, isoDow,
+  todayStr, addDays, parseDate, toDateStr, monthName, weekStart, weekDows, isoDow,
   segmented, toast, effectiveStatus, confirmDialog, fmtDayMonth, localizeUnits, fmtKmAuto,
 } from './ui.js';
 import { distanceUnit } from './units.js';
@@ -81,7 +81,7 @@ function step(dir) {
 }
 
 function weekLabel(dateStr) {
-  const start = weekStartMonday(dateStr), end = addDays(start, 6);
+  const start = weekStart(dateStr), end = addDays(start, 6);
   const s = parseDate(start), e = parseDate(end);
   return t('calendar.weekRange', { from: s.getDate(), to: e.getDate(), month: monthName(e.getMonth(), false) });
 }
@@ -89,11 +89,11 @@ function weekLabel(dateStr) {
 /* ------------------------------- Month ---------------------------------- */
 function drawMonth(view) {
   const grid = el('div', { class: 'cal-grid' });
-  const dows = weekdayNames();   // Sunday first; the grid starts on Monday
-  [1, 2, 3, 4, 5, 6, 0].forEach((i) => grid.appendChild(el('div', { class: 'cal-grid__dow', text: dows[i] })));
+  const dows = weekdayNames();   // Sunday first; the grid starts on the person's first day of the week
+  weekDows().forEach((d) => grid.appendChild(el('div', { class: 'cal-grid__dow', text: dows[d % 7] })));
 
   const first = firstOfMonth(cursor);
-  const gridStart = weekStartMonday(first);
+  const gridStart = weekStart(first);
   const month = parseDate(cursor).getMonth();
   const today = todayStr();
 
@@ -157,7 +157,7 @@ function legend() {
 
 /* ------------------------------- Week ---------------------------------- */
 function drawWeek(view) {
-  const start = weekStartMonday(cursor);
+  const start = weekStart(cursor);
   const today = todayStr();
   const wrap = el('div', { class: 'cal-week' });
 

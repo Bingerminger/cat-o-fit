@@ -13,7 +13,7 @@
    2007). The race session falls on any weekday, the days before it are eased.
    ========================================================================= */
 
-import { uid, nowIso, typeMeta, fmtNum, fmtMinSec, addDays, isoDow, diffDays, weekStartMonday } from './ui.js';
+import { uid, nowIso, typeMeta, fmtNum, fmtMinSec, addDays, isoDow, diffDays, nextWeekStart, dateOfDow } from './ui.js';
 import { commitmentDates, commitMeta, defaultCommitments } from './commitments.js';
 import { isHard } from './planflow.js';
 
@@ -174,8 +174,27 @@ export function makePhases(weeks) {
   return phases;
 }
 
+/** Does the last plan week hold nothing but race day? That happens when the race falls on the first
+    day of a plan week – typically a Sunday race for a person whose weeks, and so whose new plans,
+    begin on Sunday. Taper and phases then treat race day as the end of the week before.
+    Only for plans created from v4.1 on (`raceDayJoinsTaper`): an older plan whose race falls on its
+    start weekday keeps its taper exactly as it was planned. */
+export function raceOnlyLastWeek(plan) {
+  const weeks = (plan && plan.weeks) | 0;
+  return !!plan.raceDayJoinsTaper && weeks > 1 && !!plan.startDate && !!plan.endDate && diffDays(plan.startDate, plan.endDate) === (weeks - 1) * 7;
+}
+
+/** Phases of a race plan from its start to race day (see raceOnlyLastWeek: in a plan with
+    `joinsTaper`, a race-day-only last week joins the taper instead of shifting every phase by a week). */
+export function racePlanPhases(weeks, startDate, raceDate, joinsTaper = false) {
+  if (!raceOnlyLastWeek({ raceDayJoinsTaper: joinsTaper, weeks, startDate, endDate: raceDate })) return makePhases(weeks);
+  const phases = makePhases(weeks - 1);
+  phases[phases.length - 1].endWeek = weeks;
+  return phases;
+}
+
 function phasesOf(plan) {
-  return Array.isArray(plan.phases) && plan.phases.length ? plan.phases : makePhases(Math.max(1, plan.weeks | 0));
+  return Array.isArray(plan.phases) && plan.phases.length ? plan.phases : racePlanPhases(Math.max(1, plan.weeks | 0), plan.startDate, plan.endDate, plan.raceDayJoinsTaper);
 }
 export function phaseForWeek(plan, week) {
   const phases = phasesOf(plan);
@@ -308,11 +327,11 @@ export function levelOf(plan = {}) {
   return 'fortgeschritten';
 }
 
-/** Plan start (coming Monday, today for a very near race) and number of weeks. */
+/** Plan start (the person's coming first day of the week – Monday unless they chose Saturday or
+    Sunday –, today for a very near race) and number of weeks. Only for NEW plans: an existing plan
+    keeps its startDate and with it its 7-day plan weeks. */
 export function planWindow(eventDate, today) {
-  let start = today;
-  const dow = isoDow(today);
-  if (dow !== 1) start = addDays(today, 8 - dow);
+  let start = nextWeekStart(today);
   if (start >= eventDate) start = today;
   const weeks = Math.max(1, Math.ceil((diffDays(start, eventDate) + 1) / 7));
   return { start, weeks };
@@ -388,6 +407,13 @@ export function volumeConfig(plan = {}, event = {}, pz = {}) {
  * week at the starting volume – so the plan picks up at the current state.
  */
 export function weekVolumes(plan, cfg) {
+  if (raceOnlyLastWeek(plan)) {
+    // The last plan week holds race day only: the taper counts back from the week before it,
+    // and race day keeps the race-week volume (otherwise the peak long run would land 8 days out).
+    const out = weekVolumes({ ...plan, weeks: plan.weeks - 1, endDate: null }, cfg);
+    out.push(out[out.length - 1]);
+    return out;
+  }
   const weeks = Math.max(1, plan.weeks | 0);
   const out = new Array(weeks + 1).fill(null);
   const at = (w, km, extra = {}) => { out[w] = { km: r05(km), deload: false, taper: null, ...extra }; };
@@ -1046,7 +1072,6 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   const alloc = allocate(cfg, info, countRoles(tpl), phase.key);
   const weekStart = addDays(plan.startDate, (week - 1) * 7);
   const weekEnd = addDays(weekStart, 6);
-  const monday = weekStartMonday(weekStart);
   const raceDate = event ? event.date : null;
   const covered = opts.coveredFixed || new Set();
 
@@ -1058,10 +1083,9 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
     commitByDate.get(date).push(commitment);
   }
 
-  const dateOf = (dow) => {
-    const d = addDays(monday, dow - 1);
-    return d < weekStart ? addDays(d, 7) : d;   // plan start in the middle of the week
-  };
+  // The template stays keyed by ISO weekday; each one lands inside this plan week, whichever day
+  // the plan began on (Monday, the person's Sunday/Saturday, or mid-week for a near race).
+  const dateOf = (dow) => dateOfDow(weekStart, dow);
   const usedDates = new Set([...tpl.map((row) => dateOf(row.dow)), ...commitByDate.keys()]);
   const dtr = (date) => (raceDate ? diffDays(date, raceDate) : Infinity);
 
@@ -1092,7 +1116,7 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   // the plan itself would build hard days in a row, the weekly check would criticise its own
   // structure, and the coach would suggest every week to drop exactly the key session.
   const hardCommit = new Set();
-  // Including the Sunday before and the Monday after (match on Sunday → no tempo on Monday).
+  // Including the day before and the day after the week (match on Sunday → no tempo on Monday).
   for (const { date, commitment } of commitmentDates(planCommitments(plan), addDays(weekStart, -1), addDays(weekEnd, 1))) {
     if ((!raceDate || date < raceDate) && isHardCommit(commitment)) hardCommit.add(date);
   }

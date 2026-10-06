@@ -12,7 +12,7 @@
    (monthly km) count everyone. Cycle data never appear here.
    ========================================================================= */
 import { computeStats, evaluateBadges, TRAINING_BADGE_CATS } from './badges.js';
-import { todayStr, addDays, weekStartMonday } from './ui.js';
+import { todayStr, addDays, weekStart } from './ui.js';
 import { acwr, trainingLoad } from './load.js';
 
 const MILESTONES = [50, 100, 250, 500, 750, 1000, 1500, 2000, 3000, 5000];
@@ -48,7 +48,7 @@ export function teamMonthKm(members, today = todayStr()) {
  * Respects `shareMetrics` (hidden members are not shown).
  */
 export function teamWeekActivity(members, today = todayStr()) {
-  const ws = weekStartMonday(today), we = addDays(ws, 6);
+  const ws = weekStart(today), we = addDays(ws, 6);   // the viewer's week: the team card shows it next to their own
   const rows = members
     .filter((m) => m.shareMetrics !== false)
     .map((m) => {

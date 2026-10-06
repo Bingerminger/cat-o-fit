@@ -2957,7 +2957,7 @@
     "dueDone": "séances prévues (4 semaines) réalisées",
     "consistency": "La régularité compte plus que quelques grosses journées.",
     "weeklyVolume": "Volume hebdomadaire",
-    "weeklyAxis": "↕ {unit} de course par semaine · → semaine calendaire (lun.–dim.), 8 dernières",
+    "weeklyAxis": "↕ {unit} de course par semaine · → semaine calendaire ({range}), 8 dernières",
     "weeklyAria": "Distance de course par semaine",
     "trainingYear": "Année d’entraînement",
     "hint": {

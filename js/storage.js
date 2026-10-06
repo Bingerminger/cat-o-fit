@@ -20,7 +20,7 @@ import {
   pushOps, pullChanges, pullAllChanges, serverHas, apiGet, isOnline, onStatus, ping, REACH_TIMEOUT, deleteUserData,
   serverLogin, serverLogout, serverSession, serverSetPin, serverError,
 } from './api-client.js';
-import { uid, nowIso, debounce, todayStr, addDays, weekStartMonday, diffDays, scopeKey } from './ui.js';
+import { uid, nowIso, debounce, todayStr, addDays, weekStart, diffDays, scopeKey } from './ui.js';
 import { sha256Hex } from './sha256.js';
 import { migrateHealth } from './healthdata.js';
 import { migrateLabs } from './labs.js';
@@ -1730,13 +1730,13 @@ export async function seedDemo(today = todayStr()) {
   // the current week + completed sessions are included (otherwise the plan start
   // would only be next week and "Today"/calendar would be empty).
   try {
-    const { createPlanForEvent, generatePlanUnits, makePhases } = await import('./plans.js');
+    const { createPlanForEvent, generatePlanUnits, racePlanPhases } = await import('./plans.js');
     const { defaultCommitments, mkCommit } = await import('./commitments.js');
     const ev = d.self.events[0];
     const plan = createPlanForEvent(ev);
-    const start = addDays(weekStartMonday(today), -14);
+    const start = addDays(weekStart(today), -14);   // a new plan: it begins on the person's first day of the week
     const weeks = Math.max(plan.weeks, Math.ceil((diffDays(start, ev.date) + 1) / 7));
-    const phases = makePhases(weeks);
+    const phases = racePlanPhases(weeks, start, ev.date, plan.raceDayJoinsTaper);
     // Fixed appointments of the demo: Mon/Wed football + Sunday matches from ~2 weeks on – shows
     // configurable appointments, date range and the weekly check (Sat long run → Sun match).
     const commitments = [...defaultCommitments(), mkCommit('match', 7, { fromDate: addDays(today, 12), durationMin: 120 })];

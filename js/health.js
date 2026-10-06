@@ -8,7 +8,7 @@ import * as store from './storage.js';
 import {
   el, icon, iconSvg, uid, nowIso, fmtNum, fmtDayMonth, todayStr, sectionHead,
   emptyState, toast, openSheet, closeSheet, field, input, textarea, navigate, toggle,
-  refreshView, segmented, addDays, weekStartMonday, fmtWeight, fmtWeightDec,
+  refreshView, segmented, addDays, weekStart, fmtWeight, fmtWeightDec,
 } from './ui.js';
 import { kgToShown, weightUnit, toInput, fromInput } from './units.js';
 import { setHeader } from './router.js';
@@ -68,11 +68,11 @@ const RANGES = [
 ];
 const uiState = { range: '1y' };
 
-/** Median per calendar week (Monday as the date) – for long trends (FE-09). */
+/** Median per calendar week (the person's first day of the week as the date) – for long trends (FE-09). */
 export function weeklyMedian(points) {
   const byWeek = new Map();
   points.forEach((p) => {
-    const w = weekStartMonday(p.date);
+    const w = weekStart(p.date);
     if (!byWeek.has(w)) byWeek.set(w, []);
     byWeek.get(w).push(p.value);
   });

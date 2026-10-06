@@ -2957,7 +2957,7 @@
     "dueDone": "fällige Einheiten (4 Wochen) erledigt",
     "consistency": "Konsistenz zählt mehr als einzelne Top-Tage.",
     "weeklyVolume": "Wochenumfang",
-    "weeklyAxis": "↕ Lauf-{unit} pro Woche · → Kalenderwoche (Mo–So), letzte 8",
+    "weeklyAxis": "↕ Lauf-{unit} pro Woche · → Kalenderwoche ({range}), letzte 8",
     "weeklyAria": "Laufstrecke pro Woche",
     "trainingYear": "Trainingsjahr",
     "hint": {

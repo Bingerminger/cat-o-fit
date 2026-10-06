@@ -2957,7 +2957,7 @@
     "dueDone": "due sessions (4 weeks) done",
     "consistency": "Consistency counts for more than the odd big day.",
     "weeklyVolume": "Weekly volume",
-    "weeklyAxis": "↕ Run {unit} per week · → calendar week (Mon–Sun), last 8",
+    "weeklyAxis": "↕ Run {unit} per week · → calendar week ({range}), last 8",
     "weeklyAria": "Running distance per week",
     "trainingYear": "Training year",
     "hint": {

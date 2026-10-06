@@ -8,7 +8,7 @@
    list sits client-side in LocalStorage (the celebration does not need to sync).
    ========================================================================= */
 
-import { diffDays, todayStr, addDays, typeMeta, el, iconSvg, sectionHead, fmtNum, weekStartMonday, fmtKm } from './ui.js';
+import { diffDays, todayStr, addDays, typeMeta, el, iconSvg, sectionHead, fmtNum, weekStart, fmtKm } from './ui.js';
 import { kmToShown, distanceUnit } from './units.js';
 import { lsGet, lsSet } from './env.js';
 import { locale, t, tp } from './i18n.js';
@@ -48,7 +48,7 @@ export function illnessDays(plans = [], today, days = 60) {
 }
 
 /**
- * Weekly streak: consecutive calendar weeks (Mon–Sun) with at least `minDays`
+ * Weekly streak: consecutive calendar weeks (the person's week, units().weekStart) with at least `minDays`
  * training days. The current week counts as soon as it reaches the goal – while
  * it is still running, it does not break the streak. Rest days preserve the streak: what is
  * rewarded is regularity, not training without a break (previously "days in a row" counted, and the
@@ -61,7 +61,7 @@ export function weekStreak({ sessions = [], plans = [] } = {}, today = todayStr(
   (plans || []).forEach((p) => ((p && p.units) || []).forEach((u) => { if (isHealthMiss(u)) sick.add(u.date); }));
   const count = (ws) => { let n = 0; for (let i = 0; i < 7; i++) if (active.has(addDays(ws, i))) n++; return n; };
   const hasSick = (ws) => { for (let i = 0; i < 7; i++) if (sick.has(addDays(ws, i))) return true; return false; };
-  let ws = weekStartMonday(today);
+  let ws = weekStart(today);
   let streak = count(ws) >= minDays ? 1 : 0;
   for (let guard = 0; guard < 520; guard++) {
     ws = addDays(ws, -7);
@@ -288,7 +288,7 @@ export function momentum(data, today = todayStr()) {
   const perWeek = new Map();
   activeDateSet(sessions, plans).forEach((d) => {
     if (!windowDays.has(d)) return;
-    const ws = weekStartMonday(d);
+    const ws = weekStart(d);   // capped per week as the person counts weeks, like the streak
     perWeek.set(ws, (perWeek.get(ws) || 0) + 1);
   });
   let activeDays = 0;

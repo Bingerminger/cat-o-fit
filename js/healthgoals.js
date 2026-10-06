@@ -8,7 +8,7 @@
    Pure, DOM-free logic -> covered by node:test.
    ========================================================================= */
 
-import { weekStartMonday, addDays } from './ui.js';
+import { weekStart, addDays } from './ui.js';
 import { sessionMinutes } from './fitness.js';
 import { weightNow, weightGoalStatus } from './energy.js';
 
@@ -25,9 +25,9 @@ export function weeklyGoals(profile = {}) {
   };
 }
 
-/** Active minutes and training days of the current week (Mon–Sun around `today`). */
+/** Active minutes and training days of the current week (the person's week around `today`, units().weekStart). */
 export function weekActivity(sessions = [], today) {
-  const ws = weekStartMonday(today);
+  const ws = weekStart(today);
   const we = addDays(ws, 6);
   let minutes = 0;
   const days = new Set();
