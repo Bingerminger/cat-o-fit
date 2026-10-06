@@ -5,10 +5,16 @@
    (format.* in ui.json), so every browser shows exactly the same text –
    Intl's names differ between engines and contexts ("Sa." vs "Sa",
    "Jul" vs "Juli"). Intl only fills in when a catalog is missing.
-   Numbers use the separators Intl reports for the language. Units stay metric.
+   Numbers use the separators Intl reports for the language. Distances, paces,
+   weights, heights, temperatures and elevations follow the person's units
+   (units.js) – the values passed in are always metric.
    ========================================================================= */
 
 import { locale, t, tList, has } from './i18n.js';
+import {
+  kmToShown, kgToShown, celsiusToShown, metresToShown, cmToFeetInches, units,
+  distanceUnit, weightUnit, temperatureUnit, elevationUnit, KM_PER_MI,
+} from './units.js';
 
 /** "YYYY-MM-DD" -> local Date (no time-zone shift). */
 export function parseDate(str) {
@@ -82,9 +88,55 @@ export function decimalSeparator() {
   return decimalSeps.get(l);
 }
 
+/** Distance from kilometres in the person's unit: "21,1 km" / "13.1 mi". */
 export function fmtKm(km, digits = 1) {
   if (km == null) return '–';
-  return Number(km).toFixed(digits).replace('.', decimalSeparator()) + ' km';
+  return Number(kmToShown(Number(km))).toFixed(digits).replace('.', decimalSeparator()) + ' ' + distanceUnit();
+}
+export const fmtDistance = fmtKm;
+/** Body weight from kilograms: "72,4 kg" / "159.6 lb". */
+export function fmtWeight(kg, digits = 1) {
+  if (kg == null || Number.isNaN(Number(kg))) return '–';
+  return Number(kgToShown(Number(kg))).toFixed(digits).replace('.', decimalSeparator()) + ' ' + weightUnit();
+}
+/** Height from centimetres: "180 cm" / "5′ 11″". */
+export function fmtHeight(cm) {
+  if (cm == null || Number.isNaN(Number(cm))) return '–';
+  if (units().weight !== 'lb') return `${Math.round(Number(cm))} cm`;
+  const h = cmToFeetInches(Number(cm));
+  return `${h.ft}′ ${h.in}″`;
+}
+/** Temperature from °C, whole degrees: "21 °C" / "70 °F". */
+export function fmtTemp(c) {
+  if (c == null || Number.isNaN(Number(c))) return '–';
+  return `${Math.round(celsiusToShown(Number(c)))} ${temperatureUnit()}`;
+}
+/** Elevation from metres, whole: "120 m" / "394 ft". */
+export function fmtElevation(m) {
+  if (m == null || Number.isNaN(Number(m))) return '–';
+  return `${fmtInt(Math.round(metresToShown(Number(m))))} ${elevationUnit()}`;
+}
+
+/* Generated plan texts are stored with metric amounts ("Long run 18 km", "6×1 km at 4:45/km").
+   For a person on miles they are converted when shown; metre intervals (track) stay. */
+const PACE_IN_TEXT = /(\d{1,2}:\d{2})(?:(\s?[–-]\s?)(\d{1,2}:\d{2}))?(\s?(?:min)?\s?)\/\s?km\b/g;
+const KM_IN_TEXT = /(\d+(?:[.,]\d+)?)(\s?| )km\b(?!\/h)/g;
+const perMile = (mss) => {
+  const [m, s] = mss.split(':').map(Number);
+  const sec = Math.round((m * 60 + s) * KM_PER_MI);
+  return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+};
+export function localizeUnits(text) {
+  if (typeof text !== 'string' || units().distance !== 'mi') return text;
+  return text
+    .replace(PACE_IN_TEXT, (_, a, dash, b, gap) => `${perMile(a)}${b ? dash + perMile(b) : ''}${gap}/mi`)
+    .replace(KM_IN_TEXT, (_, n, gap) => {
+      const km = Number(n.replace(',', '.'));
+      const mi = km / KM_PER_MI;
+      // Long distances to a tenth, short ones to a hundredth ("0.62 mi" for 1 km).
+      const digits = mi >= 3 ? 1 : 2;
+      return `${mi.toFixed(digits).replace(/\.?0+$/, '').replace('.', decimalSeparator())}${gap}mi`;
+    });
 }
 export function fmtNum(n, digits = 1) {
   if (n == null || Number.isNaN(n)) return '–';

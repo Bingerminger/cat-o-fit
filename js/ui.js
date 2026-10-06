@@ -17,6 +17,7 @@
    re-exported here so that existing imports from ui.js stay valid. */
 export { APP_NS, scopeKey } from './env.js';
 import { t } from './i18n.js';
+import { paceToShown, paceUnit } from './units.js';
 
 /* -------------------------------------------------------------------------
    DOM helpers
@@ -28,7 +29,7 @@ import { t } from './i18n.js';
  * number and unit ("72.4 kg" never wraps between 72.4 and kg). Display
  * only – stored values, CSV tables and calendars stay unchanged.
  */
-const UNIT_GAP = /(\d) (?=(?:kcal|km|kg|kJ|bpm|min|Hm|mmol|µmol|nmol|pmol|mg|µg|ng|pg|mU|ml|ms|Wdh\.|°C|IE|g|l|m|s|h|U|%|W)(?![\p{L}\d]))/gu;
+const UNIT_GAP = /(\d) (?=(?:kcal|km|kg|kJ|bpm|min|mi|lb|ft|°F|mg\/dL|Hm|mmol|µmol|nmol|pmol|mg|µg|ng|pg|mU|ml|ms|Wdh\.|°C|IE|g|l|m|s|h|U|%|W)(?![\p{L}\d]))/gu;
 export function keepUnits(text) {
   return typeof text === 'string' && text.includes(' ') ? text.replace(UNIT_GAP, '$1\u00a0') : text;
 }
@@ -261,10 +262,12 @@ export function isOverdue(unit, todayString = todayStr()) { return effectiveStat
    ------------------------------------------------------------------------- */
 import {
   parseDate, fmtWeekday, fmtDate, fmtDateLong, fmtDayMonth, monthName, fmtKm, fmtNum, fmtDec, fmtInt,
+  fmtDistance, fmtWeight, fmtHeight, fmtTemp, fmtElevation, localizeUnits,
 } from './format.js';
 
 export {
   parseDate, fmtWeekday, fmtDate, fmtDateLong, fmtDayMonth, monthName, fmtKm, fmtNum, fmtDec, fmtInt,
+  fmtDistance, fmtWeight, fmtHeight, fmtTemp, fmtElevation, localizeUnits,
 };
 
 /** Date -> "YYYY-MM-DD" (local). */
@@ -285,16 +288,19 @@ export function isoDow(dateStr) { const d = parseDate(dateStr).getDay(); return 
 /** Monday of the week of a date. */
 export function weekStartMonday(dateStr) { return addDays(dateStr, -(isoDow(dateStr) - 1)); }
 
-/** Seconds/km -> "m:ss". */
-export function fmtPace(sec) {
+/** Seconds -> "m:ss" as they are (e.g. the time of one split). */
+export function fmtMinSec(sec) {
   if (!sec || sec <= 0) return '–';
   const s = Math.round(sec);
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 }
+/** Pace from seconds per km in the person's unit -> "m:ss" (per km or per mile). */
+export function fmtPace(secPerKm) { return fmtMinSec(paceToShown(secPerKm)); }
+/** Pace range with its unit: "5:20–5:34 min/km" / "8:35–8:57 min/mi". */
 export function fmtPaceRange(min, max) {
   if (!min) return '–';
-  if (!max || max === min) return `${fmtPace(min)} min/km`;
-  return `${fmtPace(min)}–${fmtPace(max)} min/km`;
+  if (!max || max === min) return `${fmtPace(min)} ${paceUnit()}`;
+  return `${fmtPace(min)}–${fmtPace(max)} ${paceUnit()}`;
 }
 /** Seconds -> "M:SS" or "H:MM:SS". */
 export function fmtDuration(sec) {

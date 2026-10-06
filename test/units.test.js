@@ -69,3 +69,30 @@ test('the person: own settings first, else the region; saved once for the server
     if (original) Object.defineProperty(globalThis, 'navigator', original); else delete globalThis.navigator;
   }
 });
+
+test('formatting follows the units: distance, pace, weight, height, temperature, elevation', async () => {
+  const { fmtKm, fmtWeight, fmtHeight, fmtTemp, fmtElevation } = await import('../js/format.js');
+  const { fmtPace, fmtPaceRange, fmtMinSec } = await import('../js/ui.js');
+  assert.equal(fmtKm(21.0975, 1), '21,1 km');
+  assert.equal(fmtPaceRange(300, 320), '5:00–5:20 min/km');
+  assert.equal(fmtWeight(72.4), '72,4 kg');
+  assert.equal(fmtHeight(180), '180 cm');
+  assert.equal(fmtTemp(21.4), '21 °C');
+  setUnits({ distance: 'mi', weight: 'lb', temperature: 'f' });
+  assert.equal(fmtKm(21.0975, 1), '13,1 mi');
+  assert.equal(fmtPace(300), '8:03');
+  assert.equal(fmtPaceRange(300, 320), '8:03–8:35 min/mi');
+  assert.equal(fmtMinSec(300), '5:00', 'a split time is shown as it is');
+  assert.equal(fmtWeight(72.4), '159,6 lb');
+  assert.equal(fmtHeight(180), '5′ 11″');
+  assert.equal(fmtTemp(21.4), '71 °F');
+  assert.equal(fmtElevation(100), '328 ft');
+});
+
+test('generated plan texts: km and paces converted for miles, metre intervals and km/h untouched', async () => {
+  const { localizeUnits } = await import('../js/format.js');
+  const text = 'Long run 18 km at 5:20–5:34 min/km, then 6×800 m and 4×1 km at 4:45/km (bike 25 km/h)';
+  assert.equal(localizeUnits(text), text, 'metric: unchanged');
+  setUnits({ distance: 'mi' });
+  assert.equal(localizeUnits(text), 'Long run 11,2 mi at 8:35–8:58 min/mi, then 6×800 m and 4×0,62 mi at 7:39/mi (bike 25 km/h)');
+});
