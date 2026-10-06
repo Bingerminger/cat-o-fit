@@ -54,7 +54,8 @@ die neuen hat noch keine Muttersprachlerin angehört. Einheiten sind metrisch (i
   sportlichen Zielkorridor und eine Einschätzung der Energieversorgung.
 - **Die Küche gehört dazu.** Rezepte, Kalorienbilanz, Ess-Tagebuch mit Strichcode-Suche und eine
   gemeinsame Einkaufsliste mit Vorrat.
-- **Wirklich deins.** JSON-Dateien auf deinem Server, Export als Tabelle, offline-fähig auf jedem
+- **Wirklich deins.** JSON-Dateien auf deinem Server, Export als Tabelle und Import deines
+  Krafttraining-Verlaufs aus Strong, Hevy oder FitNotes, offline-fähig auf jedem
   Gerät, keine Abhängigkeiten, kein Build-Schritt, keine Datenbank, über 850 automatisierte Tests,
   AGPL-3.0-or-later.
 
@@ -111,7 +112,7 @@ die Zeile Krafttraining: 3. Oktober 2026), aus der Dokumentation, den Preisseite
 | <sub>Open Source (OSI-anerkannte Lizenz)</sub> | <sub>✅ AGPL</sub> | <sub>❌</sub> | <sub>✅ AGPL</sub> | <sub>✅ AGPL</sub> | <sub>✅ AGPL</sub> | <sub>❌</sub> | <sub>❌</sub> | <sub>❌</sub> |
 | <sub>Ohne Abo, ohne Werbung</sub> | <sub>✅</sub> | <sub>✅</sub> | <sub>✅</sub> | <sub>✅</sub> | <sub>✅</sub> | <sub>🟡</sub> | <sub>🟡</sub> | <sub>🟡 Werbung</sub> |
 | <sub>Wettkampf&shy;pläne, die sich anpassen</sub> | <sub>⭐</sub> | <sub>❌</sub> | <sub>❌</sub> | <sub>❌</sub> | <sub>❌</sub> | <sub>✅ mit Uhr</sub> | <sub>💰 Runna</sub> | <sub>❌</sub> |
-| <sub>Krafttraining: Übungs&shy;bibliothek, Sätze, Steige&shy;rung</sub> | <sub>✅ animiert, mit Musik</sub> | <sub>✅ geführt + Steige&shy;rung</sub> | <sub>✅ Steige&shy;rung</sub> | <sub>❌</sub> | <sub>⭐ größte Biblio&shy;thek</sub> | <sub>✅ mit Uhr</sub> | <sub>💰 Runna</sub> | <sub>🟡 nur Protokoll</sub> |
+| <sub>Krafttraining: Übungs&shy;bibliothek, Sätze, Steige&shy;rung</sub> | <sub>✅ animiert, mit Musik, Import aus Strong/&shy;Hevy</sub> | <sub>✅ geführt + Steige&shy;rung</sub> | <sub>✅ Steige&shy;rung</sub> | <sub>❌</sub> | <sub>⭐ größte Biblio&shy;thek</sub> | <sub>✅ mit Uhr</sub> | <sub>💰 Runna</sub> | <sub>🟡 nur Protokoll</sub> |
 | <sub>Belastungs&shy;steuerung mit einer Tages&shy;empfehlung</sub> | <sub>⭐ alle Sport&shy;arten</sub> | <sub>🟡 von der Uhr</sub> | <sub>❌</sub> | <sub>❌</sub> | <sub>🟡 Muskel&shy;karte</sub> | <sub>✅ mit Uhr</sub> | <sub>💰</sub> | <sub>❌</sub> |
 | <sub>Familie und Teams: Rollen, für andere planen, gemeinsames Dashboard</sub> | <sub>⭐ bis zu 32 Personen</sub> | <sub>✅ 7 Rechte</sub> | <sub>🟡 Trainer im Studio</sub> | <sub>🟡 Follower</sub> | <sub>🟡 Profile + Admin-Ansicht</sub> | <sub>🟡 Garmin Jr.</sub> | <sub>🟡 Familien&shy;abo</sub> | <sub>🟡 Tagebuch teilen</sub> |
 | <sub>Zyklus&shy;bewusstes Training</sub> | <sub>✅</sub> | <sub>🟡 Erfas&shy;sung + Tipps</sub> | <sub>❌</sub> | <sub>❌</sub> | <sub>❌</sub> | <sub>🟡 Erfas&shy;sung + Tipps</sub> | <sub>❌</sub> | <sub>❌</sub> |
@@ -133,8 +134,9 @@ die Zeile Krafttraining: 3. Oktober 2026), aus der Dokumentation, den Preisseite
   Kurzbefehl), Android Health Connect (über eine Brücken-App) sowie GPX-, TCX- und FIT-Dateien oder den
   ganzen Garmin- bzw. Strava-Export – eine direkte Verbindung zur Garmin- oder Strava-Cloud gibt es
   nicht. Die App ist eine installierbare Web-App, keine App aus dem Store. Krafttraining: 93 animierte
-  Übungen, Sätze mit Wiederholungen und Gewicht samt Hinweis für den nächsten Schritt, und ganze
-  Einheiten, die mit Musik im Takt und Ansagen von selbst durchlaufen.
+  Übungen, Sätze mit Wiederholungen und Gewicht samt Hinweis für den nächsten Schritt, ganze Einheiten,
+  die mit Musik im Takt und aufgenommenen Ansagen in sieben Sprachen von selbst durchlaufen, und ein
+  Import deines Verlaufs aus Strong, Hevy oder FitNotes (CSV). Eine öffentliche Demo läuft im Browser.
 - **Freie Messwerte** heißt: selbst benannte Messgrößen ohne Referenzbereich.
 - **SparkyFitness** nennt seine Lizenz selbst „source-available, not open source“; kommerzielle Nutzung
   nur mit Erlaubnis. Bereitschaft und Belastung übernimmt es von Garmin, Polar oder Oura; die

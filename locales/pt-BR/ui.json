@@ -3418,7 +3418,7 @@
     "memberAdded": "Integrante adicionado – o PIN inicial é 0000, e o app lembra a pessoa de escolher o próprio PIN ao entrar",
     "name": "Nome",
     "role": "Função",
-    "pinHint": "🔒 O PIN inicial é 0000. A pessoa escolhe o próprio PIN ao entrar (Configurações → Alterar PIN).",
+    "pinHint": "🔒 O PIN inicial é 0000. A pessoa escolhe o próprio PIN ao entrar (Configurações → Conta → Alterar PIN).",
     "removeMemberTitle": "Remover integrante?",
     "removeConfirm": "Remover definitivamente",
     "remove": "Remover",

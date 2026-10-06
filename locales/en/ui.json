@@ -3418,7 +3418,7 @@
     "memberAdded": "Member added – the starting PIN is 0000, and the app reminds them to choose their own when they sign in",
     "name": "Name",
     "role": "Role",
-    "pinHint": "🔒 The starting PIN is 0000. The member chooses their own when signing in (Settings → Change PIN).",
+    "pinHint": "🔒 The starting PIN is 0000. The member chooses their own when signing in (Settings → Account → Change PIN).",
     "removeMemberTitle": "Remove member?",
     "removeConfirm": "Remove for good",
     "remove": "Remove",

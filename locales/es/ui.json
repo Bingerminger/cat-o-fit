@@ -3418,7 +3418,7 @@
     "memberAdded": "Miembro añadido: el PIN inicial es 0000 y la app le recordará que elija el suyo al iniciar sesión",
     "name": "Nombre",
     "role": "Rol",
-    "pinHint": "🔒 El PIN inicial es 0000. Cada miembro elige el suyo al iniciar sesión (Ajustes → Cambiar PIN).",
+    "pinHint": "🔒 El PIN inicial es 0000. Cada miembro elige el suyo al iniciar sesión (Ajustes → Cuenta → Cambiar PIN).",
     "removeMemberTitle": "¿Eliminar al miembro?",
     "removeConfirm": "Eliminar definitivamente",
     "remove": "Eliminar",

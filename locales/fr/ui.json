@@ -3418,7 +3418,7 @@
     "memberAdded": "Membre ajouté – le code PIN de départ est 0000, et l’app lui rappellera d’en choisir un à sa connexion",
     "name": "Nom",
     "role": "Rôle",
-    "pinHint": "🔒 Le code PIN de départ est 0000. Le membre choisit le sien à sa connexion (Réglages → Changer le code PIN).",
+    "pinHint": "🔒 Le code PIN de départ est 0000. Le membre choisit le sien à sa connexion (Réglages → Compte → Changer le code PIN).",
     "removeMemberTitle": "Retirer le membre ?",
     "removeConfirm": "Retirer définitivement",
     "remove": "Retirer",

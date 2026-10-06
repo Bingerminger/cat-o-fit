@@ -53,7 +53,8 @@ metric (imperial is planned).
   and an energy-availability estimate – for documentation and general information, not diagnosis.
 - **Kitchen included.** Recipes, calorie balance, a food diary with barcode lookup and a shared shopping
   list with pantry.
-- **Truly yours.** JSON files on your own server, CSV export, offline-first on every device, zero
+- **Truly yours.** JSON files on your own server, CSV export and an import of your strength history
+  from Strong, Hevy or FitNotes, offline-first on every device, zero
   dependencies, no build step, no database, 850+ automated tests, AGPL-3.0-or-later.
 
 <div align="center">
@@ -101,7 +102,7 @@ strength-training row: 3 October 2026), taken from each product's own documentat
 | <sub>Open source (OSI-approved license)</sub> | <sub>✅ AGPL</sub> | <sub>❌</sub> | <sub>✅ AGPL</sub> | <sub>✅ AGPL</sub> | <sub>✅ AGPL</sub> | <sub>❌</sub> | <sub>❌</sub> | <sub>❌</sub> |
 | <sub>No subscription, no ads</sub> | <sub>✅</sub> | <sub>✅</sub> | <sub>✅</sub> | <sub>✅</sub> | <sub>✅</sub> | <sub>🟡</sub> | <sub>🟡</sub> | <sub>🟡 ads</sub> |
 | <sub>Race plans that adapt</sub> | <sub>⭐</sub> | <sub>❌</sub> | <sub>❌</sub> | <sub>❌</sub> | <sub>❌</sub> | <sub>✅ with watch</sub> | <sub>💰 Runna</sub> | <sub>❌</sub> |
-| <sub>Strength training: exercise library, sets, pro&shy;gression</sub> | <sub>✅ 93 animated, with music</sub> | <sub>✅ guided + pro&shy;gression</sub> | <sub>✅ pro&shy;gression rules</sub> | <sub>❌</sub> | <sub>⭐ 1,324 exercises</sub> | <sub>✅ with watch</sub> | <sub>💰 Runna</sub> | <sub>🟡 logging</sub> |
+| <sub>Strength training: exercise library, sets, pro&shy;gression</sub> | <sub>✅ 93 animated, with music, import from Strong/&shy;Hevy</sub> | <sub>✅ guided + pro&shy;gression</sub> | <sub>✅ pro&shy;gression rules</sub> | <sub>❌</sub> | <sub>⭐ 1,324 exercises</sub> | <sub>✅ with watch</sub> | <sub>💰 Runna</sub> | <sub>🟡 logging</sub> |
 | <sub>Load manage&shy;ment with one daily recom&shy;mendation</sub> | <sub>⭐ all sports</sub> | <sub>🟡 from wearables</sub> | <sub>❌</sub> | <sub>❌</sub> | <sub>🟡 muscle map</sub> | <sub>✅ with watch</sub> | <sub>💰</sub> | <sub>❌</sub> |
 | <sub>Family and teams: roles, planning for others, shared dashboard</sub> | <sub>⭐ up to 32 people</sub> | <sub>✅ 7 permissions</sub> | <sub>🟡 gym trainers</sub> | <sub>🟡 followers</sub> | <sub>🟡 profiles + admin view</sub> | <sub>🟡 Garmin Jr.</sub> | <sub>🟡 family plan</sub> | <sub>🟡 diary sharing</sub> |
 | <sub>Cycle-aware training</sub> | <sub>✅</sub> | <sub>🟡 tracking + tips</sub> | <sub>❌</sub> | <sub>❌</sub> | <sub>❌</sub> | <sub>🟡 tracking + tips</sub> | <sub>❌</sub> | <sub>❌</sub> |
@@ -122,8 +123,9 @@ strength-training row: 3 October 2026), taken from each product's own documentat
   Wearable data arrives via Apple Health (automatic with a free Shortcut), Android Health Connect (via a
   bridge app) and GPX/TCX/FIT files or complete Garmin/Strava exports – there is no direct connection to
   the Garmin or Strava cloud. The app is an installable web app, not an app-store app. Strength
-  training: 93 animated exercises, sets with reps and weight plus a hint for the next step, and whole
-  sessions that play hands-free with music on the beat and voice cues.
+  training: 93 animated exercises, sets with reps and weight plus a hint for the next step, whole
+  sessions that play hands-free with music on the beat and recorded voice cues in seven languages, and
+  an import of your history from Strong, Hevy or FitNotes (CSV). A public demo runs in the browser.
 - **Free-form** lab values means custom measurements you name yourself, without reference ranges.
 - **SparkyFitness** describes its license as “source-available, not open source”; commercial use needs
   permission. Readiness and load values come from Garmin, Polar or Oura; family sharing is in beta. Its

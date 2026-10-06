@@ -3418,7 +3418,7 @@
     "memberAdded": "Lid toegevoegd – de start-pincode is 0000, en de app herinnert eraan om bij het aanmelden een eigen pincode te kiezen",
     "name": "Naam",
     "role": "Rol",
-    "pinHint": "🔒 De start-pincode is 0000. Het lid kiest bij het aanmelden een eigen pincode (Instellingen → Pincode wijzigen).",
+    "pinHint": "🔒 De start-pincode is 0000. Het lid kiest bij het aanmelden een eigen pincode (Instellingen → Account → Pincode wijzigen).",
     "removeMemberTitle": "Lid verwijderen?",
     "removeConfirm": "Definitief verwijderen",
     "remove": "Verwijderen",
