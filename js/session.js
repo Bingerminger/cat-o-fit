@@ -14,7 +14,9 @@ import {
   refreshView, goOrRefresh,
   fmtDec, fmtNum, fmtMinSec, fmtTemp, fmtElevation, localizeUnits, fmtKmAuto,
 } from './ui.js';
-import { units, kmToShown, kgToShown, celsiusToShown, distanceUnit, paceUnit, weightUnit } from './units.js';
+import {
+  units, kmToShown, kgToShown, celsiusToShown, distanceUnit, paceUnit, weightUnit, toInput, fromInput, paceFromInput,
+} from './units.js';
 import { sessionLoad, sessionRpeInfo, loadMinutes } from './load.js';
 import { findUnit, saveUnitPatch, completeUnit, linkSession, nextFreeDay, MISSED_REASONS } from './unit-actions.js';
 import { setHeader } from './router.js';
@@ -354,11 +356,19 @@ function renderEvaluation(view, plan, unit, ex) {
 }
 
 /* ------------------------------ Logging -------------------------------- */
+/** Distance field in the person's unit (km or mi), filled from stored kilometres; read back with
+    fromInput(…, 'distance', km). */
+function distanceInput(km, attrs = {}) {
+  const mi = distanceUnit() === 'mi';
+  return input({ type: 'number', step: mi ? '0.01' : '0.1', inputmode: 'decimal', value: toInput(km, 'distance'), placeholder: distanceUnit(), ...attrs });
+}
+
 function openLogSheet(plan, unit, existing = null, prefill = null) {
   const ex = existing || {};
   // After a continuous session (workout-show.js) the actual duration is already known.
   const pre = !existing && prefill && Number(prefill.durationSec) > 0 ? Number(prefill.durationSec) : 0;
-  const distI = input({ type: 'number', step: '0.1', min: '0', inputmode: 'decimal', value: ex.distanceKm ?? unit?.targetDistanceKm ?? '', placeholder: 'km' });
+  const storedKm = ex.distanceKm ?? unit?.targetDistanceKm ?? null;
+  const distI = distanceInput(storedKm, { min: '0' });
   // New entry: duration prefilled with the planned duration – without a duration every
   // session counted with 30 minutes towards the load (90 min of football thus only a third).
   const plannedMin = !existing && Number(unit?.targetDurationMin) > 0 ? Number(unit.targetDurationMin) : '';
@@ -379,7 +389,7 @@ function openLogSheet(plan, unit, existing = null, prefill = null) {
   const isRun = cat === 'run';
   const showHr = isRun || cat === 'cross';
   const rows = [];
-  if (isRun) rows.push(field(t('session.distanceKm'), distI));
+  if (isRun) rows.push(field(t('session.distanceKm', { unit: distanceUnit() }), distI));
   rows.push(field(t('session.duration'), dur.node));
   if (showHr) rows.push(el('div', { class: 'field__row' }, [field(t('session.avgHr'), avgI), field(t('session.maxHr'), maxI)]));
   rows.push(field(t('session.effortRpe'), rpeEl));
@@ -396,7 +406,7 @@ function openLogSheet(plan, unit, existing = null, prefill = null) {
         class: 'btn btn--primary grow', text: t('session.save'),
         onclick: () => {
           // Keep it plausible: no negative values, seconds 0–59, HR 30–230.
-          const dist = isRun ? (Math.max(0, parseFloat(String(distI.value).replace(',', '.'))) || null) : null;
+          const dist = isRun ? (Math.max(0, fromInput(distI.value, 'distance', storedKm)) || null) : null;
           const durationSec = (Math.max(0, parseInt(minI.value || 0, 10) || 0) * 60 + Math.max(0, Math.min(59, parseInt(secI.value || 0, 10) || 0))) || null;
           const hr = (v) => { const n = parseInt(v, 10); return n >= 30 && n <= 230 ? n : null; };
           const data = {
@@ -421,6 +431,11 @@ function openLogSheet(plan, unit, existing = null, prefill = null) {
 }
 
 /** Sports for free sessions (without rest day and competition special cases). */
+/** Stored text (plan titles, descriptions) as a form field shows it – in the person's units – and
+    back: an unchanged field keeps the stored text, so opening and saving converts nothing. */
+const shownText = (stored) => localizeUnits(stored || '');
+const textFromField = (value, stored) => (value.trim() === shownText(stored).trim() ? String(stored || '').trim() : value.trim());
+
 const ACTIVITY_TYPES = TYPE_OPTIONS.filter((o) => !['rest', 'camp'].includes(o.value));
 /** Categories with a route. */
 const DISTANCE_CATS = new Set(['run', 'bike', 'walk', 'swim']);
@@ -443,8 +458,8 @@ export function openActivitySheet({ date = todayStr(), existing = null } = {}) {
   let type = ex.type || 'easy';
   const typeSel = select(ACTIVITY_TYPES, type);
   const dateI = input({ type: 'date', value: ex.date || date });
-  const titleI = input({ value: ex.title || '', placeholder: t('session.titlePlaceholder') });
-  const distI = input({ type: 'number', step: '0.1', min: '0', inputmode: 'decimal', value: ex.distanceKm ?? '', placeholder: 'km' });
+  const titleI = input({ value: shownText(ex.title), placeholder: t('session.titlePlaceholder') });
+  const distI = distanceInput(ex.distanceKm, { min: '0' });
   const dur = durationFields({ min: ex.durationSec ? Math.floor(ex.durationSec / 60) : '', sec: ex.durationSec ? ex.durationSec % 60 : '' });
   const { minI, secI } = dur;
   const avgI = input({ type: 'number', min: '30', max: '230', inputmode: 'numeric', value: ex.avgHr ?? '', placeholder: t('session.avgHrShort') });
@@ -453,7 +468,7 @@ export function openActivitySheet({ date = todayStr(), existing = null } = {}) {
   let rpe = ex.rpe || 0;
   const rpeEl = rpeScale(rpe, (v) => { rpe = v; });
 
-  const distField = field(t('session.distanceKm'), distI);
+  const distField = field(t('session.distanceKm', { unit: distanceUnit() }), distI);
   const matchBox = el('div', {});
   let linkTo = null;
   let linkOn = true;
@@ -476,7 +491,7 @@ export function openActivitySheet({ date = todayStr(), existing = null } = {}) {
 
   const save = () => {
     if (!dateI.value) { toast(t('session.pickDate'), 'bad'); return; }
-    const km = distField.hidden ? null : (Math.max(0, parseFloat(String(distI.value).replace(',', '.'))) || null);
+    const km = distField.hidden ? null : (Math.max(0, fromInput(distI.value, 'distance', ex.distanceKm)) || null);
     const durationSec = (Math.max(0, parseInt(minI.value || 0, 10) || 0) * 60 + Math.max(0, Math.min(59, parseInt(secI.value || 0, 10) || 0))) || null;
     if (!durationSec && !km) { toast(t('session.needDurationOrDistance'), 'bad'); return; }
     const hr = parseInt(avgI.value, 10);
@@ -486,7 +501,7 @@ export function openActivitySheet({ date = todayStr(), existing = null } = {}) {
       avgHr: hr >= 30 && hr <= 230 ? hr : null, rpe: rpe || null, notes: notesI.value.trim(),
     };
     if (existing) {
-      store.patch('sessions', existing.id, { ...data, type, date: dateI.value, title: titleI.value.trim() || typeMeta(type).label });
+      store.patch('sessions', existing.id, { ...data, type, date: dateI.value, title: textFromField(titleI.value, ex.title) || typeMeta(type).label });
     } else if (linkTo && linkOn) {
       completeUnit(linkTo.plan, linkTo.unit, { ...data, source: 'manual' });
     } else {
@@ -629,13 +644,14 @@ export function openUnitCreator(plan, dateStr) {
 /** Shared form for creating/editing a planned session. */
 function unitFormSheet(plan, unit, isNew) {
   let type = unit.type || 'easy';
-  const titleI = input({ value: unit.title || '' });
+  const titleI = input({ value: shownText(unit.title) });
   const dateI = input({ type: 'date', value: unit.date });
-  const distI = input({ type: 'number', step: '0.1', inputmode: 'decimal', value: unit.targetDistanceKm ?? '', placeholder: 'km' });
+  const distI = distanceInput(unit.targetDistanceKm);
   const durI = input({ type: 'number', inputmode: 'numeric', value: unit.targetDurationMin ?? '', placeholder: 'min' });
-  const paceI = input({ value: unit.targetPaceSecPerKm ? fmtPace(unit.targetPaceSecPerKm) : '', placeholder: t('session.pacePlaceholder') });
+  // Pace typed per km or per mile (fmtPace shows it in the person's unit), stored per km.
+  const paceI = input({ value: unit.targetPaceSecPerKm ? fmtPace(unit.targetPaceSecPerKm) : '', placeholder: t('session.pacePlaceholder', { example: fmtPace(330) }) });
   const hrSel = select([{ value: '', label: t('session.noneOption') }, ...[1, 2, 3, 4, 5].map((z) => ({ value: String(z), label: t('session.zone', { zone: z }) }))], unit.targetHrZone ? String(unit.targetHrZone) : '');
-  const descI = textarea({ value: unit.description ?? '' });
+  const descI = textarea({ value: shownText(unit.description) });
 
   const iv = unit.intervals || {};
   const roundsI = input({ type: 'number', inputmode: 'numeric', value: iv.rounds ?? '', placeholder: t('session.roundsPlaceholder') });
@@ -652,7 +668,7 @@ function unitFormSheet(plan, unit, isNew) {
   const refreshWhatIf = () => {
     if (!isNew) return;
     whatIfBox.innerHTML = '';
-    const draft = { ...unit, type, date: dateI.value, targetDistanceKm: parseFloat(distI.value) || null, targetDurationMin: parseInt(durI.value) || null };
+    const draft = { ...unit, type, date: dateI.value, targetDistanceKm: fromInput(distI.value, 'distance', unit.targetDistanceKm) || null, targetDurationMin: parseInt(durI.value) || null };
     const sim = simulateAdd((store.find('plans', plan.id) || {}).units || [], draft);
     if (!sim) return;
     whatIfBox.appendChild(el('div', { class: 'card card--flat row gap-2', style: { alignItems: 'flex-start' } }, [
@@ -678,15 +694,17 @@ function unitFormSheet(plan, unit, isNew) {
   });
 
   const save = () => {
-    const paceSec = parsePaceInput(paceI.value);
+    // Typed per km or per mile, stored per km; an unchanged pace keeps its stored range.
+    const paceSec = paceFromInput(parsePaceInput(paceI.value), unit.targetPaceSecPerKm);
+    const samePace = paceSec && paceSec === unit.targetPaceSecPerKm && unit.targetPaceMaxSecPerKm;
     const fields = {
-      type, title: titleI.value.trim() || typeMeta(type).label, date: dateI.value, dow: isoDow(dateI.value),
-      targetDistanceKm: parseFloat(distI.value) || null,
+      type, title: textFromField(titleI.value, unit.title) || typeMeta(type).label, date: dateI.value, dow: isoDow(dateI.value),
+      targetDistanceKm: fromInput(distI.value, 'distance', unit.targetDistanceKm) || null,
       targetDurationMin: parseInt(durI.value) || null,
       targetPaceSecPerKm: paceSec,
-      targetPaceMaxSecPerKm: paceSec ? paceSec + 10 : null,
+      targetPaceMaxSecPerKm: paceSec ? (samePace ? unit.targetPaceMaxSecPerKm : paceSec + 10) : null,
       targetHrZone: hrSel.value ? parseInt(hrSel.value) : null,
-      description: descI.value.trim(),
+      description: textFromField(descI.value, unit.description),
       intervals: ['interval', 'tempo'].includes(type) && roundsI.value
         ? { rounds: parseInt(roundsI.value), workSec: parseInt(workI.value) || 180, restSec: parseInt(restI.value) || 90 }
         : null,
@@ -714,8 +732,8 @@ function unitFormSheet(plan, unit, isNew) {
     body: el('div', {}, [
       el('div', { class: 'field__row' }, [field(t('session.type'), typeSel), field(t('session.date'), dateI)]),
       field(t('session.titleLabel'), titleI),
-      el('div', { class: 'field__row' }, [field(t('session.distanceKm'), distI), field(t('session.durationMin'), durI)]),
-      el('div', { class: 'field__row' }, [field(t('session.targetPaceMinKm'), paceI), field(t('session.hrZone'), hrSel)]),
+      el('div', { class: 'field__row' }, [field(t('session.distanceKm', { unit: distanceUnit() }), distI), field(t('session.durationMin'), durI)]),
+      el('div', { class: 'field__row' }, [field(t('session.targetPaceMinKm', { unit: paceUnit() }), paceI), field(t('session.hrZone'), hrSel)]),
       intervalBox,
       field(t('session.drinkEvery'), drinkI),
       field(t('session.description'), descI),

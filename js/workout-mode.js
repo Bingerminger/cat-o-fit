@@ -23,6 +23,7 @@ import { buildPhases, advance, phaseRemaining, unitTarget } from './workout-engi
 import { cleanSet, fmtSet, lastSetsFor, progressionHint, toStrengthSets } from './strength.js';
 import { tone, unlockAudio } from './audio.js';
 import { programForUnit, buildShow } from './show-program.js';
+import { distanceUnit, weightUnit, toInput, fromInput } from './units.js';
 
 import { t } from './i18n.js';
 
@@ -450,11 +451,14 @@ function setLogger(ex, unit, setLog) {
     }
     const prev = sets[sets.length - 1] || (last && last.sets[last.sets.length - 1]) || null;
     const repsI = input({ type: 'number', min: '1', max: '100', inputmode: 'numeric', placeholder: t('workoutMode.repsPlaceholder'), 'aria-label': t('workoutMode.repsAria', { name: ex.name }), value: prev ? String(prev.reps) : '' });
-    const kgI = input({ type: 'number', min: '0', max: '500', step: '0.25', inputmode: 'decimal', placeholder: 'kg', 'aria-label': t('workoutMode.weightAria', { name: ex.name }), value: prev && prev.kg != null ? String(prev.kg) : '' });
+    // Weight typed in kg or lb; stored in kg by cleanSet (0.25 kg grid, 0.01 kg for pounds).
+    const lb = weightUnit() === 'lb';
+    const prevKg = prev && prev.kg != null ? prev.kg : null;
+    const kgI = input({ type: 'number', min: '0', max: lb ? '1100' : '500', step: lb ? '0.1' : '0.25', inputmode: 'decimal', placeholder: weightUnit(), 'aria-label': t('workoutMode.weightAria', { name: ex.name, unit: weightUnit() }), value: prevKg != null ? String(toInput(prevKg, 'weight')) : '' });
     box.appendChild(el('div', { class: 'workout__sets-add' }, [
       repsI, kgI,
       el('button', { class: 'btn btn--soft', type: 'button', onclick: () => {
-        const clean = cleanSet({ reps: repsI.value, kg: kgI.value });
+        const clean = cleanSet({ reps: repsI.value, kg: fromInput(kgI.value, 'weight', prevKg) });
         if (!clean) { toast(t('workoutMode.enterReps'), 'bad'); return; }
         setLog.log[ex.id] = [...sets, clean];
         setLog.onChange();
@@ -474,7 +478,8 @@ function setLogger(ex, unit, setLog) {
 /* --------------------------- Finish sheet ---------------------------- */
 function openFinishSheet(plan, unit, pre, onDone) {
   const isRun = ['easy', 'long', 'recovery', 'tempo', 'interval', 'race', 'cross_bike'].includes(unit.type);
-  const distI = input({ type: 'number', step: '0.1', inputmode: 'decimal', value: unit.targetDistanceKm ?? '', placeholder: 'km' });
+  // Distance typed in km or mi, stored in km (the planned distance stays as planned when kept).
+  const distI = input({ type: 'number', step: distanceUnit() === 'mi' ? '0.01' : '0.1', inputmode: 'decimal', value: toInput(unit.targetDistanceKm, 'distance'), placeholder: distanceUnit() });
   const mins = Math.floor((pre.durationSec || 0) / 60), secs = (pre.durationSec || 0) % 60;
   const dur = durationFields({ min: mins || '', sec: secs || '' });
   const { minI, secI } = dur;
@@ -488,7 +493,7 @@ function openFinishSheet(plan, unit, pre, onDone) {
   openSheet({
     title: t('workoutMode.finishTitle'),
     body: el('div', {}, [
-      isRun ? field(t('workoutMode.distanceKm'), distI) : null,
+      isRun ? field(t('workoutMode.distanceKm', { unit: distanceUnit() }), distI) : null,
       field(t('workoutMode.duration'), dur.node),
       field(t('workoutMode.effortRpe'), rpeEl),
       field(t('workoutMode.feeling'), feelRow),
@@ -498,7 +503,7 @@ function openFinishSheet(plan, unit, pre, onDone) {
       el('button', {
         class: 'btn btn--primary btn--block', text: t('workoutMode.saveFinish'),
         onclick: () => {
-          const dist = parseFloat(distI.value) || null;
+          const dist = fromInput(distI.value, 'distance', unit.targetDistanceKm) || null;
           const durationSec = (parseInt(minI.value || 0) * 60 + parseInt(secI.value || 0)) || pre.durationSec || null;
           completeUnit(plan, unit, {
             distanceKm: dist, durationSec,

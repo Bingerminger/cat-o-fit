@@ -10,7 +10,7 @@ import {
   emptyState, toast, openSheet, closeSheet, field, input, textarea, navigate, toggle,
   refreshView, segmented, addDays, weekStartMonday, fmtWeight, fmtWeightDec,
 } from './ui.js';
-import { kgToShown, weightUnit } from './units.js';
+import { kgToShown, weightUnit, toInput, fromInput } from './units.js';
 import { setHeader } from './router.js';
 import { progressTabs } from './nav.js';
 import { lineChart } from './charts.js';
@@ -34,7 +34,7 @@ function metricsDef() {
   const weightToward = gs && gs.status !== 'halten' && gs.direction !== 'hold' ? gs.direction : null;
   // HRV: label by the measurement method of the most recent value (SDNN from Apple, RMSSD from many watches).
   const hrvMethod = currentHrvMethod(store.get('health'));
-  // `unit` is the stored unit (the entry form still takes kg); `mass` values are shown in kg or lb.
+  // `unit` is the stored unit; `mass` values are shown and typed in kg or lb.
   return {
     weight: { label: t('healthView.metricWeight'), unit: 'kg', mass: true, icon: 'scale', digits: 1, target, toward: weightToward },
     bodyFat: { label: t('healthView.metricBodyFat'), unit: '%', icon: 'drop', digits: 1, toward: null },
@@ -53,6 +53,8 @@ function metricsDef() {
 /** Value and unit as shown: masses in the person's unit (kg or lb), everything else as stored. */
 const shownVal = (d, v) => (d.mass && v != null ? kgToShown(Number(v)) : v);
 const shownUnit = (d) => (d.mass ? weightUnit() : d.unit);
+/** A stored value for the entry form: masses in kg or lb, everything else as stored. */
+const fieldValue = (d, v) => (d.mass ? toInput(v, 'weight') : (v ?? ''));
 
 function sortedHealth() {
   return store.get('health').slice().sort((a, b) => a.date.localeCompare(b.date));
@@ -232,12 +234,12 @@ export function openHealthEntry(existing = {}) {
   methodSel.value = defaultMethod();
   Object.entries(defs).forEach(([key, d]) => {
     if (enabled[key] === false) return;
-    const inp = input({ type: 'number', step: d.digits ? '0.1' : '1', inputmode: 'decimal', value: current[key] ?? '', placeholder: d.unit || '' });
+    const inp = input({ type: 'number', step: d.digits ? '0.1' : '1', inputmode: 'decimal', value: fieldValue(d, current[key]), placeholder: shownUnit(d) || '' });
     inputs[key] = inp;
     if (key === 'hrv') {
       fields.push(el('div', { class: 'field__row' }, [field('HRV (ms)', inp), field(t('healthView.method'), methodSel)]));
     } else {
-      fields.push(field(`${d.label}${d.unit ? ' (' + d.unit + ')' : ''}`, inp));
+      fields.push(field(`${d.label}${shownUnit(d) ? ' (' + shownUnit(d) + ')' : ''}`, inp));
     }
   });
   const notesI = textarea({ value: current.notes ?? '', placeholder: t('healthView.notesPlaceholder') });
@@ -255,7 +257,7 @@ export function openHealthEntry(existing = {}) {
   // Date changed -> load the values of this day (or clear them if there are none yet).
   const loadDay = () => {
     current = entryFor(dateI.value || date);
-    Object.entries(inputs).forEach(([k, inp]) => { inp.value = current[k] ?? ''; });
+    Object.entries(inputs).forEach(([k, inp]) => { inp.value = fieldValue(defs[k], current[k]); });
     methodSel.value = defaultMethod();
     notesI.value = current.notes ?? '';
     alcohol = !!current.alcohol;
@@ -278,6 +280,8 @@ export function openHealthEntry(existing = {}) {
           const base = entryFor(d);
           const rec = { ...base, id: base.id || uid('h'), date: d, source: base.source || 'manual', notes: notesI.value.trim() };
           Object.entries(inputs).forEach(([k, inp]) => {
+            // Masses typed in kg or lb are stored in kg (unchanged fields keep the stored value).
+            if (defs[k].mass) { rec[k] = fromInput(inp.value, 'weight', base[k]); return; }
             const v = inp.value === '' ? null : parseFloat(inp.value);
             rec[k] = Number.isNaN(v) ? null : v;
           });

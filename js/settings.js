@@ -12,14 +12,14 @@ import {
   fmtDec, fmtHeight, fmtWeightDec,
   rerenderView,
 } from './ui.js';
-import { distanceUnit } from './units.js';
+import { distanceUnit, weightUnit, toInput, fromInput, cmToFeetInches, heightFromInput } from './units.js';
 import { sessionsCsv, healthCsv, labsCsv, diaryCsv } from './csv-export.js';
 import { setHeader } from './router.js';
 import { syncNow } from './storage.js';
 import { geocode, refreshWeather, placeLabel } from './weather.js';
 import { APP_VERSION } from './version.js';
 import { weeklyGoals, DEFAULT_GOALS } from './healthgoals.js';
-import { GOAL_METRICS, metricMeta, latestMetric } from './goals.js';
+import { GOAL_METRICS, metricMeta, latestMetric, shownMetric } from './goals.js';
 import { currentEligibility, openGateSheet } from './wellness.js';
 import { ageOf, weightGoalBlockReason } from './eligibility.js';
 import { weightNow, bmiFor } from './energy.js';
@@ -577,7 +577,8 @@ function openGoalSheet(view, elig = currentEligibility()) {
   const metrics = GOAL_METRICS.filter((m) => !(elig.noWeightGoals && WEIGHT_METRICS.includes(m.key)));
   let metric = metrics[0].key;
   const metricSel = select(
-    metrics.map((m) => ({ value: m.key, label: `${m.label}${m.unit ? ' (' + m.unit + ')' : ''}` })),
+    // Weight in the person's unit (kg or lb): typed in it, stored in kg.
+    metrics.map((m) => { const unit = shownMetric(m).unit; return { value: m.key, label: `${m.label}${unit ? ' (' + unit + ')' : ''}` }; }),
     metric, { onchange: (e) => { metric = e.target.value; updateHint(); } },
   );
   const targetI = input({ type: 'number', step: '0.1', inputmode: 'decimal', placeholder: t('settings.goalSheet.target') });
@@ -590,7 +591,7 @@ function openGoalSheet(view, elig = currentEligibility()) {
     const m = metricMeta(metric);
     const how = metric === 'hrv' && hrvMethod && hrvMethod !== 'unbekannt' ? ` (${t('settings.goalSheet.hrvMethod', { method: hrvLabel(hrvMethod) })})` : '';
     hint.textContent = cur != null
-      ? t('settings.goalSheet.current', { value: `${fmtDec(cur)}${m.unit ? ' ' + m.unit : ''}${how}` })
+      ? t('settings.goalSheet.current', { value: `${metric === 'weight' ? fmtWeightDec(cur) : `${fmtDec(cur)}${m.unit ? ' ' + m.unit : ''}`}${how}` })
       : t('settings.goalSheet.noMeasurement');
   }
   updateHint();
@@ -602,7 +603,7 @@ function openGoalSheet(view, elig = currentEligibility()) {
   targetI.addEventListener('input', confirm.reset);
   metricSel.addEventListener('change', confirm.reset);
   createBtn.onclick = () => {
-    const target = parseFloat(String(targetI.value).replace(',', '.'));
+    const target = metric === 'weight' ? fromInput(targetI.value, 'weight') : parseFloat(String(targetI.value).replace(',', '.'));
     if (!Number.isFinite(target)) { toast(t('settings.goalSheet.enterTarget'), 'bad'); return; }
     const profile = store.profile();
     if (!confirm.ok(goalWarning(metric, target, profile))) return;
@@ -719,9 +720,18 @@ function openPinSheet(member) {
 function openProfileSheet() {
   const p = store.profile();
   const nameI = input({ value: p.name || '' });
-  const hI = input({ type: 'number', value: p.heightCm || '', inputmode: 'numeric' });
-  const wI = input({ type: 'number', step: '0.1', value: p.weightKg || '', inputmode: 'decimal' });
-  const twI = input({ type: 'number', step: '0.1', value: p.targetWeightKg || '', inputmode: 'decimal' });
+  // Height and weights in the person's units – alongside pounds the height in feet and inches.
+  // Stored in whole cm and in kg; a field left as it was keeps its stored value.
+  const lb = weightUnit() === 'lb';
+  const h0 = lb && p.heightCm ? cmToFeetInches(p.heightCm) : null;
+  const hI = input({ type: 'number', value: lb ? (h0 ? h0.ft : '') : (p.heightCm || ''), inputmode: 'numeric',
+    ...(lb ? { min: '0', max: '8', class: 'input input--dur', placeholder: 'ft', 'aria-label': t('settings.profile.height', { unit: 'ft' }) } : {}) });
+  const hInI = lb ? input({ type: 'number', min: '0', max: '11', value: h0 ? h0.in : '', inputmode: 'numeric', class: 'input input--dur', placeholder: 'in', 'aria-label': t('settings.profile.height', { unit: 'in' }) }) : null;
+  const heightControl = lb
+    ? el('div', { class: 'dur-fields' }, [hI, el('span', { class: 'dur-unit', 'aria-hidden': 'true', text: 'ft' }), hInI, el('span', { class: 'dur-unit', 'aria-hidden': 'true', text: 'in' })])
+    : hI;
+  const wI = input({ type: 'number', step: '0.1', value: toInput(p.weightKg || null, 'weight'), inputmode: 'decimal' });
+  const twI = input({ type: 'number', step: '0.1', value: toInput(p.targetWeightKg || null, 'weight'), inputmode: 'decimal' });
   const byI = input({ type: 'number', value: p.birthYear || '', inputmode: 'numeric', placeholder: t('settings.profile.year') });
   const sexI = select([{ value: '', label: t('settings.profile.sexNone') }, { value: 'w', label: t('settings.profile.sexFemale') }, { value: 'm', label: t('settings.profile.sexMale') }], p.sex || '');
   const goalsI = textarea({ value: (p.goals || []).join('\n'), placeholder: t('settings.profile.goalsPlaceholder') });
@@ -732,7 +742,7 @@ function openProfileSheet() {
     const age = ageOf({ birthYear: parseInt(byI.value) || null }, todayStr());
     return age != null ? age < 18 : gate.minor === true;
   };
-  const twField = field(t('settings.profile.targetWeight'), twI);
+  const twField = field(t('settings.profile.targetWeight', { unit: weightUnit() }), twI);
   const twNote = el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '-4px', marginBottom: '8px' } });
   const syncTarget = () => {
     const minor = isMinor();
@@ -750,14 +760,14 @@ function openProfileSheet() {
   const warnBox = warningBox();
   const saveBtn = el('button', { class: 'btn btn--primary grow', text: t('settings.save') });
   const confirm = pendingConfirm(warnBox, saveBtn, t('settings.save'), t('settings.profile.saveAnyway'));
-  [twI, hI, byI].forEach((i) => i.addEventListener('input', confirm.reset));
+  [twI, hI, hInI, byI].filter(Boolean).forEach((i) => i.addEventListener('input', confirm.reset));
 
   openSheet({
     title: t('settings.profile.editTitle'),
     body: el('div', {}, [
       field(t('settings.profile.name'), nameI),
-      el('div', { class: 'field__row' }, [field(t('settings.profile.height'), hI), field(t('settings.profile.birthYear'), byI)]),
-      el('div', { class: 'field__row' }, [field(t('settings.profile.weight'), wI), twField]),
+      el('div', { class: 'field__row' }, [field(t('settings.profile.height', { unit: lb ? 'ft/in' : 'cm' }), heightControl), field(t('settings.profile.birthYear'), byI)]),
+      el('div', { class: 'field__row' }, [field(t('settings.profile.weight', { unit: weightUnit() }), wI), twField]),
       twNote,
       warnBox,
       field(t('settings.profile.sex'), sexI),
@@ -770,9 +780,9 @@ function openProfileSheet() {
     ],
   });
   saveBtn.onclick = () => {
-    const heightCm = parseInt(hI.value) || null;
-    const weightKg = parseFloat(wI.value) || null;
-    const targetWeightKg = isMinor() ? null : (parseFloat(twI.value) || null);
+    const heightCm = lb ? heightFromInput(hI.value, hInI.value, p.heightCm) : (parseInt(hI.value) || null);
+    const weightKg = fromInput(wI.value, 'weight', p.weightKg) || null;
+    const targetWeightKg = isMinor() ? null : (fromInput(twI.value, 'weight', p.targetWeightKg) || null);
     const changed = targetWeightKg != null && targetWeightKg !== p.targetWeightKg;
     if (!confirm.ok(changed ? targetWeightWarning(targetWeightKg, { heightCm }) : null)) return;
     const changes = {

@@ -18,12 +18,13 @@ import { t } from './i18n.js';
 /** Top end of the repetition range (8–12) for the progression hint. */
 export const REP_TOP = 12;
 
-/** Valid set? Repetitions 1–100, weight optional 0–500 kg. */
+/** Valid set? Repetitions 1–100, weight optional 0–500 kg on the 0.25 kg grid – for people who log in
+    pounds to 0.01 kg, so a typed 45 lb comes back as 45 lb and not as 45.2 lb. */
 export function cleanSet(s) {
   const reps = Math.round(Number(s && s.reps));
   if (!Number.isFinite(reps) || reps < 1 || reps > 100) return null;
   const kgRaw = s && s.kg != null && s.kg !== '' ? Number(String(s.kg).replace(',', '.')) : null;
-  const kg = kgRaw != null && Number.isFinite(kgRaw) && kgRaw >= 0 && kgRaw <= 500 ? Math.round(kgRaw * 4) / 4 : null;
+  const kg = kgRaw != null && Number.isFinite(kgRaw) && kgRaw >= 0 && kgRaw <= 500 ? (weightUnit() === 'lb' ? Math.round(kgRaw * 100) / 100 : Math.round(kgRaw * 4) / 4) : null;
   return { reps, kg };
 }
 

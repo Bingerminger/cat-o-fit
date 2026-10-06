@@ -17,7 +17,7 @@ import { openIcsSheet } from './ics-export.js';
 import { currentEligibility } from './wellness.js';
 import { adherence } from './fitness.js';
 import { isProtectedDay } from './cycle.js';
-import { distanceUnit, paceUnit } from './units.js';
+import { distanceUnit, paceUnit, toInput, fromInput } from './units.js';
 
 import { t, tp } from './i18n.js';
 
@@ -360,8 +360,9 @@ function openEventForm(existing = null) {
   // and the target time "hh:mm:ss" cannot be entered. Dot and comma work too.
   const timeI = input({ value: e.targetTime || '', placeholder: t('events.timePlaceholder'), autocomplete: 'off' });
   const notesI = textarea({ value: e.notes || '', placeholder: t('events.notesPlaceholder') });
-  const kmI = input({ type: 'number', step: '0.1', value: e.distanceKm || '', placeholder: 'km' });
-  const kmField = field(t('events.distanceKm'), kmI);
+  // Own distance typed in km or mi, stored in km; kept as it was when the field is not changed.
+  const kmI = input({ type: 'number', step: distanceUnit() === 'mi' ? '0.01' : '0.1', value: toInput(e.distanceKm || null, 'distance'), placeholder: distanceUnit() });
+  const kmField = field(t('events.distanceKm', { unit: distanceUnit() }), kmI);
   kmField.style.display = distType === 'custom' ? 'block' : 'none';
 
   const distSel = select(Object.entries(DISTANCES).map(([k, v]) => ({ value: k, label: v.beta ? t('events.betaLabel', { label: v.label }) : v.label })), distType, {
@@ -397,7 +398,7 @@ function openEventForm(existing = null) {
           if (!nameI.value.trim()) { fieldError(nameI, t('events.nameMissing')); return; }
           if (!dateI.value) { fieldError(dateI, t('events.dateMissing')); return; }
           if (timeI.value.trim() && !parseTargetTime(timeI.value)) { fieldError(timeI, t('events.timeInvalid')); return; }
-          const km = distType === 'custom' ? (parseFloat(kmI.value) || null) : (DISTANCES[distType]?.km ?? (e.distanceKm || null));
+          const km = distType === 'custom' ? (fromInput(kmI.value, 'distance', e.distanceKm) || null) : (DISTANCES[distType]?.km ?? (e.distanceKm || null));
           const rec = {
             ...e,
             id: e.id || uid('evt'),
