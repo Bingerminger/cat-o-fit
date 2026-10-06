@@ -412,6 +412,17 @@
       "ready": "Sauvegarde prête",
       "failed": "Échec de la sauvegarde",
       "failedMsg": "La sauvegarde n’a pas pu être créée."
+    },
+    "units": {
+      "title": "Unités",
+      "distance": "Distance et allure",
+      "weight": "Poids et taille",
+      "temperature": "Température",
+      "weekStart": "Premier jour de la semaine",
+      "labs": "Valeurs de laboratoire",
+      "labsSi": "SI (mmol/l)",
+      "labsConventional": "Conventionnelles (mg/dL)",
+      "hint": "Tout est enregistré en métrique – le changement ne modifie que l’affichage et la saisie des valeurs. Les nouveaux plans commencent au premier jour de la semaine choisi."
     }
   },
   "common": {

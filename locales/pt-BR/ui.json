@@ -412,6 +412,17 @@
       "ready": "Backup pronto",
       "failed": "Falha no backup",
       "failedMsg": "Não foi possível criar o backup."
+    },
+    "units": {
+      "title": "Unidades",
+      "distance": "Distância e ritmo",
+      "weight": "Peso e altura",
+      "temperature": "Temperatura",
+      "weekStart": "Primeiro dia da semana",
+      "labs": "Exames laboratoriais",
+      "labsSi": "SI (mmol/l)",
+      "labsConventional": "Convencionais (mg/dL)",
+      "hint": "Tudo é salvo no sistema métrico – trocar só muda como os valores são mostrados e digitados. Planos novos começam no primeiro dia da semana escolhido."
     }
   },
   "common": {

@@ -412,6 +412,17 @@
       "ready": "Back-up klaar",
       "failed": "Back-up mislukt",
       "failedMsg": "De back-up kon niet worden gemaakt."
+    },
+    "units": {
+      "title": "Eenheden",
+      "distance": "Afstand en tempo",
+      "weight": "Gewicht en lengte",
+      "temperature": "Temperatuur",
+      "weekStart": "Eerste dag van de week",
+      "labs": "Labwaarden",
+      "labsSi": "SI (mmol/l)",
+      "labsConventional": "Conventioneel (mg/dL)",
+      "hint": "Alles wordt metrisch opgeslagen – omschakelen verandert alleen hoe waarden worden getoond en ingevoerd. Nieuwe plannen beginnen op de gekozen eerste dag van de week."
     }
   },
   "common": {

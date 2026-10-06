@@ -412,6 +412,17 @@
       "ready": "Copia de seguridad lista",
       "failed": "Falló la copia de seguridad",
       "failedMsg": "No se pudo crear la copia de seguridad."
+    },
+    "units": {
+      "title": "Unidades",
+      "distance": "Distancia y ritmo",
+      "weight": "Peso y altura",
+      "temperature": "Temperatura",
+      "weekStart": "Primer día de la semana",
+      "labs": "Valores de laboratorio",
+      "labsSi": "SI (mmol/l)",
+      "labsConventional": "Convencionales (mg/dL)",
+      "hint": "Todo se guarda en el sistema métrico: cambiar solo modifica cómo se muestran e introducen los valores. Los planes nuevos empiezan el primer día de la semana que elijas."
     }
   },
   "common": {

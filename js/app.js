@@ -10,6 +10,7 @@ import { openCaptureSheet } from './capture.js';
 import { accentPalette } from './contrast.js';
 import { useHrReference } from './load.js';
 import { applyLanguage } from './language.js';
+import { applyUnits, ensureUnitDefaults } from './unit-prefs.js';
 import { loadLanguages, t, tp } from './i18n.js';
 
 import { render as renderDashboard } from './dashboard.js';
@@ -308,6 +309,7 @@ async function doLogout() {
   closeSheet();
   await store.logout();
   await applyLanguage();   // the sign-in screen speaks the instance language
+  applyUnits();
   applyAuthChrome();
   if (location.hash.startsWith('#/login')) router.refresh();
   else navigate('#/login');
@@ -368,6 +370,7 @@ async function boot() {
   if (demo) demo.prepareDemo();
   await Promise.all([store.init(), loadLanguages()]);
   await applyLanguage();   // catalogs before the first render
+  applyUnits();            // km/mi, kg/lb, °C/°F, week start, lab units of the person
   loadExerciseTexts();     // exercise steps and tips in the background
   loadHelpTexts();         // the in-app help, likewise
   // If a session lacks the effort rating, the load estimates it from the average HR – relative
@@ -421,7 +424,11 @@ async function boot() {
 
   // Background sync -> ensure the plan, update theme/weather & view.
   store.onSync((area, origin) => {
-    if (area === 'profile') { applyTheme(); maybeRefreshWeather(); }
+    if (area === 'profile') {
+      applyTheme(); maybeRefreshWeather();
+      ensureUnitDefaults();   // once: the region's units become the person's saved choice
+      if (applyUnits()) refreshSoon();
+    }
     // Sign-in, switching person or a language picked on another device.
     if (area === 'profile' || area === 'family') applyLanguage().then((changed) => { if (changed) { router.refresh(); demo?.showBar(); } });
     if (area === 'events' || area === 'plans') ensureGenerated();

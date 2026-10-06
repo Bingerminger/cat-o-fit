@@ -106,7 +106,7 @@ function demoMemberProfile(spec, today) {
     goals: minor ? [t('demo.goalEnjoyMoving'), t('demo.goalClubSport')]
       : female ? [t('demo.goalRunRegularly'), t('demo.goalFitHealthy')] : [t('demo.goalEndurance'), t('demo.goalKeepWeight')],
     settings: {
-      theme: 'system', accent: spec.color, weekStart: 1, units: 'metric', weather: true,
+      theme: 'system', accent: spec.color, weather: true,
       location: { name: spec.city, country: 'DE', ...loc },
       modules: { cycle: female, nutrition: true, shopping: true, checklist: true, strength: true, labs: true },
       // Screening questions answered (all "no") -> module at full scope. The app
@@ -407,7 +407,7 @@ export function buildDemo(today) {
   // Location (Dresden) for the weather forecast, active modules (incl. cycle!),
   // visible metrics and health goals (progress set to "Today").
   const settings = {
-    theme: 'system', accent: '#18b48a', weekStart: 1, units: 'metric', weather: true,
+    theme: 'system', accent: '#18b48a', weather: true,
     location: { name: 'Dresden', country: 'DE', lat: 51.0504, lon: 13.7373 },
     modules: { cycle: true, nutrition: true, shopping: true, checklist: true, strength: true, labs: true },
     // Screening questions of the demo person answered (all "no") – otherwise the

@@ -27,6 +27,7 @@ import { hrZonesFrom, estimateMaxHr, zoneName } from './hrzones.js';
 import { t, tp, languages, locale } from './i18n.js';
 import { applyLanguage, instanceLanguage } from './language.js';
 import { weekdayNames } from './format.js';
+import { applyUnits, personUnits } from './unit-prefs.js';
 
 /** Language options: the supported languages by their own names. */
 function languageOptions() {
@@ -277,6 +278,20 @@ export function render(view) {
       }),
   ]));
   disp.appendChild(el('div', { class: 'dim mb-4', style: { fontSize: '.74rem' }, text: t('settings.language.hint') }));
+  // Units of this person – stored data stay metric, units.js converts for display and input.
+  const pu = personUnits();
+  const setUnit = (key, value) => { store.setSetting(key, value); applyUnits(); refreshView(); };
+  const unitRow = (label, control) => el('div', { class: 'row row--between wrap mb-2', style: { gap: '8px' } }, [el('span', { text: label }), control]);
+  const pair = (key, a, b, current, label) => segmented([{ value: a[0], label: a[1] }, { value: b[0], label: b[1] }], current, (v) => setUnit(key, v), { label });
+  disp.appendChild(el('div', { class: 'dim mb-2', style: { fontSize: '.74rem', fontWeight: '650' }, text: t('settings.units.title') }));
+  disp.appendChild(unitRow(t('settings.units.distance'), pair('distanceUnit', ['km', 'km'], ['mi', 'mi'], pu.distance, t('settings.units.distance'))));
+  disp.appendChild(unitRow(t('settings.units.weight'), pair('weightUnit', ['kg', 'kg'], ['lb', 'lb'], pu.weight, t('settings.units.weight'))));
+  disp.appendChild(unitRow(t('settings.units.temperature'), pair('temperatureUnit', ['c', '°C'], ['f', '°F'], pu.temperature, t('settings.units.temperature'))));
+  disp.appendChild(unitRow(t('settings.units.weekStart'), select([1, 6, 0].map((d) => ({ value: String(d), label: weekdayNames(true)[d] })), String(pu.weekStart), {
+    'aria-label': t('settings.units.weekStart'), onchange: (e) => setUnit('weekStart', Number(e.target.value)),
+  })));
+  disp.appendChild(unitRow(t('settings.units.labs'), pair('labUnits', ['si', t('settings.units.labsSi')], ['conventional', t('settings.units.labsConventional')], pu.labs, t('settings.units.labs'))));
+  disp.appendChild(el('div', { class: 'dim mb-4', style: { fontSize: '.74rem' }, text: t('settings.units.hint') }));
   disp.appendChild(el('div', { class: 'dim mb-2', style: { fontSize: '.74rem', fontWeight: '650' }, text: t('settings.appearance.accent') }));
   disp.appendChild(el('div', { class: 'row wrap gap-3' }, ACCENTS.map((c) => {
     const active = (s.accent || '#18b48a').toLowerCase() === c.toLowerCase();

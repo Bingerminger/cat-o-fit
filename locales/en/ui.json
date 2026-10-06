@@ -412,6 +412,17 @@
       "ready": "Backup ready",
       "failed": "Backup failed",
       "failedMsg": "The backup could not be created."
+    },
+    "units": {
+      "title": "Units",
+      "distance": "Distance and pace",
+      "weight": "Weight and height",
+      "temperature": "Temperature",
+      "weekStart": "First day of the week",
+      "labs": "Lab values",
+      "labsSi": "SI (mmol/l)",
+      "labsConventional": "Conventional (mg/dL)",
+      "hint": "Everything is stored metric – switching only changes how values are shown and entered. Plans you create from now on start on the first day of the week you choose."
     }
   },
   "common": {
