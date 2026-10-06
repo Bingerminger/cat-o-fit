@@ -4184,7 +4184,7 @@
       "other": "{taken} su {count} dosi in 14 giorni · barre = ultimi 21 giorni (altezza piena = 100%){extra}"
     },
     "eaRange": "kcal per kg di massa libera da grasso (intervallo {low}–{high}) · valore di riferimento {target}",
-    "eaBasis": "Da {days} giorni registrati per intero: in media {intake} kcal mangiate, in media {training} kcal per l’allenamento ({trainingSource}), {ffm} kg di massa libera da grasso ({ffmSource}).",
+    "eaBasis": "Da {days} giorni registrati per intero: in media {intake} kcal mangiate, in media {training} kcal per l’allenamento ({trainingSource}), {ffm} di massa libera da grasso ({ffmSource}).",
     "eaPlainUnclear": "Troppo pochi giorni registrati per intero per valutare ({days} su {total}). In Alimentazione, conferma “Segna il giorno come completo” quando hai registrato tutto.",
     "cost": "Costo: {cost}",
     "counts": "{measurements} in {dates} · ultimo {last}",

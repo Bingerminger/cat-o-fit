@@ -4184,7 +4184,7 @@
       "other": "{taken} van {count} innames in 14 dagen · balken = laatste 21 dagen (volle hoogte = 100%){extra}"
     },
     "eaRange": "kcal per kg vetvrije massa (bereik {low}–{high}) · richtwaarde {target}",
-    "eaBasis": "Uit {days} volledig vastgelegde dagen: gem. {intake} kcal gegeten, gem. {training} kcal voor training ({trainingSource}), {ffm} kg vetvrije massa ({ffmSource}).",
+    "eaBasis": "Uit {days} volledig vastgelegde dagen: gem. {intake} kcal gegeten, gem. {training} kcal voor training ({trainingSource}), {ffm} vetvrije massa ({ffmSource}).",
     "eaPlainUnclear": "Te weinig volledig vastgelegde dagen om te beoordelen ({days} van {total}). Bevestig bij Voeding “Dag compleet markeren” zodra je alles hebt vastgelegd.",
     "cost": "Kosten: {cost}",
     "counts": "{measurements} op {dates} · laatste {last}",

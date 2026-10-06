@@ -17,7 +17,7 @@ import {
   el, icon, iconSvg, uid, nowIso, todayStr, fmtDate, sectionHead, emptyState,
   toast, openSheet, closeSheet, field, input, select, confirmDialog, toggle,
   refreshView, infoButton,
-  fmtDec,
+  fmtDec, fmtWeightDec,
   rerenderView,
 } from './ui.js';
 import { setHeader } from './router.js';
@@ -250,7 +250,7 @@ function eaCard(ea, eaArgs) {
     ea.level === 'unklar' ? null : el('div', { class: 'dim mt-2', style: { fontSize: '.74rem' }, text: t('labsView.eaBasis', {
     days: ea.confirmedDays, intake: ea.intakeAvg, training: ea.trainingAvg,
     trainingSource: ea.trainingSource === 'gemessen' ? t('labsView.eaTrainingMeasured') : ea.trainingSource === 'teils' ? t('labsView.eaTrainingMixed') : t('labsView.eaTrainingEstimated'),
-    ffm: fmtDec(ea.ffm), ffmSource: ea.ffmMeasured ? t('labsView.eaFfmMeasured') : t('labsView.eaFfmEstimated'),
+    ffm: fmtWeightDec(ea.ffm), ffmSource: ea.ffmMeasured ? t('labsView.eaFfmMeasured') : t('labsView.eaFfmEstimated'),
   }) }),
     el('button', {
       class: 'btn btn--soft mt-2', style: { fontSize: '.8rem' },

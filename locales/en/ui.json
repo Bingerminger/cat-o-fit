@@ -4184,7 +4184,7 @@
       "other": "{taken} of {count} doses in 14 days · bars = last 21 days (full height = 100%){extra}"
     },
     "eaRange": "kcal per kg fat-free mass (range {low}–{high}) · guideline value {target}",
-    "eaBasis": "From {days} fully logged days: avg. {intake} kcal eaten, avg. {training} kcal for training ({trainingSource}), {ffm} kg fat-free mass ({ffmSource}).",
+    "eaBasis": "From {days} fully logged days: avg. {intake} kcal eaten, avg. {training} kcal for training ({trainingSource}), {ffm} fat-free mass ({ffmSource}).",
     "eaPlainUnclear": "Too few fully logged days to assess ({days} of {total}). In Nutrition, confirm “Mark day complete” once you have logged everything.",
     "cost": "Cost: {cost}",
     "counts": "{measurements} on {dates} · latest {last}",

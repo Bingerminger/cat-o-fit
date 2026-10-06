@@ -4184,7 +4184,7 @@
       "other": "{taken} von {count} Einnahmen in 14 Tagen · Balken = letzte 21 Tage (volle Höhe = 100 %){extra}"
     },
     "eaRange": "kcal je kg fettfreier Masse (Spanne {low}–{high}) · Richtwert {target}",
-    "eaBasis": "Aus {days} vollständig erfassten Tagen: Ø {intake} kcal gegessen, Ø {training} kcal fürs Training ({trainingSource}), {ffm} kg fettfreie Masse ({ffmSource}).",
+    "eaBasis": "Aus {days} vollständig erfassten Tagen: Ø {intake} kcal gegessen, Ø {training} kcal fürs Training ({trainingSource}), {ffm} fettfreie Masse ({ffmSource}).",
     "eaPlainUnclear": "Noch zu wenige vollständig erfasste Tage für eine Einschätzung ({days} von {total}). Bestätige in der Ernährung „Tag vollständig“, wenn du alles erfasst hast.",
     "cost": "Kosten: {cost}",
     "counts": "{measurements} an {dates} · zuletzt {last}",

@@ -4184,7 +4184,7 @@
       "other": "{taken} sur {count} prises en 14 jours · barres = 21 derniers jours (hauteur maximale = 100 %){extra}"
     },
     "eaRange": "kcal par kg de masse non grasse (plage {low}–{high}) · valeur de référence {target}",
-    "eaBasis": "Sur {days} jours entièrement notés : en moyenne {intake} kcal mangées, en moyenne {training} kcal pour l’entraînement ({trainingSource}), {ffm} kg de masse non grasse ({ffmSource}).",
+    "eaBasis": "Sur {days} jours entièrement notés : en moyenne {intake} kcal mangées, en moyenne {training} kcal pour l’entraînement ({trainingSource}), {ffm} de masse non grasse ({ffmSource}).",
     "eaPlainUnclear": "Trop peu de jours entièrement notés pour évaluer ({days} sur {total}). Dans Nutrition, confirme « Journée complète » une fois que tu as tout noté.",
     "cost": "Coût : {cost}",
     "counts": "{measurements} sur {dates} · dernière mesure : {last}",
