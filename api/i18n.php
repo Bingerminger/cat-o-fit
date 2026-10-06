@@ -84,6 +84,73 @@ function person_language(?string $userId): string
     return SERVER_SOURCE_LANGUAGE;
 }
 
+/** Kilometres per mile (international mile). */
+const KM_PER_MI = 1.609344;
+
+/**
+ * Units of a person for server texts (calendar files): their own choice in the profile settings
+ * (distanceUnit), else metric. The app saves the browser region's default on first use (unit-prefs.js).
+ */
+function person_units(?string $userId): array
+{
+    $units = ['distance' => 'km'];
+    try {
+        if ($userId !== null && is_valid_user($userId)) {
+            $profile = read_store('profile', 'user', $userId)['records']['profile'] ?? null;
+            $settings = is_array($profile) && is_array($profile['settings'] ?? null) ? $profile['settings'] : [];
+            if (($settings['distanceUnit'] ?? null) === 'mi') {
+                $units['distance'] = 'mi';
+            }
+        }
+    } catch (Throwable) {
+        // Unreadable store: metric is fine.
+    }
+    return $units;
+}
+
+/** Distance from kilometres with its unit: "10,5 km" / "6.5 mi". */
+function server_distance(float $km, int $decimals, string $lang, array $units): string
+{
+    $mi = ($units['distance'] ?? 'km') === 'mi';
+    return server_number($mi ? $km / KM_PER_MI : $km, $decimals, $lang) . ($mi ? ' mi' : ' km');
+}
+
+/** Pace from seconds per km as "m:ss" in the person's unit (per km or per mile). */
+function server_pace(int $secPerKm, array $units): string
+{
+    $sec = (int) round(($units['distance'] ?? 'km') === 'mi' ? $secPerKm * KM_PER_MI : $secPerKm);
+    return sprintf('%d:%02d', intdiv($sec, 60), $sec % 60);
+}
+
+/** Unit label of a pace: "min/km" / "min/mi". */
+function server_pace_unit(array $units): string
+{
+    return ($units['distance'] ?? 'km') === 'mi' ? 'min/mi' : 'min/km';
+}
+
+/**
+ * Generated plan texts carry metric amounts ("Long run 18 km at 5:20/km"); for a person on miles they
+ * are converted like localizeUnits() in js/format.js – metre intervals and km/h stay.
+ */
+function server_localize_units(string $text, string $lang, array $units): string
+{
+    if (($units['distance'] ?? 'km') !== 'mi') {
+        return $text;
+    }
+    $perMile = static function (string $mss): string {
+        [$m, $s] = array_map('intval', explode(':', $mss));
+        $sec = (int) round(($m * 60 + $s) * KM_PER_MI);
+        return sprintf('%d:%02d', intdiv($sec, 60), $sec % 60);
+    };
+    $text = (string) preg_replace_callback('/(\d{1,2}:\d{2})(?:(\s?[–-]\s?)(\d{1,2}:\d{2}))?(\s?(?:min)?\s?)\/\s?km\b/u',
+        static fn(array $m): string => $perMile($m[1]) . (($m[3] ?? '') !== '' ? $m[2] . $perMile($m[3]) : '') . $m[4] . '/mi', $text);
+    return (string) preg_replace_callback('/(\d+(?:[.,]\d+)?)(\s?|\x{00a0})km\b(?!\/h)/u', static function (array $m) use ($lang): string {
+        $mi = (float) str_replace(',', '.', $m[1]) / KM_PER_MI;
+        $num = server_number($mi, $mi >= 3 ? 1 : 2, $lang);
+        return $num . $m[2] . 'mi';
+    }, $text);
+}
+
 /** Catalog of a language as a nested array ([] when it is missing or broken). */
 function server_catalog(string $lang): array
 {

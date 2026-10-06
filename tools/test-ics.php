@@ -74,7 +74,15 @@ check('ics.php no longer writes a fixed zone', !str_contains($src, 'TZID=Europe/
 // --- Texts and numbers per language (api/i18n.php) ------------------------------
 check('Language: exact, via the base language, or none', server_match_language('de-AT') === 'de' && server_match_language('pt') === 'pt-BR'
     && server_match_language('PT_br') === 'pt-BR' && server_match_language('xx') === null && server_match_language(null) === null);
-check('Text: placeholders, German as before', server_text('de', 'ics.distance', ['km' => '10,5']) === 'Distanz: 10,5 km');
+check('Text: placeholders, German as before', server_text('de', 'ics.distance', ['length' => server_distance(10.5, 1, 'de', ['distance' => 'km'])]) === 'Distanz: 10,5 km');
+$mi = ['distance' => 'mi'];
+check('Units: miles – distance, pace with its unit (4.1)', server_distance(10.0, 1, 'en', $mi) === '6.2 mi'
+    && server_pace(300, $mi) . ' ' . server_pace_unit($mi) === '8:03 min/mi' && server_pace(300, []) . ' ' . server_pace_unit([]) === '5:00 min/km',
+    [server_distance(10.0, 1, 'en', $mi), server_pace(300, $mi)]);
+check('Units: plan texts converted for miles, metres and km/h stay, metric untouched',
+    server_localize_units('Long run 18 km at 5:20–5:34 min/km, 6×800 m, bike 25 km/h', 'en', $mi) === 'Long run 11.2 mi at 8:35–8:58 min/mi, 6×800 m, bike 25 km/h'
+    && server_localize_units('Long run 18 km', 'de', ['distance' => 'km']) === 'Long run 18 km',
+    server_localize_units('Long run 18 km at 5:20–5:34 min/km, 6×800 m, bike 25 km/h', 'en', $mi));
 check('Text: English', server_text('en', 'ics.alarmTomorrow', ['title' => 'Long run']) === 'Tomorrow: Long run');
 check('Text: French catalogue, unsupported language → English, unknown key → the key', server_text('fr', 'ics.race') === 'Course'
     && server_text('xx', 'ics.race') === 'Race' && server_text('de', 'ics.nope') === 'ics.nope');

@@ -30,6 +30,8 @@ $id    = isset($_GET['id']) ? (string) $_GET['id'] : '';
 $user  = isset($_GET['user']) ? (string) $_GET['user'] : null;
 // Texts in the person's language (without a valid person: the instance default).
 $lang  = person_language($user !== null && is_valid_user($user) ? $user : null);
+// Distances and paces in the person's units (km or miles).
+$units = person_units($user !== null && is_valid_user($user) ? $user : null);
 
 /** Plain-text error – the link opens in a browser or calendar, not in the app. */
 $icsError = static function (int $status, string $key) use ($lang): never {
@@ -200,29 +202,30 @@ function targettime_minutes(?string $t): int
 // ---------------------------------------------------------------------------
 
 /** Builds a VEVENT for a planned training session. */
-function vevent_unit(object $u, ?object $event, string $appUrl, string $host, string $lang): array
+function vevent_unit(object $u, ?object $event, string $appUrl, string $host, string $lang, array $units = []): array
 {
     $type = $u->type ?? 'easy';
     $time = !empty($u->time) ? (string) $u->time : default_time($type);
     $mins = estimate_minutes($u);
 
     $title = $u->title ?? server_text($lang, 'ics.training');
-    $summary = $title;
+    $summary = server_localize_units((string) $title, $lang, $units);
 
     // DESCRIPTION with target values + deep link into the app.
     $descParts = [];
+    // Generated plan texts carry kilometres; on miles they are converted like in the app.
     if (!empty($u->description)) {
-        $descParts[] = (string) $u->description;
+        $descParts[] = server_localize_units((string) $u->description, $lang, $units);
     } elseif (!empty($u->desc)) {
-        $descParts[] = (string) $u->desc;   // programme session from earlier versions
+        $descParts[] = server_localize_units((string) $u->desc, $lang, $units);   // programme session from earlier versions
     }
     if (!empty($u->targetDistanceKm)) {
-        $descParts[] = server_text($lang, 'ics.distance', ['km' => server_number((float) $u->targetDistanceKm, 1, $lang)]);
+        $descParts[] = server_text($lang, 'ics.distance', ['length' => server_distance((float) $u->targetDistanceKm, 1, $lang, $units)]);
     }
     if (!empty($u->targetPaceSecPerKm)) {
-        $pmin = sec_to_pace((int) $u->targetPaceSecPerKm);
-        $pmax = !empty($u->targetPaceMaxSecPerKm) ? '–' . sec_to_pace((int) $u->targetPaceMaxSecPerKm) : '';
-        $descParts[] = server_text($lang, 'ics.pace', ['pace' => $pmin . $pmax]);
+        $pmin = server_pace((int) $u->targetPaceSecPerKm, $units);
+        $pmax = !empty($u->targetPaceMaxSecPerKm) ? '–' . server_pace((int) $u->targetPaceMaxSecPerKm, $units) : '';
+        $descParts[] = server_text($lang, 'ics.pace', ['pace' => $pmin . $pmax . ' ' . server_pace_unit($units)]);
     }
     if (!empty($u->targetHrZone)) {
         $descParts[] = server_text($lang, 'ics.hrZone', ['zone' => (int) $u->targetHrZone]);
@@ -254,7 +257,7 @@ function vevent_unit(object $u, ?object $event, string $appUrl, string $host, st
 }
 
 /** Builds a VEVENT for the race itself. */
-function vevent_race(object $event, string $appUrl, string $host, string $lang): array
+function vevent_race(object $event, string $appUrl, string $host, string $lang, array $units = []): array
 {
     $time = '10:00';
     $mins = targettime_minutes($event->targetTime ?? null) + 30; // buffer
@@ -262,7 +265,7 @@ function vevent_race(object $event, string $appUrl, string $host, string $lang):
 
     $desc = [];
     $desc[] = isset($event->distanceKm)
-        ? server_text($lang, 'ics.raceDistanceKm', ['distance' => $event->distanceType ?? '', 'km' => server_number((float) $event->distanceKm, 2, $lang)])
+        ? server_text($lang, 'ics.raceDistanceKm', ['distance' => $event->distanceType ?? '', 'length' => server_distance((float) $event->distanceKm, 2, $lang, $units)])
         : server_text($lang, 'ics.raceDistance', ['distance' => $event->distanceType ?? '']);
     if (!empty($event->targetTime)) {
         $desc[] = server_text($lang, 'ics.targetTime', ['time' => $event->targetTime]);
@@ -304,14 +307,6 @@ function valarm(string $trigger, string $text): array
     ];
 }
 
-/** Seconds/km -> "m:ss". */
-function sec_to_pace(int $sec): string
-{
-    $m = intdiv($sec, 60);
-    $s = $sec % 60;
-    return sprintf('%d:%02d', $m, $s);
-}
-
 // ---------------------------------------------------------------------------
 // Collect the sessions depending on the scope.
 // ---------------------------------------------------------------------------
@@ -337,14 +332,14 @@ if ($scope === 'session') {
     if ($unit === null) {
         $icsError(404, 'ics.error.unitNotFound');
     }
-    $body = vevent_unit($unit, $event, $appUrl, $host, $lang);
+    $body = vevent_unit($unit, $event, $appUrl, $host, $lang, $units);
     $filename = $fileName('session');
 } elseif ($scope === 'race') {
     $event = find_event($events, $id);
     if ($event === null) {
         $icsError(404, 'ics.error.eventNotFound');
     }
-    $body = vevent_race($event, $appUrl, $host, $lang);
+    $body = vevent_race($event, $appUrl, $host, $lang, $units);
     $filename = $fileName('race');
 } else {
     // scope=event: complete plan + race.
@@ -356,12 +351,12 @@ if ($scope === 'session') {
                 if (($u->type ?? '') === 'rest') {
                     continue;
                 }
-                $body = array_merge($body, vevent_unit($u, $event, $appUrl, $host, $lang));
+                $body = array_merge($body, vevent_unit($u, $event, $appUrl, $host, $lang, $units));
             }
         }
     }
     if ($event !== null) {
-        $body = array_merge($body, vevent_race($event, $appUrl, $host, $lang));
+        $body = array_merge($body, vevent_race($event, $appUrl, $host, $lang, $units));
     }
     $filename = $fileName('plan');
 }

@@ -231,6 +231,10 @@ $setLang('fr', 'en');
 check('Calendar: person with French → French labels, decimal comma', str_contains($b = $icsBody(), "CATEGORIES:Course\r\n") && str_contains($b, '(21\\,1 km)'), $b);
 $setLang('xx', 'en');
 check('Calendar: unsupported language → the instance default', str_contains($icsBody(), "CATEGORIES:Race\r\n"));
+// 4.1: the person's distance unit – miles in the race distance.
+http('POST', '?action=ops&area=profile&user=u-a', ['ops' => [['op' => 'upsert', 'record' => ['id' => 'profile', 'name' => 'Admin', 'settings' => ['language' => 'en', 'distanceUnit' => 'mi']]]]], $admin);
+check('Calendar: person on miles → race distance in miles', str_contains($b = $icsBody(), 'Distance: HM (13.11 mi)'), $b);
+$setLang('xx', 'en');   // back to the state the next checks expect
 $r = http('POST', '?action=ics-token', ['user' => 'u-a'], $kid);
 check('Key of another person as a member → 403', $r['status'] === 403 || $r['status'] === 401, $r['json']);
 
