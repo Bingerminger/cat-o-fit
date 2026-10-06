@@ -413,6 +413,7 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
 /* Segmented control */
 .segmented {
   display: inline-flex;
+  max-width: 100%;   /* longer labels in other languages must not widen the page */
   background: var(--surface-2);
   border-radius: var(--r-md);
   padding: 3px;
@@ -424,7 +425,11 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
   font-size: 0.86rem;
   font-weight: 600;
   color: var(--text-2);
-  white-space: nowrap;
+  /* One line where it fits; otherwise wrap (hyphenated in the page language) instead of overflowing. */
+  min-width: 0;
+  text-align: center;
+  hyphens: auto;
+  -webkit-hyphens: auto;
 }
 .segmented__opt.is-active {
   background: var(--surface);
