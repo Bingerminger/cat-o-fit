@@ -419,7 +419,7 @@ async function renderFlow({ page, h, server, lang }) {
   await page.getByRole('button', { name: L('reports.create'), exact: true }).first().click();
   await click(L('reports.typeGoal'));
   await page.getByPlaceholder(L('reports.goalPlaceholder')).fill(typed.certGoal);
-  await page.getByPlaceholder(L('reports.detailPlaceholder')).fill(typed.certDetail);
+  await page.getByPlaceholder(L('reports.detailPlaceholder', { from: 72, to: 65, unit: 'kg' })).fill(typed.certDetail);
   await page.getByRole('button', { name: L('reports.createGoal'), exact: true }).click();
   await page.getByRole('button', { name: L('reports.saveCertificate'), exact: true }).click();
   await page.waitForFunction(() => location.hash.startsWith('#/report/'));

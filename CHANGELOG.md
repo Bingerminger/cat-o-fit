@@ -7,6 +7,43 @@ Cat-O-Fit was developed privately, in German, up to v3.23.x. This repository and
 with v4.0.0, the first public release. Copies of v3.23.x or earlier that were handed out stay under the
 MIT licence they came with.
 
+## [4.1.0] – 2026-10-06
+
+Your units: miles, pounds, °F, the first day of the week and conventional lab units – chosen per
+person, stored metric.
+
+### Added
+
+- **Units per person** under Settings → Appearance → Units: kilometres or miles (pace in min/km or
+  min/mi, elevation in metres or feet), kilograms or pounds (height in centimetres or feet and
+  inches), °C or °F. Without a choice the app follows the browser's region – miles, pounds and °F in
+  the United States, metric elsewhere – and saves that once, so the person keeps it on every device.
+- **Everything shown follows the units:** Today, calendar, plans and their generated texts, sessions,
+  statistics and charts, body values and goals, races and predictions, badges, team and family
+  figures, weather and the printable reports. Storage stays metric, so switching back and forth
+  changes no data; reports keep the units of the day they were written.
+- **Everything typed follows them too:** logging and editing sessions, planned sessions and their
+  target pace, strength sets in workout mode, a race's own distance, height, weight and target
+  weight, weight goals and body values. A field saved unchanged keeps the stored value exactly.
+- **First day of the week:** Monday, Saturday or Sunday (Sunday by default in the United States) –
+  for the calendar, weekly figures, goals and charts. New plans start on that day; existing plans
+  keep their days.
+- **Conventional lab units:** lab values, ranges, trends and charts in units such as ng/mL and mg/dL
+  instead of SI units (the default in the United States). Storage and ratings stay canonical.
+- **Mile splits:** imported GPX and TCX runs also keep splits per mile.
+- The calendar feed (.ics) and the CSV export use the person's units; the CSV headings name them.
+- A help article in all seven languages on units and the first day of the week.
+
+### Changed
+
+- Saving a planned session with an unchanged target pace keeps its pace range instead of resetting
+  the upper end to pace + 10 s.
+
+### Documentation
+
+- FAQ, getting started, settings, labs and training science describe the units; the README and the
+  roadmap describe 4.1.
+
 ## [4.0.1] – 2026-10-06
 
 ### Added

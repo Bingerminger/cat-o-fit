@@ -3,7 +3,13 @@
 Planned development of Cat-O-Fit, in rough order of priority. What is already done is in the
 [CHANGELOG](../CHANGELOG.md). Suggestions and help are welcome – see [CONTRIBUTING](../CONTRIBUTING.md).
 
-**As of:** 6 October 2026, v4.0.0.
+**As of:** 6 October 2026, v4.1.0.
+
+## Done: v4.1.0 – Your units
+
+Miles and min/mi, pounds, feet and inches, °F, the first day of the week and lab values in
+conventional units such as mg/dL – chosen per person, with the browser's region as the default;
+storage stays metric. Details are in the [CHANGELOG](../CHANGELOG.md).
 
 ## Done: v4.0.0 – Cat-O-Fit speaks your language
 
@@ -12,14 +18,12 @@ voice cues in every language, English for developers, the AGPL-3.0-or-later lice
 the import from Strong, Hevy and FitNotes, and templates for Unraid and CasaOS. Details are in the
 [CHANGELOG](../CHANGELOG.md).
 
-## After v4.0.0
+## After v4.1.0
 
-### v4.1 – Imperial units and regional details
+### On demand
 
-- Miles, min/mi, pounds, feet and °F as a display option – storage stays metric.
-- First day of the week as a setting, lab values in conventional units (e.g. mg/dL).
-- More languages on demand (Polish, Swedish, Danish, Czech, Ukrainian …), and a translation platform
-  once contributors ask for one.
+- More languages (Polish, Swedish, Danish, Czech, Ukrainian …), and a translation platform once
+  contributors ask for one.
 
 ### v4.2 – Strength in depth
 
