@@ -6,6 +6,7 @@ import { toCsv, sessionsCsv, healthCsv, labsCsv, diaryCsv } from '../js/csv-expo
 import * as store from '../js/storage.js';
 import * as settings from '../js/settings.js';
 import { setLocale } from '../js/i18n.js';
+import { setUnits, METRIC } from '../js/units.js';
 
 const lines = (csv) => csv.replace(/^﻿/, '').trimEnd().split('\r\n');
 
@@ -54,6 +55,27 @@ test('Body values, labs (with own reference range) and diary', () => {
   assert.equal(l[1], '2026-07-06;Ferritin;47;µg/l;15;150;nüchtern');
   const t = lines(diaryCsv([{ date: '2026-09-01', _kind: 'day', complete: true }, { date: '2026-09-01', title: 'Porridge', kcal: 520 }]));
   assert.equal(t.length, 2, 'the "day complete" marker is not a meal');
+});
+
+test('v4.1: the table follows the person\'s units – miles, feet, pounds, conventional lab units', () => {
+  setUnits({ distance: 'mi', weight: 'lb', labs: 'conventional' });
+  try {
+    const s = lines(sessionsCsv([{ id: 'a', date: '2026-09-02', type: 'easy', title: 'Lauf', durationSec: 5214, distanceKm: 16.09344, paceSecPerKm: 324, ascentM: 100 }]));
+    assert.ok(s[0].startsWith('Datum;Sportart;Titel;Dauer (min);Distanz (mi);Pace (min/mi);'), s[0]);
+    assert.ok(s[0].includes(';Anstieg (ft);'), s[0]);
+    const cells = s[1].split(';');
+    assert.deepEqual([cells[4], cells[5], cells[10]], ['10,00', '8:41', '328'], '10 mi, 8:41 per mile, 328 ft');
+    const h = lines(healthCsv([{ date: '2026-09-01', weight: 72.4, muscleMass: 30 }]));
+    assert.ok(h[0].startsWith('Datum;Gewicht (lb);Körperfett (%);Muskelmasse (lb);Fettfreie Masse (lb);'), h[0]);
+    assert.match(h[1], /^2026-09-01;159,6;;66,1;;/);
+    const l = lines(labsCsv([{ date: '2026-07-06', analyte: 'vitaminD', value: 75, unit: 'nmol/l', refLow: 50, refHigh: 125 }]));
+    assert.equal(l[1], '2026-07-06;Vitamin D (25-OH);30;ng/mL;20;50,1;', 'factor 2.496, three significant digits');
+  } finally {
+    setUnits(METRIC);
+  }
+  const back = lines(sessionsCsv([{ id: 'a', date: '2026-09-02', type: 'easy', distanceKm: 9.25, ascentM: 100 }]));
+  assert.ok(back[0].includes('Distanz (km);Pace (min/km);') && back[0].includes(';Anstieg (m);'), 'metric again');
+  assert.equal(back[1].split(';')[10], '100');
 });
 
 test('Settings offer the table export', () => {
