@@ -13,6 +13,7 @@ Wettkämpfe und Programme, Plan, Kalender, Workout-Modus, Erinnerungen, Übungen
 - [Ein Training durchführen](#ein-training-durchführen)
 - [Ein Training ohne Uhr nachtragen](#ein-training-ohne-uhr-nachtragen)
 - [Aktivitäten aus Dateien übernehmen](#aktivitäten-aus-dateien-übernehmen)
+- [Krafttraining-Verlauf aus anderen Apps übernehmen](#krafttraining-verlauf-aus-anderen-apps-übernehmen)
 - [Eine Einheit verschieben](#eine-einheit-verschieben)
 - [Einheiten anpassen, ergänzen & aufholen](#einheiten-anpassen-ergänzen--aufholen)
 - [Erinnerungen aufs iPhone bekommen](#erinnerungen-aufs-iphone-bekommen)
@@ -216,6 +217,56 @@ die letzten 90 Tage, damit der Gerätespeicher nicht vollläuft.
 App sie aus deiner Herzfrequenz, und „Heute“ fragt bei frisch importierten Trainings kurz nach – ein
 Tipp auf „leicht“, „mittel“, „hart“ oder „sehr hart“ genügt (siehe
 [Coach & Belastung](coach-and-load.md#prüfen-ob-deine-belastung-gesund-ist)).
+
+---
+
+## Krafttraining-Verlauf aus anderen Apps übernehmen
+
+Hast du dein Krafttraining bisher in **Strong**, **Hevy** oder **FitNotes** festgehalten, nimmst du den
+Verlauf mit. Auf derselben Import-Seite steht gleich nach „Aktivitäten aus Dateien“ der Abschnitt
+**„Krafttraining aus anderen Apps“**:
+
+1. Exportiere in der anderen App deine Workouts als **CSV-Datei**.
+2. Tipp in Cat-O-Fit auf **„CSV-Datei wählen“** und such die Datei aus. Sie wird **auf deinem Gerät**
+   gelesen. Bevor etwas gespeichert wird, siehst du eine Übersicht: wie viele Workouts aus welcher App,
+   welchen Zeitraum sie abdecken und „… von … Übungen der Bibliothek zugeordnet, die übrigen mit eigenem
+   Namen“.
+3. Tipp auf **„… übernehmen“** (davor steht, wie viele Workouts neu sind).
+
+Was die App mit der Datei macht:
+
+- **Welche App sie geschrieben hat:** Das erkennt die App an den Spaltenüberschriften; als Trennzeichen
+  sind Komma, Semikolon und Tabulator gleichermaßen in Ordnung. Jede andere Datei weist sie ab mit „Diese
+  Datei ist kein CSV-Export aus Strong, Hevy oder FitNotes.“
+- **Workouts:** Bei Strong und Hevy werden die Zeilen je Workout zusammengefasst (Beginn und Name, wie in
+  der App). FitNotes kennt weder eine Startzeit noch einen Namen, deshalb wird alles, was du an einem
+  **Tag** gemacht hast, zu einem Workout. Die Dauer bringen Strong und Hevy mit, wo die Datei sie
+  enthält; FitNotes hat keine.
+- **Kilogramm oder Pfund:** Hevy und FitNotes nennen die Einheit in den Spaltenüberschriften, Strong in
+  einer Spalte „Weight Unit“. Fehlt sie in einer Strong-Datei, fragt die Übersicht **„Gewichte in der
+  Datei“** – **kg** oder **lb** (kg ist vorgewählt; beim Umschalten rechnet die Übersicht neu). Pfund
+  werden in Schritten von 0,25 kg in Kilogramm umgerechnet.
+- **Körpergewicht und übersprungene Zeilen:** Ein Gewicht von 0 ist die Schreibweise dieser Apps für
+  einen Satz mit dem eigenen Körpergewicht (Klimmzüge, Liegestütze); hier wird daraus ein Satz ohne
+  Gewicht. Zeilen ohne Wiederholungen – Cardio, Haltezeiten wie beim Plank – werden übersprungen; die
+  Übersicht nennt die Zahl („… Zeilen ohne Wiederholungen übersprungen“). Ein Satz zählt mit 1 bis 100
+  Wiederholungen.
+- **Übungsnamen:** Eine Übung wird der [Bibliothek](#übungs-bibliothek) nur bei einem **exakten**
+  Treffer zugeordnet – Name oder Alias einer unserer Übungen, in deiner App-Sprache, auf Englisch oder
+  auf Deutsch, ohne die Geräteangabe in Klammern und gleich in Einzahl oder Mehrzahl. „Squat (Barbell)“
+  wird zu unserer „Kniebeuge“. Alles andere behält seinen **eigenen Namen** im Training: „Bench Press
+  (Barbell)“ bleibt, wie es ist, und ein klassisches „Deadlift (Barbell)“ ist bewusst **nicht** unser
+  Rumänisches Kreuzheben – ein falscher Treffer würde den Steigerungshinweis in die Irre führen.
+- **Titel und Anstrengung:** Jedes Workout wird an seinem Tag zu einem **freien Krafttraining** (ohne
+  Bezug zu einer geplanten Einheit) mit dem Titel aus der Datei. Hat die Datei keinen – bei FitNotes
+  immer –, nennt die App es **„Kraft (Strong)“**, „Kraft (Hevy)“ bzw. „Kraft (FitNotes)“. Enthält die
+  Datei einen RPE je Satz (Strong, Hevy), wird der auf eine ganze Zahl gerundete **Durchschnitt** der
+  Sätze zur Anstrengung des Trainings.
+- **Zweimal importieren ist unbedenklich:** Was schon da ist, erkennt die App und überspringt es („…
+  schon vorhanden – werden übersprungen“); du kannst also auch einen neueren Export einlesen, der die
+  alten Workouts noch enthält. Als schon übernommen gilt ein Workout, wenn an dem Tag ein Training aus
+  derselben App existiert – und, wo die App Workout-Namen kennt, mit demselben Namen. Trainings, die du
+  selbst erfasst hast, bleiben unberührt.
 
 ---
 

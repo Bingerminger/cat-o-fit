@@ -18,10 +18,10 @@ Für alle, die mit Cat-O-Fit trainieren – ganz ohne Technikwissen.
 | Seite | Inhalt |
 |---|---|
 | [Erste Schritte](usage/getting-started.md) | Was die App macht, die ersten fünf Minuten, Navigation, Hilfe in der App, Diagramme lesen |
-| [Training planen und durchführen](usage/training.md) | Wettkampf oder Programm anlegen, Plan, Workout-Modus, nachtragen, verschieben, Erinnerungen und Kalender-Abo, Fortschritt, Übungen, Wetter |
+| [Training planen und durchführen](usage/training.md) | Wettkampf oder Programm anlegen, Plan, Workout-Modus, nachtragen, Import aus Dateien und Kraftsport-Apps, verschieben, Erinnerungen und Kalender-Abo, Fortschritt, Übungen, Wetter |
 | [Coach & Belastung](usage/coach-and-load.md) | Die Tagesempfehlung, Belastung & Form, Aktuelle Form, Erfolge, feste Termine, zwei Ziele in einem Plan |
 | [Gesundheit](usage/health.md) | Körperwerte, Apple Health, Gesundheitsziele, Gesundheit & Eignung, Zykluskalender |
-| [Labor & Ergänzung](usage/labs.md) | Laborwerte erfassen und sportbezogen einordnen, woher du Werte bekommst |
+| [Labor & Ergänzung](usage/labs.md) | Laborwerte erfassen und sportbezogen einordnen, woher du Werte bekommst (in Deutschland und anderswo) |
 | [Ernährung & Einkauf](usage/nutrition.md) | Rezepte, Kalorienbilanz, Ess-Tagebuch, Einkaufsliste und Vorrat |
 | [Team & Familie](usage/family.md) | Anmelden, PIN, Rollen, Mitverwalten, Teams, was privat bleibt |
 | [Die Bereiche im Detail](usage/areas.md) | Jede Ansicht kurz erklärt, Module, Daten & Sicherung |

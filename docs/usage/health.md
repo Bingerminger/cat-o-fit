@@ -80,6 +80,10 @@ for the New Year’s Day run at 00:30), **moving time** without pauses, distance
 you see a summary: if a planned session of the same day and the same sport fits, the activity is matched to
 it, otherwise it is saved as a free workout.
 
+**Strength history from other apps (CSV).** Below that, the same page takes the CSV export of **Strong**,
+**Hevy** or **FitNotes** and turns it into strength sessions with their sets (more under
+[Importing strength history from other apps](training.md#import-strength-history-from-other-apps)).
+
 **Matching automatically imported workouts.** If workouts arrive via “Health Auto Export” without a link to
 the plan, “Today” offers to match them to the fitting planned session of the same day (**Match**,
 **Match all** or **Don’t match**). Once matched, the session counts as done – without double load.

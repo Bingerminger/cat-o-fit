@@ -96,7 +96,14 @@ Kontrolle. Genau solche Verläufe sieht man in einem einzelnen Befund nicht.
 ### Woher bekomme ich die Werte? (Deutschland)
 
 Vier bis fünf Wege führen zu einem Laborbefund – sie unterscheiden sich vor allem darin,
-**wer zahlt** und wie sportnah die Auswahl der Werte ist.
+**wer zahlt** und wie sportnah die Auswahl der Werte ist. Diese Wege mit ihren Kassenregeln und Preisen
+sind die deutschen: Cat-O-Fit zeigt sie, wenn der Ort in deinen Einstellungen (**Einstellungen →
+„Standort & Wetter“**) in Deutschland liegt – hast du keinen Ort hinterlegt, entscheidet die App-Sprache,
+und Deutsch zählt als Deutschland. Überall sonst steht an ihrer Stelle – und an der der deutschen Normen
+weiter unten – ein kurzer allgemeiner Hinweis: Frag eine sportmedizinische Praxis oder deine Ärztin oder
+deinen Arzt, welche Werte sie messen können; ein privates Labor ist die Alternative, und bring den
+Befund mit – Werte aus jedem Labor in jedem Land funktionieren, weil du den Referenzbereich einträgst,
+der darauf steht.
 
 | Weg | Was drin ist | Kosten |
 |---|---|---|

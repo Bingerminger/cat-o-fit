@@ -14,10 +14,10 @@ For everyone who trains with Cat-O-Fit – no technical knowledge needed.
 | Page | Contents |
 |---|---|
 | [Getting started](usage/getting-started.md) | What the app does, the first five minutes, navigation, help in the app, reading charts |
-| [Planning and doing your training](usage/training.md) | Set up a race or a programme, the plan, workout mode, logging afterwards, moving sessions, reminders and calendar subscription, progress, exercises, weather |
+| [Planning and doing your training](usage/training.md) | Set up a race or a programme, the plan, workout mode, logging afterwards, importing from files and strength apps, moving sessions, reminders and calendar subscription, progress, exercises, weather |
 | [Coach & load](usage/coach-and-load.md) | The daily recommendation, load & form, current form, achievements, fixed commitments, two goals in one plan |
 | [Health](usage/health.md) | Body values, Apple Health, health goals, health & eligibility, cycle calendar |
-| [Labs & supplements](usage/labs.md) | Record lab values and read them in a sports context, where to get values |
+| [Labs & supplements](usage/labs.md) | Record lab values and read them in a sports context, where to get values (in Germany and elsewhere) |
 | [Nutrition & shopping](usage/nutrition.md) | Recipes, calorie balance, food diary, shopping list and pantry |
 | [Team & family](usage/family.md) | Signing in, PIN, roles, co-managing, teams, what stays private |
 | [The areas in detail](usage/areas.md) | Every view in brief, modules, data & backup |

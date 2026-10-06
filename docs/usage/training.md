@@ -13,6 +13,7 @@ Races and programmes, the plan, calendar, workout mode, reminders, exercises and
 - [Do a training session](#do-a-training-session)
 - [Log a training session without a watch](#log-a-training-session-without-a-watch)
 - [Import activities from files](#import-activities-from-files)
+- [Import strength history from other apps](#import-strength-history-from-other-apps)
 - [Reschedule a session](#reschedule-a-session)
 - [Adjust, add & catch up on sessions](#adjust-add--catch-up-on-sessions)
 - [Get reminders on your iPhone](#get-reminders-on-your-iphone)
@@ -216,6 +217,52 @@ the last 90 days, so the device storage does not fill up.
 estimates it from your heart rate, and “Today” briefly asks about freshly imported trainings – one
 tap on “light”, “medium”, “hard” or “very hard” is enough (see
 [Coach & load](coach-and-load.md#checking-whether-your-load-is-healthy)).
+
+---
+
+## Import strength history from other apps
+
+If you have logged your strength training in **Strong**, **Hevy** or **FitNotes**, you can bring that
+history along. On the same import page, the section **“Strength training from other apps”** follows
+right after “Activities from files”:
+
+1. In the other app, export your workouts as a **CSV file**.
+2. In Cat-O-Fit tap **“Choose CSV file”** and pick it. The file is read **on your device**. Before
+   anything is saved you see an overview: how many workouts from which app, the period they cover and
+   “… of … exercises matched to the library, the others kept by name”.
+3. Tap **“Import …”** (it shows how many new workouts there are).
+
+What the app does with the file:
+
+- **Which app wrote it:** the app tells from the column headings; commas, semicolons or tabs as the
+  separator are all fine. Any other file is turned away with “This file is not a CSV export from Strong,
+  Hevy or FitNotes.”
+- **Workouts:** Strong and Hevy files are grouped by workout (start and name, as in the app). FitNotes
+  records neither a start time nor a name, so everything you did on one **day** becomes one workout.
+  Where the file has them, Strong and Hevy bring the session’s duration; FitNotes has none.
+- **Kilograms or pounds:** Hevy and FitNotes name the unit in the column headings, Strong in a “Weight
+  Unit” column. If a Strong file has no such column, the overview asks **“Weights in the file”** –
+  **kg** or **lb** (kg is preselected; the overview updates when you switch). Pounds are converted to
+  kg in steps of 0.25 kg.
+- **Bodyweight and skipped rows:** a weight of 0 is how these apps write a bodyweight set (pull-ups,
+  push-ups); here it becomes a set without weight. Rows without repetitions – cardio, timed holds such
+  as a plank – are skipped, and the overview says how many (“… rows without repetitions skipped”). A
+  set counts with 1 to 100 repetitions.
+- **Exercise names:** an exercise is matched to the [library](#exercise-library) only when the name is an
+  **exact** match – the name or an alias of one of our exercises, in your app language, in English or in
+  German, without the equipment in brackets and regardless of singular or plural. “Squat (Barbell)”
+  becomes our “Squats”. Everything else keeps its **own name** in the session: “Bench Press (Barbell)”
+  stays as it is, and a conventional “Deadlift (Barbell)” is deliberately **not** our Romanian deadlift
+  – a wrong match would mislead the progression hint.
+- **Title and effort:** each workout becomes a **free strength session** (not tied to a planned session)
+  on its day, with the workout’s title from the file. Where the file has none – always with FitNotes –
+  the app calls it **“Strength (Strong)”**, “Strength (Hevy)” or “Strength (FitNotes)”. If the file has
+  an RPE per set (Strong, Hevy), the **average** of the sets, rounded to a whole number, becomes the
+  session’s effort.
+- **Importing twice is safe:** workouts that are already there are recognised and skipped (“… already
+  there – skipped”), so you can import a newer export that still contains the old workouts. A workout
+  counts as already imported if a session from the same app exists on that day – and, where the app
+  has workout names, with the same name. Sessions you logged yourself are not touched.
 
 ---
 

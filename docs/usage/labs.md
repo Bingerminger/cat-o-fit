@@ -87,7 +87,12 @@ in a single report.
 ### Where do I get my lab results? (Germany)
 
 Four to five routes lead to a lab report – they differ mainly in **who pays** and how close to sport the
-choice of values is.
+choice of values is. These routes, with their insurance rules and prices, are the German ones: Cat-O-Fit
+shows them when the place in your settings (**Settings → “Location & weather”**) is in Germany – if you
+have not set a place, the app language decides, and German counts as Germany. Everywhere else a short
+general note takes their place, and that of the German standards further down: ask a sports-medicine
+practice or your doctor which values they can measure, a private lab is the alternative, and bring the
+report – values from any lab in any country work, because you enter the reference range printed on it.
 
 | Route | What it covers | Cost |
 |---|---|---|

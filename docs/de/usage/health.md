@@ -82,6 +82,10 @@ die **Zeit in jeder Zone**. Vor dem Speichern siehst du eine Zusammenfassung: Pa
 Einheit desselben Tages und derselben Sportart, wird die Aktivität ihr zugeordnet, sonst als freies
 Training gespeichert.
 
+**Krafttraining-Verlauf aus anderen Apps (CSV).** Darunter nimmt dieselbe Seite den CSV-Export von
+**Strong**, **Hevy** oder **FitNotes** entgegen und macht daraus Krafttrainings mit ihren Sätzen (mehr
+unter [Krafttraining-Verlauf aus anderen Apps übernehmen](training.md#krafttraining-verlauf-aus-anderen-apps-übernehmen)).
+
 **Automatisch importierte Trainings zuordnen.** Kommen Trainings über „Health Auto Export“ ohne Bezug
 zum Plan an, schlägt „Heute“ vor, sie der passenden geplanten Einheit desselben Tages zuzuordnen
 (**Zuordnen**, **Alle zuordnen** oder **Nicht zuordnen**). Zugeordnet gilt die Einheit als erledigt –
