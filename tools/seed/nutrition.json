@@ -1,6 +1,7 @@
 [
   {
     "id": "demo-n1",
+    "suggestionId": "overnight-oats-mit-beeren",
     "category": "fruehstueck",
     "title": "Overnight Oats mit Beeren",
     "kcal": 520,
@@ -21,6 +22,7 @@
   },
   {
     "id": "demo-n2",
+    "suggestionId": "protein-porridge-mit-banane",
     "category": "fruehstueck",
     "title": "Protein-Porridge mit Banane",
     "kcal": 600,
@@ -39,6 +41,7 @@
   },
   {
     "id": "demo-n3",
+    "suggestionId": "haehnchen-reis-bowl-mit-brokkoli",
     "category": "mittag",
     "title": "Hähnchen-Reis-Bowl mit Brokkoli",
     "kcal": 600,
@@ -57,6 +60,7 @@
   },
   {
     "id": "demo-n4",
+    "suggestionId": "lachs-mit-suesskartoffel-spinat",
     "category": "mittag",
     "title": "Lachs mit Süßkartoffel & Spinat",
     "kcal": 620,
@@ -75,6 +79,7 @@
   },
   {
     "id": "demo-n5",
+    "suggestionId": "omelett-mit-feta-tomaten",
     "category": "abend",
     "title": "Omelett mit Feta & Tomaten",
     "kcal": 440,
@@ -94,6 +99,7 @@
   },
   {
     "id": "demo-n6",
+    "suggestionId": "skyr-mit-beeren",
     "category": "snack",
     "title": "Skyr mit Beeren",
     "kcal": 140,
