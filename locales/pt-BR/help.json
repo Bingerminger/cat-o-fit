@@ -207,6 +207,20 @@
         "3": "Ir para Importação de saúde"
       }
     },
+    "kraft-import": {
+      "q": "Trazer seu histórico de musculação do Strong, Hevy ou FitNotes",
+      "aliases": "Strong|Hevy|FitNotes|CSV|importar|histórico|musculação|pesos",
+      "blocks": {
+        "0": "Você registrava sua musculação no Strong, Hevy ou FitNotes? Traga o histórico: o Cat-O-Fit lê a exportação CSV deles e cria, para cada treino, uma sessão de musculação com as séries (repetições × kg).",
+        "1": [
+          "No outro app, exporte seu histórico de treinos como arquivo CSV.",
+          "No Cat-O-Fit, abra Importação de saúde e, em “Musculação de outros apps”, toque em “Escolher arquivo CSV”.",
+          "Confira o resumo – treinos, período, exercícios associados. Se o arquivo não disser se os pesos estão em kg ou lb, escolha. Depois importe."
+        ],
+        "2": "Os exercícios que a biblioteca conhece são associados a ela; os outros mantêm o próprio nome, então nada se perde. Linhas sem repetições (cardio, exercícios isométricos) são ignoradas, e importar o mesmo arquivo de novo não duplica nada.",
+        "3": "Ir para Importação de saúde"
+      }
+    },
     "erinnerungen": {
       "q": "Receber lembretes no iPhone",
       "blocks": {

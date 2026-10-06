@@ -207,6 +207,20 @@
         "3": "Go to Health import"
       }
     },
+    "kraft-import": {
+      "q": "Bringing your strength history from Strong, Hevy or FitNotes",
+      "aliases": "Strong|Hevy|FitNotes|CSV|import|strength history|gym log|weights",
+      "blocks": {
+        "0": "Logged your strength training in Strong, Hevy or FitNotes? Bring the history along: Cat-O-Fit reads their CSV export and creates a strength session with sets (reps × kg) for every workout.",
+        "1": [
+          "In the other app, export your workout history as a CSV file.",
+          "In Cat-O-Fit, open Health import and, under “Strength training from other apps”, tap “Choose CSV file”.",
+          "Check the overview – workouts, period, matched exercises. If the file does not say whether the weights are in kg or lb, choose it. Then import."
+        ],
+        "2": "Exercises the library knows are matched to it; all others keep their own name, so nothing is lost. Rows without repetitions (cardio, timed holds) are skipped, and importing the same file again adds nothing twice.",
+        "3": "Go to Health import"
+      }
+    },
     "erinnerungen": {
       "q": "Getting reminders on your iPhone",
       "blocks": {

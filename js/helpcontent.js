@@ -39,6 +39,7 @@ const STRUCTURE = [
     ['koerperwerte', ['steps', 'tip', 'tip', ['link', '#/health']]],
     ['apple-health', ['p', 'steps', 'tip', ['link', '#/import']]],
     ['health-connect', ['p', 'steps', 'tip', ['link', '#/import']]],
+    ['kraft-import', ['p', 'steps', 'tip', ['link', '#/import']]],
     ['erinnerungen', ['p', 'steps']],
     ['fortschritt', ['p', 'steps', ['link', '#/stats']]],
   ]],

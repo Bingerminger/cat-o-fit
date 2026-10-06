@@ -207,6 +207,20 @@
         "3": "Zum Health-Import"
       }
     },
+    "kraft-import": {
+      "q": "Krafttraining aus Strong, Hevy oder FitNotes übernehmen",
+      "aliases": "Strong|Hevy|FitNotes|CSV|Import|Krafttraining-Verlauf|Gym|Gewichte",
+      "blocks": {
+        "0": "Du hast dein Krafttraining in Strong, Hevy oder FitNotes protokolliert? Nimm den Verlauf mit: Cat-O-Fit liest deren CSV-Export und legt für jedes Training eine Krafteinheit mit Sätzen (Wiederholungen × kg) an.",
+        "1": [
+          "Exportiere in der anderen App deinen Trainingsverlauf als CSV-Datei.",
+          "Öffne in Cat-O-Fit den Health-Import und tippe unter „Krafttraining aus anderen Apps“ auf „CSV-Datei wählen“.",
+          "Prüf die Übersicht – Trainings, Zeitraum, zugeordnete Übungen. Steht in der Datei nicht, ob die Gewichte in kg oder lb sind, wählst du es aus. Dann übernehmen."
+        ],
+        "2": "Übungen, die die Bibliothek kennt, werden ihr zugeordnet; alle anderen behalten ihren Namen, es geht also nichts verloren. Zeilen ohne Wiederholungen (Cardio, gehaltene Übungen) werden übersprungen, und ein zweiter Import derselben Datei legt nichts doppelt an.",
+        "3": "Zum Health-Import"
+      }
+    },
     "erinnerungen": {
       "q": "Erinnerungen aufs iPhone bekommen",
       "blocks": {
