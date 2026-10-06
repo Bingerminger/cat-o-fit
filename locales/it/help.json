@@ -513,7 +513,7 @@
         "1": [
           "Prima i segnali d’allarme: un rientro dolce dopo malattia o infortunio, un giorno di recupero quando il carico è chiaramente più alto del previsto, più facile oggi quando la prontezza è bassa, più facile dopo il calcio quando la partita è stata dura, una settimana più leggera dopo settimane di sessioni molto dure.",
           "Poi il tuo piano: distribuire la giornata (due sessioni nello stesso giorno), recuperare la sessione chiave che hai saltato, bilanciare il volume settimanale (recuperare con dolcezza i km di corsa rimasti indietro) – mai dopo una malattia o un infortunio.",
-          "Per ultima la progressione (“Hai ancora margine”) – solo senza segnali d’allarme, con il carico nella norma e non nei 14 giorni dopo uno stop.",
+          "Per ultima la progressione (“Ancora energia da spendere”) – solo senza segnali d’allarme, con il carico nella norma e non nei 14 giorni dopo uno stop.",
           "Sotto, informazioni senza un verdetto proprio: prontezza (HRV, frequenza cardiaca a riposo, sonno), previsione della forma, frequenza cardiaca nelle corse facili, sforzo delle ultime sessioni (RPE medio)."
         ],
         "2": "“Perché questo consiglio?” sotto la scheda mostra che cos’altro sarebbe andato bene. Allenarsi secondo il piano non è un segnale d’allarme, e il coach non tocca mai gli appuntamenti fissi. Le modifiche al piano avvengono solo quando le attivi tu."
@@ -590,7 +590,7 @@
           "Se il tuo carico è ben sopra il pianificato, o si accumulano giorni duri che non erano nel piano, il coach propone un giorno di recupero per la prossima sessione dura nei due giorni seguenti. Un allenamento che segue il piano non è un segnale d’allarme.",
           "Se in quel giorno cadono due sessioni (diciamo da due obiettivi), l’intera giornata viene abbassata a facile – oppure ne sposti una su un giorno libero (distribuire la giornata).",
           "Se inserisci l’inizio delle mestruazioni per oggi o domani, l’app chiede se vuoi andarci più piano – solo allora viene adattato qualcosa.",
-          "Ogni adattamento automatico compare in modo trasparente nel registro “Ultimi adeguamenti automatici” e si può annullare finché la sessione è ancora aperta."
+          "Ogni adattamento automatico compare in modo trasparente nel registro “Ultimi adattamenti automatici” e si può annullare finché la sessione è ancora aperta."
         ],
         "2": "Nulla cambia alle tue spalle – gli adattamenti sono visibili e reversibili. “Oggi” mostra sempre un solo consiglio; “Perché questo consiglio?” mostra che cosa è stato messo da parte."
       }
@@ -754,7 +754,7 @@
       "blocks": {
         "0": "Oltre alla famiglia intera, come admin puoi formare dei team – per esempio “Team Rosso”, “Team Blu”, “Team Verde”. Un membro può stare in PIÙ team contemporaneamente, e alcuni restano senza alcun team.",
         "1": "Crei i team in Altro → “Gestisci team”: “Crea team”, scegli un nome e un’icona e assegna i membri con le spunte. Per cambiare team, sposta semplicemente le spunte – così togli qualcuno da un team e lo metti in un altro (o in aggiunta in un secondo).",
-        "2": "Nella dashboard del team/famiglia passi in alto tra “Tutti”, i singoli team e “Nessun team”. Tutte le cifre – chilometri settimanali, km mensili e traguardo, “Attivi questa settimana” e i badge del team – vengono poi sommate esattamente per i membri del team scelto.",
+        "2": "Nella dashboard del team/famiglia passi in alto tra “Tutti”, i singoli team e “Nessun team”. Tutte le cifre – chilometri settimanali, km mensili e traguardo, “Persone attive questa settimana” e i badge del team – vengono poi sommate esattamente per i membri del team scelto.",
         "3": "Un membro in due team conta in entrambi – comodo se qualcuno è, per esempio, nel gruppo di corsa E nella squadra di calcio.",
         "4": "Se un membro viene rimosso, scompare automaticamente da tutti i team – non restano “fantasmi”.",
         "5": "Gestisci i team"
@@ -773,7 +773,7 @@
         "0": "Invece di aprire singoli file .ics, il tuo calendario può sottoscrivere un intero piano – tutte le sessioni e la gara. Poi recupera da solo le modifiche. Ciò che sottoscrivi è sempre un piano, non il calendario dell’app.",
         "1": [
           "Altro → “Obiettivi e piani” → apri una gara o un programma → tocca l’icona di download “Esporta” in alto – oppure nel piano “…” → “Aggiungi al calendario (.ics)”.",
-          "Nella finestra “Esporta nel calendario” tocca “Copia il link di sottoscrizione”. Il pulsante compare solo con una connessione al server e dopo il tuo accesso con PIN.",
+          "Nella finestra “Esporta nel calendario” tocca “Copia il link di iscrizione”. Il pulsante compare solo con una connessione al server e dopo il tuo accesso con PIN.",
           "Incolla il link nel tuo calendario come sottoscrizione:"
         ],
         "2": "iPhone/iPad: app Calendario → “Calendari” → “Aggiungi calendario” → “Aggiungi calendario sottoscritto”.",

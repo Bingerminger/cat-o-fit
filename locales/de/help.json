@@ -73,7 +73,7 @@
       "q": "Einen Wettkampf anlegen und den Plan erstellen",
       "blocks": {
         "0": [
-          "Öffne „Ziele“ und tippe auf „+“ → wähle „Wettkampf“.",
+          "Öffne „Ziele & Pläne“ und tippe auf „+“ → wähle „Wettkampf“.",
           "Gib Name, Datum, Distanz und Zielzeit ein und wähle die Priorität: A – Saisonhöhepunkt, B – wichtiger Wettkampf, C – Vorbereitungs- oder Spaßrennen.",
           "Speichern – du landest auf der Ziel-Seite.",
           "Tippe auf „Plan erstellen“ und wähle Niveau (Einsteiger, Fortgeschritten, Leistung), Lauftage pro Woche (3–6) und ob es feste Termine gibt (z. B. Vereinstraining) – standardmäßig keine.",
@@ -89,12 +89,12 @@
       "blocks": {
         "0": "Du willst einfach fit, kräftig oder gesünder werden – ohne Wettkampf? Dann lege ein Trainingsprogramm an.",
         "1": [
-          "Öffne „Ziele“ und tippe auf „+“ → wähle „Trainingsprogramm“.",
+          "Öffne „Ziele & Pläne“ und tippe auf „+“ → wähle „Trainingsprogramm“.",
           "Wähle einen Schwerpunkt: Allgemeine Fitness, Kraft & Muskelaufbau, Abnehmen & Gewicht oder Beweglichkeit & Gesundheit.",
           "Lege Trainingstage pro Woche (3–5) und die Dauer (4, 8 oder 12 Wochen) fest.",
           "Speichern & Plan erstellen – der Wochenplan steht sofort."
         ],
-        "2": "Die Ausdauer steigt Woche für Woche bis in den WHO-Bereich (ab 150 Minuten, Gehen zählt mit), dazu Kraft an zwei Tagen – von der Eingewöhnung bis zu schwereren Varianten. Jede 4. Woche ist leichter. Mit „Plan ab heute neu erstellen“ erzeugst du die kommenden Wochen frisch; Erledigtes bleibt.",
+        "2": "Die Ausdauer steigt Woche für Woche bis in den WHO-Bereich (ab 150 Minuten, Gehen zählt mit), dazu Kraft an zwei Tagen – von der Eingewöhnung bis zu schwereren Varianten. Jede 4. Woche ist leichter. Mit „Plan ab heute neu berechnen“ erzeugst du die kommenden Wochen frisch; Erledigtes bleibt.",
         "3": "Zu deinen Zielen"
       }
     },
@@ -103,9 +103,9 @@
       "blocks": {
         "0": [
           "Tippe auf dem Dashboard oder im Kalender auf die heutige Einheit.",
-          "Du siehst das Soll (Distanz, Zielpace, HF-Zone). Tippe „Training starten“.",
+          "Du siehst das Soll (Distanz, Zielpace, HF-Zone). Tippe „Starten“.",
           "Im Workout-Modus läuft die Uhr; bei Intervallen führt dich Cat-O-Fit mit Ton durch Einlaufen, Belastung, Pause und Auslaufen – mit Zielpace und HF-Zone der Phase.",
-          "Am Ende „Beenden“ → Distanz, Anstrengung (RPE) und Gefühl eintragen → fertig. Verwerfen ohne Speichern fragt noch einmal nach."
+          "Am Ende „Training beenden“ → Distanz, Anstrengung (RPE) und Gefühl eintragen → fertig. Verwerfen ohne Speichern fragt noch einmal nach."
         ],
         "1": "Bei langen Läufen erinnert dich Cat-O-Fit automatisch ans Trinken. Auf dem iPhone: Bildschirm nicht sperren (sonst pausieren die Signale, die Zeit läuft aber richtig weiter), Stummschalter aus – vibrieren kann Safari nicht."
       }
@@ -119,7 +119,7 @@
           "Tippe „Als erledigt erfassen“.",
           "Trage ein, was du weißt (Distanz, Zeit, Gefühl) – alles ist optional."
         ],
-        "2": "Der Soll-Ist-Vergleich ist ehrlich: Ein lockerer Lauf deutlich zu schnell gilt nicht als „erreicht“; Intervalle werden nicht über den Schnitt der ganzen Einheit bewertet."
+        "2": "Der Soll-Ist-Vergleich ist ehrlich: Ein lockerer Lauf deutlich zu schnell gilt nicht als „Ziel im Wesentlichen erreicht“; Intervalle werden nicht über den Schnitt der ganzen Einheit bewertet."
       }
     },
     "training-ohne-plan": {
@@ -131,7 +131,7 @@
           "Sportart, Datum, Dauer, Distanz, Herzfrequenz und Anstrengung eintragen.",
           "Passt eine geplante Einheit desselben Tages, bietet die App an, das Training ihr zuzuordnen."
         ],
-        "2": "Freie Trainings stehen im Kalender, auf „Heute“ und in der Statistik unter „Trainings ohne Plan“ – dort öffnen, bearbeiten oder löschen. Importierte Trainings (Apple Health, GPX/TCX) schlägt „Heute“ zum Zuordnen vor."
+        "2": "Freie Trainings stehen im Kalender, auf „Heute“ und unter „Fortschritt“ bei „Trainings ohne Plan“ – dort öffnen, bearbeiten oder löschen. Importierte Trainings (Apple Health, GPX/TCX) schlägt „Heute“ zum Zuordnen vor."
       }
     },
     "einheit-verschieben": {
@@ -160,7 +160,7 @@
         ],
         "2": "Legst du eine Einheit selbst an und liegt in derselben Woche schon eine ähnlich intensive, bietet Cat-O-Fit an, diese aus dem Plan zu nehmen – so bleibt die Wochenbelastung konstant. Du entscheidest: „Aus Plan nehmen“ oder „Beide behalten“.",
         "3": "Hat sich für eine Woche etwas grundlegend geändert (z. B. Saisonstart, Trainingslager)? In der Wochenübersicht des Plans berechnet „Diese Woche neu berechnen“ nur diese eine Woche frisch – bereits erledigte Trainings bleiben erhalten.",
-        "4": "Verpasst? Vergangene, offene Einheiten erscheinen als „überfällig“. Im Dashboard erinnert dich ein Hinweis ans Verschieben, Nachtragen oder Abhaken.",
+        "4": "Verpasst? Vergangene, offene Einheiten erscheinen als „Überfällig“. Im Dashboard erinnert dich ein Hinweis ans Verschieben, Nachtragen oder Abhaken.",
         "5": "Hast du eine Schlüsseleinheit (Tempo, Intervalle, Long Run, Kraft) als verpasst markiert, bietet das Dashboard an, sie auf einen freien Tag der nächsten Woche nachzuholen – statt sie verfallen zu lassen."
       }
     },
@@ -171,7 +171,7 @@
           "Tippe auf „＋ Erfassen“ → „Körperwerte“ (oder Fortschritt → Körper → „+“).",
           "Trage z. B. Gewicht, Ruhepuls oder Schlaf ein – nur was du möchtest.",
           "Die Verläufe zeigen deinen Trend mit Y-Skala, beim Gewicht mit Ziellinie.",
-          "„Muskelmasse“ ist der Wert einer Körperanalyse-Waage; die „fettfreie Masse“ (Lean Body Mass, z. B. aus Apple Health) ist deutlich höher und fließt in die Energieversorgung ein.",
+          "„Muskelmasse“ ist der Wert einer Körperanalyse-Waage; die „Fettfreie Masse“ (Lean Body Mass, z. B. aus Apple Health) ist deutlich höher und fließt in die Energieversorgung ein.",
           "HRV mit Messart: Apple speichert SDNN, viele Uhren und Ringe zeigen RMSSD. Die Zahlen sind nicht vergleichbar – Verlauf, Ziele und Bereitschaft vergleichen nur Werte derselben Messart."
         ],
         "1": "Genauer Wert gefällig? Zieh den Finger über ein Diagramm (am Rechner: Maus darüber) – eine Führungslinie springt zum nächsten Punkt und zeigt Datum + Wert.",
@@ -189,7 +189,7 @@
           "Kostenlos und automatisch per Kurzbefehl: Mit der Apple-App „Kurzbefehle“ lassen sich Gesundheitswerte lesen und an dieselbe Adresse schicken – die Anleitung steht in der Doku (Apple Health). Ob die Automation bei gesperrtem iPhone zuverlässig läuft, hängt von iOS ab.",
           "Kostenlos von Hand: iPhone → Health-App → Profilbild → „Alle Gesundheitsdaten exportieren“ und die ZIP unter Health-Import hochladen (Voll-Import). Einzelne Aufzeichnungen als GPX- oder TCX-Datei (Garmin, Strava …) gehen ebenfalls – mit Sportart, Bewegungszeit, Kilometer-Splits und Zeit in HF-Zonen."
         ],
-        "2": "Eine zusätzliche Anmeldung („Authorization“-Header) brauchst du nur, falls deine Instanz hinter einer vorgeschalteten Anmeldung liegt – die eingebaute Basic-Auth des Containers lässt den Health-Eingang ohnehin durch. Kontrolle: In Health-Import zeigt „Zuletzt importiert“ die übernommenen Tageswerte; manuelle Einträge bleiben erhalten, doppelte Workouts werden erkannt.",
+        "2": "Eine zusätzliche Anmeldung („Authorization“-Header) brauchst du nur, falls deine Instanz hinter einer vorgeschalteten Anmeldung liegt – die eingebaute Basic-Auth des Containers lässt den Health-Eingang ohnehin durch. Kontrolle: In Health-Import zeigt „Zuletzt importiert (automatisch)“ die übernommenen Tageswerte; manuelle Einträge bleiben erhalten, doppelte Workouts werden erkannt.",
         "3": "Zum Health-Import"
       }
     },
@@ -221,7 +221,7 @@
     "fortschritt": {
       "q": "Deinen Fortschritt verstehen",
       "blocks": {
-        "0": "Unter „Statistik“ siehst du auf einen Blick, wo du stehst – ganz oben die Ampel „Bin ich auf Plan?“.",
+        "0": "Unter „Fortschritt“ siehst du auf einen Blick, wo du stehst – ganz oben die Ampel „Bin ich auf Plan?“.",
         "1": [
           "Ampel (grün/gelb/rot): fasst Einhaltung, Last und Ausfälle der letzten 4 Wochen zusammen – mit Begründung.",
           "Plan-Einhaltung: wie viele fällige Einheiten du im 4-Wochen-Fenster erledigt hast.",
@@ -231,7 +231,7 @@
           "Trainingsjahr: eine Heatmap der letzten 12 Monate (wie bei GitHub) – je dunkler ein Tag, desto mehr Trainingszeit.",
           "Wettkampfprognose: eine grobe Schätzung deiner möglichen Zeit."
         ],
-        "2": "Zur Statistik"
+        "2": "Zum Fortschritt"
       }
     },
     "navigation": {
@@ -651,7 +651,7 @@
     "vorlieben": {
       "q": "Wie lernt Cat-O-Fit meine Vorlieben?",
       "blocks": {
-        "0": "In der Ernährung markierst du Lieblingsgerichte mit ♥ und tippst nach dem Kochen auf „Gekocht“. Daraus lernt Cat-O-Fit, welche Tags (z. B. proteinreich, vegetarisch) du bevorzugst, und schlägt Passendes unter „Für dich“ vor.",
+        "0": "In der Ernährung markierst du Lieblingsgerichte mit ♥ und tippst nach dem Kochen auf „Gekocht“. Daraus lernt Cat-O-Fit, welche Tags (z. B. proteinreich, vegetarisch) du bevorzugst, und schlägt Passendes unter „Für dich empfohlen“ vor.",
         "1": "Auch die Tages-Checkliste merkt sich häufig Genutztes und bietet es als Schnell-Hinzufügen an."
       }
     },
@@ -691,7 +691,7 @@
         "1": [
           "Jedes Mitglied plant in der Ernährung Gerichte mit Portionen für die Woche (Warenkorb-Symbol).",
           "Cat-O-Fit zieht alle geplanten Gerichte zusammen, aggregiert die Zutaten (z. B. Haferflocken mehrerer Personen zu einer Menge) und zieht das gemeinsame Lager ab – die Liste zeigt genau, was ihr braucht.",
-          "Beim Einkauf „Alles eingekauft“ tippen: Die Mengen wandern ins gemeinsame Lager. „Gekocht“ bucht sie wieder ab."
+          "Beim Einkauf „Alles eingekauft → ins Lager“ tippen: Die Mengen wandern ins gemeinsame Lager. „Gekocht“ bucht sie wieder ab."
         ],
         "2": "Der Einkaufstag gilt für alle und wird von Admins in der Team-/Familienverwaltung gesetzt (Standard Dienstag).",
         "3": "Zur Einkaufsliste"
@@ -743,7 +743,7 @@
       "blocks": {
         "0": "Ja! Cat-O-Fit ist für dein ganzes Team oder deine Familie (bis zu 32 Personen). Beim Start erscheint die Anmeldung – tippe auf deine Kachel und gib deine PIN ein.",
         "1": "Jedes Mitglied hat eigene Pläne, Trainings, Körperwerte und Einstellungen.",
-        "2": "Admins verwalten Team bzw. Familie (Mehr → „Team verwalten“: Mitglieder anlegen, Rollen, Teams, Einkaufstag) und können ein Mitglied „öffnen“, um z. B. für Kinder oder das Team zu planen – oben steht dann „Du verwaltest gerade …“ mit „Zurück zu mir“. Zyklus, Labor und Ergänzungen bleiben dabei immer privat. Anlegen, Rollen ändern und Entfernen gehen nur mit Verbindung zum Server.",
+        "2": "Admins verwalten Team bzw. Familie (Mehr → „Team verwalten“: Mitglieder anlegen, Rollen, Teams, Einkaufstag) und können ein Mitglied über „Öffnen“ aufrufen, um z. B. für Kinder oder das Team zu planen – oben steht dann „Du verwaltest gerade …“ mit „Zurück zu mir“. Zyklus, Labor und Ergänzungen bleiben dabei immer privat. Anlegen, Rollen ändern und Entfernen gehen nur mit Verbindung zum Server.",
         "3": "In Einstellungen → Konto legst du selbst fest, ob dein Hauptziel und deine Kennzahlen im gemeinsamen Dashboard sichtbar sind – verborgene Ziele erscheinen dort als „🔒 privat“.",
         "4": "Neu angelegte Mitglieder starten mit der PIN „0000“; bis sie in Einstellungen → Konto eine eigene festlegen (mit der bisherigen PIN), erinnert „Heute“ daran. PIN vergessen? Eine Admin-Person öffnet das Mitglied und setzt sie unter Einstellungen → Konto neu. Hat die einzige Admin-Person ihre PIN vergessen, hilft nur der Betrieb am Server (siehe Fehlersuche).",
         "5": "Zum Team/Familie-Dashboard"
@@ -754,7 +754,7 @@
       "blocks": {
         "0": "Neben der ganzen Familie kannst du als Admin Teams bilden – z. B. „Team Rot“, „Team Blau“, „Team Grün“. Ein Mitglied kann in MEHREREN Teams gleichzeitig sein, und manche bleiben ganz ohne Team.",
         "1": "Teams legst du unter Mehr → „Team verwalten“ an: „Team anlegen“, Name und Symbol wählen und die Mitglieder per Häkchen zuordnen. Für einen Teamwechsel setzt du die Häkchen einfach um – so nimmst du jemanden aus einem Team heraus und ordnest ihn einem anderen (oder zusätzlich einem zweiten) zu.",
-        "2": "Im Team/Familie-Dashboard schaltest du oben zwischen „Alle“, den einzelnen Teams und „Ohne Team“ um. Alle Kennzahlen – Wochen-Kilometer, Monats-km & Meilenstein, „diese Woche aktiv“ und die Team-Erfolge – werden dann genau für die Mitglieder des gewählten Teams zusammengerechnet.",
+        "2": "Im Team/Familie-Dashboard schaltest du oben zwischen „Alle“, den einzelnen Teams und „Ohne Team“ um. Alle Kennzahlen – Wochen-Kilometer, Monats-km & Meilenstein, „Diese Woche aktiv“ und die Team-Erfolge – werden dann genau für die Mitglieder des gewählten Teams zusammengerechnet.",
         "3": "Ein Mitglied in zwei Teams zählt in beiden mit – praktisch, wenn jemand z. B. in der Laufgruppe UND im Fußballteam ist.",
         "4": "Wird ein Mitglied entfernt, verschwindet es automatisch aus allen Teams – es bleiben keine „Geister“ zurück.",
         "5": "Teams verwalten"

@@ -143,7 +143,7 @@
           "Abra o treino → “Reagendar”: “Amanhã”, “Depois de amanhã” ou “Próximo dia livre” com um toque – ou escolha uma data.",
           "No calendário (visão semanal) você também pode arrastar: segure o treino pela alça (⠿) e arraste para outro dia.",
           "O Cat-O-Fit confere na hora: já tem algo nesse dia? Há um treino puxado (tempo run, intervalados, força, longão) no dia anterior ou no seguinte? Abaixo você vê o efeito na carga da semana – antes e depois.",
-          "Confirme se estiver tudo certo. O treino passa a ter a marca “Reagendado”; um arrasto no calendário pode ser desfeito com “Desfazer”."
+          "Confirme se estiver tudo certo. O treino passa a ter a marca “Movido”; um arrasto no calendário pode ser desfeito com “Desfazer”."
         ],
         "2": "Os avisos não bloqueiam nada – se você quiser, reagenda mesmo assim. O treino reagendado continua contando para a carga da semana e para a checagem da semana.",
         "3": "Ir para o calendário"
@@ -213,7 +213,7 @@
         "0": "O jeito mais confiável no iPhone/iPad é o calendário nativo.",
         "1": [
           "Abra um treino ou o plano e toque no ícone de exportar.",
-          "Escolha “Plano completo”, “Este treino” ou “Somente a prova”.",
+          "Escolha “Plano completo”, “Este treino” ou “Só a prova”.",
           "O arquivo .ics abre no calendário do iOS – com um lembrete 1 hora antes e outro na noite anterior."
         ]
       }
@@ -651,7 +651,7 @@
     "vorlieben": {
       "q": "Como o Cat-O-Fit aprende as minhas preferências?",
       "blocks": {
-        "0": "Em Nutrição você marca pratos favoritos com ♥ e toca em “Cozinhei” depois de cozinhar. A partir disso, o Cat-O-Fit aprende quais tags (por exemplo, rico em proteína, vegetariano) você prefere e sugere pratos parecidos em “Recomendações para você”.",
+        "0": "Em Nutrição você marca pratos favoritos com ♥ e toca em “Cozinhei” depois de cozinhar. A partir disso, o Cat-O-Fit aprende quais tags (por exemplo, rico em proteína, vegetariano) você prefere e sugere pratos parecidos em “Recomendadas para você”.",
         "1": "A checklist diária também lembra o que você usa com frequência e oferece como adição rápida."
       }
     },
@@ -744,7 +744,7 @@
         "0": "Sim! O Cat-O-Fit é para toda a sua equipe ou família (até 32 pessoas). Ao abrir, aparece o login – toque no seu cartão e digite seu PIN.",
         "1": "Cada membro tem os próprios planos, treinos, medidas corporais e configurações.",
         "2": "Admins gerenciam a equipe ou a família (Mais → “Gerenciar equipe”: adicionar membros, papéis, equipes, dia de compras) e podem “Abrir” um membro, por exemplo para planejar para crianças ou para a equipe – o topo da tela então diz “Você está gerenciando …”, com “Voltar para mim”. Ciclo, exames e suplementos continuam sempre privados nesse processo. Adicionar membros, mudar papéis e removê-los só funcionam com conexão com o servidor.",
-        "3": "Em Configurações → Visibilidade no painel da equipe/família, você decide se a sua meta principal e os seus números aparecem – metas ocultas aparecem no painel como “🔒 privado”.",
+        "3": "Em Configurações → Visibilidade no painel da equipe/família, você decide se a sua meta principal e os seus números aparecem – metas ocultas aparecem no painel como “🔒 privada”.",
         "4": "Membros recém-adicionados começam com o PIN “0000”; até definirem o próprio em Configurações → Conta (com o PIN anterior), “Hoje” lembra essas pessoas. Esqueceu o PIN? Um admin abre o membro e define um novo em Configurações → Conta. Se o único admin esqueceu o PIN, a única ajuda é trabalhar no próprio servidor (veja Solução de problemas).",
         "5": "Ir para o painel da equipe/família"
       }
@@ -754,7 +754,7 @@
       "blocks": {
         "0": "Além da família inteira, como admin você pode formar equipes – por exemplo, “Equipe Vermelha”, “Equipe Azul”, “Equipe Verde”. Um membro pode estar em VÁRIAS equipes ao mesmo tempo, e alguns ficam sem equipe nenhuma.",
         "1": "Você cria equipes em Mais → “Gerenciar equipe”: “Criar equipe”, escolha um nome e um ícone e atribua os membros com marcas. Para trocar de equipe, basta mover as marcas – assim você tira alguém de uma equipe e passa para outra (ou também para uma segunda).",
-        "2": "No painel da equipe/família, você alterna no topo entre “Todos”, as equipes individuais e “Sem equipe”. Todos os números – quilômetros semanais, km mensais e marco, “Em atividade esta semana” e as conquistas da equipe – são então somados exatamente para os membros da equipe escolhida.",
+        "2": "No painel da equipe/família, você alterna no topo entre “Todos”, as equipes individuais e “Sem equipe”. Todos os números – quilômetros semanais, km mensais e marco, “Atividade nesta semana” e as conquistas da equipe – são então somados exatamente para os membros da equipe escolhida.",
         "3": "Um membro em duas equipes conta nas duas – útil se alguém estiver, por exemplo, no grupo de corrida E no time de futebol.",
         "4": "Se um membro é removido, ele some automaticamente de todas as equipes – não sobram “fantasmas”.",
         "5": "Gerenciar equipes"

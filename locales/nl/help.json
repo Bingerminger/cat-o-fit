@@ -66,7 +66,7 @@
           "Ben je hersteld? Fitheid min vermoeidheid geeft je vorm – ingedeeld ten opzichte van je fitheid: fris, in balans, in training of duidelijk vermoeid. Pas beoordeeld als er ongeveer drie maanden aan gegevens zijn.",
           "Train je te eenzijdig? Er verschijnt pas een melding als je trainingsdagen erg op elkaar lijken en de week ruim boven je gemiddelde ligt; wandelen en mobiliteit tellen hier niet mee."
         ],
-        "2": "De drempelwaarden zijn een richtlijn op basis van observationele gegevens uit teamsporten – geen blessurebarometer en geen belofte van bescherming. In de eerste vier weken zegt de kaart eerlijk “Je gegevens worden nog opgebouwd”. Kracht, voetbal en fietsen tellen net zo mee als hardlopen; de waarden zijn belastingspunten (AU = minuten × inspanning)."
+        "2": "De drempelwaarden zijn een richtlijn op basis van observationele gegevens uit teamsporten – geen blessurebarometer en geen belofte van bescherming. In de eerste vier weken zegt de kaart eerlijk “Je gegevens groeien nog”. Kracht, voetbal en fietsen tellen net zo mee als hardlopen; de waarden zijn belastingspunten (AU = minuten × inspanning)."
       }
     },
     "wettkampf-anlegen": {
@@ -185,7 +185,7 @@
       "blocks": {
         "0": "Je bronnen (Garmin, Apple Watch, Withings …) schrijven naar Apple Health. Vanaf daar komen de belangrijkste waarden bij Cat-O-Fit{hi} – gewicht, rusthartslag, HRV, VO₂max, slaap, stappen, actieve energie en workouts. Er zijn drie manieren:",
         "1": [
-          "Automatisch met “Health Auto Export – JSON+CSV” (App Store): de app zelf is gratis, maar de automatische overdracht die je nodig hebt (REST API) is alleen met Premium beschikbaar – volgens de App Store ongeveer €8 per jaar of €30 eenmalig. Instellen: klik in Cat-O-Fit bij Gezondheidsimport op “Auto-import inschakelen” en kopieer de endpoint-URL; kies in Health Auto Export bij Automations → + → “REST API”, plak de URL, methode POST, formaat JSON (exportversie 2), kies metrics + workouts, aggregatie “daily”, periode “Since last sync” → opslaan → “Run now”.",
+          "Automatisch met “Health Auto Export – JSON+CSV” (App Store): de app zelf is gratis, maar de automatische overdracht die je nodig hebt (REST API) is alleen met Premium beschikbaar – volgens de App Store ongeveer €8 per jaar of €30 eenmalig. Instellen: klik in Cat-O-Fit bij Gezondheidsimport op “Automatische import inschakelen” en kopieer de endpoint-URL; kies in Health Auto Export bij Automations → + → “REST API”, plak de URL, methode POST, formaat JSON (exportversie 2), kies metrics + workouts, aggregatie “daily”, periode “Since last sync” → opslaan → “Run now”.",
           "Gratis en automatisch via een opdracht: met Apples app “Opdrachten” kun je gezondheidswaarden lezen en naar hetzelfde adres sturen – de instructies staan in de documentatie (Apple Health). Of de automatisering betrouwbaar draait terwijl de iPhone vergrendeld is, hangt van iOS af.",
           "Gratis, met de hand: iPhone → app Gezondheid → profielfoto → “Exporteer alle gezondheidsgegevens” en upload de ZIP bij Gezondheidsimport (volledige import). Losse opnames als GPX- of TCX-bestand (Garmin, Strava …) werken ook – met sport, bewegingstijd, kilometertijden en tijd in hartslagzones."
         ],
@@ -199,7 +199,7 @@
       "blocks": {
         "0": "Op Android verzamelt Health Connect de waarden van je horloge en apps. Websites kunnen er niet uit lezen – daarom stuurt een kleine brug-app op het apparaat de gegevens naar Cat-O-Fit, bijvoorbeeld de open-source “HC Webhook”.",
         "1": [
-          "Klik in Cat-O-Fit bij Gezondheidsimport op “Auto-import inschakelen” en kopieer de endpoint-URL en de sleutel.",
+          "Klik in Cat-O-Fit bij Gezondheidsimport op “Automatische import inschakelen” en kopieer de endpoint-URL en de sleutel.",
           "Voer in de brug-app de URL in als webhookadres en stuur de sleutel mee als header “X-Catofit-Token” (lukt dat niet: voeg “&token=<key>” aan het adres toe).",
           "Sta de gegevenstypen toe: gewicht, vetpercentage, magere massa, rusthartslag, HRV, slaap, stappen, actieve calorieën, workouts en hartslag. Cyclus alleen als je die geïmporteerd wilt hebben – hij blijft privé."
         ],
@@ -213,7 +213,7 @@
         "0": "De betrouwbaarste manier op iPhone/iPad is de eigen agenda.",
         "1": [
           "Open een training of het schema en tik op het exporticoon.",
-          "Kies “Volledig schema”, “Deze training” of “Alleen de wedstrijd”.",
+          "Kies “Volledig schema”, “Deze training” of “Alleen wedstrijd”.",
           "Het .ics-bestand opent in de iOS-agenda – inclusief een herinnering 1 uur van tevoren en de avond ervoor."
         ]
       }
@@ -370,7 +370,7 @@
           "Ferritine wordt samen met het CRP uit dezelfde bloedafname geïnterpreteerd: bij ontsteking is een hoge waarde niet te beoordelen, maar een lage is nog steeds opvallend.",
           "Oudere waarden (vitamine D na vier maanden of uit een ander seizoen, de meeste andere na een jaar) blijven in de geschiedenis staan maar geven geen suggesties meer – de app adviseert dan een nieuwe meting.",
           "Onder “Supplementen” vind je algemene informatie met de onderbouwing, de gebruikelijke hoeveelheid (in lijn met de maximumgehalten van het BfR en de bovengrenzen van de EFSA), timing en interacties – altijd eerst de weg via voeding. Een te hoge waarde leidt nooit tot “suppleren”, maar tot het advies je inname te controleren. Bij prestatieproducten staat een opmerking over batchgetest producten (Kölner Liste).",
-          "Wat je regelmatig inneemt, voer je in onder “Jouw schema” en vink je af. Producten die je alleen nodig hebt (bijv. cafeïne vóór wedstrijden) markeer je als zodanig – ze tellen niet mee voor de naleving."
+          "Wat je regelmatig inneemt, voer je in onder “Je innameschema” en vink je af. Producten die je alleen nodig hebt (bijv. cafeïne vóór wedstrijden) markeer je als zodanig – ze tellen niet mee voor de naleving."
         ],
         "2": "Helemaal bovenaan schat de app je energievoorziening: of je genoeg eet voor wat je traint. De berekening gebruikt alleen dagen die je in Voeding hebt bevestigd met “Dag als compleet markeren”, en het resultaat is een bereik, geen meting. Daarvoor heeft de app je vetvrije massa nodig – gemeten (weegschaal, Apple Health) of uit een vetpercentage van de afgelopen vier maanden. Te weinig energie is in duursport een vaker voorkomend probleem dan een ontbrekend supplement – en een veelvoorkomende oorzaak van dalende prestaties, blessures en cyclusstoornissen.",
         "3": "IJzer wordt nooit voorgesteld zonder labwaarde – op vermoeden ingenomen is het schadelijk als de voorraden vol zijn. Cat-O-Fit is bedoeld voor documentatie en algemene informatie voor gezonde volwassenen – geen medisch hulpmiddel, geen diagnose: bij afwijkende waarden verwijst de app uitdrukkelijk naar een arts. Je waarden zijn privé: in de app niet zichtbaar voor beheerders, en de server geeft ze pas vrij nadat je je met je pincode hebt aangemeld. Wie de server beheert, kan de opgeslagen bestanden echter wel lezen.",
@@ -481,7 +481,7 @@
     "vdot": {
       "q": "Huidige vorm & streeftempo’s (VDOT) – zo gebruik je ze",
       "blocks": {
-        "0": "Bij Vandaag schat de kaart “Huidige vorm” een VDOT (een vorm-/prestatiegetal volgens Jack Daniels) op basis van je recente loopprestaties en leidt daar passende trainingszones uit af. Direct erboven staat de kaart “Jouw trainingszones” met de actuele streeftempo’s van het schema – zodat je beide direct kunt vergelijken.",
+        "0": "Bij Vandaag schat de kaart “Huidige vorm” een VDOT (een vorm-/prestatiegetal volgens Jack Daniels) op basis van je recente loopprestaties en leidt daar passende trainingszones uit af. Direct erboven staat de kaart “Je trainingszones” met de actuele streeftempo’s van het schema – zodat je beide direct kunt vergelijken.",
         "1": "Zo lees je de kaart:",
         "2": [
           "De VDOT-chip (bijv. “VDOT 41,9”) is je geschatte huidige prestatie.",
@@ -492,7 +492,7 @@
         ],
         "3": "Met één tik aanpassen:",
         "4": [
-          "Tik op “Trainingszones aan je vorm aanpassen”.",
+          "Tik op “Trainingszones aanpassen aan je vorm”.",
           "Cat-O-Fit past de vormtempo’s direct toe op je trainingszones EN op alle openstaande, toekomstige hardlooptrainingen in je schema – elke training krijgt de zone voor zijn type (lange duurloop → lange duurloop, drempel → drempel). Met een streeftijd blijft het wedstrijdtempo je doel.",
           "Daarna zegt de kaart “passen goed bij …” – vorm en schema komen weer overeen."
         ],
@@ -754,7 +754,7 @@
       "blocks": {
         "0": "Naast het hele gezin kun je als beheerder teams vormen – bijv. “Team Rood”, “Team Blauw”, “Team Groen”. Een lid kan in MEERDERE teams tegelijk zitten, en sommige leden zitten helemaal in geen team.",
         "1": "Teams maak je onder Meer → “Team beheren”: “Team maken”, kies een naam en icoon en wijs de leden toe met vinkjes. Om van team te wisselen verplaats je gewoon de vinkjes – zo haal je iemand uit het ene team en zet je die in een ander (of ook in een tweede).",
-        "2": "Op het team-/gezinsdashboard schakel je bovenaan tussen “Alle”, de afzonderlijke teams en “Geen team”. Alle cijfers – weekkilometers, maand-km & mijlpaal, “Deze week actief” en de teambadges – worden dan opgeteld voor precies de leden van het gekozen team.",
+        "2": "Op het team-/gezinsdashboard schakel je bovenaan tussen “Alle”, de afzonderlijke teams en “Geen team”. Alle cijfers – weekkilometers, maand-km & mijlpaal, “Actief deze week” en de teambadges – worden dan opgeteld voor precies de leden van het gekozen team.",
         "3": "Een lid in twee teams telt in beide mee – handig als iemand bijvoorbeeld in de loopgroep ÉN het voetbalteam zit.",
         "4": "Wordt een lid verwijderd, dan verdwijnt die automatisch uit alle teams – er blijven geen “spoken” achter.",
         "5": "Teams beheren"
