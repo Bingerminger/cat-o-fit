@@ -3873,7 +3873,11 @@
       "referenceRanges": "**Referentiewaarden zijn in Duitsland niet overal gelijk.** Elk lab hanteert zijn eigen waarden – afhankelijk van meetmethode, apparaat en referentiepopulatie. Bij ferritine, fT3 of vitamine B12 verschillen ze merkbaar. Daarom staat het bereik altijd op de uitslag: het hoort bij de waarde.",
       "sportRanges": "**Er zijn geen officiële sportspecifieke referentiewaarden.** Wat Cat-O-Fit als streefbereik voor sport toont, komt uit de sportgeneeskundige literatuur en internationale standpunten – niet uit een Duitse norm. De bron van elke waarde staat in de detailweergave onder “Basis van de bereiken”."
     },
-    "teaser": "De meeste waarden krijg je via een sportmedisch onderzoek (door veel verzekeraars vergoed), via de praktijk van je huisarts of via een thuistestlab."
+    "teaser": "De meeste waarden krijg je via een sportmedisch onderzoek (door veel verzekeraars vergoed), via de praktijk van je huisarts of via een thuistestlab.",
+    "teaserElsewhere": "De meeste waarden krijg je via een sportmedische keuring, je huisarts of een particulier lab – wat vergoed wordt en wat het kost, hangt af van je land en je verzekering.",
+    "elsewhere": "Vraag een sportmedische praktijk of je huisarts welke waarden ze voor je kunnen meten; een particulier lab is het alternatief. Bewaar het verslag: de referentiewaarden erop horen bij de waarden.",
+    "elsewhereTip": "Waarden van elk lab in elk land werken: vul het referentiebereik in dat op je verslag staat.",
+    "standardsElsewhere": "**Referentiewaarden verschillen per lab** – afhankelijk van methode, apparaat en referentiegroep – daarom staat het bereik op het verslag: het hoort bij de waarde. **Officiële sportspecifieke referentiewaarden bestaan niet;** de sportieve doelbereiken in Cat-O-Fit komen uit de sportmedische literatuur, met de bron per waarde in het detailscherm."
   },
   "labs": {
     "analyte": {

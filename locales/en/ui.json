@@ -3873,7 +3873,11 @@
       "referenceRanges": "**Reference ranges are not uniform across Germany.** Every lab gives its own – depending on measurement method, device and reference population. For ferritin, fT3 or vitamin B12 they differ noticeably. That is why the range is always printed on the report: it belongs to the value.",
       "sportRanges": "**There are no official sport-specific reference values.** What Cat-O-Fit shows as a sport target range comes from sports-medicine literature and international position statements – not from a German standard. The source for each value is in the detail view under “Basis of the ranges”."
     },
-    "teaser": "You can get most values through a sports-medicine check-up (subsidised by many insurers), through your GP’s practice or through a mail-in lab."
+    "teaser": "You can get most values through a sports-medicine check-up (subsidised by many insurers), through your GP’s practice or through a mail-in lab.",
+    "teaserElsewhere": "You can get most values through a sports-medicine check-up, your doctor or a private lab – what is covered and what it costs depends on your country and insurance.",
+    "elsewhere": "Ask a sports-medicine practice or your doctor which values they can measure for you; a private lab is the alternative. Bring the report: its reference ranges belong to the values.",
+    "elsewhereTip": "Values from any lab in any country work: enter the reference range printed on your report.",
+    "standardsElsewhere": "**Reference ranges differ between labs** – depending on method, device and reference population – so the range is printed on the report: it belongs to the value. **There are no official sport-specific reference values;** the sport target ranges in Cat-O-Fit come from sports-medicine literature, with the source of each value in the detail view."
   },
   "labs": {
     "analyte": {

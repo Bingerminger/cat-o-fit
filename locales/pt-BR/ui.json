@@ -3873,7 +3873,11 @@
       "referenceRanges": "**Os valores de referência não são uniformes na Alemanha.** Cada laboratório informa os seus – conforme o método de medição, o aparelho e a população de referência. Para ferritina, fT3 ou vitamina B12, eles diferem de forma perceptível. Por isso a faixa vem sempre impressa no laudo: ela faz parte do valor.",
       "sportRanges": "**Não existem valores de referência oficiais específicos para o esporte.** O que o Cat-O-Fit mostra como faixa-alvo esportiva vem da literatura de medicina esportiva e de posicionamentos internacionais – não de uma norma alemã. A fonte de cada valor está na vista de detalhes, em “Base das faixas”."
     },
-    "teaser": "A maioria dos valores você consegue por um check-up de medicina esportiva (subsidiado por muitos planos), pelo seu consultório de clínica geral ou por um laboratório por correio."
+    "teaser": "A maioria dos valores você consegue por um check-up de medicina esportiva (subsidiado por muitos planos), pelo seu consultório de clínica geral ou por um laboratório por correio.",
+    "teaserElsewhere": "A maioria dos valores você consegue com um check-up de medicina esportiva, com seu médico ou em um laboratório particular – o que é coberto e quanto custa depende do seu país e do seu plano.",
+    "elsewhere": "Pergunte a uma clínica de medicina esportiva ou ao seu médico quais valores podem medir para você; um laboratório particular é a alternativa. Guarde o laudo: os intervalos de referência dele acompanham os valores.",
+    "elsewhereTip": "Valores de qualquer laboratório, em qualquer país, funcionam: informe o intervalo de referência impresso no seu laudo.",
+    "standardsElsewhere": "**Os intervalos de referência variam de laboratório para laboratório** – conforme o método, o aparelho e a população de referência –, por isso o intervalo vem impresso no laudo: ele acompanha o valor. **Não existem valores de referência oficiais para o esporte;** as faixas-alvo esportivas do Cat-O-Fit vêm da literatura de medicina esportiva, com a fonte de cada valor na tela de detalhes."
   },
   "labs": {
     "analyte": {

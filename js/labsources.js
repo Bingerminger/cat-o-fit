@@ -1,4 +1,5 @@
-import { t } from './i18n.js';
+import { t, locale } from './i18n.js';
+import * as store from './storage.js';
 /* =========================================================================
    labsources.js — Where do athletes get their lab values?
    Plain data, DOM-free – used by the labs view and the in-app help so that
@@ -6,8 +7,17 @@ import { t } from './i18n.js';
 
    Scope: Germany. Costs and insurance coverage are rough guides and may change;
    what counts is always the information from your own health insurer or the
-   practice.
+   practice. Outside Germany a short general note takes the place of the routes
+   (inGermany); the standards likewise.
    ========================================================================= */
+
+/** Does the German detail apply? The person's place decides (Settings → location); without
+    one, German as the app language counts as Germany. */
+export function inGermany() {
+  let country = null;
+  try { country = store.settings().location?.country || null; } catch { /* no person yet */ }
+  return country ? String(country).toUpperCase() === 'DE' : locale() === 'de';
+}
 
 /** Routes to a lab report – from the most obvious to the supplementary. */
 export const LAB_SOURCES = [
@@ -64,4 +74,4 @@ export const LAB_STANDARDS = {
 
 /** Short version for display in the empty module. */
 export const labSourcesTeaser = () =>
-  t('labSources.teaser');
+  (inGermany() ? t('labSources.teaser') : t('labSources.teaserElsewhere'));

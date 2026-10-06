@@ -27,7 +27,7 @@ import {
   ANALYTES, ANALYTE_GROUPS, groupLabel, unitsFor, unitFactor, toCanonical, fromCanonical, overview, series,
   refRange, hasOwnRef, latest, migrateLabRecord, implausible, LAB_SCHEMA, labRecordsFromReport,
 } from './labs.js';
-import { LAB_SOURCES, labSourcesTeaser } from './labsources.js';
+import { LAB_SOURCES, labSourcesTeaser, inGermany } from './labsources.js';
 import {
   recommend, activePlans, takenOn, adherence, adherenceSeries, SUPPLEMENTS, dopingNote, catalogFor, isDaily,
 } from './supplements.js';
@@ -285,7 +285,10 @@ function eaCardPlain(ea) {
 
 /** "Where do I get lab values?" – collapsible as long as nothing has been recorded yet. */
 function sourcesCard() {
-  const body = el('div', { hidden: true, style: { marginTop: '6px' } },
+  // The routes, costs and insurers describe Germany; elsewhere a general note.
+  const body = !inGermany()
+    ? el('div', { hidden: true, class: 'muted', style: { marginTop: '6px', fontSize: '.82rem' }, text: t('labSources.elsewhere') })
+    : el('div', { hidden: true, style: { marginTop: '6px' } },
     LAB_SOURCES.map((src, i) => el('div', { style: { padding: '8px 0', borderTop: i ? '1px solid var(--border)' : 'none' } }, [
       el('div', { class: 'row gap-2', style: { alignItems: 'baseline' } }, [
         el('div', { style: { fontWeight: '650', fontSize: '.86rem' }, text: src.title }),

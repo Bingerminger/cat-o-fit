@@ -13,7 +13,7 @@
    'labStandards'. Call loadHelpTexts() before showing the help.
    ========================================================================= */
 
-import { LAB_SOURCES, LAB_STANDARDS } from './labsources.js';
+import { LAB_SOURCES, LAB_STANDARDS, inGermany } from './labsources.js';
 import { t, tList, has, loadArea } from './i18n.js';
 
 /** labsources.js marks terms with **…** – the help shows plain text. */
@@ -117,11 +117,15 @@ function block(kind, key, params) {
   if (kind === 'tip') return { tip: t(key, params) };
   if (Array.isArray(kind) && kind[0] === 'tip') return { tip: t(key, params), link: { label: t(key.replace('.blocks.', '.links.'), params), hash: kind[1] } };
   if (kind === 'steps') return { steps: (tList(key) || []).map((s) => fill(s, params)) };
+  // Lab routes and standards describe Germany; outside it the help gives the general version.
   if (kind === 'labSources') {
+    if (!inGermany()) return { p: t('labSources.elsewhere') };
     return { steps: LAB_SOURCES.map((s) => `${s.title}${s.best ? ` (${t('help.labBest')})` : ''}: ${s.what} ${s.cost.charAt(0).toUpperCase()}${s.cost.slice(1)}.`) };
   }
-  if (kind === 'labBestTip') return { tip: LAB_SOURCES.find((s) => s.best).tip };
-  if (kind === 'labStandards') return { steps: [...LAB_STANDARDS.regulated, ...LAB_STANDARDS.notRegulated].map(plain) };
+  if (kind === 'labBestTip') return { tip: inGermany() ? LAB_SOURCES.find((s) => s.best).tip : t('labSources.elsewhereTip') };
+  if (kind === 'labStandards') {
+    return { steps: (inGermany() ? [...LAB_STANDARDS.regulated, ...LAB_STANDARDS.notRegulated] : [t('labSources.standardsElsewhere')]).map(plain) };
+  }
   throw new Error(`unknown help block ${kind}`);
 }
 

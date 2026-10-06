@@ -3873,7 +3873,11 @@
       "referenceRanges": "**Les plages de référence ne sont pas uniformes en Allemagne.** Chaque laboratoire indique les siennes – selon la méthode de mesure, l’appareil et la population de référence. Pour la ferritine, la fT3 ou la vitamine B12, elles diffèrent sensiblement. C’est pourquoi la plage est toujours imprimée sur le compte rendu : elle fait partie de la valeur.",
       "sportRanges": "**Il n’existe pas de valeurs de référence officielles propres au sport.** Ce que Cat-O-Fit affiche comme plage cible sportive provient de la littérature de médecine du sport et de prises de position internationales – pas d’une norme allemande. La source de chaque valeur se trouve dans la vue détaillée sous « Base des plages »."
     },
-    "teaser": "Tu peux obtenir la plupart des valeurs lors d’un bilan de médecine du sport (subventionné par de nombreuses caisses), au cabinet de ton médecin généraliste ou via un laboratoire par correspondance."
+    "teaser": "Tu peux obtenir la plupart des valeurs lors d’un bilan de médecine du sport (subventionné par de nombreuses caisses), au cabinet de ton médecin généraliste ou via un laboratoire par correspondance.",
+    "teaserElsewhere": "La plupart des valeurs s’obtiennent via un bilan de médecine du sport, ton médecin ou un laboratoire privé – la prise en charge et le prix dépendent de ton pays et de ton assurance.",
+    "elsewhere": "Demande à un cabinet de médecine du sport ou à ton médecin quelles valeurs ils peuvent mesurer pour toi ; un laboratoire privé est l’alternative. Garde le compte rendu : ses intervalles de référence vont avec les valeurs.",
+    "elsewhereTip": "Les valeurs de n’importe quel laboratoire, dans n’importe quel pays, fonctionnent : saisis l’intervalle de référence imprimé sur ton compte rendu.",
+    "standardsElsewhere": "**Les intervalles de référence varient d’un laboratoire à l’autre** – selon la méthode, l’appareil et la population de référence –, c’est pourquoi l’intervalle figure sur le compte rendu : il va avec la valeur. **Il n’existe pas de valeurs de référence officielles pour le sport ;** les plages cibles sportives de Cat-O-Fit viennent de la littérature en médecine du sport, avec la source de chaque valeur dans la vue détaillée."
   },
   "labs": {
     "analyte": {

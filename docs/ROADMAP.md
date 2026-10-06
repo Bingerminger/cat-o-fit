@@ -3,68 +3,14 @@
 Planned development of Cat-O-Fit, in rough order of priority. What is already done is in the
 [CHANGELOG](../CHANGELOG.md). Suggestions and help are welcome – see [CONTRIBUTING](../CONTRIBUTING.md).
 
-**As of:** 3 October 2026, after v3.23.0.
+**As of:** 6 October 2026, v4.0.0.
 
-## Next: v4.0.0 – Cat-O-Fit speaks your language
+## Done: v4.0.0 – Cat-O-Fit speaks your language
 
-Today the app, its help and most of the documentation are German only. v4.0.0 – the first public
-release – makes Cat-O-Fit multilingual from the ground up and switches development to English.
-
-### Languages
-
-- **Seven languages:** English, German, French, Spanish, Italian, Brazilian Portuguese (pt-BR) and
-  Dutch. A new language needs a catalog file and one entry in the language list, no code.
-- **Your language, per person:** every member of a family or team picks their own language. New
-  members inherit the language of the instance; on the very first start the browser language decides.
-  Calendar export and reports follow the person they belong to.
-- **Everything inside the app is translated:** navigation, setup, every screen, the in-app help
-  (71 articles), all 93 exercises with their movement cues, the 25 follow-along workouts, recipes,
-  lab values and badges. Content that only applies to Germany (statutory health insurance, IGeL,
-  Kölner Liste) only shows when the country is set to Germany.
-- **Voice cues in every language:** the follow-along player has pre-recorded voice clips per
-  language – only voices with a free licence (CC0, CC BY or public domain), credited in CREDITS.md.
-- **Formats from the browser's `Intl`:** dates, weekdays, months, numbers and plural forms follow the
-  chosen language. Units stay metric in v4.0.0; data are always stored metric.
-- **No migration of your data:** values stored by older versions stay as they are and are shown in
-  your language. Plans you create from v4.0.0 on are stored language-neutral.
-- **Honest about machine translation:** translations are produced with a fixed glossary and a
-  consistent informal tone, and the README says so. Corrections by native speakers are welcome via
-  pull request; a translation platform follows when contributors ask for it.
-- **Checked in CI:** the same keys in every language, matching placeholders, all plural forms, no
-  unknown keys in the code and no hard-coded user-facing text outside the catalogs.
-
-### English for developers
-
-- Code comments, test names, commit messages, release notes and the developer documentation
-  (architecture, development, interfaces, contributing, security) are English.
-- User documentation is English first with a German edition; the other languages are served by the
-  in-app help. Screenshots are rendered automatically in English and German.
-- The CHANGELOG is English from v4.0.0; older entries stay in German.
-
-### Licence: AGPL-3.0-or-later
-
-- Cat-O-Fit is licensed under the **GNU Affero General Public License v3.0 or later**. Whoever runs
-  a modified version as a network service has to offer its source code to its users.
-- Contributions are accepted under the same licence (inbound = outbound), without a CLA.
-- The app links to its source code in Settings → About, as the AGPL asks.
-- The name and logo stay protected separately, see [TRADEMARKS](../TRADEMARKS.md).
-
-### Also in v4.0.0
-
-- **Public demo** – a static build on GitHub Pages with an example person and full sample data,
-  language switch included; nothing leaves the browser.
-- **Import from Strong, Hevy and FitNotes** – bring your strength history along via CSV; unknown
-  exercises become your own exercises, nothing is dropped.
-- **Community** – GitHub Discussions, English issue forms, a fixed release rhythm and
-  "good first issue" tasks for translations.
-- **Unraid and CasaOS** – ready-made templates, and the container image for both amd64 and arm64.
-
-### Only what the law requires
-
-Translated in-app notices (not a medical device, suitability check, privacy notes), the privacy
-template for operators in English and German, and a credits entry for every voice and third-party
-component. No imprint and no cookie banner: the operator of an instance is responsible for those,
-and Cat-O-Fit sets no tracking cookies.
+The first public release: seven languages with a language per person, server texts and recorded
+voice cues in every language, English for developers, the AGPL-3.0-or-later licence, a public demo,
+the import from Strong, Hevy and FitNotes, and templates for Unraid and CasaOS. Details are in the
+[CHANGELOG](../CHANGELOG.md).
 
 ## After v4.0.0
 

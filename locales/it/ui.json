@@ -3873,7 +3873,11 @@
       "referenceRanges": "**In Germania gli intervalli di riferimento non sono uniformi.** Ogni laboratorio indica i propri – in base al metodo di misura, allo strumento e alla popolazione di riferimento. Per ferritina, fT3 o vitamina B12 differiscono in modo sensibile. Per questo l’intervallo è sempre stampato sul referto: appartiene al valore.",
       "sportRanges": "**Non esistono valori di riferimento ufficiali specifici per lo sport.** Quello che Cat-O-Fit mostra come intervallo obiettivo per lo sport proviene dalla letteratura di medicina dello sport e da posizioni ufficiali internazionali – non da uno standard tedesco. La fonte di ogni valore è nella vista di dettaglio, sotto “Base degli intervalli”."
     },
-    "teaser": "Puoi ottenere la maggior parte dei valori con una visita di medicina dello sport (sostenuta da molte casse), dallo studio del tuo medico di base o da un laboratorio per posta."
+    "teaser": "Puoi ottenere la maggior parte dei valori con una visita di medicina dello sport (sostenuta da molte casse), dallo studio del tuo medico di base o da un laboratorio per posta.",
+    "teaserElsewhere": "La maggior parte dei valori si ottiene con una visita di medicina dello sport, dal tuo medico o in un laboratorio privato – copertura e costi dipendono dal tuo paese e dalla tua assicurazione.",
+    "elsewhere": "Chiedi a un ambulatorio di medicina dello sport o al tuo medico quali valori possono misurarti; un laboratorio privato è l’alternativa. Tieni il referto: i suoi intervalli di riferimento vanno con i valori.",
+    "elsewhereTip": "Vanno bene i valori di qualsiasi laboratorio in qualsiasi paese: inserisci l’intervallo di riferimento stampato sul referto.",
+    "standardsElsewhere": "**Gli intervalli di riferimento variano da laboratorio a laboratorio** – a seconda di metodo, strumento e popolazione di riferimento –, per questo l’intervallo è stampato sul referto: va con il valore. **Non esistono valori di riferimento ufficiali per lo sport;** gli intervalli obiettivo sportivi di Cat-O-Fit vengono dalla letteratura di medicina dello sport, con la fonte di ogni valore nella vista di dettaglio."
   },
   "labs": {
     "analyte": {

@@ -3873,7 +3873,11 @@
       "referenceRanges": "**Los rangos de referencia no son uniformes en Alemania.** Cada laboratorio indica los suyos, según el método de medición, el aparato y la población de referencia. En la ferritina, la fT3 o la vitamina B12 difieren de forma notable. Por eso el rango siempre figura en el informe: forma parte del valor.",
       "sportRanges": "**No existen valores de referencia oficiales específicos para el deporte.** Lo que Cat-O-Fit muestra como rango objetivo deportivo procede de la literatura de medicina deportiva y de declaraciones de posición internacionales, no de una norma alemana. La fuente de cada valor está en la vista de detalle, en “Base de los rangos”."
     },
-    "teaser": "La mayoría de los valores puedes conseguirlos con un chequeo de medicina deportiva (subvencionado por muchos seguros), en tu consulta de atención primaria o en un laboratorio por correo."
+    "teaser": "La mayoría de los valores puedes conseguirlos con un chequeo de medicina deportiva (subvencionado por muchos seguros), en tu consulta de atención primaria o en un laboratorio por correo.",
+    "teaserElsewhere": "La mayoría de los valores se obtienen con un chequeo de medicina deportiva, tu médico o un laboratorio privado; lo que se cubre y lo que cuesta depende de tu país y de tu seguro.",
+    "elsewhere": "Pregunta en una consulta de medicina deportiva o a tu médico qué valores pueden medirte; un laboratorio privado es la alternativa. Guarda el informe: sus rangos de referencia van con los valores.",
+    "elsewhereTip": "Sirven los valores de cualquier laboratorio de cualquier país: introduce el rango de referencia que figura en tu informe.",
+    "standardsElsewhere": "**Los rangos de referencia varían de un laboratorio a otro** –según el método, el equipo y la población de referencia–, por eso el rango figura en el informe: va con el valor. **No existen valores de referencia oficiales para el deporte;** los rangos objetivo deportivos de Cat-O-Fit proceden de la literatura de medicina deportiva, con la fuente de cada valor en la vista de detalle."
   },
   "labs": {
     "analyte": {
