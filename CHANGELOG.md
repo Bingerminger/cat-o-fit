@@ -7,6 +7,24 @@ Cat-O-Fit was developed privately, in German, up to v3.23.x. This repository and
 with v4.0.0, the first public release. Copies of v3.23.x or earlier that were handed out stay under the
 MIT licence they came with.
 
+## [4.0.1] – 2026-10-06
+
+### Added
+
+- A help article in all seven languages on bringing strength history from Strong, Hevy or FitNotes,
+  and the import described in the training guide.
+
+### Fixed
+
+- The in-app help names buttons, menu entries and sections exactly as the app shows them – 33 places in
+  German, Italian, Brazilian Portuguese and Dutch (e.g. the German menu entry "Ziele & Pläne").
+- The PIN hint for new members gives the full path Settings → Account → Change PIN.
+
+### Documentation
+
+- The labs guide explains when the German routes to lab values apply; the README and the comparison
+  table describe 4.0.
+
 ## [4.0.0] – 2026-10-06
 
 The first public release: Cat-O-Fit speaks seven languages, is developed in English and is licensed

@@ -10,7 +10,7 @@
  * On every version increase the old cache is discarded.
  */
 
-const VERSION = 'catofit-v117';
+const VERSION = 'catofit-v118';
 // Cache name unique per deployment path: production (/cat-o-fit/) and acceptance
 // (/cat-o-fit-acc/) live on the SAME origin and would otherwise share the
 // CacheStorage – then the app shell of one environment ends up in the other.
