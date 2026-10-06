@@ -68,4 +68,9 @@ test('FE-22: kilometre splits and time in HR zones from the track points', () =>
   assert.ok(s.timeInZones[3] > 800 && s.timeInZones[4] > 700, JSON.stringify(s.timeInZones));
   assert.equal(parseActivityFile(gpx(pts, 'running')).timeInZones, null, 'no zones, no time in zones');
   assert.equal(parseActivityFile(gpx(pts, 'cycling')).splits.length, 0, 'cycling: no running splits');
+  // 4.1: mile splits alongside (6.2 km = 3 full miles), mile 1 at 5:00/km ≈ 8:03.
+  assert.equal(s.splitsMi.length, 3);
+  assert.equal(s.splitsMi[0].mi, 1);
+  assert.ok(Math.abs(s.splitsMi[0].sec - 483) <= 3, `mile 1 ≈ 8:03, was ${s.splitsMi[0].sec}`);
+  assert.deepEqual(parseActivityFile(gpx(pts, 'cycling')).splitsMi, [], 'cycling: no mile splits');
 });

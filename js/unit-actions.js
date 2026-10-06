@@ -48,6 +48,7 @@ export function completeUnit(plan, unit, data) {
     feeling: data.feeling ?? null,
     timeInZones: data.timeInZones ?? null,
     splits: data.splits ?? [],
+    splitsMi: data.splitsMi ?? [],
     // From file or watch (otherwise they would get lost when assigning to the planned unit):
     // calories, elevation gain, route – and the sets from workout mode.
     kcal: data.kcal ?? null,

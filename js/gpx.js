@@ -183,11 +183,32 @@ export function ascentOf(eles) {
 
 /* ------------------------- Shared analysis ------------------------- */
 
+/** One mile in metres (international mile). */
+const MILE_M = 1609.344;
+
+/** Time per full section of `metres` along the track (interpolated): [{ [key]: n, sec }]. */
+function splitsEvery(track, metres, key) {
+  const out = [];
+  if (track.length < 2 || track[track.length - 1].cum < metres) return out;
+  let next = 1, lastT = track[0].t;
+  for (let i = 1; i < track.length; i++) {
+    const a = track[i - 1], b = track[i];
+    while (b.cum >= next * metres && b.cum > a.cum) {
+      const f = (next * metres - a.cum) / (b.cum - a.cum);
+      const tt = a.t + f * (b.t - a.t);
+      out.push({ [key]: next, sec: Math.round((tt - lastT) / 1000) });
+      lastT = tt;
+      next++;
+    }
+  }
+  return out;
+}
+
 /**
  * A session from measurement points – shared by GPX, TCX and FIT. `totals` may specify values from the
  * file (start/end in ms, distanceM, durationSec as stopwatch time, avgHr, maxHr,
  * kcal, ascentM); otherwise the analysis computes them from the points.
- * @returns {{date,durationSec,elapsedSec,distanceKm,avgHr,maxHr,type,sportKnown,splits,timeInZones,ascentM,route,kcal}|null}
+ * @returns {{date,durationSec,elapsedSec,distanceKm,avgHr,maxHr,type,sportKnown,splits,splitsMi,timeInZones,ascentM,route,kcal}|null}
  */
 export function buildActivity(pts = [], { type = null, totals = {}, hrZones = null, utcOffsetMin = null } = {}) {
   const start = totals.start != null ? totals.start : (pts.length ? pts[0].t : NaN);
@@ -232,21 +253,11 @@ export function buildActivity(pts = [], { type = null, totals = {}, hrZones = nu
 
   const t = type || 'run';
 
-  // Kilometre splits (running/walking/hiking only) – time per full kilometre, interpolated.
-  const splits = [];
-  if (['run', 'walk', 'hike'].includes(t) && track.length >= 2 && track[track.length - 1].cum >= 1000) {
-    let nextKm = 1, lastT = track[0].t;
-    for (let i = 1; i < track.length; i++) {
-      const a = track[i - 1], b = track[i];
-      while (b.cum >= nextKm * 1000 && b.cum > a.cum) {
-        const f = (nextKm * 1000 - a.cum) / (b.cum - a.cum);
-        const tt = a.t + f * (b.t - a.t);
-        splits.push({ km: nextKm, sec: Math.round((tt - lastT) / 1000) });
-        lastT = tt;
-        nextKm++;
-      }
-    }
-  }
+  // Splits (running/walking/hiking only) – time per full kilometre and per full mile, interpolated;
+  // the session shows the ones that match the person's distance unit.
+  const footSport = ['run', 'walk', 'hike'].includes(t);
+  const splits = footSport ? splitsEvery(track, 1000, 'km') : [];
+  const splitsMi = footSport ? splitsEvery(track, MILE_M, 'mi') : [];
 
   // Time per HR zone (needs zones from the profile and HR per point).
   let timeInZones = null;
@@ -288,7 +299,7 @@ export function buildActivity(pts = [], { type = null, totals = {}, hrZones = nu
 
   return {
     date: localDate(start, utcOffsetMin), durationSec, elapsedSec, distanceKm, avgHr, maxHr,
-    type: t, sportKnown: !!type, splits, timeInZones, ascentM, route, kcal: totals.kcal != null ? totals.kcal : null,
+    type: t, sportKnown: !!type, splits, splitsMi, timeInZones, ascentM, route, kcal: totals.kcal != null ? totals.kcal : null,
   };
 }
 
