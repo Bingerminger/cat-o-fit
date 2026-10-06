@@ -15,7 +15,7 @@
    comes from spreading out the hard stimuli (see rolling.js).
    ========================================================================= */
 
-import { weekStartMonday, addDays, isoDow } from './ui.js';
+import { weekStartMonday, addDays, isoDow, localizeUnits as lu } from './ui.js';
 import { loadClass, isHard, findMakeupDay, isOpen } from './planflow.js';
 import { weekdayNames } from './format.js';
 
@@ -69,12 +69,12 @@ export function weekCollisions(units = [], dateStr) {
         const lower = PRIORITY_RANK[unitPriority(ext[i])] <= PRIORITY_RANK[unitPriority(ext[j])] ? ext[i] : ext[j];
         out.push({
           kind: 'hard-b2b', severity: 'warn', date: ext[j].date,
-          text: t('triage.hardB2b', { first: ext[i].title, firstDay: dayLabel(ext[i].date), second: ext[j].title, secondDay: dayLabel(ext[j].date) }),
+          text: t('triage.hardB2b', { first: lu(ext[i].title), firstDay: dayLabel(ext[i].date), second: lu(ext[j].title), secondDay: dayLabel(ext[j].date) }),
           suggest: ext[i].fixed && ext[j].fixed
             ? t('triage.bothFixed')
             : lower.fixed
-              ? t('triage.lowerFixed', { title: lower.title })
-              : t('triage.moveLower', { title: lower.title }),
+              ? t('triage.lowerFixed', { title: lu(lower.title) })
+              : t('triage.moveLower', { title: lu(lower.title) }),
         });
       }
     }
@@ -87,7 +87,7 @@ export function weekCollisions(units = [], dateStr) {
     out.push({
       kind: 'too-many-hard', severity: 'warn',
       text: t('triage.tooManyHard', { count: hard.length }),
-      suggest: softest ? t('triage.softenLeast', { title: softest.title })
+      suggest: softest ? t('triage.softenLeast', { title: lu(softest.title) })
         : t('triage.allHardFixed'),
     });
   }

@@ -7,8 +7,9 @@ import * as store from './storage.js';
 import {
   el, icon, iconSvg, navigate, typeMeta, typeIcon, fmtKm, fmtPace, fmtWeekday,
   todayStr, addDays, parseDate, toDateStr, monthName, weekStartMonday, isoDow,
-  segmented, toast, effectiveStatus, confirmDialog, fmtDayMonth,
+  segmented, toast, effectiveStatus, confirmDialog, fmtDayMonth, localizeUnits, fmtKmAuto,
 } from './ui.js';
+import { distanceUnit } from './units.js';
 import { setHeader } from './router.js';
 import { openActivitySheet, openReschedule } from './session.js';
 import { saveUnitPatch } from './unit-actions.js';
@@ -106,7 +107,7 @@ function drawMonth(view) {
     const isRace = units.some((u) => u.type === 'race');
     // Short title ("Long 14 km") – visible from 820 px width instead of only coloured dots (UI-17);
     // for screen readers the cell announces the date and sessions.
-    const titles = [...units.map((u) => `${typeMeta(u.type).short}${u.targetDistanceKm ? ` ${fmtKm(u.targetDistanceKm, u.targetDistanceKm % 1 ? 1 : 0)}` : ''}`),
+    const titles = [...units.map((u) => `${typeMeta(u.type).short}${u.targetDistanceKm ? ` ${fmtKmAuto(u.targetDistanceKm)}` : ''}`),
       ...free.map((s) => `${typeMeta(s.type).short}${s.distanceKm ? ` ${fmtKm(s.distanceKm, 0)}` : ''} ✓`)];
     const aria = { weekday: fmtWeekday(date, true), date: fmtDayMonth(date), items: titles.length ? titles.join(', ') : t('calendar.nothingPlanned') };
     const cell = el('button', {
@@ -127,7 +128,7 @@ function drawMonth(view) {
         cycleDot(date),
         ...units.slice(0, 4).map((u) => el('span', { class: 'cal-dot', style: { background: typeMeta(u.type).color } })),
         // Free trainings: dot with a border (done, without a plan).
-        ...free.slice(0, 2).map((s) => el('span', { class: 'cal-dot cal-dot--free', style: { background: typeMeta(s.type).color }, title: s.title || typeMeta(s.type).label })),
+        ...free.slice(0, 2).map((s) => el('span', { class: 'cal-dot cal-dot--free', style: { background: typeMeta(s.type).color }, title: localizeUnits(s.title) || typeMeta(s.type).label })),
         // Appointments as square dots (to distinguish them from round training dots).
         ...termineOn(date).slice(0, 3).map((task) => el('span', { class: 'cal-dot cal-dot--task', style: { background: catMeta(task.category).color }, title: task.text })),
       ]),
@@ -197,12 +198,13 @@ function drawWeek(view) {
 
 function weekUnit(u) {
   const meta = [];
-  if (u.targetDistanceKm) meta.push(fmtKm(u.targetDistanceKm, u.targetDistanceKm % 1 ? 1 : 0));
-  if (u.targetPaceSecPerKm) meta.push(`${fmtPace(u.targetPaceSecPerKm)}/km`);
+  if (u.targetDistanceKm) meta.push(fmtKmAuto(u.targetDistanceKm));
+  if (u.targetPaceSecPerKm) meta.push(`${fmtPace(u.targetPaceSecPerKm)}/${distanceUnit()}`);
   if (u.targetDurationMin && !u.targetDistanceKm) meta.push(`${u.targetDurationMin} min`);
+  const title = localizeUnits(u.title);
 
   // Handle as a button: dragging moves, tapping (or Enter) opens the reschedule dialog.
-  const handle = el('button', { class: 'cal-unit__handle', type: 'button', 'aria-label': t('calendar.moveUnit', { title: u.title }), title: t('calendar.dragOrTap'), html: iconSvg('grip') });
+  const handle = el('button', { class: 'cal-unit__handle', type: 'button', 'aria-label': t('calendar.moveUnit', { title }), title: t('calendar.dragOrTap'), html: iconSvg('grip') });
   attachDrag(handle, u);
 
   const eff0 = effectiveStatus(u);
@@ -212,7 +214,7 @@ function weekUnit(u) {
     handle,
     typeIcon(u.type, 'type-icon--sm'),
     el('a', { class: 'cal-unit__body', href: `#/session/${u.id}`, style: { textDecoration: 'none' } }, [
-      el('div', { class: 'cal-unit__title', text: u.title }),
+      el('div', { class: 'cal-unit__title', text: title }),
       el('div', { class: 'cal-unit__meta', text: meta.join(' · ') || typeMeta(u.type).label }),
     ]),
   ]);
@@ -223,13 +225,13 @@ function weekUnit(u) {
     can be edited and deleted. */
 function freeRow(s) {
   const meta = [];
-  if (s.distanceKm) meta.push(fmtKm(s.distanceKm, s.distanceKm % 1 ? 1 : 0));
+  if (s.distanceKm) meta.push(fmtKmAuto(s.distanceKm));
   if (s.durationSec) meta.push(`${Math.round(s.durationSec / 60)} min`);
   meta.push(s.source === 'apple-health' || s.source === 'health' ? 'Apple Health' : s.source === 'health-connect' ? 'Health Connect' : s.source === 'gpx' ? t('calendar.fileImport') : t('calendar.noPlan'));
   return el('a', { class: 'cal-unit cal-unit--done', href: `#/session/${s.id}`, style: { textDecoration: 'none' } }, [
     typeIcon(s.type, 'type-icon--sm'),
     el('div', { class: 'cal-unit__body' }, [
-      el('div', { class: 'cal-unit__title', text: s.title || typeMeta(s.type).label }),
+      el('div', { class: 'cal-unit__title', text: localizeUnits(s.title) || typeMeta(s.type).label }),
       el('div', { class: 'cal-unit__meta', text: meta.join(' · ') }),
     ]),
   ]);
@@ -258,7 +260,7 @@ function attachDrag(handle, unit) {
   handle.addEventListener('click', () => { if (!handle.dataset.dragged) openRescheduleFor(unit); delete handle.dataset.dragged; });
   handle.addEventListener('pointerdown', (e) => {
     e.preventDefault();
-    const ghost = el('div', { class: 'drag-ghost', text: unit.title });
+    const ghost = el('div', { class: 'drag-ghost', text: localizeUnits(unit.title) });
     let moved = false;
     let lastY = e.clientY;
     let lastX = e.clientX;
@@ -321,11 +323,11 @@ export async function reschedule(unit, newDate) {
   const plan = store.get('plans').find((p) => p.id === unit.planId);
   const { sameDay, hardNeighbor } = rescheduleCheck((plan && plan.units) || [], unit.id, newDate);
   const hints = [];
-  if (sameDay) hints.push(t('calendar.sameDay', { title: sameDay.title }));
+  if (sameDay) hints.push(t('calendar.sameDay', { title: localizeUnits(sameDay.title) }));
   if (hardNeighbor) {
     hints.push(hardNeighbor.dir === 'prev'
-      ? t('calendar.hardBefore', { title: hardNeighbor.unit.title })
-      : t('calendar.hardAfter', { title: hardNeighbor.unit.title }));
+      ? t('calendar.hardBefore', { title: localizeUnits(hardNeighbor.unit.title) })
+      : t('calendar.hardAfter', { title: localizeUnits(hardNeighbor.unit.title) }));
   }
   if (hints.length && !(await confirmDialog({
     title: t('calendar.moveTo', { weekday: fmtWeekday(newDate, true) }), message: hints.join(' '),

@@ -20,7 +20,7 @@
    (see redflags.js).
    ========================================================================= */
 
-import { latest, freshLatest, assess, trend } from './labs.js';
+import { latest, freshLatest, assess, trend, toShown, shownUnit, unitLabel } from './labs.js';
 import { fmtDec, parseDate } from './ui.js';
 import { locale, t, tp } from './i18n.js';
 
@@ -183,8 +183,10 @@ export function recommend({
   const fresh = (key) => freshLatest(labs, key, today);
   const judge = (key, rec) => assess(key, rec.value, { sex, labs, today, record: rec, pregnant });
   // A value that is too HIGH never leads to "add", but to a hint to review the intake.
-  const tooHigh = (key, label, rec, unit) => mk(key, 1,
-    t('supplements.tooHighReason', { label, value: num(rec.value), unit, date: dmy(rec.date) }),
+  // Lab values in the person's lab unit (canonical or conventional), like the labs view.
+  const labValue = (rec) => `${num(toShown(rec.analyte, rec.value))} ${unitLabel(shownUnit(rec.analyte))}`;
+  const tooHigh = (key, label, rec) => mk(key, 1,
+    t('supplements.tooHighReason', { label, value: num(toShown(rec.analyte, rec.value)), unit: unitLabel(shownUnit(rec.analyte)), date: dmy(rec.date) }),
     t('supplements.tooHighAction'),
     { holdOnly: true, high: true });
 
@@ -230,12 +232,12 @@ export function recommend({
     const a = judge('vitaminD', vd);
     if (a.side === 'low') {
       items.push(mk('vitaminD', 1,
-        t('supplements.vitaminDReason', { value: num(vd.value), date: dmy(vd.date), assessment: a.label }),
+        t('supplements.vitaminDReason', { value: labValue(vd), date: dmy(vd.date), assessment: a.label }),
         a.deficient
           ? t('supplements.vitaminDDeficientAction')
           : t('supplements.vitaminDLowAction')));
     } else if (a.side === 'high') {
-      items.push(tooHigh('vitaminD', SUPPLEMENTS.vitaminD.label, vd, 'nmol/l'));
+      items.push(tooHigh('vitaminD', SUPPLEMENTS.vitaminD.label, vd));
     }
   } else if (month >= 10 || month <= 3) {
     const old = latest(labs, 'vitaminD', today);
@@ -252,19 +254,19 @@ export function recommend({
   if (b12) {
     const a = judge('b12', b12);
     if (a.status === 'niedrig') {
-      items.push(mk('b12', 1, t('supplements.holoTcReason', { value: num(b12.value), date: dmy(b12.date), assessment: a.label }),
+      items.push(mk('b12', 1, t('supplements.holoTcReason', { value: labValue(b12), date: dmy(b12.date), assessment: a.label }),
         t('supplements.b12LowAction')));
     } else if (a.side === 'low') {
-      items.push(mk('b12', 2, t('supplements.holoTcReason', { value: num(b12.value), date: dmy(b12.date), assessment: a.label }),
+      items.push(mk('b12', 2, t('supplements.holoTcReason', { value: labValue(b12), date: dmy(b12.date), assessment: a.label }),
         t('supplements.b12GreyAction'),
         { holdOnly: diet !== 'vegan' }));
     } else if (a.side === 'high') {
-      items.push(tooHigh('b12', 'Holo-TC', b12, 'pmol/l'));
+      items.push(tooHigh('b12', 'Holo-TC', b12));
     }
   } else if (b12t) {
     const a = judge('b12total', b12t);
     if (a.side === 'low') {
-      items.push(mk('b12', a.status === 'niedrig' ? 1 : 2, t('supplements.b12TotalReason', { value: num(b12t.value), date: dmy(b12t.date), assessment: a.label }),
+      items.push(mk('b12', a.status === 'niedrig' ? 1 : 2, t('supplements.b12TotalReason', { value: labValue(b12t), date: dmy(b12t.date), assessment: a.label }),
         t('supplements.b12TotalAction'),
         { holdOnly: diet !== 'vegan' }));
     }
@@ -285,10 +287,10 @@ export function recommend({
     const a = judge(key, mg);
     const label = key === 'magnesium' ? t('labs.analyte.magnesium.label') : t('labs.analyte.magnesiumSerum.label');
     if (a.side === 'low') {
-      items.push(mk('magnesium', 2, t('supplements.magnesiumReason', { label, value: num(mg.value), date: dmy(mg.date), assessment: a.label }),
+      items.push(mk('magnesium', 2, t('supplements.magnesiumReason', { label, value: labValue(mg), date: dmy(mg.date), assessment: a.label }),
         t('supplements.magnesiumAction')));
     } else if (a.side === 'high') {
-      items.push(tooHigh('magnesium', label, mg, 'mmol/l'));
+      items.push(tooHigh('magnesium', label, mg));
     }
   }
 

@@ -12,8 +12,9 @@ import {
   select, FEELINGS, segmented, TYPE_OPTIONS, effectiveStatus, STATUS_META, isoDow, fmtInt,
   rpeScale, feelingPicker, durationFields, addDays, fmtWeekday,
   refreshView, goOrRefresh,
-  fmtDec,
+  fmtDec, fmtNum, fmtMinSec, fmtTemp, fmtElevation, localizeUnits, fmtKmAuto,
 } from './ui.js';
+import { units, kmToShown, kgToShown, celsiusToShown, distanceUnit, paceUnit, weightUnit } from './units.js';
 import { sessionLoad, sessionRpeInfo, loadMinutes } from './load.js';
 import { findUnit, saveUnitPatch, completeUnit, linkSession, nextFreeDay, MISSED_REASONS } from './unit-actions.js';
 import { setHeader } from './router.js';
@@ -81,7 +82,7 @@ function renderPlanned(view, plan, unit) {
     typeIcon(unit.type, 'type-icon--lg'),
     el('div', { class: 'session-hero__body' }, [
       el('div', { class: 'session-hero__type', text: m.label }),
-      el('div', { class: 'session-hero__title', text: unit.title }),
+      el('div', { class: 'session-hero__title', text: localizeUnits(unit.title) }),
       el('div', { class: 'session-hero__date', text: fmtDateLong(unit.date) }),
     ]),
   ]));
@@ -105,7 +106,7 @@ function renderPlanned(view, plan, unit) {
 
   // Target values
   const targets = [];
-  if (unit.targetDistanceKm) targets.push([t('session.distance'), fmtKm(unit.targetDistanceKm, unit.targetDistanceKm % 1 ? 1 : 0)]);
+  if (unit.targetDistanceKm) targets.push([t('session.distance'), fmtKmAuto(unit.targetDistanceKm)]);
   if (unit.targetDurationMin) targets.push([t('session.duration'), `${unit.targetDurationMin} min`]);
   if (unit.targetPaceSecPerKm) targets.push([t('session.targetPace'), fmtPaceRange(unit.targetPaceSecPerKm, unit.targetPaceMaxSecPerKm)]);
   if (unit.targetHrZone) targets.push([t('session.hrZone'), t('session.zone', { zone: unit.targetHrZone })]);
@@ -116,7 +117,7 @@ function renderPlanned(view, plan, unit) {
 
   if (unit.description) {
     view.appendChild(sectionHead(t('session.description')));
-    view.appendChild(el('div', { class: 'card card--flat', text: unit.description }));
+    view.appendChild(el('div', { class: 'card card--flat', text: localizeUnits(unit.description) }));
   }
 
   // Weather hint for the training day
@@ -127,7 +128,7 @@ function renderPlanned(view, plan, unit) {
     view.appendChild(el('div', { class: 'card card--flat mt-4 row gap-3', style: { alignItems: 'flex-start', borderLeft: `3px solid ${color}` } }, [
       el('span', { style: { fontSize: '1.5rem', lineHeight: '1' }, text: wmo(w.code).emoji }),
       el('div', { class: 'grow' }, [
-        el('div', { style: { fontWeight: '650', fontSize: '.9rem' }, text: `${w.tMin}–${w.tMax} °C · ${wmo(w.code).label}` }),
+        el('div', { style: { fontWeight: '650', fontSize: '.9rem' }, text: `${Math.round(celsiusToShown(w.tMin))}–${fmtTemp(w.tMax)} · ${wmo(w.code).label}` }),
         el('div', { class: 'muted', style: { fontSize: '.84rem', marginTop: '2px' }, text: wh.text }),
       ]),
     ]));
@@ -241,7 +242,7 @@ function renderEvaluation(view, plan, unit, ex) {
     typeIcon(type, 'type-icon--lg'),
     el('div', { class: 'session-hero__body' }, [
       el('div', { class: 'session-hero__type', text: m.label }),
-      el('div', { class: 'session-hero__title', text: (ex?.title || unit?.title || m.label) }),
+      el('div', { class: 'session-hero__title', text: localizeUnits(ex?.title || unit?.title || m.label) }),
       el('div', { class: 'session-hero__date', text: fmtDateLong(date) }),
     ]),
   ]));
@@ -257,9 +258,9 @@ function renderEvaluation(view, plan, unit, ex) {
 
   // Key figures
   view.appendChild(el('div', { class: 'stat-grid mt-4' }, [
-    ex.distanceKm != null ? bigStat(fmtKm(ex.distanceKm, 1).replace(' km', ''), 'km') : null,
+    ex.distanceKm != null ? bigStat(fmtNum(kmToShown(ex.distanceKm), 1), distanceUnit()) : null,
     ex.durationSec != null ? bigStat(fmtDuration(ex.durationSec), t('session.time')) : null,
-    ex.paceSecPerKm != null ? bigStat(fmtPace(ex.paceSecPerKm), 'min/km') : null,
+    ex.paceSecPerKm != null ? bigStat(fmtPace(ex.paceSecPerKm), paceUnit()) : null,
     ex.avgHr != null ? bigStat(String(ex.avgHr), t('session.avgHrShort')) : null,
   ].filter(Boolean)));
 
@@ -313,7 +314,7 @@ function renderEvaluation(view, plan, unit, ex) {
         el('div', { class: 'list-item__body' }, [
           // An exercise imported from another app that the library does not know keeps its own name.
           el('div', { class: 'list-item__title', text: e ? e.name : (x.name || x.exerciseId) }),
-          el('div', { class: 'list-item__sub', style: { whiteSpace: 'normal' }, text: `${x.sets.map(fmtSet).join(' · ')}${vol ? ` · ${t('session.volumeMoved', { kg: fmtInt(vol) })}` : ''}` }),
+          el('div', { class: 'list-item__sub', style: { whiteSpace: 'normal' }, text: `${x.sets.map(fmtSet).join(' · ')}${vol ? ` · ${t('session.volumeMoved', { weight: `${fmtInt(kgToShown(vol))} ${weightUnit()}` })}` : ''}` }),
         ]),
       ]));
     });
@@ -324,10 +325,10 @@ function renderEvaluation(view, plan, unit, ex) {
     view.appendChild(sectionHead(t('session.route')));
     view.appendChild(el('div', { class: 'card' }, [
       routeMap(ex.route, { distanceKm: ex.distanceKm, ascentM: ex.ascentM, decode: decodePolyline }),
-      el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: `${ex.ascentM ? `${t('session.ascent', { m: ex.ascentM })} · ` : ''}${t('session.routeNoMap')}` }),
+      el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: `${ex.ascentM ? `${t('session.ascent', { elevation: fmtElevation(ex.ascentM) })} · ` : ''}${t('session.routeNoMap')}` }),
     ]));
   }
-  if (ex.splits && ex.splits.length) view.appendChild(splitsCard(ex.splits));
+  if ((ex.splits && ex.splits.length) || (ex.splitsMi && ex.splitsMi.length)) view.appendChild(splitsCard(ex));
 
   // Load, RPE & feeling – the load points always with their derivation, so that
   // it is visible when the duration was estimated (planned, from the route, flat rate).
@@ -402,7 +403,7 @@ function openLogSheet(plan, unit, existing = null, prefill = null) {
             distanceKm: dist, durationSec,
             avgHr: hr(avgI.value), maxHr: hr(maxI.value),
             rpe: rpe || null, feeling: feeling || null, notes: notesI.value.trim(),
-            timeInZones: ex.timeInZones || null, splits: ex.splits || [],
+            timeInZones: ex.timeInZones || null, splits: ex.splits || [], splitsMi: ex.splitsMi || [],
             source: ex.source || 'manual',
           };
           if (existing) {
@@ -465,7 +466,7 @@ export function openActivitySheet({ date = todayStr(), existing = null } = {}) {
       const cb = el('input', { type: 'checkbox', checked: linkOn, onchange: (e) => { linkOn = e.target.checked; } });
       matchBox.appendChild(el('label', { class: 'card card--flat row gap-2 mt-2', style: { alignItems: 'center', cursor: 'pointer' } }, [
         cb,
-        el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: t('session.linkToPlanned', { title: linkTo.unit.title }) }),
+        el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: t('session.linkToPlanned', { title: localizeUnits(linkTo.unit.title) }) }),
       ]));
     }
   };
@@ -517,7 +518,7 @@ export function openActivitySheet({ date = todayStr(), existing = null } = {}) {
     ]),
     footer: [
       existing ? el('button', { class: 'btn btn--danger', 'aria-label': t('session.delete'), onclick: async () => {
-        if (await confirmDialog({ title: t('session.deleteTraining'), message: existing.title || typeMeta(existing.type).label, confirmLabel: t('session.delete'), danger: true })) {
+        if (await confirmDialog({ title: t('session.deleteTraining'), message: localizeUnits(existing.title) || typeMeta(existing.type).label, confirmLabel: t('session.delete'), danger: true })) {
           store.remove('sessions', existing.id);
           closeSheet(); toast(t('session.deleted')); goOrRefresh('#/calendar');
         }
@@ -538,8 +539,8 @@ export function openReschedule(plan, unit) {
     const units = (store.find('plans', plan.id) || {}).units || [];
     const { sameDay, hardNeighbor } = rescheduleCheck(units, unit.id, dateI.value);
     const hints = [];
-    if (sameDay) hints.push(t('session.sameDayHint', { title: sameDay.title }));
-    if (hardNeighbor) hints.push(hardNeighbor.dir === 'prev' ? t('session.hardBefore', { title: hardNeighbor.unit.title }) : t('session.hardAfter', { title: hardNeighbor.unit.title }));
+    if (sameDay) hints.push(t('session.sameDayHint', { title: localizeUnits(sameDay.title) }));
+    if (hardNeighbor) hints.push(hardNeighbor.dir === 'prev' ? t('session.hardBefore', { title: localizeUnits(hardNeighbor.unit.title) }) : t('session.hardAfter', { title: localizeUnits(hardNeighbor.unit.title) }));
     hints.forEach((hint) => warnBox.appendChild(el('div', { class: 'card card--flat row gap-2 mt-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('info'), style: { color: 'var(--warn-text)', width: '18px', flex: '0 0 auto' } }),
       el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: hint }),
@@ -594,7 +595,7 @@ function markMissed(plan, unit) {
   openSheet({
     title: t('session.whyMissed'),
     body: el('div', {}, [
-      el('p', { class: 'muted mb-3', style: { fontSize: '.84rem' }, text: t('session.missedHint', { title: unit.title }) }),
+      el('p', { class: 'muted mb-3', style: { fontSize: '.84rem' }, text: t('session.missedHint', { title: localizeUnits(unit.title) }) }),
       list,
     ]),
   });
@@ -722,7 +723,7 @@ function unitFormSheet(plan, unit, isNew) {
     ]),
     footer: [
       !isNew ? el('button', { class: 'btn btn--danger', 'aria-label': t('session.delete'), onclick: async () => {
-        if (await confirmDialog({ title: t('session.deleteUnit'), message: unit.title, confirmLabel: t('session.delete'), danger: true })) {
+        if (await confirmDialog({ title: t('session.deleteUnit'), message: localizeUnits(unit.title), confirmLabel: t('session.delete'), danger: true })) {
           const cur = store.find('plans', plan.id);
           store.patch('plans', plan.id, { units: (cur.units || []).filter((u) => u.id !== unit.id) });
           closeSheet(); toast(t('session.deleted')); goOrRefresh(`#/plan/${plan.eventId}`);
@@ -741,10 +742,10 @@ function offerOffset(plan, newUnit, offset) {
   openSheet({
     title: t('session.balanceTitle'),
     body: el('div', {}, [
-      el('p', { class: 'muted', style: { fontSize: '.88rem' }, text: `${t('session.offsetPlanned', { title: newUnit.title, date: fmtDate(newUnit.date) })} ${load.km ? tp('session.offsetWeekKm', load.count, { km: load.km }) : tp('session.offsetWeek', load.count)}` }),
+      el('p', { class: 'muted', style: { fontSize: '.88rem' }, text: `${t('session.offsetPlanned', { title: localizeUnits(newUnit.title), date: fmtDate(newUnit.date) })} ${load.km ? tp('session.offsetWeekKm', load.count, { km: fmtKm(load.km, 0) }) : tp('session.offsetWeek', load.count)}` }),
       el('p', { class: 'mt-2', style: { fontSize: '.88rem' }, text: t('session.balanceText') }),
       el('div', { class: 'card card--flat mt-2' }, [
-        el('div', { class: 'card__title', text: offset.title }),
+        el('div', { class: 'card__title', text: localizeUnits(offset.title) }),
         el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: `${fmtDate(offset.date)}${offset.targetDistanceKm ? ' · ' + fmtKm(offset.targetDistanceKm) : ''}` }),
       ]),
       el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: t('session.balanceNote') }),
@@ -785,12 +786,17 @@ function zonesCard(tiz) {
   return wrap;
 }
 
-function splitsCard(splits) {
+/** Mile splits for a person on miles when the file gave them, otherwise the km splits – the header
+    says honestly which. Each time is shown as it is (m:ss per split), not converted. */
+function splitsCard(ex) {
+  const perMile = (units().distance === 'mi' && ex.splitsMi?.length) || !ex.splits?.length;
+  const splits = perMile ? ex.splitsMi : ex.splits;
+  const key = perMile ? 'mi' : 'km';
   const tbl = el('table', { class: 'splits' }, [
-    el('thead', {}, el('tr', {}, [el('th', { text: 'km' }), el('th', { text: t('session.pace') }), el('th', { text: '', style: 'width:45%' })])),
+    el('thead', {}, el('tr', {}, [el('th', { text: key }), el('th', { text: t('session.pace') }), el('th', { text: '', style: 'width:45%' })])),
     el('tbody', {}, splits.map((s) => el('tr', {}, [
-      el('td', { text: String(s.km) }),
-      el('td', { text: fmtPace(s.sec) }),
+      el('td', { text: String(s[key]) }),
+      el('td', { text: fmtMinSec(s.sec) }),
       el('td', {}, el('div', { class: 'splits__bar' }, el('i', { style: { width: `${splitBarPct(s.sec, splits)}%` } }))),
     ]))),
   ]);

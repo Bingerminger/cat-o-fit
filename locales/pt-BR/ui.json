@@ -82,7 +82,7 @@
       "dialogNameNew": "Novo PIN de {name}"
     },
     "profile": {
-      "target": "Meta de {kg} kg",
+      "target": "Meta de {weight}",
       "goalsHeading": "METAS",
       "year": "Ano",
       "sexNone": "Não informado",
@@ -217,7 +217,7 @@
       "women": "em mulheres",
       "unknown": "em mulheres (em homens, abaixo de cerca de 5%)"
     },
-    "bmiWarning": "Com {height} cm, este peso-alvo equivale a um IMC de {bmi} – abaixo de 18,5 é considerado baixo peso. O Cat-O-Fit não calcula déficit para isso e recomenda manter o seu peso.",
+    "bmiWarning": "Com {height}, este peso-alvo equivale a um IMC de {bmi} – abaixo de 18,5 é considerado baixo peso. O Cat-O-Fit não calcula déficit para isso e recomenda manter o seu peso.",
     "fileNames": {
       "familyBackup": "catofit-backup-familia",
       "sessions": "treinos",
@@ -363,7 +363,7 @@
     "visibility": {
       "intro": "O que os outros veem de você no painel compartilhado. O seu nome e o seu avatar continuam visíveis para o login; ciclo, exames e suplementos são sempre privados de qualquer forma.",
       "goal": "Mostrar a minha meta principal",
-      "metrics": "Mostrar os meus números (embalo, km, sequência)",
+      "metrics": "Mostrar os meus números (embalo, {unit}, sequência)",
       "metricsAria": "Mostrar os meus números",
       "load": "Mostrar a minha carga para os coaches",
       "loadHint": "Admins veem a sua carga semanal, a sua razão de carga e como você se sentiu nos últimos dias."
@@ -991,7 +991,7 @@
       "other": "dias"
     },
     "targetChip": "Meta {time}",
-    "targetPace": "Pace-alvo min/km",
+    "targetPace": "Pace-alvo {unit}",
     "daysUntil": {
       "one": "dia até {date}",
       "other": "dias até {date}"
@@ -1286,8 +1286,8 @@
     "followAlong": "Treine junto, sem parar · ≈ {min} min",
     "unitExercisesCount": "Exercícios deste treino ({n})",
     "inPlan": "no plano",
-    "volumeMoved": "{kg} kg levantados",
-    "ascent": "{m} m de subida",
+    "volumeMoved": "{weight} levantados",
+    "ascent": "{elevation} de subida",
     "loadSrcRoute": "duração estimada pela distância",
     "loadFormula": "{min} min × esforço {rpe}",
     "linkToPlanned": "Vincular ao treino planejado “{title}” – assim ele conta como feito.",
@@ -1391,7 +1391,7 @@
     "timeInZones": "Tempo nas zonas de frequência cardíaca",
     "pace": "Pace",
     "splits": "Parciais",
-    "splitsBarHint": "Barras: ±30 s em torno do seu quilômetro médio",
+    "splitsBarHint": "Barras: ±30 s em torno da sua parcial média",
     "rpeFromType": "estimado pelo esporte",
     "exercisesIntroUsage": "Ordenados por quanto você usa. Toque em um para ver a animação para treinar junto; os exercícios marcados contam quando você conclui o treino.",
     "usedTimes": "usado {n}×",
@@ -1405,8 +1405,8 @@
       "other": "Isso dá {count} treinos nesta semana."
     },
     "offsetWeekKm": {
-      "one": "Isso dá {count} treino nesta semana ({km} km).",
-      "other": "Isso dá {count} treinos nesta semana ({km} km)."
+      "one": "Isso dá {count} treino nesta semana ({km}).",
+      "other": "Isso dá {count} treinos nesta semana ({km})."
     }
   },
   "unitActions": {
@@ -1499,7 +1499,7 @@
     "raceDay": "Dia de prova!",
     "newLogic": "Nova lógica de plano disponível",
     "newLogicText": "Treino de prova em qualquer dia da semana, paces-alvo a partir do seu tempo-alvo, volume de acordo com o seu nível e os dias de corrida. Se quiser, o app recalcula o seu plano a partir de hoje – o passado fica como está.",
-    "statRunKm": "Km de corrida planejados",
+    "statRunKm": "{unit} de corrida planejados",
     "statSessions": "Treinos",
     "statDone": "Feitos",
     "weekOverview": "Semanas em resumo",
@@ -1523,11 +1523,11 @@
     "regenProgramText": "Os treinos de hoje em diante são criados de novo. Treinos passados, concluídos e perdidos ficam como estão.",
     "recalc": "Recalcular",
     "regenProgramDone": "Plano semanal recriado a partir de hoje",
-    "historyWeekKm": "média de {km} km por semana",
+    "historyWeekKm": "média de {km} por semana",
     "historyFewRuns": "só algumas corridas",
-    "historyLongest": ", corrida mais longa de {km} km",
+    "historyLongest": ", corrida mais longa de {km}",
     "levelLineDays": " · {days} dias de corrida por semana",
-    "levelLineBase": " · partindo do seu volume atual (média de {km} km por semana)",
+    "levelLineBase": " · partindo do seu volume atual (média de {km} por semana)",
     "regenWeekFresh": "Os treinos planejados desta semana serão criados de novo.",
     "regenWeekFreshFromToday": "Os treinos planejados desta semana, de hoje em diante, serão criados de novo.",
     "regenWeekKept": {
@@ -1639,15 +1639,15 @@
     "startWorkoutFor": "Iniciar treino: {title}",
     "startWorkout": "Iniciar treino",
     "ofPlanned": "de {km} planejados",
-    "runKm": "Km de corrida",
+    "runKm": "{unit} de corrida",
     "statSessions": "treinos",
     "statDone": "feitos"
   },
   "dashboardCoach": {
     "makeEasier": "Deixar “{title}” mais leve",
-    "raiseTo": "Aumentar “{title}” para {km} km",
-    "raised": "Aumentado para {km} km",
-    "volumeText": "Nesta semana ficaram {missed} km por fazer ({done}/{planned} km feitos). Acrescente parte disso aos poucos ao seu próximo treino leve – sem dobrar a carga.",
+    "raiseTo": "Aumentar “{title}” para {km}",
+    "raised": "Aumentado para {km}",
+    "volumeText": "Nesta semana ficaram {missed} por fazer ({done}/{planned} feitos). Acrescente parte disso aos poucos ao seu próximo treino leve – sem dobrar a carga.",
     "rpeText": "RPE médio de {rpe} em 10, com base em {count} treinos avaliados nas últimas {weeks} semanas.",
     "restWholeText": "{reason} Esse dia ({date}) tem {count} treinos das suas metas – o dia todo vai leve para a recuperação funcionar de verdade.",
     "restText": "{reason} Sugestão: transformar “{title}” de {date} em um dia de recuperação.",
@@ -1734,8 +1734,8 @@
     "weightAlmost": "{current} – quase na sua meta de {target}, agora é manter",
     "weightProgress": "{current} → meta {target} (faltam {remaining})",
     "phaseNote": "Fase “{phase}”: {note}",
-    "weekAlmost": "quase na sua meta de {target} kg – mantenha",
-    "weekRemaining": "faltam {remaining} kg para {target} kg",
+    "weekAlmost": "quase na sua meta de {target} – mantenha",
+    "weekRemaining": "faltam {remaining} para {target}",
     "currentToGoal": "{current} → meta {target}",
     "gainWeight": "Ganhar peso",
     "loseWeight": "Perder peso",
@@ -2655,32 +2655,32 @@
         "desc": "200 treinos concluídos"
       },
       "km100": {
-        "name": "Primeiros 100 km",
-        "desc": "100 km acumulados"
+        "name": "Primeiros {distance}",
+        "desc": "{distance} acumulados"
       },
       "km500": {
-        "name": "Clube dos 500 km",
-        "desc": "500 km acumulados"
+        "name": "Clube dos {distance}",
+        "desc": "{distance} acumulados"
       },
       "km1000": {
-        "name": "Herói dos mil quilômetros",
-        "desc": "1000 km acumulados"
+        "name": "Herói das longas distâncias",
+        "desc": "{distance} acumulados"
       },
       "km2000": {
         "name": "Cidadão do mundo",
-        "desc": "2000 km acumulados"
+        "desc": "{distance} acumulados"
       },
       "long15": {
         "name": "Fã de longão",
-        "desc": "Uma corrida de mais de 15 km"
+        "desc": "Uma corrida de mais de {distance}"
       },
       "long21": {
         "name": "Ensaio geral da meia maratona",
-        "desc": "Uma corrida de mais de 21 km"
+        "desc": "Uma corrida de mais de {distance}"
       },
       "marathon": {
         "name": "Distância da maratona",
-        "desc": "Uma corrida de mais de 42 km"
+        "desc": "Uma corrida de mais de {distance}"
       },
       "quality1": {
         "name": "Um toque de pimenta",
@@ -2861,8 +2861,8 @@
     "goalVerdictNamed": "{name} alcançou uma meta que traçou para si: {goal} Que conquista!",
     "trainingSessions": "Treinos",
     "activeDays": "Dias ativos",
-    "kmRunLabel": "Quilômetros corridos",
-    "otherKmMonth": "Outros quilômetros (ciclismo, caminhada, natação …)",
+    "kmRunLabel": "Distância corrida",
+    "otherKmMonth": "Outras distâncias (ciclismo, caminhada, natação …)",
     "trainingTime": "Tempo de treino",
     "planAdherence": "Adesão ao plano",
     "headingTraining": "Treino",
@@ -2879,7 +2879,7 @@
     "targetTime": "Tempo-alvo",
     "trainingPeriod": "Período de treino",
     "sessionsDone": "Treinos concluídos",
-    "otherKmEvent": "Outros quilômetros (ciclismo, natação, caminhada …)",
+    "otherKmEvent": "Outras distâncias (ciclismo, natação, caminhada …)",
     "headingFacts": "Dados principais",
     "headingPrep": "Preparação",
     "finishTime": "Tempo de chegada",
@@ -2929,7 +2929,7 @@
     "noRace": "Nenhuma prova cadastrada ainda.",
     "raceHint": "Inclui a preparação e – se registrado – o resultado.",
     "goalPlaceholder": "p. ex.: alcancei o peso-alvo",
-    "detailPlaceholder": "p. ex.: de 72 para 65 kg (opcional)",
+    "detailPlaceholder": "p. ex.: de {from} para {to} {unit} (opcional)",
     "goalTitle": "Título da meta",
     "goalDetails": "Detalhes (opcional)",
     "titleRequired": "Informe um título",
@@ -2957,8 +2957,8 @@
     "dueDone": "treinos previstos (4 semanas) concluídos",
     "consistency": "Constância vale mais do que um dia excepcional de vez em quando.",
     "weeklyVolume": "Volume semanal",
-    "weeklyAxis": "↕ km de corrida por semana · → semana do calendário (seg–dom), últimas 8",
-    "weeklyAria": "Quilômetros de corrida por semana",
+    "weeklyAxis": "↕ {unit} de corrida por semana · → semana do calendário (seg–dom), últimas 8",
+    "weeklyAria": "Distância de corrida por semana",
     "trainingYear": "Ano de treino",
     "hint": {
       "unclear": "Ainda não há dados suficientes.",
@@ -2969,10 +2969,10 @@
       "normal": "Carga dentro da faixa habitual."
     },
     "loadHeading": "Carga de treino",
-    "runKm7": "km de corrida · 7 dias",
-    "runKm28": "km de corrida · 28 dias",
+    "runKm7": "{unit} de corrida · 7 dias",
+    "runKm28": "{unit} de corrida · 28 dias",
     "points7": "Pontos de carga · 7 dias",
-    "pointsExplain": "Pontos de carga = minutos × esforço (RPE 1–10) em todos os esportes (inclusive treino de força, futebol e ciclismo) – os km de corrida mostram só o seu volume de corrida.",
+    "pointsExplain": "Pontos de carga = minutos × esforço (RPE 1–10) em todos os esportes (inclusive treino de força, futebol e ciclismo) – os {unit} de corrida mostram só o seu volume de corrida.",
     "missed": {
       "injured": "Lesão",
       "sick": "Doença",
@@ -2985,7 +2985,7 @@
     "sessions": "Treinos",
     "sessionsByType": "Treinos por tipo",
     "metricsHeading": "Medidas e metas",
-    "weightHeading": "Peso (kg)",
+    "weightHeading": "Peso ({unit})",
     "weight": "Peso",
     "predictionHeading": "Previsão de prova",
     "predictionRiegel": "Estimativa de Riegel – apenas uma aproximação.",
@@ -3022,8 +3022,8 @@
     "noTraining": "sem treino",
     "less": "menos",
     "more": "mais",
-    "routeDistance": "Percurso de {km} km – desenhado sem mapa",
-    "elevationAscent": "Perfil de elevação: de {min} a {max} m, {ascent} m de subida",
+    "routeDistance": "Percurso de {km} – desenhado sem mapa",
+    "elevationAscent": "Perfil de elevação: de {min} a {max}, {ascent} de subida",
     "start": "Início",
     "barChart": "Gráfico de barras",
     "trainingYear": "Ano de treino",
@@ -3036,12 +3036,12 @@
       "other": "{count} horas"
     },
     "route": "Percurso – desenhado sem mapa",
-    "elevation": "Perfil de elevação: de {min} a {max} m"
+    "elevation": "Perfil de elevação: de {min} a {max}"
   },
   "healthView": {
     "range3m": "3 meses",
     "weekAverageSince": "Média semanal em comparação com {date}",
-    "targetKg": "Meta {target} kg",
+    "targetKg": "Meta {target}",
     "alcoholFreeDays": {
       "one": "{count} dia sem álcool",
       "other": "{count} dias sem álcool"
@@ -3089,7 +3089,7 @@
     "lastReceived": "Último recebimento: {date}",
     "recentBodyFat": "{value} % de gordura corporal",
     "recentResting": "Repouso {value}",
-    "recentLean": "Massa magra {value} kg",
+    "recentLean": "Massa magra {value}",
     "recentSleep": "{value} h de sono",
     "recentSteps": "{value} passos",
     "fileImportTitle": "{type} (importação de arquivo)",
@@ -3124,7 +3124,7 @@
     },
     "willMatch": "Será associada ao treino planejado “{title}”.",
     "kmSplits": "{n} parciais de km",
-    "ascent": "{m} m de subida",
+    "ascent": "{elevation} de subida",
     "movingTime": "{time} em movimento",
     "matchedTo": "Associada ao treino planejado “{title}”.",
     "processing": "Processando {name} …",
@@ -3383,7 +3383,7 @@
     "longestStreak": "maior sequência semanal"
   },
   "familyAdmin": {
-    "metricWeekKm": "km semanais (todos os esportes)",
+    "metricWeekKm": "{unit} semanais (todos os esportes)",
     "showOnDashboard": "Mostrar {label} no painel",
     "memberCount": "{n} de {max} integrantes",
     "deleteTeamText": "A equipe “{name}” será excluída. Os integrantes continuam.",
@@ -3536,8 +3536,8 @@
     "missedInjured": "{n}× perdido por lesão – isso não pesa contra você. Volte com cuidado.",
     "missedSick": "{n}× perdido por doença – isso não pesa contra você.",
     "holdAbove": "acima da sua meta – mantenha",
-    "kgAbove": "{kg} kg acima da meta",
-    "kmPerWeek": "km/sem",
+    "kgAbove": "{weight} acima da meta",
+    "kmPerWeek": "{unit}/sem",
     "noDueSessions": "Ainda não há treinos previstos, então não há o que avaliar.",
     "loadHigh": "Carga bem acima da sua média – planeje alguma recuperação.",
     "loadRaised": "Carga elevada – aumente aos poucos e fique de olho na recuperação.",
@@ -3550,7 +3550,7 @@
     "currentValue": "último valor",
     "weight": "Peso",
     "weeklyKm": "Distância semanal",
-    "weeklyKmHint": "Média de km de corrida das últimas 4 semanas",
+    "weeklyKmHint": "Média de {unit} de corrida das últimas 4 semanas",
     "easyPace": "Pace leve",
     "easyPaceHint": "Média das corridas de base em Z2",
     "easyPaceNoHr": "Média das corridas de base · não avaliado sem frequência cardíaca",
@@ -3559,7 +3559,7 @@
     "vo2Hint": "Desempenho de resistência",
     "atTarget": "no seu peso-alvo",
     "holdBelow": "abaixo da sua meta – mantenha",
-    "kgBelow": "{kg} kg abaixo da meta"
+    "kgBelow": "{weight} abaixo da meta"
   },
   "adaptive": {
     "rhrRaised": "Frequência cardíaca em repouso elevada",
@@ -3614,9 +3614,9 @@
     }
   },
   "weather": {
-    "hot": "Muito quente ({temp} °C) – corra cedo ou à noite, cerca de {slow}% mais devagar do que o planejado, e beba bastante água.",
-    "freezing": "Congelante ({temp} °C) – agasalhe-se bem e não pule o aquecimento.",
-    "warm": "Quente ({temp} °C) – corra cerca de {slow}% mais devagar do que o planejado e beba mais água.",
+    "hot": "Muito quente ({temp}) – corra cedo ou à noite, cerca de {slow}% mais devagar do que o planejado, e beba bastante água.",
+    "freezing": "Congelante ({temp}) – agasalhe-se bem e não pule o aquecimento.",
+    "warm": "Quente ({temp}) – corra cerca de {slow}% mais devagar do que o planejado e beba mais água.",
     "wmo": {
       "clear": "céu limpo",
       "fair": "predominantemente limpo",
@@ -3653,7 +3653,7 @@
     "basisEasy": "corridas leves de treino (VDOT {v}) – do lado cauteloso; uma prova ou um tempo run melhora a estimativa",
     "basisFormSmoothed": "a sua forma (VDOT {v}, suavizado ao longo de {weeks} semanas)",
     "basisForm": "a sua forma (VDOT {v})",
-    "basisRiegel": "{km} km em {time} (estimativa de Riegel)",
+    "basisRiegel": "{km} em {time} (estimativa de Riegel)",
     "tipStreak": "Constância linda – {weeks} semanas seguidas. Os dias de descanso fazem parte – continue, sem pressão.",
     "volumeNote": "Só é alcançável com preparação suficiente – a sua distância semanal ou o seu longão ainda está um pouco curto para isso.",
     "tipRace": "Dia de prova – boa sorte! 🏁",
@@ -3722,7 +3722,7 @@
     "reps": "{n} reps",
     "hintHarder": "Todas as séries com {top}+ repetições – hora de uma variação mais difícil ou de um pouco mais de peso.",
     "hintMoreReps": "Na próxima vez, tente uma ou duas repetições a mais – até {top} em todas as séries.",
-    "hintMoreWeight": "Todas as séries com {top}+ repetições – na próxima vez, experimente cerca de {kg} kg.",
+    "hintMoreWeight": "Todas as séries com {top}+ repetições – na próxima vez, experimente cerca de {weight}.",
     "hintSameWeight": "Fique no mesmo peso e aumente as repetições – até {top} em todas as séries."
   },
   "hrZones": {
@@ -3749,8 +3749,8 @@
   "formCards": {
     "basisSmoothed": "suavizado ao longo de {weeks} semanas · mais recente: {distance} em {time}, em {date}",
     "basisEstimated": "estimado a partir de {distance} em {time} · {date}",
-    "fasterThanPlan": "A sua forma está cerca de {sec} s/km mais rápida do que os seus paces-alvo planejados – hora de afiá-los.",
-    "slowerThanPlan": "Os seus paces-alvo planejados estão cerca de {sec} s/km mais rápidos do que a sua forma mais recente – talvez valha defini-los de forma mais conservadora.",
+    "fasterThanPlan": "A sua forma está cerca de {sec} s/{unit} mais rápida do que os seus paces-alvo planejados – hora de afiá-los.",
+    "slowerThanPlan": "Os seus paces-alvo planejados estão cerca de {sec} s/{unit} mais rápidos do que a sua forma mais recente – talvez valha defini-los de forma mais conservadora.",
     "easy": "Leve",
     "threshold": "Limiar",
     "race": "Prova",
@@ -4134,11 +4134,11 @@
     "ironInflamedReason": "Ferritina {value} µg/l ({date}) – {assessment}. A PCR da mesma coleta de sangue está elevada.",
     "ferritinReason": "Ferritina {value} µg/l ({date}) – {assessment}.",
     "ferritinFalling": "Ao longo de várias medições, a ferritina vem caindo mais do que a variação habitual (cerca de {rate} µg/l por mês) e, nesse ritmo, chegará à faixa limítrofe {when}.",
-    "vitaminDReason": "Vitamina D {value} nmol/l ({date}) – {assessment}.",
+    "vitaminDReason": "Vitamina D {value} ({date}) – {assessment}.",
     "vitaminDOld": "O seu último valor de vitamina D ({date}) é de outra estação do ano ou tem mais de quatro meses.",
-    "holoTcReason": "Holo-TC {value} pmol/l ({date}) – {assessment}.",
-    "b12TotalReason": "Vitamina B12 (total) {value} pmol/l ({date}) – {assessment}.",
-    "magnesiumReason": "{label} {value} mmol/l ({date}) – {assessment}.",
+    "holoTcReason": "Holo-TC {value} ({date}) – {assessment}.",
+    "b12TotalReason": "Vitamina B12 (total) {value} ({date}) – {assessment}.",
+    "magnesiumReason": "{label} {value} ({date}) – {assessment}.",
     "proteinReason": "Segundo o seu diário alimentar, você consome em média {value} g de proteína por kg de peso corporal ({days} dias) – 1,2–2,0 g por kg é o habitual para quem treina.",
     "creatineReason": {
       "one": "{count} treino de força nas últimas quatro semanas – para ganhar força e músculo, a creatina é o suplemento mais bem estudado.",

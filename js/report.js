@@ -11,7 +11,8 @@
    No external sources. Covered by node:test.
    ========================================================================= */
 
-import { diffDays, fmtKm, fmtDuration, fmtDate, typeMeta, parseHms, fmtDec, monthName } from './ui.js';
+import { diffDays, fmtKm, fmtKmAuto, fmtDuration, fmtDate, typeMeta, parseHms, fmtDec, monthName } from './ui.js';
+import { kgToShown, weightUnit } from './units.js';
 import { evaluateBadges, momentum } from './badges.js';
 import { adherence, isRunSession } from './fitness.js';
 
@@ -105,7 +106,8 @@ export function buildMonthReport({ profile = {}, sessions = [], plans = [], heal
 
   const sections = [{ heading: t('report.headingTraining'), items: training }];
   if (verteilung.length) sections.push({ heading: t('report.headingMix'), items: verteilung });
-  const kg = (v) => `${fmtDec(v)} kg`;
+  // Sealed in the person's unit at the time of the report (kg or lb, to a tenth).
+  const kg = (v) => `${fmtDec(Math.round(kgToShown(v) * 10) / 10)} ${weightUnit()}`;
   if (w) sections.push({ heading: t('report.headingWeight'), items: [
     { label: t('report.weightStart'), value: kg(w.start) },
     { label: t('report.weightEnd'), value: kg(w.end) },
@@ -155,7 +157,7 @@ export function buildEventReport({ profile = {}, event = {}, plan = null, sessio
     { label: t('report.race'), value: event.name || '–' },
     { label: t('report.date'), value: event.date ? fmtDate(event.date) : '–' },
   ];
-  if (event.distanceKm) stamm.push({ label: t('report.distance'), value: fmtKm(event.distanceKm, event.distanceKm % 1 ? 1 : 0) });
+  if (event.distanceKm) stamm.push({ label: t('report.distance'), value: fmtKmAuto(event.distanceKm) });
   if (event.targetTime) stamm.push({ label: t('report.targetTime'), value: event.targetTime });
 
   const vorbereitung = [

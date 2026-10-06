@@ -6,7 +6,8 @@
    Deliberate exception to the "no external service" principle – weather is impossible without it.
    ========================================================================= */
 
-import { typeMeta } from './ui.js';
+import { typeMeta, fmtTemp } from './ui.js';
+import { celsiusToShown } from './units.js';
 import { lsGet, lsSet } from './env.js';
 import { locale, t } from './i18n.js';
 
@@ -119,17 +120,19 @@ export function weatherHint(unit, w) {
   if (w.code >= 95) return { text: t('weather.thunder'), tone: 'warn' };
   if (w.code >= 71 && w.code <= 77) return { text: t('weather.snowIce'), tone: 'warn' };
   if (w.wind >= 45) return { text: t('weather.stormy'), tone: 'warn' };
-  if (w.tMax >= 28) return { text: t('weather.hot', { temp: w.tMax, slow }), tone: 'warn' };
+  // Thresholds in °C; the temperature is shown in the person's unit.
+  if (w.tMax >= 28) return { text: t('weather.hot', { temp: fmtTemp(w.tMax), slow }), tone: 'warn' };
   if ((w.precip != null && w.precip >= 70) || (w.code >= 61 && w.code <= 67) || (w.code >= 80 && w.code <= 82)) return { text: t('weather.rainLikely'), tone: 'neutral' };
-  if (w.tMax <= 0) return { text: t('weather.freezing', { temp: w.tMax }), tone: 'neutral' };
-  if (w.tMax >= 24) return { text: t('weather.warm', { temp: w.tMax, slow }), tone: 'neutral' };
+  if (w.tMax <= 0) return { text: t('weather.freezing', { temp: fmtTemp(w.tMax) }), tone: 'neutral' };
+  if (w.tMax >= 24) return { text: t('weather.warm', { temp: fmtTemp(w.tMax), slow }), tone: 'neutral' };
   if (w.code <= 2 && w.tMax >= 8 && w.tMax <= 22) return { text: t('weather.perfect'), tone: 'good' };
   return null;
 }
 
-/** Compact display data (emoji + temperature) for calendar cells. */
+/** Compact display data (emoji + temperature in the person's unit, whole degrees) for calendar cells. */
 export function weatherBadge(dateStr) {
   const w = weatherForDate(dateStr);
   if (!w) return null;
-  return { emoji: wmo(w.code).emoji, tMax: w.tMax, tMin: w.tMin, label: wmo(w.code).label };
+  const deg = (c) => Math.round(celsiusToShown(c));
+  return { emoji: wmo(w.code).emoji, tMax: deg(w.tMax), tMin: deg(w.tMin), label: wmo(w.code).label };
 }

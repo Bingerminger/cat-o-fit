@@ -8,7 +8,8 @@
    list sits client-side in LocalStorage (the celebration does not need to sync).
    ========================================================================= */
 
-import { diffDays, todayStr, addDays, typeMeta, el, iconSvg, sectionHead, fmtNum, weekStartMonday } from './ui.js';
+import { diffDays, todayStr, addDays, typeMeta, el, iconSvg, sectionHead, fmtNum, weekStartMonday, fmtKm } from './ui.js';
+import { kmToShown, distanceUnit } from './units.js';
 import { lsGet, lsSet } from './env.js';
 import { locale, t, tp } from './i18n.js';
 import * as store from './storage.js';
@@ -164,7 +165,9 @@ export function computeStats(data = {}, today = todayStr()) {
 }
 
 /* ------------------------------- Badges --------------------------------- */
-// Each badge: emoji, name, desc, category and a progress function.
+/** A run length for the badge texts: whole km, miles to a tenth (15 km = 9.3 mi). */
+const runKm = (km) => fmtKm(km, distanceUnit() === 'mi' ? 1 : 0);
+// Each badge: emoji, name, desc, category and a progress function (`km`: progress in kilometres).
 // tier = effort/difficulty: 4 Legendary · 3 Epic · 2 Advanced · 1 Beginner.
 export const TIERS = [
   { tier: 4, get label() { return t('badges.tiers.legendary'); }, color: '#f5a623' },
@@ -189,16 +192,16 @@ export const BADGES = [
   { id: 'count100', tier: 4, emoji: '👑', get name() { return t('badges.items.count100.name'); }, cat: 'Umfang', get desc() { return t('badges.items.count100.desc'); }, p: (s) => [s.totalSessions, 100] },
   { id: 'count200', tier: 4, emoji: '🏛️', get name() { return t('badges.items.count200.name'); }, cat: 'Umfang', get desc() { return t('badges.items.count200.desc'); }, p: (s) => [s.totalSessions, 200] },
 
-  /* ---- Distance (km) ---- */
-  { id: 'km100', tier: 2, emoji: '🛣️', get name() { return t('badges.items.km100.name'); }, cat: 'Distanz', get desc() { return t('badges.items.km100.desc'); }, p: (s) => [s.totalKm, 100] },
-  { id: 'km500', tier: 3, emoji: '🚀', get name() { return t('badges.items.km500.name'); }, cat: 'Distanz', get desc() { return t('badges.items.km500.desc'); }, p: (s) => [s.totalKm, 500] },
-  { id: 'km1000', tier: 4, emoji: '🌍', get name() { return t('badges.items.km1000.name'); }, cat: 'Distanz', get desc() { return t('badges.items.km1000.desc'); }, p: (s) => [s.totalKm, 1000] },
-  { id: 'km2000', tier: 4, emoji: '✈️', get name() { return t('badges.items.km2000.name'); }, cat: 'Distanz', get desc() { return t('badges.items.km2000.desc'); }, p: (s) => [s.totalKm, 2000] },
+  /* ---- Distance (km; thresholds stay metric, the texts show the person's unit) ---- */
+  { id: 'km100', tier: 2, emoji: '🛣️', get name() { return t('badges.items.km100.name', { distance: fmtKm(100, 0) }); }, cat: 'Distanz', get desc() { return t('badges.items.km100.desc', { distance: fmtKm(100, 0) }); }, p: (s) => [s.totalKm, 100], km: true },
+  { id: 'km500', tier: 3, emoji: '🚀', get name() { return t('badges.items.km500.name', { distance: fmtKm(500, 0) }); }, cat: 'Distanz', get desc() { return t('badges.items.km500.desc', { distance: fmtKm(500, 0) }); }, p: (s) => [s.totalKm, 500], km: true },
+  { id: 'km1000', tier: 4, emoji: '🌍', get name() { return t('badges.items.km1000.name'); }, cat: 'Distanz', get desc() { return t('badges.items.km1000.desc', { distance: fmtKm(1000, 0) }); }, p: (s) => [s.totalKm, 1000], km: true },
+  { id: 'km2000', tier: 4, emoji: '✈️', get name() { return t('badges.items.km2000.name'); }, cat: 'Distanz', get desc() { return t('badges.items.km2000.desc', { distance: fmtKm(2000, 0) }); }, p: (s) => [s.totalKm, 2000], km: true },
 
   /* ---- Long Run & Tempo ---- */
-  { id: 'long15', tier: 2, emoji: '🦵', get name() { return t('badges.items.long15.name'); }, cat: 'Long Run', get desc() { return t('badges.items.long15.desc'); }, p: (s) => [s.longestRun, 15] },
-  { id: 'long21', tier: 3, emoji: '🏃‍♀️', get name() { return t('badges.items.long21.name'); }, cat: 'Long Run', get desc() { return t('badges.items.long21.desc'); }, p: (s) => [s.longestRun, 21] },
-  { id: 'marathon', tier: 4, emoji: '🏁', get name() { return t('badges.items.marathon.name'); }, cat: 'Long Run', get desc() { return t('badges.items.marathon.desc'); }, p: (s) => [s.longestRun, 42] },
+  { id: 'long15', tier: 2, emoji: '🦵', get name() { return t('badges.items.long15.name'); }, cat: 'Long Run', get desc() { return t('badges.items.long15.desc', { distance: runKm(15) }); }, p: (s) => [s.longestRun, 15], km: true },
+  { id: 'long21', tier: 3, emoji: '🏃‍♀️', get name() { return t('badges.items.long21.name'); }, cat: 'Long Run', get desc() { return t('badges.items.long21.desc', { distance: runKm(21) }); }, p: (s) => [s.longestRun, 21], km: true },
+  { id: 'marathon', tier: 4, emoji: '🏁', get name() { return t('badges.items.marathon.name'); }, cat: 'Long Run', get desc() { return t('badges.items.marathon.desc', { distance: runKm(42) }); }, p: (s) => [s.longestRun, 42], km: true },
   { id: 'quality1', tier: 1, emoji: '🌶️', get name() { return t('badges.items.quality1.name'); }, cat: 'Tempo', get desc() { return t('badges.items.quality1.desc'); }, p: (s) => [s.qualityCount, 1] },
   { id: 'interval10', tier: 3, emoji: '🎡', get name() { return t('badges.items.interval10.name'); }, cat: 'Tempo', get desc() { return t('badges.items.interval10.desc'); }, p: (s) => [s.intervalCount, 10] },
 
@@ -422,7 +425,12 @@ function badgeCard(b) {
     card.appendChild(el('div', { class: 'badge-card__check', text: t('badges.earned') }));
   } else if (b.target > 1) {
     card.appendChild(el('div', { class: 'badge-progress' }, el('i', { style: { width: `${Math.round(b.progress * 100)}%` } })));
-    card.appendChild(el('div', { class: 'badge-card__prog', text: `${fmtNum(Math.min(b.cur, b.target), b.cur % 1 ? 1 : 0)} / ${b.target}` }));
+    // Distance badges count kilometres; a person on miles sees the progress in miles.
+    const miles = b.km && distanceUnit() === 'mi';
+    const cur = Math.min(b.cur, b.target);
+    card.appendChild(el('div', { class: 'badge-card__prog', text: miles
+      ? `${fmtNum(kmToShown(cur), 1)} / ${fmtNum(kmToShown(b.target), 0)}`
+      : `${fmtNum(cur, b.cur % 1 ? 1 : 0)} / ${b.target}` }));
   }
   return card;
 }

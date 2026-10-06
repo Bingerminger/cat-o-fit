@@ -14,8 +14,9 @@ import {
   fmtPaceRange, fmtDate, fmtDayMonth, addDays, diffDays, todayStr, parseHms, fmtNum, fmtInt,
   sectionHead, emptyState, toast, confirmDialog, openSheet, closeSheet,
   effectiveStatus, STATUS_META, input, field, segmented,
-  goOrRefresh, actionSheet,
+  goOrRefresh, actionSheet, localizeUnits, fmtKmAuto,
 } from './ui.js';
+import { kmToShown, distanceUnit } from './units.js';
 import { setHeader } from './router.js';
 import { openIcsSheet } from './ics-export.js';
 import { onAccent } from './contrast.js';
@@ -215,8 +216,8 @@ export function openPlanSetup(event, { plan = null } = {}) {
   const levelHint = el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '-4px' }, text: PLAN_LEVELS[level].hint });
   const histText = hist.weekKm || hist.longKm
     ? t('plans.history', {
-      week: hist.weekKm ? t('plans.historyWeekKm', { km: fmtNum(hist.weekKm) }) : t('plans.historyFewRuns'),
-      longest: hist.longKm ? t('plans.historyLongest', { km: fmtNum(hist.longKm) }) : '',
+      week: hist.weekKm ? t('plans.historyWeekKm', { km: fmtKm(hist.weekKm) }) : t('plans.historyFewRuns'),
+      longest: hist.longKm ? t('plans.historyLongest', { km: fmtKm(hist.longKm) }) : '',
     })
     : t('plans.historyNone');
 
@@ -360,7 +361,7 @@ export function render(view, eventId) {
   const planRun = units.filter((u) => typeMeta(u.type).cat === 'run');
   const totalKm = planRun.reduce((a, u) => a + (u.targetDistanceKm || 0), 0);
   view.appendChild(el('div', { class: 'stat-grid mt-4' }, [
-    stat(fmtInt(Math.round(totalKm)), t('plans.statRunKm')),   // the label already says "km"
+    stat(fmtInt(Math.round(kmToShown(totalKm))), t('plans.statRunKm', { unit: distanceUnit() })),   // the label names the unit
     stat(`${units.length}`, t('plans.statSessions')),
     stat(`${done}`, t('plans.statDone')),
   ]));
@@ -373,11 +374,11 @@ export function render(view, eventId) {
       lines.push(t('plans.levelLine', {
         level: lv,
         days: plan.daysPerWeek ? t('plans.levelLineDays', { days: plan.daysPerWeek }) : '',
-        base: plan.baseWeekKm ? t('plans.levelLineBase', { km: fmtNum(plan.baseWeekKm) }) : '',
+        base: plan.baseWeekKm ? t('plans.levelLineBase', { km: fmtKm(plan.baseWeekKm) }) : '',
       }));
       lines.push(paceText(plan.paceInfo, plan.paces, event.targetTime));
     } else if (plan.baseLongKm) {
-      lines.push(t('plans.adaptedToForm', { km: fmtKm(plan.baseLongKm, plan.baseLongKm % 1 ? 1 : 0) }));
+      lines.push(t('plans.adaptedToForm', { km: fmtKmAuto(plan.baseLongKm) }));
     }
     if (lines.length) {
       view.appendChild(el('div', { class: 'card card--flat mt-2 row gap-2', style: { alignItems: 'flex-start' } }, [
@@ -552,7 +553,7 @@ async function saveCommitments(plan, event, commitments) {
 function planUnitRow(u) {
   const meta = [];
   const dur = u.targetDurationMin ?? u.dur ?? null;   // Programmes from older versions: `dur`
-  if (u.targetDistanceKm) meta.push(fmtKm(u.targetDistanceKm, u.targetDistanceKm % 1 ? 1 : 0));
+  if (u.targetDistanceKm) meta.push(fmtKmAuto(u.targetDistanceKm));
   if (dur && !u.targetDistanceKm) meta.push(`${dur} min`);
   if (u.targetPaceSecPerKm) meta.push(fmtPace(u.targetPaceSecPerKm));
   const eff = effectiveStatus(u);
@@ -566,7 +567,7 @@ function planUnitRow(u) {
   }, [
     typeIcon(u.type, 'type-icon--sm'),
     el('div', { class: 'cal-unit__body' }, [
-      el('div', { class: 'cal-unit__title' }, [u.title, tag]),
+      el('div', { class: 'cal-unit__title' }, [localizeUnits(u.title), tag]),
       el('div', { class: 'cal-unit__meta', text: `${fmtDate(u.date)}${meta.length ? ' · ' + meta.join(' · ') : ''}` }),
     ]),
     el('span', { class: 'list-item__chev', html: iconSvg('chevronRight') }),

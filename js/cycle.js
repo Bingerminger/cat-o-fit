@@ -15,7 +15,7 @@ import * as store from './storage.js';
 import {
   el, icon, iconSvg, uid, nowIso, navigate, todayStr, addDays, diffDays,
   fmtDate, fmtDateLong, sectionHead, toast, openSheet, closeSheet, field, input, confirmDialog, toggle,
-  fmtWeekday,
+  fmtWeekday, localizeUnits,
   rerenderView,
 } from './ui.js';
 import { setHeader } from './router.js';
@@ -442,7 +442,7 @@ async function askAboutFirstDay(startDate) {
   if (startDate < today || diffDays(today, startDate) > 1) return 0;
   const targets = easeTargets(startDate);
   if (!targets.length) return 0;
-  const names = [...new Set(targets.map((u) => t('cycle.quotedTitle', { title: u.title })))].join(', ');
+  const names = [...new Set(targets.map((u) => t('cycle.quotedTitle', { title: localizeUnits(u.title) })))].join(', ');
   const ease = await confirmDialog({
     title: t('cycle.askTitle'),
     message: startDate === today ? t('cycle.easeToday', { names }) : t('cycle.easeTomorrow', { names }),

@@ -63,8 +63,8 @@ test('Running km: statistics, "Today", monthly report and key figure count runs 
   assert.equal(runKm(sessions, ws, addDays(ws, 6)), 10);                    // "Today": week 22–28.06.
   assert.equal(loadBalance(sessions, T).last7, 10);                          // statistics "Running km · 7 days"
   const bericht = buildMonthReport({ sessions, plans: [], monthStr: '2026-06', today: T }).sections[0].items;
-  assert.equal(bericht.find((i) => i.label === 'Gelaufene Kilometer').value, '18 km');
-  assert.equal(bericht.find((i) => /Weitere Kilometer/.test(i.label)).value, '46 km');
+  assert.equal(bericht.find((i) => i.label === 'Gelaufene Strecke').value, '18 km');
+  assert.equal(bericht.find((i) => /Weitere Strecken/.test(i.label)).value, '46 km');
   assert.equal(keyMetrics({ sessions, today: T }).find((m) => m.key === 'weeklyKm').value, 4.5);   // 18 km / 4 weeks
 });
 

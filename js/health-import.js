@@ -10,6 +10,7 @@ import * as store from './storage.js';
 import {
   el, icon, iconSvg, uid, navigate, typeMeta, fmtKm, fmtDuration, sectionHead, toast, todayStr, addDays,
   input, select, openSheet, closeSheet, confirmDialog, fmtDate, fmtNum, toggle, segmented,
+  fmtWeight, fmtElevation, localizeUnits, fmtKmAuto,
 } from './ui.js';
 import { setHeader } from './router.js';
 import { uploadHealthExport } from './api-client.js';
@@ -208,10 +209,10 @@ function healthIngestRecent() {
     const list = el('div', { class: 'list-card' });
     health.forEach((h) => {
       const parts = [];
-      if (h.weight != null) parts.push(`${fmtNum(h.weight, 1)} kg`);
+      if (h.weight != null) parts.push(fmtWeight(h.weight));
       if (h.bodyFat != null) parts.push(t('healthImport.recentBodyFat', { value: fmtNum(h.bodyFat, 1) }));
       if (h.restingHr != null) parts.push(t('healthImport.recentResting', { value: h.restingHr }));
-      if (h.leanMass != null) parts.push(t('healthImport.recentLean', { value: fmtNum(h.leanMass, 1) }));
+      if (h.leanMass != null) parts.push(t('healthImport.recentLean', { value: fmtWeight(h.leanMass) }));
       if (h.hrv != null) parts.push(`HRV ${h.hrv}`);
       if (h.vo2max != null) parts.push(`VO₂ ${fmtNum(h.vo2max, 1)}`);
       if (h.sleepHours != null) parts.push(t('healthImport.recentSleep', { value: fmtNum(h.sleepHours, 1) }));
@@ -231,7 +232,7 @@ function healthIngestRecent() {
     const list = el('div', { class: 'list-card' });
     sess.forEach((s) => {
       const parts = [];
-      if (s.distanceKm) parts.push(fmtKm(s.distanceKm, s.distanceKm % 1 ? 1 : 0));
+      if (s.distanceKm) parts.push(fmtKmAuto(s.distanceKm));
       if (s.durationSec) parts.push(fmtDuration(s.durationSec));
       if (s.avgHr) parts.push(`Ø${s.avgHr}`);
       list.appendChild(el('div', { class: 'list-item' }, [
@@ -296,6 +297,7 @@ export function activityData(data, type, { route = true } = {}) {
     paceSecPerKm: isRun && data.distanceKm && data.durationSec ? Math.round(data.durationSec / data.distanceKm) : null,
     avgHr: data.avgHr, maxHr: data.maxHr ?? null,
     splits: isRun || type === 'walk' || type === 'hike' ? (data.splits || []) : [],
+    splitsMi: isRun || type === 'walk' || type === 'hike' ? (data.splitsMi || []) : [],
     timeInZones: data.timeInZones || null,
     // Watch values where the file has them: calories (active), elevation gain, simplified route.
     kcal: data.kcal ?? null,
@@ -467,14 +469,14 @@ async function importActivity(file, status) {
   const matchLine = el('div', { class: 'muted', style: { fontSize: '.82rem' } });
   const showMatch = () => {
     const m = findPlannedMatch(store.get('plans'), { date: data.date, type });
-    matchLine.textContent = m ? t('healthImport.willMatch', { title: m.unit.title }) : t('healthImport.noMatch');
+    matchLine.textContent = m ? t('healthImport.willMatch', { title: localizeUnits(m.unit.title) }) : t('healthImport.noMatch');
   };
   sportSel.addEventListener('change', () => { type = sportSel.value; showMatch(); });
   showMatch();
   const extras = [
     data.splits && data.splits.length ? t('healthImport.kmSplits', { n: data.splits.length }) : null,
     data.timeInZones ? t('healthImport.timeInZones') : null,
-    data.ascentM ? t('healthImport.ascent', { m: data.ascentM }) : null,
+    data.ascentM ? t('healthImport.ascent', { elevation: fmtElevation(data.ascentM) }) : null,
     data.route ? t('healthImport.route') : null,
   ].filter(Boolean);
   status.appendChild(el('div', { class: 'col gap-2' }, [
@@ -487,7 +489,7 @@ async function importActivity(file, status) {
       status.innerHTML = '';
       status.appendChild(el('div', {}, [
         el('div', { style: { fontWeight: '700' }, text: t('healthImport.activityImportedCheck') }),
-        el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: r.matched ? t('healthImport.matchedTo', { title: r.matched.title }) : t('healthImport.savedFree') }),
+        el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: r.matched ? t('healthImport.matchedTo', { title: localizeUnits(r.matched.title) }) : t('healthImport.savedFree') }),
       ]));
       toast(t('healthImport.activityImported'), 'good');
     } }, [icon('check'), t('healthImport.takeOver')]),

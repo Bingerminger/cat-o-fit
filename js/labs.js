@@ -22,6 +22,7 @@
 
 import { diffDays, fmtDec } from './ui.js';
 import { locale, t } from './i18n.js';
+import { units } from './units.js';
 
 /* ----------------------------- Analyte catalogue ---------------------------- */
 
@@ -221,6 +222,38 @@ export function fromCanonical(key, value, unit) {
   const f = unitFactor(key, unit);
   if (f == null || !Number.isFinite(v)) return null;
   return f === 1 ? v : Math.round((v / f) * 1000) / 1000;
+}
+
+/* --------------------- Conventional lab units (v4.1) ---------------------- */
+
+/* The canonical units are the ones German labs report. A person who chose conventional lab units
+   (Settings → Appearance, default in the United States) sees these instead – only where an analyte
+   has a common conventional unit; storage, ranges and ratings stay canonical. */
+const CONVENTIONAL = {
+  ferritin: 'ng/ml', vitaminD: 'ng/ml', b12total: 'pg/ml', folate: 'ng/ml', magnesium: 'mg/dl',
+  magnesiumSerum: 'mg/dl', zinc: 'µg/dl', tsh: 'µIU/ml', ft3: 'pg/ml', testosterone: 'ng/dl',
+  estradiol: 'pg/ml', urea: 'mg/dl (BUN)',
+};
+const conventional = () => units().labs === 'conventional';
+
+/** Unit an analyte is shown in: canonical, or its conventional unit when the person chose those. */
+export function shownUnit(key) {
+  const a = ANALYTES[key];
+  if (!a) return '';
+  return conventional() && CONVENTIONAL[key] ? CONVENTIONAL[key] : a.unit;
+}
+/** Canonical value (or difference) → value in the shown unit; converted values to three significant
+    digits, as labs report them (75 nmol/l → 30 ng/ml, not 30.048). */
+export function toShown(key, value) {
+  if (value == null || value === '') return value;
+  const u = shownUnit(key);
+  if (u === (ANALYTES[key] || {}).unit) return Number(value);
+  const v = fromCanonical(key, value, u);
+  return v == null || v === 0 ? v : Number(v.toPrecision(3));
+}
+/** Unit as written for the person: conventional style capitalises the litre ("mg/dL", "ng/mL"). */
+export function unitLabel(unit) {
+  return conventional() ? String(unit).replace(/(\/[µnpm]?)l\b/, '$1L').replace(/\/dl\b/, '/dL') : unit;
 }
 
 /* ------------------------- Read migration (v3.20.0) ----------------------- */

@@ -82,7 +82,7 @@
       "dialogNameNew": "Nieuwe pincode voor {name}"
     },
     "profile": {
-      "target": "Doel {kg} kg",
+      "target": "Doel {weight}",
       "goalsHeading": "DOELEN",
       "year": "Jaar",
       "sexNone": "Niet opgegeven",
@@ -217,7 +217,7 @@
       "women": "voor vrouwen",
       "unknown": "voor vrouwen (voor mannen onder ongeveer 5%)"
     },
-    "bmiWarning": "Bij {height} cm komt dit streefgewicht overeen met een BMI van {bmi} – onder 18,5 geldt als ondergewicht. Cat-O-Fit berekent er geen tekort voor, maar adviseert je gewicht te behouden.",
+    "bmiWarning": "Bij {height} komt dit streefgewicht overeen met een BMI van {bmi} – onder 18,5 geldt als ondergewicht. Cat-O-Fit berekent er geen tekort voor, maar adviseert je gewicht te behouden.",
     "fileNames": {
       "familyBackup": "catofit-gezinsbackup",
       "sessions": "trainingen",
@@ -363,7 +363,7 @@
     "visibility": {
       "intro": "Wat de anderen van jou zien op het gedeelde dashboard. Je naam en avatar blijven zichtbaar om aan te melden; cyclus, labwaarden en supplementen zijn hoe dan ook altijd privé.",
       "goal": "Mijn hoofddoel tonen",
-      "metrics": "Mijn cijfers tonen (momentum, km, reeks)",
+      "metrics": "Mijn cijfers tonen (momentum, {unit}, reeks)",
       "metricsAria": "Mijn cijfers tonen",
       "load": "Mijn belasting tonen aan coaches",
       "loadHint": "Beheerders zien je weekbelasting, je belastingsverhouding en hoe je je de afgelopen dagen hebt gevoeld."
@@ -991,7 +991,7 @@
       "other": "dagen"
     },
     "targetChip": "Doel {time}",
-    "targetPace": "Streeftempo min/km",
+    "targetPace": "Streeftempo {unit}",
     "daysUntil": {
       "one": "dag tot {date}",
       "other": "dagen tot {date}"
@@ -1286,8 +1286,8 @@
     "followAlong": "Non-stop meedoen · ≈ {min} min",
     "unitExercisesCount": "Oefeningen voor deze training ({n})",
     "inPlan": "in het schema",
-    "volumeMoved": "{kg} kg getild",
-    "ascent": "{m} m klimmen",
+    "volumeMoved": "{weight} getild",
+    "ascent": "{elevation} klimmen",
     "loadSrcRoute": "duur geschat op basis van de afstand",
     "loadFormula": "{min} min × inspanning {rpe}",
     "linkToPlanned": "Koppel aan de geplande training “{title}” – die telt dan als gedaan.",
@@ -1390,8 +1390,8 @@
     "balanced": "In balans – vergelijkbare training verwijderd",
     "timeInZones": "Tijd in hartslagzones",
     "pace": "Tempo",
-    "splits": "Kilometertijden",
-    "splitsBarHint": "Balken: ±30 s rond je gemiddelde kilometer",
+    "splits": "Tussentijden",
+    "splitsBarHint": "Balken: ±30 s rond je gemiddelde tussentijd",
     "rpeFromType": "geschat op basis van de sport",
     "exercisesIntroUsage": "Gesorteerd op hoe vaak je ze gebruikt. Tik er een aan om de meedoen-animatie te zien; aangevinkte oefeningen tellen mee als je de training voltooit.",
     "usedTimes": "{n}× gebruikt",
@@ -1405,8 +1405,8 @@
       "other": "Dat maakt {count} trainingen deze week."
     },
     "offsetWeekKm": {
-      "one": "Dat maakt {count} training deze week ({km} km).",
-      "other": "Dat maakt {count} trainingen deze week ({km} km)."
+      "one": "Dat maakt {count} training deze week ({km}).",
+      "other": "Dat maakt {count} trainingen deze week ({km})."
     }
   },
   "unitActions": {
@@ -1499,7 +1499,7 @@
     "raceDay": "Wedstrijddag!",
     "newLogic": "Nieuwe schemalogica beschikbaar",
     "newLogicText": "Wedstrijdtraining op elke weekdag, streeftempo’s uit je streeftijd, omvang passend bij je niveau en loopdagen. Als je wilt, berekent de app je schema opnieuw vanaf vandaag – het verleden blijft zoals het is.",
-    "statRunKm": "Geplande loopkilometers",
+    "statRunKm": "Geplande loopafstand ({unit})",
     "statSessions": "Trainingen",
     "statDone": "Gedaan",
     "weekOverview": "Weken in één oogopslag",
@@ -1523,11 +1523,11 @@
     "regenProgramText": "Trainingen vanaf vandaag worden opnieuw gemaakt. Verstreken, voltooide en gemiste trainingen blijven zoals ze zijn.",
     "recalc": "Herberekenen",
     "regenProgramDone": "Weekschema vanaf vandaag opnieuw gemaakt",
-    "historyWeekKm": "gem. {km} km per week",
+    "historyWeekKm": "gem. {km} per week",
     "historyFewRuns": "slechts een paar lopen",
-    "historyLongest": ", langste loop {km} km",
+    "historyLongest": ", langste loop {km}",
     "levelLineDays": " · {days} loopdagen per week",
-    "levelLineBase": " · uitgaande van je huidige omvang (gem. {km} km per week)",
+    "levelLineBase": " · uitgaande van je huidige omvang (gem. {km} per week)",
     "regenWeekFresh": "De geplande trainingen van deze week worden opnieuw gemaakt.",
     "regenWeekFreshFromToday": "De geplande trainingen van deze week vanaf vandaag worden opnieuw gemaakt.",
     "regenWeekKept": {
@@ -1639,15 +1639,15 @@
     "startWorkoutFor": "Workout starten: {title}",
     "startWorkout": "Workout starten",
     "ofPlanned": "van {km} gepland",
-    "runKm": "Loopkm",
+    "runKm": "Gelopen {unit}",
     "statSessions": "trainingen",
     "statDone": "gedaan"
   },
   "dashboardCoach": {
     "makeEasier": "Maak “{title}” rustiger",
-    "raiseTo": "Verhoog “{title}” naar {km} km",
-    "raised": "Verhoogd naar {km} km",
-    "volumeText": "Deze week bleef {missed} km liggen ({done}/{planned} km gedaan). Voeg een deel daarvan rustig toe aan je volgende rustige training – zonder de belasting te verdubbelen.",
+    "raiseTo": "Verhoog “{title}” naar {km}",
+    "raised": "Verhoogd naar {km}",
+    "volumeText": "Deze week bleef {missed} liggen ({done}/{planned} gedaan). Voeg een deel daarvan rustig toe aan je volgende rustige training – zonder de belasting te verdubbelen.",
     "rpeText": "Gemiddelde RPE {rpe} van 10 uit {count} beoordeelde trainingen in de afgelopen {weeks} weken.",
     "restWholeText": "{reason} Op die dag ({date}) staan {count} trainingen uit je doelen – de hele dag gaat rustig, zodat het herstel echt werkt.",
     "restText": "{reason} Suggestie: maak van “{title}” op {date} een hersteldag.",
@@ -1734,8 +1734,8 @@
     "weightAlmost": "{current} – bijna bij je doel van {target}, houd het nu vast",
     "weightProgress": "{current} → doel {target} (nog {remaining})",
     "phaseNote": "Fase “{phase}”: {note}",
-    "weekAlmost": "bijna bij je doel van {target} kg – houd het vast",
-    "weekRemaining": "nog {remaining} kg tot {target} kg",
+    "weekAlmost": "bijna bij je doel van {target} – houd het vast",
+    "weekRemaining": "nog {remaining} tot {target}",
     "currentToGoal": "{current} → doel {target}",
     "gainWeight": "Aankomen",
     "loseWeight": "Afvallen",
@@ -2655,32 +2655,32 @@
         "desc": "200 trainingen voltooid"
       },
       "km100": {
-        "name": "Eerste 100 km",
-        "desc": "100 km verzameld"
+        "name": "Eerste {distance}",
+        "desc": "{distance} verzameld"
       },
       "km500": {
-        "name": "500 km-club",
-        "desc": "500 km verzameld"
+        "name": "{distance}-club",
+        "desc": "{distance} verzameld"
       },
       "km1000": {
-        "name": "Held van duizend km",
-        "desc": "1000 km verzameld"
+        "name": "Held van de lange afstand",
+        "desc": "{distance} verzameld"
       },
       "km2000": {
         "name": "Wereldreiziger",
-        "desc": "2000 km verzameld"
+        "desc": "{distance} verzameld"
       },
       "long15": {
         "name": "Duurloopliefhebber",
-        "desc": "Een loop van meer dan 15 km"
+        "desc": "Een loop van meer dan {distance}"
       },
       "long21": {
         "name": "Generale repetitie halve marathon",
-        "desc": "Een loop van meer dan 21 km"
+        "desc": "Een loop van meer dan {distance}"
       },
       "marathon": {
         "name": "Marathonafstand",
-        "desc": "Een loop van meer dan 42 km"
+        "desc": "Een loop van meer dan {distance}"
       },
       "quality1": {
         "name": "Een vleugje pit",
@@ -2861,8 +2861,8 @@
     "goalVerdictNamed": "{name} heeft een zelfgesteld doel bereikt: {goal} Geweldige prestatie!",
     "trainingSessions": "Trainingen",
     "activeDays": "Actieve dagen",
-    "kmRunLabel": "Gelopen kilometers",
-    "otherKmMonth": "Overige kilometers (fietsen, wandelen, zwemmen …)",
+    "kmRunLabel": "Gelopen afstand",
+    "otherKmMonth": "Overige afstanden (fietsen, wandelen, zwemmen …)",
     "trainingTime": "Trainingstijd",
     "planAdherence": "Schematrouw",
     "headingTraining": "Training",
@@ -2879,7 +2879,7 @@
     "targetTime": "Streeftijd",
     "trainingPeriod": "Trainingsperiode",
     "sessionsDone": "Voltooide trainingen",
-    "otherKmEvent": "Overige kilometers (fietsen, zwemmen, wandelen …)",
+    "otherKmEvent": "Overige afstanden (fietsen, zwemmen, wandelen …)",
     "headingFacts": "Kerngegevens",
     "headingPrep": "Voorbereiding",
     "finishTime": "Eindtijd",
@@ -2929,7 +2929,7 @@
     "noRace": "Nog geen wedstrijd toegevoegd.",
     "raceHint": "Bevat de voorbereiding en – indien geregistreerd – de uitslag.",
     "goalPlaceholder": "bijv. streefgewicht bereikt",
-    "detailPlaceholder": "bijv. van 72 naar 65 kg (optioneel)",
+    "detailPlaceholder": "bijv. van {from} naar {to} {unit} (optioneel)",
     "goalTitle": "Titel van het doel",
     "goalDetails": "Details (optioneel)",
     "titleRequired": "Vul een titel in",
@@ -2957,8 +2957,8 @@
     "dueDone": "geplande trainingen (4 weken) gedaan",
     "consistency": "Regelmaat telt zwaarder dan een enkele topdag.",
     "weeklyVolume": "Weekomvang",
-    "weeklyAxis": "↕ Loopkm per week · → kalenderweek (ma–zo), laatste 8",
-    "weeklyAria": "Hardloopkilometers per week",
+    "weeklyAxis": "↕ Gelopen {unit} per week · → kalenderweek (ma–zo), laatste 8",
+    "weeklyAria": "Hardloopafstand per week",
     "trainingYear": "Trainingsjaar",
     "hint": {
       "unclear": "Nog te weinig gegevens.",
@@ -2969,10 +2969,10 @@
       "normal": "Belasting binnen het gebruikelijke bereik."
     },
     "loadHeading": "Trainingsbelasting",
-    "runKm7": "Loopkm · 7 dagen",
-    "runKm28": "Loopkm · 28 dagen",
+    "runKm7": "Gelopen {unit} · 7 dagen",
+    "runKm28": "Gelopen {unit} · 28 dagen",
     "points7": "Belastingspunten · 7 dagen",
-    "pointsExplain": "Belastingspunten = minuten × inspanning (RPE 1–10) over alle sporten (ook kracht, voetbal en fietsen) – loopkm tonen alleen je hardloopomvang.",
+    "pointsExplain": "Belastingspunten = minuten × inspanning (RPE 1–10) over alle sporten (ook kracht, voetbal en fietsen) – gelopen {unit} tonen alleen je hardloopomvang.",
     "missed": {
       "injured": "Geblesseerd",
       "sick": "Ziek",
@@ -2985,7 +2985,7 @@
     "sessions": "Trainingen",
     "sessionsByType": "Trainingen per type",
     "metricsHeading": "Meetwaarden & doelen",
-    "weightHeading": "Gewicht (kg)",
+    "weightHeading": "Gewicht ({unit})",
     "weight": "Gewicht",
     "predictionHeading": "Wedstrijdvoorspelling",
     "predictionRiegel": "Riegel-schatting – slechts een benadering.",
@@ -3022,8 +3022,8 @@
     "noTraining": "geen training",
     "less": "minder",
     "more": "meer",
-    "routeDistance": "Route van {km} km – getekend zonder kaart",
-    "elevationAscent": "Hoogteprofiel: {min} tot {max} m, {ascent} m stijging",
+    "routeDistance": "Route van {km} – getekend zonder kaart",
+    "elevationAscent": "Hoogteprofiel: {min} tot {max}, {ascent} stijging",
     "start": "Start",
     "barChart": "Staafdiagram",
     "trainingYear": "Trainingsjaar",
@@ -3036,12 +3036,12 @@
       "other": "{count} uur"
     },
     "route": "Route – getekend zonder kaart",
-    "elevation": "Hoogteprofiel: {min} tot {max} m"
+    "elevation": "Hoogteprofiel: {min} tot {max}"
   },
   "healthView": {
     "range3m": "3 maanden",
     "weekAverageSince": "Weekgemiddelde vergeleken met {date}",
-    "targetKg": "Doel {target} kg",
+    "targetKg": "Doel {target}",
     "alcoholFreeDays": {
       "one": "{count} alcoholvrije dag",
       "other": "{count} alcoholvrije dagen"
@@ -3089,7 +3089,7 @@
     "lastReceived": "Laatst ontvangen: {date}",
     "recentBodyFat": "{value}% lichaamsvet",
     "recentResting": "Rust {value}",
-    "recentLean": "Vetvrij {value} kg",
+    "recentLean": "Vetvrij {value}",
     "recentSleep": "{value} uur slaap",
     "recentSteps": "{value} stappen",
     "fileImportTitle": "{type} (bestandsimport)",
@@ -3124,7 +3124,7 @@
     },
     "willMatch": "Wordt gekoppeld aan de geplande training “{title}”.",
     "kmSplits": "{n} km-splits",
-    "ascent": "{m} m stijging",
+    "ascent": "{elevation} stijging",
     "movingTime": "{time} in beweging",
     "matchedTo": "Gekoppeld aan de geplande training “{title}”.",
     "processing": "{name} wordt verwerkt …",
@@ -3383,7 +3383,7 @@
     "longestStreak": "langste weekreeks"
   },
   "familyAdmin": {
-    "metricWeekKm": "Weekkilometers (alle sporten)",
+    "metricWeekKm": "{unit} per week (alle sporten)",
     "showOnDashboard": "{label} tonen op het dashboard",
     "memberCount": "{n} van {max} leden",
     "deleteTeamText": "“{name}” wordt verwijderd. De leden zelf blijven bewaard.",
@@ -3536,8 +3536,8 @@
     "missedInjured": "{n}× gemist door blessure – het telt niet tegen je. Bouw voorzichtig weer op.",
     "missedSick": "{n}× gemist door ziekte – het telt niet tegen je.",
     "holdAbove": "boven je streefwaarde – houd dit vast",
-    "kgAbove": "{kg} kg boven streefgewicht",
-    "kmPerWeek": "km/wk",
+    "kgAbove": "{weight} boven streefgewicht",
+    "kmPerWeek": "{unit}/wk",
     "noDueSessions": "Er zijn nog geen trainingen aan de beurt, dus er valt niets te beoordelen.",
     "loadHigh": "Belasting ruim boven je gemiddelde – plan wat herstel in.",
     "loadRaised": "Belasting verhoogd – bouw rustig op en let op je herstel.",
@@ -3550,7 +3550,7 @@
     "currentValue": "laatste waarde",
     "weight": "Gewicht",
     "weeklyKm": "Weekafstand",
-    "weeklyKmHint": "Gem. loopkm van de laatste 4 weken",
+    "weeklyKmHint": "Gem. gelopen {unit} van de laatste 4 weken",
     "easyPace": "Rustig tempo",
     "easyPaceHint": "Gem. rustige duurlopen in Z2",
     "easyPaceNoHr": "Gem. rustige duurlopen · zonder hartslag niet beoordeeld",
@@ -3559,7 +3559,7 @@
     "vo2Hint": "Duurprestatie",
     "atTarget": "op je streefgewicht",
     "holdBelow": "onder je streefwaarde – houd dit vast",
-    "kgBelow": "{kg} kg onder streefgewicht"
+    "kgBelow": "{weight} onder streefgewicht"
   },
   "adaptive": {
     "rhrRaised": "Rusthartslag verhoogd",
@@ -3614,9 +3614,9 @@
     }
   },
   "weather": {
-    "hot": "Heet ({temp} °C) – loop vroeg of laat, ongeveer {slow}% langzamer dan gepland, en drink veel.",
-    "freezing": "Vrieskou ({temp} °C) – kleed je warm aan en sla de warming-up niet over.",
-    "warm": "Warm ({temp} °C) – loop ongeveer {slow}% langzamer dan gepland en drink meer.",
+    "hot": "Heet ({temp}) – loop vroeg of laat, ongeveer {slow}% langzamer dan gepland, en drink veel.",
+    "freezing": "Vrieskou ({temp}) – kleed je warm aan en sla de warming-up niet over.",
+    "warm": "Warm ({temp}) – loop ongeveer {slow}% langzamer dan gepland en drink meer.",
     "wmo": {
       "clear": "helder",
       "fair": "overwegend helder",
@@ -3653,7 +3653,7 @@
     "basisEasy": "rustige looptrainingen (VDOT {v}) – aan de voorzichtige kant; een wedstrijd of tempoloop maakt de schatting beter",
     "basisFormSmoothed": "je vorm (VDOT {v}, afgevlakt over {weeks} weken)",
     "basisForm": "je vorm (VDOT {v})",
-    "basisRiegel": "{km} km in {time} (Riegel-schatting)",
+    "basisRiegel": "{km} in {time} (Riegel-schatting)",
     "tipStreak": "Mooi volgehouden – {weeks} weken op rij. Rustdagen horen erbij – ga gewoon door, zonder druk.",
     "volumeNote": "Alleen haalbaar met genoeg voorbereiding – je weekafstand of je langste loop is daarvoor nog wat aan de korte kant.",
     "tipRace": "Wedstrijddag – veel succes! 🏁",
@@ -3722,7 +3722,7 @@
     "reps": "{n} herhalingen",
     "hintHarder": "Alle sets op {top}+ herhalingen – tijd voor een zwaardere variant of een beetje extra gewicht.",
     "hintMoreReps": "Probeer de volgende keer één of twee herhalingen meer – tot {top} in elke set.",
-    "hintMoreWeight": "Alle sets op {top}+ herhalingen – probeer de volgende keer ongeveer {kg} kg.",
+    "hintMoreWeight": "Alle sets op {top}+ herhalingen – probeer de volgende keer ongeveer {weight}.",
     "hintSameWeight": "Blijf bij hetzelfde gewicht en bouw de herhalingen op – tot {top} in elke set."
   },
   "hrZones": {
@@ -3749,8 +3749,8 @@
   "formCards": {
     "basisSmoothed": "afgevlakt over {weeks} weken · laatste {distance} in {time} op {date}",
     "basisEstimated": "geschat op basis van {distance} in {time} · {date}",
-    "fasterThanPlan": "Je vorm is ongeveer {sec} s/km sneller dan je geplande streeftempo’s – tijd om ze aan te scherpen.",
-    "slowerThanPlan": "Je geplande streeftempo’s liggen ongeveer {sec} s/km sneller dan je laatste vorm – misschien wil je ze voorzichtiger instellen.",
+    "fasterThanPlan": "Je vorm is ongeveer {sec} s/{unit} sneller dan je geplande streeftempo’s – tijd om ze aan te scherpen.",
+    "slowerThanPlan": "Je geplande streeftempo’s liggen ongeveer {sec} s/{unit} sneller dan je laatste vorm – misschien wil je ze voorzichtiger instellen.",
     "easy": "Rustig",
     "threshold": "Drempel",
     "race": "Wedstrijd",
@@ -4134,11 +4134,11 @@
     "ironInflamedReason": "Ferritine {value} µg/l ({date}) – {assessment}. Het CRP uit dezelfde bloedafname is verhoogd.",
     "ferritinReason": "Ferritine {value} µg/l ({date}) – {assessment}.",
     "ferritinFalling": "Over meerdere metingen daalt ferritine sneller dan de gebruikelijke variatie (ongeveer {rate} µg/l per maand) en bereikt het in dit tempo {when} het krappe bereik voor sport.",
-    "vitaminDReason": "Vitamine D {value} nmol/l ({date}) – {assessment}.",
+    "vitaminDReason": "Vitamine D {value} ({date}) – {assessment}.",
     "vitaminDOld": "Je laatste vitamine D-waarde ({date}) komt uit een ander seizoen of is meer dan vier maanden oud.",
-    "holoTcReason": "Holo-TC {value} pmol/l ({date}) – {assessment}.",
-    "b12TotalReason": "Vitamine B12 (totaal) {value} pmol/l ({date}) – {assessment}.",
-    "magnesiumReason": "{label} {value} mmol/l ({date}) – {assessment}.",
+    "holoTcReason": "Holo-TC {value} ({date}) – {assessment}.",
+    "b12TotalReason": "Vitamine B12 (totaal) {value} ({date}) – {assessment}.",
+    "magnesiumReason": "{label} {value} ({date}) – {assessment}.",
     "proteinReason": "Volgens je eetdagboek eet je gemiddeld {value} g eiwit per kg lichaamsgewicht ({days} dagen) – 1,2–2,0 g per kg is gebruikelijk bij training.",
     "creatineReason": {
       "one": "{count} krachttraining in de afgelopen vier weken – voor het opbouwen van kracht en spieren is creatine het best onderzochte supplement.",

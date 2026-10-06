@@ -8,8 +8,9 @@
 import * as store from './storage.js';
 import {
   el, icon, iconSvg, typeMeta, typeIcon, fmtKm, fmtDuration, fmtDate, nowIso, todayStr, isoDow,
-  fmtWeekday, toast, fmtNum, refreshView, infoButton, fmtDec,
+  fmtWeekday, toast, fmtNum, refreshView, infoButton, fmtDec, localizeUnits as lu, fmtKmAuto,
 } from './ui.js';
+import { kmToShown } from './units.js';
 import { easierVariant, deloadVariant, progressVariant, dayLoadUnits } from './planflow.js';
 import { coachWhy } from './coach.js';
 import { saveUnitPatch, linkSession } from './unit-actions.js';
@@ -18,6 +19,8 @@ import { gentleVariant } from './rolling.js';
 import { applyAdapt, undoAdapt as undoAdaptStore, canUndo } from './adapt.js';
 
 import { t } from './i18n.js';
+
+const dist = fmtKmAuto;
 
 /** The one daily recommendation (coach.js) as a card – with the reason why exactly this one. */
 export function coachCard(view, coach, today) {
@@ -57,17 +60,17 @@ function returnCard(p) {
         el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: r.reason === 'injured' ? t('dashboardCoach.returnTextInjured', { date: fmtDate(r.date) }) : t('dashboardCoach.returnTextIll', { date: fmtDate(r.date) }) }),
       ]),
     ]),
-    u ? el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => makeEasier(u, t('dashboardCoach.log.returnReason')) }, [icon('feather'), t('dashboardCoach.makeEasier', { title: u.title })]) : null,
+    u ? el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => makeEasier(u, t('dashboardCoach.log.returnReason')) }, [icon('feather'), t('dashboardCoach.makeEasier', { title: lu(u.title) })]) : null,
   ]);
 }
 
 /** Coach card: automatic weekly volume compensation (suggestion with "Apply"). */
 function volumeBalanceCard(bal) {
   const s = bal.suggestion;
-  const apply = el('button', { class: 'btn btn--soft mt-2', style: { fontSize: '.82rem' } }, [icon('check'), t('dashboardCoach.raiseTo', { title: s.unit.title, km: fmtDec(s.newKm) })]);
+  const apply = el('button', { class: 'btn btn--soft mt-2', style: { fontSize: '.82rem' } }, [icon('check'), t('dashboardCoach.raiseTo', { title: lu(s.unit.title), km: dist(s.newKm) })]);
   apply.addEventListener('click', () => {
     saveUnitPatch(s.unit.planId, s.unit.id, { targetDistanceKm: s.newKm });
-    toast(t('dashboardCoach.raised', { km: fmtDec(s.newKm) }), 'good');
+    toast(t('dashboardCoach.raised', { km: dist(s.newKm) }), 'good');
     refreshView();
   });
   return el('div', { class: 'card', style: { borderLeft: '3px solid #f5a623' } }, [
@@ -75,7 +78,7 @@ function volumeBalanceCard(bal) {
       el('span', { html: iconSvg('route'), style: { color: '#f5a623', width: '20px', flex: '0 0 auto', marginTop: '1px' } }),
       el('div', {}, [
         el('div', { style: { fontWeight: '700', fontSize: '.92rem' }, text: t('dashboardCoach.volumeTitle') }),
-        el('div', { class: 'muted', style: { fontSize: '.84rem', marginTop: '2px' }, text: t('dashboardCoach.volumeText', { missed: bal.missedKm, done: bal.done, planned: bal.planned }) }),
+        el('div', { class: 'muted', style: { fontSize: '.84rem', marginTop: '2px' }, text: t('dashboardCoach.volumeText', { missed: dist(bal.missedKm), done: Math.round(kmToShown(bal.done)), planned: fmtKm(bal.planned, 0) }) }),
         apply,
       ]),
     ]),
@@ -127,7 +130,7 @@ function restDayCard(rd) {
         el('div', { style: { fontWeight: '700' }, text: whole ? t('dashboardCoach.restWholeTitle') : t('dashboardCoach.restTitle') }),
         el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: whole
           ? t('dashboardCoach.restWholeText', { reason: rd.reason, date: fmtDate(rd.date), count: dayCount })
-          : t('dashboardCoach.restText', { reason: rd.reason, title: u.title, date: fmtDate(u.date) }) }),
+          : t('dashboardCoach.restText', { reason: rd.reason, title: lu(u.title), date: fmtDate(u.date) }) }),
       ]),
     ]),
     el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => restDayApply(rd.date) }, [icon('feather'), whole ? t('dashboardCoach.restWholeButton') : t('dashboardCoach.restButton')]),
@@ -157,10 +160,10 @@ function footballEaseCard(fb) {
       el('span', { html: iconSvg('activity'), style: { color: '#5cc97a', width: '20px', flex: '0 0 auto' } }),
       el('div', { class: 'grow' }, [
         el('div', { style: { fontWeight: '700' }, text: t('dashboardCoach.footballTitle', { when: fb.when === 'heute' ? t('common.today') : t('common.yesterday') }) }),
-        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('dashboardCoach.footballText', { title: u.title, date: fmtDate(u.date) }) }),
+        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('dashboardCoach.footballText', { title: lu(u.title), date: fmtDate(u.date) }) }),
       ]),
     ]),
-    el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => footballEaseApply(u) }, [icon('feather'), t('dashboardCoach.makeEasier', { title: u.title })]),
+    el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => footballEaseApply(u) }, [icon('feather'), t('dashboardCoach.makeEasier', { title: lu(u.title) })]),
   ]);
 }
 function footballEaseApply(unit) {
@@ -181,10 +184,10 @@ function destackCard(sug) {
       el('span', { html: iconSvg('calendar'), style: { color: '#5b8def', width: '20px', flex: '0 0 auto' } }),
       el('div', { class: 'grow' }, [
         el('div', { style: { fontWeight: '700' }, text: t('dashboardCoach.destackTitle') }),
-        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('dashboardCoach.destackText', { date: fmtDate(sug.date), keep: k ? k.title : t('dashboardCoach.session'), move: m.title, weekday: fmtWeekday(sug.target, true), target: fmtDate(sug.target) }) }),
+        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('dashboardCoach.destackText', { date: fmtDate(sug.date), keep: k ? lu(k.title) : t('dashboardCoach.session'), move: lu(m.title), weekday: fmtWeekday(sug.target, true), target: fmtDate(sug.target) }) }),
       ]),
     ]),
-    el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => destackApply(m, sug.target) }, [icon('calendar'), t('dashboardCoach.moveTo', { title: m.title, weekday: fmtWeekday(sug.target) })]),
+    el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => destackApply(m, sug.target) }, [icon('calendar'), t('dashboardCoach.moveTo', { title: lu(m.title), weekday: fmtWeekday(sug.target) })]),
   ]);
 }
 function destackApply(unit, target) {
@@ -215,8 +218,8 @@ export function adaptLogCard() {
       el('div', { class: 'row gap-2', style: { alignItems: 'flex-start' } }, [
         el('span', { html: iconSvg(KIND_ICON[e.kind] || 'activity'), style: { color: 'var(--text-3)', width: '15px', flex: '0 0 auto', marginTop: '2px' } }),
         el('div', {}, [
-          el('div', { style: { fontWeight: '650', fontSize: '.82rem' }, text: e.title || t('dashboardCoach.adjustment') }),
-          el('div', { class: 'muted', style: { fontSize: '.76rem' }, text: e.reason || '' }),
+          el('div', { style: { fontWeight: '650', fontSize: '.82rem' }, text: lu(e.title) || t('dashboardCoach.adjustment') }),
+          el('div', { class: 'muted', style: { fontSize: '.76rem' }, text: lu(e.reason) || '' }),
         ]),
       ]),
       e.undoable ? el('button', { class: 'btn btn--ghost', style: { fontSize: '.72rem', flex: '0 0 auto' }, onclick: () => undoAdapt(e.planId, e.id) }, t('common.undo')) : null,
@@ -236,7 +239,7 @@ function readinessAdjustCard(soft) {
           el('div', { style: { fontWeight: '700' }, text: t('dashboardCoach.readinessLow', { score: soft.score }) }),
           infoButton('bereitschaft', t('dashboardCoach.readiness')),
         ]),
-        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('dashboardCoach.readinessText', { title: u.title }) }),
+        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('dashboardCoach.readinessText', { title: lu(u.title) }) }),
       ]),
     ]),
     el('div', { class: 'row gap-2 mt-2' }, [
@@ -262,7 +265,7 @@ function makeupCard(unit, targetDay) {
       el('span', { html: iconSvg('refresh'), style: { color: '#5b8def', width: '20px', flex: '0 0 auto' } }),
       el('div', { class: 'grow' }, [
         el('div', { style: { fontWeight: '700' }, text: t('dashboardCoach.makeupTitle') }),
-        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('dashboardCoach.makeupText', { title: unit.title, date: fmtDate(unit.date), weekday: fmtWeekday(targetDay, true), target: fmtDate(targetDay) }) }),
+        el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('dashboardCoach.makeupText', { title: lu(unit.title), date: fmtDate(unit.date), weekday: fmtWeekday(targetDay, true), target: fmtDate(targetDay) }) }),
       ]),
     ]),
     el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => makeupMove(unit, targetDay) }, [icon('calendar'), t('dashboardCoach.makeupButton', { weekday: fmtWeekday(targetDay) })]),
@@ -337,7 +340,7 @@ export function freeSessionCard(s) {
     el('div', { class: 'row gap-3', style: { alignItems: 'center' } }, [
       typeIcon(s.type),
       el('div', { class: 'grow' }, [
-        el('div', { style: { fontWeight: '700' }, text: `✓ ${s.title || typeMeta(s.type).label}` }),
+        el('div', { style: { fontWeight: '700' }, text: `✓ ${lu(s.title) || typeMeta(s.type).label}` }),
         el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: meta.join(' · ') }),
       ]),
       el('span', { class: 'list-item__chev', html: iconSvg('chevronRight') }),
@@ -358,7 +361,7 @@ export function rpeAskCard(list) {
       el('div', { class: 'row gap-2', style: { alignItems: 'center' } }, [
         typeIcon(s.type, 'type-icon--sm'),
         el('div', { class: 'grow', style: { minWidth: '0' } }, [
-          el('div', { style: { fontWeight: '650', fontSize: '.86rem' }, text: `${fmtDate(s.date)} · ${s.title || typeMeta(s.type).label}${s.distanceKm ? ' · ' + fmtKm(s.distanceKm, 1) : ''}` }),
+          el('div', { style: { fontWeight: '650', fontSize: '.86rem' }, text: `${fmtDate(s.date)} · ${lu(s.title) || typeMeta(s.type).label}${s.distanceKm ? ' · ' + fmtKm(s.distanceKm, 1) : ''}` }),
           el('div', { class: 'muted', style: { fontSize: '.78rem' }, text: est.source === 'herzfrequenz'
             ? t('dashboardCoach.rpeFromHr', { rpe: fmtNum(est.rpe, est.rpe % 1 ? 1 : 0) })
             : t('dashboardCoach.rpeFromType', { rpe: fmtNum(est.rpe, est.rpe % 1 ? 1 : 0) }) }),
@@ -385,8 +388,8 @@ export function importMatchCard(matches) {
   const rows = matches.slice(0, 4).map((m) => el('div', { class: 'row gap-2', style: { alignItems: 'center', padding: '6px 0', borderTop: '1px solid var(--border)' } }, [
     typeIcon(m.session.type, 'type-icon--sm'),
     el('div', { class: 'grow', style: { minWidth: '0' } }, [
-      el('div', { style: { fontWeight: '650', fontSize: '.86rem' }, text: `${fmtDate(m.session.date)} · ${m.session.title || typeMeta(m.session.type).label}${m.session.distanceKm ? ' · ' + fmtKm(m.session.distanceKm, 1) : ''}` }),
-      el('div', { class: 'muted', style: { fontSize: '.78rem' }, text: t('dashboardCoach.fitsUnit', { title: m.unit.title }) }),
+      el('div', { style: { fontWeight: '650', fontSize: '.86rem' }, text: `${fmtDate(m.session.date)} · ${lu(m.session.title) || typeMeta(m.session.type).label}${m.session.distanceKm ? ' · ' + fmtKm(m.session.distanceKm, 1) : ''}` }),
+      el('div', { class: 'muted', style: { fontSize: '.78rem' }, text: t('dashboardCoach.fitsUnit', { title: lu(m.unit.title) }) }),
     ]),
     el('button', { class: 'btn btn--soft', style: { fontSize: '.8rem', padding: '6px 10px', flex: '0 0 auto' }, onclick: () => link([m]) }, t('dashboardCoach.match')),
     el('button', { class: 'icon-btn', 'aria-label': t('dashboardCoach.dontMatch'), title: t('dashboardCoach.dontMatch'), onclick: () => { store.patch('sessions', m.session.id, { matchDismissed: true }); refreshView(); } }, icon('x')),

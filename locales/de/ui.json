@@ -82,7 +82,7 @@
       "dialogNameNew": "Neue PIN für {name}"
     },
     "profile": {
-      "target": "Ziel {kg} kg",
+      "target": "Ziel {weight}",
       "goalsHeading": "ZIELE",
       "year": "Jahr",
       "sexNone": "keine Angabe",
@@ -217,7 +217,7 @@
       "women": "bei Frauen",
       "unknown": "bei Frauen (bei Männern unter etwa 5 %)"
     },
-    "bmiWarning": "Das Zielgewicht entspricht bei {height} cm einem BMI von {bmi} – unter 18,5 gilt als Untergewicht. Cat-O-Fit rechnet dafür kein Defizit, sondern empfiehlt, das Gewicht zu halten.",
+    "bmiWarning": "Das Zielgewicht entspricht bei {height} einem BMI von {bmi} – unter 18,5 gilt als Untergewicht. Cat-O-Fit rechnet dafür kein Defizit, sondern empfiehlt, das Gewicht zu halten.",
     "fileNames": {
       "familyBackup": "catofit-familienbackup",
       "sessions": "trainings",
@@ -363,7 +363,7 @@
     "visibility": {
       "intro": "Was die anderen von dir im gemeinsamen Dashboard sehen. Dein Name und Avatar bleiben für die Anmeldung sichtbar; Zyklus, Labor und Ergänzungen sind ohnehin immer privat.",
       "goal": "Mein Hauptziel zeigen",
-      "metrics": "Meine Kennzahlen zeigen (Momentum, km, Serie)",
+      "metrics": "Meine Kennzahlen zeigen (Momentum, {unit}, Serie)",
       "metricsAria": "Meine Kennzahlen zeigen",
       "load": "Meine Belastung für Trainer:innen zeigen",
       "loadHint": "Admins sehen deine Wochenlast, das Lastverhältnis und dein Befinden der letzten Tage."
@@ -1175,7 +1175,7 @@
       "other": "Tage"
     },
     "targetChip": "Ziel {time}",
-    "targetPace": "Zielpace min/km",
+    "targetPace": "Zielpace {unit}",
     "daysUntil": {
       "one": "Tag bis {date}",
       "other": "Tage bis {date}"
@@ -1286,8 +1286,8 @@
     "followAlong": "Durchgehend mitmachen · ≈ {min} min",
     "unitExercisesCount": "Übungen für diese Einheit ({n})",
     "inPlan": "im Plan",
-    "volumeMoved": "{kg} kg bewegt",
-    "ascent": "{m} Höhenmeter bergauf",
+    "volumeMoved": "{weight} bewegt",
+    "ascent": "{elevation} bergauf",
     "loadSrcRoute": "Dauer aus der Strecke geschätzt",
     "loadFormula": "{min} min × Anstrengung {rpe}",
     "linkToPlanned": "Der geplanten Einheit „{title}“ zuordnen – sie gilt dann als erledigt.",
@@ -1391,7 +1391,7 @@
     "timeInZones": "Zeit in Herzfrequenz-Zonen",
     "pace": "Pace",
     "splits": "Splits",
-    "splitsBarHint": "Balken: ±30 s um deinen mittleren Kilometer",
+    "splitsBarHint": "Balken: ±30 s um deinen mittleren Split",
     "rpeFromType": "geschätzt aus der Sportart",
     "exercisesIntroUsage": "Nach deiner Nutzungshäufigkeit sortiert. Antippen zeigt die Animation zum Mitmachen; Abgehaktes zählt beim Erledigen der Einheit mit.",
     "usedTimes": "{n}× genutzt",
@@ -1405,8 +1405,8 @@
       "other": "Diese Woche umfasst damit {count} Einheiten."
     },
     "offsetWeekKm": {
-      "one": "Diese Woche umfasst damit {count} Einheit ({km} km).",
-      "other": "Diese Woche umfasst damit {count} Einheiten ({km} km)."
+      "one": "Diese Woche umfasst damit {count} Einheit ({km}).",
+      "other": "Diese Woche umfasst damit {count} Einheiten ({km})."
     }
   },
   "unitActions": {
@@ -1499,7 +1499,7 @@
     "raceDay": "Wettkampf!",
     "newLogic": "Neue Planlogik verfügbar",
     "newLogicText": "Renneinheit an jedem Wochentag, Zielpaces aus deiner Zielzeit, Umfang passend zu Niveau und Lauftagen. Auf Wunsch rechnet die App deinen Plan ab heute neu – Vergangenes bleibt unverändert.",
-    "statRunKm": "Geplante Lauf-km",
+    "statRunKm": "Geplante Lauf-{unit}",
     "statSessions": "Einheiten",
     "statDone": "Erledigt",
     "weekOverview": "Wochenübersicht",
@@ -1523,11 +1523,11 @@
     "regenProgramText": "Die Einheiten ab heute werden neu erzeugt. Vergangene, erledigte und verpasste Einheiten bleiben unverändert.",
     "recalc": "Neu berechnen",
     "regenProgramDone": "Wochenplan ab heute neu erstellt",
-    "historyWeekKm": "Ø {km} km pro Woche",
+    "historyWeekKm": "Ø {km} pro Woche",
     "historyFewRuns": "wenige Läufe",
-    "historyLongest": ", längster Lauf {km} km",
+    "historyLongest": ", längster Lauf {km}",
     "levelLineDays": " · {days} Lauftage pro Woche",
-    "levelLineBase": " · Einstieg bei deinem aktuellen Umfang (Ø {km} km pro Woche)",
+    "levelLineBase": " · Einstieg bei deinem aktuellen Umfang (Ø {km} pro Woche)",
     "regenWeekFresh": "Die geplanten Einheiten dieser Woche werden frisch erzeugt.",
     "regenWeekFreshFromToday": "Die geplanten Einheiten dieser Woche ab heute werden frisch erzeugt.",
     "regenWeekKept": {
@@ -1639,15 +1639,15 @@
     "startWorkoutFor": "Training starten: {title}",
     "startWorkout": "Training starten",
     "ofPlanned": "von {km} geplant",
-    "runKm": "Lauf-km",
+    "runKm": "Lauf-{unit}",
     "statSessions": "Einheiten",
     "statDone": "erledigt"
   },
   "dashboardCoach": {
     "makeEasier": "„{title}“ lockerer machen",
-    "raiseTo": "„{title}“ auf {km} km erhöhen",
-    "raised": "Auf {km} km erhöht",
-    "volumeText": "Diese Woche sind {missed} km liegen geblieben ({done}/{planned} km erledigt). Lege einen Teil behutsam auf die nächste lockere Einheit – ohne Doppelbelastung.",
+    "raiseTo": "„{title}“ auf {km} erhöhen",
+    "raised": "Auf {km} erhöht",
+    "volumeText": "Diese Woche sind {missed} liegen geblieben ({done}/{planned} erledigt). Lege einen Teil behutsam auf die nächste lockere Einheit – ohne Doppelbelastung.",
     "rpeText": "Ø RPE {rpe} von 10 aus {count} bewerteten Einheiten der letzten {weeks} Wochen.",
     "restWholeText": "{reason} An dem Tag ({date}) liegen {count} Einheiten aus deinen Zielen – der ganze Tag wird ruhig, damit die Erholung wirklich greift.",
     "restText": "{reason} Vorschlag: „{title}“ am {date} zu einem Erholungstag machen.",
@@ -1734,8 +1734,8 @@
     "weightAlmost": "{current} – fast am Ziel {target}, jetzt halten",
     "weightProgress": "{current} → Ziel {target} (noch {remaining})",
     "phaseNote": "Phase „{phase}“: {note}",
-    "weekAlmost": "fast am Ziel {target} kg – halten",
-    "weekRemaining": "noch {remaining} kg bis {target} kg",
+    "weekAlmost": "fast am Ziel {target} – halten",
+    "weekRemaining": "noch {remaining} bis {target}",
     "currentToGoal": "{current} → Ziel {target}",
     "gainWeight": "Zunehmen",
     "loseWeight": "Abnehmen",
@@ -2655,32 +2655,32 @@
         "desc": "200 Trainings absolviert"
       },
       "km100": {
-        "name": "Erste 100 km",
-        "desc": "100 km gesammelt"
+        "name": "Erste {distance}",
+        "desc": "{distance} gesammelt"
       },
       "km500": {
-        "name": "500-km-Club",
-        "desc": "500 km gesammelt"
+        "name": "Club der {distance}",
+        "desc": "{distance} gesammelt"
       },
       "km1000": {
         "name": "Tausendsassa",
-        "desc": "1000 km gesammelt"
+        "desc": "{distance} gesammelt"
       },
       "km2000": {
         "name": "Weltenbummler:in",
-        "desc": "2000 km gesammelt"
+        "desc": "{distance} gesammelt"
       },
       "long15": {
         "name": "Langstreckenliebe",
-        "desc": "Ein Lauf über 15 km"
+        "desc": "Ein Lauf über {distance}"
       },
       "long21": {
         "name": "HM-Generalprobe",
-        "desc": "Ein Lauf über 21 km"
+        "desc": "Ein Lauf über {distance}"
       },
       "marathon": {
         "name": "Marathon-Distanz",
-        "desc": "Ein Lauf über 42 km"
+        "desc": "Ein Lauf über {distance}"
       },
       "quality1": {
         "name": "Schärfe drin",
@@ -2861,8 +2861,8 @@
     "goalVerdictNamed": "{name} hat ein selbst gestecktes Ziel erreicht: {goal} Großartige Leistung!",
     "trainingSessions": "Trainingseinheiten",
     "activeDays": "Aktive Tage",
-    "kmRunLabel": "Gelaufene Kilometer",
-    "otherKmMonth": "Weitere Kilometer (Rad, Gehen, Schwimmen …)",
+    "kmRunLabel": "Gelaufene Strecke",
+    "otherKmMonth": "Weitere Strecken (Rad, Gehen, Schwimmen …)",
     "trainingTime": "Trainingszeit",
     "planAdherence": "Plan-Einhaltung",
     "headingTraining": "Training",
@@ -2879,7 +2879,7 @@
     "targetTime": "Zielzeit",
     "trainingPeriod": "Trainingszeitraum",
     "sessionsDone": "Einheiten absolviert",
-    "otherKmEvent": "Weitere Kilometer (Rad, Schwimmen, Gehen …)",
+    "otherKmEvent": "Weitere Strecken (Rad, Schwimmen, Gehen …)",
     "headingFacts": "Eckdaten",
     "headingPrep": "Vorbereitung",
     "finishTime": "Ergebniszeit",
@@ -2929,7 +2929,7 @@
     "noRace": "Noch kein Wettkampf angelegt.",
     "raceHint": "Enthält Vorbereitung und – falls erfasst – das Ergebnis.",
     "goalPlaceholder": "z. B. Zielgewicht erreicht",
-    "detailPlaceholder": "z. B. von 72 auf 65 kg (optional)",
+    "detailPlaceholder": "z. B. von {from} auf {to} {unit} (optional)",
     "goalTitle": "Titel des Ziels",
     "goalDetails": "Details (optional)",
     "titleRequired": "Bitte einen Titel eingeben",
@@ -2957,8 +2957,8 @@
     "dueDone": "fällige Einheiten (4 Wochen) erledigt",
     "consistency": "Konsistenz zählt mehr als einzelne Top-Tage.",
     "weeklyVolume": "Wochenumfang",
-    "weeklyAxis": "↕ Lauf-km pro Woche · → Kalenderwoche (Mo–So), letzte 8",
-    "weeklyAria": "Lauf-Kilometer pro Woche",
+    "weeklyAxis": "↕ Lauf-{unit} pro Woche · → Kalenderwoche (Mo–So), letzte 8",
+    "weeklyAria": "Laufstrecke pro Woche",
     "trainingYear": "Trainingsjahr",
     "hint": {
       "unclear": "Noch zu wenig Daten.",
@@ -2969,10 +2969,10 @@
       "normal": "Belastung im üblichen Rahmen."
     },
     "loadHeading": "Trainingslast",
-    "runKm7": "Lauf-km · 7 Tage",
-    "runKm28": "Lauf-km · 28 Tage",
+    "runKm7": "Lauf-{unit} · 7 Tage",
+    "runKm28": "Lauf-{unit} · 28 Tage",
     "points7": "Belastungspunkte · 7 Tage",
-    "pointsExplain": "Belastungspunkte = Minuten × Anstrengung (RPE 1–10) über alle Sportarten (auch Kraft, Fußball, Rad) – Lauf-km zeigen nur das Laufpensum.",
+    "pointsExplain": "Belastungspunkte = Minuten × Anstrengung (RPE 1–10) über alle Sportarten (auch Kraft, Fußball, Rad) – Lauf-{unit} zeigen nur das Laufpensum.",
     "missed": {
       "injured": "Verletzt",
       "sick": "Krank",
@@ -2985,7 +2985,7 @@
     "sessions": "Einheiten",
     "sessionsByType": "Einheiten nach Art",
     "metricsHeading": "Werte & Ziele",
-    "weightHeading": "Gewicht (kg)",
+    "weightHeading": "Gewicht ({unit})",
     "weight": "Gewicht",
     "predictionHeading": "Wettkampfprognose",
     "predictionRiegel": "Riegel-Schätzung – nur eine Näherung.",
@@ -3022,8 +3022,8 @@
     "noTraining": "kein Training",
     "less": "weniger",
     "more": "mehr",
-    "routeDistance": "Strecke über {km} km – ohne Karte gezeichnet",
-    "elevationAscent": "Höhenprofil: {min} bis {max} m, {ascent} Höhenmeter bergauf",
+    "routeDistance": "Strecke über {km} – ohne Karte gezeichnet",
+    "elevationAscent": "Höhenprofil: {min} bis {max}, {ascent} bergauf",
     "start": "Start",
     "barChart": "Balkendiagramm",
     "trainingYear": "Trainingsjahr",
@@ -3036,12 +3036,12 @@
       "other": "{count} Stunden"
     },
     "route": "Strecke – ohne Karte gezeichnet",
-    "elevation": "Höhenprofil: {min} bis {max} m"
+    "elevation": "Höhenprofil: {min} bis {max}"
   },
   "healthView": {
     "range3m": "3 Monate",
     "weekAverageSince": "Wochenmittel gegenüber {date}",
-    "targetKg": "Ziel {target} kg",
+    "targetKg": "Ziel {target}",
     "alcoholFreeDays": {
       "one": "{count} Tag alkoholfrei",
       "other": "{count} Tage alkoholfrei"
@@ -3089,7 +3089,7 @@
     "lastReceived": "Zuletzt empfangen: {date}",
     "recentBodyFat": "{value} % KF",
     "recentResting": "Ruhe {value}",
-    "recentLean": "FFM {value} kg",
+    "recentLean": "FFM {value}",
     "recentSleep": "{value} h Schlaf",
     "recentSteps": "{value} Schr.",
     "fileImportTitle": "{type} (Datei-Import)",
@@ -3124,7 +3124,7 @@
     },
     "willMatch": "Wird der geplanten Einheit „{title}“ zugeordnet.",
     "kmSplits": "{n} km-Splits",
-    "ascent": "{m} Hm",
+    "ascent": "{elevation} bergauf",
     "movingTime": "{time} in Bewegung",
     "matchedTo": "Der geplanten Einheit „{title}“ zugeordnet.",
     "processing": "Verarbeite {name} …",
@@ -3383,7 +3383,7 @@
     "longestStreak": "längste Wochen-Serie"
   },
   "familyAdmin": {
-    "metricWeekKm": "Wochen-km (alle Sportarten)",
+    "metricWeekKm": "Wochen-{unit} (alle Sportarten)",
     "showOnDashboard": "{label} im Dashboard zeigen",
     "memberCount": "{n} von {max} Mitgliedern",
     "deleteTeamText": "„{name}“ wird gelöscht. Die Mitglieder selbst bleiben erhalten.",
@@ -3536,8 +3536,8 @@
     "missedInjured": "{n}× verletzungsbedingt ausgefallen – zählt nicht gegen dich. Steig vorsichtig wieder ein.",
     "missedSick": "{n}× krankheitsbedingt ausgefallen – zählt nicht gegen dich.",
     "holdAbove": "über dem Ziel – halten",
-    "kgAbove": "{kg} kg über Ziel",
-    "kmPerWeek": "km/Wo",
+    "kgAbove": "{weight} über Ziel",
+    "kmPerWeek": "{unit}/Wo",
     "noDueSessions": "Noch keine fälligen Einheiten zum Bewerten.",
     "loadHigh": "Belastung deutlich über deinem Schnitt – Erholung einplanen.",
     "loadRaised": "Belastung erhöht – behutsam steigern und auf Erholung achten.",
@@ -3550,7 +3550,7 @@
     "currentValue": "aktueller Wert",
     "weight": "Gewicht",
     "weeklyKm": "Wochenumfang",
-    "weeklyKmHint": "Ø Lauf-km der letzten 4 Wochen",
+    "weeklyKmHint": "Ø Lauf-{unit} der letzten 4 Wochen",
     "easyPace": "Lockeres Tempo",
     "easyPaceHint": "Ø Grundlagenläufe in Z2",
     "easyPaceNoHr": "Ø Grundlagenläufe · ohne Herzfrequenz nicht bewertet",
@@ -3559,7 +3559,7 @@
     "vo2Hint": "Ausdauer-Leistung",
     "atTarget": "am Zielgewicht",
     "holdBelow": "unter dem Ziel – halten",
-    "kgBelow": "{kg} kg unter Ziel"
+    "kgBelow": "{weight} unter Ziel"
   },
   "adaptive": {
     "rhrRaised": "Ruhepuls erhöht",
@@ -3614,9 +3614,9 @@
     }
   },
   "weather": {
-    "hot": "Heiß ({temp} °C) – früh oder spät laufen, rund {slow} % langsamer als geplant, viel trinken.",
-    "freezing": "Frostig ({temp} °C) – warm anziehen, Aufwärmen nicht vergessen.",
-    "warm": "Warm ({temp} °C) – rund {slow} % langsamer als geplant laufen und mehr trinken.",
+    "hot": "Heiß ({temp}) – früh oder spät laufen, rund {slow} % langsamer als geplant, viel trinken.",
+    "freezing": "Frostig ({temp}) – warm anziehen, Aufwärmen nicht vergessen.",
+    "warm": "Warm ({temp}) – rund {slow} % langsamer als geplant laufen und mehr trinken.",
     "wmo": {
       "clear": "klar",
       "fair": "heiter",
@@ -3653,7 +3653,7 @@
     "basisEasy": "lockeren Trainingsläufen (VDOT {v}) – eher zu vorsichtig, ein Wettkampf oder Tempolauf verbessert die Schätzung",
     "basisFormSmoothed": "deiner Form (VDOT {v}, geglättet über {weeks} Wochen)",
     "basisForm": "deiner Form (VDOT {v})",
-    "basisRiegel": "{km} km in {time} (Riegel-Schätzung)",
+    "basisRiegel": "{km} in {time} (Riegel-Schätzung)",
     "tipStreak": "Schöne Konstanz – {weeks} Wochen in Folge dran. Ruhetage gehören dazu – weiter so, ohne Druck.",
     "volumeNote": "Nur bei ausreichender Vorbereitung erreichbar – dein Wochenumfang bzw. dein längster Lauf ist dafür noch knapp.",
     "tipRace": "Heute ist Wettkampf – viel Erfolg! 🏁",
@@ -3722,7 +3722,7 @@
     "reps": "{n} Wdh.",
     "hintHarder": "Alle Sätze mit {top}+ Wiederholungen – Zeit für eine schwerere Variante oder etwas Zusatzgewicht.",
     "hintMoreReps": "Nächstes Mal ein, zwei Wiederholungen mehr – bis {top} in jedem Satz.",
-    "hintMoreWeight": "Alle Sätze mit {top}+ Wiederholungen – nächstes Mal etwa {kg} kg.",
+    "hintMoreWeight": "Alle Sätze mit {top}+ Wiederholungen – nächstes Mal etwa {weight}.",
     "hintSameWeight": "Beim selben Gewicht bleiben und die Wiederholungen steigern – bis {top} in jedem Satz."
   },
   "hrZones": {
@@ -3749,8 +3749,8 @@
   "formCards": {
     "basisSmoothed": "geglättet über {weeks} Wochen · zuletzt {distance} in {time} am {date}",
     "basisEstimated": "geschätzt aus {distance} in {time} · {date}",
-    "fasterThanPlan": "Deine Form ist rund {sec} s/km schneller als deine Plan-Zielpaces – Zeit, sie zu schärfen.",
-    "slowerThanPlan": "Deine Plan-Zielpaces sind rund {sec} s/km schneller als deine jüngste Form – evtl. konservativer ansetzen.",
+    "fasterThanPlan": "Deine Form ist rund {sec} s/{unit} schneller als deine Plan-Zielpaces – Zeit, sie zu schärfen.",
+    "slowerThanPlan": "Deine Plan-Zielpaces sind rund {sec} s/{unit} schneller als deine jüngste Form – evtl. konservativer ansetzen.",
     "easy": "Locker",
     "threshold": "Schwelle",
     "race": "Wettkampf",
@@ -4134,11 +4134,11 @@
     "ironInflamedReason": "Ferritin {value} µg/l ({date}) – {assessment}. Das CRP derselben Blutentnahme ist erhöht.",
     "ferritinReason": "Ferritin {value} µg/l ({date}) – {assessment}.",
     "ferritinFalling": "Ferritin fällt seit mehreren Messungen deutlicher als die übliche Schwankung (etwa {rate} µg/l pro Monat) und erreicht bei diesem Verlauf {when} den knappen Bereich.",
-    "vitaminDReason": "Vitamin D {value} nmol/l ({date}) – {assessment}.",
+    "vitaminDReason": "Vitamin D {value} ({date}) – {assessment}.",
     "vitaminDOld": "Dein letzter Vitamin-D-Wert ({date}) stammt aus einer anderen Jahreszeit oder ist älter als vier Monate.",
-    "holoTcReason": "Holo-TC {value} pmol/l ({date}) – {assessment}.",
-    "b12TotalReason": "Vitamin B12 (gesamt) {value} pmol/l ({date}) – {assessment}.",
-    "magnesiumReason": "{label} {value} mmol/l ({date}) – {assessment}.",
+    "holoTcReason": "Holo-TC {value} ({date}) – {assessment}.",
+    "b12TotalReason": "Vitamin B12 (gesamt) {value} ({date}) – {assessment}.",
+    "magnesiumReason": "{label} {value} ({date}) – {assessment}.",
     "proteinReason": "Laut Ess-Tagebuch im Schnitt {value} g Eiweiß je kg Körpergewicht ({days} Tage) – für Training sind 1,2–2,0 g je kg üblich.",
     "creatineReason": {
       "one": "{count} Krafteinheit in den letzten vier Wochen – für Kraft- und Muskelaufbau ist Kreatin das am besten untersuchte Nahrungsergänzungsmittel.",

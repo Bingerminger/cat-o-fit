@@ -8,6 +8,7 @@ import * as store from './storage.js';
 import {
   el, icon, iconSvg, fmtKm, fmtPace, fmtPaceRange, fmtDuration, fmtDate, fmtNum, todayStr, toast, refreshView, infoButton,
 } from './ui.js';
+import { paceToShown, paceUnit, distanceUnit } from './units.js';
 import { estimateVdot, pacesFromVdot, paceAdjustment, raceZone, racePaceFromVdot } from './vdot.js';
 import { repaceUnits } from './planflow.js';
 
@@ -30,7 +31,7 @@ export function zonesCard() {
       el('div', { class: 'dim', style: { fontSize: '.62rem', marginTop: '3px' }, text: `Z${z.zone}` }),
       el('div', { class: 'num', style: { fontSize: '.64rem' }, text: `${z.min}–${z.max}` }),
     ]))) : null,
-    paces.length ? el('div', { class: 'muted', style: { fontSize: '.8rem' }, text: paces.join(' · ') + ' min/km' }) : null,
+    paces.length ? el('div', { class: 'muted', style: { fontSize: '.8rem' }, text: `${paces.join(' · ')} ${paceUnit()}` }) : null,
   ]);
 }
 
@@ -68,8 +69,8 @@ export function formCard(today, { actionableOnly = false } = {}) {
   if (actionableOnly && !faster && !slower) return null;
   if (faster || slower) {
     card.appendChild(el('div', { class: 'muted mt-2', style: { fontSize: '.8rem' }, text: faster
-      ? t('formCards.fasterThanPlan', { sec: adj.deltaSec })
-      : t('formCards.slowerThanPlan', { sec: -adj.deltaSec }) }));
+      ? t('formCards.fasterThanPlan', { sec: Math.round(paceToShown(adj.deltaSec)), unit: distanceUnit() })
+      : t('formCards.slowerThanPlan', { sec: Math.round(paceToShown(-adj.deltaSec)), unit: distanceUnit() }) }));
     card.appendChild(el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => applyFormPaces(est.vdot) }, [icon('refresh'), t('formCards.adjustZones')]));
   } else if (adj.deltaSec != null && !est.onlyEasy) {
     card.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: t('formCards.pacesFit') }));

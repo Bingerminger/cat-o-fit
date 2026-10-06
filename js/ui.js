@@ -262,12 +262,12 @@ export function isOverdue(unit, todayString = todayStr()) { return effectiveStat
    ------------------------------------------------------------------------- */
 import {
   parseDate, fmtWeekday, fmtDate, fmtDateLong, fmtDayMonth, monthName, fmtKm, fmtNum, fmtDec, fmtInt,
-  fmtDistance, fmtWeight, fmtHeight, fmtTemp, fmtElevation, localizeUnits,
+  fmtDistance, fmtKmAuto, fmtWeight, fmtWeightDec, fmtHeight, fmtTemp, fmtElevation, localizeUnits,
 } from './format.js';
 
 export {
   parseDate, fmtWeekday, fmtDate, fmtDateLong, fmtDayMonth, monthName, fmtKm, fmtNum, fmtDec, fmtInt,
-  fmtDistance, fmtWeight, fmtHeight, fmtTemp, fmtElevation, localizeUnits,
+  fmtDistance, fmtKmAuto, fmtWeight, fmtWeightDec, fmtHeight, fmtTemp, fmtElevation, localizeUnits,
 };
 
 /** Date -> "YYYY-MM-DD" (local). */

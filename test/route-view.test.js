@@ -21,7 +21,7 @@ test('routeMap: line with start and finish, elevation profile with min/max – w
   assert.match(path.getAttribute('d'), /^M[\d. ]+L/);
   assert.equal(svgs[0].querySelectorAll('circle').length, 2, 'start and finish');
   assert.ok(!box.querySelector('image') && !box.querySelector('img'), 'no map images');
-  assert.match(svgs[1].getAttribute('aria-label'), /Höhenprofil: 90 bis 130 m, 64 Höhenmeter/);
+  assert.match(svgs[1].getAttribute('aria-label'), /Höhenprofil: 90 m bis 130 m, 64 m bergauf/);
   const labels = svgs[1].querySelectorAll('text').map((t) => t.textContent);
   assert.ok(labels.includes('130 m') && labels.includes('90 m') && labels.includes('8,4 km'));
 });
@@ -36,6 +36,6 @@ test('The evaluation of an imported unit shows the route', () => {
   store.replaceArea('sessions', [{ id: 'f1', date: '2026-09-25', type: 'run', title: 'Lauf (Datei-Import)', distanceKm: 8.4, durationSec: 2900, ascentM: 64, route, source: 'gpx' }]);
   renderSession(view, 'f1');
   assert.match(view.textContent, /Strecke/);
-  assert.match(view.textContent, /64 Höhenmeter bergauf/);
+  assert.match(view.textContent, /64\sm bergauf/);
   assert.ok(view.querySelector('.route-map'), 'map without tiles included');
 });

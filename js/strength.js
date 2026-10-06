@@ -10,7 +10,8 @@
    increase the repetitions first. Deliberately small: no 1000-exercise database.
    ========================================================================= */
 
-import { fmtDec } from './ui.js';
+import { fmtDec, fmtWeightDec } from './ui.js';
+import { kgToShown, weightUnit } from './units.js';
 
 import { t } from './i18n.js';
 
@@ -26,10 +27,10 @@ export function cleanSet(s) {
   return { reps, kg };
 }
 
-/** "12 × 20 kg" or "12 reps" without weight. */
+/** "12 × 20 kg" (or "12 × 44.1 lb") or "12 reps" without weight. */
 export function fmtSet(s) {
   if (!s) return '';
-  return s.kg != null ? `${s.reps} × ${fmtDec(s.kg)} kg` : t('strength.reps', { n: s.reps });
+  return s.kg != null ? `${s.reps} × ${fmtWeightDec(s.kg)}` : t('strength.reps', { n: s.reps });
 }
 
 /** Training volume (Σ repetitions × kg) – a set without weight does not count. */
@@ -76,8 +77,13 @@ export function progressionHint(sets = []) {
       : t('strength.hintMoreReps', { top: REP_TOP });
   }
   const top = Math.max(...kgs);
-  const step = top < 10 ? 1 : 2.5;
   return allTop
-    ? t('strength.hintMoreWeight', { top: REP_TOP, kg: fmtDec(top + step) })
+    ? t('strength.hintMoreWeight', { top: REP_TOP, weight: nextWeight(top) })
     : t('strength.hintSameWeight', { top: REP_TOP });
+}
+
+/** The next weight up: +2.5 kg (+1 kg below 10 kg); in pounds the usual +5 lb (+2.5 lb), whole. */
+function nextWeight(topKg) {
+  if (weightUnit() !== 'lb') return `${fmtDec(topKg + (topKg < 10 ? 1 : 2.5))} kg`;
+  return `${fmtDec(Math.round(kgToShown(topKg) + (topKg < 10 ? 2.5 : 5)))} lb`;
 }

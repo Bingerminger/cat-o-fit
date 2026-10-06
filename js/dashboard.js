@@ -6,8 +6,9 @@
 import * as store from './storage.js';
 import {
   el, icon, iconSvg, navigate, typeMeta, typeIcon, fmtKm, fmtPace, fmtDate, todayStr, addDays,
-  diffDays, weekStartMonday, fmtWeekday, sectionHead, isOverdue, toast, infoButton,
+  diffDays, weekStartMonday, fmtWeekday, sectionHead, isOverdue, toast, infoButton, localizeUnits, fmtKmAuto,
 } from './ui.js';
+import { distanceUnit } from './units.js';
 import { fmtDayMonthNumeric } from './format.js';
 import { momentum, newlyUnlocked, markSeen, badgeData } from './badges.js';
 import { isProtectedDay } from './cycle.js';
@@ -337,24 +338,25 @@ function startCard() {
 function todayCard(u) {
   const m = typeMeta(u.type);
   const meta = [];
-  if (u.targetDistanceKm) meta.push(fmtKm(u.targetDistanceKm, u.targetDistanceKm % 1 ? 1 : 0));
+  if (u.targetDistanceKm) meta.push(fmtKmAuto(u.targetDistanceKm));
   if (u.targetDurationMin && !u.targetDistanceKm) meta.push(`${u.targetDurationMin} min`);
-  if (u.targetPaceSecPerKm) meta.push(`${fmtPace(u.targetPaceSecPerKm)}/km`);
+  if (u.targetPaceSecPerKm) meta.push(`${fmtPace(u.targetPaceSecPerKm)}/${distanceUnit()}`);
   const done = u.status === 'erledigt';
+  const title = localizeUnits(u.title);
   // Card = link to the session; the ▶ next to it is a separate link that starts the training
   // directly. Before, it was a dummy inside the card link (UI-09).
   const link = el('a', { class: 'today-unit__link', href: `#/session/${u.id}` }, [
     typeIcon(u.type, 'type-icon--lg'),
     el('div', { class: 'grow' }, [
       el('div', { class: 'row gap-2', style: { alignItems: 'center' } }, [
-        el('div', { class: 'card__title', text: u.title }),
+        el('div', { class: 'card__title', text: title }),
         done ? el('span', { class: 'chip chip--good', text: t('dashboard.doneChip') }) : null,
       ]),
       el('div', { class: 'muted', style: { fontSize: '.86rem' }, text: meta.join(' · ') || m.label }),
     ]),
   ]);
   const side = !done && u.type !== 'rest'
-    ? el('a', { class: 'btn btn--primary today-unit__play', href: `#/workout/${u.id}`, 'aria-label': t('dashboard.startWorkoutFor', { title: u.title }), title: t('dashboard.startWorkout') }, [icon('play')])
+    ? el('a', { class: 'btn btn--primary today-unit__play', href: `#/workout/${u.id}`, 'aria-label': t('dashboard.startWorkoutFor', { title }), title: t('dashboard.startWorkout') }, [icon('play')])
     : el('span', { class: 'list-item__chev', 'aria-hidden': 'true', html: iconSvg('chevronRight') });
   return el('div', { class: 'card today-unit' }, [link, side]);
 }
@@ -394,7 +396,7 @@ function weekStats(today) {
   const realKm = runKm(store.get('sessions'), start, end);
 
   return el('div', { class: 'week-stats mt-3' }, [
-    statTile(fmtKm(realKm, 0), t('dashboard.ofPlanned', { km: fmtKm(planKm, 0) }), t('dashboard.runKm')),
+    statTile(fmtKm(realKm, 0), t('dashboard.ofPlanned', { km: fmtKm(planKm, 0) }), t('dashboard.runKm', { unit: distanceUnit() })),
     statTile(`${doneCount}/${planCount}`, t('dashboard.statSessions'), t('dashboard.statDone')),
   ]);
 }

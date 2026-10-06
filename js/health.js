@@ -8,8 +8,9 @@ import * as store from './storage.js';
 import {
   el, icon, iconSvg, uid, nowIso, fmtNum, fmtDayMonth, todayStr, sectionHead,
   emptyState, toast, openSheet, closeSheet, field, input, textarea, navigate, toggle,
-  refreshView, segmented, addDays, weekStartMonday, fmtDec,
+  refreshView, segmented, addDays, weekStartMonday, fmtWeight, fmtWeightDec,
 } from './ui.js';
+import { kgToShown, weightUnit } from './units.js';
 import { setHeader } from './router.js';
 import { progressTabs } from './nav.js';
 import { lineChart } from './charts.js';
@@ -33,11 +34,12 @@ function metricsDef() {
   const weightToward = gs && gs.status !== 'halten' && gs.direction !== 'hold' ? gs.direction : null;
   // HRV: label by the measurement method of the most recent value (SDNN from Apple, RMSSD from many watches).
   const hrvMethod = currentHrvMethod(store.get('health'));
+  // `unit` is the stored unit (the entry form still takes kg); `mass` values are shown in kg or lb.
   return {
-    weight: { label: t('healthView.metricWeight'), unit: 'kg', icon: 'scale', digits: 1, target, toward: weightToward },
+    weight: { label: t('healthView.metricWeight'), unit: 'kg', mass: true, icon: 'scale', digits: 1, target, toward: weightToward },
     bodyFat: { label: t('healthView.metricBodyFat'), unit: '%', icon: 'drop', digits: 1, toward: null },
-    muscleMass: { label: t('healthView.metricMuscleMass'), unit: 'kg', icon: 'dumbbell', digits: 1, toward: 'up' },
-    leanMass: { label: t('healthView.metricLeanMass'), unit: 'kg', icon: 'dumbbell', digits: 1, toward: null },
+    muscleMass: { label: t('healthView.metricMuscleMass'), unit: 'kg', mass: true, icon: 'dumbbell', digits: 1, toward: 'up' },
+    leanMass: { label: t('healthView.metricLeanMass'), unit: 'kg', mass: true, icon: 'dumbbell', digits: 1, toward: null },
     visceralFat: { label: t('healthView.metricVisceralFat'), unit: '', icon: 'info', digits: 0, toward: 'down' },
     restingHr: { label: t('healthView.metricRestingHr'), unit: 'bpm', icon: 'heart', digits: 0, toward: 'down' },
     hrv: { label: hrvLabel(hrvMethod), unit: 'ms', icon: 'activity', digits: 0, toward: 'up', method: hrvMethod },
@@ -47,6 +49,10 @@ function metricsDef() {
     mood: { label: t('healthView.metricMood'), unit: '/10', icon: 'sparkles', digits: 0, toward: 'up' },
   };
 }
+
+/** Value and unit as shown: masses in the person's unit (kg or lb), everything else as stored. */
+const shownVal = (d, v) => (d.mass && v != null ? kgToShown(Number(v)) : v);
+const shownUnit = (d) => (d.mass ? weightUnit() : d.unit);
 
 function sortedHealth() {
   return store.get('health').slice().sort((a, b) => a.date.localeCompare(b.date));
@@ -120,9 +126,9 @@ export function render(view) {
         el('span', { class: 'metric-tile__name', text: d.label }),
         el('span', { html: iconSvg(d.icon), style: { width: '16px', color: 'var(--text-3)' } }),
       ]),
-      el('div', { class: 'metric-tile__val num', text: `${fmtNum(last, d.digits)}${d.unit ? ' ' + d.unit : ''}` }),
+      el('div', { class: 'metric-tile__val num', text: `${fmtNum(shownVal(d, last), d.digits)}${shownUnit(d) ? ' ' + shownUnit(d) : ''}` }),
       delta != null
-        ? el('div', { class: 'metric-tile__delta', title: t('healthView.weekAverageSince', { date: fmtDayMonth(ch.since) }), style: { color: deltaColor(d, delta) }, text: `${delta > 0 ? '▲' : delta < 0 ? '▼' : '■'} ${fmtNum(Math.abs(delta), d.digits)}` })
+        ? el('div', { class: 'metric-tile__delta', title: t('healthView.weekAverageSince', { date: fmtDayMonth(ch.since) }), style: { color: deltaColor(d, delta) }, text: `${delta > 0 ? '▲' : delta < 0 ? '▼' : '■'} ${fmtNum(Math.abs(shownVal(d, delta)), d.digits)}` })
         : el('div', { class: 'metric-tile__delta dim', text: '—' }),
     ]));
   });
@@ -145,18 +151,19 @@ export function render(view) {
     const series = (key === 'hrv' ? withHrvMethod(data, d.method) : data)
       .filter((x) => x[key] != null && (!from || x.date >= from));
     if (series.length < 2) return;
-    const raw = series.map((x) => ({ label: fmtDayMonth(x.date), date: x.date, value: x[key] }));
+    const raw = series.map((x) => ({ label: fmtDayMonth(x.date), date: x.date, value: shownVal(d, x[key]) }));
     // Long series as weekly means (median per calendar week) – daily values would be mere noise.
     const points = raw.length > 150 ? weeklyMedian(raw) : raw;
     // "HRV (RMSSD)" + unit → "HRV (RMSSD, ms)" instead of double parentheses.
-    const head = !d.unit ? d.label : d.label.endsWith(')') ? `${d.label.slice(0, -1)}, ${d.unit})` : `${d.label} (${d.unit})`;
+    const unit = shownUnit(d);
+    const head = !unit ? d.label : d.label.endsWith(')') ? `${d.label.slice(0, -1)}, ${unit})` : `${d.label} (${unit})`;
     view.appendChild(sectionHead(head));
     const card = el('div', { class: 'card' });
     card.appendChild(lineChart(points, {
       label: head,
-      target: key === 'weight' && d.target != null ? d.target : null,
-      targetLabel: key === 'weight' && d.target != null ? t('healthView.targetKg', { target: fmtDec(d.target) }) : '',
-      unit: d.unit,
+      target: key === 'weight' && d.target != null ? shownVal(d, d.target) : null,
+      targetLabel: key === 'weight' && d.target != null ? t('healthView.targetKg', { target: fmtWeightDec(d.target) }) : '',
+      unit,
       fmt: (v) => fmtNum(v, d.digits),
     }));
     view.appendChild(card);
@@ -167,7 +174,7 @@ export function render(view) {
   const list = el('div', { class: 'list-card' });
   data.slice().reverse().slice(0, 12).forEach((entry) => {
     const parts = [];
-    if (entry.weight != null) parts.push(`${fmtNum(entry.weight, 1)} kg`);
+    if (entry.weight != null) parts.push(fmtWeight(entry.weight));
     if (entry.restingHr != null) parts.push(`${entry.restingHr} bpm`);
     if (entry.sleepHours != null) parts.push(`${fmtNum(entry.sleepHours, 1)} h`);
     list.appendChild(el('button', { class: 'list-item', style: { width: '100%', textAlign: 'left' }, onclick: () => openHealthEntry(entry) }, [

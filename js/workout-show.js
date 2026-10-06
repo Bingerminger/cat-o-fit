@@ -16,7 +16,7 @@
    shortly before their time – pausing and jumping leave nothing ringing on.
    ========================================================================= */
 
-import { el, icon, segmented, toast } from './ui.js';
+import { el, icon, segmented, toast, localizeUnits } from './ui.js';
 import * as store from './storage.js';
 import { categoryMeta, loadExerciseTexts } from './exercises.js';
 import { exerciseArt } from './exercise-art.js';
@@ -101,7 +101,7 @@ export function openShow(program, { onFinish = null } = {}) {
   let rounds = program.rounds;
   let rest = program.rest;
 
-  const root = el('div', { class: 'show', role: 'dialog', 'aria-modal': 'true', 'aria-label': program.title });
+  const root = el('div', { class: 'show', role: 'dialog', 'aria-modal': 'true', 'aria-label': localizeUnits(program.title) });
   document.body.appendChild(root);
   document.documentElement.classList.add('show-open');
 
@@ -163,7 +163,7 @@ export function openShow(program, { onFinish = null } = {}) {
     } }, [icon('play'), el('span', { text: t('workoutShow.letsGo') })]);
     root.appendChild(el('div', { class: 'show-ov' }, [
       el('div', { class: 'show-ov__head' }, [
-        el('div', {}, [el('div', { class: 'show-ov__kicker', text: t('workoutShow.kicker') }), el('h2', { class: 'show-ov__title', text: program.title }), total]),
+        el('div', {}, [el('div', { class: 'show-ov__kicker', text: t('workoutShow.kicker') }), el('h2', { class: 'show-ov__title', text: localizeUnits(program.title) }), total]),
         el('button', { class: 'show__close', type: 'button', 'aria-label': t('common.close'), onclick: close }, [icon('x')]),
       ]),
       el('div', { class: 'show-ov__body' }, [
@@ -484,7 +484,7 @@ export function openShow(program, { onFinish = null } = {}) {
       const durationSec = Math.round(show.total);
       root.innerHTML = '';
       root.appendChild(el('div', { class: 'show-done' }, [
-        el('div', { class: 'show-done__kicker', text: prog.title }),
+        el('div', { class: 'show-done__kicker', text: localizeUnits(prog.title) }),
         el('h2', { class: 'show-done__title', text: t('workoutShow.done') }),
         el('p', { class: 'show-done__stats', text: summaryLine(mmss(durationSec), n, prog.rounds) }),
         el('div', { class: 'show-done__actions' }, [

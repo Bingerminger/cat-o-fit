@@ -6,8 +6,9 @@
 import * as store from './storage.js';
 import {
   el, iconSvg, typeMeta, typeIcon, fmtKm, fmtDuration, fmtDayMonth, todayStr, addDays,
-  diffDays, weekStartMonday, sectionHead, emptyState, fmtNum, fmtInt,
+  diffDays, weekStartMonday, sectionHead, emptyState, fmtNum, fmtInt, fmtDec, localizeUnits,
 } from './ui.js';
+import { kmToShown, kgToShown, distanceUnit, weightUnit } from './units.js';
 import { setHeader } from './router.js';
 import { progressTabs } from './nav.js';
 import { barChart, donut, lineChart, progressRing, heatmap, heatmapLegend } from './charts.js';
@@ -72,11 +73,11 @@ export function render(view) {
   for (let i = 7; i >= 0; i--) {
     const ws = weekStartMonday(addDays(today, -i * 7));
     const km = runKm(sessions, ws, addDays(ws, 6));
-    weeks.push({ label: t('statistics.weekLabel', { day: parseInt(ws.slice(-2)) }), value: Math.round(km), ws });
+    weeks.push({ label: t('statistics.weekLabel', { day: parseInt(ws.slice(-2)) }), value: Math.round(kmToShown(km)), ws });
   }
   view.appendChild(el('div', { class: 'card' }, [
-    el('div', { class: 'dim', style: { fontSize: '.74rem', marginBottom: '2px' }, text: t('statistics.weeklyAxis') }),
-    barChart(weeks, { showValues: true, height: 150, yUnit: 'km', label: t('statistics.weeklyAria') }),
+    el('div', { class: 'dim', style: { fontSize: '.74rem', marginBottom: '2px' }, text: t('statistics.weeklyAxis', { unit: distanceUnit() }) }),
+    barChart(weeks, { showValues: true, height: 150, yUnit: distanceUnit(), label: t('statistics.weeklyAria') }),
   ]));
 
   /* ---- Training year (heatmap in GitHub style) ---- */
@@ -103,11 +104,11 @@ export function render(view) {
   const load7 = trainingLoad(sessions, today, 7);
   view.appendChild(sectionHead(t('statistics.loadHeading'), null, { help: 'belastungspunkte' }));
   view.appendChild(el('div', { class: 'stat-grid' }, [
-    miniStat(fmtKm(last7, 0), t('statistics.runKm7')),
-    miniStat(fmtKm(last28, 0), t('statistics.runKm28')),
+    miniStat(fmtKm(last7, 0), t('statistics.runKm7', { unit: distanceUnit() })),
+    miniStat(fmtKm(last28, 0), t('statistics.runKm28', { unit: distanceUnit() })),
     miniStat(load7 ? fmtInt(load7) : '–', t('statistics.points7')),
   ]));
-  view.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: t('statistics.pointsExplain') }));
+  view.appendChild(el('div', { class: 'dim mt-2', style: { fontSize: '.76rem' }, text: t('statistics.pointsExplain', { unit: distanceUnit() }) }));
   view.appendChild(el('div', { class: 'card card--flat mt-2 row gap-2', style: { alignItems: 'flex-start' } }, [
     el('span', { html: iconSvg('info'), style: { color: 'var(--accent-text)', width: '18px', flex: '0 0 auto' } }),
     el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: t('statistics.loadHintNote', { hint: loadHint }) }),
@@ -171,10 +172,13 @@ export function render(view) {
   /* ---- Weight trend ---- */
   const health = store.get('health').filter((h) => h.weight != null).sort((a, b) => a.date.localeCompare(b.date));
   if (health.length >= 2) {
-    view.appendChild(sectionHead(t('statistics.weightHeading')));
+    // Stored in kg, drawn in the person's unit (kg or lb).
+    const targetKg = store.profile().targetWeightKg;
+    const target = targetKg != null ? Math.round(kgToShown(targetKg) * 10) / 10 : targetKg;
+    view.appendChild(sectionHead(t('statistics.weightHeading', { unit: weightUnit() })));
     view.appendChild(el('div', { class: 'card' }, lineChart(
-      health.map((h) => ({ label: fmtDayMonth(h.date), date: h.date, value: h.weight })),
-      { label: t('statistics.weight'), target: store.profile().targetWeightKg, targetLabel: t('statistics.target', { value: store.profile().targetWeightKg, unit: 'kg' }), unit: 'kg', fmt: (v) => fmtNum(v, 1) },
+      health.map((h) => ({ label: fmtDayMonth(h.date), date: h.date, value: kgToShown(Number(h.weight)) })),
+      { label: t('statistics.weight'), target, targetLabel: t('statistics.target', { value: fmtDec(target), unit: weightUnit() }), unit: weightUnit(), fmt: (v) => fmtNum(v, 1) },
     )));
   }
 
@@ -219,7 +223,7 @@ export function render(view) {
     }, [
       typeIcon(s.type, 'type-icon--sm'),
       el('div', { class: 'grow' }, [
-        el('div', { style: { fontWeight: '650', fontSize: '.88rem' }, text: s.title || typeMeta(s.type).label }),
+        el('div', { style: { fontWeight: '650', fontSize: '.88rem' }, text: localizeUnits(s.title) || typeMeta(s.type).label }),
         el('div', { class: 'muted', style: { fontSize: '.78rem' }, text: [fmtDayMonth(s.date), s.distanceKm ? fmtKm(s.distanceKm, 1) : null, s.durationSec ? fmtDuration(s.durationSec) : null].filter(Boolean).join(' · ') }),
       ]),
       el('span', { class: 'list-item__chev', html: iconSvg('chevronRight') }),

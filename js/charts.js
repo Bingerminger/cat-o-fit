@@ -12,7 +12,7 @@
    ========================================================================= */
 
 import { fmtNum } from './ui.js';
-import { fmtDayMonth, monthNames, weekdayNames } from './format.js';
+import { fmtDayMonth, monthNames, weekdayNames, fmtKm, fmtElevation } from './format.js';
 import { t as tr, tp } from './i18n.js';
 
 const SVGNS = 'http://www.w3.org/2000/svg';
@@ -686,7 +686,7 @@ export function routeMap(route, { distanceKm = null, ascentM = null, decode } = 
     const offX = (W - (maxX - minX) * scale) / 2, offY = (H - (maxY - minY) * scale) / 2;
     const P = ([x, y]) => [Math.round((offX + (x - minX) * scale) * 10) / 10, Math.round((offY + (y - minY) * scale) * 10) / 10];
     const d = xy.map((p, i) => `${i ? 'L' : 'M'}${P(p).join(' ')}`).join('');
-    const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, class: 'route-map__track', role: 'img', 'aria-label': distanceKm ? tr('charts.routeDistance', { km: fmtNum(distanceKm, 1) }) : tr('charts.route') });
+    const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, class: 'route-map__track', role: 'img', 'aria-label': distanceKm ? tr('charts.routeDistance', { km: fmtKm(distanceKm, 1) }) : tr('charts.route') });
     svg.appendChild(s('path', { d, fill: 'none', style: paint('stroke', ACCENT), 'stroke-width': 3.5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
     const [sx, sy] = P(xy[0]), [ex, ey] = P(xy[xy.length - 1]);
     svg.appendChild(s('circle', { cx: ex, cy: ey, r: 5.5, style: `${paint('fill', 'var(--surface)')};${paint('stroke', 'var(--text)')}`, 'stroke-width': 2.5 }));
@@ -702,15 +702,16 @@ export function routeMap(route, { distanceKm = null, ascentM = null, decode } = 
     const y = (v) => Math.round((TOP + (1 - (v - min) / rng) * (H - TOP - BOT)) * 10) / 10;
     let last = vals[0];
     const line = ele.map((e, i) => { if (e != null) last = e; return `${x(i)},${y(last)}`; });
+    // Elevations in metres, labelled in the person's unit (m, or ft alongside miles).
     const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, class: 'route-map__ele', role: 'img', 'aria-label': ascentM
-      ? tr('charts.elevationAscent', { min: Math.round(min), max: Math.round(max), ascent: ascentM })
-      : tr('charts.elevation', { min: Math.round(min), max: Math.round(max) }) });
+      ? tr('charts.elevationAscent', { min: fmtElevation(min), max: fmtElevation(max), ascent: fmtElevation(ascentM) })
+      : tr('charts.elevation', { min: fmtElevation(min), max: fmtElevation(max) }) });
     svg.appendChild(s('polygon', { points: `0,${H - BOT} ${line.join(' ')} ${W},${H - BOT}`, style: paint('fill', 'color-mix(in srgb, var(--accent) 18%, transparent)') }));
     svg.appendChild(s('polyline', { points: line.join(' '), fill: 'none', style: paint('stroke', ACCENT), 'stroke-width': 2, 'stroke-linejoin': 'round' }));
-    svg.appendChild(txt(`${Math.round(max)} m`, { class: 'chart-axis', x: 2, y: TOP + 8, 'font-size': AXIS_FS }));
-    svg.appendChild(txt(`${Math.round(min)} m`, { class: 'chart-axis', x: 2, y: H - BOT - 3, 'font-size': AXIS_FS }));
+    svg.appendChild(txt(fmtElevation(max), { class: 'chart-axis', x: 2, y: TOP + 8, 'font-size': AXIS_FS }));
+    svg.appendChild(txt(fmtElevation(min), { class: 'chart-axis', x: 2, y: H - BOT - 3, 'font-size': AXIS_FS }));
     svg.appendChild(txt(tr('charts.start'), { class: 'chart-axis', x: 0, y: H - 4, 'font-size': AXIS_FS }));
-    if (distanceKm) svg.appendChild(txt(`${fmtNum(distanceKm, 1)} km`, { class: 'chart-axis', x: W, y: H - 4, 'text-anchor': 'end', 'font-size': AXIS_FS }));
+    if (distanceKm) svg.appendChild(txt(fmtKm(distanceKm, 1), { class: 'chart-axis', x: W, y: H - 4, 'text-anchor': 'end', 'font-size': AXIS_FS }));
     wrap.appendChild(svg);
   }
   return wrap;

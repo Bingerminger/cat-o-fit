@@ -10,7 +10,7 @@
    contradiction to the form card on the dashboard.
    ========================================================================= */
 
-import { parseHms, fmtDuration, todayStr, diffDays, fmtNum, fmtDec } from './ui.js';
+import { parseHms, fmtDuration, todayStr, diffDays, fmtDec, fmtKm } from './ui.js';
 import { estimateVdot, raceTimeFromVdot } from './vdot.js';
 
 import { t } from './i18n.js';
@@ -103,7 +103,7 @@ export function predictRace(sessions, distanceKm, { hrZones = null, today = toda
   if (!pred) return null;
   return {
     seconds: Math.round(pred),
-    basis: t('suggestions.basisRiegel', { km: fmtNum(best.distanceKm, 1), time: fmtDuration(best.durationSec) }),
+    basis: t('suggestions.basisRiegel', { km: fmtKm(best.distanceKm, 1), time: fmtDuration(best.durationSec) }),
     method: 'riegel', onlyEasy: false, caveat, note,
   };
 }

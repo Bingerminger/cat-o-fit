@@ -25,6 +25,7 @@ import { lineChart, barChart, sparkline, donut } from './charts.js';
 import { moduleOff } from './nutrition.js';
 import {
   ANALYTES, ANALYTE_GROUPS, groupLabel, unitsFor, unitFactor, toCanonical, fromCanonical, overview, series,
+  shownUnit, toShown, unitLabel,
   refRange, hasOwnRef, latest, migrateLabRecord, implausible, LAB_SCHEMA, labRecordsFromReport,
 } from './labs.js';
 import { LAB_SOURCES, labSourcesTeaser, inGermany } from './labsources.js';
@@ -357,11 +358,17 @@ function labStats(rows, labs, evaluate = true) {
 const num = fmtDec;
 /** Range as text: "15–300" or "from 35" (no upper limit). */
 const fmtRange = (r) => (r[1] == null ? t('labsView.rangeFrom', { value: num(r[0]) }) : `${num(r[0])}–${num(r[1])}`);
-/** Value as it stood on the report (unit of the report), otherwise canonical. */
-function valueText(rec, unit) {
-  if (rec && rec.enteredUnit && rec.enteredValue != null) return `${num(rec.enteredValue)} ${rec.enteredUnit}`;
-  return `${num(rec ? rec.value : '')} ${unit}`;
+/** Value as it stood on the report when that is the unit shown (with SI units: always the report's
+    unit, as before); otherwise converted into the unit the person chose. */
+function valueText(rec, key) {
+  if (!rec) return '';
+  const shown = shownUnit(key);
+  const canonical = (ANALYTES[key] || {}).unit;
+  if (rec.enteredUnit && rec.enteredValue != null && (rec.enteredUnit === shown || shown === canonical)) return `${num(rec.enteredValue)} ${unitLabel(rec.enteredUnit)}`;
+  return `${num(toShown(key, rec.value))} ${unitLabel(shown)}`;
 }
+/** Canonical range → shown unit. */
+const shownRange = (key, r) => (r ? [toShown(key, r[0]), r[1] == null ? null : toShown(key, r[1])] : r);
 const monthsText = (days) => tp('labsView.months', Math.round(days / 30));
 
 function valueRow(r, i, labs) {
@@ -370,10 +377,10 @@ function valueRow(r, i, labs) {
   const arrow = trd ? (trd.dir === 'up' ? '↑' : trd.dir === 'down' ? '↓' : '→') : '';
   const sub = [fmtDate(r.date), a.label];
   if (r.stale) sub.push(t('labsView.staleShort'));
-  if (trd && trd.dir !== 'flat') sub.push(t('labsView.perMonth', { arrow, value: num(Math.abs(trd.perMonth)), unit: r.unit }));
+  if (trd && trd.dir !== 'flat') sub.push(t('labsView.perMonth', { arrow, value: num(Math.abs(toShown(r.key, trd.perMonth))), unit: unitLabel(shownUnit(r.key)) }));
 
   // Mini trend right in the row: spot the trend without expanding.
-  const pts = series(labs, r.key).map((l) => Number(l.value));
+  const pts = series(labs, r.key).map((l) => toShown(r.key, Number(l.value)));
   const spark = pts.length >= 3
     ? el('span', { style: { width: '54px', flex: '0 0 auto', opacity: '.85' } }, [sparkline(pts, { color: TONE_COLOR[a.tone] })])
     : null;
@@ -389,7 +396,7 @@ function valueRow(r, i, labs) {
       el('div', { class: 'list-item__sub', text: sub.join(' · ') }),
     ]),
     spark,
-    el('span', { class: 'num', style: { fontWeight: '700' }, text: valueText(r.record, r.unit) }),
+    el('span', { class: 'num', style: { fontWeight: '700' }, text: valueText(r.record, r.key) }),
   ]);
   return el('div', {}, [row, detail]);
 }
@@ -407,28 +414,31 @@ function eaChart(args) {
 function fillDetail(box, r) {
   const labs = store.get('labs');
   const all = series(labs, r.key);
-  const pts = all.map((l) => ({ label: fmtDate(l.date), date: l.date, value: Number(l.value) }));
+  const unit = unitLabel(shownUnit(r.key));
+  const pts = all.map((l) => ({ label: fmtDate(l.date), date: l.date, value: toShown(r.key, Number(l.value)) }));
   const a = r.assessment;
   const rec = r.record || latest(labs, r.key);
   // Documenting only: the range from the person's own report (which is age-appropriate), no rating.
   const ownOnly = a.status === 'unbewertet' && hasOwnRef(rec) ? [Number(rec.refLow), Number(rec.refHigh)] : null;
   const ref = a.ref || ownOnly;
   const sportDiffers = a.sport && (!ref || a.sport[0] !== ref[0] || a.sport[1] !== ref[1]);
+  // Ranges are canonical; shown in the person's unit like the values.
+  const refShown = shownRange(r.key, ref), sportShown = shownRange(r.key, a.sport);
   if (pts.length >= 2) {
     // Both corridors: reference as a dashed frame, sport target range as a filled area.
     const bands = [];
-    if (sportDiffers) bands.push({ lo: a.sport[0], hi: a.sport[1], kind: 'fill', label: t('labsView.sportRange') });
-    if (ref) bands.push({ lo: ref[0], hi: ref[1], kind: 'frame', label: a.ownRef || ownOnly ? t('labsView.refOwnLab') : t('labsView.reference') });
-    box.appendChild(lineChart(pts, { label: t('labsView.chartLabel', { label: r.label || t('labsView.labValue') }), unit: r.unit, height: 130, bands, color: TONE_COLOR[a.tone] }));
+    if (sportDiffers) bands.push({ lo: sportShown[0], hi: sportShown[1], kind: 'fill', label: t('labsView.sportRange') });
+    if (ref) bands.push({ lo: refShown[0], hi: refShown[1], kind: 'frame', label: a.ownRef || ownOnly ? t('labsView.refOwnLab') : t('labsView.reference') });
+    box.appendChild(lineChart(pts, { label: t('labsView.chartLabel', { label: r.label || t('labsView.labValue') }), unit, height: 130, bands, color: TONE_COLOR[a.tone] }));
   }
   const ranges = [];
-  if (ref) ranges.push(`${a.ownRef || ownOnly ? t('labsView.refOwnLab') : t('labsView.refTypical')} ${fmtRange(ref)} ${r.unit}`);
-  if (sportDiffers) ranges.push(`${t('labsView.sportRange')} ${fmtRange(a.sport)} ${r.unit}`);
+  if (ref) ranges.push(`${a.ownRef || ownOnly ? t('labsView.refOwnLab') : t('labsView.refTypical')} ${fmtRange(refShown)} ${unit}`);
+  if (sportDiffers) ranges.push(`${t('labsView.sportRange')} ${fmtRange(sportShown)} ${unit}`);
   if (ranges.length) box.appendChild(el('div', { class: 'dim', style: { fontSize: '.76rem' }, text: ranges.join(' · ') }));
   if (a.ref && !a.ownRef) {
     box.appendChild(el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '2px' }, text: t('labsView.eachLabOwn') }));
   }
-  if (rec && rec.enteredUnit) box.appendChild(el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '2px' }, text: t('labsView.onReport', { entered: num(rec.enteredValue), enteredUnit: rec.enteredUnit, value: num(rec.value), unit: r.unit }) }));
+  if (rec && rec.enteredUnit && unitLabel(rec.enteredUnit) !== unit) box.appendChild(el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '2px' }, text: t('labsView.onReport', { entered: num(rec.enteredValue), enteredUnit: unitLabel(rec.enteredUnit), value: num(toShown(r.key, rec.value)), unit }) }));
   const ctx = rec ? [rec.exercise48h && t('labsView.ctxAfterExercise'), rec.fasting && t('labsView.ctxFasting'), rec.cycleDay && t('labsView.ctxCycleDay', { day: rec.cycleDay }), rec.biotin && t('labsView.ctxBiotin')].filter(Boolean) : [];
   if (ctx.length) box.appendChild(el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '2px' }, text: t('labsView.drawContext', { items: ctx.join(' · ') }) }));
   if (a.blocked) box.appendChild(el('div', { class: 'muted mt-2', style: { fontSize: '.82rem' }, text: a.blocked }));
@@ -452,12 +462,12 @@ function fillDetail(box, r) {
   // Measurements: edit (typos, wrong unit) and delete.
   const list = el('div', { class: 'mt-2', style: { borderTop: '1px solid var(--border)' } });
   all.slice().reverse().forEach((m) => list.appendChild(el('div', { class: 'row row--between', style: { alignItems: 'center', padding: '6px 0', gap: '8px' } }, [
-    el('span', { style: { fontSize: '.82rem' }, text: `${fmtDate(m.date)} · ${valueText(m, r.unit)}` }),
+    el('span', { style: { fontSize: '.82rem' }, text: `${fmtDate(m.date)} · ${valueText(m, r.key)}` }),
     el('span', { class: 'row gap-1' }, [
       el('button', { class: 'icon-btn', 'aria-label': t('labsView.editMeasurement', { date: fmtDate(m.date) }), onclick: (e) => { e.stopPropagation(); openValueSheet(currentEligibility(), m); } }, icon('edit')),
       el('button', { class: 'icon-btn', 'aria-label': t('labsView.deleteMeasurement', { date: fmtDate(m.date) }), onclick: async (e) => {
         e.stopPropagation();
-        if (await confirmDialog({ title: t('labsView.deleteTitle'), message: t('labsView.deleteBody', { label: ANALYTES[r.key].label, date: fmtDate(m.date), value: valueText(m, r.unit) }), confirmLabel: t('labsView.delete'), danger: true })) {
+        if (await confirmDialog({ title: t('labsView.deleteTitle'), message: t('labsView.deleteBody', { label: ANALYTES[r.key].label, date: fmtDate(m.date), value: valueText(m, r.key) }), confirmLabel: t('labsView.delete'), danger: true })) {
           store.remove('labs', m.id); toast(t('labsView.deleted'), 'good'); rerender();
         }
       } }, icon('trash')),
@@ -562,7 +572,7 @@ function openReportSheet() {
     items.forEach(([key, a]) => {
       const units = unitsFor(key);
       const valueI = input({ type: 'number', step: 'any', inputmode: 'decimal', placeholder: t('labsView.valuePlaceholder'), 'aria-label': t('labsView.ariaResult', { label: a.label }) });
-      const unitSel = select(units.map((u) => ({ value: u, label: u })), units[0], { 'aria-label': t('labsView.ariaUnit', { label: a.label }) });
+      const unitSel = select(units.map((u) => ({ value: u, label: unitLabel(u) })), shownUnit(key), { 'aria-label': t('labsView.ariaUnit', { label: a.label }) });
       if (units.length < 2) unitSel.disabled = true;
       const loI = input({ type: 'number', step: 'any', inputmode: 'decimal', placeholder: t('labsView.from'), 'aria-label': t('labsView.ariaRefFrom', { label: a.label }) });
       const hiI = input({ type: 'number', step: 'any', inputmode: 'decimal', placeholder: t('labsView.to'), 'aria-label': t('labsView.ariaRefTo', { label: a.label }) });
@@ -617,7 +627,7 @@ function openValueSheet(elig = currentEligibility(), existing = null) {
   const profile = store.profile();
   const ex = existing ? migrateLabRecord(existing) : null;
   let key = ex && ANALYTES[ex.analyte] ? ex.analyte : 'ferritin';
-  let unit = ex && ex.enteredUnit && unitFactor(key, ex.enteredUnit) ? ex.enteredUnit : ANALYTES[key].unit;
+  let unit = ex && ex.enteredUnit && unitFactor(key, ex.enteredUnit) ? ex.enteredUnit : shownUnit(key);
   // Child and adolescent profile: no adult ranges as placeholders – the report knows the matching ones.
   const suggest = elig.labsEvaluate;
   const inUnit = (v) => (v == null ? '' : String(fromCanonical(key, v, unit)));
@@ -646,8 +656,8 @@ function openValueSheet(elig = currentEligibility(), existing = null) {
   const drawUnits = (keep = false) => {
     unitSel.innerHTML = '';
     const opts = unitsFor(key);
-    if (!keep || !opts.includes(unit)) unit = opts[0];
-    opts.forEach((u) => { const o = el('option', { value: u, text: u }); if (u === unit) o.selected = true; unitSel.appendChild(o); });
+    if (!keep || !opts.includes(unit)) unit = shownUnit(key);
+    opts.forEach((u) => { const o = el('option', { value: u, text: unitLabel(u) }); if (u === unit) o.selected = true; unitSel.appendChild(o); });
     unitSel.disabled = opts.length < 2;
   };
   unitSel.addEventListener('change', () => {

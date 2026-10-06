@@ -10,6 +10,7 @@ import {
 } from './ui.js';
 import { setHeader, refresh } from './router.js';
 import { weekdayNames } from './format.js';
+import { distanceUnit } from './units.js';
 
 import { t } from './i18n.js';
 
@@ -65,7 +66,7 @@ export function render(view) {
   view.appendChild(metricsCard());
 }
 
-const dashMetrics = () => [['momentum', t('family.metricMomentum')], ['weekKm', t('familyAdmin.metricWeekKm')], ['streak', t('familyAdmin.metricStreak')]];
+const dashMetrics = () => [['momentum', t('family.metricMomentum')], ['weekKm', t('familyAdmin.metricWeekKm', { unit: distanceUnit() })], ['streak', t('familyAdmin.metricStreak')]];
 const DEFAULT_DASH = ['momentum', 'weekKm'];
 
 /** Selection of which key figures per member appear in the family dashboard. */

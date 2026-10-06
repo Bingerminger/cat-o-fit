@@ -13,7 +13,7 @@
 import * as store from './storage.js';
 import {
   el, icon, iconSvg, navigate, typeMeta, fmtClock, fmtPaceRange, stepper, toast,
-  openSheet, closeSheet, field, input, textarea, rpeScale, feelingPicker, durationFields,
+  openSheet, closeSheet, field, input, textarea, rpeScale, feelingPicker, durationFields, localizeUnits,
 } from './ui.js';
 import { lsGet, lsSet, lsRemove } from './env.js';
 import { findUnit, completeUnit, saveUnitPatch } from './unit-actions.js';
@@ -99,7 +99,7 @@ export function render(view, id) {
   hints.forEach((line) => hint.appendChild(el('div', { text: line })));
 
   root.appendChild(el('div', { class: 'workout__top' }, [
-    el('div', { class: 'workout__title', text: unit.title }),
+    el('div', { class: 'workout__title', text: localizeUnits(unit.title) }),
     el('button', { class: 'icon-btn workout__close', 'aria-label': t('common.close'), onclick: () => askQuit() }, icon('x')),
   ]));
   // Drink-break banner (fades in briefly for reminders).

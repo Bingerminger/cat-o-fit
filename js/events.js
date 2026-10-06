@@ -4,7 +4,7 @@
 
 import * as store from './storage.js';
 import {
-  el, icon, iconSvg, uid, nowIso, navigate, fmtDate, fmtDateLong, fmtKm, fmtPace,
+  el, icon, iconSvg, uid, nowIso, navigate, fmtDate, fmtDateLong, fmtKm, fmtKmAuto, fmtPace,
   diffDays, addDays, todayStr, sectionHead, emptyState, toast, confirmDialog, openSheet, closeSheet,
   field, input, select, textarea, segmented, PRIORITIES, fieldError,
 } from './ui.js';
@@ -17,12 +17,14 @@ import { openIcsSheet } from './ics-export.js';
 import { currentEligibility } from './wellness.js';
 import { adherence } from './fitness.js';
 import { isProtectedDay } from './cycle.js';
+import { distanceUnit, paceUnit } from './units.js';
 
 import { t, tp } from './i18n.js';
 
+// 5 and 10 km keep their race name for a person on miles ("5K", as races are called there).
 const DISTANCES = {
-  '5k': { label: '5 km', km: 5 },
-  '10k': { label: '10 km', km: 10 },
+  '5k': { get label() { return distanceUnit() === 'mi' ? '5K' : '5 km'; }, km: 5 },
+  '10k': { get label() { return distanceUnit() === 'mi' ? '10K' : '10 km'; }, km: 10 },
   'HM': { get label() { return t('events.distances.halfMarathon'); }, km: 21.0975 },
   'M': { get label() { return t('events.distances.marathon'); }, km: 42.195 },
   // `beta`: plans for these formats are still young (no bike/swim zones,
@@ -151,11 +153,11 @@ export function renderDetail(view, id) {
   // did not fit into the tile on the iPhone. Triathlon and Hyrox name their format.
   const distKm = e.distanceKm || dist.km;
   const distStat = !dist.sport && distKm
-    ? miniStat(fmtKm(distKm, distKm % 1 ? 1 : 0), dist.label && !/km$/.test(dist.label) && e.distanceType !== 'custom' ? dist.label : t('events.distance'))
+    ? miniStat(fmtKmAuto(distKm), dist.label && !/ (km|mi)$/.test(dist.label) && e.distanceType !== 'custom' ? dist.label : t('events.distance'))
     : miniStat(dist.label || '–', dist.sport ? t('events.format') : t('events.distance'));
   view.appendChild(el('div', { class: 'stat-grid mt-4' }, [
     distStat,
-    paceSec ? miniStat(`${fmtPace(paceSec)}`, t('events.targetPace')) : null,
+    paceSec ? miniStat(`${fmtPace(paceSec)}`, t('events.targetPace', { unit: paceUnit() })) : null,
     miniStat(e.location || '–', t('events.location')),
   ].filter(Boolean)));
 

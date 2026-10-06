@@ -8,6 +8,7 @@
 import { diffDays, fmtPace, weekStartMonday, addDays, typeMeta, fmtDec } from './ui.js';
 import { weightGoalStatus } from './energy.js';
 import { acwr, sessionLoad, trainingLoad, loadMinutes, RPE_BY_TYPE, FOOTBALL_RPE, footballRpe } from './load.js';
+import { kgToShown, kmToShown, weightUnit, paceUnit, distanceUnit } from './units.js';
 
 import { t } from './i18n.js';
 
@@ -18,6 +19,9 @@ export { sessionLoad, trainingLoad, RPE_BY_TYPE, FOOTBALL_RPE, footballRpe };
 const EASY_TYPES = ['easy', 'long', 'recovery'];
 const fmt1 = (v) => fmtDec(Math.round(v * 10) / 10);
 const fmt0 = (v) => String(Math.round(v));
+// Values stay metric (trend and target logic); `fmt` shows them in the person's unit.
+const fmtKg = (v) => fmt1(kgToShown(v));
+const fmtKm0 = (v) => fmt0(kmToShown(v));
 
 /** Running session (category "run": easy, long, tempo, interval, race, recovery, run). */
 export function isRunSession(s) { return !!s && typeMeta(s.type).cat === 'run'; }
@@ -243,9 +247,9 @@ export function keyMetrics({ profile = {}, health = [], sessions = [], today, no
     if (gs) {
       goal = gs.status === 'halten' ? 'halten' : 'verbessern';
       if (goal === 'halten') { good = true; hint = gs.beyond ? (gs.gap > 0 ? t('fitness.holdAbove') : t('fitness.holdBelow')) : t('fitness.atTarget'); }
-      else { good = prev == null ? null : (gs.direction === 'down' ? dir === 'down' : dir === 'up'); hint = gs.gap > 0 ? t('fitness.kgAbove', { kg: fmt1(gs.remaining) }) : t('fitness.kgBelow', { kg: fmt1(gs.remaining) }); }
+      else { good = prev == null ? null : (gs.direction === 'down' ? dir === 'down' : dir === 'up'); hint = gs.gap > 0 ? t('fitness.kgAbove', { weight: `${fmtKg(gs.remaining)} ${weightUnit()}` }) : t('fitness.kgBelow', { weight: `${fmtKg(gs.remaining)} ${weightUnit()}` }); }
     }
-    push({ key: 'weight', label: t('fitness.weight'), value: w, unit: 'kg', target, dir, good, goal, hint, fmt: fmt1 });
+    push({ key: 'weight', label: t('fitness.weight'), value: w, unit: weightUnit(), target, dir, good, goal, hint, fmt: fmtKg });
   }
 
   // Weekly volume — building up counts as progress
@@ -253,7 +257,7 @@ export function keyMetrics({ profile = {}, health = [], sessions = [], today, no
   if (km4 > 0) {
     const kmPrev = sumKm(sessions, today, 28, 56) / 4;
     const dir = dirOf(km4, kmPrev > 0 ? kmPrev : null, 1);
-    push({ key: 'weeklyKm', label: t('fitness.weeklyKm'), value: km4, unit: t('fitness.kmPerWeek'), dir, good: goodOf(dir, 'up'), goal: 'verbessern', hint: t('fitness.weeklyKmHint'), fmt: fmt0 });
+    push({ key: 'weeklyKm', label: t('fitness.weeklyKm'), value: km4, unit: t('fitness.kmPerWeek', { unit: distanceUnit() }), dir, good: goodOf(dir, 'up'), goal: 'verbessern', hint: t('fitness.weeklyKmHint', { unit: distanceUnit() }), fmt: fmtKm0 });
   }
 
   // Easy pace — faster at the same easiness is better. "Same easiness" means: average
@@ -264,12 +268,12 @@ export function keyMetrics({ profile = {}, health = [], sessions = [], today, no
   const z2Pace = z2 ? avgPaceSec(sessions, today, 0, 28, z2.max) : null;
   if (z2Pace != null) {
     const dir = dirOf(z2Pace, avgPaceSec(sessions, today, 28, 56, z2.max), 3);
-    push({ key: 'easyPace', label: t('fitness.easyPace'), value: z2Pace, unit: 'min/km', dir, good: goodOf(dir, 'down'), goal: 'verbessern', hint: t('fitness.easyPaceHint'), fmt: fmtPace });
+    push({ key: 'easyPace', label: t('fitness.easyPace'), value: z2Pace, unit: paceUnit(), dir, good: goodOf(dir, 'down'), goal: 'verbessern', hint: t('fitness.easyPaceHint'), fmt: fmtPace });
   } else {
     const pace = avgPaceSec(sessions, today, 0, 28);
     if (pace != null) {
       const dir = dirOf(pace, avgPaceSec(sessions, today, 28, 56), 3);
-      push({ key: 'easyPace', label: t('fitness.easyPace'), value: pace, unit: 'min/km', dir, good: null, goal: 'verbessern', hint: t('fitness.easyPaceNoHr'), fmt: fmtPace });
+      push({ key: 'easyPace', label: t('fitness.easyPace'), value: pace, unit: paceUnit(), dir, good: null, goal: 'verbessern', hint: t('fitness.easyPaceNoHr'), fmt: fmtPace });
     }
   }
 

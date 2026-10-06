@@ -11,6 +11,7 @@
 
 import { weightNow, weightGoalStatus } from './energy.js';
 import { withHrvMethod } from './healthdata.js';
+import { kgToShown, weightUnit } from './units.js';
 
 import { t } from './i18n.js';
 
@@ -23,6 +24,12 @@ export const GOAL_METRICS = [
   { key: 'vo2max', label: 'VO₂max', unit: '', field: 'vo2max', digits: 0, get hint() { return t('goals.hintUp'); } },
 ];
 export function metricMeta(key) { return GOAL_METRICS.find((m) => m.key === key) || null; }
+/** A metric's value as shown: weight in the person's unit (kg or lb), the others as stored.
+    Goals and readings stay stored in kg; `unit` in GOAL_METRICS is the stored unit. */
+export function shownMetric(m, v) {
+  if (m && m.key === 'weight') return { value: v == null ? v : kgToShown(Number(v)), unit: weightUnit() };
+  return { value: v, unit: m ? m.unit : '' };
+}
 
 /** Most recent recorded value of a metric (from health; weight alternatively from the profile).
     HRV: only values of the measurement method `hrvMethod` (SDNN and RMSSD are not comparable). */

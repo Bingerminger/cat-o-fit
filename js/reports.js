@@ -17,6 +17,7 @@ import { progressTabs } from './nav.js';
 import { buildMonthReport, buildEventReport, buildGoalReport, monthRange } from './report.js';
 import { currentEligibility } from './wellness.js';
 import { isProtectedDay } from './cycle.js';
+import { weightUnit } from './units.js';
 
 import { t } from './i18n.js';
 
@@ -175,7 +176,9 @@ function eventForm(done) {
 
 function goalForm(done) {
   const titleI = input({ placeholder: t('reports.goalPlaceholder') });
-  const detailI = input({ placeholder: t('reports.detailPlaceholder') });
+  // Free text – the example speaks the person's unit (72 → 65 kg, 160 → 145 lb).
+  const lb = weightUnit() === 'lb';
+  const detailI = input({ placeholder: t('reports.detailPlaceholder', { from: lb ? 160 : 72, to: lb ? 145 : 65, unit: weightUnit() }) });
   return el('div', {}, [
     field(t('reports.goalTitle'), titleI),
     field(t('reports.goalDetails'), detailI),

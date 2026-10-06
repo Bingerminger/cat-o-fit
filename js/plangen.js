@@ -13,7 +13,7 @@
    2007). The race session falls on any weekday, the days before it are eased.
    ========================================================================= */
 
-import { uid, nowIso, typeMeta, fmtKm, fmtPaceRange, addDays, isoDow, diffDays, weekStartMonday } from './ui.js';
+import { uid, nowIso, typeMeta, fmtNum, fmtMinSec, addDays, isoDow, diffDays, weekStartMonday } from './ui.js';
 import { commitmentDates, commitMeta, defaultCommitments } from './commitments.js';
 import { isHard } from './planflow.js';
 
@@ -34,7 +34,10 @@ export const RUN_DAYS = [3, 4, 5, 6];
 const r05 = (v) => Math.round(v * 2) / 2;
 const r5 = (v) => Math.max(5, Math.round(v / 5) * 5);
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-const kmText = (km) => fmtKm(km, km % 1 ? 1 : 0);
+// Generated texts are stored – always metric ("18 km", "5:20–5:34 min/km"), whatever units the
+// person uses; localizeUnits converts them when shown and workout-engine reads them as they are.
+const kmText = (km) => `${fmtNum(km, km % 1 ? 1 : 0)} km`;
+const paceRangeText = (min, max) => (!max || max === min ? `${fmtMinSec(min)} min/km` : `${fmtMinSec(min)}–${fmtMinSec(max)} min/km`);
 
 /* ===================== Weekly templates ===================== */
 
@@ -721,7 +724,7 @@ function longUnit(ctx) {
   const blockKm = r05(km * blockShare);
   if (blockKm >= 3) {
     const rz = pz.race;
-    const paceTxt = rz && rz.min ? ` (${fmtPaceRange(rz.min, rz.max)})` : '';
+    const paceTxt = rz && rz.min ? ` (${paceRangeText(rz.min, rz.max)})` : '';
     return mkUnit(ctx, 'long', {
       dist: km, pace: pace(pz, 'long'), paceKey: 'long', raceBlockKm: blockKm, title,
       desc: `${t('plangen.long.raceBlockDesc', { km: kmText(km), block: kmText(blockKm), pace: paceTxt })}${bike && ` ${t('plangen.long.bikeAltRaceBlock', bikeKm)}`}`,

@@ -9,9 +9,10 @@ import {
   openSheet, closeSheet, confirmDialog, alertDialog, toast, sectionHead, fmtPaceRange, todayStr,
   uid, nowIso, fmtDate, safeAccent, saveFile, savedFileMessage,
   refreshView, goOrRefresh, actionSheet,
-  fmtDec,
+  fmtDec, fmtHeight, fmtWeightDec,
   rerenderView,
 } from './ui.js';
+import { distanceUnit } from './units.js';
 import { sessionsCsv, healthCsv, labsCsv, diaryCsv } from './csv-export.js';
 import { setHeader } from './router.js';
 import { syncNow } from './storage.js';
@@ -97,7 +98,7 @@ export function render(view) {
         toggle(s.shareGoal !== false, (v) => store.setSetting('shareGoal', v), t('settings.visibility.goal')),
       ]),
       el('div', { class: 'row row--between', style: { padding: '8px 0', borderTop: '1px solid var(--border)' } }, [
-        el('span', { text: t('settings.visibility.metrics') }),
+        el('span', { text: t('settings.visibility.metrics', { unit: distanceUnit() }) }),
         toggle(s.shareMetrics !== false, (v) => store.setSetting('shareMetrics', v), t('settings.visibility.metricsAria')),
       ]),
       el('div', { class: 'row row--between', style: { padding: '8px 0', borderTop: '1px solid var(--border)', gap: '12px' } }, [
@@ -109,8 +110,9 @@ export function render(view) {
 
 /* ----- Profile ----- */
   const elig = currentEligibility();
-  const profileLine = [`${p.heightCm || '–'} cm`, `${p.weightKg ? fmtDec(p.weightKg) : '–'} kg`];
-  if (!elig.noWeightGoals) profileLine.push(t('settings.profile.target', { kg: p.targetWeightKg ? fmtDec(p.targetWeightKg) : '–' }));
+  // Display in the person's units (height in ft/in alongside pounds); stored in cm and kg.
+  const profileLine = [p.heightCm ? fmtHeight(p.heightCm) : '–', p.weightKg ? fmtWeightDec(p.weightKg) : '–'];
+  if (!elig.noWeightGoals) profileLine.push(t('settings.profile.target', { weight: p.targetWeightKg ? fmtWeightDec(p.targetWeightKg) : '–' }));
   view.appendChild(sectionHead(t('settings.sections.profile')));
   view.appendChild(el('button', { class: 'card card--link', style: { width: '100%', textAlign: 'left' }, onclick: () => openProfileSheet() }, [
     el('div', { class: 'row gap-3' }, [
@@ -170,13 +172,15 @@ export function render(view) {
   } else {
     goals.forEach((g, i) => {
       const m = metricMeta(g.metric); const unit = m && m.unit ? ' ' + m.unit : '';
+      // Weight goals in the person's unit (stored in kg).
+      const target = m && m.key === 'weight' ? fmtWeightDec(g.target) : `${fmtDec(g.target)}${unit}`;
       const paused = elig.noWeightGoals && WEIGHT_METRICS.includes(g.metric);
       goalsCard.appendChild(el('div', { class: 'row row--between', style: { padding: '8px 0', borderTop: i ? '1px solid var(--border)' : 'none' } }, [
         el('div', {}, [
           el('div', { style: { fontWeight: '650', fontSize: '.9rem' }, text: (m && m.label) || g.metric }),
           el('div', { class: 'dim', style: { fontSize: '.76rem' }, text: paused
             ? t('settings.goals.paused')
-            : g.deadline ? t('settings.goals.targetBy', { target: `${fmtDec(g.target)}${unit}`, date: fmtDate(g.deadline) }) : t('settings.goals.target', { target: `${fmtDec(g.target)}${unit}` }) }),
+            : g.deadline ? t('settings.goals.targetBy', { target, date: fmtDate(g.deadline) }) : t('settings.goals.target', { target }) }),
         ]),
         el('button', {
           class: 'icon-btn', 'aria-label': t('settings.goals.removeAria'),
@@ -661,7 +665,7 @@ function goalWarning(metric, target, profile = {}) {
 function targetWeightWarning(target, profile = {}) {
   const bmi = bmiFor(target, profile);
   if (bmi == null || bmi >= 18.5) return null;
-  return t('settings.bmiWarning', { height: profile.heightCm, bmi: fmtDec(bmi) });
+  return t('settings.bmiWarning', { height: fmtHeight(profile.heightCm), bmi: fmtDec(bmi) });
 }
 
 /**

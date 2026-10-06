@@ -6,7 +6,7 @@
 
 import { icsUrl, icsToken } from './api-client.js';
 import * as store from './storage.js';
-import { el, icon, iconSvg, openSheet, closeSheet, toast } from './ui.js';
+import { el, icon, iconSvg, openSheet, closeSheet, toast, localizeUnits } from './ui.js';
 
 import { t } from './i18n.js';
 
@@ -43,7 +43,7 @@ export async function openIcsSheet({ scope = 'event', id, event = null, unit = n
   const u = store.activeUserId();
   const token = await tokenFor(u);
   if (!token) toast(t('icsExport.needsServer'), 'bad', 5000);
-  if (unit) list.appendChild(optionRow(t('icsExport.thisSession'), t('icsExport.thisSessionSub', { title: unit.title }), icsUrl('session', unit.id, u, token)));
+  if (unit) list.appendChild(optionRow(t('icsExport.thisSession'), t('icsExport.thisSessionSub', { title: localizeUnits(unit.title) }), icsUrl('session', unit.id, u, token)));
   let subscribe = null;
   let guide = null;
   if (event) {

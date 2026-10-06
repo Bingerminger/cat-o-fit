@@ -94,10 +94,23 @@ export function fmtKm(km, digits = 1) {
   return Number(kmToShown(Number(km))).toFixed(digits).replace('.', decimalSeparator()) + ' ' + distanceUnit();
 }
 export const fmtDistance = fmtKm;
+/** A single distance (planned session, race, run): whole kilometres without a decimal ("10 km"),
+    otherwise – and always in miles, where whole km are rarely whole miles – to a tenth ("6,2 mi"). */
+export function fmtKmAuto(km) {
+  if (km == null) return '–';
+  return fmtKm(km, Number(km) % 1 || units().distance === 'mi' ? 1 : 0);
+}
 /** Body weight from kilograms: "72,4 kg" / "159.6 lb". */
 export function fmtWeight(kg, digits = 1) {
   if (kg == null || Number.isNaN(Number(kg))) return '–';
   return Number(kgToShown(Number(kg))).toFixed(digits).replace('.', decimalSeparator()) + ' ' + weightUnit();
+}
+/** Weight from kilograms without padding: kg as stored ("65 kg", "22,25 kg"), pounds to a tenth
+    ("143,3 lb") – for targets, sets and other values that were typed in rather than measured. */
+export function fmtWeightDec(kg) {
+  if (kg == null || kg === '' || Number.isNaN(Number(kg))) return '–';
+  const v = units().weight === 'lb' ? Math.round(kgToShown(Number(kg)) * 10) / 10 : Number(kg);
+  return `${fmtDec(v)} ${weightUnit()}`;
 }
 /** Height from centimetres: "180 cm" / "5′ 11″". */
 export function fmtHeight(cm) {

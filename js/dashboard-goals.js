@@ -4,11 +4,12 @@
    ========================================================================= */
 
 import * as store from './storage.js';
-import { el, iconSvg, navigate, fmtDuration, parseHms, fmtNum } from './ui.js';
+import { el, iconSvg, navigate, fmtDuration, parseHms, fmtNum, fmtKmAuto, fmtWeight } from './ui.js';
+import { distanceUnit } from './units.js';
 import { predictRace } from './suggestions.js';
 import { goalProgress } from './healthgoals.js';
 import { currentEnergyTargets, currentEligibility } from './wellness.js';
-import { goalsProgress } from './goals.js';
+import { goalsProgress, shownMetric } from './goals.js';
 import { phaseEmphasis, stimulusCheck } from './dualgoal.js';
 import { progressRing } from './charts.js';
 
@@ -46,7 +47,7 @@ export function goalCockpitCard(today) {
     rows.push(goalRow('flag', event.name, detail, tone));
   }
   if (hasWeight) {
-    const kg = (v) => `${fmtNum(v, 1)} kg`;
+    const kg = (v) => fmtWeight(v);
     const detail = gs.reached
       ? (gs.beyond ? t('dashboardGoals.weightReachedBeyond', { weight: kg(gs.current) }) : t('dashboardGoals.weightReached', { weight: kg(gs.current) }))
       : gs.status === 'halten'
@@ -86,9 +87,12 @@ export function goalCockpitCard(today) {
   ]));
   return el('div', { class: 'card' }, children);
 }
-/** Short name of the race for the cockpit ("Half marathon", "10 km" …). */
+/** Short name of the race for the cockpit ("Half marathon", "10 km" …). 5 and 10 km keep their race
+    name for a person on miles ("5K", as races are called there), other distances are converted. */
 const RACE_LABELS = {
-  '5k': '5 km', '10k': '10 km', hyrox: 'Hyrox',
+  get '5k'() { return distanceUnit() === 'mi' ? '5K' : '5 km'; },
+  get '10k'() { return distanceUnit() === 'mi' ? '10K' : '10 km'; },
+  hyrox: 'Hyrox',
   get HM() { return t('dashboardGoals.halfMarathon'); },
   get M() { return t('dashboardGoals.marathon'); },
 };
@@ -98,7 +102,7 @@ function raceLabel(event) {
   const km = Number(event.distanceKm);
   if (Math.abs(km - 21.0975) < 0.3) return t('dashboardGoals.halfMarathon');
   if (Math.abs(km - 42.195) < 0.5) return t('dashboardGoals.marathon');
-  return Number.isFinite(km) && km > 0 ? `${fmtNum(km, km % 1 ? 1 : 0)} km` : t('dashboardGoals.race');
+  return Number.isFinite(km) && km > 0 ? fmtKmAuto(km) : t('dashboardGoals.race');
 }
 
 function goalRow(ico, title, detail, tone) {
@@ -141,12 +145,12 @@ export function weekGoalsCard(today) {
     const txt = w.reached
       ? t('dashboardGoals.goalWeightReached')
       : w.status === 'halten'
-        ? t('dashboardGoals.weekAlmost', { target: fmtNum(w.target, 1) })
-        : t('dashboardGoals.weekRemaining', { remaining: fmtNum(w.remaining, 1), target: fmtNum(w.target, 1) });
+        ? t('dashboardGoals.weekAlmost', { target: fmtWeight(w.target) })
+        : t('dashboardGoals.weekRemaining', { remaining: fmtWeight(w.remaining), target: fmtWeight(w.target) });
     children.push(el('div', { class: 'row gap-2 mt-3', style: { alignItems: 'center', justifyContent: 'center', fontSize: '.8rem' } }, [
       el('span', { style: { width: '18px', height: '18px', flexShrink: '0', color: 'var(--accent-strong)' }, html: iconSvg('target') }),
       // Always set values as text (never as HTML) – they come from user data.
-      el('span', {}, [el('strong', { text: `${fmtNum(w.current, 1)} kg` }), ` · ${txt}`]),
+      el('span', {}, [el('strong', { text: fmtWeight(w.current) }), ` · ${txt}`]),
     ]));
   }
   if (prog.allMet) children.push(el('div', { class: 'center mt-2', style: { fontSize: '.76rem', color: 'var(--accent-strong)', fontWeight: '650' }, text: t('dashboardGoals.weekGoalMet') }));
@@ -160,9 +164,10 @@ export function healthGoalsCard(today) {
   if (!items.length) return null;
   const fmt = (n, d) => (n == null ? '—' : (d ? fmtNum(n, d) : String(Math.round(n))));
   const rows = items.map((it) => {
-    const m = it.metric; const unit = m.unit ? ' ' + m.unit : '';
+    const m = it.metric; const su = shownMetric(m).unit; const unit = su ? ' ' + su : '';
+    const show = (v) => shownMetric(m, v).value;   // kg → lb for a person on pounds
     const status = it.reached ? t('dashboardGoals.reached')
-      : (it.current == null ? t('dashboardGoals.noReading') : t('dashboardGoals.stillToGo', { value: `${fmt(it.remaining, m.digits)}${unit}` }));
+      : (it.current == null ? t('dashboardGoals.noReading') : t('dashboardGoals.stillToGo', { value: `${fmt(show(it.remaining), m.digits)}${unit}` }));
     const dl = it.daysLeft != null ? ` · ${it.daysLeft >= 0 ? t('dashboardGoals.daysLeft', { n: it.daysLeft }) : t('dashboardGoals.deadlinePassed')}` : '';
     return el('div', { style: { marginBottom: '11px' } }, [
       el('div', { class: 'row row--between', style: { fontSize: '.84rem', marginBottom: '3px' } }, [
@@ -172,7 +177,7 @@ export function healthGoalsCard(today) {
       el('div', { style: { height: '8px', borderRadius: '999px', background: 'var(--surface-3)', overflow: 'hidden' } }, [
         el('div', { style: { height: '100%', width: Math.round(it.pct * 100) + '%', background: it.reached ? 'var(--good)' : 'var(--accent)', borderRadius: '999px', transition: 'width .3s ease' } }),
       ]),
-      el('div', { class: 'dim', style: { fontSize: '.72rem', marginTop: '2px' }, text: t('dashboardGoals.currentToGoal', { current: `${fmt(it.current, m.digits)}${it.current == null ? '' : unit}`, target: `${fmt(it.target, m.digits)}${unit}` }) }),
+      el('div', { class: 'dim', style: { fontSize: '.72rem', marginTop: '2px' }, text: t('dashboardGoals.currentToGoal', { current: `${fmt(show(it.current), m.digits)}${it.current == null ? '' : unit}`, target: `${fmt(show(it.target), m.digits)}${unit}` }) }),
     ]);
   });
   return el('div', { class: 'card mt-3' }, [

@@ -11,7 +11,7 @@
      a fixed 0.2 s – after a pause the work intervals ran too long.
    ========================================================================= */
 
-import { fmtDec } from './ui.js';
+import { fmtDec, localizeUnits } from './ui.js';
 
 import { t } from './i18n.js';
 
@@ -24,7 +24,8 @@ function paceMid(unit) {
   if (!unit || !unit.targetPaceSecPerKm) return null;
   return (unit.targetPaceSecPerKm + (unit.targetPaceMaxSecPerKm || unit.targetPaceSecPerKm)) / 2;
 }
-function kmLabel(km) { return `${fmtDec(km)} km`; }
+/** "2 km", or in miles for a person on miles ("1,24 mi") – like the generated plan texts. */
+function kmLabel(km) { return localizeUnits(`${fmtDec(km)} km`); }
 
 /** Target for a work phase (pace range, HR zone). */
 export function unitTarget(unit) {
@@ -87,8 +88,9 @@ export function buildPhases(unit) {
   if (segs) {
     work = segs.map((s, i) => ({
       sec: workSecOf(s), restSec: s.restSec || 0,
-      label: s.phaseLabel || t('workoutEngine.work', { label: s.label || `${i + 1}/${segs.length}` }),
-      restLabel: s.restLabel || (s.floatRest ? t('workoutEngine.floatRest') : t('workoutEngine.jogRest', { n: i + 1 })),
+      // Segment labels are stored with the plan ("1 km · 2/6") – shown in the person's units.
+      label: localizeUnits(s.phaseLabel) || t('workoutEngine.work', { label: localizeUnits(s.label) || `${i + 1}/${segs.length}` }),
+      restLabel: localizeUnits(s.restLabel) || (s.floatRest ? t('workoutEngine.floatRest') : t('workoutEngine.jogRest', { n: i + 1 })),
       restHint: s.walk || s.restLabel === 'Gehen' ? t('workoutEngine.hintWalk') : s.floatRest ? t('workoutEngine.hintKeepEasy') : t('workoutEngine.hintEasyJog'),
       distanceM: s.workM || null,
     }));
