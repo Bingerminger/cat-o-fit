@@ -14,6 +14,7 @@ deinem eigenen Server.
 [![Docker](https://img.shields.io/badge/Docker-amd64%20%7C%20arm64-2496ed.svg)](docs/de/operations/installation.md)
 [![PWA](https://img.shields.io/badge/PWA-installierbar-3d8bff.svg)](manifest.webmanifest)
 [![Sprachen: 7](https://img.shields.io/badge/Sprachen-7-blue.svg)](#sprachen)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-ffdd00.svg)](https://buymeacoffee.com/bingerminger)
 
 [English](README.md) · **Deutsch**
 
@@ -262,6 +263,13 @@ Test-Runner, ohne Abhängigkeiten (`npm test`), dazu PHP-Tests für Speicherung,
 Health-Import und Kalender. Die Sprachkataloge prüft die Testsuite mit: jeder Schlüssel, jeder
 Platzhalter und jede Pluralform in allen sieben Sprachen, dazu Trainingspläne und Rezepte je Sprache. Die CI führt alles bei jedem Push aus; ein Lasttest der PHP-Persistenz ist
 in der [Entwicklungsdoku](docs/DEVELOPMENT.md#load-test--performance) beschrieben.
+
+## Unterstützen
+
+Cat-O-Fit ist unabhängig: keine Firma dahinter, keine Werbung, kein Abo, kein Cloud-Konto, keine
+Datensammlung. Wenn es dir und deiner Familie beim Training hilft und du etwas zurückgeben möchtest,
+kannst du mir [einen Kaffee spendieren](https://buymeacoffee.com/bingerminger) – ganz freiwillig.
+Sterne, Fehlermeldungen und Weitersagen helfen genauso.
 
 ## Open Source – und das ernst gemeint
 

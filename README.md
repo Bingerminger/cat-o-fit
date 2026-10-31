@@ -13,6 +13,7 @@ AGPL licensed, on your own hardware.
 [![dependencies: 0](https://img.shields.io/badge/dependencies-0-success.svg)](package.json)
 [![Docker](https://img.shields.io/badge/Docker-amd64%20%7C%20arm64-2496ed.svg)](docs/operations/installation.md)
 [![Languages: 7](https://img.shields.io/badge/languages-7-blue.svg)](#languages)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-ffdd00.svg)](https://buymeacoffee.com/bingerminger)
 
 **English** · [Deutsch](README.de.md)
 
@@ -242,6 +243,13 @@ ingredient name or a barcode; data under the ODbL). Details: [privacy in operati
 Cat-O-Fit is for **documentation and general information for healthy adults**. It is **not a medical
 device** and does not diagnose; hints on lab values, energy availability or supplements do not replace
 a medical assessment.
+
+## Support
+
+Cat-O-Fit is independent: no company behind it, no ads, no subscription, no cloud account, no data
+collection. If it helps you and your family train and you want to give something back, you can
+[buy me a coffee](https://buymeacoffee.com/bingerminger) – entirely voluntary. Stars, bug reports
+and telling others about it help just as much.
 
 ## License and community
 
