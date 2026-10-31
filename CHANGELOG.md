@@ -7,6 +7,14 @@ Cat-O-Fit was developed privately, in German, up to v3.23.x. This repository and
 with v4.0.0, the first public release. Copies of v3.23.x or earlier that were handed out stay under the
 MIT licence they came with.
 
+## [4.1.1] – 2026-10-31
+
+### Added
+
+- A voluntary support link (Buy Me a Coffee) under Settings → About & legal, in all seven languages;
+  it opens in a new tab without a referrer, nothing in the app depends on it, and a minor's profile
+  does not show it. The README and GitHub's Sponsor button point to it as well.
+
 ## [4.1.0] – 2026-10-06
 
 Your units: miles, pounds, °F, the first day of the week and conventional lab units – chosen per

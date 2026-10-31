@@ -3,7 +3,7 @@
 Planned development of Cat-O-Fit, in rough order of priority. What is already done is in the
 [CHANGELOG](../CHANGELOG.md). Suggestions and help are welcome – see [CONTRIBUTING](../CONTRIBUTING.md).
 
-**As of:** 6 October 2026, v4.1.0.
+**As of:** 31 October 2026, v4.1.1.
 
 ## Done: v4.1.0 – Your units
 
