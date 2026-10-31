@@ -103,8 +103,10 @@ die HF-Reserve mit Ruhepuls oder aus deiner **Schwellen-HF** aus Leistungsdiagno
 **Standort & Wetter**, **Ernährung** und **Daten & Sicherung**. Die Leiste ganz oben springt direkt
 zu Konto, Profil, Zielen, Training, Darstellung, Modulen und Daten & Backup. Admins sehen außerdem
 den Abschnitt **Verwaltung (Admin)** mit der Team-Verwaltung und der **Standardsprache** der Instanz
-(für die Anmeldeseite und neue Personen). Ganz unten steht – nur für Admins – **„App
-zurücksetzen“**.
+(für die Anmeldeseite und neue Personen). **Über & Rechtliches** verlinkt Lizenz, Danksagungen,
+Markenhinweise und Quellcode, dazu einen freiwilligen Weg, das Projekt über Buy Me a Coffee zu
+unterstützen (nicht im Profil Minderjähriger); nichts in der App hängt davon ab. Ganz unten steht –
+nur für Admins – **„App zurücksetzen“**.
 
 <br clear="all" />
 

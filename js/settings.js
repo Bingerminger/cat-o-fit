@@ -43,6 +43,9 @@ const BODY_FAT_FLOOR = { w: 12, m: 5 };
 /** Redraw the settings without reloading the page. */
 function rerender(view) { rerenderView(render, view); }
 
+/** Buy Me a Coffee – the voluntary way to support the project (also in .github/FUNDING.yml). */
+const SUPPORT_URL = 'https://buymeacoffee.com/bingerminger';
+
 const ACCENTS = ['#18b48a', '#2bb673', '#19b9c9', '#3d8bff', '#7c5cff', '#ff5d8f', '#ff8a3d', '#f5b300'];
 
 export function render(view) {
@@ -468,6 +471,15 @@ export function render(view) {
     ].map(([label, href]) => el('a', { class: 'btn btn--ghost', style: { fontSize: '.78rem', padding: '.4rem .7rem' }, href, target: '_blank', rel: 'noopener', text: label }))),
   ]);
   view.appendChild(legal);
+  // Support: voluntary, nothing in return, nothing in the app depends on it. The link opens a new
+  // tab and passes on no referrer. Not shown on a minor's profile.
+  if (!elig.minor) {
+    view.appendChild(el('div', { class: 'card', id: 'support-card', style: { fontSize: '.8rem', lineHeight: '1.5' } }, [
+      el('div', { class: 'card__title' }, [el('span', { 'aria-hidden': 'true', text: '☕ ' }), t('settings.support.title')]),
+      el('p', { class: 'dim mt-1', text: t('settings.support.text') }),
+      el('a', { class: 'btn btn--ghost mt-2', style: { fontSize: '.78rem', padding: '.4rem .7rem' }, href: SUPPORT_URL, target: '_blank', rel: 'noopener noreferrer', 'data-support-link': true, text: t('settings.support.link') }),
+    ]));
+  }
 
   // App reset deliberately as the VERY LAST action (destructive) – danger zone at the very bottom.
   if (store.isAdmin()) {

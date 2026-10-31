@@ -406,6 +406,11 @@
       "trademarks": "Markenhinweise",
       "source": "Quellcode"
     },
+    "support": {
+      "title": "Cat-O-Fit unterstützen",
+      "text": "Cat-O-Fit ist unabhängig und quelloffen – ohne Werbung, ohne Abo, ohne Cloud-Konto. Wenn es dir und deiner Familie beim Training hilft, kannst du die Weiterentwicklung unterstützen – ganz freiwillig, die App bleibt dieselbe.",
+      "link": "Über Buy Me a Coffee unterstützen"
+    },
     "save": "Speichern",
     "backup": {
       "notSaved": "Backup nicht gesichert",

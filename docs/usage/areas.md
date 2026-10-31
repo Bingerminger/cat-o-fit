@@ -102,7 +102,9 @@ reserve with your resting heart rate, or from your **threshold HR** from perform
 weather**, **Nutrition** and **Data & backup**. The bar at the very top jumps straight to Account,
 Profile, Goals, Training, Appearance, Modules and Data & backup. Admins also see the section
 **Administration (admin)** with the team management and the instance's **Default language** (for the
-sign-in screen and new people). At the very bottom – for admins only – is **“Reset app”**.
+sign-in screen and new people). **About & legal** links the licence, credits, trademarks and source
+code, plus a voluntary way to support the project through Buy Me a Coffee (not shown on a minor's
+profile); nothing in the app depends on it. At the very bottom – for admins only – is **“Reset app”**.
 
 <br clear="all" />
 

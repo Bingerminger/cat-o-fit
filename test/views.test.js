@@ -167,6 +167,39 @@ for (const [name, run] of SMOKE) {
   });
 }
 
+test('settings.render: support link under "About & legal" – Buy Me a Coffee in a new tab, no referrer, not on a minor\'s profile', async () => {
+  const { setLocale } = await import('../js/i18n.js');
+  const supportCard = () => {
+    const view = setupShell();
+    settings.render(view);
+    return { view, card: view.querySelector('#support-card'), link: view.querySelector('[data-support-link]') };
+  };
+  const { view, card, link } = supportCard();
+  assert.ok(card && link, 'support card with link');
+  assert.equal(link.getAttribute('href'), 'https://buymeacoffee.com/bingerminger');
+  assert.equal(link.getAttribute('target'), '_blank');
+  assert.equal(link.getAttribute('rel'), 'noopener noreferrer');
+  assert.match(card.textContent, /Cat-O-Fit unterstützen/);
+  assert.match(card.textContent, /ganz freiwillig/);
+  assert.equal(link.textContent, 'Über Buy Me a Coffee unterstützen');
+  const about = view.querySelectorAll('.section-head').find((h) => h.textContent.includes('Über & Rechtliches'));
+  assert.ok(about && view.childNodes.indexOf(card) > view.childNodes.indexOf(about), 'card sits in "About & legal"');
+
+  await setLocale('en');
+  try {
+    const en = supportCard();
+    assert.match(en.card.textContent, /Support Cat-O-Fit/);
+    assert.equal(en.link.textContent, 'Support via Buy Me a Coffee');
+  } finally {
+    await setLocale('de');
+  }
+
+  store.setProfile({ name: 'Kind', birthYear: Number(todayStr().slice(0, 4)) - 12, sex: 'm' });
+  const minor = supportCard();
+  assert.ok(!minor.card && !minor.link, 'no support link on a minor\'s profile');
+  assert.ok(minor.view.querySelectorAll('.section-head').some((h) => h.textContent.includes('Über & Rechtliches')), 'About & legal stays');
+});
+
 test('dashboard.render: with data shows content without a crash', () => {
   const today = todayStr();
   store.replaceArea('sessions', [{ id: 's1', date: today, type: 'easy', distanceKm: 8, durationSec: 2880, status: 'erledigt' }]);

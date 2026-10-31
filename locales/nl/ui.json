@@ -406,6 +406,11 @@
       "trademarks": "Handelsmerken",
       "source": "Broncode"
     },
+    "support": {
+      "title": "Cat-O-Fit steunen",
+      "text": "Cat-O-Fit is onafhankelijk en open source – zonder reclame, zonder abonnement, zonder cloudaccount. Helpt het jou en je gezin bij het trainen, dan kun je de verdere ontwikkeling steunen – helemaal vrijwillig, de app blijft hetzelfde.",
+      "link": "Steunen via Buy Me a Coffee"
+    },
     "save": "Opslaan",
     "backup": {
       "notSaved": "Back-up niet opgeslagen",

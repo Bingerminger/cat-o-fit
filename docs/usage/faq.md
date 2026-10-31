@@ -62,4 +62,5 @@ too.
 **Does Cat-O-Fit cost anything?** No – the app is open source (AGPL licence) and runs on your own
 hardware. Only an optional extra service can cost money, such as the premium tier of “Health Auto
 Export” for the automatic Apple Health import; there are also free ways (see
-[Apple Health](apple-health.md)).
+[Apple Health](apple-health.md)). If you want to give something back, Settings → About & legal has a
+voluntary [Buy Me a Coffee](https://buymeacoffee.com/bingerminger) link.

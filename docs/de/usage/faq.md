@@ -63,4 +63,5 @@ der CSV-Export folgen deinen Einheiten.
 **Kostet Cat-O-Fit etwas?** Nein – die App ist quelloffen (AGPL-Lizenz) und läuft auf eurer eigenen
 Hardware. Kosten kann nur ein optionaler Zusatzdienst verursachen, etwa die Premium-Stufe von
 „Health Auto Export“ für den automatischen Apple-Health-Import; es gibt aber auch kostenlose Wege
-(siehe [Apple Health](apple-health.md)).
+(siehe [Apple Health](apple-health.md)). Wer etwas zurückgeben möchte, findet unter Einstellungen →
+Über & Rechtliches einen freiwilligen Link zu [Buy Me a Coffee](https://buymeacoffee.com/bingerminger).

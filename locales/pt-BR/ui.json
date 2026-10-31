@@ -406,6 +406,11 @@
       "trademarks": "Marcas registradas",
       "source": "Código-fonte"
     },
+    "support": {
+      "title": "Apoie o Cat-O-Fit",
+      "text": "O Cat-O-Fit é independente e de código aberto – sem anúncios, sem assinatura, sem conta na nuvem. Se ele ajuda você e sua família a treinar, você pode apoiar o desenvolvimento – de forma totalmente voluntária, o app continua o mesmo.",
+      "link": "Apoiar pelo Buy Me a Coffee"
+    },
     "save": "Salvar",
     "backup": {
       "notSaved": "Backup não salvo",

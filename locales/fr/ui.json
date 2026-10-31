@@ -406,6 +406,11 @@
       "trademarks": "Marques",
       "source": "Code source"
     },
+    "support": {
+      "title": "Soutenir Cat-O-Fit",
+      "text": "Cat-O-Fit est indépendant et open source – sans publicité, sans abonnement, sans compte cloud. S’il t’aide à t’entraîner avec ta famille, tu peux soutenir son développement – de façon entièrement volontaire, l’appli reste la même.",
+      "link": "Soutenir via Buy Me a Coffee"
+    },
     "save": "Enregistrer",
     "backup": {
       "notSaved": "Sauvegarde non enregistrée",
