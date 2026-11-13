@@ -124,7 +124,14 @@ function liftSide(S, m) {
     const hip = V.add(pelvis, V.mul(lat, s * BODY.hipW));
     const ankle = p3(g.end, s * STANCE);
     // The knee stays in the plane of its leg and goes out only as far as it goes forward: over the toes.
-    const knee0 = p3(g.joint, s * ((BODY.hipW + STANCE) / 2 + TRACK.knee * offLine(S.hip, g.end, g.joint)));
+    let knee0 = p3(g.joint, s * ((BODY.hipW + STANCE) / 2 + TRACK.knee * offLine(S.hip, g.end, g.joint)));
+    // A leg that is all but straight bends its knee to the front of the body, whatever side the flat picture drew the
+    // slight bend on (a leg in a plank was drawn bent "upwards" – for a body that faces the floor that is backwards).
+    // A leg that is clearly bent is drawn the way it bends.
+    const axis = V.norm(V.sub(ankle, hip));
+    const off = V.sub(V.sub(knee0, hip), V.mul(axis, V.dot(V.sub(knee0, hip), axis)));
+    const inPlane = [off[0], off[1], 0];
+    if (V.len(inPlane) < 9 && V.dot(inPlane, fwd) < 0) knee0 = V.sub(knee0, V.mul(inPlane, 2));
     const knee = solveLimb3(hip, ankle, BODY.thigh, BODY.shin, knee0).joint;
     const foot = S.legs[side].foot;
     const dx = foot[1][0] - foot[0][0]; const dy = foot[1][1] - foot[0][1];
