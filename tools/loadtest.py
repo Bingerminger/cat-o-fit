@@ -10,12 +10,16 @@ DATA_DIR    = sys.argv[2] if len(sys.argv) > 2 else "scratch/lt-app/data"
 NUSERS      = int(sys.argv[3]) if len(sys.argv) > 3 else 10
 WRITES      = int(sys.argv[4]) if len(sys.argv) > 4 else 60    # single upserts/user (sessions)
 READS       = int(sys.argv[5]) if len(sys.argv) > 5 else 25    # changes reads/user
-BACKUPS     = int(sys.argv[6]) if len(sys.argv) > 6 else 3     # full backups/user (all areas)
+BACKUPS     = int(sys.argv[6]) if len(sys.argv) > 6 else 3     # full backups/user (all areas but the private ones)
 IMPORTS     = int(sys.argv[7]) if len(sys.argv) > 7 else 2     # imports/user (health replace)
 IMPORT_RECS = int(sys.argv[8]) if len(sys.argv) > 8 else 50    # records per import
 CONCURRENCY = int(sys.argv[9]) if len(sys.argv) > 9 else 40    # parallel requests
 
 USER_AREAS = ['profile','events','plans','sessions','health','nutrition','diary','shopping','checklist','cycle','reports','labs','supplements']
+# The private areas (cycle, labs, supplements) go only to the person themself with a server session
+# (since 3.20); the admin's full backup leaves them out – so does the backup here.
+PRIVATE_AREAS = ['cycle','labs','supplements']
+BACKUP_AREAS = [a for a in USER_AREAS if a not in PRIVATE_AREAS]
 
 def req(method, url, body=None):
     data = json.dumps(body).encode() if body is not None else None
@@ -58,7 +62,7 @@ def do_read(u):
     record("read", ok and isinstance(pl,dict) and pl.get("ok"), ms)
 def do_backup(u):
     t0 = time.perf_counter(); allok = True
-    for a in USER_AREAS:
+    for a in BACKUP_AREAS:
         ok, ms, pl = req("GET", f"{BASE}?area={a}&user={u}")
         allok = allok and ok and isinstance(pl,dict) and pl.get("ok")
     record("backup", allok, (time.perf_counter()-t0)*1000)
@@ -125,7 +129,7 @@ total = sum(len(v) for v in metrics.values()); total_err = sum(1 for v in metric
 def line(): print("+"+"-"*22+"+"+"-"*8+"+"+"-"*8+"+"+"-"*7+"+"+"-"*9+"+"+"-"*9+"+"+"-"*9+"+")
 print("\n=== PERFORMANCE (latency in ms) ===")
 line(); print(f"| {'Operation':20} | {'Reqs':>6} | {'OK':>6} | {'Err':>5} | {'avg ms':>7} | {'p50':>7} | {'p95':>7} |"); line()
-for typ,label in [("write","Write (upsert)"),("read","Read (changes)"),("backup","Backup (11 Areas)"),("import",f"Import (replace {IMPORT_RECS})")]:
+for typ,label in [("write","Write (upsert)"),("read","Read (changes)"),("backup",f"Backup ({len(BACKUP_AREAS)} areas)"),("import",f"Import (replace {IMPORT_RECS})")]:
     n,okc,err,avg,p50,p95,mx = st(typ)
     print(f"| {label:20} | {n:>6} | {okc:>6} | {err:>5} | {avg:>7.1f} | {p50:>7.1f} | {p95:>7.1f} |")
 line()

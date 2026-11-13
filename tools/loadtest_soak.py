@@ -16,6 +16,10 @@ IMPORT_RECS = int(sys.argv[7]) if len(sys.argv)>7 else 100
 BUCKET      = 10.0
 
 USER_AREAS = ['profile','events','plans','sessions','health','nutrition','diary','shopping','checklist','cycle','reports','labs','supplements']
+# The private areas (cycle, labs, supplements) go only to the person themself with a server session
+# (since 3.20); the admin's full backup leaves them out – so does the backup here.
+PRIVATE_AREAS = ['cycle','labs','supplements']
+BACKUP_AREAS = [a for a in USER_AREAS if a not in PRIVATE_AREAS]
 def req(method, url, body=None):
     data = json.dumps(body).encode() if body is not None else None
     r = urllib.request.Request(url, data=data, method=method, headers={'Content-Type':'application/json','Accept':'application/json'})
@@ -62,7 +66,7 @@ def op_read(u):
     ok,ms,pl=req("GET", f"{BASE}?area=sessions&user={u}&action=changes&since=0"); rec("read",ok and isinstance(pl,dict) and pl.get("ok"),ms,bk())
 def op_backup(u):
     t0=time.perf_counter(); a_ok=True
-    for a in USER_AREAS:
+    for a in BACKUP_AREAS:
         ok,ms,pl=req("GET", f"{BASE}?area={a}&user={u}"); a_ok=a_ok and ok and isinstance(pl,dict) and pl.get("ok")
     rec("backup",a_ok,(time.perf_counter()-t0)*1000,bk())
 def op_import(u):
@@ -121,7 +125,7 @@ totw=sum(succ.values())
 print("\n=== PERFORMANCE (latency ms) ===")
 L=lambda: print("+"+"-"*22+"+"+"-"*8+"+"+"-"*8+"+"+"-"*7+"+"+"-"*9+"+"+"-"*9+"+")
 L(); print(f"| {'Operation':20} | {'Reqs':>6} | {'OK':>6} | {'Err':>5} | {'avg ms':>7} | {'p95':>7} |"); L()
-for t,lab in [("write","Write (upsert)"),("read","Read (changes)"),("backup","Backup (11 Areas)"),("import",f"Import ({IMPORT_RECS})")]:
+for t,lab in [("write","Write (upsert)"),("read","Read (changes)"),("backup",f"Backup ({len(BACKUP_AREAS)} areas)"),("import",f"Import ({IMPORT_RECS})")]:
     n,okc,err,avg,p50,p95=stx(t); print(f"| {lab:20} | {n:>6} | {okc:>6} | {err:>5} | {avg:>7.1f} | {p95:>7.1f} |")
 L()
 print(f"\nTotal: {tot} requests · {totw} writes in {wall:.1f}s · {tot/wall:.0f} req/s · {terr} errors")
