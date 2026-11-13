@@ -1571,7 +1571,8 @@
       },
       "long": "{prio} · {name} · {date}: longer than {km} – not built in, it deserves a plan of its own",
       "taper": "{prio} · {name} · {date}: falls in the taper – not built in",
-      "changed": "Season races have changed since the plan was last calculated. They go into the plan once you recalculate it from today."
+      "changed": "Season races have changed since the plan was last calculated. They go into the plan once you recalculate it from today.",
+      "clash": "{prio} · {name} · {date}: too close to “{other}” – not built in"
     }
   },
   "commitments": {

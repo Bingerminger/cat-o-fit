@@ -1571,7 +1571,8 @@
       },
       "long": "{prio} · {name} · {date}: mais de {km} – não entra no plano, merece um plano próprio",
       "taper": "{prio} · {name} · {date}: cai no polimento – não entra no plano",
-      "changed": "Provas da temporada mudaram desde o último cálculo. Elas entram no plano quando você o recalcular a partir de hoje."
+      "changed": "Provas da temporada mudaram desde o último cálculo. Elas entram no plano quando você o recalcular a partir de hoje.",
+      "clash": "{prio} · {name} · {date}: perto demais de “{other}” – não entra no plano"
     }
   },
   "commitments": {

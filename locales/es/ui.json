@@ -1571,7 +1571,8 @@
       },
       "long": "{prio} · {name} · {date}: más de {km}; no se integra, merece un plan propio",
       "taper": "{prio} · {name} · {date}: cae en la puesta a punto; no se integra",
-      "changed": "Algunas carreras de la temporada han cambiado desde el último cálculo. Entran en el plan cuando lo vuelvas a calcular desde hoy."
+      "changed": "Algunas carreras de la temporada han cambiado desde el último cálculo. Entran en el plan cuando lo vuelvas a calcular desde hoy.",
+      "clash": "{prio} · {name} · {date}: demasiado cerca de «{other}»; no se integra"
     }
   },
   "commitments": {

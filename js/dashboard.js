@@ -126,10 +126,15 @@ export function render(view) {
   }
 
   // Overdue sessions to catch up on
+  // The link goes to the plan's goal: a side race session (since 4.2) carries its own race's id, and
+  // programme sessions carry none.
   const overdue = [];
-  store.get('plans').forEach((p) => (p.units || []).forEach((u) => { if (isOverdue(u, today) && !isProtectedDay(u.date)) overdue.push(u); }));
+  let overdueGoal = null;
+  store.get('plans').forEach((p) => (p.units || []).forEach((u) => {
+    if (isOverdue(u, today) && !isProtectedDay(u.date)) { overdue.push(u); if (!overdueGoal) overdueGoal = p.eventId; }
+  }));
   if (overdue.length) {
-    view.appendChild(el('a', { class: 'card card--link mt-4', href: `#/plan/${overdue[0].eventId}`, style: { borderLeft: '4px solid #f5a623' } }, [
+    view.appendChild(el('a', { class: 'card card--link mt-4', href: `#/plan/${overdueGoal}`, style: { borderLeft: '4px solid #f5a623' } }, [
       el('div', { class: 'row gap-3' }, [
         el('span', { class: 'type-icon', style: { background: 'color-mix(in srgb, #f5a623 18%, transparent)', color: '#f5a623' }, html: iconSvg('bell') }),
         el('div', { class: 'grow' }, [

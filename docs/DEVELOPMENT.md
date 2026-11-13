@@ -453,9 +453,11 @@ Do **not** break these rules in the store (`storage.js`) and backend (`storage.p
   `sessionLoad`, and `rolling.footballFollowupEase` suggests the easy following day.
   (4) **Volume (since 4.2)** – `autovolume.js autoVolumeDecision` shortens the remaining easy runs
   (`easy`/`long`/`recovery`/`run`) of the current plan week by 10–15 % when the load ratio is above
-  1.3 or the form is `ermuedet` – both only over the plan (acute load > 115 % of `plannedAcuteLoad`,
-  runs at `ownMinPerKm`; `test/autovolume-sim.test.js` walks whole plans followed as planned and
-  expects no cut) –, the RPE trend is `ease`, or more than 30 % of last plan week's running
+  1.3 or the form is `ermuedet` – both only over the plan: the person's ACWR > 115 % of the plan's own
+  (`plannedRatio` over the same windows, runs at `ownMinPerKm`, from plan day 27 on), so steady extras
+  cancel out; `test/autovolume-sim.test.js` walks whole plans followed as planned – also with every
+  session rated a notch harder, a daily walk and unplanned football – and expects no cut, and a sudden
+  +40 % week to be noticed –, the RPE trend is `ease`, or more than 30 % of last plan week's running
   km were missed (`lastWeekShare`, only once every run of that week is settled – an import that
   arrives on Monday must not look like a miss); never in week 1, deload/taper/race weeks, never fixed, race or own sessions, once
   per plan week (`plan.autoVolume.week`, kept after an undo). Only downwards – increases stay the

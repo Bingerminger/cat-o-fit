@@ -6,8 +6,8 @@
    it was. Since 4.2 a small reduction happens by itself – once per plan week and
    only downwards:
 
-     · load ratio (acute:chronic) above 1.3 → −10 %, above 1.5 → −15 %   ┐ only when the last 7 days
-     · form "tired" (fatigue clearly above fitness) → −10 %                ┘ were > 115 % of the plan
+     · load ratio (acute:chronic) above 1.3 → −10 %, above 1.5 → −15 %   ┐ only when the ratio is > 115 %
+     · form "tired" (fatigue clearly above fitness) → −10 %                ┘ of the plan's own (week 5 on)
      · effort of the last three weeks consistently very high (RPE trend 'ease') → −10 %
      · last plan week: more than 30 % of the planned running km missed → −10 %, more than half → −15 %
        (counted once every run of that week is settled – done or missed)
@@ -57,32 +57,44 @@ export function ownMinPerKm(sessions = [], today) {
   return Math.min(12, Math.max(3, v));
 }
 
-/** Load the plan intended for the last 7 days (today included), in the same points as the actual
-    load: duration × the type's effort; runs given as a distance at the person's own pace. */
-export function plannedAcuteLoad(units = [], today, minPerKm = 6) {
-  return (units || []).reduce((sum, u) => {
-    if (!u || u.type === 'rest' || u.date > today || diffDays(u.date, today) >= 7) return sum;
-    const km = Number(u.targetDistanceKm) || 0;
-    const min = Number(u.targetDurationMin)
-      || (km ? (typeMeta(u.type).cat === 'run' ? km * minPerKm : loadMinutes({ type: u.type, distanceKm: km }).min) : 40);
-    return sum + min * sessionRpe({ type: u.type, intensity: u.intensity }, null);
-  }, 0);
+/** Load points of a planned session, as the actual load counts them: duration × the type's effort;
+    runs given as a distance at the person's own pace. */
+function plannedLoad(u, minPerKm) {
+  const km = Number(u.targetDistanceKm) || 0;
+  const min = Number(u.targetDurationMin)
+    || (km ? (typeMeta(u.type).cat === 'run' ? km * minPerKm : loadMinutes({ type: u.type, distanceKm: km }).min) : 40);
+  return min * sessionRpe({ type: u.type, intensity: u.intensity }, null);
+}
+
+/** The plan's OWN load ratio on `today`: what it intended for the last 7 days against what it intended
+    for the 21 days before (the windows of load.js acwr). null without planned load in the earlier days. */
+export function plannedRatio(units = [], today, minPerKm = 6) {
+  let acute = 0, chronic = 0;
+  for (const u of units || []) {
+    if (!u || u.type === 'rest' || u.date > today) continue;
+    const d = diffDays(u.date, today);
+    if (d < 7) acute += plannedLoad(u, minPerKm);
+    else if (d < 28) chronic += plannedLoad(u, minPerKm);
+  }
+  return chronic > 0 ? (acute / 7) / (chronic / 21) : null;
 }
 
 /**
- * The signals that speak for less volume this week, each with its factor. Load ratio and form
- * count only when the last 7 days were clearly MORE than planned (as for the coach's recovery
- * day): following a plan that builds up is not a warning sign, even though the ratio rises
- * and the form turns "tired" by the plan's own design.
+ * The signals that speak for less volume this week, each with its factor. Load ratio and form count
+ * only when the person's ratio is clearly above the plan's own (> 115 %): a plan that builds up raises
+ * the ratio and tires by design – following it is no warning sign. Comparing ratios cancels what the
+ * person does steadily besides the plan or rates a notch higher (a daily walk, football without a
+ * commitment); a sudden week far above the plan stands out. The plan must have run four weeks.
  * `allUnits` = the sessions of all plans (two goals) for the planned load; default: this plan's.
  * @returns {Array<{key:'load'|'effort'|'fatigue'|'completion', factor:number, value?:number}>}
  */
 export function autoVolumeSignals({ plan, sessions = [], today, weekStart, allUnits = null }) {
   const out = [];
   const ac = acwr(sessions, today);
-  const planned = plannedAcuteLoad(allUnits || (plan && plan.units) || [], today, ownMinPerKm(sessions, today));
-  const overPlan = planned <= 0 || ac.acuteWeek > planned * 1.15;
-  if (overPlan && ac.ratio != null && !ac.sparse && ac.ratio > 1.3) {
+  const running = plan && plan.startDate && diffDays(plan.startDate, today) >= 27;
+  const pr = running ? plannedRatio(allUnits || plan.units || [], today, ownMinPerKm(sessions, today)) : null;
+  const overPlan = pr != null && ac.ratio != null && !ac.sparse && ac.ratio > pr * 1.15;
+  if (overPlan && ac.ratio > 1.3) {
     out.push({ key: 'load', factor: ac.ratio > 1.5 ? 0.85 : 0.9, value: Math.round(ac.ratio * 100) / 100 });
   }
   const prog = rpeProgression(sessions, today);

@@ -63,14 +63,21 @@ export function sideRaceCandidates(plan, mainEvent, events = store.get('events')
 }
 
 /** Each side race of a plan with what happens to it: 'built' (with its recovery days), 'long'
-    (above SIDE_RACE_MAX_KM) or 'taper' (in the plan's taper) – the latter two are not built in. */
+    (above SIDE_RACE_MAX_KM), 'taper' (in the plan's taper) or 'clash' (within three days of another side
+    race that is built in, `other` = its name) – the last three are not built in. */
 export function sideRaceView(plan, mainEvent, list = plan.sideRaces || []) {
   if (!list.length) return [];
   const p = { ...plan, sideRaces: list };
-  const built = sideRacesOf(p, weekVolumes(p, volumeConfig(p, mainEvent, p.paces || {})));
+  const targets = weekVolumes(p, volumeConfig(p, mainEvent, p.paces || {}));
+  const built = sideRacesOf(p, targets);
+  const alone = (r) => sideRacesOf({ ...p, sideRaces: [r] }, targets).length > 0;
   return list.map((r) => {
     const b = built.find((x) => x.eventId === r.eventId);
-    return { ...r, state: b ? 'built' : Number(r.distanceKm) > SIDE_RACE_MAX_KM ? 'long' : 'taper', recovery: b ? b.recovery : 0 };
+    if (b) return { ...r, state: 'built', recovery: b.recovery };
+    if (Number(r.distanceKm) > SIDE_RACE_MAX_KM) return { ...r, state: 'long', recovery: 0 };
+    if (!alone(r)) return { ...r, state: 'taper', recovery: 0 };
+    const near = built.find((x) => Math.abs(diffDays(x.date, r.date)) <= 3);
+    return { ...r, state: 'clash', recovery: 0, other: near ? near.name : '' };
   });
 }
 
@@ -79,6 +86,7 @@ export function sideRaceLine(r) {
   const base = { prio: r.priority, name: r.name, date: fmtDate(r.date) };
   if (r.state === 'long') return t('plans.sideRaces.long', { ...base, km: fmtKm(SIDE_RACE_MAX_KM, 0) });
   if (r.state === 'taper') return t('plans.sideRaces.taper', base);
+  if (r.state === 'clash') return t('plans.sideRaces.clash', { ...base, other: r.other });
   return r.priority === 'B' ? tp('plans.sideRaces.lineB', r.recovery, base) : tp('plans.sideRaces.lineC', r.recovery, base);
 }
 
@@ -96,8 +104,9 @@ export function sideRacesChanged(plan, mainEvent, today = todayStr()) {
 export function sideRaceStatus(event) {
   const host = hostPlanFor(event);
   if (!host) return null;
-  const cand = sideRaceCandidates(host.plan, host.event).find((r) => r.eventId === event.id);
-  const [view] = sideRaceView(host.plan, host.event, [cand]);
+  const all = sideRaceCandidates(host.plan, host.event);
+  const cand = all.find((r) => r.eventId === event.id);
+  const view = sideRaceView(host.plan, host.event, all).find((r) => r.eventId === event.id);
   const snap = (host.plan.sideRaces || []).find((r) => r.eventId === event.id);
   const inPlan = !!snap && sideKey([snap]) === sideKey([cand]) && (host.plan.units || []).some((u) => u.sideRace && u.eventId === event.id);
   return { ...host, view, state: view.state !== 'built' ? view.state : inPlan ? 'built' : 'pending' };

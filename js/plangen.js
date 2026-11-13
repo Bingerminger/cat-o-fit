@@ -1196,12 +1196,13 @@ const weekOfPlan = (plan, date) => Math.floor(diffDays(plan.startDate, date) / 7
  *       also a short day before that) and easy days after it – 1 up to 5 km, 2 up to 10 km, else 3.
  *   C – a race as training: the day before easy, 1 easy day after it (2 above 10 km), and it
  *       replaces the week's quality session.
- * A race about as long as the week's long run (70 % and more) replaces the long run as well.
+ * A race about as long as the week's long run (70 % and more) replaces the long run as well. Of two side
+ * races within three days only one is built in (B before C, else the earlier).
  * @returns {Array<{eventId, date, priority, name, km, targetTime, taper:number, recovery:number}>}
  */
 export function sideRacesOf(plan, targets = []) {
   const list = Array.isArray(plan && plan.sideRaces) ? plan.sideRaces : [];
-  return list
+  const eligible = list
     .filter((r) => r && (r.priority === 'B' || r.priority === 'C') && r.date > plan.startDate && r.date < plan.endDate
       && Number(r.distanceKm) > 0 && Number(r.distanceKm) <= SIDE_RACE_MAX_KM
       && !(targets[weekOfPlan(plan, r.date)] || {}).taper)
@@ -1214,6 +1215,12 @@ export function sideRacesOf(plan, targets = []) {
         recovery: b ? (km <= 5 ? 1 : km <= 10 ? 2 : 3) : (km <= 10 ? 1 : 2),
       };
     });
+  // Two side races within three days of each other: their windows would collide. The B race wins over
+  // the C race, otherwise the earlier one; the other is not built in.
+  const kept = [];
+  const order = [...eligible].sort((a, b) => (a.priority === b.priority ? a.date.localeCompare(b.date) : a.priority === 'B' ? -1 : 1));
+  for (const r of order) if (!kept.some((k) => Math.abs(diffDays(k.date, r.date)) <= 3)) kept.push(r);
+  return kept.sort((a, b) => a.date.localeCompare(b.date));
 }
 
 /** Does a side race's window (its taper or the day before, race day, recovery) reach into plan week `week`?

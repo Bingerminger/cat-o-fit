@@ -26,12 +26,18 @@ export function saveUnitPatch(planId, unitId, patch) {
   store.patch('plans', plan.id, { units });
 }
 
+/** The goal a performed session belongs to: a side race (B/C, since 4.2) to its own race, every other
+    session to the plan's goal. */
+function goalOf(plan, unit) {
+  return (unit && unit.sideRace && unit.eventId) || plan.eventId || null;
+}
+
 /** Creates a performed session from a planned unit. */
 export function completeUnit(plan, unit, data) {
   const session = {
     id: uid('ses'),
     plannedId: unit.id,
-    eventId: plan.eventId,
+    eventId: goalOf(plan, unit),
     date: unit.date,
     type: unit.type,
     title: unit.title,
@@ -70,7 +76,7 @@ export function completeUnit(plan, unit, data) {
     unit done, the session carries the plan reference. No second session. */
 export function linkSession(plan, unit, session) {
   store.patch('sessions', session.id, {
-    plannedId: unit.id, eventId: plan.eventId ?? null, matchDismissed: null,
+    plannedId: unit.id, eventId: goalOf(plan, unit), matchDismissed: null,
     plannedDurationMin: Number(unit.targetDurationMin) > 0 ? Number(unit.targetDurationMin) : (session.plannedDurationMin ?? null),
   });
   saveUnitPatch(plan.id, unit.id, { status: 'erledigt', executedSessionId: session.id });

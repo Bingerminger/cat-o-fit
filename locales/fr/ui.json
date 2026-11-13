@@ -1571,7 +1571,8 @@
       },
       "long": "{prio} · {name} · {date} : plus de {km} – pas intégrée, elle mérite son propre plan",
       "taper": "{prio} · {name} · {date} : tombe pendant l’affûtage – pas intégrée",
-      "changed": "Des courses de la saison ont changé depuis le dernier calcul. Elles n’entrent dans le plan que lorsque tu le recalcules à partir d’aujourd’hui."
+      "changed": "Des courses de la saison ont changé depuis le dernier calcul. Elles n’entrent dans le plan que lorsque tu le recalcules à partir d’aujourd’hui.",
+      "clash": "{prio} · {name} · {date} : trop proche de « {other} » – pas intégrée"
     }
   },
   "commitments": {

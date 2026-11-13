@@ -888,8 +888,8 @@
       "blocks": {
         "0": "Desde a 4.2 seu plano de corrida ajusta o volume sozinho – só para baixo e só um pouco. Uma vez por semana do plano, o app olha quatro sinais:",
         "1": [
-          "Razão de carga acima de 1,3 → −10% (acima de 1,5 → −15%) – só se os seus últimos 7 dias ficaram mais de 15% acima do planejado.",
-          "Forma com cansaço evidente → −10% – também só acima do plano. Um plano que progride sobe a razão e cansa; isso é o esperado, não um sinal de alerta.",
+          "Razão de carga acima de 1,3 → −10% (acima de 1,5 → −15%) – só se a sua razão ficar mais de 15% acima da do plano para os mesmos dias, e a partir da quinta semana do plano.",
+          "Forma com cansaço evidente → −10% – também só acima do plano. Um plano que progride sobe a razão e cansa; o que você faz de forma constante por fora se compensa. Uma semana repentina muito acima do plano se destaca.",
           "Esforço das últimas três semanas sempre muito alto (RPE médio de 7,5 ou mais) → −10%.",
           "Última semana do plano com mais de 30% dos km previstos perdidos → −10% (mais da metade → −15%) – conta só quando cada corrida daquela semana está feita ou marcada como perdida.",
           "Vários sinais se multiplicam, mas um treino nunca perde mais de 15%. Só encurtam os trotes leves, o longão e os trotes regenerativos da semana atual a partir de hoje – treinos de qualidade, provas, compromissos fixos e treinos que você mesmo criou ficam."
@@ -907,7 +907,8 @@
           "B – prova importante: um trote curto na véspera, o dia anterior livre, acima de 10 km mais um dia curto antes; depois dias leves – 1 até 5 km, 2 até 10 km, senão 3.",
           "C – prova como treino: nada exigente na véspera, 1 dia leve depois (2 acima de 10 km), e ela substitui o treino de qualidade da semana.",
           "Se a prova for mais ou menos tão longa quanto o longão da semana, ela o substitui também.",
-          "Não entram no plano: provas acima de 25 km, provas no polimento e provas que já têm um plano próprio. Depois o plano continua progredindo como se a semana tivesse sido normal."
+          "Não entram no plano: provas acima de 25 km, provas no polimento e provas que já têm um plano próprio. Depois o plano continua progredindo como se a semana tivesse sido normal.",
+          "Se duas provas secundárias estiverem a três dias ou menos uma da outra, só uma entra no plano – a B antes da C, senão a primeira."
         ],
         "2": "Um plano nunca muda sozinho: quando uma prova B ou C é adicionada ou muda, o plano avisa – ela entra quando você recalcula a partir de hoje. Compromissos fixos no dia da prova saem, como na prova A.",
         "3": "Ir para suas metas"

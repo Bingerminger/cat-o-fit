@@ -359,6 +359,20 @@ test('PLAN-B: side races are built in with a short taper and recovery, the plan 
   report('side races', bad);
 });
 
+test('PLAN-B: two side races within three days – only one is built in, the B race before the C race', () => {
+  const base = makePlan({ key: 'hm', level: 'fortgeschritten', days: 4, hist: { weekKm: 25, longKm: 12 } });
+  const sat = addDays(base.plan.startDate, 4 * 7 + 5);
+  const plan = { ...base.plan, sideRaces: [
+    { eventId: 'e-c', date: sat, priority: 'C', name: 'C', distanceKm: 5 },
+    { eventId: 'e-b', date: addDays(sat, 1), priority: 'B', name: 'B', distanceKm: 10 },
+  ] };
+  const units = generatePlanUnits(plan, base.event, {});
+  assert.deepEqual(units.filter((u) => u.sideRace).map((u) => u.eventId), ['e-b']);
+  report('side races close together', sideViolations(plan, base.event, units, 'C Sat + B Sun', generatePlanUnits(base.plan, base.event, {})));
+  const two = { ...base.plan, sideRaces: [{ ...plan.sideRaces[0] }, { ...plan.sideRaces[0], eventId: 'e-c2', date: addDays(sat, 3) }] };
+  assert.deepEqual(generatePlanUnits(two, base.event, {}).filter((u) => u.sideRace).map((u) => u.eventId), ['e-c'], 'two C races: the earlier');
+});
+
 test('PLAN-B: longer than 25 km, in the taper, on or after the main race – not built in, the plan stays as it was', () => {
   const base = makePlan({ key: 'hm', level: 'fortgeschritten', days: 4, hist: { weekKm: 25, longKm: 12 } });
   const shape = (list) => list.map((u) => `${u.date}|${u.type}|${u.targetDistanceKm ?? ''}`).join();

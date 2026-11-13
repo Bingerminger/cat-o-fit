@@ -888,8 +888,8 @@
       "blocks": {
         "0": "Dalla 4.2 il tuo piano di corsa adatta da solo il volume – solo verso il basso e solo di poco. Una volta per settimana del piano l’app guarda quattro segnali:",
         "1": [
-          "Rapporto di carico sopra 1,3 → −10% (sopra 1,5 → −15%) – solo se i tuoi ultimi 7 giorni hanno superato di oltre il 15% quanto previsto.",
-          "Forma chiaramente stanca → −10% – anche questo solo sopra il piano. Un piano che cresce alza il rapporto e stanca; è voluto, non un segnale d’allarme.",
+          "Rapporto di carico sopra 1,3 → −10% (sopra 1,5 → −15%) – solo se il tuo rapporto supera di oltre il 15% quello del piano per gli stessi giorni, e dalla quinta settimana del piano.",
+          "Forma chiaramente stanca → −10% – anche questo solo sopra il piano. Un piano che cresce alza il rapporto e stanca; ciò che fai stabilmente a parte si compensa. Una settimana improvvisa ben sopra il piano risalta.",
           "Fatica delle ultime tre settimane sempre molto alta (RPE medio di 7,5 o più) → −10%.",
           "Ultima settimana del piano con più del 30% dei km previsti saltati → −10% (più della metà → −15%) – conta solo quando ogni corsa di quella settimana è fatta o segnata come saltata.",
           "Più segnali si moltiplicano, ma una seduta non perde mai più del 15%. Si accorciano solo le corse lente, il lungo e le corse di recupero della settimana in corso da oggi – sedute di qualità, gare, impegni fissi e sedute aggiunte da te restano."
@@ -907,7 +907,8 @@
           "B – gara importante: una corsetta breve il giorno prima, il giorno precedente libero, oltre 10 km ancora un giorno breve prima; poi giorni leggeri – 1 fino a 5 km, 2 fino a 10 km, altrimenti 3.",
           "C – gara come allenamento: niente di impegnativo il giorno prima, 1 giorno leggero dopo (2 oltre 10 km), e sostituisce la seduta di qualità della settimana.",
           "Se la gara è lunga circa quanto il lungo della settimana, sostituisce anche quello.",
-          "Non vengono inserite: gare oltre 25 km, gare durante lo scarico e gare che hanno già un piano proprio. Dopo il piano continua a crescere come se la settimana fosse stata normale."
+          "Non vengono inserite: gare oltre 25 km, gare durante lo scarico e gare che hanno già un piano proprio. Dopo il piano continua a crescere come se la settimana fosse stata normale.",
+          "Se due gare secondarie distano tre giorni o meno, nel piano ne entra solo una – la B prima della C, altrimenti la prima."
         ],
         "2": "Un piano non cambia mai da solo: se si aggiunge o cambia una gara B o C, il piano lo segnala – viene inserita quando lo ricalcoli da oggi. Gli impegni fissi nel giorno della gara saltano, come per la gara A.",
         "3": "Vai ai tuoi obiettivi"

@@ -212,8 +212,10 @@ Seit 4.2 passt der Plan seinen Umfang selbst an – nur **nach unten** und nur e
 schaut die App auf vier Signale:
 
 - **Belastungsverhältnis** über 1,3 → −10 % (über 1,5 → −15 %) und **Form** deutlich ermüdet → −10 % – beides
-  nur, wenn deine letzten 7 Tage mehr als 15 % über der geplanten Last lagen (geplante Läufe in deinem eigenen
-  Tempo). Ein Plan, der aufbaut, hebt das Verhältnis und macht müde – wer ihm folgt, zeigt kein Warnsignal,
+  nur, wenn dein Belastungsverhältnis mehr als 15 % über dem des Plans für dieselben Tage liegt, und ab der
+  fünften Planwoche. Ein Plan, der aufbaut, hebt das Verhältnis und macht müde – wer ihm folgt, zeigt kein
+  Warnsignal, und was du dauerhaft nebenbei tust (täglich gehen, eine Stufe härter einschätzen), hebt sich
+  heraus; eine plötzliche Woche weit über dem Plan fällt auf,
 - **Anstrengung** der letzten drei Wochen dauerhaft sehr hoch (RPE im Schnitt 7,5 oder mehr) → −10 %,
 - **letzte Planwoche** mehr als 30 % der geplanten Laufkilometer verpasst → −10 % (mehr als die Hälfte
   → −15 %) – gezählt erst, wenn jeder Lauf dieser Woche erledigt oder als verpasst markiert ist; ein Lauf,

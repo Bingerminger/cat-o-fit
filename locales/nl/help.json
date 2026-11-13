@@ -888,8 +888,8 @@
       "blocks": {
         "0": "Sinds 4.2 past je loopschema zelf zijn omvang aan – alleen omlaag en alleen een beetje. Eén keer per planweek kijkt de app naar vier signalen:",
         "1": [
-          "Belastingsverhouding boven 1,3 → −10% (boven 1,5 → −15%) – alleen als je laatste 7 dagen meer dan 15% boven het geplande lagen.",
-          "Vorm duidelijk moe → −10% – ook alleen boven het schema. Een schema dat opbouwt verhoogt de verhouding en maakt moe; dat is de bedoeling, geen waarschuwingssignaal.",
+          "Belastingsverhouding boven 1,3 → −10% (boven 1,5 → −15%) – alleen als jouw verhouding meer dan 15% boven die van het schema voor dezelfde dagen ligt, en vanaf de vijfde planweek.",
+          "Vorm duidelijk moe → −10% – ook alleen boven het schema. Een schema dat opbouwt verhoogt de verhouding en maakt moe; wat je er vast naast doet valt weg. Een plotselinge week ver boven het schema valt op.",
           "Inspanning van de laatste drie weken aanhoudend zeer hoog (gemiddelde RPE 7,5 of meer) → −10%.",
           "Vorige planweek meer dan 30% van de geplande loopkilometers gemist → −10% (meer dan de helft → −15%) – pas geteld als elke loop van die week gedaan of als gemist gemarkeerd is.",
           "Meerdere signalen vermenigvuldigen zich, maar een training verliest nooit meer dan 15%. Alleen rustige duurlopen, de lange duurloop en herstellopen van de lopende week vanaf vandaag worden korter – kwaliteitstrainingen, wedstrijden, vaste afspraken en trainingen die je zelf hebt toegevoegd blijven."
@@ -907,7 +907,8 @@
           "B – belangrijke wedstrijd: de dag ervoor een korte shakeout, de dag daarvoor vrij, boven 10 km nog een korte dag ervoor; daarna rustige dagen – 1 tot 5 km, 2 tot 10 km, anders 3.",
           "C – wedstrijd als training: de dag ervoor niets zwaars, 1 rustige dag erna (2 boven 10 km), en hij vervangt de kwaliteitstraining van de week.",
           "Is de wedstrijd ongeveer zo lang als de lange duurloop van de week, dan vervangt hij die ook.",
-          "Niet ingebouwd: wedstrijden boven 25 km, wedstrijden in de taper en wedstrijden met een eigen schema. Daarna bouwt het schema verder op alsof de week normaal was."
+          "Niet ingebouwd: wedstrijden boven 25 km, wedstrijden in de taper en wedstrijden met een eigen schema. Daarna bouwt het schema verder op alsof de week normaal was.",
+          "Liggen twee tussenwedstrijden drie dagen of minder uit elkaar, dan komt er maar één in het schema – de B vóór de C, anders de eerste."
         ],
         "2": "Een schema verandert nooit vanzelf: komt er een B- of C-wedstrijd bij of verandert er een, dan meldt het schema dat – ingebouwd wordt bij het opnieuw berekenen vanaf vandaag. Vaste afspraken op de wedstrijddag vervallen, net als bij de A-wedstrijd.",
         "3": "Naar je doelen"

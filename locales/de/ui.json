@@ -1571,7 +1571,8 @@
       },
       "long": "{prio} · {name} · {date}: länger als {km} – nicht eingebaut, dafür lohnt ein eigener Plan",
       "taper": "{prio} · {name} · {date}: liegt im Tapering – nicht eingebaut",
-      "changed": "Seit der letzten Berechnung haben sich Saisonrennen geändert. In den Plan kommen sie erst, wenn du ihn ab heute neu berechnest."
+      "changed": "Seit der letzten Berechnung haben sich Saisonrennen geändert. In den Plan kommen sie erst, wenn du ihn ab heute neu berechnest.",
+      "clash": "{prio} · {name} · {date}: zu nah an „{other}“ – nicht eingebaut"
     }
   },
   "commitments": {

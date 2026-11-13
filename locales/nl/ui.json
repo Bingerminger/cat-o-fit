@@ -1571,7 +1571,8 @@
       },
       "long": "{prio} · {name} · {date}: langer dan {km} – niet ingebouwd, daar hoort een eigen schema bij",
       "taper": "{prio} · {name} · {date}: valt in de taper – niet ingebouwd",
-      "changed": "Er zijn wedstrijden van het seizoen veranderd sinds de laatste berekening. Ze komen pas in het schema als je het vanaf vandaag opnieuw berekent."
+      "changed": "Er zijn wedstrijden van het seizoen veranderd sinds de laatste berekening. Ze komen pas in het schema als je het vanaf vandaag opnieuw berekent.",
+      "clash": "{prio} · {name} · {date}: te dicht bij ‘{other}’ – niet ingebouwd"
     }
   },
   "commitments": {

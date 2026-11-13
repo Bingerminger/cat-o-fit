@@ -888,8 +888,8 @@
       "blocks": {
         "0": "Depuis la 4.2, ton plan de course ajuste lui-même son volume – seulement à la baisse et seulement un peu. Une fois par semaine du plan, l’app regarde quatre signaux :",
         "1": [
-          "Ratio de charge au-dessus de 1,3 → −10 % (au-dessus de 1,5 → −15 %) – seulement si tes 7 derniers jours ont dépassé de plus de 15 % ce qui était prévu.",
-          "Forme : fatigue marquée → −10 % – là aussi seulement au-dessus du plan. Un plan qui progresse fait monter le ratio et fatigue ; c’est voulu, pas un signal d’alerte.",
+          "Ratio de charge au-dessus de 1,3 → −10 % (au-dessus de 1,5 → −15 %) – seulement si ton ratio dépasse de plus de 15 % celui du plan pour les mêmes jours, et à partir de la cinquième semaine du plan.",
+          "Forme : fatigue marquée → −10 % – là aussi seulement au-dessus du plan. Un plan qui progresse fait monter le ratio et fatigue ; ce que tu fais régulièrement à côté s’annule. Une semaine soudaine bien au-dessus du plan ressort.",
           "Effort des trois dernières semaines toujours très élevé (RPE moyen de 7,5 ou plus) → −10 %.",
           "Semaine passée du plan : plus de 30 % des km prévus manqués → −10 % (plus de la moitié → −15 %) – compté seulement quand chaque sortie de la semaine est faite ou marquée comme manquée.",
           "Plusieurs signaux se multiplient, mais une séance ne perd jamais plus de 15 %. Seuls les footings, la sortie longue et les footings de récupération de la semaine en cours à partir d’aujourd’hui raccourcissent – séances de qualité, courses, engagements fixes et séances ajoutées par toi restent."
@@ -907,7 +907,8 @@
           "B – course importante : un court footing la veille, le jour d’avant libre, au-delà de 10 km encore un jour court avant ; ensuite des jours faciles – 1 jusqu’à 5 km, 2 jusqu’à 10 km, sinon 3.",
           "C – course comme entraînement : rien d’exigeant la veille, 1 jour facile après (2 au-delà de 10 km), et elle remplace la séance de qualité de la semaine.",
           "Si la course est à peu près aussi longue que la sortie longue de la semaine, elle la remplace aussi.",
-          "Ne sont pas intégrées : les courses de plus de 25 km, celles pendant l’affûtage et celles qui ont déjà leur propre plan. Ensuite le plan continue de progresser comme si la semaine avait été normale."
+          "Ne sont pas intégrées : les courses de plus de 25 km, celles pendant l’affûtage et celles qui ont déjà leur propre plan. Ensuite le plan continue de progresser comme si la semaine avait été normale.",
+          "Si deux courses secondaires sont à trois jours ou moins l’une de l’autre, une seule entre dans le plan – la B avant la C, sinon la première."
         ],
         "2": "Un plan ne change jamais tout seul : quand une course B ou C s’ajoute ou change, le plan le signale – elle est intégrée lorsque tu recalcules à partir d’aujourd’hui. Les engagements fixes du jour de course tombent, comme pour la course A.",
         "3": "Aller à tes objectifs"

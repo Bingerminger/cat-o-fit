@@ -284,7 +284,9 @@ library. English is the source language; the other catalogs follow its keys.
   blocked like a commitment day, B with the race-week rules for its short taper, no demanding work in
   the recovery days, a C race instead of the week's quality session); weeks around them are no reference
   for the next increase (`lastFullKm` counts them as steps). The side race session carries its own
-  `eventId` and `sideRace: 'B'|'C'`.
+  `eventId` and `sideRace: 'B'|'C'`; links to a plan therefore go through the plan's `eventId`, never a
+  session's, and a performed side race belongs to its own race (`unit-actions goalOf`). Two side races
+  within three days: only one is built in (B before C, else the earlier).
 - **Programme** (`program.js`): `createProgramPlan(program, today)` creates a weekly plan without a
   competition (fitness/strength/weight loss/mobility) with endurance-minute progression and strength days.
 - Both deliver **the same plan/unit format** (`planId`, `date`, `type`, `targetDurationMin`,

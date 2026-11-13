@@ -88,6 +88,17 @@ test('no side races for a plan whose own race is B or C, nor for triathlon; long
   assert.equal(sideRaceStatus(M).state, 'long');
 });
 
+test('a C race the day before a B race: only the B race is built in, the C race says why', () => {
+  const C2 = { ...C, id: 'ev-c2', date: '2027-02-27' };
+  store.upsertMany('events', [A, B, C2]);
+  createPlanForEvent(A, { today: TODAY, daysPerWeek: 4 });
+  assert.equal(raceUnits(plan(), B.id).length, 1);
+  assert.equal(raceUnits(plan(), C2.id).length, 0);
+  const st = sideRaceStatus(C2);
+  assert.equal(st.state, 'clash');
+  assert.equal(st.view.other, B.name);
+});
+
 test('a plan from before 4.2 keeps its sessions; the race shows up as pending', () => {
   store.upsertMany('events', [A, B]);
   createPlanForEvent(A, { today: TODAY, daysPerWeek: 4 });

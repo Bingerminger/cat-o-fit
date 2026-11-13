@@ -12,11 +12,11 @@ import * as store from '../js/storage.js';
 import { ensureAutoVolume, undoAdapt, applyAdapt, canUndo } from '../js/adapt.js';
 import { gentleVariant } from '../js/rolling.js';
 
-const START = '2026-11-02';   // Monday; week 3 = 16.–22.11.
+const START = '2026-10-05';   // Monday; week 7 = 16.–22.11. (load and form count from the fifth week on)
 const TUE3 = '2026-11-17';
 
-/** Plan with five weeks: Tue easy 8 · Wed strength · Thu tempo 8 · Sat long 14 · Sun football (fixed). */
-function buildPlan({ weeks = 5, extra = [] } = {}) {
+/** Plan with nine weeks: Tue easy 8 · Wed strength · Thu tempo 8 · Sat long 14 · Sun football (fixed). */
+function buildPlan({ weeks = 9, extra = [] } = {}) {
   const units = [];
   let n = 0;
   const add = (date, type, km, more = {}) => units.push({
@@ -55,7 +55,7 @@ test('load ratio above 1.3 shortens the easy runs of the current plan week by 10
   assert.ok(d, 'a decision');
   assert.deepEqual(d.signals.map((s) => s.key), ['load']);
   assert.equal(d.factor, 0.9);
-  assert.equal(d.week, 3);
+  assert.equal(d.week, 7);
   const byId = Object.fromEntries(plan.units.map((u) => [u.id, u]));
   assert.deepEqual(d.unitIds.map((id) => byId[id].type).sort(), ['easy', 'long'], 'only easy and long runs');
   assert.ok(d.unitIds.every((id) => byId[id].date >= '2026-11-17' && byId[id].date <= '2026-11-22'), 'only this plan week');
@@ -77,11 +77,13 @@ test('the session that is already past or done stays as it is', () => {
 test('no adjustment without a signal, in the first week, twice per week, for programmes', () => {
   const calm = buildSessions(TUE3);
   assert.equal(autoVolumeDecision({ plan: buildPlan(), sessions: calm, today: TUE3 }), null, 'ratio 1.0, last week fully run');
-  const hot = buildSessions('2026-11-04', { acuteMin: 66 });
-  assert.equal(autoVolumeDecision({ plan: buildPlan(), sessions: hot, today: '2026-11-04' }), null, 'first plan week');
+  const hot = buildSessions('2026-10-07', { acuteMin: 66 });
+  assert.equal(autoVolumeDecision({ plan: buildPlan(), sessions: hot, today: '2026-10-07' }), null, 'first plan week');
   const sessions = buildSessions(TUE3, { acuteMin: 66 });
-  assert.equal(autoVolumeDecision({ plan: { ...buildPlan(), autoVolume: { week: 3, factor: 0.9 } }, sessions, today: TUE3 }), null, 'already adjusted this week');
-  assert.ok(autoVolumeDecision({ plan: { ...buildPlan(), autoVolume: { week: 2, factor: 0.9 } }, sessions, today: TUE3 }), 'a new week may be adjusted again');
+  assert.equal(autoVolumeDecision({ plan: { ...buildPlan(), autoVolume: { week: 7, factor: 0.9 } }, sessions, today: TUE3 }), null, 'already adjusted this week');
+  assert.ok(autoVolumeDecision({ plan: { ...buildPlan(), autoVolume: { week: 6, factor: 0.9 } }, sessions, today: TUE3 }), 'a new week may be adjusted again');
+  // Load ratio and form are measured against the plan's own ratio: only after four plan weeks.
+  assert.equal(autoVolumeDecision({ plan: { ...buildPlan(), startDate: '2026-10-26' }, sessions, today: TUE3 }), null, 'plan in its fourth week');
   assert.equal(autoVolumeDecision({ plan: { ...buildPlan(), kind: 'program' }, sessions, today: TUE3 }), null, 'programmes');
 });
 
@@ -95,6 +97,15 @@ test('weeks that are lighter by plan are left alone: taper, race week, deload', 
   const deload = buildPlan();
   deload.units.forEach((u) => { if (u.date >= '2026-11-16' && u.date <= '2026-11-22' && u.type === 'long') u.targetDistanceKm = 10; });
   assert.equal(autoVolumeDecision({ plan: deload, sessions, today: TUE3 }), null, 'week planned clearly lighter than the one before');
+});
+
+test('a plan from before 4.2 (sessions without a phase): a taper week is recognised by its lower volume', () => {
+  const strip = (p) => ({ ...p, units: p.units.map(({ phase, ...u }) => u) });
+  const sessions = buildSessions(TUE3, { acuteMin: 66 });
+  assert.ok(autoVolumeDecision({ plan: strip(buildPlan()), sessions, today: TUE3 }), 'an ordinary week is adjusted');
+  const taper = buildPlan();
+  taper.units.forEach((u) => { if (u.date >= '2026-11-16' && u.date <= '2026-11-22' && u.targetDistanceKm) u.targetDistanceKm *= 0.7; });
+  assert.equal(autoVolumeDecision({ plan: strip(taper), sessions, today: TUE3 }), null, 'the taper week stays');
 });
 
 test('last week more than half missed → −15 %, but only once every run of it is settled', () => {
@@ -205,7 +216,7 @@ test('app: shortens once per week, logs it and can be undone', async () => {
   assert.equal(long.targetDistanceKm, 12.5);
   assert.equal(long.title, 'Long Run 12,5 km');
   assert.equal(plan.units.find((u) => u.date === '2026-11-19').intervals.rounds, 4, 'the tempo session keeps its stimulus');
-  assert.deepEqual(plan.autoVolume, { week: 3, factor: 0.9, date: TUE3 });
+  assert.deepEqual(plan.autoVolume, { week: 7, factor: 0.9, date: TUE3 });
   const entry = plan.adaptLog[0];
   assert.equal(entry.kind, 'autovolume');
   assert.match(entry.title, /−10 %/);
@@ -224,7 +235,7 @@ test('app: shortens once per week, logs it and can be undone', async () => {
   // The plan goes to the server as one change.
   await store.syncNow();
   const srvPlan = globalThis.__fakeServer.store('plans', { user: 'u-1' }).records.p1;
-  assert.equal(srvPlan.autoVolume.week, 3);
+  assert.equal(srvPlan.autoVolume.week, 7);
 });
 
 test('app: undoing the automatic cut leaves a session that a newer adjustment changed again', () => {

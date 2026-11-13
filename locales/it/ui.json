@@ -1571,7 +1571,8 @@
       },
       "long": "{prio} · {name} · {date}: oltre {km} – non inserita, merita un piano tutto suo",
       "taper": "{prio} · {name} · {date}: cade nello scarico – non inserita",
-      "changed": "Alcune gare della stagione sono cambiate dall’ultimo calcolo. Entrano nel piano solo quando lo ricalcoli da oggi."
+      "changed": "Alcune gare della stagione sono cambiate dall’ultimo calcolo. Entrano nel piano solo quando lo ricalcoli da oggi.",
+      "clash": "{prio} · {name} · {date}: troppo vicina a «{other}» – non inserita"
     }
   },
   "commitments": {
