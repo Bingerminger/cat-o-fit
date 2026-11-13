@@ -130,6 +130,23 @@ $add = http('POST', '?action=ops&area=family&scope=family', ['ops' => [
 ]], $admin);
 check('Admin session: member created', $add['status'] === 200 && empty($add['json']['rejected']), $add['json']);
 
+// An admin without a PIN (e.g. after a full backup restored on a new server) has a member's rights until
+// they set one (4.2) – their own PIN needs no old one.
+http('POST', '?action=ops&area=family&scope=family', ['ops' => [
+    ['op' => 'upsert', 'record' => ['id' => 'u-n', '_kind' => 'member', 'name' => 'Neu', 'role' => 'admin', 'createdAt' => '2026-01-03T00:00:00Z']],
+]], $admin);
+$noPin = [];
+$r = http('POST', '?action=login', ['user' => 'u-n', 'pin' => ''], $noPin);
+check('admin without a PIN: signs in, but as a member, and is told to set a PIN', $r['status'] === 200 && ($r['json']['role'] ?? '') === 'user'
+    && ($r['json']['adminPinRequired'] ?? null) === true, $r['json']);
+$r = http('POST', '?action=ops&area=family&scope=family', ['ops' => [['op' => 'upsert', 'record' => ['id' => 'u-z', '_kind' => 'member', 'name' => 'Z', 'role' => 'admin']]]], $noPin);
+check('… no admin action before the PIN', ($r['json']['rejected'][0]['code'] ?? '') === 'admin_add_member', $r['json']);
+$r = http('POST', '?action=set-pin', ['user' => 'u-n', 'pin' => '8642'], $noPin);
+check('… sets their own PIN without an old one', $r['status'] === 200, $r['json']);
+$r = http('GET', '?action=session', null, $noPin);
+check('… and has the admin rights from then on', ($r['json']['role'] ?? '') === 'admin', $r['json']);
+http('POST', '?action=ops&area=family&scope=family', ['ops' => [['op' => 'delete', 'id' => 'u-n']]], $admin);
+
 // --- Private areas ---
 $w = http('POST', '?action=ops&area=labs&user=u-a', ['ops' => [['op' => 'upsert', 'record' => ['id' => 'l1', 'analyte' => 'ferritin', 'value' => 40]]]], $admin);
 check('Own private area: write', $w['status'] === 200, $w['json']);
@@ -299,10 +316,16 @@ check('ops with since: response also contains the foreign change', in_array('fre
 $r = http('POST', '?action=ops&area=sessions&user=u-a', ['ops' => [['op' => 'upsert', 'record' => ['id' => 'eigen-2', 'date' => '2026-09-22']]]], $admin);
 check('ops without since: response as before', !isset($r['json']['changes']), array_keys($r['json'] ?? []));
 
-// --- Barcode lookup (MKT-18): only valid GTINs go out ---
-$r = http('GET', '?action=foodfacts&code=' . rawurlencode('4006381333932'), null, $nobody);
+// --- Nutrition lookup: only for a signed-in person with the switch on (4.2), only valid GTINs go out ---
+$r = http('GET', '?action=foodfacts&q=' . rawurlencode('Haferflocken'), null, $nobody);
+check('Food lookup without a session → 401 session, nothing asked', $r['status'] === 401 && ($r['json']['code'] ?? '') === 'session', [$r['status'], $r['json']]);
+http('POST', '?action=ops&area=profile&user=u-a', ['ops' => [['op' => 'merge', 'record' => ['id' => 'profile', 'settings' => ['foodLookup' => false]]]]], $admin);
+$r = http('GET', '?action=foodfacts&q=' . rawurlencode('Haferflocken'), null, $admin);
+check('Food lookup with the switch off → disabled, nothing asked', ($r['json']['found'] ?? null) === false && ($r['json']['disabled'] ?? null) === true, $r['json']);
+http('POST', '?action=ops&area=profile&user=u-a', ['ops' => [['op' => 'merge', 'record' => ['id' => 'profile', 'settings' => ['foodLookup' => true]]]]], $admin);
+$r = http('GET', '?action=foodfacts&code=' . rawurlencode('4006381333932'), null, $admin);
 check('Barcode with a wrong check digit is rejected without a lookup', ($r['json']['found'] ?? null) === false && ($r['json']['error'] ?? '') === 'Invalid barcode', $r['json']);
-$r = http('GET', '?action=foodfacts&code=' . rawurlencode('../../etc/passwd'), null, $nobody);
+$r = http('GET', '?action=foodfacts&code=' . rawurlencode('../../etc/passwd'), null, $admin);
 check('… nonsense in the code parameter likewise', ($r['json']['found'] ?? null) === false && isset($r['json']['error']), $r['json']);
 
 // --- Read access for own tools (MKT-15): off by default, read-only, nothing private ---
@@ -485,7 +508,11 @@ if (is_file($evFile)) {
     file_put_contents($evFile, substr($evBackup, 0, (int) (strlen($evBackup) / 2)));
     $raw = (string) @file_get_contents("http://127.0.0.1:{$port}/api/api.php?action=ics&scope=event&id=e1&user=u-a", false, stream_context_create(['http' => ['ignore_errors' => true, 'header' => 'Cookie: ' . implode('; ', array_map(static fn($k, $v) => "{$k}={$v}", array_keys($fresh), $fresh))]]));
     check('damaged events.json: calendar answers without a PHP error', !preg_match('/Fatal|Uncaught|\/data\//', $raw), substr($raw, 0, 160));
+    $r = http('GET', '?action=changes&area=events&user=u-a&since=0', null, $fresh);
+    check('damaged events.json: 500 server_error, the details only in the log (4.2)', $r['status'] === 500
+        && ($r['json']['code'] ?? '') === 'server_error' && !isset($r['json']['detail']) && !str_contains((string) ($r['json']['error'] ?? ''), 'events'), $r['json']);
     file_put_contents($evFile, $evBackup);
+    foreach (glob($evFile . '.corrupt-*') ?: [] as $f) @unlink($f);
 }
 
 // --- Reset the app: the admin deletes themself, then the family (v4.2) -----

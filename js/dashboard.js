@@ -59,7 +59,9 @@ export function render(view) {
         el('span', { style: { fontSize: '1.5rem', lineHeight: '1' }, text: '🔒' }),
         el('div', { class: 'grow' }, [
           el('div', { style: { fontWeight: '700' }, text: t('dashboard.pinTitle') }),
-          el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: t('dashboard.pinText') }),
+          // An admin without a PIN has a member's rights on the server until they set one.
+          el('div', { class: 'muted', style: { fontSize: '.82rem' }, text: store.identityMember()?.role === 'admin' && !store.memberHasPin(store.identityId())
+            ? t('dashboard.adminPinText') : t('dashboard.pinText') }),
         ]),
         el('span', { class: 'list-item__chev', html: iconSvg('chevronRight') }),
       ]),

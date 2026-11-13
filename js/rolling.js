@@ -12,7 +12,7 @@
    RUN/strength session is adjusted.
    ========================================================================= */
 
-import { addDays, diffDays } from './ui.js';
+import { addDays, diffDays, uid } from './ui.js';
 import { isHard, isOpen } from './planflow.js';
 import { acwr, formToday, formState, fmtRatio } from './load.js';
 import { unitLoad } from './whatif.js';
@@ -167,7 +167,7 @@ export function footballFollowupEase({ units = [], sessions = [], today } = {}) 
  */
 export function pushAdaptLog(log = [], entry = {}, max = 25) {
   const e = {
-    id: entry.id || `al-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
+    id: entry.id || uid('al'),
     ts: entry.ts || new Date().toISOString(),
     ...entry,
   };

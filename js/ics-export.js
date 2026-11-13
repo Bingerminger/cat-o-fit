@@ -6,7 +6,7 @@
 
 import { icsUrl, icsToken } from './api-client.js';
 import * as store from './storage.js';
-import { el, icon, iconSvg, openSheet, closeSheet, toast, localizeUnits } from './ui.js';
+import { el, icon, iconSvg, openSheet, closeSheet, toast, localizeUnits, todayStr, fmtDateLong } from './ui.js';
 
 import { t } from './i18n.js';
 
@@ -37,6 +37,18 @@ function optionRow(title, sub, url) {
   ]);
 }
 
+/** Links without a key (before 3.20.0) end on this day (api/ics.php ICS_LEGACY_UNTIL); the dialog says so
+    until LEGACY_HINT_UNTIL, so a subscription that went quiet can be set up again. */
+export const ICS_LEGACY_UNTIL = '2026-11-30';
+const LEGACY_HINT_UNTIL = '2027-05-31';
+
+/** The note on old subscription links for a day (null once it is no longer needed). */
+export function legacyLinkNote(today = todayStr()) {
+  if (today > LEGACY_HINT_UNTIL) return null;
+  const date = fmtDateLong(ICS_LEGACY_UNTIL);
+  return today > ICS_LEGACY_UNTIL ? t('icsExport.legacyEnded', { date }) : t('icsExport.legacyUntil', { date });
+}
+
 export async function openIcsSheet({ scope = 'event', id, event = null, unit = null } = {}) {
   const list = el('div', { class: 'list' });
 
@@ -63,6 +75,8 @@ export async function openIcsSheet({ scope = 'event', id, event = null, unit = n
         t('icsExport.hint')),
     ]),
   ]);
+  const legacy = subscribe ? legacyLinkNote() : null;
+  if (legacy) hint.appendChild(el('div', { class: 'muted mt-2', style: { fontSize: '0.84rem', fontWeight: '600' }, text: legacy }));
 
   openSheet({ title: t('icsExport.title'), body: [list, subscribe, guide, hint].filter(Boolean) });
 }

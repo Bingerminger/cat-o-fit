@@ -207,11 +207,12 @@ export async function openBrowser({ base, headed = false, lang = 'de' }) {
   });
   await context.route('**/*', async (route) => {
     const url = route.request().url();
-    if (url.startsWith(ORIGIN)) {
+    const u = new URL(url);   // compare the parsed origin and host, not the beginning of the text
+    if (u.origin === ORIGIN) {
       const response = await route.fetch({ url: base + url.slice(ORIGIN.length) });
       return route.fulfill({ response });
     }
-    if (url.startsWith('https://api.open-meteo.com/')) return route.fulfill({ json: forecast() });
+    if (u.protocol === 'https:' && u.host === 'api.open-meteo.com') return route.fulfill({ json: forecast() });
     return route.abort();
   });
   const page = await context.newPage();

@@ -35,8 +35,31 @@ function ff_valid_gtin(string $code): bool
     return (10 - $sum % 10) % 10 === $check;
 }
 
+/** Has the person switched on "add nutritional values online"? The same rule as the app
+    (store-data.js foodLookupEnabled): their own setting, otherwise on only for profiles from before 28.09.2026. */
+function ff_lookup_on(string $userId): bool
+{
+    $profile = read_store('profile', 'user', $userId)['records']['profile'] ?? [];
+    $settings = is_array($profile) && is_array($profile['settings'] ?? null) ? $profile['settings'] : [];
+    if (is_bool($settings['foodLookup'] ?? null)) {
+        return $settings['foodLookup'];
+    }
+    $created = (string) (family_member($userId)['createdAt'] ?? '');
+    return $created !== '' && $created < '2026-09-28';
+}
+
+// Only for a signed-in person, and only with their switch on (since 4.2 on the server too – before, only the
+// app checked it, and any device in the network could make the server ask Open Food Facts).
+$ffSession = current_session();
+if ($ffSession === null) {
+    fail('Please sign in.', 401, 'session');
+}
+
 $code = isset($_GET['code']) ? preg_replace('/\s+/', '', (string) $_GET['code']) : '';
 $q = isset($_GET['q']) ? trim((string) $_GET['q']) : '';
+if (!ff_lookup_on((string) $ffSession['user'])) {
+    respond(['found' => false, 'disabled' => true]);
+}
 if ($code !== '') {
     // Only genuine barcodes go out – no arbitrary strings in the address.
     if (!ff_valid_gtin($code)) {

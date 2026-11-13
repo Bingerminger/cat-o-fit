@@ -1024,7 +1024,11 @@ async function exportFamilyData() {
     const blob = new Blob([JSON.stringify(dump, null, 2)], { type: 'application/json' });
     const res = await saveFile(name, blob);
     if (res === 'cancelled') { toast(t('settings.fullBackup.notSaved')); return; }
-    await alertDialog({ title: t('settings.fullBackup.ready'), tone: 'good', message: tp('settings.fullBackup.exported', n, { saved: savedFileMessage(res, name) }) });
+    // Areas the server did not hand out are named, not silently taken from this device (since 4.2).
+    const gaps = Array.isArray(dump.incomplete) ? dump.incomplete.length : 0;
+    const message = tp('settings.fullBackup.exported', n, { saved: savedFileMessage(res, name) })
+      + (gaps ? `\n\n${tp('settings.fullBackup.incomplete', gaps)}` : '');
+    await alertDialog({ title: t('settings.fullBackup.ready'), tone: gaps ? 'bad' : 'good', message });
   } catch (e) {
     await alertDialog({ title: t('settings.fullBackup.failed'), tone: 'bad', message: e.message || t('settings.fullBackup.fileFailedMsg') });
   }

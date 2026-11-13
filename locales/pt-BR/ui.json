@@ -328,7 +328,11 @@
       "confirmButton": "Restaurar tudo",
       "partialTitle": "Restauração ainda incompleta",
       "restoredTitle": "Família restaurada",
-      "restoreFailedMsg": "Não foi possível importar o backup completo."
+      "restoreFailedMsg": "Não foi possível importar o backup completo.",
+      "incomplete": {
+        "one": "Atenção: {count} área não veio do servidor – vem da cópia deste dispositivo (talvez mais antiga) ou está faltando. Verifique a conexão e crie o backup de novo.",
+        "other": "Atenção: {count} áreas não vieram do servidor – vêm da cópia deste dispositivo (talvez mais antiga) ou estão faltando. Verifique a conexão e crie o backup de novo."
+      }
     },
     "sections": {
       "account": "Conta",
@@ -1667,6 +1671,7 @@
     "athlete": "atleta",
     "pinTitle": "Defina o seu próprio PIN",
     "pinText": "O seu perfil ainda usa o PIN padrão 0000 (ou nenhum). Todo mundo na família o conhece – defina o seu em Configurações.",
+    "adminPinText": "Você está cadastrado como admin, mas ainda não tem PIN. Seus direitos de admin valem quando você definir o seu próprio PIN em Configurações – até lá, qualquer pessoa na rede poderia entrar como você.",
     "toCycle": "Ir para Ciclo",
     "periodOverdue": "Menstruação atrasada?",
     "nextRace": "Próxima prova",
@@ -3723,6 +3728,8 @@
     "copyLink": "Copiar link da assinatura",
     "howTo": "Como configurar a assinatura",
     "hint": "O arquivo .ics abre no Calendário do iOS. O lembrete que ele contém (1 hora antes e na noite anterior) é a forma mais confiável de receber notificações no iPhone/iPad – mesmo com o app fechado. Como assinatura, o plano se mantém atualizado sozinho. O link contém a sua chave pessoal de calendário – compartilhe só com quem pode ver o seu plano.",
+    "legacyEnded": "Configurou uma assinatura de calendário antes da versão 3.20? Esses links sem chave deixaram de funcionar em {date} – o calendário não mostra mais nada novo. Copie de novo o link de assinatura acima e substitua a assinatura antiga por ele.",
+    "legacyUntil": "Configurou uma assinatura de calendário antes da versão 3.20? Esses links sem chave só funcionam até {date}. Copie de novo o link de assinatura acima e substitua a assinatura antiga por ele.",
     "title": "Exportar para o calendário",
     "linkCopied": "Link da assinatura copiado – adicione-o ao seu calendário como assinatura"
   },

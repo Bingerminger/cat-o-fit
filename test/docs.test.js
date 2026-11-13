@@ -38,8 +38,10 @@ function prose(md) {
 
 /** GitHub anchor of a heading. */
 function slug(text) {
-  return text.trim().toLowerCase()
-    .replace(/<[^>]+>/g, '')
+  // Tags removed until none is left ("<<b>i>" would leave a tag after a single pass).
+  let s = text.trim().toLowerCase();
+  for (let prev = null; prev !== s;) { prev = s; s = s.replace(/<[^>]+>/g, ''); }
+  return s
     .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
     .replace(/[^\p{L}\p{N}\s_-]/gu, '')
     .replace(/\s/g, '-');

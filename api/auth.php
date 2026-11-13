@@ -252,8 +252,13 @@ function fails_path(string $userId): string
 /** Timestamps of failed attempts in the current window. */
 function fails_recent(string $userId): array
 {
-    $raw = @file_get_contents(fails_path($userId));
-    $data = is_string($raw) ? json_decode($raw, true) : null;
+    return fails_in_window(@file_get_contents(fails_path($userId)));
+}
+
+/** The timestamps of a stored counter that still lie in the window. */
+function fails_in_window($raw): array
+{
+    $data = is_string($raw) && $raw !== '' ? json_decode($raw, true) : null;
     $since = time() - PIN_FAIL_WINDOW;
     return array_values(array_filter((array) ($data['t'] ?? []), static fn($t) => is_int($t) && $t > $since));
 }
@@ -273,10 +278,21 @@ function fails_locked(string $userId): int
 /** Count a failed attempt; returns the remaining attempts. */
 function fails_register(string $userId): int
 {
-    $recent = fails_recent($userId);
+    // Read, add and write under one lock: parallel wrong PINs must not overwrite each other's count.
+    $fh = @fopen(fails_path($userId), 'c+');
+    if ($fh === false) {
+        return max(0, PIN_MAX_FAILS - count(fails_recent($userId)) - 1);
+    }
+    flock($fh, LOCK_EX);
+    $recent = fails_in_window(stream_get_contents($fh));
     $recent[] = time();
     $recent = array_slice($recent, -PIN_MAX_FAILS);
-    @file_put_contents(fails_path($userId), json_encode(['t' => $recent]), LOCK_EX);
+    ftruncate($fh, 0);
+    rewind($fh);
+    fwrite($fh, (string) json_encode(['t' => $recent]));
+    fflush($fh);
+    flock($fh, LOCK_UN);
+    fclose($fh);
     return max(0, PIN_MAX_FAILS - count($recent));
 }
 
@@ -363,7 +379,18 @@ function current_session(): ?array
         $s['seen'] = time();
         @file_put_contents($path, json_encode($s), LOCK_EX);
     }
-    return ['user' => $s['user'], 'role' => ($member['role'] ?? 'user') === 'admin' ? 'admin' : 'user', 'token' => $token];
+    return ['user' => $s['user'], 'role' => effective_role($member), 'token' => $token];
+}
+
+/**
+ * The rights a member signs in with: an admin without a PIN has those of a member until they set one
+ * (since 4.2) – anyone in the network could otherwise sign in as them with an empty PIN, for example
+ * after a full backup was restored on a new server (backups carry no PINs). Their own PIN they can
+ * set without an old one.
+ */
+function effective_role(array $member): string
+{
+    return ($member['role'] ?? 'user') === 'admin' && member_has_pin($member) ? 'admin' : 'user';
 }
 
 /** End this request's session (file + cookie). */

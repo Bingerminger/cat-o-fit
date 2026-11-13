@@ -35,7 +35,7 @@ jobs:
       # PHP is preinstalled on the Ubuntu runners. test-api.php starts its own
       # PHP test server with an empty temporary data directory.
       - name: PHP tests (health mapping, persistence, API, calendar)
-        run: php tools/test-health-ingest.php && php tools/test-health-xml.php && php tools/test-storage.php && php tools/test-api.php && php tools/test-ics.php
+        run: php tools/test-health-ingest.php && php tools/test-health-xml.php && php tools/test-storage.php && php tools/test-api.php && php tools/test-ics.php && php tools/test-router.php
 
   docker:
     name: Docker image smoke test

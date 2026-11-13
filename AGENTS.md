@@ -23,7 +23,7 @@ the change: say in the pull request that an agent helped and what you checked yo
 ```bash
 npm test                                            # all Node suites (node:test, mini DOM)
 php tools/test-health-ingest.php && php tools/test-health-xml.php \
-  && php tools/test-storage.php && php tools/test-api.php && php tools/test-ics.php
+  && php tools/test-storage.php && php tools/test-api.php && php tools/test-ics.php && php tools/test-router.php
 docker build -t cat-o-fit:smoke . && IMAGE=cat-o-fit:smoke bash tools/test-docker.sh
 npm install --no-save playwright@1.65.0 && npx playwright install chromium webkit
 node tools/test-browser.mjs                         # real browsers, seven languages, demo, offline start

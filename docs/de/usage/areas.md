@@ -147,7 +147,8 @@ Unter **Einstellungen → Daten & Sicherung** sicherst du deine Daten – ganz o
    „Vollbackup wiederherstellen“ setzt die ganze Familie auf den Stand der Datei zurück – auf dem
    Gerät **und** auf dem Server (dafür braucht es die Verbindung zum Server). Private Bereiche und die
    PINs bleiben dabei **unangetastet**; auf einem ganz neuen Server setzt die Admin-Person die PINs der
-   Mitglieder danach neu. Weil das alles überschreibt, fragt die App vorher deutlich nach.
+   Mitglieder danach neu – die wiederherstellende Admin-Person bleibt Mitglied, und ein Admin ohne PIN
+   handelt als Mitglied, bis er eine festlegt. Weil das alles überschreibt, fragt die App vorher deutlich nach.
 3. **Mein Backup (für alle):** eine JSON-Datei mit **deinen eigenen Daten** – inklusive **Zyklus,
    Labor und Ergänzungen**. Auf iPhone und iPad öffnet sich dafür das **Teilen-Menü**: Wähle
    **„In Dateien sichern“** und prüfe, dass die Datei dort angekommen ist. „Mein Backup importieren“

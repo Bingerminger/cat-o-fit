@@ -150,6 +150,8 @@ export function createFakeServer() {
         delete auth.fails[body.user];
       }
       auth.session = body.user;
+      // Unlike the real server (api/auth.php effective_role), an admin without a PIN keeps the admin role here:
+      // the demo never leaves the browser, and the tests use PIN-less admins (test-api.php checks the rule).
       return resp({ ok: true, user: body.user, role: m.role === 'admin' ? 'admin' : 'user', weakPin: !isHash(m.pinHash) || body.pin === '0000' });
     }
     if (!auth.session || !member(auth.session)) return resp({ ok: false, error: 'Please sign in – the sign-in at the server is missing or has expired.', code: 'session' }, 401);

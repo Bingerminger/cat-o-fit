@@ -65,6 +65,8 @@ again. The devices pick up the state at their next sync. Afterwards the web serv
 **Full backup in the app:** Settings → Data & backup → “Restore full backup (overwrites all)” (admins
 only, with a connection to the server). This sets the whole family back to the state of the file –
 private areas and PINs stay untouched; on a completely new server, the admin sets the members' PINs
-again afterwards.
+again afterwards. The admin who restores stays a member with their PIN even if the file comes from
+another server. Admins from the file who have no PIN there act as members until they set their own
+(“Today” tells them) – otherwise anyone in the network could sign in as them.
 
 **My backup:** Settings → Data & backup → “Import my backup”.

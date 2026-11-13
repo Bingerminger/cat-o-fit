@@ -63,6 +63,9 @@ wieder starten. Die Geräte holen den Stand beim nächsten Abgleich. Die Schreib
 **Vollbackup in der App:** Einstellungen → Daten & Sicherung → „Vollbackup wiederherstellen“ (nur
 Admins, mit Verbindung zum Server). Das setzt die ganze Familie auf den Stand der Datei – private
 Bereiche und PINs bleiben unangetastet; auf einem ganz neuen Server setzt die Admin-Person die PINs der
-Mitglieder danach neu.
+Mitglieder danach neu. Die wiederherstellende Admin-Person bleibt mit ihrer PIN Mitglied, auch wenn die
+Datei von einem anderen Server stammt. Admins aus der Datei, die dort keine PIN haben, handeln als
+Mitglieder, bis sie eine eigene festlegen („Heute“ sagt es ihnen) – sonst könnte sich jede Person im Netz
+als sie anmelden.
 
 **Mein Backup:** Einstellungen → Daten & Sicherung → „Mein Backup importieren“.

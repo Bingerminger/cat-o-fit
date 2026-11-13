@@ -328,7 +328,11 @@
       "confirmButton": "Alles herstellen",
       "partialTitle": "Herstel nog niet voltooid",
       "restoredTitle": "Gezin hersteld",
-      "restoreFailedMsg": "De volledige back-up kon niet worden geïmporteerd."
+      "restoreFailedMsg": "De volledige back-up kon niet worden geïmporteerd.",
+      "incomplete": {
+        "one": "Let op: {count} onderdeel kwam niet van de server – het komt uit de kopie op dit apparaat (misschien ouder) of ontbreekt. Controleer de verbinding en maak de back-up opnieuw.",
+        "other": "Let op: {count} onderdelen kwamen niet van de server – ze komen uit de kopie op dit apparaat (misschien ouder) of ontbreken. Controleer de verbinding en maak de back-up opnieuw."
+      }
     },
     "sections": {
       "account": "Account",
@@ -1667,6 +1671,7 @@
     "athlete": "sporter",
     "pinTitle": "Stel je eigen pincode in",
     "pinText": "Je profiel gebruikt nog de standaardpincode 0000 (of geen). Iedereen in het gezin kent die – stel in Instellingen je eigen pincode in.",
+    "adminPinText": "Je staat als beheerder geregistreerd, maar hebt nog geen pincode. Je beheerrechten gelden zodra je in Instellingen je eigen pincode instelt – tot die tijd zou iedereen in het netwerk als jou kunnen inloggen.",
     "toCycle": "Naar Cyclus",
     "periodOverdue": "Menstruatie uitgebleven?",
     "nextRace": "Volgende wedstrijd",
@@ -3723,6 +3728,8 @@
     "copyLink": "Abonnementslink kopiëren",
     "howTo": "Zo stel je het abonnement in",
     "hint": "Het .ics-bestand opent in de iOS-agenda. De herinnering die erin zit (1 uur ervoor en de avond ervoor) is de betrouwbaarste manier om meldingen te krijgen op iPhone/iPad – ook als de app gesloten is. Als abonnement blijft het schema vanzelf up-to-date. De link bevat je persoonlijke agendasleutel – deel hem alleen met mensen die je schema mogen zien.",
+    "legacyEnded": "Agenda-abonnement ingesteld vóór versie 3.20? Zulke links zonder sleutel werken sinds {date} niet meer – de agenda toont dan niets nieuws. Kopieer de abonnementslink hierboven opnieuw en vervang daarmee het oude abonnement.",
+    "legacyUntil": "Agenda-abonnement ingesteld vóór versie 3.20? Zulke links zonder sleutel werken alleen tot {date}. Kopieer de abonnementslink hierboven opnieuw en vervang daarmee het oude abonnement.",
     "title": "Exporteren naar agenda",
     "linkCopied": "Abonnementslink gekopieerd – voeg hem in je agenda toe als abonnement"
   },

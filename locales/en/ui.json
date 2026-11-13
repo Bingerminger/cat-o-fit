@@ -328,7 +328,11 @@
       "confirmButton": "Restore everything",
       "partialTitle": "Restore not yet complete",
       "restoredTitle": "Family restored",
-      "restoreFailedMsg": "The full backup could not be imported."
+      "restoreFailedMsg": "The full backup could not be imported.",
+      "incomplete": {
+        "one": "Note: {count} area did not come from the server – it is taken from this device’s copy (maybe older) or missing. Check the connection and create the backup again.",
+        "other": "Note: {count} areas did not come from the server – they are taken from this device’s copy (maybe older) or missing. Check the connection and create the backup again."
+      }
     },
     "sections": {
       "account": "Account",
@@ -1667,6 +1671,7 @@
     "athlete": "athlete",
     "pinTitle": "Set your own PIN",
     "pinText": "Your profile still uses the default PIN 0000 (or none). Everyone in the family knows it – set your own in Settings.",
+    "adminPinText": "You are listed as an admin but have no PIN yet. Your admin rights apply once you set your own PIN in Settings – until then anyone in the network could sign in as you.",
     "toCycle": "Go to Cycle",
     "periodOverdue": "Period overdue?",
     "nextRace": "Next race",
@@ -3723,6 +3728,8 @@
     "copyLink": "Copy subscription link",
     "howTo": "How to set up the subscription",
     "hint": "The .ics file opens in the iOS calendar. The reminder it contains (1 hour before and the evening before) is the most reliable way to get notifications on iPhone/iPad – even when the app is closed. As a subscription, the plan stays up to date by itself. The link contains your personal calendar key – share it only with people who are allowed to see your plan.",
+    "legacyEnded": "Set up a calendar subscription before version 3.20? Such links without a key stopped working on {date} – the calendar then shows nothing new. Copy the subscription link above again and replace the old subscription with it.",
+    "legacyUntil": "Set up a calendar subscription before version 3.20? Such links without a key only work until {date}. Copy the subscription link above again and replace the old subscription with it.",
     "title": "Export to calendar",
     "linkCopied": "Subscription link copied – add it in your calendar as a subscription"
   },

@@ -7,7 +7,7 @@ import { nowIso } from './ui.js';
 import { t as tr } from './i18n.js';
 import { apiGet, isOnline, pullAllChanges, pullChanges, serverHas } from './api-client.js';
 import { addReport, replaceArea } from './store-data.js';
-import { activeMember, familyReplaceFrom, isAdmin, isManaging, pushFamily, syncFamily } from './store-family.js';
+import { activeMember, familyReplaceFrom, identityMember, isAdmin, isManaging, pushFamily, syncFamily } from './store-family.js';
 import { loadUserFromLS, notify, readUserArea, writeUserArea } from './store-local.js';
 import { stripRev, withOpId } from './store-merge.js';
 import { commitLocal, pushArea, queueOf, queueUserOp } from './store-queue.js';
@@ -85,26 +85,32 @@ export async function exportFamilyAll() {
   // the order of the members in the file stays the family's order.
   const list = family.members || [];
   const buckets = new Array(list.length);
+  const gaps = [];
   let next = 0;
   const worker = async () => {
-    for (let i = next++; i < list.length; i = next++) buckets[i] = await memberBucket(list[i].id, areas);
+    for (let i = next++; i < list.length; i = next++) buckets[i] = await memberBucket(list[i].id, areas, gaps);
   };
   await Promise.all(Array.from({ length: Math.min(BACKUP_PARALLEL, list.length) }, worker));
   list.forEach((m, i) => { dump.users[m.id] = buckets[i]; });
+  // Areas the server did not hand out: taken from this device's copy (maybe older) or missing – said in
+  // the file and to the admin, not silently (since 4.2).
+  if (gaps.length) dump.incomplete = gaps;
   return dump;
 }
 
 /** How many members the full backup fetches at the same time. */
 export const BACKUP_PARALLEL = 4;
 
-/** The backup areas of one member: in one request if the server can, otherwise area by area. */
-async function memberBucket(userId, areas) {
+/** The backup areas of one member: in one request if the server can, otherwise area by area.
+    `gaps` collects the areas that did not come from the server ({user, area, from: 'device'|'missing'}). */
+async function memberBucket(userId, areas, gaps = []) {
   const bulk = await peekUserAreas(userId, areas);
   if (bulk) return bulk;
   const bucket = {};
   for (const a of areas) {
-    const data = await peekUserArea(userId, a);
+    const { data, from } = await peekUserAreaFrom(userId, a);
     if (data != null) bucket[a] = data;
+    if (from !== 'server') gaps.push({ user: userId, area: a, from: data != null ? 'device' : 'missing' });
   }
   return bucket;
 }
@@ -149,8 +155,14 @@ export async function importFamilyAll(dump) {
   let usersRestored = 0; let areasRestored = 0;
 
   // 1) Replace the family authoritatively (members/settings/pantry/teams as records)
-  //    and wait until the server has them.
-  familyReplaceFrom(dump.family);
+  //    and wait until the server has them. The admin who restores stays a member (with their PIN, which
+  //    the server keeps for an ID it knows) even if the backup comes from another server: otherwise they
+  //    would lock themself out, and nobody could set the restored members' PINs.
+  const me = identityMember();
+  const family = me && !dump.family.members.some((m) => m && m.id === me.id)
+    ? { ...dump.family, members: [...dump.family.members, { ...me, role: 'admin' }] }
+    : dump.family;
+  familyReplaceFrom(family);
   if (isOnline()) { try { await pushFamily(); } catch { /* stays in the queue */ } }
 
   // 2) Prepare one authoritative replace op per member and area.
@@ -198,11 +210,16 @@ export async function importFamilyAll(dump) {
 
 /** Logical view of an area of any member (read-only). */
 export async function peekUserArea(userId, area) {
+  return (await peekUserAreaFrom(userId, area)).data;
+}
+
+/** The same, with where it came from: `from` 'server' or 'device' (the copy on this device, maybe older). */
+async function peekUserAreaFrom(userId, area) {
   if (isOnline()) {
-    try { return await apiGet(area, { user: userId }); } catch { /* falls back to LS */ }
+    try { return { data: await apiGet(area, { user: userId }), from: 'server' }; } catch { /* falls back to LS */ }
   }
   const recs = readUserArea(userId, area);
-  if (recs == null) return null;
-  if (Array.isArray(recs)) return recs.filter((r) => !r.deleted).map(stripRev);
-  return stripRev(recs);
+  if (recs == null) return { data: null, from: 'device' };
+  if (Array.isArray(recs)) return { data: recs.filter((r) => !r.deleted).map(stripRev), from: 'device' };
+  return { data: stripRev(recs), from: 'device' };
 }

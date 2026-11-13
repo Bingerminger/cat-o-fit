@@ -348,7 +348,8 @@ function barcodePane(hide) {
     if (!store.foodLookupEnabled()) {
       info.textContent = '';
       info.appendChild(el('div', { text: t('nutrition.lookupOff') }));
-      info.appendChild(el('button', { class: 'btn btn--soft mt-2', type: 'button', onclick: () => { store.setSetting('foodLookup', true); lookup(); } }, t('nutrition.turnOnSearch')));
+      // The server checks the switch too – send it before the first lookup.
+      info.appendChild(el('button', { class: 'btn btn--soft mt-2', type: 'button', onclick: async () => { store.setSetting('foodLookup', true); info.textContent = t('nutrition.searching'); await store.syncNow(); lookup(); } }, t('nutrition.turnOnSearch')));
       return;
     }
     info.textContent = t('nutrition.searching');

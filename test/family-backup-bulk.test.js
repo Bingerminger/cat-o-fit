@@ -115,6 +115,14 @@ test('BACKUP-04: if the request per member fails, the backup asks area by area',
   const dump = await store.exportFamilyAll();
   assert.equal(count(isAreaGet), IDS.length * 10);
   assert.deepEqual(canon(dump.users), full);
+  assert.equal(dump.incomplete, undefined, 'everything came from the server');
+});
+
+test('full backup: an area the server does not hand out is named, not silently taken from the device', async () => {
+  srv.opts.failWhen = (u) => (u.searchParams.get('action') === 'changes-all'
+    || (u.searchParams.get('area') === 'events' && u.searchParams.get('user') === 'u-3') ? 500 : null);
+  const dump = await store.exportFamilyAll();
+  assert.deepEqual(dump.incomplete, [{ user: 'u-3', area: 'events', from: 'missing' }]);
 });
 
 test('BACKUP-06: a file from the bundled backup restores to the same content', async () => {

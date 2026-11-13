@@ -377,7 +377,9 @@ export function genitive(name) {
 }
 
 export function uid(prefix = 'id') {
-  return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+  // Random part from the browser's cryptographic generator (Math.random is predictable); five base-36 digits.
+  const b = crypto.getRandomValues(new Uint8Array(5));
+  return `${prefix}-${Date.now().toString(36)}-${Array.from(b, (x) => (x % 36).toString(36)).join('')}`;
 }
 export function nowIso() { return new Date().toISOString(); }
 export function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }

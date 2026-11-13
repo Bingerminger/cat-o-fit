@@ -328,7 +328,11 @@
       "confirmButton": "Alles wiederherstellen",
       "partialTitle": "Wiederherstellung noch nicht vollständig",
       "restoredTitle": "Familie wiederhergestellt",
-      "restoreFailedMsg": "Das Vollbackup konnte nicht eingespielt werden."
+      "restoreFailedMsg": "Das Vollbackup konnte nicht eingespielt werden.",
+      "incomplete": {
+        "one": "Achtung: {count} Bereich kam nicht vom Server – er stammt aus dem Speicher dieses Geräts (vielleicht älter) oder fehlt. Prüfe die Verbindung und erstelle das Backup noch einmal.",
+        "other": "Achtung: {count} Bereiche kamen nicht vom Server – sie stammen aus dem Speicher dieses Geräts (vielleicht älter) oder fehlen. Prüfe die Verbindung und erstelle das Backup noch einmal."
+      }
     },
     "sections": {
       "account": "Konto",
@@ -1667,6 +1671,7 @@
     "athlete": "Athlet:in",
     "pinTitle": "Eigene PIN festlegen",
     "pinText": "Dein Profil nutzt noch die Standard-PIN 0000 (oder keine). Jede Person der Familie kennt sie – lege in den Einstellungen eine eigene fest.",
+    "adminPinText": "Du bist als Admin eingetragen, hast aber noch keine PIN. Deine Admin-Rechte gelten erst, wenn du in den Einstellungen eine eigene PIN festlegst – bis dahin könnte sich sonst jede Person im Netz als du anmelden.",
     "toCycle": "Zum Zyklus",
     "periodOverdue": "Periode überfällig?",
     "nextRace": "Nächster Wettkampf",
@@ -3723,6 +3728,8 @@
     "copyLink": "Abo-Link kopieren",
     "howTo": "So richtest du das Abo ein",
     "hint": "Die .ics-Datei öffnet sich im iOS-Kalender. Die enthaltene Erinnerung (1 Std. vorher und am Vorabend) ist auf iPhone/iPad der zuverlässigste Weg für Hinweise – auch wenn die App geschlossen ist. Als Abo bleibt der Plan von selbst aktuell. Der Link enthält deinen persönlichen Kalender-Schlüssel – teile ihn nur mit Menschen, die deinen Plan sehen dürfen.",
+    "legacyEnded": "Kalender-Abo vor Version 3.20 eingerichtet? Solche Links ohne Schlüssel gelten seit {date} nicht mehr – der Kalender zeigt dann nichts Neues an. Kopiere den Abo-Link oben neu und ersetze damit das alte Abo.",
+    "legacyUntil": "Kalender-Abo vor Version 3.20 eingerichtet? Solche Links ohne Schlüssel gelten nur bis {date}. Kopiere den Abo-Link oben neu und ersetze damit das alte Abo.",
     "title": "In Kalender exportieren",
     "linkCopied": "Abo-Link kopiert – im Kalender als Abonnement hinzufügen"
   },

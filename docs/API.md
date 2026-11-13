@@ -59,7 +59,9 @@ the server (`CATOFIT_TZ`/`TZ`). Periods land in the private area `cycle` (only w
 sends; period starts already logged ± 3 days stay).
 
 **Food lookup:** `GET ?action=foodfacts&q=<text>` (text search, at most 64 characters) returns
-`{found, name, kcal100, protein100, source, samples}` – the median of at least two products.
+`{found, name, kcal100, protein100, source, samples}` – the median of at least two products. Since 4.2
+only with the person's session (otherwise `401`, `code: session`) and with their switch “add nutritional
+values online” on (otherwise `{found: false, disabled: true}`, nothing leaves the server).
 **Barcode lookup** (since v3.21.0): `GET ?action=foodfacts&code=<EAN>` returns, like the
 text search, `{found, name, kcal100, protein100}`; only valid barcodes (8, 12, 13 or 14 digits
 with a check digit) go to Open Food Facts, anything else answers immediately with `found: false`.
@@ -105,7 +107,7 @@ set up the subscription once more (“Copy subscription link” in the “Export
 
 | Call | Purpose |
 |---|---|
-| `POST ?action=login` with `{"user", "pin"}` | Check the PIN, open a session (cookie `catofit_sid`, HttpOnly, SameSite=Strict); response `{ok, user, role, weakPin}` |
+| `POST ?action=login` with `{"user", "pin"}` | Check the PIN, open a session (cookie `catofit_sid`, HttpOnly, SameSite=Strict); response `{ok, user, role, weakPin, adminPinRequired}` – since 4.2 `role` is `admin` only for an admin with a PIN; without one, `adminPinRequired: true` and the rights of a member until they set their own PIN (no old one needed) |
 | `POST ?action=logout` | End the session |
 | `GET ?action=session` | `{ok, user, role}` of the running session (`user: null` without a session) |
 | `POST ?action=set-pin` with `{"user", "pin", "old"?}` | own PIN (with the previous one) or, as an admin, that of a member |
@@ -131,7 +133,8 @@ set up the subscription once more (“Copy subscription link” in the “Export
 - **Full family backup** (`exportFamilyAll`): `{app: "catofit", kind: "family-full", version: 1,
   family: {members, settings, pantry, teams}, users: {<id>: {<area>: …}}}` – without private
   areas and without PIN hashes; `teams` is missing in files from before v3.20.0 (the teams
-  are then kept when restoring).
+  are then kept when restoring). Since 4.2 `incomplete: [{user, area, from}]` lists areas the server did
+  not hand out (`from`: `device` = this device's copy, maybe older; `missing`) – the app says so too.
 - **Tables (CSV)** from “Settings → Data & backup”: sessions, body values, lab values and
   food diary, one file each, UTF-8 with BOM, date as `YYYY-MM-DD`. The format follows the language: with
   a decimal comma (German, French …) semicolon-separated, with a decimal point (English)

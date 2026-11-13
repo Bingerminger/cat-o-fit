@@ -143,7 +143,8 @@ Under **Settings → Data & backup** you back up your data – with no third-par
    private areas** (cycle, labs, supplements) and without PINs. “Restore full backup” resets the
    whole family to the state of the file – on the device **and** on the server (this needs the
    connection to the server). Private areas and PINs are **left untouched** in the process; on a
-   brand-new server the admin sets the members' PINs again afterwards. Because this overwrites
+   brand-new server the admin sets the members' PINs again afterwards – the admin who restores stays a
+   member, and an admin without a PIN acts as a member until they set one. Because this overwrites
    everything, the app asks clearly beforehand.
 3. **My backup (for everyone):** a JSON file with **your own data** – including **cycle, labs and
    supplements**. On iPhone and iPad the **Share menu** opens for this: choose **“Save to Files”** and

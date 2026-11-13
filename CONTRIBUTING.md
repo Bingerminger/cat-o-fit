@@ -32,10 +32,10 @@ cd cat-o-fit
 # Run the tests (plain Node, nothing to install)
 npm test
 php tools/test-health-ingest.php && php tools/test-health-xml.php \
-  && php tools/test-storage.php && php tools/test-api.php && php tools/test-ics.php
+  && php tools/test-storage.php && php tools/test-api.php && php tools/test-ics.php && php tools/test-router.php
 
-# Serve the app locally (backend included)
-php -S localhost:8000
+# Serve the app locally (backend included); the router closes data/ and .git like the .htaccess files
+php -S localhost:8000 tools/dev-router.php
 # then open http://localhost:8000
 ```
 

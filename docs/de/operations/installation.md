@@ -155,13 +155,20 @@ Beide Plattformen sind für das eigene Heimnetz gedacht. Bevor du die App ins In
    location ~ /\.                                    { deny all; }   # .git, .htaccess …
    location ~ \.(md)$                                { deny all; }
    location ~ ^/api/(?!api\.php$)[^/]+\.php$             { deny all; }   # nur api.php ist ein Einstieg
+   add_header X-Content-Type-Options "nosniff" always;
    add_header X-Frame-Options "DENY" always;
    add_header Referrer-Policy "no-referrer" always;
-   add_header X-Content-Type-Options "nosniff" always;
+   add_header Permissions-Policy "camera=(self), microphone=(), geolocation=(), payment=(), usb=()" always;
+   add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://api.open-meteo.com https://geocoding-api.open-meteo.com; manifest-src 'self'; worker-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'" always;
    ```
 
    Außerdem müssen `.js`-Dateien als `text/javascript` ausgeliefert werden (bei Apache erledigt das die
    `.htaccess`).
+
+> ⚠️ **Der eingebaute PHP-Server (`php -S`) ist kein Server fürs Netz.** Er liest keine `.htaccess`:
+> Schlicht gestartet, gibt er `data/` – die Trainings-, Gesundheits- und Zyklusdaten aller – und `.git` an
+> jeden heraus, der den Port erreicht. Zum Ausprobieren auf dem eigenen Rechner startest du ihn mit dem
+> Router, der dieselben Pfade sperrt und dieselben Kopfzeilen sendet: `php -S localhost:8000 tools/dev-router.php`.
 
 ---
 

@@ -328,7 +328,11 @@
       "confirmButton": "Ripristina tutto",
       "partialTitle": "Ripristino non ancora completo",
       "restoredTitle": "Famiglia ripristinata",
-      "restoreFailedMsg": "Non è stato possibile importare il backup completo."
+      "restoreFailedMsg": "Non è stato possibile importare il backup completo.",
+      "incomplete": {
+        "one": "Attenzione: {count} area non è arrivata dal server – proviene dalla copia di questo dispositivo (forse più vecchia) o manca. Controlla la connessione e crea di nuovo il backup.",
+        "other": "Attenzione: {count} aree non sono arrivate dal server – provengono dalla copia di questo dispositivo (forse più vecchia) o mancano. Controlla la connessione e crea di nuovo il backup."
+      }
     },
     "sections": {
       "account": "Account",
@@ -1667,6 +1671,7 @@
     "athlete": "atleta",
     "pinTitle": "Imposta il tuo PIN",
     "pinText": "Il tuo profilo usa ancora il PIN predefinito 0000 (o nessuno). Lo conoscono tutti in famiglia – impostane uno tuo nelle Impostazioni.",
+    "adminPinText": "Sei registrato come admin, ma non hai ancora un PIN. I tuoi diritti di admin valgono quando imposti un PIN tuo nelle Impostazioni – fino ad allora chiunque in rete potrebbe accedere al posto tuo.",
     "toCycle": "Vai a Ciclo",
     "periodOverdue": "Mestruazioni in ritardo?",
     "nextRace": "Prossima gara",
@@ -3723,6 +3728,8 @@
     "copyLink": "Copia il link di iscrizione",
     "howTo": "Come configurare l’iscrizione",
     "hint": "Il file .ics si apre nel calendario di iOS. Il promemoria che contiene (1 ora prima e la sera prima) è il modo più affidabile per ricevere notifiche su iPhone/iPad – anche con l’app chiusa. Come iscrizione, il piano resta aggiornato da solo. Il link contiene la tua chiave personale del calendario – condividilo solo con chi può vedere il tuo piano.",
+    "legacyEnded": "Abbonamento al calendario creato prima della versione 3.20? Questi link senza chiave non valgono più dal {date} – il calendario non mostra più nulla di nuovo. Copia di nuovo il link di abbonamento qui sopra e sostituisci con esso il vecchio abbonamento.",
+    "legacyUntil": "Abbonamento al calendario creato prima della versione 3.20? Questi link senza chiave valgono solo fino al {date}. Copia di nuovo il link di abbonamento qui sopra e sostituisci con esso il vecchio abbonamento.",
     "title": "Esporta nel calendario",
     "linkCopied": "Link di iscrizione copiato – aggiungilo al tuo calendario come iscrizione"
   },

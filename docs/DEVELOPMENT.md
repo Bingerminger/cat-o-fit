@@ -19,8 +19,9 @@ git clone https://github.com/Bingerminger/cat-o-fit.git
 cd cat-o-fit
 
 # Option A: full (frontend + PHP backend)
-php -S localhost:8000
-# -> open http://localhost:8000
+php -S localhost:8000 tools/dev-router.php
+# -> open http://localhost:8000 (the router closes data/, .git, tools … like the .htaccess files
+#    and sends the same security headers – without it, php -S hands them out)
 
 # Option B: tests only
 npm test
@@ -30,7 +31,8 @@ With an empty `data/` (as it ships in the repo, containing only a `.htaccess`) t
 **first-time setup** (create an admin with their own PIN, optionally demo data). For an instance in
 the old format there are developer seeds under `tools/seed/` (generated with `tools/gen-demo-seeds.mjs`):
 `cp tools/seed/*.json data/` before the first start – `ensure_bootstrap()` then migrates them to the
-first admin `u-1` **without a PIN** (use locally only). The runtime folders (`data/users`,
+first admin `u-1` **without a PIN** (use locally only; since 4.2 an admin without a PIN has a member's
+rights on the server until they set one – set it first under Settings → Account). The runtime folders (`data/users`,
 `data/family`, `data/auth`) are in `.gitignore`.
 
 ### Clean state / reset
@@ -68,7 +70,8 @@ npm test     # node --import ./test-setup.js --test "test/**/*.test.js"
   host list.
 - **PHP tests without a server:** `php tools/test-health-ingest.php` (Apple Health mapping incl.
   the daily format), `php tools/test-health-xml.php` (full import), `php tools/test-ics.php`
-  (calendar time zone) and `php tools/test-storage.php` (persistence: unreadable/empty/corrupt file,
+  (calendar time zone, text escaping, line folding), `php tools/test-router.php` (the `php -S` router and
+  the nginx proposal: closed paths, security headers as in `.htaccess`) and `php tools/test-storage.php` (persistence: unreadable/empty/corrupt file,
   `replace` with `baseRev`; works on a copy of `storage.php` in a temporary directory).
 - **Documentation tests:** `test/docs.test.js` checks links and anchors of all Markdown files, image
   references, the numbers quoted in the docs and README, version equality (version.js, package.json,
@@ -173,8 +176,10 @@ After changes, check the app briefly in the browser (especially for changes clos
   (empty sessionStorage / new tab) asks for a sign-in again. Sign in from the DevTools console:
   `const s = await import('./js/storage.js'); await s.refreshFamily(); await s.login('<id>','<pin>'); location.hash = '#/';`
   (ID and PIN of the admin person created in the first-time setup). Or simply tap the
-  profile tile in the UI. `php -S` does not evaluate `.htaccess` – the Content Security Policy still
-  applies, because `index.html` carries it additionally as a `<meta>` tag.
+  profile tile in the UI. `php -S` does not evaluate `.htaccess` – started with `tools/dev-router.php`
+  it closes the same paths and sends the same headers (`php tools/test-router.php` checks both, and the
+  nginx proposal in the installation guide); `index.html` carries the Content Security Policy
+  additionally as a `<meta>` tag.
 - After every shell change, mind the **service-worker cache** – raise `VERSION` in
   `service-worker.js` or empty the cache in the DevTools.
 
@@ -606,8 +611,8 @@ The app itself speaks seven languages (`de`, `en`, `fr`, `es`, `it`, `pt-BR`, `n
 4. New data area? Add it in `js/store-state.js` (`AREAS`/`ARRAY_AREAS`), `api/storage.php`
    (`user_areas`) and in `tools/loadtest.py`/`tools/loadtest_soak.py` (`USER_AREAS`).
 5. Keep the tests green / extend them: `npm test` (JS) **and** the PHP tests `php tools/test-health-ingest.php`,
-   `php tools/test-health-xml.php`, `php tools/test-storage.php`, `php tools/test-api.php` and
-   `php tools/test-ics.php`.
+   `php tools/test-health-xml.php`, `php tools/test-storage.php`, `php tools/test-api.php`,
+   `php tools/test-ics.php` and `php tools/test-router.php`.
 6. Update `CHANGELOG.md` and, where needed, `docs/ROADMAP.md`, the pages under `docs/` (the English
    pages and their German copies under `docs/de/`) and the in-app help (structure in
    `js/helpcontent.js`, texts in `locales/<lang>/help.json`). New or changed UI texts go into the

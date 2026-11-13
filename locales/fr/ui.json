@@ -328,7 +328,11 @@
       "confirmButton": "Tout restaurer",
       "partialTitle": "Restauration pas encore terminée",
       "restoredTitle": "Famille restaurée",
-      "restoreFailedMsg": "La sauvegarde complète n’a pas pu être importée."
+      "restoreFailedMsg": "La sauvegarde complète n’a pas pu être importée.",
+      "incomplete": {
+        "one": "Attention : {count} domaine n’est pas venu du serveur – il provient de la copie de cet appareil (peut-être plus ancienne) ou manque. Vérifie la connexion et refais la sauvegarde.",
+        "other": "Attention : {count} domaines ne sont pas venus du serveur – ils proviennent de la copie de cet appareil (peut-être plus ancienne) ou manquent. Vérifie la connexion et refais la sauvegarde."
+      }
     },
     "sections": {
       "account": "Compte",
@@ -1667,6 +1671,7 @@
     "athlete": "athlète",
     "pinTitle": "Choisis ton propre code PIN",
     "pinText": "Ton profil utilise encore le code PIN par défaut 0000 (ou aucun). Toute la famille le connaît – choisis le tien dans les Réglages.",
+    "adminPinText": "Tu es inscrit·e comme admin, mais tu n’as pas encore de code PIN. Tes droits d’admin s’appliquent dès que tu choisis ton propre code PIN dans les Réglages – sinon, n’importe qui sur le réseau pourrait se connecter en ton nom.",
     "toCycle": "Aller à Cycle",
     "periodOverdue": "Règles en retard ?",
     "nextRace": "Prochaine course",
@@ -3723,6 +3728,8 @@
     "copyLink": "Copier le lien d’abonnement",
     "howTo": "Comment configurer l’abonnement",
     "hint": "Le fichier .ics s’ouvre dans le calendrier iOS. Le rappel qu’il contient (1 heure avant et la veille au soir) est le moyen le plus fiable de recevoir des notifications sur iPhone/iPad – même quand l’app est fermée. En abonnement, le plan se met à jour tout seul. Le lien contient ta clé de calendrier personnelle – ne le partage qu’avec les personnes autorisées à voir ton plan.",
+    "legacyEnded": "Abonnement au calendrier créé avant la version 3.20 ? Ces liens sans clé ne fonctionnent plus depuis le {date} – le calendrier n’affiche alors plus rien de nouveau. Copie à nouveau le lien d’abonnement ci-dessus et remplace l’ancien abonnement.",
+    "legacyUntil": "Abonnement au calendrier créé avant la version 3.20 ? Ces liens sans clé ne fonctionnent que jusqu’au {date}. Copie à nouveau le lien d’abonnement ci-dessus et remplace l’ancien abonnement.",
     "title": "Exporter vers le calendrier",
     "linkCopied": "Lien d’abonnement copié – ajoute-le dans ton calendrier comme abonnement"
   },

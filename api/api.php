@@ -74,6 +74,13 @@ function fail(string $message, int $status = 400, ?string $code = null, array $e
 // ---------------------------------------------------------------------------
 ini_set('display_errors', '0');
 ini_set('log_errors', '1');
+/** 500 for a caught exception: the message (it may carry server paths, e.g. in a TypeError) goes to the
+    server log, the response names only the code (API.md: "the details go to the server log"). */
+function fail_exception(Throwable $e, string $code): never
+{
+    error_log('Cat-O-Fit API: ' . get_class($e) . ': ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+    fail('Server error – the details are in the server log.', 500, $code);
+}
 /** The documented error answer for an error nobody caught (500, details only in the log). */
 function fail_uncaught(string $logLine): void
 {
@@ -232,8 +239,10 @@ if ($action === 'login') {
     session_create($uid);
     respond([
         'ok' => true, 'user' => $uid,
-        'role' => ($member['role'] ?? 'user') === 'admin' ? 'admin' : 'user',
+        'role' => effective_role($member),
         'weakPin' => !member_has_pin($member) || $pin === '0000',
+        // An admin without a PIN: the admin rights apply once they have set one (see effective_role()).
+        'adminPinRequired' => ($member['role'] ?? 'user') === 'admin' && !member_has_pin($member),
     ]);
 }
 
@@ -299,7 +308,7 @@ if ($action === 'ics-token') {
     try {
         respond(['ok' => true, 'token' => ics_token($uid, !empty($body['rotate']))]);
     } catch (Throwable $e) {
-        fail('Server error: ' . $e->getMessage(), 500, 'server_error', ['detail' => $e->getMessage()]);
+        fail_exception($e, 'server_error');
     }
 }
 
@@ -361,7 +370,7 @@ if ($action === 'delete-user') {
         fails_reset($user);
         respond(['ok' => true, 'deleted' => $user]);
     } catch (Throwable $e) {
-        fail('Deleting failed: ' . $e->getMessage(), 500, 'delete_failed', ['detail' => $e->getMessage()]);
+        fail_exception($e, 'delete_failed');
     }
 }
 
@@ -404,7 +413,7 @@ if ($action === 'changes-all') {
             if ($res['records']) $changes[$a] = $res['records'];
         }
     } catch (Throwable $e) {
-        fail('Server error: ' . $e->getMessage(), 500, 'server_error', ['detail' => $e->getMessage()]);
+        fail_exception($e, 'server_error');
     }
     respond(['ok' => true, 'revs' => (object) $revs, 'changes' => (object) $changes, 'locked' => $locked]);
 }
@@ -496,5 +505,5 @@ try {
 
     fail('Unknown action. Use ?action=changes (GET) or ?action=ops (POST).', 400, 'unknown_action');
 } catch (Throwable $e) {
-    fail('Server error: ' . $e->getMessage(), 500, 'server_error', ['detail' => $e->getMessage()]);
+    fail_exception($e, 'server_error');
 }

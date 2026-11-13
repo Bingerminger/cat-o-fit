@@ -116,6 +116,20 @@ test('importFamilyAll restores members + areas authoritatively', async () => {
   assert.equal(store.find('events', 'eA').name, 'Marathon');
 });
 
+test('importFamilyAll on a new server: the admin who restores stays a member and admin', async () => {
+  await store.login('u-1', '');
+  const dump = {
+    app: 'catofit', kind: 'family-full', version: 1, exportedAt: new Date().toISOString(),
+    family: { members: [{ id: 'old-admin', name: 'Alex', role: 'admin' }, { id: 'old-kid', name: 'Kim', role: 'user' }], settings: {}, pantry: [] },
+    users: { 'old-admin': { events: [{ id: 'e1', name: 'Lauf' }] } },
+  };
+  await store.importFamilyAll(dump);
+  const ids = store.members().map((m) => m.id).sort();
+  assert.deepEqual(ids, ['old-admin', 'old-kid', 'u-1'], 'the restoring admin is still there');
+  assert.equal(store.members().find((m) => m.id === 'u-1').role, 'admin');
+  assert.equal(store.isAdmin(), true, 'and can set the restored members\' PINs');
+});
+
 test('importFamilyAll leaves private cycle data untouched', async () => {
   await store.login('u-1', '');
   store.replaceArea('cycle', [{ id: 'c1', date: '2026-06-01' }]);   // private, present locally

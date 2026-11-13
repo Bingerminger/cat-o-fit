@@ -328,7 +328,11 @@
       "confirmButton": "Restaurar todo",
       "partialTitle": "Restauración aún incompleta",
       "restoredTitle": "Familia restaurada",
-      "restoreFailedMsg": "No se pudo importar la copia de seguridad completa."
+      "restoreFailedMsg": "No se pudo importar la copia de seguridad completa.",
+      "incomplete": {
+        "one": "Atención: {count} área no llegó del servidor: procede de la copia de este dispositivo (quizá más antigua) o falta. Comprueba la conexión y vuelve a crear la copia de seguridad.",
+        "other": "Atención: {count} áreas no llegaron del servidor: proceden de la copia de este dispositivo (quizá más antigua) o faltan. Comprueba la conexión y vuelve a crear la copia de seguridad."
+      }
     },
     "sections": {
       "account": "Cuenta",
@@ -1667,6 +1671,7 @@
     "athlete": "deportista",
     "pinTitle": "Define tu propio PIN",
     "pinText": "Tu perfil sigue usando el PIN predeterminado 0000 (o ninguno). Toda la familia lo conoce: define el tuyo en Ajustes.",
+    "adminPinText": "Figuras como admin, pero aún no tienes PIN. Tus derechos de admin se aplican cuando definas tu propio PIN en Ajustes; hasta entonces, cualquiera en la red podría iniciar sesión como tú.",
     "toCycle": "Ir a Ciclo",
     "periodOverdue": "¿La regla se retrasa?",
     "nextRace": "Próxima carrera",
@@ -3723,6 +3728,8 @@
     "copyLink": "Copiar enlace de suscripción",
     "howTo": "Cómo configurar la suscripción",
     "hint": "El archivo .ics se abre en el calendario de iOS. El recordatorio que contiene (1 hora antes y la tarde anterior) es la forma más fiable de recibir avisos en iPhone/iPad, incluso con la app cerrada. Como suscripción, el plan se mantiene actualizado solo. El enlace contiene tu clave personal de calendario: compártelo solo con quien pueda ver tu plan.",
+    "legacyEnded": "¿Configuraste una suscripción de calendario antes de la versión 3.20? Esos enlaces sin clave dejaron de funcionar el {date}: el calendario ya no muestra nada nuevo. Vuelve a copiar el enlace de suscripción de arriba y sustituye con él la suscripción antigua.",
+    "legacyUntil": "¿Configuraste una suscripción de calendario antes de la versión 3.20? Esos enlaces sin clave solo funcionan hasta el {date}. Vuelve a copiar el enlace de suscripción de arriba y sustituye con él la suscripción antigua.",
     "title": "Exportar al calendario",
     "linkCopied": "Enlace de suscripción copiado: añádelo en tu calendario como suscripción"
   },
