@@ -5,7 +5,9 @@
    - WebKit (the engine of Safari on iPhone and iPad) on phone and tablet;
    - en-US: no metric figure left on screen (miles, pounds, °F by the region's defaults);
    - the service worker registers and the app starts without network (Chromium);
-   - the built public demo: every view, and nothing leaves the browser except the weather service.
+   - the built project site: the start page (both languages, phone and desktop, light and dark), old
+     demo addresses leading on, and the demo under demo/ – every view, nothing leaves the browser
+     except the weather service.
    Each language runs against its own fresh instance (empty data/, own `php -S`); the weather
    service is answered with a fixed forecast, every other outside host counts as an error.
 
@@ -187,21 +189,43 @@ if (want('offline')) {
 }
 
 if (want('demo')) {
-  console.log('== built demo (Chromium)');
-  const dir = mkdtempSync(join(tmpdir(), 'catofit-demo-'));
-  execFileSync(process.execPath, [join(ROOT, 'tools/build-demo.mjs'), '--out', dir], { stdio: 'ignore' });
+  console.log('== built site: start page and demo (Chromium)');
+  const dir = mkdtempSync(join(tmpdir(), 'catofit-site-'));
+  execFileSync(process.execPath, [join(ROOT, 'tools/build-site.mjs'), '--out', dir], { stdio: 'ignore' });
   const port = 18000 + Math.floor(Math.random() * 2000);
   const php = spawn(process.env.PHP || 'php', ['-S', `127.0.0.1:${port}`, '-t', dir], { stdio: 'ignore' });
   const base = `http://127.0.0.1:${port}`;
   try {
     for (let i = 0; i < 50; i++) { try { if ((await fetch(`${base}/index.html`)).ok) break; } catch { /* starting */ } await new Promise((r) => setTimeout(r, 100)); }
+    // The start page in both languages, on a phone and on a desktop, light and dark: no error, nothing
+    // from other servers, nothing sideways.
+    for (const [path, viewport, colorScheme] of [['/', { width: 390, height: 844 }, 'light'], ['/de/', { width: 390, height: 844 }, 'dark'], ['/', { width: 1280, height: 900 }, 'dark']]) {
+      const w = await watchedContext(chromium, `start page ${path} ${viewport.width}`, { locale: 'en-GB', viewport, origin: base });
+      await w.page.emulateMedia({ colorScheme });
+      await w.page.goto(`${base}${path}`);
+      await w.page.waitForTimeout(300);
+      if (w.errors.length) fail(w.where, w.errors.join(' | ').slice(0, 300));
+      if (w.outside.length) fail(w.where, `requests to other hosts: ${w.outside.slice(0, 3).join(', ')}`);
+      if (await w.page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)) fail(w.where, 'the page scrolls sideways');
+      await w.ctx.close();
+    }
+    // Old demo addresses (the demo lived at the root until 4.1).
+    {
+      const w = await watchedContext(chromium, 'old demo addresses', { locale: 'en-GB', viewport: { width: 390, height: 844 }, origin: base });
+      for (const [from, to] of [['/#/calendar', '/demo/#/calendar'], ['/index.html#/', '/demo/#/'], ['/?lang=de', '/de/']]) {
+        await w.page.goto(`${base}${from}`);
+        await w.page.waitForURL((u) => u.href.startsWith(`${base}${to}`), { timeout: 5000 }).catch(() => {});
+        if (!w.page.url().startsWith(`${base}${to}`)) fail(w.where, `${from} leads to ${w.page.url().slice(base.length)}, not ${to}`);
+      }
+      await w.ctx.close();
+    }
     const w = await watchedContext(chromium, 'demo', { locale: 'en-GB', viewport: { width: 390, height: 844 }, origin: base });
     const api = [];
     w.page.on('request', (r) => { if (r.url().includes('/api/')) api.push(`${r.method()} ${r.url().slice(base.length)}`); });
-    await w.page.goto(`${base}/?lang=en`);
+    await w.page.goto(`${base}/demo/?lang=en`);
     await booted(w.page);
     await w.page.waitForTimeout(1500);
-    await visitAll(w, base);
+    await visitAll(w, `${base}/demo`);
     if (api.length) fail('demo', `requests to the API left the browser: ${api.slice(0, 3).join(', ')}`);
     await w.ctx.close();
   } finally { php.kill(); rmSync(dir, { recursive: true, force: true }); }

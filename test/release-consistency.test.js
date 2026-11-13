@@ -40,6 +40,18 @@ test('the demo is built from the newest release, never from a push', () => {
   assert.match(pages, /git tag --list 'v\*' --sort=-version:refname/, 'falls back to the newest tag');
   const build = pages.slice(pages.indexOf('  build:'), pages.indexOf('  deploy:'));
   assert.doesNotMatch(build, /pages:\s*write/, 'the build job has read access only');
+  // Since 4.2 the site (start page + demo under demo/) is published, after its rules are checked.
+  assert.match(build, /node tools\/build-site\.mjs --check/);
+  assert.match(build, /node tools\/build-site\.mjs --out dist\/site/);
+  assert.match(build, /path: dist\/site/);
+});
+
+test('README links lead to the start page and the demo under demo/', () => {
+  for (const [file, demo] of [['README.md', 'https://bingerminger.github.io/cat-o-fit/demo/'], ['README.de.md', 'https://bingerminger.github.io/cat-o-fit/demo/?lang=de']]) {
+    const text = read(file);
+    assert.ok(text.includes(`](${demo})`), `${file}: the demo link should be ${demo}`);
+    assert.doesNotMatch(text, /bingerminger\.github\.io\/cat-o-fit\/\?lang=/, `${file}: the demo moved to demo/`);
+  }
 });
 
 test('CI tests the Docker image as users run it', () => {

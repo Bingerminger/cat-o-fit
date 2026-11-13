@@ -25,5 +25,5 @@ graphify-out/
 .claude/
 *.log
 
-# Static demo build (tools/build-demo.mjs)
+# Static builds: the demo (tools/build-demo.mjs) and the project site (tools/build-site.mjs)
 dist/

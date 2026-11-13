@@ -1,8 +1,9 @@
 name: Demo
 
-# The public demo on GitHub Pages: the app shell without PHP, with the API answered in the
-# browser (js/demo-server.js). It is always built from the newest release tag – the demo shows
-# what is released, not the state of main:
+# The project site on GitHub Pages: the start page (English at the root, German under de/) and the
+# public demo under demo/ – the app shell without PHP, with the API answered in the browser
+# (js/demo-server.js). It is always built from the newest release tag – the site shows what is
+# released, not the state of main:
 #   • when a GitHub release is published (the last step of the release),
 #   • by hand.
 # No weekly run is needed: the demo data are created for the visitor's own "today" when it opens.
@@ -47,13 +48,21 @@ jobs:
         with:
           node-version: '22.x'
 
-      - name: Build the demo
-        run: node tools/build-demo.mjs --out dist/demo
+      # Since 4.2: start page + demo under demo/. A release before that has no build-site.mjs and
+      # gets its demo at the root, as it was published then.
+      - name: Build the site and the demo
+        run: |
+          if [ -f tools/build-site.mjs ]; then
+            node tools/build-site.mjs --check
+            node tools/build-site.mjs --out dist/site
+          else
+            node tools/build-demo.mjs --out dist/site
+          fi
 
       - name: Upload
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          path: dist/demo
+          path: dist/site
 
   deploy:
     name: Publish the demo

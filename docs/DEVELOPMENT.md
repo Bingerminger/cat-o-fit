@@ -634,3 +634,17 @@ access) answer 501 with `code: demo` there (translated as `server.demo`); reques
 release tag – when a release is published, or by hand – so it shows what is released, not the state
 of `main`. Try it locally: `php -S 127.0.0.1:8090 -t dist/demo`. In the repository settings,
 Pages must use “GitHub Actions” as its source.
+
+**Project site** (since 4.2, same workflow): `node tools/build-site.mjs` builds the start page in
+English (`/cat-o-fit/`) and German (`/cat-o-fit/de/`) from `tools/site/content.mjs`, the demo under
+`/cat-o-fit/demo/`, a 404 page and a service worker at the old address that removes a worker an
+earlier demo may have left there. Old demo links keep working: an address with a route (`#/…`, also
+an installed demo app) continues in `demo/`, `?lang=de` opens the German start page. Every factual
+statement carries a claim id that `tools/site/claims.md` backs; `node tools/build-site.mjs --check`
+(also `test/site.test.js`) checks that, plus: nothing loaded from other servers, every link, anchor
+and image exists, images have alternative text and their real size, one `h1` and both language
+versions linked, no download or user figures, counts (exercises, people, languages) taken from the
+code, and inline scripts that neither store nor send anything. Images come from `docs/assets/` at
+build time. Because the workflow builds from the newest tag, the start page changes only with a
+release – a manual run before the first tag that contains `tools/build-site.mjs` builds the plain
+demo at the root, as before. Try it locally: `node tools/build-site.mjs && php -S 127.0.0.1:8090 -t dist/site`.
