@@ -10,6 +10,7 @@ import {
   fmtDate, fmtKmAuto, fmtPace, localizeUnits, typeMeta, todayStr,
 } from './ui.js';
 import { distanceUnit } from './units.js';
+import { phaseName } from './planflow.js';
 import { t, locale } from './i18n.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -43,7 +44,7 @@ export function planBodyHtml(plan, name) {
   const weeks = planWeeks(plan);
   const range = plan.startDate && plan.endDate ? `${fmtDate(plan.startDate)} – ${fmtDate(plan.endDate)}` : '';
   const rows = weeks.map(({ week, phase, units }) => `
-    <h2>${esc(t('planShare.week', { n: week }))}${phase && phase.name ? ` · ${esc(phase.name)}` : ''}</h2>
+    <h2>${esc(t('planShare.week', { n: week }))}${phase && phaseName(plan, phase) ? ` · ${esc(phaseName(plan, phase))}` : ''}</h2>
     <table>${units.map((u) => `
       <tr>
         <td class="day">${esc(fmtDate(u.date))}</td>

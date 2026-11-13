@@ -558,8 +558,10 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
   display: flex; flex-direction: column; align-items: center; gap: var(--sp-2);
   pointer-events: none;
 }
+/* A toast lets taps through to what lies below (a dialog's "Save" on a wide screen) – only its own
+   button ("Undo") takes them. */
 .toast {
-  pointer-events: auto;
+  pointer-events: none;
   max-width: calc(var(--maxw) - 32px);
   padding: var(--sp-3) var(--sp-4);
   border-radius: var(--r-pill);
@@ -665,6 +667,7 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
 
 /* Toast action ("Undo") – large target, clearly recognisable as a button */
 .toast__action {
+  pointer-events: auto;
   margin-left: var(--sp-2); min-height: 36px; padding: 0 var(--sp-3);
   border-radius: var(--r-pill); font-weight: 750; font-size: 0.86rem;
   background: color-mix(in srgb, currentColor 18%, transparent); color: inherit;

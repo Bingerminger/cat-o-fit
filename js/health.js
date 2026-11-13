@@ -195,7 +195,7 @@ function deltaColor(d, delta) {
   if (delta === 0) return 'var(--text-3)';
   if (!d.toward) return 'var(--text-2)';   // neutral without a target direction
   const improving = (d.toward === 'down' && delta < 0) || (d.toward === 'up' && delta > 0);
-  return improving ? 'var(--good)' : 'var(--text-2)'; // neutral: no "red"
+  return improving ? 'var(--good-text)' : 'var(--text-2)'; // neutral: no "red"; text colour for 4.5:1
 }
 
 /* ----------------------------- Recording -------------------------------- */

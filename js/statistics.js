@@ -32,7 +32,8 @@ export function weeklyRunKm(sessions, today, n = 8) {
   return out;
 }
 
-const AMPEL = { gruen: { c: '#2bb673', emoji: '🟢' }, gelb: { c: '#e8a13a', emoji: '🟡' }, rot: { c: '#e5594f', emoji: '🔴' } };
+// `c` colours areas, `text` is the readable text colour of the same tone (≥ 4.5:1 in both themes).
+const AMPEL = { gruen: { c: '#2bb673', text: 'var(--good-text)', emoji: '🟢' }, gelb: { c: '#e8a13a', text: 'var(--warn-text)', emoji: '🟡' }, rot: { c: '#e5594f', text: 'var(--bad-text)', emoji: '🔴' } };
 
 export function render(view) {
   setHeader({ title: t('nav.progress') });
@@ -59,7 +60,7 @@ export function render(view) {
     ]),
     el('div', { class: 'mt-3', style: { display: 'flex', flexDirection: 'column', gap: '5px' } }, st.reasons.map((r) => {
       const mark = r.ok === true ? '✓' : r.ok === false ? '!' : '·';
-      const mc = r.ok === true ? '#2bb673' : r.ok === false ? a.c : 'var(--text-3)';
+      const mc = r.ok === true ? 'var(--good-text)' : r.ok === false ? a.text : 'var(--text-3)';
       return el('div', { class: 'row gap-2', style: { alignItems: 'flex-start', fontSize: '.86rem' } }, [
         el('span', { style: { color: mc, fontWeight: '800', width: '12px', flex: '0 0 auto', textAlign: 'center' }, text: mark }),
         el('span', { text: r.text }),
@@ -162,7 +163,7 @@ export function render(view) {
     view.appendChild(sectionHead(t('statistics.metricsHeading')));
     view.appendChild(el('div', { class: 'card', style: { paddingTop: '4px', paddingBottom: '4px' } }, metrics.map((m, i) => {
       const arrow = m.dir === 'up' ? '↑' : m.dir === 'down' ? '↓' : '→';
-      const ac = m.good === true ? '#2bb673' : m.good === false ? '#e5594f' : 'var(--text-3)';
+      const ac = m.good === true ? 'var(--good-text)' : m.good === false ? 'var(--bad-text)' : 'var(--text-3)';
       const targetTxt = m.target != null ? ` · ${t('statistics.target', { value: m.fmt(m.target), unit: m.unit })}` : '';
       return el('div', { class: 'row gap-3', style: { alignItems: 'center', padding: '9px 0', borderBottom: i < metrics.length - 1 ? '1px solid var(--border)' : 'none' } }, [
         el('div', { class: 'grow' }, [

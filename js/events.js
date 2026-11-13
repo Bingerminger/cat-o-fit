@@ -110,7 +110,7 @@ function eventCard(e, dim = false) {
         el('div', { class: 'muted', style: { fontSize: '0.84rem' }, text: `${fmtDate(e.date)} · ${dist}${e.location ? ' · ' + e.location : ''}` }),
       ]),
       el('div', { style: { textAlign: 'right' } }, [
-        el('div', { class: 'num', style: { fontWeight: '800', fontSize: '1.1rem', color: days >= 0 ? 'var(--accent)' : 'var(--text-3)' }, text: days > 0 ? `${days}` : (days === 0 ? t('events.today') : '–') }),
+        el('div', { class: 'num', style: { fontWeight: '800', fontSize: '1.1rem', color: days >= 0 ? 'var(--accent-text)' : 'var(--text-3)' }, text: days > 0 ? `${days}` : (days === 0 ? t('events.today') : '–') }),
         el('div', { class: 'dim', style: { fontSize: '0.66rem' }, text: days > 0 ? tp('events.daysUnit', days) : '' }),
       ]),
     ]),

@@ -9,7 +9,15 @@
 
 import { weekStart, addDays, diffDays } from './ui.js';
 
-import { t } from './i18n.js';
+import { t, has } from './i18n.js';
+
+/** Display name of a plan phase in the person's language, by its key (since 4.2): a plan made in another
+    language used to keep the phase names it was made with ("Grundlage" in a French view). */
+export function phaseName(plan, phase) {
+  if (!phase) return '';
+  const key = phase.key ? `${plan && plan.kind === 'program' ? 'program' : 'plangen'}.phases.${phase.key}.name` : null;
+  return key && has(key) ? t(key) : (phase.name || '');
+}
 
 /** Load class of a session type (for "similar intensity"). */
 export function loadClass(type) {

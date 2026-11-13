@@ -199,11 +199,14 @@
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md);
   padding: 14px 10px 12px; text-align: center;
   display: flex; flex-direction: column; align-items: center; gap: 3px;
-  opacity: 0.5; filter: grayscale(0.7);
+  border-style: dashed;
   min-width: 0;
 }
+/* Not yet earned: the picture fades, the texts keep their readable colours (the whole card at half
+   opacity left name, description and progress at 2–3.5:1). */
+.badge-card:not(.is-unlocked) .badge-card__emoji { opacity: 0.4; filter: grayscale(1); }
 .badge-card.is-unlocked {
-  opacity: 1; filter: none;
+  border-style: solid;
   border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
   box-shadow: var(--shadow-1);
 }

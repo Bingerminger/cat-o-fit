@@ -13,6 +13,7 @@
    ========================================================================= */
 
 import { diffDays, addDays } from './ui.js';
+import { phaseName } from './planflow.js';
 
 import { t } from './i18n.js';
 
@@ -43,7 +44,7 @@ export function currentPhaseKey(plan, today) {
 export function phaseEmphasis(plan, today) {
   const key = currentPhaseKey(plan, today);
   const p = (plan && plan.phases || []).find((x) => x.key === key);
-  return { phase: key, phaseName: p ? p.name : '', ...PHASE_EMPHASIS[key] };
+  return { phase: key, phaseName: p ? phaseName(plan, p) : '', ...PHASE_EMPHASIS[key] };
 }
 
 /** Recommended daily deficit (kcal), phase-dependent & safe. 0 when the target weight is reached. */

@@ -50,6 +50,12 @@ stays. German and English are written by the project; the other five are machine
 fixed glossary and not yet reviewed by native speakers – corrections are very welcome (see
 [Translation review status](../../locales/REVIEW.md)).
 
+**I switched the language – why are my sessions still in the old one?** The titles and descriptions of a
+plan's sessions are written into the plan when it is made, in the language you used then; the app shows
+them as written (they may contain your own changes). Phase names and everything around them follow the
+new language straight away. To get the sessions in the new language, open the plan and choose
+**“…” → “Recalculate plan from today”** – past weeks stay as they are.
+
 **Can I use miles, pounds and °F?** Yes, since version 4.1 – each person chooses under
 **Settings → Appearance → Units**: kilometres or miles (and min/km or min/mi), kilograms or pounds
 (height in centimetres or feet and inches), °C or °F, the first day of the week and lab values in SI

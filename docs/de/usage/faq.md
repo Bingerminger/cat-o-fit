@@ -51,6 +51,12 @@ maschinell mit festem Glossar übersetzt und noch nicht von Muttersprachlerinnen
 geprüft – Korrekturen sind sehr willkommen (siehe
 [Stand der Übersetzungsprüfung](../../../locales/REVIEW.md)).
 
+**Ich habe die Sprache gewechselt – warum stehen meine Einheiten noch in der alten?** Titel und
+Beschreibungen der Einheiten werden beim Erstellen in den Plan geschrieben, in der Sprache, die du damals
+hattest; die App zeigt sie so, wie sie dastehen (sie können deine eigenen Änderungen enthalten).
+Phasennamen und alles drumherum folgen der neuen Sprache sofort. Für die Einheiten in der neuen Sprache
+öffne den Plan und wähle **„…“ → „Plan ab heute neu berechnen“** – vergangene Wochen bleiben, wie sie sind.
+
 **Gehen auch Meilen, Pfund und °F?** Ja, seit Version 4.1 – jede Person wählt unter
 **Einstellungen → Darstellung → Maßeinheiten**: Kilometer oder Meilen (und min/km oder min/mi),
 Kilogramm oder Pfund (Größe in Zentimetern oder Fuß und Zoll), °C oder °F, den ersten Wochentag und

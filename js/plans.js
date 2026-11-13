@@ -22,7 +22,7 @@ import { openIcsSheet } from './ics-export.js';
 import { onAccent } from './contrast.js';
 import { openUnitCreator } from './session.js';
 import { MISSED_REASON_LABEL } from './unit-actions.js';
-import { mergeFromDate, clampWeek, weekOfDate } from './planflow.js';
+import { mergeFromDate, clampWeek, weekOfDate, phaseName } from './planflow.js';
 import { buildProgramUnits } from './program.js';
 import { commitmentsSummary, mkCommit, dowLabel, FOOTBALL_INTENSITY } from './commitments.js';
 import { weekTriage } from './triage.js';
@@ -554,7 +554,7 @@ export function render(view, eventId) {
     }, [
       el('span', { class: 'phase-pill', style: { background: phase.color, color: onAccent(phase.color) }, text: t('plans.weekShort', { week: w }) }),
       el('div', { class: 'grow' }, [
-        el('div', { class: 'cal-day__dow', text: phase.name }),
+        el('div', { class: 'cal-day__dow', text: phaseName(plan, phase) }),
         el('div', { class: 'cal-day__date', text: `${fmtDayMonth(addDays(plan.startDate, (w - 1) * 7))} · ${fmtKm(wkm, 0)}` }),
       ]),
       el('span', { class: 'list-item__chev', html: iconSvg('chevronDown') }),
@@ -714,7 +714,7 @@ function phaseTimeline(plan, currentWeek) {
       style: { flex: String(span), textAlign: 'center' },
     }, [
       el('div', { style: { height: '8px', borderRadius: '4px', background: p.color, opacity: active ? '1' : '0.4' } }),
-      el('div', { class: 'dim', style: { fontSize: '0.64rem', marginTop: '4px', fontWeight: active ? '700' : '500', color: active ? p.color : 'var(--text-3)' }, text: p.name }),
+      el('div', { class: 'dim', style: { fontSize: '0.64rem', marginTop: '4px', fontWeight: active ? '700' : '500', color: active ? p.color : 'var(--text-3)' }, text: phaseName(plan, p) }),
     ]));
   });
   return wrap;
