@@ -7,12 +7,13 @@
    them the view (#/uebungen). No external data, no third-party images.
    ========================================================================= */
 
-import { el, icon, iconSvg, segmented, input, sectionHead, openSheet, toast } from './ui.js';
+import { el, icon, iconSvg, segmented, input, sectionHead, openSheet, closeSheet, toast, rerenderView } from './ui.js';
 import { setHeader } from './router.js';
 import { exerciseArt } from './exercise-art.js';
 import { onAccent } from './contrast.js';
 import { exerciseUsage, bumpExerciseUsage, get as getArea } from './storage.js';
 import { exerciseRecords } from './strength.js';
+import { myExercises, myWorkouts, saveMyExercise, removeMyExercise, saveMyWorkout, removeMyWorkout, MY_CATEGORIES, WORK_CHOICES, REST_CHOICES_WO, ROUND_CHOICES } from './my-library.js';
 import { recordsCard, plateButton } from './strength-ui.js';
 import { MOTIONS, motionFor } from './exercise-motions.js';
 import { mountPlayer } from './motion-player.js';
@@ -210,8 +211,8 @@ export const EXERCISES = ROWS.map(exerciseOf);
 let textsLoading = null;
 export function loadExerciseTexts() { return (textsLoading ||= loadArea('exercises')); }
 
-/** Find an exercise by id. */
-export function findExercise(id) { return EXERCISES.find((e) => e.id === id) || null; }
+/** Find an exercise by id – in the library or among the person's own (my-library.js, since 4.2). */
+export function findExercise(id) { return EXERCISES.find((e) => e.id === id) || (id ? myExercises().find((e) => e.id === id) : null) || null; }
 
 /** Filters by category, body region ('all' = all) and free text (name/muscles). */
 export function filterExercises(list = EXERCISES, { category = 'all', region = 'all', query = '' } = {}) {
@@ -270,8 +271,10 @@ export function exerciseMentions(text = '') {
     Football appointments get the FIFA 11+ warm-up and the prevention exercises. */
 export function suggestedExercisesFor(type) {
   if (type === 'cross_football' || type === 'match') return PREVENTION_IDS.map(findExercise).filter(Boolean);
-  if (type === 'mobility' || type === 'recovery') return MOBILITY_CORE.map(findExercise).filter(Boolean);
-  if (type === 'strength' || type === 'gym') return STRENGTH_CORE.map(findExercise).filter(Boolean);
+  // The person's own exercises of the matching kind come first.
+  const own = (cats) => myExercises().filter((e) => cats.includes(e.category));
+  if (type === 'mobility' || type === 'recovery') return [...own(['mobility']), ...MOBILITY_CORE.map(findExercise).filter(Boolean)];
+  if (type === 'strength' || type === 'gym') return [...own(['strength', 'core']), ...STRENGTH_CORE.map(findExercise).filter(Boolean)];
   return [];
 }
 
@@ -331,10 +334,13 @@ function renderWorkouts(view) {
   const search = input({ type: 'search', placeholder: t('exerciseLib.searchWorkouts'), 'aria-label': t('exerciseLib.searchWorkoutsAria'), value: uiState.woQuery });
   search.addEventListener('input', () => { uiState.woQuery = search.value; draw(); });
   view.appendChild(el('div', { class: 'field mt-2' }, [search]));
+  // Own workouts (since 4.2): put together from library exercises, first in the list.
+  const own = myWorkouts();
+  view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-2', type: 'button', onclick: () => import('./my-library-ui.js').then((m) => m.openMyWorkoutSheet(null, { onSaved: () => render(view) })) }, [icon('plus'), t('myLibrary.addWorkout')]));
   const chips = el('div', { class: 'mt-2', style: { display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '2px' } });
   const paintChips = () => {
     chips.innerHTML = '';
-    for (const c of [{ key: 'all', label: t('common.all') }, ...WORKOUT_CATS]) {
+    for (const c of [{ key: 'all', label: t('common.all') }, ...(own.length ? [{ key: 'mine', label: t('myLibrary.own') }] : []), ...WORKOUT_CATS]) {
       chips.appendChild(el('button', {
         class: 'chip' + (uiState.woCat === c.key ? ' chip--accent' : ''), style: { flex: '0 0 auto', cursor: 'pointer' }, text: c.label,
         onclick: () => { uiState.woCat = c.key; paintChips(); draw(); },
@@ -349,17 +355,17 @@ function renderWorkouts(view) {
   function draw() {
     grid.innerHTML = '';
     const q = uiState.woQuery.trim().toLowerCase();
-    const list = WORKOUTS.filter((w) => (uiState.woCat === 'all' || w.cat === uiState.woCat)
+    const list = [...own, ...WORKOUTS].filter((w) => (uiState.woCat === 'all' || w.cat === uiState.woCat)
       && (!q || [w.title, w.subtitle, ...workoutIds(w).map((id) => (findExercise(id) || {}).name || '')].some((s) => s.toLowerCase().includes(q))));
     if (!list.length) { grid.appendChild(el('div', { class: 'empty', text: t('exerciseLib.noWorkoutMatch') })); return; }
     for (const w of list) {
       const first = coverOf(w);
       const cm = categoryMeta((findExercise(first) || {}).category);
       const min = el('span', { class: 'wo-card__min', text: minutes.get(w.id) || '' });
-      grid.appendChild(el('button', { class: `wo-card wo-card--${w.style}`, type: 'button', dataset: { id: w.id }, onclick: () => playWorkout(w) }, [
+      grid.appendChild(el('button', { class: `wo-card wo-card--${w.style || 'power'}`, type: 'button', dataset: { id: w.id }, onclick: () => (w.custom ? ownWorkoutSheet(w, view) : playWorkout(w)) }, [
         el('span', { class: 'wo-card__art', html: exerciseArt(first, { color: cm.color }) }),
         el('span', { class: 'wo-card__title', text: w.title }),
-        el('span', { class: 'wo-card__sub', text: w.subtitle }),
+        el('span', { class: 'wo-card__sub', text: w.custom ? t('myLibrary.ownWorkoutSub', { work: w.work, rest: w.rest, rounds: w.rounds }) : w.subtitle }),
         el('span', { class: 'wo-card__meta' }, [icon('play'), min, el('span', { text: ` · ${tp('exerciseLib.exerciseCount', w.items.length)} · ${difficultyLabel(w.level)}` })]),
         el('span', { class: 'wo-card__gear', text: workoutGear(w) }),
       ]));
@@ -368,9 +374,21 @@ function renderWorkouts(view) {
   draw();
   // Duration from the real timeline – loaded afterwards, show-program.js needs this catalogue.
   import('./show-program.js').then(({ programForWorkout, buildShow }) => {
-    for (const w of WORKOUTS) minutes.set(w.id, `≈ ${Math.max(1, Math.round(buildShow(programForWorkout(w)).total / 60))} min`);
+    for (const w of [...own, ...WORKOUTS]) minutes.set(w.id, `≈ ${Math.max(1, Math.round(buildShow(programForWorkout(w)).total / 60))} min`);
     draw();
   }).catch(() => {});
+}
+
+/** An own workout: follow along, or edit it. */
+function ownWorkoutSheet(w, view) {
+  openSheet({
+    title: w.title,
+    body: el('div', {}, [
+      el('div', { class: 'muted', style: { fontSize: '.86rem' }, text: workoutIds(w).map((id) => (findExercise(id) || {}).name || id).join(' · ') }),
+      el('button', { class: 'btn btn--primary btn--block mt-3', type: 'button', onclick: () => { closeSheet(); playWorkout(w); } }, [icon('play'), t('myLibrary.play')]),
+      el('button', { class: 'btn btn--ghost btn--block mt-2', type: 'button', onclick: () => { closeSheet(); import('./my-library-ui.js').then((m) => m.openMyWorkoutSheet(w, { onSaved: () => render(view) })); } }, [icon('edit'), t('myLibrary.edit')]),
+    ]),
+  });
 }
 
 async function playWorkout(w) {
@@ -395,6 +413,8 @@ export function render(view) {
   const search = input({ type: 'search', placeholder: t('exerciseLib.searchExercises'), 'aria-label': t('exerciseLib.searchExercisesAria'), value: uiState.query });
   search.addEventListener('input', () => { uiState.query = search.value; drawGrid(); });
   view.appendChild(el('div', { class: 'field mt-2' }, [search]));
+  // Own exercises (since 4.2): they appear first in the grid and in the workout's suggestions.
+  view.appendChild(el('button', { class: 'btn btn--soft btn--block mt-2', type: 'button', onclick: () => import('./my-library-ui.js').then((m) => m.openMyExerciseSheet(null, { onSaved: () => render(view) })) }, [icon('plus'), t('myLibrary.addExercise')]));
 
   const cats = [{ value: 'all', label: t('common.all') }, ...EX_CATEGORIES.map((c) => ({ value: c.key, label: c.label }))];
   // Five categories do not fit side by side on narrow phones – the bar then scrolls sideways.
@@ -424,7 +444,7 @@ export function render(view) {
   function drawGrid() {
     grid.innerHTML = '';
     const usage = exerciseUsage();
-    const list = filterExercises(EXERCISES, uiState);
+    const list = filterExercises([...myExercises(), ...EXERCISES], uiState);
     if (!list.length) { grid.appendChild(el('p', { class: 'dim center', text: t('exerciseLib.noExerciseMatch') })); return; }
     list.forEach((e) => grid.appendChild(exerciseCard(e, usage[e.id] || 0)));
   }
@@ -440,7 +460,7 @@ function exerciseCard(e, count = 0) {
     el('div', { class: 'ex-card__name', text: e.name }),
     el('div', { class: 'ex-card__meta' }, [
       el('span', { class: 'chip', style: { background: 'var(--surface-2)' }, text: cm.label }),
-      el('span', { class: 'dim', style: { fontSize: '.72rem' }, text: difficultyLabel(e.difficulty) }),
+      el('span', { class: 'dim', style: { fontSize: '.72rem' }, text: e.custom ? t('myLibrary.own') : difficultyLabel(e.difficulty) }),
       count > 0 ? el('span', { class: 'chip', title: t('exerciseLib.usedTimes', { n: count }), style: { background: cm.color, color: onAccent(cm.color), fontSize: '.72rem' }, text: `${count}×` }) : null,
     ]),
   ]);
@@ -461,20 +481,21 @@ function openDetail(e) {
     m ? playerHost : el('div', { class: 'ex-detail__art', html: exerciseArt(e.art, { color: cm.color }) }),
     el('div', { class: 'row gap-2', style: { flexWrap: 'wrap', marginTop: '6px' } }, [
       el('span', { class: 'chip', style: { background: cm.color, color: onAccent(cm.color) }, text: cm.label }),
-      el('span', { class: 'chip', text: difficultyLabel(e.difficulty) }),
-      el('span', { class: 'chip', text: '🛠 ' + e.equipment }),
+      el('span', { class: 'chip', text: e.custom ? t('myLibrary.own') : difficultyLabel(e.difficulty) }),
+      e.equipment ? el('span', { class: 'chip', text: '🛠 ' + e.equipment }) : null,
       usedEl,
     ]),
-    el('div', { class: 'dim mt-3', style: { fontSize: '.82rem' }, text: t('exerciseLib.muscles', { list: (e.muscles || []).join(', ') }) }),
+    (e.muscles || []).length ? el('div', { class: 'dim mt-3', style: { fontSize: '.82rem' }, text: t('exerciseLib.muscles', { list: e.muscles.join(', ') }) }) : null,
+    e.custom ? el('button', { class: 'btn btn--ghost mt-2', type: 'button', onclick: () => { closeSheet(); import('./my-library-ui.js').then((m) => m.openMyExerciseSheet(e, { onSaved: () => rerenderView(render) })); } }, [icon('edit'), t('myLibrary.edit')]) : null,
     // Since 4.2: the person's best values in this exercise, and the plate calculator for loaded ones.
     recordsCard(exerciseRecords(getArea('sessions'), e.id)),
     e.category === 'strength' && !e.hold ? plateButton(() => exerciseRecords(getArea('sessions'), e.id).weight?.value ?? null) : null,
-    sectionHead(t('exerciseLib.howTo')),
-    el('ol', { class: 'ex-steps' }, (e.steps || []).map((s) => el('li', { text: s }))),
-    el('div', { class: 'card card--flat mt-3 row gap-2', style: { alignItems: 'flex-start' } }, [
+    (e.steps || []).length ? sectionHead(e.custom ? t('myLibrary.notes') : t('exerciseLib.howTo')) : null,
+    (e.steps || []).length ? el('ol', { class: 'ex-steps' }, e.steps.map((s) => el('li', { text: s }))) : null,
+    e.tip ? el('div', { class: 'card card--flat mt-3 row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('info'), style: { color: 'var(--accent-text)', flex: '0 0 auto', width: '18px' } }),
       el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: e.tip }),
-    ]),
+    ]) : null,
     e.progression ? el('div', { class: 'card card--flat mt-2 row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('arrowRight'), style: { color: 'var(--good-text)', flex: '0 0 auto', width: '18px' } }),
       el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: t('exerciseLib.progression', { text: e.progression }) }),

@@ -12,6 +12,7 @@
    ========================================================================= */
 
 import { findExercise, exerciseMentions, exercisesForUnit } from './exercises.js';
+import { findWorkout } from './my-library.js';
 import { MOTIONS } from './exercise-motions.js';
 import { cycleOf, introOf } from './motion-rig.js';
 import { STYLES, styleFor } from './music.js';
@@ -121,6 +122,13 @@ export function programForUnit(unit = {}) {
 export function programForWorkout(w) {
   const items = w.items.map((x) => (typeof x === 'string' ? itemOf(x, { work: w.work }) : itemOf(x.id, { work: x.work || w.work }))).filter(Boolean);
   return { title: w.title, format: 'interval', style: w.style || styleOf(items), rounds: w.rounds || 1, rest: w.rest ?? 15, roundRest: w.roundRest ?? 45, items, workoutId: w.id };
+}
+
+/** The programme of a planned session: the workout assigned to it (catalogue or own, since 4.2), otherwise
+    what its text and linked exercises prescribe. */
+export function programForPlanned(unit = {}) {
+  const w = unit.workoutId ? findWorkout(unit.workoutId) : null;
+  return w ? programForWorkout(w) : programForUnit(unit);
 }
 
 /** What an exercise lasts in the programme and prescribes (for overview and announcement). */

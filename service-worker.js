@@ -85,6 +85,8 @@ const SHELL_ASSETS = [
   './js/perftest.js',
   './js/heat.js',
   './js/events.js',
+  './js/my-library.js',
+  './js/my-library-ui.js',
   './js/plans.js',
   './js/plan-share.js',
   './js/plangen.js',

@@ -33,7 +33,8 @@ import { exercisesForUnit, openExercise, difficultyLabel, findExercise } from '.
 import { fmtSet, volume, exerciseRecords, exerciseKey, newRecords } from './strength.js';
 import { newRecordText } from './strength-ui.js';
 import { exerciseArt } from './exercise-art.js';
-import { programForUnit, buildShow } from './show-program.js';
+import { programForPlanned, buildShow } from './show-program.js';
+import { findWorkout } from './my-library.js';
 import { routeMap } from './charts.js';
 import { decodePolyline } from './gpx.js';
 
@@ -178,14 +179,25 @@ function renderUnitExercises(view, plan, unit) {
   const cta = el('div', { class: 'show-cta-slot' });
   const paintCta = () => {
     cta.innerHTML = '';
-    const current = () => programForUnit({ ...unit, exerciseIds: [...linkedIds] });
+    // A workout assigned to the session (catalogue or own, since 4.2) replaces what the text prescribes.
+    const assigned = unit.workoutId ? findWorkout(unit.workoutId) : null;
+    const current = () => programForPlanned({ ...unit, exerciseIds: [...linkedIds] });
     const prog = current();
-    if (!prog) return;
-    const min = Math.max(1, Math.round(buildShow(prog).total / 60));
-    cta.appendChild(el('button', { class: 'btn btn--primary btn--block show-cta', type: 'button', onclick: async () => {
-      const { openShow } = await import('./workout-show.js');
-      openShow(current(), { onFinish: ({ durationSec }) => openLogSheet(plan, unit, null, { durationSec }) });
-    } }, [icon('play'), t('session.followAlong', { min })]));
+    if (prog) {
+      const min = Math.max(1, Math.round(buildShow(prog).total / 60));
+      cta.appendChild(el('button', { class: 'btn btn--primary btn--block show-cta', type: 'button', onclick: async () => {
+        const { openShow } = await import('./workout-show.js');
+        openShow(current(), { onFinish: ({ durationSec }) => openLogSheet(plan, unit, null, { durationSec }) });
+      } }, [icon('play'), assigned ? t('myLibrary.followWorkout', { title: assigned.title, min }) : t('session.followAlong', { min })]));
+    }
+    const assign = (id) => { unit.workoutId = id; saveUnitPatch(plan.id, unit.id, { workoutId: id }); paintCta(); };
+    cta.appendChild(el('div', { class: 'row gap-2 mt-2', style: { alignItems: 'center', flexWrap: 'wrap' } }, [
+      el('span', { class: 'dim grow', style: { fontSize: '.8rem' }, text: assigned ? t('myLibrary.assigned', { title: assigned.title }) : t('myLibrary.assignHint') }),
+      el('button', { class: 'btn btn--ghost', type: 'button', style: { fontSize: '.8rem', padding: '4px 10px' },
+        onclick: () => import('./my-library-ui.js').then((m) => m.openWorkoutPicker({ current: assigned ? assigned.id : null, onPick: assign })) },
+      assigned ? t('myLibrary.change') : t('myLibrary.assign')),
+      assigned ? el('button', { class: 'btn btn--ghost', type: 'button', style: { fontSize: '.8rem', padding: '4px 10px' }, onclick: () => assign(null) }, t('myLibrary.unassign')) : null,
+    ]));
   };
   // For runs the stretching/strength suggestions are accessories: collapsed, so that the path to
   // the start stays short (UI-09). For strength/mobility they are the content – open.

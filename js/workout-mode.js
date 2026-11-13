@@ -23,7 +23,8 @@ import { buildPhases, advance, phaseRemaining, unitTarget } from './workout-engi
 import { cleanSet, fmtSet, recentSetsFor, progressionHint, toStrengthSets, exerciseRecords, newRecords, REST_CHOICES, DEFAULT_REST_SEC } from './strength.js';
 import { recordsLine, newRecordText, plateButton } from './strength-ui.js';
 import { tone, unlockAudio } from './audio.js';
-import { programForUnit, buildShow } from './show-program.js';
+import { programForPlanned, buildShow } from './show-program.js';
+import { findWorkout } from './my-library.js';
 import { distanceUnit, weightUnit, toInput, fromInput } from './units.js';
 
 import { t } from './i18n.js';
@@ -389,13 +390,15 @@ function renderWorkoutExercises(host, plan, unit, setLog = null) {
   const paint = () => {
     list.innerHTML = '';
     // Do all exercises in one go – the workout's clock keeps running meanwhile.
-    const prog = programForUnit({ ...unit, exerciseIds: linked });
+    // The workout assigned to the session (since 4.2) or what its text and exercises prescribe.
+    const assigned = unit.workoutId ? findWorkout(unit.workoutId) : null;
+    const prog = programForPlanned({ ...unit, exerciseIds: linked });
     if (prog) {
       const min = Math.max(1, Math.round(buildShow(prog).total / 60));
       list.appendChild(el('button', { class: 'btn btn--primary btn--block show-cta', type: 'button', onclick: async () => {
         const { openShow } = await import('./workout-show.js');
-        openShow(programForUnit({ ...unit, exerciseIds: linked }));
-      } }, [icon('play'), t('workoutMode.followAlong', { min })]));
+        openShow(programForPlanned({ ...unit, exerciseIds: linked }));
+      } }, [icon('play'), assigned ? t('myLibrary.followWorkout', { title: assigned.title, min }) : t('workoutMode.followAlong', { min })]));
     }
     const usage = store.exerciseUsage();
     // Linked ones first, then the exercises from the plan, below them the suggestions by usage.

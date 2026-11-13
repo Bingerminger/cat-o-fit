@@ -511,6 +511,11 @@ calf raises, running drills, pogo jumps and the **FIFA 11+ football warm-up**).
   **“+”** you attach an exercise to the session; when you complete it, it then counts automatically.
   Tap an exercise to see it animated and follow along. The exercises also stay reachable **during the
   workout** (a panel under the clock that you can expand and collapse).
+- **Your own exercises:** **“Add your own exercise”** – for a machine or a variation the library does not
+  have – with name, kind, equipment, steps and whether it counts by time. They have no animation; they
+  borrow the picture of a similar exercise you choose. They come first in the library and in the
+  suggestions of strength or mobility sessions, and sets, best values and records work as for any
+  exercise.
 
 > The animations are deliberately schematic – they show the sequence and rhythm of the basic movement
 > and do not replace individual instruction. If you have pain or are unsure, get proper guidance.
@@ -535,6 +540,11 @@ to follow along with, meant for an iPad or phone a metre or two away on the floo
   body, dumbbells, kettlebell, Hyrox strength, glutes & legs, abs, Tabata, cardio without jumping,
   morning mobility, free hips, shoulders & neck, an evening routine, stretching after a run, running
   drills, feet & calves and football injury prevention – each with fixed work and rest times.
+- **Your own workouts:** **“Put together your own workout”** – library exercises in your order, with
+  work time, rest and rounds. They appear first under Workouts and play like the ready-made ones.
+- **A workout for a planned session:** under “Follow along non-stop”, **“Assign a workout”** picks a
+  ready-made or your own workout for that session; following along then plays it instead of the plan
+  text (“Remove” goes back to the text).
 
 Before the start you see all exercises with amount and duration and set the **rounds** and **rest**.
 Then **“Let’s go”** – after that you do not have to tap anything:

@@ -47,6 +47,11 @@ carry `thresholdPaceSecPerKm`/`thresholdPaceDate`, `ftpW`/`ftpDate`, `cssSecPer1
 access includes them) and `settings.autoVolume`. Plans may carry `strengthDays` (0–2), `sideRaces`
 (`[{eventId, date, priority, name, distanceKm, targetTime}]`), `autoVolume` (`{week, factor, date}`);
 sessions of a plan may carry `sideRace` (`"B"`/`"C"`), `autoVolume` (the factor) and `manual: true`.
+Strength (4.2): `settings.restByExercise` (`{exerciseId: seconds}`), `settings.customExercises`
+(`[{id, name, category, hold, gear, notes, art}]`) and `settings.customWorkouts`
+(`[{id, title, items: [exerciseId], work, rest, rounds}]`); a planned session may carry `workoutId`
+(a catalogue workout or an own one); `strengthSets` may name an own exercise by its `exerciseId`.
+Programmes may have the types `starterHome` and `starterGym`.
 
 **Health Connect (Android)** (since v3.21.0): arrays per data type with ISO timestamps, as sent by
 bridge apps (e.g. “HC Webhook”) – `weight` (`kilograms`), `body_fat` (`percentage`),

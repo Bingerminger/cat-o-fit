@@ -520,6 +520,11 @@ Lauf-ABC, Fußgelenksprünge und das **Fußball-Aufwärmen nach FIFA 11+**).
   sortiert**. Mit **„+“** hängst du eine Übung an die Einheit; beim Erledigen zählt sie dann automatisch
   mit. Tippe eine Übung an, um sie animiert zu sehen und mitzumachen. Die Übungen bleiben auch **während
   des Workouts** erreichbar (ein-/ausklappbares Panel unter der Uhr).
+- **Eigene Übungen:** **„Eigene Übung anlegen“** – für ein Gerät oder eine Variante, die die Bibliothek
+  nicht kennt – mit Name, Art, Ausrüstung, Ablauf und ob sie nach Zeit zählt. Sie haben keine Animation
+  und leihen sich das Bild einer ähnlichen Übung, die du auswählst. Sie stehen in der Bibliothek und in
+  den Vorschlägen von Kraft- bzw. Beweglichkeitseinheiten vorn; Sätze, Bestwerte und Bestleistungen
+  funktionieren wie bei jeder Übung.
 
 > Die Animationen sind bewusst schematisch – sie zeigen Ablauf und Takt der Grundbewegung und ersetzen
 > keine individuelle Anleitung. Bei Schmerzen oder Unsicherheit lieber fachkundig anleiten lassen.
@@ -544,6 +549,12 @@ Mitmachen, gedacht fürs iPad oder Handy ein, zwei Meter entfernt auf dem Boden:
   Kettlebell, Hyrox-Kraft, Po & Beine, Bauch, Tabata, Cardio ohne Springen, Mobility am Morgen,
   Hüfte frei, Schultern & Nacken, Abendroutine, Dehnen nach dem Laufen, Lauf-ABC, Füße & Waden und
   Fußball-Prävention – jeweils mit fester Arbeits- und Pausenzeit.
+- **Eigene Workouts:** **„Eigenes Workout zusammenstellen“** – Übungen aus der Bibliothek in deiner
+  Reihenfolge, mit Belastungszeit, Pause und Runden. Sie stehen unter Workouts vorn und laufen wie die
+  fertigen.
+- **Ein Workout für eine geplante Einheit:** unter „Durchgehend mitmachen“ wählt **„Workout zuordnen“**
+  ein fertiges oder eigenes Workout für diese Einheit; Mitmachen spielt dann dieses statt des Plantexts
+  („Lösen“ führt zum Text zurück).
 
 Vor dem Start siehst du alle Übungen mit Menge und Dauer und stellst **Runden** und **Pause** ein. Dann
 **„Los geht’s“** – danach musst du nichts mehr antippen:
