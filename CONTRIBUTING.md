@@ -59,7 +59,7 @@ running a server is described in the [installation guide](docs/operations/instal
 - **Versioning:** the single source of truth is `js/version.js`. For a released
   change, raise `APP_VERSION` **and** the `version` in `package.json` (SemVer), bump the **service worker cache**
   (`VERSION` in `service-worker.js`) and add new frontend files to `SHELL_ASSETS`.
-- **Data areas:** new areas must be added **in parallel** in `js/storage.js` (`AREAS`), `api/storage.php`
+- **Data areas:** new areas must be added **in parallel** in `js/store-state.js` (`AREAS`), `api/storage.php`
   (`user_areas`) and in `tools/loadtest.py` and `tools/loadtest_soak.py` (`USER_AREAS`).
 - **Language:** development is in English from 4.0.0 – **commit messages and code comments are
   written in English**. UI texts are not hard-coded in modules: they live in the translation

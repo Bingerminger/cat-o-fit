@@ -81,7 +81,9 @@ test('FE-19: lazily loaded view – follow-up work only after drawing', async ()
 test('FE-19: demo.js and the large views do not load at startup', async () => {
   const { readFileSync } = await import('node:fs');
   const src = (f) => readFileSync(new URL(`../js/${f}`, import.meta.url), 'utf8');
-  const statics = ['app.js', 'storage.js', 'dashboard.js', 'capture.js'].map(src).join('\n');
+  const { readdirSync } = await import('node:fs');
+  const storeParts = readdirSync(new URL('../js/', import.meta.url)).filter((f) => /^store-[\w-]+\.js$/.test(f));
+  const statics = ['app.js', 'storage.js', ...storeParts, 'dashboard.js', 'capture.js'].map(src).join('\n');
   for (const m of ['demo', 'help', 'labs-view', 'reports', 'family-admin', 'health-import', 'workout-mode']) {
     assert.doesNotMatch(statics, new RegExp(`from '\\./${m}\\.js'`), `${m}.js statically imported`);
   }

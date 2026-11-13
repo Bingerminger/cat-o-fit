@@ -543,7 +543,7 @@ The app itself speaks seven languages (`de`, `en`, `fr`, `es`, `it`, `pt-BR`, `n
 1. Raise `js/version.js` **and** `package.json` `version` (SemVer).
 2. Bump `VERSION` (cache name) in `service-worker.js`.
 3. New frontend file? Add it to `SHELL_ASSETS` in `service-worker.js`.
-4. New data area? Add it in `js/storage.js` (`AREAS`/`ARRAY_AREAS`), `api/storage.php`
+4. New data area? Add it in `js/store-state.js` (`AREAS`/`ARRAY_AREAS`), `api/storage.php`
    (`user_areas`) and in `tools/loadtest.py`/`tools/loadtest_soak.py` (`USER_AREAS`).
 5. Keep the tests green / extend them: `npm test` (JS) **and** the PHP tests `php tools/test-health-ingest.php`,
    `php tools/test-health-xml.php`, `php tools/test-storage.php`, `php tools/test-api.php` and
@@ -571,7 +571,7 @@ cat-o-fit/
   service-worker.js       Offline shell (network-first)
   js/
     app.js router.js      Bootstrap & hash routing
-    storage.js api-client.js   Data layer & sync
+    storage.js api-client.js   Data layer & sync (storage.js is the door to the parts store-*.js)
     ui.js charts.js       UI building blocks
     i18n.js language.js format.js   Translations, language choice, number/date formats
     plangen.js program.js Plan generators (race / programme), pure

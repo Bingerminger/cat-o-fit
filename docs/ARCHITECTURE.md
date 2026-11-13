@@ -99,10 +99,29 @@ This document describes how Cat-O-Fit is built, for developers. For setup and wo
 The heart of the app. It holds the state per **area** and takes care of LocalStorage,
 sync and the multi-user context.
 
+**In parts (since 4.2):** `js/storage.js` is only the door – views and tests import
+`* as store` from it, the public names are the same as before. The code lives in twelve parts in
+layers; each part imports only lower ones (no import cycle, `test/store-layers.test.js`):
+
+| Layer | Part | Holds |
+|--:|---|---|
+| 0 | `store-state.js` | areas, device-storage keys, in-memory data, `vars` (the reassigned module variables: `identity`, `activeUser`, `pendingOps` …) |
+| 1 | `store-merge.js` | merging records and ops (higher rev wins, op ids, compacting, profile patches) |
+| 2 | `store-local.js` | LocalStorage of areas, queues and the family store; full device; sync indicator; notifications; shared device |
+| 3 | `store-session.js` | server session: private areas allowed, catching up an offline sign-in, session lost |
+| 4 | `store-family.js` | family record store, its sync, the view and the roles (`isAdmin`, `isManaging` …) |
+| 5 | `store-queue.js` | op queue, push in chunks, applying what the server returns, resync after a restore, other tabs |
+| 6 | `store-data.js` | the public data API (`get/find/upsert/patch/remove/replaceArea`, profile, settings) |
+| 7 | `store-sync.js` | sync pass, `syncNow`, start, switching and signing out the person |
+| 8 | `store-auth.js` | PIN and sign-in |
+| 9 | `store-members.js` | co-management, members, teams |
+| 10 | `store-backup.js` | personal backup and the admin's full backup |
+| 11 | `store-setup.js` | initial setup, demo data, resetting the app |
+
 - **Areas (`AREAS`, 13):** `profile` (object) plus the list areas `events`, `plans`,
   `sessions`, `health`, `nutrition`, `diary`, `shopping`, `checklist`, `cycle`, `reports`, `labs`,
   `supplements` (`ARRAY_AREAS`). **Invariant:** `ARRAY_AREAS` = `AREAS` without `profile`. A new area
-  must be entered in `storage.js`, in `api/storage.php` (`user_areas`) and in the load-test tools
+  must be entered in `js/store-state.js`, in `api/storage.php` (`user_areas`) and in the load-test tools
   (`USER_AREAS`).
 - **Sealed areas (`SEALED_AREAS`, e.g. `reports`):** append-only. `upsert/patch/
   remove` have no effect; the only way to write is `addReport()` – for certificates/reports
