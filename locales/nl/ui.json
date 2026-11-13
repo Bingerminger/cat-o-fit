@@ -434,6 +434,21 @@
     "training": {
       "autoVolume": "Omvang automatisch aanpassen",
       "autoVolumeHint": "Ligt je belasting duidelijk boven wat gepland was, blijft de inspanning zeer zwaar of is vorige week maar deels gelopen, dan kort de app de rustige duurlopen van de lopende planweek met 10–15% in – hooguit één keer per week, nooit kwaliteitstrainingen, wedstrijden, vaste afspraken of je eigen trainingen. Wie volgens schema traint, merkt er niets van. Elke aanpassing staat onder ‘Vandaag’ en is terug te draaien. Meer omvang stelt de app alleen voor."
+    },
+    "perfTest": {
+      "title": "Inspanningstest",
+      "intro": "Waarden uit een lab- of veldtest, elk met de dag van de test. Een leeg veld verwijdert de waarde.",
+      "dateOf": "Testdag: {what}",
+      "threshold": "Drempeltempo ({unit})",
+      "thresholdHint": "Telt in de vormschatting als een zware loop op de testdag – zes weken lang, daarna tellen alleen je lopen.",
+      "countsUntil": "Telt in de vormschatting als een zware loop op de testdag – tot {date}.",
+      "expired": "Ouder dan zes weken – telt niet meer mee in de vormschatting. Een nieuwe test telt weer.",
+      "ftp": "FTP (watt)",
+      "ftpHint": "Geeft fietstrainingen wattbereiken voor hun zone.",
+      "powerZone": "Z{zone} {min}–{max} W",
+      "css": "CSS (min/100 m)",
+      "cssHint": "Kritische zwemsnelheid, bijv. uit 400 m en 200 m: (tijd 400 m − tijd 200 m) ÷ 2. Referentietempo voor zwemtrainingen.",
+      "powerZoneUpTo": "Z{zone} tot {max} W"
     }
   },
   "common": {
@@ -1427,7 +1442,11 @@
     "offsetWeekKm": {
       "one": "Dat maakt {count} training deze week ({km}).",
       "other": "Dat maakt {count} trainingen deze week ({km})."
-    }
+    },
+    "power": "Vermogen",
+    "powerUpTo": "tot {max} W",
+    "css": "Referentie CSS",
+    "cssValue": "{pace} min/100 m"
   },
   "unitActions": {
     "missedReasons": {
@@ -3813,7 +3832,9 @@
     "intervals": "Intervallen",
     "adjustZones": "Trainingszones aanpassen aan je vorm",
     "pacesFit": "Je geplande streeftempo’s passen goed bij je huidige vorm.",
-    "zonesAdjusted": "Trainingszones & openstaande geplande tempo’s aangepast aan je vorm"
+    "zonesAdjusted": "Trainingszones & openstaande geplande tempo’s aangepast aan je vorm",
+    "basisTest": "uit je inspanningstest van {date} (drempel {pace})",
+    "basisSmoothedTest": "afgevlakt over {weeks} weken · beste waarde van de laatste week: inspanningstest van {date} (drempel {pace})"
   },
   "storage": {
     "syncing": "Synchroniseren …",

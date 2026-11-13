@@ -9,7 +9,8 @@
   "sex": "w",
   "maxHr": 190,
   "restHr": 52,
-  "thresholdPaceSecPerKm": 312,
+  "thresholdPaceSecPerKm": 300,
+  "thresholdPaceDate": "2026-06-22",
   "goals": [
     "Körperfett reduzieren",
     "Muskelmasse erhöhen",

@@ -26,7 +26,8 @@ if (!function_exists('respond')) {
 const READ_AREAS = ['events', 'plans', 'sessions', 'health', 'nutrition', 'diary', 'checklist', 'reports'];
 /** Profile fields that are useful for an analysis – no keys, no settings. */
 const READ_PROFILE_FIELDS = ['name', 'sex', 'birthYear', 'heightCm', 'weightKg', 'targetWeightKg', 'maxHr', 'restHr',
-    'hrZones', 'paceZones', 'thresholdPaceSecPerKm', 'level', 'goals', 'activityFactor'];
+    'hrZones', 'paceZones', 'thresholdPaceSecPerKm', 'thresholdPaceDate', 'ftpW', 'ftpDate', 'cssSecPer100m', 'cssDate',
+    'level', 'goals', 'activityFactor'];
 
 $user  = isset($_GET['user']) ? (string) $_GET['user'] : '';
 $token = (string) ($_SERVER['HTTP_X_CATOFIT_TOKEN'] ?? ($_GET['token'] ?? ''));

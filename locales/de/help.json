@@ -913,6 +913,20 @@
         "2": "Ein Plan ändert sich nie von selbst: Kommt ein B- oder C-Rennen dazu oder ändert es sich, zeigt der Plan das an – eingebaut wird beim Neuberechnen ab heute. Feste Termine am Renntag entfallen wie beim A-Rennen.",
         "3": "Zu deinen Zielen"
       }
+    },
+    "leistungsdiagnostik": {
+      "q": "Leistungsdiagnostik: Schwellenpace, FTP und CSS",
+      "aliases": "Laktattest|Schwelle|Watt|Leistungszonen|Schwimmtempo|Feldtest",
+      "blocks": {
+        "0": "Werte aus einem Labor- oder Feldtest trägst du unter Einstellungen → Training ein, jeweils mit dem Testtag. Die App macht daraus keine zweite Pace neben deiner Form:",
+        "1": [
+          "Schwellenpace: zählt in der Formschätzung wie ein harter Lauf am Testtag – sechs Wochen lang, dann zählen nur noch deine Läufe. Die Formkarte nennt den Test als Grundlage, und ihr Schwellenbereich enthält das getestete Tempo.",
+          "FTP (Watt): Radeinheiten zeigen zu ihrer Zone einen Wattbereich – Stufen nach Coggan: bis 55 %, 56–75 %, 76–90 %, 91–105 %, 106–120 % der FTP.",
+          "CSS (kritische Schwimmgeschwindigkeit): Bezugstempo pro 100 m für Schwimmeinheiten, z. B. aus einem 400-m- und einem 200-m-Test: (Zeit 400 m − Zeit 200 m) ÷ 2."
+        ],
+        "2": "Die Schwellen-HF aus demselben Test trägst du bei den Herzfrequenz-Zonen ein („Schwelle“). Ein leeres Feld entfernt einen Wert wieder.",
+        "3": "Einstellungen öffnen"
+      }
     }
   },
   "labBest": "passt am besten"

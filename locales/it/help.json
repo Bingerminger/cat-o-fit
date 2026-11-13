@@ -913,6 +913,20 @@
         "2": "Un piano non cambia mai da solo: se si aggiunge o cambia una gara B o C, il piano lo segnala – viene inserita quando lo ricalcoli da oggi. Gli impegni fissi nel giorno della gara saltano, come per la gara A.",
         "3": "Vai ai tuoi obiettivi"
       }
+    },
+    "leistungsdiagnostik": {
+      "q": "Test di prestazione: passo alla soglia, FTP e CSS",
+      "aliases": "test del lattato|soglia|watt|zone di potenza|passo di nuoto|test sul campo",
+      "blocks": {
+        "0": "I valori di un test in laboratorio o sul campo si inseriscono in Impostazioni → Allenamento, ciascuno con il giorno del test. L’app non ne fa un secondo passo accanto alla tua forma:",
+        "1": [
+          "Passo alla soglia: conta nella stima della forma come una corsa impegnativa nel giorno del test – per sei settimane, poi contano solo le tue corse. La scheda della forma cita il test come base e il suo intervallo di soglia contiene il passo testato.",
+          "FTP (watt): le sedute in bici mostrano un intervallo di watt per la loro zona – livelli di Coggan: fino al 55%, 56–75%, 76–90%, 91–105%, 106–120% della FTP.",
+          "CSS (velocità critica di nuoto): passo di riferimento per 100 m per le sedute di nuoto, ad es. da un test di 400 m e uno di 200 m: (tempo 400 m − tempo 200 m) ÷ 2."
+        ],
+        "2": "La FC di soglia dello stesso test si inserisce nelle zone di frequenza cardiaca («Soglia»). Un campo vuoto rimuove di nuovo un valore.",
+        "3": "Apri le Impostazioni"
+      }
     }
   },
   "labBest": "più adatto"

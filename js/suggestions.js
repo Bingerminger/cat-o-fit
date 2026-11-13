@@ -73,13 +73,13 @@ export const PREDICTION_VOLUME = Object.freeze({
  * then only achievable with sufficient preparation (no "sharpen the goal" advice).
  * @returns {{seconds:number, basis:string, method:'form'|'riegel', onlyEasy:boolean, caveat:string|null, note:string|null}|null}
  */
-export function predictRace(sessions, distanceKm, { hrZones = null, today = todayStr() } = {}) {
+export function predictRace(sessions, distanceKm, { hrZones = null, perfTest = null, today = todayStr() } = {}) {
   if (!distanceKm) return null;
   const caveat = volumeCaveat(distanceKm, runVolume(sessions, today)) ? 'volume' : null;
   const note = caveat ? t('suggestions.volumeNote') : null;
 
   // 1) Form-based (preferred): identical basis as training ranges & form card.
-  const form = estimateVdot(sessions || [], today, 42, { hrZones });
+  const form = estimateVdot(sessions || [], today, 42, { hrZones, perfTest });
   if (form && form.vdot) {
     const seconds = raceTimeFromVdot(form.vdot, distanceKm * 1000);
     if (seconds) {

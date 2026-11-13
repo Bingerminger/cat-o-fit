@@ -11,6 +11,7 @@
 
 import { diffDays, fmtDec, fmtDuration, parseHms } from './ui.js';
 import { predictRace } from './suggestions.js';
+import { formOptions } from './vdot.js';
 import { hrvMethodOf } from './healthdata.js';
 
 import { t } from './i18n.js';
@@ -127,7 +128,7 @@ export function adaptiveInsights({ sessions = [], health = [], events = [], prof
 
   const ev = events.filter((e) => e.status !== 'abgeschlossen' && e.date >= today).sort((a, b) => a.date.localeCompare(b.date))[0];
   if (ev) {
-    const pred = predictRace(sessions, ev.distanceKm, { hrZones: profile.hrZones, today });
+    const pred = predictRace(sessions, ev.distanceKm, { ...formOptions(profile), today });
     if (pred) {
       const targetSec = parseHms(ev.targetTime);
       const ahead = targetSec && pred.seconds <= targetSec * 0.97;   // clearly faster than the target

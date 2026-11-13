@@ -434,6 +434,21 @@
     "training": {
       "autoVolume": "Adjust volume automatically",
       "autoVolumeHint": "When your load is clearly above what was planned, the effort stays very high or last week was only partly run, the app shortens the easy runs of the current plan week by 10–15% – at most once a week, never quality sessions, races, fixed commitments or your own sessions. Training as planned is left alone. Every adjustment is listed on “Today” and can be undone. More volume is only ever suggested."
+    },
+    "perfTest": {
+      "title": "Performance test",
+      "intro": "Values from a lab or field test, each with the day of the test. An empty field removes the value.",
+      "dateOf": "Test day: {what}",
+      "threshold": "Threshold pace ({unit})",
+      "thresholdHint": "Counts in the form estimate like a hard run on the test day – for six weeks, then only your runs do.",
+      "countsUntil": "Counts in the form estimate like a hard run on the test day – until {date}.",
+      "expired": "Older than six weeks – no longer counts in the form estimate. A new test counts again.",
+      "ftp": "FTP (watts)",
+      "ftpHint": "Gives bike sessions watt ranges for their zone.",
+      "powerZone": "Z{zone} {min}–{max} W",
+      "css": "CSS (min/100 m)",
+      "cssHint": "Critical swim speed, e.g. from 400 m and 200 m: (time 400 m − time 200 m) ÷ 2. Reference pace for swim sessions.",
+      "powerZoneUpTo": "Z{zone} up to {max} W"
     }
   },
   "common": {
@@ -1427,7 +1442,11 @@
     "offsetWeekKm": {
       "one": "That makes {count} session this week ({km}).",
       "other": "That makes {count} sessions this week ({km})."
-    }
+    },
+    "power": "Power",
+    "powerUpTo": "up to {max} W",
+    "css": "Reference CSS",
+    "cssValue": "{pace} min/100 m"
   },
   "unitActions": {
     "missedReasons": {
@@ -3813,7 +3832,9 @@
     "intervals": "Intervals",
     "adjustZones": "Adjust training zones to your form",
     "pacesFit": "Your planned target paces suit your current form well.",
-    "zonesAdjusted": "Training zones & open planned paces adjusted to your form"
+    "zonesAdjusted": "Training zones & open planned paces adjusted to your form",
+    "basisTest": "from your performance test on {date} (threshold {pace})",
+    "basisSmoothedTest": "smoothed over {weeks} weeks · best of the latest week: performance test on {date} (threshold {pace})"
   },
   "storage": {
     "syncing": "Syncing …",

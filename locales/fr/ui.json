@@ -434,6 +434,21 @@
     "training": {
       "autoVolume": "Ajuster le volume automatiquement",
       "autoVolumeHint": "Si ta charge dépasse nettement ce qui était prévu, si l’effort reste très élevé ou si la semaine passée n’a été courue qu’en partie, l’app raccourcit de 10 à 15 % les footings de la semaine en cours du plan – au plus une fois par semaine, jamais les séances de qualité, les courses, les engagements fixes ni tes propres séances. S’entraîner selon le plan ne déclenche rien. Chaque ajustement apparaît sous « Aujourd’hui » et peut être annulé. Plus de volume n’est jamais que proposé."
+    },
+    "perfTest": {
+      "title": "Test de performance",
+      "intro": "Valeurs d’un test en laboratoire ou sur le terrain, chacune avec le jour du test. Un champ vide supprime la valeur.",
+      "dateOf": "Jour du test : {what}",
+      "threshold": "Allure au seuil ({unit})",
+      "thresholdHint": "Compte dans l’estimation de la forme comme une sortie exigeante le jour du test – pendant six semaines, ensuite seules tes sorties comptent.",
+      "countsUntil": "Compte dans l’estimation de la forme comme une sortie exigeante le jour du test – jusqu’au {date}.",
+      "expired": "Plus de six semaines – ne compte plus dans l’estimation de la forme. Un nouveau test compte à nouveau.",
+      "ftp": "FTP (watts)",
+      "ftpHint": "Donne aux séances de vélo des plages de puissance pour leur zone.",
+      "powerZone": "Z{zone} {min}–{max} W",
+      "css": "CSS (min/100 m)",
+      "cssHint": "Vitesse critique de nage, p. ex. à partir de 400 m et 200 m : (temps 400 m − temps 200 m) ÷ 2. Allure de référence des séances de natation.",
+      "powerZoneUpTo": "Z{zone} jusqu’à {max} W"
     }
   },
   "common": {
@@ -1427,7 +1442,11 @@
     "offsetWeekKm": {
       "one": "Cela fait {count} séance cette semaine ({km}).",
       "other": "Cela fait {count} séances cette semaine ({km})."
-    }
+    },
+    "power": "Puissance",
+    "powerUpTo": "jusqu’à {max} W",
+    "css": "Référence CSS",
+    "cssValue": "{pace} min/100 m"
   },
   "unitActions": {
     "missedReasons": {
@@ -3813,7 +3832,9 @@
     "intervals": "Fractionné",
     "adjustZones": "Adapter les zones d’entraînement à ta forme",
     "pacesFit": "Tes allures cibles prévues correspondent bien à ta forme actuelle.",
-    "zonesAdjusted": "Zones d’entraînement et allures prévues des séances à venir adaptées à ta forme"
+    "zonesAdjusted": "Zones d’entraînement et allures prévues des séances à venir adaptées à ta forme",
+    "basisTest": "d’après ton test de performance du {date} (seuil {pace})",
+    "basisSmoothedTest": "moyenne lissée sur {weeks} semaines · meilleure valeur de la dernière semaine : test de performance du {date} (seuil {pace})"
   },
   "storage": {
     "syncing": "Synchronisation …",

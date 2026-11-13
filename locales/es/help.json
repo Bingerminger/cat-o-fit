@@ -913,6 +913,20 @@
         "2": "Un plan nunca cambia por sí solo: si se añade o cambia una carrera B o C, el plan lo indica y la integra cuando lo recalculas desde hoy. Los compromisos fijos del día de la carrera desaparecen, como en la carrera A.",
         "3": "Ir a tus objetivos"
       }
+    },
+    "leistungsdiagnostik": {
+      "q": "Prueba de rendimiento: ritmo umbral, FTP y CSS",
+      "aliases": "test de lactato|umbral|vatios|zonas de potencia|ritmo de nado|prueba de campo",
+      "blocks": {
+        "0": "Los valores de una prueba de laboratorio o de campo se introducen en Ajustes → Entrenamiento, cada uno con el día de la prueba. La app no los convierte en un segundo ritmo junto a tu forma:",
+        "1": [
+          "Ritmo umbral: cuenta en la estimación de la forma como una carrera exigente el día de la prueba, durante seis semanas; después solo cuentan tus carreras. La tarjeta de forma cita la prueba como base y su rango umbral contiene el ritmo probado.",
+          "FTP (vatios): las sesiones de bici muestran un rango de vatios para su zona; niveles de Coggan: hasta 55 %, 56–75 %, 76–90 %, 91–105 %, 106–120 % del FTP.",
+          "CSS (velocidad crítica de nado): ritmo de referencia por 100 m para las sesiones de natación, p. ej. con una prueba de 400 m y otra de 200 m: (tiempo 400 m − tiempo 200 m) ÷ 2."
+        ],
+        "2": "La FC umbral de la misma prueba se introduce en las zonas de frecuencia cardiaca («Umbral»). Un campo vacío vuelve a eliminar un valor.",
+        "3": "Abrir Ajustes"
+      }
     }
   },
   "labBest": "la mejor opción"

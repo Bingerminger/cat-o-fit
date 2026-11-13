@@ -913,6 +913,20 @@
         "2": "Um plano nunca muda sozinho: quando uma prova B ou C é adicionada ou muda, o plano avisa – ela entra quando você recalcula a partir de hoje. Compromissos fixos no dia da prova saem, como na prova A.",
         "3": "Ir para suas metas"
       }
+    },
+    "leistungsdiagnostik": {
+      "q": "Teste de desempenho: pace de limiar, FTP e CSS",
+      "aliases": "teste de lactato|limiar|watts|zonas de potência|ritmo de nado|teste de campo",
+      "blocks": {
+        "0": "Valores de um teste em laboratório ou de campo entram em Configurações → Treino, cada um com o dia do teste. O app não os transforma em um segundo pace ao lado da sua forma:",
+        "1": [
+          "Pace de limiar: conta na estimativa da forma como uma corrida exigente no dia do teste – por seis semanas; depois só as suas corridas contam. O cartão de forma cita o teste como base, e a faixa de limiar contém o pace testado.",
+          "FTP (watts): os treinos de bike mostram uma faixa de watts para a zona deles – níveis de Coggan: até 55%, 56–75%, 76–90%, 91–105%, 106–120% da FTP.",
+          "CSS (velocidade crítica de nado): pace de referência por 100 m para os treinos de natação, p. ex. a partir de um teste de 400 m e outro de 200 m: (tempo 400 m − tempo 200 m) ÷ 2."
+        ],
+        "2": "A FC de limiar do mesmo teste entra nas zonas de frequência cardíaca (“Limiar”). Um campo vazio remove um valor de novo.",
+        "3": "Abrir Configurações"
+      }
     }
   },
   "labBest": "melhor opção"

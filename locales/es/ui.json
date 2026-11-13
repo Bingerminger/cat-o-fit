@@ -434,6 +434,21 @@
     "training": {
       "autoVolume": "Ajustar el volumen automáticamente",
       "autoVolumeHint": "Si tu carga supera claramente lo previsto, el esfuerzo sigue muy alto o la semana pasada solo se corrió en parte, la app acorta un 10–15 % los rodajes suaves de la semana actual del plan: como mucho una vez por semana y nunca las sesiones de calidad, las carreras, los compromisos fijos ni tus propias sesiones. Entrenar según el plan no cambia nada. Cada ajuste aparece en «Hoy» y se puede deshacer. Más volumen solo se propone."
+    },
+    "perfTest": {
+      "title": "Prueba de rendimiento",
+      "intro": "Valores de una prueba de laboratorio o de campo, cada uno con el día de la prueba. Un campo vacío elimina el valor.",
+      "dateOf": "Día de la prueba: {what}",
+      "threshold": "Ritmo umbral ({unit})",
+      "thresholdHint": "Cuenta en la estimación de la forma como una carrera exigente el día de la prueba, durante seis semanas; después solo cuentan tus carreras.",
+      "countsUntil": "Cuenta en la estimación de la forma como una carrera exigente el día de la prueba, hasta el {date}.",
+      "expired": "De hace más de seis semanas: ya no cuenta en la estimación de la forma. Una prueba nueva vuelve a contar.",
+      "ftp": "FTP (vatios)",
+      "ftpHint": "Da a las sesiones de bici rangos de vatios para su zona.",
+      "powerZone": "Z{zone} {min}–{max} W",
+      "css": "CSS (min/100 m)",
+      "cssHint": "Velocidad crítica de nado, p. ej. con 400 m y 200 m: (tiempo 400 m − tiempo 200 m) ÷ 2. Ritmo de referencia de las sesiones de natación.",
+      "powerZoneUpTo": "Z{zone} hasta {max} W"
     }
   },
   "common": {
@@ -1427,7 +1442,11 @@
     "offsetWeekKm": {
       "one": "Eso hace {count} sesión esta semana ({km}).",
       "other": "Eso hace {count} sesiones esta semana ({km})."
-    }
+    },
+    "power": "Potencia",
+    "powerUpTo": "hasta {max} W",
+    "css": "Referencia CSS",
+    "cssValue": "{pace} min/100 m"
   },
   "unitActions": {
     "missedReasons": {
@@ -3813,7 +3832,9 @@
     "intervals": "Series",
     "adjustZones": "Ajustar las zonas de entrenamiento a tu forma",
     "pacesFit": "Tus ritmos objetivo planificados encajan bien con tu forma actual.",
-    "zonesAdjusted": "Zonas de entrenamiento y ritmos pendientes ajustados a tu forma"
+    "zonesAdjusted": "Zonas de entrenamiento y ritmos pendientes ajustados a tu forma",
+    "basisTest": "de tu prueba de rendimiento del {date} (umbral {pace})",
+    "basisSmoothedTest": "suavizado sobre {weeks} semanas · mejor valor de la última semana: prueba de rendimiento del {date} (umbral {pace})"
   },
   "storage": {
     "syncing": "Sincronizando …",

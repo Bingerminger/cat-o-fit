@@ -115,6 +115,13 @@ wenn es etwas anzupassen gibt):
 4. Die Zeile darunter vergleicht Form und Plan: „Deine Form ist rund **11 s/km schneller** als deine
    Plan-Zielpaces – Zeit, sie zu schärfen.“ (Passt beides zusammen, steht dort „passen gut“.)
 
+**Leistungsdiagnostik (seit 4.2).** Unter **Einstellungen → Training → Leistungsdiagnostik** trägst du Werte
+aus einem Labor- oder Feldtest ein, jeweils mit dem Testtag. Eine **Schwellenpace** zählt in der Form wie ein
+harter Lauf an diesem Tag, sechs Wochen lang – die Karte nennt dann den Test als Grundlage, und ihr
+Schwellenbereich enthält das getestete Tempo; eine zweite Pace neben der Form gibt es nicht. Eine **FTP** gibt
+Radeinheiten einen Wattbereich zu ihrer Zone (Stufen nach Coggan), eine **CSS** ist das Bezugstempo pro 100 m
+für Schwimmeinheiten. Die Schwellen-HF gehört zu den Herzfrequenz-Zonen.
+
 **Anpassen (ein Tap):** „**Trainingsbereiche an deine Form anpassen**“ übernimmt die Form-Paces **sofort**
 in deine Trainingsbereiche **und** in alle offenen, künftigen Lauf-Einheiten deines Plans – ohne Umweg über
 „Diese Woche neu berechnen“. Jede Einheit bekommt dabei den Bereich ihrer Art (Long Run → Long Run,

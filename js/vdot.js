@@ -101,6 +101,36 @@ export function racePaceFromVdot(vdot, distanceKm) {
   return sec ? Math.round(sec / distanceKm) : null;
 }
 
+/** Middle of the threshold range (86–90 % of VDOT, see ZONE_PCT). */
+const THRESHOLD_MID = (ZONE_PCT.threshold[0] + ZONE_PCT.threshold[1]) / 2;
+
+/**
+ * VDOT from a threshold pace (s/km) of a performance test – the inverse of the app's own threshold range:
+ * the pace sits in the middle of `pacesFromVdot(vdot).threshold`, so the form card shows the tested pace
+ * again and not a second, contradicting one. null for nonsense.
+ */
+export function vdotFromThresholdPace(secPerKm) {
+  const sec = Number(secPerKm);
+  if (!(sec >= 150 && sec <= 900)) return null;
+  const vdot = vo2AtSpeed(60000 / sec) / THRESHOLD_MID;
+  return (vdot > 20 && vdot < 90) ? Math.round(vdot * 10) / 10 : null;
+}
+
+/**
+ * The one set of inputs every form estimate gets (formcards, plan paces, race prediction): the heart rate
+ * zones and the dated threshold pace of a performance test. A test without a date never counts – values
+ * from before 4.2 (demo profiles) must not move anyone's form.
+ */
+export function formOptions(profile = {}) {
+  const p = profile || {};
+  const sec = Number(p.thresholdPaceSecPerKm);
+  const date = typeof p.thresholdPaceDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(p.thresholdPaceDate) ? p.thresholdPaceDate : null;
+  return { hrZones: p.hrZones || null, perfTest: sec > 0 && date ? { secPerKm: sec, date } : null };
+}
+
+/** Days a test counts in the form estimate – the window of the estimate. */
+export const FORM_WINDOW = 42;
+
 /** Full pace ranges from a VDOT – format like `profile.paceZones`. */
 export function pacesFromVdot(vdot) {
   if (!vdot) return null;
@@ -186,9 +216,18 @@ function median(xs) {
  * is the best run of the latest week. Returns { vdot, basis, weeks, onlyEasy, hardCount } or null.
  * `hrZones` (optional, profile) makes heart rate usable as a hardness feature.
  */
-export function estimateVdot(sessions = [], today, days = 42, { hrZones = null } = {}) {
+export function estimateVdot(sessions = [], today, days = FORM_WINDOW, { hrZones = null, perfTest = null } = {}) {
   const z4 = Array.isArray(hrZones) ? hrZones.find((z) => z.zone === 4) : null;
   const hard = [], easy = [];
+  // A performance test counts like one hard run on its date (since 4.2): blended into the smoothing,
+  // and it drops out after the window like any run – no second pace source beside the estimate.
+  if (perfTest && perfTest.date && perfTest.date <= today && diffDays(perfTest.date, today) <= days) {
+    const v = vdotFromThresholdPace(perfTest.secPerKm);
+    if (v) {
+      const week = Math.round(diffDays(weekStart(perfTest.date), weekStart(today)) / 7);
+      hard.push({ v, week, date: perfTest.date, distanceKm: null, durationSec: null, type: 'test', paceSecPerKm: Number(perfTest.secPerKm) });
+    }
+  }
   (sessions || []).forEach((s) => {
     if (!s || s.deleted || !s.distanceKm || !s.durationSec || s.distanceKm < 3) return;
     if (!RUN_TYPES.includes(s.type)) return;
@@ -224,7 +263,7 @@ function smoothVdot(runs) {
     if (!cur || r.v > cur.v || (r.v === cur.v && r.date > cur.date)) byWeek.set(r.week, r);
   });
   const weekly = [...byWeek.values()].sort((a, b) => a.week - b.week); // week 0 (current) first
-  const basisOf = (r) => ({ date: r.date, distanceKm: r.distanceKm, durationSec: r.durationSec, type: r.type });
+  const basisOf = (r) => ({ date: r.date, distanceKm: r.distanceKm, durationSec: r.durationSec, type: r.type, ...(r.paceSecPerKm ? { paceSecPerKm: r.paceSecPerKm } : {}) });
 
   // Too little history → best single run (previous, robust behaviour) – and the basis is that run, the
   // one the number comes from (the card says "estimated from …").

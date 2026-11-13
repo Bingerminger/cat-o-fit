@@ -13,6 +13,7 @@ import { openPlanSetup, sideRaceStatus, sideRaceLine } from './plans.js';
 import { PROGRAM_TYPES, programMeta, programPlanName, createProgramPlan, buildProgramUnits, programPhases } from './program.js';
 import { mergeFromDate } from './planflow.js';
 import { targetPaceSecPerKm, predictRace } from './suggestions.js';
+import { formOptions } from './vdot.js';
 import { openIcsSheet } from './ics-export.js';
 import { currentEligibility } from './wellness.js';
 import { adherence } from './fitness.js';
@@ -219,7 +220,7 @@ export function renderDetail(view, id) {
   }
 
   // Race prediction (estimate)
-  const pred = predictRace(store.get('sessions'), e.distanceKm, { hrZones: store.profile().hrZones });
+  const pred = predictRace(store.get('sessions'), e.distanceKm, formOptions(store.profile()));
   if (pred) {
     view.appendChild(sectionHead(t('events.prediction'), null, { help: 'vdot' }));
     view.appendChild(el('div', { class: 'card' }, [

@@ -7,6 +7,7 @@ import * as store from './storage.js';
 import { el, iconSvg, navigate, fmtDuration, parseHms, fmtNum, fmtKmAuto, fmtWeight } from './ui.js';
 import { distanceUnit } from './units.js';
 import { predictRace } from './suggestions.js';
+import { formOptions } from './vdot.js';
 import { goalProgress } from './healthgoals.js';
 import { currentEnergyTargets, currentEligibility } from './wellness.js';
 import { goalsProgress, shownMetric } from './goals.js';
@@ -32,7 +33,7 @@ export function goalCockpitCard(today) {
 
   const rows = [];
   if (plan && event) {
-    const pred = predictRace(sessions, event.distanceKm, { hrZones: store.profile().hrZones, today });
+    const pred = predictRace(sessions, event.distanceKm, { ...formOptions(store.profile()), today });
     const targetSec = parseHms(event.targetTime);
     let tone = 'neutral', detail;
     if (pred) {

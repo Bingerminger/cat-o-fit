@@ -434,6 +434,21 @@
     "training": {
       "autoVolume": "Ajustar o volume automaticamente",
       "autoVolumeHint": "Se a sua carga ficar bem acima do planejado, o esforço continuar muito alto ou a semana passada tiver sido corrida só em parte, o app encurta em 10–15% os trotes leves da semana atual do plano – no máximo uma vez por semana, nunca treinos de qualidade, provas, compromissos fixos ou treinos seus. Treinar conforme o plano não muda nada. Cada ajuste aparece em “Hoje” e pode ser desfeito. Mais volume o app só sugere."
+    },
+    "perfTest": {
+      "title": "Teste de desempenho",
+      "intro": "Valores de um teste em laboratório ou de campo, cada um com o dia do teste. Um campo vazio remove o valor.",
+      "dateOf": "Dia do teste: {what}",
+      "threshold": "Pace de limiar ({unit})",
+      "thresholdHint": "Conta na estimativa da forma como uma corrida exigente no dia do teste – por seis semanas; depois só as suas corridas contam.",
+      "countsUntil": "Conta na estimativa da forma como uma corrida exigente no dia do teste – até {date}.",
+      "expired": "Mais antigo que seis semanas – não conta mais na estimativa da forma. Um teste novo volta a contar.",
+      "ftp": "FTP (watts)",
+      "ftpHint": "Dá aos treinos de bike faixas de watts para a zona deles.",
+      "powerZone": "Z{zone} {min}–{max} W",
+      "css": "CSS (min/100 m)",
+      "cssHint": "Velocidade crítica de nado, p. ex. a partir de 400 m e 200 m: (tempo 400 m − tempo 200 m) ÷ 2. Pace de referência para os treinos de natação.",
+      "powerZoneUpTo": "Z{zone} até {max} W"
     }
   },
   "common": {
@@ -1427,7 +1442,11 @@
     "offsetWeekKm": {
       "one": "Isso dá {count} treino nesta semana ({km}).",
       "other": "Isso dá {count} treinos nesta semana ({km})."
-    }
+    },
+    "power": "Potência",
+    "powerUpTo": "até {max} W",
+    "css": "Referência CSS",
+    "cssValue": "{pace} min/100 m"
   },
   "unitActions": {
     "missedReasons": {
@@ -3813,7 +3832,9 @@
     "intervals": "Intervalados",
     "adjustZones": "Ajustar as zonas de treino à sua forma",
     "pacesFit": "Os seus paces-alvo planejados combinam bem com a sua forma atual.",
-    "zonesAdjusted": "Zonas de treino e paces planejados em aberto ajustados à sua forma"
+    "zonesAdjusted": "Zonas de treino e paces planejados em aberto ajustados à sua forma",
+    "basisTest": "do seu teste de desempenho de {date} (limiar {pace})",
+    "basisSmoothedTest": "suavizado ao longo de {weeks} semanas · melhor valor da semana mais recente: teste de desempenho de {date} (limiar {pace})"
   },
   "storage": {
     "syncing": "Sincronizando …",

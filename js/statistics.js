@@ -13,6 +13,7 @@ import { setHeader } from './router.js';
 import { progressTabs } from './nav.js';
 import { barChart, donut, lineChart, progressRing, heatmap, heatmapLegend } from './charts.js';
 import { predictRace } from './suggestions.js';
+import { formOptions } from './vdot.js';
 import { formCard, zonesCard } from './formcards.js';
 import { isProtectedDay } from './cycle.js';
 import { planStatus, keyMetrics, activityMatrix, trainingLoad, runKm } from './fitness.js';
@@ -192,7 +193,7 @@ export function render(view) {
   /* ---- Prediction ---- */
   const nextEvent = store.get('events').filter((e) => e.status !== 'abgeschlossen' && e.date >= today).sort((a, b) => a.date.localeCompare(b.date))[0];
   if (nextEvent) {
-    const pred = predictRace(sessions, nextEvent.distanceKm, { hrZones: store.profile().hrZones, today });
+    const pred = predictRace(sessions, nextEvent.distanceKm, { ...formOptions(store.profile()), today });
     if (pred) {
       view.appendChild(sectionHead(t('statistics.predictionHeading'), null, { help: 'vdot' }));
       view.appendChild(el('div', { class: 'card' }, [

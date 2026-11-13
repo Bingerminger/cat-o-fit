@@ -913,6 +913,20 @@
         "2": "A plan never changes by itself: when a B or C race is added or changes, the plan says so – it is built in when you recalculate from today. Fixed commitments on race day drop out, as for the A race.",
         "3": "Go to your goals"
       }
+    },
+    "leistungsdiagnostik": {
+      "q": "Performance test: threshold pace, FTP and CSS",
+      "aliases": "lactate test|threshold|watts|power zones|swim pace|field test",
+      "blocks": {
+        "0": "Values from a lab or field test go under Settings → Training, each with the day of the test. The app does not turn them into a second pace beside your form:",
+        "1": [
+          "Threshold pace: counts in the form estimate like a hard run on the test day – for six weeks, then only your runs count. The form card names the test as its basis, and its threshold range contains the tested pace.",
+          "FTP (watts): bike sessions show a watt range for their zone – Coggan’s levels: up to 55%, 56–75%, 76–90%, 91–105%, 106–120% of FTP.",
+          "CSS (critical swim speed): the reference pace per 100 m for swim sessions, e.g. from a 400 m and a 200 m test: (time 400 m − time 200 m) ÷ 2."
+        ],
+        "2": "The threshold heart rate from the same test goes into the heart rate zones (“Threshold”). An empty field removes a value again.",
+        "3": "Open Settings"
+      }
     }
   },
   "labBest": "best fit"

@@ -913,6 +913,20 @@
         "2": "Un plan ne change jamais tout seul : quand une course B ou C s’ajoute ou change, le plan le signale – elle est intégrée lorsque tu recalcules à partir d’aujourd’hui. Les engagements fixes du jour de course tombent, comme pour la course A.",
         "3": "Aller à tes objectifs"
       }
+    },
+    "leistungsdiagnostik": {
+      "q": "Test de performance : allure au seuil, FTP et CSS",
+      "aliases": "test lactate|seuil|watts|zones de puissance|allure de nage|test de terrain",
+      "blocks": {
+        "0": "Les valeurs d’un test en laboratoire ou sur le terrain se saisissent sous Réglages → Entraînement, chacune avec le jour du test. L’app n’en fait pas une deuxième allure à côté de ta forme :",
+        "1": [
+          "Allure au seuil : compte dans l’estimation de la forme comme une sortie exigeante le jour du test – pendant six semaines, ensuite seules tes sorties comptent. La carte de forme cite le test comme base, et sa plage au seuil contient l’allure testée.",
+          "FTP (watts) : les séances de vélo affichent une plage de puissance pour leur zone – niveaux de Coggan : jusqu’à 55 %, 56–75 %, 76–90 %, 91–105 %, 106–120 % de la FTP.",
+          "CSS (vitesse critique de nage) : allure de référence par 100 m pour les séances de natation, p. ex. à partir d’un test de 400 m et de 200 m : (temps 400 m − temps 200 m) ÷ 2."
+        ],
+        "2": "La FC au seuil du même test se saisit dans les zones de fréquence cardiaque (« Seuil »). Un champ vide supprime à nouveau une valeur.",
+        "3": "Ouvrir les Réglages"
+      }
     }
   },
   "labBest": "convient le mieux"

@@ -328,6 +328,14 @@ Do **not** break these rules in the store (`storage.js`) and backend (`storage.p
   (`PLAN_INVARIANTS_ALL=1` lists every violation; PLAN-B adds side races in week 2, the first deload week
   and the last build weeks, B/C × 5/10/21 km), the store side in `test/sideraces.test.js`, workout
   phases in `test/workout-engine.test.js`.
+- **Performance test (since 4.2, `js/perftest.js`).** Flat profile fields with a date each:
+  `thresholdPaceSecPerKm`/`thresholdPaceDate`, `ftpW`/`ftpDate`, `cssSecPer100m`/`cssDate`. Every form
+  estimate gets its inputs from `vdot.formOptions(profile)` (heart rate zones + the dated threshold pace;
+  `test/perftest.test.js` fails if a caller of `estimateVdot`/`predictRace` builds its own). The test counts
+  as one hard performance on its date (`vdotFromThresholdPace` inverts the app's own threshold range, so the
+  card shows the tested pace again) and drops out after `FORM_WINDOW` days; undated values (demo profiles
+  before 4.2) never count. FTP and CSS are applied when shown (`perftest.powerForZone` for bike sessions by
+  their zone, CSS on swim sessions), never baked into plan texts.
 - **Smoothed form estimate (`vdot.js estimateVdot`, since v3.10.0).** The “current form” is NO longer
   a single run (sensitive to outliers) but robustly smoothed: (1) **weekly best** per calendar week (the person's week start, `ui.weekStart`; since 4.2 – before, 7-day blocks back from today)
   (filters easy runs, dampens intra-week outliers), (2) **outlier capping** of the weekly values to

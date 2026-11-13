@@ -23,6 +23,7 @@ import { setHeader } from './router.js';
 import { openIcsSheet } from './ics-export.js';
 import { openHealthEntry } from './health.js';
 import { weatherForDate, weatherHint, wmo } from './weather.js';
+import { powerForZone } from './perftest.js';
 import { isProtectedDay, PHASE_META } from './cycle.js';
 import { suggestOffsetUnit, weekLoad, rescheduleCheck, findPlannedMatch } from './planflow.js';
 import { compareToPlan, splitBarPct } from './sollist.js';
@@ -112,6 +113,12 @@ function renderPlanned(view, plan, unit) {
   if (unit.targetDurationMin) targets.push([t('session.duration'), `${unit.targetDurationMin} min`]);
   if (unit.targetPaceSecPerKm) targets.push([t('session.targetPace'), fmtPaceRange(unit.targetPaceSecPerKm, unit.targetPaceMaxSecPerKm)]);
   if (unit.targetHrZone) targets.push([t('session.hrZone'), t('session.zone', { zone: unit.targetHrZone })]);
+  // From a performance test (since 4.2), derived when shown: watts for the bike session's zone, the CSS
+  // as the reference pace of a swim session.
+  const prof = store.profile();
+  const watts = typeMeta(unit.type).icon === 'bike' && unit.targetHrZone ? powerForZone(prof.ftpW, unit.targetHrZone) : null;
+  if (watts) targets.push([t('session.power'), watts.min ? `${watts.min}–${watts.max} W` : t('session.powerUpTo', { max: watts.max })]);
+  if (unit.type === 'swim' && Number(prof.cssSecPer100m) > 0) targets.push([t('session.css'), t('session.cssValue', { pace: fmtMinSec(prof.cssSecPer100m) })]);
   if (targets.length) {
     view.appendChild(el('div', { class: 'target-grid mt-4' },
       targets.map(([l, v]) => el('div', { class: 'target' }, [el('div', { class: 'target__label', text: l }), el('div', { class: 'target__val', text: v })]))));

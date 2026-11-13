@@ -68,6 +68,7 @@ const STRUCTURE = [
   ['knowledge', 'info', [
     ['periodisierung', ['p', 'steps']],
     ['hf-zonen', ['p', 'steps', 'tip']],
+    ['leistungsdiagnostik', ['p', 'steps', 'tip', ['link', '#/settings']]],
     ['pace-bereiche', ['p']],
     ['rpe', ['p', 'steps', 'tip']],
     ['trainingslast', ['p', 'tip', 'tip']],

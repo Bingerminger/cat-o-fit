@@ -9,10 +9,11 @@ import {
   openSheet, closeSheet, confirmDialog, alertDialog, toast, sectionHead, fmtPaceRange, todayStr,
   uid, nowIso, fmtDate, safeAccent, saveFile, savedFileMessage,
   refreshView, goOrRefresh, actionSheet,
-  fmtDec, fmtHeight, fmtWeightDec,
+  fmtDec, fmtHeight, fmtWeightDec, fmtMinSec, infoButton,
   rerenderView,
 } from './ui.js';
-import { distanceUnit, weightUnit, toInput, fromInput, cmToFeetInches, heightFromInput } from './units.js';
+import { distanceUnit, weightUnit, toInput, fromInput, cmToFeetInches, heightFromInput, paceUnit, paceToInput, paceFromInput } from './units.js';
+import { powerZones, parseMinSec, testValidity } from './perftest.js';
 import { sessionsCsv, healthCsv, labsCsv, diaryCsv } from './csv-export.js';
 import { setHeader } from './router.js';
 import { syncNow } from './storage.js';
@@ -275,6 +276,7 @@ export function render(view) {
     ]),
     el('div', { class: 'dim mt-2', style: { fontSize: '.78rem' }, text: t('settings.training.autoVolumeHint') }),
   ]));
+  view.appendChild(perfTestCard(p));
 
 /* ----- Appearance ----- */
   view.appendChild(sectionHead(t('settings.sections.appearance'), null, { help: 'masseinheiten' }));
@@ -501,6 +503,63 @@ export function render(view) {
 
   view.appendChild(el('p', { class: 'dim center mt-6', style: { fontSize: '.76rem' }, text: t('settings.footer', { version: APP_VERSION }) }));
   view.insertBefore(jumpNav(view), view.firstChild);
+}
+
+/**
+ * Values from a performance test (since 4.2): threshold pace (enters the form estimate like one hard run
+ * on the test day, for its six weeks), FTP (watts for bike sessions) and CSS (reference pace for swim
+ * sessions) – each with the date of the test. A field left empty removes the value.
+ */
+function perfTestCard(p) {
+  const today = todayStr();
+  const card = el('div', { class: 'card mt-2' }, [
+    el('div', { class: 'row row--between', style: { alignItems: 'center' } }, [
+      el('div', { class: 'card__title', style: { fontSize: '.92rem' }, text: t('settings.perfTest.title') }),
+      infoButton('leistungsdiagnostik', t('settings.perfTest.title')),
+    ]),
+    el('div', { class: 'dim', style: { fontSize: '.78rem', marginBottom: '6px' }, text: t('settings.perfTest.intro') }),
+  ]);
+  const row = ({ label, value, placeholder, inputmode, dateKey, onSave, note }) => {
+    const valueI = input({ value: value ?? '', placeholder, inputmode, 'aria-label': label });
+    const dateI = input({ type: 'date', value: p[dateKey] || '', max: today, 'aria-label': t('settings.perfTest.dateOf', { what: label }) });
+    const save = () => { onSave(valueI.value.trim(), dateI.value || today); refreshView(); };
+    valueI.addEventListener('change', save);
+    dateI.addEventListener('change', () => { if (valueI.value.trim()) save(); });
+    card.appendChild(field(label, el('div', { class: 'row gap-2' }, [valueI, dateI])));
+    if (note) card.appendChild(el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '-4px', marginBottom: '6px' }, text: note }));
+  };
+  // Threshold pace in the person's unit; counts in the form estimate for six weeks.
+  const tv = testValidity(p.thresholdPaceDate, today);
+  row({
+    label: t('settings.perfTest.threshold', { unit: paceUnit() }), value: p.thresholdPaceSecPerKm ? fmtMinSec(paceToInput(p.thresholdPaceSecPerKm)) : '',
+    placeholder: '4:45', inputmode: 'numeric', dateKey: 'thresholdPaceDate',
+    onSave: (v, date) => {
+      const sec = paceFromInput(parseMinSec(v), p.thresholdPaceSecPerKm);
+      store.setProfile(sec ? { thresholdPaceSecPerKm: sec, thresholdPaceDate: date } : { thresholdPaceSecPerKm: null, thresholdPaceDate: null });
+    },
+    note: !p.thresholdPaceSecPerKm || !tv ? t('settings.perfTest.thresholdHint')
+      : tv.counts ? t('settings.perfTest.countsUntil', { date: fmtDate(tv.until) }) : t('settings.perfTest.expired'),
+  });
+  // FTP in watts, with the power zones it gives.
+  const zones = powerZones(p.ftpW);
+  row({
+    label: t('settings.perfTest.ftp'), value: p.ftpW || '', placeholder: '220', inputmode: 'numeric', dateKey: 'ftpDate',
+    onSave: (v, date) => {
+      const w = Math.round(Number(v));
+      store.setProfile(w >= 50 && w <= 600 ? { ftpW: w, ftpDate: date } : { ftpW: null, ftpDate: null });
+    },
+    note: zones.length ? zones.map((z) => (z.min ? t('settings.perfTest.powerZone', { zone: z.zone, min: z.min, max: z.max }) : t('settings.perfTest.powerZoneUpTo', { zone: z.zone, max: z.max }))).join(' · ') : t('settings.perfTest.ftpHint'),
+  });
+  // CSS per 100 m.
+  row({
+    label: t('settings.perfTest.css'), value: p.cssSecPer100m ? fmtMinSec(p.cssSecPer100m) : '', placeholder: '1:50', inputmode: 'numeric', dateKey: 'cssDate',
+    onSave: (v, date) => {
+      const sec = parseMinSec(v);
+      store.setProfile(sec >= 50 && sec <= 300 ? { cssSecPer100m: sec, cssDate: date } : { cssSecPer100m: null, cssDate: null });
+    },
+    note: t('settings.perfTest.cssHint'),
+  });
+  return card;
 }
 
 /**

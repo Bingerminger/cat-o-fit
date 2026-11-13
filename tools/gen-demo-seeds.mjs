@@ -18,7 +18,7 @@ import { buildDemo, completeDemoUnits, planPeriodSessions } from '../js/demo.js'
 import { addDays, weekStartMonday, diffDays } from '../js/ui.js';
 import { makePhases, generatePlanUnits, DEFAULT_WEEK_TEMPLATE, PLAN_GEN, trainingHistory, suggestLevel } from '../js/plans.js';
 import { defaultCommitments, mkCommit } from '../js/commitments.js';
-import { estimateVdot, planPaces } from '../js/vdot.js';
+import { estimateVdot, planPaces, formOptions } from '../js/vdot.js';
 import { linkDemoSessions } from '../js/planflow.js';
 
 const REF = '2026-07-04';                 // reference date of the seeds (keep it current)
@@ -39,7 +39,7 @@ const phases = makePhases(weeks);
 const commitments = [...defaultCommitments(), mkCommit('match', 7, { fromDate: addDays(REF, 12), durationMin: 120 })];
 // Like createPlanForEvent: level from the history, paces from target time and form.
 const hist = trainingHistory(d.self.sessions, REF);
-const form = estimateVdot(d.self.sessions, REF, 42, { hrZones: d.profile.hrZones });
+const form = estimateVdot(d.self.sessions, REF, 42, formOptions(d.profile));
 const [h, m, s] = ev.targetTime.split(':').map(Number);
 const pp = planPaces({ distanceKm: ev.distanceKm, targetSec: h * 3600 + m * 60 + s, formVdot: form && !form.onlyEasy ? form.vdot : null });
 const plan = {

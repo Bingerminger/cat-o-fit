@@ -118,6 +118,13 @@ there is something to adjust):
 4. The line below compares form and plan: “Your form is about **11 s/km faster** than your planned
    target paces – time to sharpen them.” (If both match, it says they “suit your current form well”.)
 
+**Performance test (since 4.2).** Under **Settings → Training → Performance test** you enter values from a lab
+or field test, each with the day of the test. A **threshold pace** counts in the form like one hard run on
+that day, for six weeks – the card then names the test as its basis, and its threshold range contains the
+tested pace; there is no second pace beside the form. An **FTP** gives bike sessions a watt range for their
+zone (Coggan’s levels), a **CSS** is the reference pace per 100 m for swim sessions. The threshold heart
+rate goes into the heart rate zones.
+
 **Adjusting (one tap):** “**Adjust training zones to your form**” applies the form paces **immediately**
 to your training zones **and** to all open, future running sessions in your plan – without the detour via
 “Recalculate this week”. Each session gets the zone for its type (long run → long run, threshold →

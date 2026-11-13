@@ -26,7 +26,7 @@ import { mergeFromDate, clampWeek, weekOfDate } from './planflow.js';
 import { buildProgramUnits } from './program.js';
 import { commitmentsSummary, mkCommit, dowLabel, FOOTBALL_INTENSITY } from './commitments.js';
 import { weekTriage } from './triage.js';
-import { estimateVdot, planPaces } from './vdot.js';
+import { estimateVdot, planPaces, formOptions } from './vdot.js';
 import {
   PLAN_GEN, PLAN_LEVELS, RUN_DAYS, weekTemplateFor, planCommitments, generatePlanUnits, buildWeekUnits,
   trainingHistory, suggestLevel, levelOf, planWindow, planReadiness, racePlanPhases, coveredFixed, clampDays,
@@ -137,7 +137,7 @@ export function ensureGenerated() {
 /** Paces for a race plan: target time and form (hard runs only). For triathlon
     and Hyrox the target time is not a pure running performance – there only the form counts. */
 export function planPacesFor(event, { sessions = store.get('sessions'), today = todayStr(), profile = store.profile() } = {}) {
-  const est = estimateVdot(sessions, today, 42, { hrZones: profile.hrZones });
+  const est = estimateVdot(sessions, today, 42, formOptions(profile));
   const formVdot = est && !est.onlyEasy ? est.vdot : null;
   const isRun = (event.sport || 'run') === 'run';
   return planPaces({ distanceKm: event.distanceKm, targetSec: isRun ? (parseHms(event.targetTime) || null) : null, formVdot });

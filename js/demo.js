@@ -408,7 +408,9 @@ export function buildDemo(today) {
   // (time series ends at ~72 kg) → weight-loss goal "in progress" for the dual-goal cockpit.
   const profile = {
     heightCm: 179, weightKg: 72, targetWeightKg: 69, targetWeightStartKg: 75, birthYear: 1990, sex: 'w',
-    maxHr: 190, restHr: 52, thresholdPaceSecPerKm: 312,
+    // A performance test 12 days ago (since 4.2 it counts in the form estimate): 5:00/km at the threshold,
+    // in line with the demo's form, so the card names the test without moving the demo's figures much.
+    maxHr: 190, restHr: 52, thresholdPaceSecPerKm: 300, thresholdPaceDate: D(-12),
     goals: [t('demo.goalBodyFat'), t('demo.goalMuscle'), t('demo.goalHalf')],
     hrZones: demoHrZones(), paceZones: demoPaceZones(),
   };

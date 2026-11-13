@@ -434,6 +434,21 @@
     "training": {
       "autoVolume": "Umfang automatisch anpassen",
       "autoVolumeHint": "Liegt deine Belastung deutlich über dem Geplanten, ist die Anstrengung dauerhaft groß oder hast du die Vorwoche nur zum Teil geschafft, kürzt die App die ruhigen Läufe der laufenden Planwoche um 10–15 % – höchstens einmal pro Woche, nie Tempoeinheiten, Wettkämpfe, feste Termine oder eigene Einheiten. Wer nach Plan trainiert, bleibt unberührt. Jede Anpassung steht unter „Heute“ und lässt sich zurücknehmen. Mehr Umfang schlägt die App nur vor."
+    },
+    "perfTest": {
+      "title": "Leistungsdiagnostik",
+      "intro": "Werte aus einem Labor- oder Feldtest, jeweils mit dem Testtag. Ein leeres Feld entfernt den Wert.",
+      "dateOf": "Testtag: {what}",
+      "threshold": "Schwellenpace ({unit})",
+      "thresholdHint": "Zählt in der Formschätzung wie ein harter Lauf am Testtag – sechs Wochen lang, dann nur noch deine Läufe.",
+      "countsUntil": "Zählt in der Formschätzung wie ein harter Lauf am Testtag – bis {date}.",
+      "expired": "Älter als sechs Wochen – zählt nicht mehr in der Formschätzung. Ein neuer Test zählt wieder.",
+      "ftp": "FTP (Watt)",
+      "ftpHint": "Gibt Radeinheiten Wattbereiche zu ihrer Zone.",
+      "powerZone": "Z{zone} {min}–{max} W",
+      "css": "CSS (min/100 m)",
+      "cssHint": "Kritische Schwimmgeschwindigkeit, z. B. aus 400 m und 200 m: (Zeit 400 m − Zeit 200 m) ÷ 2. Bezugstempo für Schwimmeinheiten.",
+      "powerZoneUpTo": "Z{zone} bis {max} W"
     }
   },
   "common": {
@@ -1427,7 +1442,11 @@
     "offsetWeekKm": {
       "one": "Diese Woche umfasst damit {count} Einheit ({km}).",
       "other": "Diese Woche umfasst damit {count} Einheiten ({km})."
-    }
+    },
+    "power": "Leistung",
+    "powerUpTo": "bis {max} W",
+    "css": "Bezug CSS",
+    "cssValue": "{pace} min/100 m"
   },
   "unitActions": {
     "missedReasons": {
@@ -3813,7 +3832,9 @@
     "intervals": "Intervalle",
     "adjustZones": "Trainingsbereiche an deine Form anpassen",
     "pacesFit": "Deine Plan-Zielpaces passen gut zu deiner aktuellen Form.",
-    "zonesAdjusted": "Trainingsbereiche & offene Plan-Paces an deine Form angepasst"
+    "zonesAdjusted": "Trainingsbereiche & offene Plan-Paces an deine Form angepasst",
+    "basisTest": "aus deiner Leistungsdiagnostik vom {date} (Schwelle {pace})",
+    "basisSmoothedTest": "geglättet über {weeks} Wochen · bester Wert der jüngsten Woche: Leistungsdiagnostik vom {date} (Schwelle {pace})"
   },
   "storage": {
     "syncing": "Sync …",

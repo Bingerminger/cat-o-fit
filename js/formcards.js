@@ -9,7 +9,7 @@ import {
   el, icon, iconSvg, fmtKm, fmtPace, fmtPaceRange, fmtDuration, fmtDate, fmtNum, todayStr, toast, refreshView, infoButton,
 } from './ui.js';
 import { paceToShown, paceUnit, distanceUnit } from './units.js';
-import { estimateVdot, pacesFromVdot, paceAdjustment, raceZone, racePaceFromVdot } from './vdot.js';
+import { estimateVdot, pacesFromVdot, paceAdjustment, raceZone, racePaceFromVdot, formOptions } from './vdot.js';
 import { repaceUnits } from './planflow.js';
 
 import { t } from './i18n.js';
@@ -38,19 +38,23 @@ export function zonesCard() {
 /** Form-based target pace: estimates the current form (VDOT) and compares it with
     the plan target paces – with the option to carry the training zones over. */
 export function formCard(today, { actionableOnly = false } = {}) {
-  const est = estimateVdot(store.get('sessions'), today, 42, { hrZones: store.profile().hrZones });
+  const est = estimateVdot(store.get('sessions'), today, 42, formOptions(store.profile()));
   if (!est) return null;
   const adj = paceAdjustment(store.profile().paceZones || {}, est.vdot);
   const fresh = adj.fresh;
   const paceRow = (label, z) => el('div', { class: 'row row--between', style: { padding: '2px 0' } }, [
     el('span', { class: 'muted', text: label }), el('span', { class: 'num', text: fmtPaceRange(z.min, z.max) }),
   ]);
+  // A performance test as the basis names the test, not a run (since 4.2).
+  const test = est.basis && est.basis.type === 'test' ? { date: fmtDate(est.basis.date), pace: fmtPaceRange(est.basis.paceSecPerKm) } : null;
   const basisText = !est.basis ? null
     : est.onlyEasy
       ? t('formCards.onlyEasy')
       : (est.weeks >= 3)
-        ? t('formCards.basisSmoothed', { weeks: est.weeks, distance: fmtKm(est.basis.distanceKm, 1), time: fmtDuration(est.basis.durationSec), date: fmtDate(est.basis.date) })
-        : t('formCards.basisEstimated', { distance: fmtKm(est.basis.distanceKm, 1), time: fmtDuration(est.basis.durationSec), date: fmtDate(est.basis.date) });
+        ? (test ? t('formCards.basisSmoothedTest', { weeks: est.weeks, ...test })
+          : t('formCards.basisSmoothed', { weeks: est.weeks, distance: fmtKm(est.basis.distanceKm, 1), time: fmtDuration(est.basis.durationSec), date: fmtDate(est.basis.date) }))
+        : (test ? t('formCards.basisTest', test)
+          : t('formCards.basisEstimated', { distance: fmtKm(est.basis.distanceKm, 1), time: fmtDuration(est.basis.durationSec), date: fmtDate(est.basis.date) }));
   const card = el('div', { class: 'card mt-2' }, [
     el('div', { class: 'row row--between', style: { alignItems: 'baseline' } }, [
       el('div', { class: 'card__title', text: t('formCards.currentForm') }),

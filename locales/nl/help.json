@@ -913,6 +913,20 @@
         "2": "Een schema verandert nooit vanzelf: komt er een B- of C-wedstrijd bij of verandert er een, dan meldt het schema dat – ingebouwd wordt bij het opnieuw berekenen vanaf vandaag. Vaste afspraken op de wedstrijddag vervallen, net als bij de A-wedstrijd.",
         "3": "Naar je doelen"
       }
+    },
+    "leistungsdiagnostik": {
+      "q": "Inspanningstest: drempeltempo, FTP en CSS",
+      "aliases": "lactaattest|drempel|watt|vermogenszones|zwemtempo|veldtest",
+      "blocks": {
+        "0": "Waarden uit een lab- of veldtest vul je in onder Instellingen → Training, elk met de dag van de test. De app maakt er geen tweede tempo naast je vorm van:",
+        "1": [
+          "Drempeltempo: telt in de vormschatting als een zware loop op de testdag – zes weken lang, daarna tellen alleen je lopen. De vormkaart noemt de test als basis, en het drempelbereik bevat het geteste tempo.",
+          "FTP (watt): fietstrainingen tonen een wattbereik voor hun zone – niveaus volgens Coggan: tot 55%, 56–75%, 76–90%, 91–105%, 106–120% van de FTP.",
+          "CSS (kritische zwemsnelheid): referentietempo per 100 m voor zwemtrainingen, bijv. uit een test over 400 m en over 200 m: (tijd 400 m − tijd 200 m) ÷ 2."
+        ],
+        "2": "De drempelhartslag uit dezelfde test vul je in bij de hartslagzones (‘Drempel’). Een leeg veld verwijdert een waarde weer.",
+        "3": "Instellingen openen"
+      }
     }
   },
   "labBest": "beste match"
