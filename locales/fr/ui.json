@@ -990,8 +990,8 @@
     },
     "priorityHint": {
       "A": "A – temps fort de la saison : ton plan monte en puissance jusqu’à ce jour.",
-      "B": "B – course importante : cours-la sérieusement, sans plan complet en amont.",
-      "C": "C – course de préparation ou pour le plaisir : prends-la comme un stimulus d’entraînement."
+      "B": "B – course importante : si elle tombe pendant le plan d’une course A, ce plan l’intègre – court affûtage avant, jours faciles après.",
+      "C": "C – course de préparation ou pour le plaisir : si elle tombe pendant le plan d’une course A, elle y remplace la séance de qualité de la semaine."
     },
     "timesPerWeek": "{n}×/semaine",
     "planWeeksShort": {
@@ -1105,6 +1105,14 @@
       "planned": "prévu",
       "active": "actif",
       "completed": "terminé"
+    },
+    "sideRace": {
+      "built": "Cette course est intégrée à « {plan} ».",
+      "pending": "Cette course tombe pendant « {plan} » et n’y est pas encore intégrée – elle n’a pas besoin de son propre plan.",
+      "build": "Intégrer au plan",
+      "toPlan": "Voir le plan",
+      "chipBuilt": "dans le plan",
+      "chipPending": "pas encore dans le plan"
     }
   },
   "exerciseNames": {
@@ -1550,7 +1558,21 @@
     "regenWeekLost": "Les déplacements et modifications manuelles de cette semaine seront perdus.",
     "strengthOff": "Non",
     "strengthHint": "Phase de fondation jusqu’à {n}× par semaine, développement et pic une fois pour entretenir, rien pendant l’affûtage. Seulement les jours qui ne sont pas voisins d’une séance exigeante ou d’un engagement fixe exigeant.",
-    "levelLineStrength": "Renforcement jusqu’à {n}× par semaine"
+    "levelLineStrength": "Renforcement jusqu’à {n}× par semaine",
+    "sideRaces": {
+      "title": "Courses de la saison",
+      "lineB": {
+        "one": "{prio} · {name} · {date} : court affûtage avant, {count} jour facile après",
+        "other": "{prio} · {name} · {date} : court affûtage avant, {count} jours faciles après"
+      },
+      "lineC": {
+        "one": "{prio} · {name} · {date} : remplace la séance de qualité de la semaine, {count} jour facile après",
+        "other": "{prio} · {name} · {date} : remplace la séance de qualité de la semaine, {count} jours faciles après"
+      },
+      "long": "{prio} · {name} · {date} : plus de {km} – pas intégrée, elle mérite son propre plan",
+      "taper": "{prio} · {name} · {date} : tombe pendant l’affûtage – pas intégrée",
+      "changed": "Des courses de la saison ont changé depuis le dernier calcul. Elles n’entrent dans le plan que lorsque tu le recalcules à partir d’aujourd’hui."
+    }
   },
   "commitments": {
     "footballTraining": "Entraînement de football",

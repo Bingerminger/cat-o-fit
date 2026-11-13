@@ -897,6 +897,21 @@
         "2": "La première semaine du plan, les semaines d’allègement et d’affûtage ainsi que la semaine de course restent intactes. Chaque ajustement figure dans le journal « Derniers ajustements automatiques » sous « Aujourd’hui » et peut être annulé – il ne revient alors plus cette semaine. Plus de volume ne vient jamais automatiquement ; c’est le coach qui le propose. Pour désactiver : Réglages → Entraînement.",
         "3": "Ouvrir les Réglages"
       }
+    },
+    "saisonrennen": {
+      "q": "Courses de la saison : A, B et C",
+      "aliases": "priorité|course secondaire|course de préparation|saison",
+      "blocks": {
+        "0": "Chaque course a une priorité. Le plan d’entraînement mène à une course A ; les courses B et C qui tombent dans sa période y sont intégrées – elles n’ont pas besoin de leur propre plan.",
+        "1": [
+          "B – course importante : un court footing la veille, le jour d’avant libre, au-delà de 10 km encore un jour court avant ; ensuite des jours faciles – 1 jusqu’à 5 km, 2 jusqu’à 10 km, sinon 3.",
+          "C – course comme entraînement : rien d’exigeant la veille, 1 jour facile après (2 au-delà de 10 km), et elle remplace la séance de qualité de la semaine.",
+          "Si la course est à peu près aussi longue que la sortie longue de la semaine, elle la remplace aussi.",
+          "Ne sont pas intégrées : les courses de plus de 25 km, celles pendant l’affûtage et celles qui ont déjà leur propre plan. Ensuite le plan continue de progresser comme si la semaine avait été normale."
+        ],
+        "2": "Un plan ne change jamais tout seul : quand une course B ou C s’ajoute ou change, le plan le signale – elle est intégrée lorsque tu recalcules à partir d’aujourd’hui. Les engagements fixes du jour de course tombent, comme pour la course A.",
+        "3": "Aller à tes objectifs"
+      }
     }
   },
   "labBest": "convient le mieux"

@@ -33,7 +33,8 @@ So legst du dein Ziel an:
 1. Öffne **Mehr → Ziele & Pläne** und tippe oben auf **„+“** → wähle **Wettkampf**.
 2. Trage **Name, Datum, Distanz** und **Zielzeit** ein (`h:mm:ss`, z. B. `1:55:00`; Punkt oder
    Komma gehen auch) und wähle die **Priorität**: **A** – Saisonhöhepunkt, auf den der Plan zuläuft;
-   **B** – wichtiger Wettkampf; **C** – Vorbereitungs- oder Spaßrennen. Das Datum ist bewusst nicht
+   **B** – wichtiger Wettkampf; **C** – Vorbereitungs- oder Spaßrennen (B- und C-Rennen im Plan eines
+   A-Rennens baut dieser Plan ein, siehe unten „Eine Saison mit mehreren Rennen“). Das Datum ist bewusst nicht
    vorbelegt; fehlt etwas, markiert die App das Feld.
 3. **Speichern** – du landest auf der Ziel-Seite mit Countdown und Zielpace.
 4. Tippe auf **„Plan erstellen“**. Eine kurze Einrichtung fragt:
@@ -83,6 +84,24 @@ den Platz der Einheit ein, die der Plan in ihre Woche legen würde. Pläne aus f
 dafür eine Karte „Neue Planlogik verfügbar“; geändert wird nur, wenn du es auslöst. Das Speichern
 fester Termine wirkt genauso. „Diese Woche neu berechnen“ rührt nichts vor heute an und ersetzt die
 Verschiebungen dieser Woche – das sagt die Rückfrage vorher.
+
+**Eine Saison mit mehreren Rennen.** Der Plan läuft auf sein **A-Rennen** zu. B- und C-Rennen in seinem
+Zeitraum (Laufen, bis 25 km, vor dem Tapering) brauchen keinen eigenen Plan – der Plan baut sie ein, und
+ihre Zielseite und die Zielliste zeigen das:
+
+- **B-Rennen** – kurzes Tapering: am Vortag ein Shakeout, der Tag davor frei (über 10 km noch ein kurzer
+  Tag davor); danach lockere Tage – 1 bis 5 km, 2 bis 10 km, sonst 3.
+- **C-Rennen** – Training mit Startnummer: am Vortag nichts Forderndes, danach 1 lockerer Tag (über
+  10 km 2), und es ersetzt die Tempoeinheit der Woche.
+- Ist ein Rennen etwa so lang wie der Long Run der Woche, ersetzt es auch ihn. Feste Termine am Renntag
+  entfallen wie am Tag des A-Rennens. Danach steigert der Plan weiter, als wäre die Woche normal
+  gelaufen – er bleibt nicht eine Stufe zurück.
+
+Ein neuer Plan übernimmt die B-/C-Rennen, die es beim Anlegen gibt. Ein später hinzugefügtes oder
+geändertes Rennen zeigt der Plan („Saisonrennen“) und seine Zielseite an; in den Plan kommt es beim
+**Neuberechnen ab heute** – nie von selbst. Ein Rennen mit eigenem Plan bleibt in diesem, und ein
+längeres Rennen (ein Marathon als B-Rennen) verdient einen eigenen Plan. Triathlon- und Hyrox-Pläne
+nehmen keine Nebenrennen auf.
 
 <br clear="all" />
 

@@ -278,6 +278,13 @@ library. English is the source language; the other catalogs follow its keys.
   `updatePlanFromToday` (new from today, the past unchanged via `planflow.mergeFromDate`). The
   paces come from `vdot.planPaces` (target time + form) and are stored per plan in `plan.paces`; every
   running unit carries its zone key `paceKey`. `plan.gen` marks the generator version.
+- **Season (since 4.2):** `plan.sideRaces` is a snapshot of the B/C races inside a run plan's window
+  without a plan of their own (`plans.sideRaceCandidates`, taken at creation and at "recalculate from
+  today", never on a sync). `buildWeekUnits` builds them in week by week (`plangen.sideRacesOf`: race day
+  blocked like a commitment day, B with the race-week rules for its short taper, no demanding work in
+  the recovery days, a C race instead of the week's quality session); weeks around them are no reference
+  for the next increase (`lastFullKm` counts them as steps). The side race session carries its own
+  `eventId` and `sideRace: 'B'|'C'`.
 - **Programme** (`program.js`): `createProgramPlan(program, today)` creates a weekly plan without a
   competition (fitness/strength/weight loss/mobility) with endurance-minute progression and strength days.
 - Both deliver **the same plan/unit format** (`planId`, `date`, `type`, `targetDurationMin`,

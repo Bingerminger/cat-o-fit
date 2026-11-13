@@ -990,8 +990,8 @@
     },
     "priorityHint": {
       "A": "A – hoogtepunt van het seizoen: je schema bouwt naar deze dag toe.",
-      "B": "B – belangrijke wedstrijd: loop hem serieus, zonder volledig schema ernaartoe.",
-      "C": "C – opbouw- of plezierwedstrijd: neem hem mee als trainingsprikkel."
+      "B": "B – belangrijke wedstrijd: valt hij binnen het schema van een A-wedstrijd, dan bouwt dat schema hem in – korte taper vooraf, rustige dagen erna.",
+      "C": "C – opbouw- of plezierwedstrijd: valt hij binnen het schema van een A-wedstrijd, dan vervangt hij de kwaliteitstraining van die week."
     },
     "timesPerWeek": "{n}×/week",
     "planWeeksShort": {
@@ -1105,6 +1105,14 @@
       "planned": "gepland",
       "active": "actief",
       "completed": "afgerond"
+    },
+    "sideRace": {
+      "built": "Deze wedstrijd is ingebouwd in ‘{plan}’.",
+      "pending": "Deze wedstrijd valt binnen ‘{plan}’ en is nog niet ingebouwd – een eigen schema is niet nodig.",
+      "build": "In het schema inbouwen",
+      "toPlan": "Naar het schema",
+      "chipBuilt": "in het schema",
+      "chipPending": "nog niet in het schema"
     }
   },
   "exerciseNames": {
@@ -1550,7 +1558,21 @@
     "regenWeekLost": "Verplaatsingen en handmatige wijzigingen in deze week gaan verloren.",
     "strengthOff": "Uit",
     "strengthHint": "Basisfase tot {n}× per week, opbouw en piek één keer om het te onderhouden, niets in de taper. Alleen op dagen die niet naast een zware training of een zware vaste afspraak liggen.",
-    "levelLineStrength": "Kracht tot {n}× per week"
+    "levelLineStrength": "Kracht tot {n}× per week",
+    "sideRaces": {
+      "title": "Wedstrijden van het seizoen",
+      "lineB": {
+        "one": "{prio} · {name} · {date}: korte taper vooraf, {count} rustige dag erna",
+        "other": "{prio} · {name} · {date}: korte taper vooraf, {count} rustige dagen erna"
+      },
+      "lineC": {
+        "one": "{prio} · {name} · {date}: vervangt de kwaliteitstraining van de week, {count} rustige dag erna",
+        "other": "{prio} · {name} · {date}: vervangt de kwaliteitstraining van de week, {count} rustige dagen erna"
+      },
+      "long": "{prio} · {name} · {date}: langer dan {km} – niet ingebouwd, daar hoort een eigen schema bij",
+      "taper": "{prio} · {name} · {date}: valt in de taper – niet ingebouwd",
+      "changed": "Er zijn wedstrijden van het seizoen veranderd sinds de laatste berekening. Ze komen pas in het schema als je het vanaf vandaag opnieuw berekent."
+    }
   },
   "commitments": {
     "footballTraining": "Voetbaltraining",

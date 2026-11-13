@@ -11,5 +11,30 @@
     "location": "Dresden, Altstadt",
     "status": "geplant",
     "createdAt": "2026-05-23"
+  },
+  {
+    "id": "demo-e2",
+    "name": "Volkslauf",
+    "kind": "race",
+    "date": "2026-07-18",
+    "distanceType": "5k",
+    "distanceKm": 5,
+    "priority": "C",
+    "location": "Dresden-Neustadt",
+    "status": "geplant",
+    "createdAt": "2026-06-14"
+  },
+  {
+    "id": "demo-e3",
+    "name": "10-km-Wettkampf",
+    "kind": "race",
+    "date": "2026-08-09",
+    "distanceType": "10k",
+    "distanceKm": 10,
+    "targetTime": "00:50:00",
+    "priority": "B",
+    "location": "Dresden, Elbufer",
+    "status": "geplant",
+    "createdAt": "2026-06-14"
   }
 ]

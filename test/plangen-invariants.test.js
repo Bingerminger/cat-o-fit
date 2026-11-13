@@ -10,12 +10,17 @@
         demanding sessions the plan builds never fall on consecutive days;
    - R  race week: the day before is a short shakeout, two days before is free;
    - M  a standard marathon plan reaches the volume the race prediction asks for;
-   - W  one week built alone equals that week of the whole plan.
+   - W  one week built alone equals that week of the whole plan;
+   - B  side races (B/C, since 4.2): one race session each, a B race with shakeout and a free day
+        before, nothing demanding the day before or in the recovery days after, a C race instead of
+        the week's quality session, no strength in the short taper; weeks around them keep W, and
+        the other weeks keep V.
    Every violation is counted; the message lists the first ones. */
 import { test, after } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   planWindow, racePlanPhases, weekTemplateFor, generatePlanUnits, buildWeekUnits, volumeConfig, weekVolumes, PLAN_GEN,
+  sideRacesOf, SIDE_RACE_MAX_KM,
 } from '../js/plangen.js';
 import { mkCommit } from '../js/commitments.js';
 import { planPaces } from '../js/vdot.js';
@@ -265,4 +270,105 @@ test('PLAN-W: a week built alone equals that week of the whole plan', () => {
     }
   }
   report('single week', bad);
+});
+
+/* ---------------- B: side races of the season ---------------- */
+/** Weeks that a side race's window reaches (lighter by design, never a reference). */
+function touchedWeeks(plan, sides) {
+  const out = new Set();
+  for (const r of sides) {
+    for (let d = addDays(r.date, -Math.max(1, r.taper)); d <= addDays(r.date, r.recovery); d = addDays(d, 1)) {
+      out.add(Math.floor(diffDays(plan.startDate, d) / 7) + 1);
+    }
+  }
+  return out;
+}
+
+function sideViolations(plan, event, units, tag, baseUnits) {
+  const bad = [];
+  const targets = weekVolumes(plan, volumeConfig(plan, event, plan.paces || {}));
+  const sides = sideRacesOf(plan, targets);
+  for (const raw of plan.sideRaces) {
+    const r = sides.find((s) => s.eventId === raw.eventId);
+    const races = units.filter((u) => u.type === 'race' && u.eventId === raw.eventId);
+    if (!r) { if (races.length) bad.push(`${tag}: ${raw.priority} ${raw.distanceKm} km on ${raw.date} built in although outside the rules`); continue; }
+    if (races.length !== 1 || races[0].date !== r.date || races[0].sideRace !== r.priority) bad.push(`${tag}: ${races.length} race sessions for the side race`);
+    for (const u of units) {
+      if (u.fixed || u.type === 'race') continue;
+      const n = diffDays(u.date, r.date);   // days before the race (negative: after)
+      if (n <= 1 && n >= -r.recovery && isHard(u)) bad.push(`${tag}: ${u.type} on ${u.date}, ${n > 0 ? 'the day before' : `${-n} day(s) after`} the ${r.priority} race`);
+      if (r.priority === 'B' && n === 1 && !(u.type === 'recovery' && (u.targetDistanceKm || 0) <= 4)) bad.push(`${tag}: ${u.type} the day before the B race`);
+      if (r.priority === 'B' && n === 2) bad.push(`${tag}: ${u.type} two days before the B race`);
+      if (u.type === 'strength' && n >= -r.recovery && n <= (r.priority === 'B' ? r.taper + 1 : 2)) bad.push(`${tag}: strength ${n} day(s) before the ${r.priority} race`);
+      if (r.priority === 'C' && (u.type === 'tempo' || u.type === 'interval') && u.week === Math.floor(diffDays(plan.startDate, r.date) / 7) + 1) bad.push(`${tag}: quality session in the C race's week`);
+    }
+  }
+  if (units.filter((u) => u.type === 'race' && u.date === event.date).length !== 1) bad.push(`${tag}: the main race is missing`);
+  // The weeks around the side races, built alone, equal the whole plan.
+  const shape = (u) => `${u.date}|${u.type}|${u.targetDistanceKm ?? ''}|${u.targetDurationMin ?? ''}|${u.relocatedFrom || ''}|${u.eventId}`;
+  for (const w of touchedWeeks(plan, sides)) {
+    if (w < 1 || w > plan.weeks) continue;
+    const alone = buildWeekUnits(plan, event, {}, w).map(shape).sort().join('\n');
+    const inPlan = units.filter((u) => u.week === w).map(shape).sort().join('\n');
+    if (alone !== inPlan) bad.push(`${tag}: week ${w} built alone differs`);
+  }
+  // Outside the side races' weeks the plan is the plan without them: a side race leaves no lasting
+  // dent in the build (its weeks are skipped as a reference, the build goes on meanwhile).
+  const touched = touchedWeeks(plan, sides);
+  const cfg = volumeConfig(plan, event, plan.paces || {});
+  const weeks = byWeek(units, plan.weeks);
+  const baseWeeks = byWeek(baseUnits, plan.weeks);
+  let lastFull = null, gap = 0;
+  for (let w = 1; w <= plan.weeks; w++) {
+    const info = targets[w] || {};
+    if (info.deload || info.taper) continue;
+    if (touched.has(w)) { gap++; continue; }
+    const sum = runKm(weeks[w]), base = runKm(baseWeeks[w]);
+    if (sum < base - 1) bad.push(`${tag} W${w}: ${sum} km, without the side race ${base} km`);
+    if (w > cfg.runWalkWeeks + 1 && lastFull && sum > lastFull * (1 + cfg.step) ** (1 + gap) + 1.5) {
+      bad.push(`${tag} W${w}: ${lastFull} → ${sum} km over ${1 + gap} week(s), step ${Math.round(cfg.step * 100)} %`);
+    }
+    if (w > cfg.runWalkWeeks) { lastFull = sum; gap = 0; }
+  }
+  return bad;
+}
+
+test('PLAN-B: side races are built in with a short taper and recovery, the plan around them keeps its rules', () => {
+  const bad = [];
+  let built = 0;
+  const cases = [
+    ...['10k', 'hm', 'marathon'].map((key) => ({ key, level: 'fortgeschritten', hist: { weekKm: 25, longKm: 12 } })),
+    { key: '5k', level: 'einsteiger', hist: {} },
+  ];
+  for (const { key, level, hist } of cases) for (const days of [3, 4, 5]) for (const mask of ['none', 'football Mon+Wed', 'match Sun']) {
+    const base = makePlan({ key, level, days, hist, commitments: MASKS[mask] });
+    const targets = weekVolumes(base.plan, volumeConfig(base.plan, base.event, base.plan.paces || {}));
+    const lastBuild = Math.max(...targets.map((t, w) => (t && !t.taper ? w : 0)));
+    const deload = targets.findIndex((t) => t && t.deload);
+    for (const week of [...new Set([2, deload > 0 ? deload : 3, lastBuild, lastBuild + 1])]) for (const dow of [6, 7]) for (const priority of ['B', 'C']) for (const km of [5, 10, 21.1]) {
+      const date = addDays(base.plan.startDate, (week - 1) * 7 + dow - 1);
+      const plan = { ...base.plan, strengthDays: 1, sideRaces: [{ eventId: 'e-side', date, priority, name: 'Side race', distanceKm: km }] };
+      const units = generatePlanUnits(plan, base.event, {});
+      if (units.some((u) => u.sideRace)) built++;
+      const tag = `${key}/${days}d/${mask}/${priority} ${km} km W${week} dow ${dow}`;
+      bad.push(...sideViolations(plan, base.event, units, tag, generatePlanUnits({ ...base.plan, strengthDays: 1 }, base.event, {})));
+      bad.push(...placementViolations(units, plan, base.event, tag));
+    }
+  }
+  assert.ok(built > 500, `only ${built} plans built a side race in`);
+  report('side races', bad);
+});
+
+test('PLAN-B: longer than 25 km, in the taper, on or after the main race – not built in, the plan stays as it was', () => {
+  const base = makePlan({ key: 'hm', level: 'fortgeschritten', days: 4, hist: { weekKm: 25, longKm: 12 } });
+  const shape = (list) => list.map((u) => `${u.date}|${u.type}|${u.targetDistanceKm ?? ''}`).join();
+  for (const side of [
+    { date: addDays(base.plan.startDate, 5 * 7 + 6), distanceKm: SIDE_RACE_MAX_KM + 17 },   // a marathon
+    { date: addDays(base.event.date, -6), distanceKm: 10 },                                 // taper
+    { date: base.event.date, distanceKm: 10 },
+    { date: addDays(base.plan.startDate, 5 * 7 + 6), distanceKm: 10, priority: 'A' },
+  ]) {
+    const plan = { ...base.plan, sideRaces: [{ eventId: 'e-side', name: 'x', priority: 'B', ...side }] };
+    assert.equal(shape(generatePlanUnits(plan, base.event, {})), shape(base.units), JSON.stringify(side));
+  }
 });

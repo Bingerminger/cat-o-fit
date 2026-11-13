@@ -16,7 +16,7 @@ const LEVEL_TIME = { einsteiger: 1.3, fortgeschritten: 1, leistung: 0.8 };
 const MASKS = { none: [], 'football Mon+Wed': [1, 3].map((d) => mkCommit('cross_football', d, { id: `c-fb-${d}`, intensity: 'normal' })) };
 const HISTORY = [{}, { weekKm: 25, longKm: 12 }];
 
-function makePlan({ key, level, days, hist, commitments, strengthDays }) {
+function makePlan({ key, level, days, hist, commitments, strengthDays, side = null }) {
   const [km, weeks, sec] = DIST[key];
   const start0 = planWindow(addDays(TODAY, 7 * weeks), TODAY).start;
   const raceDate = addDays(start0, (weeks - 1) * 7 + 6);
@@ -29,6 +29,11 @@ function makePlan({ key, level, days, hist, commitments, strengthDays }) {
     phases: racePlanPhases(w, start, raceDate, true), weekTemplate: weekTemplateFor('run', days),
     raceDayJoinsTaper: true, commitments, sport: 'run', gen: PLAN_GEN, strengthDays,
   };
+  // Side races: a C race in week 3 (Saturday), a B race in week 5 (Sunday).
+  if (side) plan.sideRaces = [
+    { eventId: 'e-c', date: addDays(start, 2 * 7 + 5), priority: 'C', name: 'C', distanceKm: side.c },
+    { eventId: 'e-b', date: addDays(start, 4 * 7 + 6), priority: 'B', name: 'B', distanceKm: side.b },
+  ];
   return { plan, units: generatePlanUnits(plan, event, {}) };
 }
 
@@ -64,16 +69,28 @@ function hitDays({ plan, units }, hist, days, f) {
   return hits;
 }
 
-function matrix(fn) {
+function matrix(fn, side = null) {
   for (const key of Object.keys(DIST)) for (const level of Object.keys(LEVEL_TIME)) for (const days of [3, 5])
     for (const hist of HISTORY) for (const [mask, commitments] of Object.entries(MASKS)) for (const strengthDays of [0, 2]) {
-      fn(`${key}/${level}/${days}d/hist ${hist.weekKm || 0}/${mask}/strength ${strengthDays}`, makePlan({ key, level, days, hist, commitments, strengthDays }), hist, days);
+      fn(`${key}/${level}/${days}d/hist ${hist.weekKm || 0}/${mask}/strength ${strengthDays}`, makePlan({ key, level, days, hist, commitments, strengthDays, side }), hist, days);
     }
 }
 
 test('AUTOVOL-SIM: training exactly as planned is never cut back', () => {
   const bad = [];
   matrix((tag, made, hist, days) => { const h = hitDays(made, hist, days, 1); if (h.length) bad.push(`${tag}: ${h.slice(0, 2).join(', ')}`); });
+  assert.deepEqual(bad.slice(0, 10), [], `${bad.length} plan(s) cut back although followed as planned`);
+});
+
+test('AUTOVOL-SIM: also with side races (taper, race, recovery, back to the build) nothing is cut', () => {
+  const bad = [];
+  let withSide = 0;
+  matrix((tag, made, hist, days) => {
+    if (made.units.some((u) => u.sideRace)) withSide++;
+    const h = hitDays(made, hist, days, 1);
+    if (h.length) bad.push(`${tag}: ${h.slice(0, 2).join(', ')}`);
+  }, { c: 5, b: 10 });
+  assert.ok(withSide > 50, `${withSide} plans with side races`);
   assert.deepEqual(bad.slice(0, 10), [], `${bad.length} plan(s) cut back although followed as planned`);
 });
 

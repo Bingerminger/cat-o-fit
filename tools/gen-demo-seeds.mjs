@@ -49,6 +49,9 @@ const plan = {
   paces: pp ? pp.zones : null,
   paceInfo: pp ? { goalVdot: pp.goalVdot, formVdot: pp.formVdot, trainingVdot: pp.trainingVdot, ambitious: pp.ambitious } : null,
   phases, weekTemplate: DEFAULT_WEEK_TEMPLATE, commitments, sport: 'run', gen: PLAN_GEN,
+  // The season's B/C races inside the plan (as createPlanForEvent takes them in, since 4.2).
+  sideRaces: d.self.events.filter((e) => e.priority === 'B' || e.priority === 'C')
+    .map((e) => ({ eventId: e.id, date: e.date, priority: e.priority, name: e.name, distanceKm: e.distanceKm, targetTime: e.targetTime || null })),
   units: [], generated: true, createdAt: now, updatedAt: now,
 };
 const units = generatePlanUnits(plan, ev, d.profile)

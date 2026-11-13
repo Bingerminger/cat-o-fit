@@ -82,6 +82,7 @@ const STRUCTURE = [
     ['erholungstag', ['p', 'steps', 'tip']],
     ['umfang-automatisch', ['p', 'steps', 'tip', ['link', '#/settings']]],
     ['wochen-check', ['p', 'steps']],
+    ['saisonrennen', ['p', 'steps', 'tip', ['link', '#/events']]],
     ['ziel-cockpit', ['p', 'steps', 'tip']],
     ['gesundheitsziel', ['p', 'steps', ['tip', '#/settings']]],
     ['momentum', ['p', 'p', 'steps', ['link', '#/badges']]],

@@ -1174,8 +1174,8 @@
     },
     "priorityHint": {
       "A": "A – Saisonhöhepunkt: Der Plan läuft auf diesen Tag zu.",
-      "B": "B – wichtiger Wettkampf: ernsthaft laufen, ohne ganzen Plan davor.",
-      "C": "C – Vorbereitungs- oder Spaßrennen: als Trainingsreiz mitnehmen."
+      "B": "B – wichtiger Wettkampf: Liegt er im Plan eines A-Rennens, baut der Plan ihn ein – kurzes Tapering davor, lockere Tage danach.",
+      "C": "C – Vorbereitungs- oder Spaßrennen: Liegt es im Plan eines A-Rennens, ersetzt es dort die Tempoeinheit der Woche."
     },
     "timesPerWeek": "{n}×/Woche",
     "planWeeksShort": {
@@ -1289,6 +1289,14 @@
       "planned": "geplant",
       "active": "aktiv",
       "completed": "abgeschlossen"
+    },
+    "sideRace": {
+      "built": "Dieses Rennen ist in „{plan}“ eingebaut.",
+      "pending": "Dieses Rennen liegt im Zeitraum von „{plan}“ und ist noch nicht eingebaut – ein eigener Plan ist dafür nicht nötig.",
+      "build": "In den Plan einbauen",
+      "toPlan": "Zum Plan",
+      "chipBuilt": "im Plan",
+      "chipPending": "noch nicht im Plan"
     }
   },
   "session": {
@@ -1550,7 +1558,21 @@
     "regenWeekLost": "Verschiebungen und manuelle Änderungen dieser Woche gehen verloren.",
     "strengthOff": "Aus",
     "strengthHint": "Grundlage bis zu {n}× pro Woche, Aufbau und Spitze 1× zur Erhaltung, im Tapering keine. Nur an Tagen, die nicht neben einer harten Einheit oder einem harten Termin liegen.",
-    "levelLineStrength": "Kraft bis {n}× pro Woche"
+    "levelLineStrength": "Kraft bis {n}× pro Woche",
+    "sideRaces": {
+      "title": "Saisonrennen",
+      "lineB": {
+        "one": "{prio} · {name} · {date}: kurzes Tapering davor, {count} lockerer Tag danach",
+        "other": "{prio} · {name} · {date}: kurzes Tapering davor, {count} lockere Tage danach"
+      },
+      "lineC": {
+        "one": "{prio} · {name} · {date}: ersetzt die Tempoeinheit der Woche, danach {count} lockerer Tag",
+        "other": "{prio} · {name} · {date}: ersetzt die Tempoeinheit der Woche, danach {count} lockere Tage"
+      },
+      "long": "{prio} · {name} · {date}: länger als {km} – nicht eingebaut, dafür lohnt ein eigener Plan",
+      "taper": "{prio} · {name} · {date}: liegt im Tapering – nicht eingebaut",
+      "changed": "Seit der letzten Berechnung haben sich Saisonrennen geändert. In den Plan kommen sie erst, wenn du ihn ab heute neu berechnest."
+    }
   },
   "commitments": {
     "footballTraining": "Fußballtraining",

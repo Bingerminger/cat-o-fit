@@ -1184,6 +1184,45 @@ export function coveredFixed(plans = [], excludePlanId = null) {
   return out;
 }
 
+/** Longest side race a plan builds in – a marathon as a B race needs a plan of its own. */
+export const SIDE_RACE_MAX_KM = 25;
+
+const weekOfPlan = (plan, date) => Math.floor(diffDays(plan.startDate, date) / 7) + 1;
+
+/**
+ * The side races of a season (`plan.sideRaces`, priority B or C, since 4.2) that the plan builds in,
+ * with their windows. Only before the plan's taper and the main race, at most SIDE_RACE_MAX_KM.
+ *   B – a serious race: a short taper (shakeout the day before, the day before that free, above 10 km
+ *       also a short day before that) and easy days after it – 1 up to 5 km, 2 up to 10 km, else 3.
+ *   C – a race as training: the day before easy, 1 easy day after it (2 above 10 km), and it
+ *       replaces the week's quality session.
+ * A race about as long as the week's long run (70 % and more) replaces the long run as well.
+ * @returns {Array<{eventId, date, priority, name, km, targetTime, taper:number, recovery:number}>}
+ */
+export function sideRacesOf(plan, targets = []) {
+  const list = Array.isArray(plan && plan.sideRaces) ? plan.sideRaces : [];
+  return list
+    .filter((r) => r && (r.priority === 'B' || r.priority === 'C') && r.date > plan.startDate && r.date < plan.endDate
+      && Number(r.distanceKm) > 0 && Number(r.distanceKm) <= SIDE_RACE_MAX_KM
+      && !(targets[weekOfPlan(plan, r.date)] || {}).taper)
+    .map((r) => {
+      const km = Number(r.distanceKm);
+      const b = r.priority === 'B';
+      return {
+        eventId: r.eventId, date: r.date, priority: r.priority, name: r.name || '', km, targetTime: r.targetTime || null,
+        taper: b ? (km > 10 ? 3 : 2) : 0,
+        recovery: b ? (km <= 5 ? 1 : km <= 10 ? 2 : 3) : (km <= 10 ? 1 : 2),
+      };
+    });
+}
+
+/** Does a side race's window (its taper or the day before, race day, recovery) reach into plan week `week`?
+    Such a week is lighter by design and never the reference for the next week's increase. */
+function sideTouched(plan, week, sides) {
+  const ws = addDays(plan.startDate, (week - 1) * 7), we = addDays(ws, 6);
+  return sides.some((r) => addDays(r.date, -Math.max(1, r.taper)) <= we && addDays(r.date, r.recovery) >= ws);
+}
+
 /** Generates the sessions of exactly one plan week (1-based) – basis for the
     selective weekly recalculation. `opts.coveredFixed`: fixed commitments that another
     plan already enters – they shape the week but do not appear twice. */
@@ -1212,6 +1251,15 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   const weekEnd = addDays(weekStart, 6);
   const raceDate = event ? event.date : null;
   const covered = opts.coveredFixed || new Set();
+  // Side races of the season (B/C), built in week by week from `plan.sideRaces` (see sideRacesOf):
+  // race day takes precedence like the main race's, the days around it carry no demanding work.
+  const sides = sport === 'run' && isRunTemplate(tpl) ? sideRacesOf(plan, targets) : [];
+  const sideOn = (d) => sides.find((r) => r.date === d) || null;
+  const sideDtr = (d) => { for (const r of sides) { const n = diffDays(d, r.date); if (n >= 1 && n <= r.taper) return n; } return null; };
+  const sideUneasy = (d) => sides.some((r) => { const n = diffDays(d, r.date); return n <= 1 && n >= -r.recovery; });
+  // No strength in a B race's taper and the day before it, nor two days before a C race.
+  const sideNoStrength = (d) => sides.some((r) => { const n = diffDays(d, r.date); return n >= -r.recovery && n <= (r.priority === 'B' ? r.taper + 1 : 2); });
+  const sideHere = sides.filter((r) => r.date >= weekStart && r.date <= weekEnd);
   let alloc = allocate(cfg, info, roles, phase.key);
   // The quality session is shaped first; the week's other runs are fitted around its real length
   // (otherwise its fixed warm-up and cool-down push a small week far above its target).
@@ -1229,7 +1277,7 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   // Collect the fixed commitments of this week (race day always takes precedence).
   const commitByDate = new Map();
   for (const { date, commitment } of commitmentDates(planCommitments(plan), weekStart, weekEnd)) {
-    if (raceDate && date >= raceDate) continue;
+    if ((raceDate && date >= raceDate) || sideOn(date)) continue;
     if (!commitByDate.has(date)) commitByDate.set(date, []);
     commitByDate.get(date).push(commitment);
   }
@@ -1237,7 +1285,12 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   // The template stays keyed by ISO weekday; each one lands inside this plan week, whichever day
   // the plan began on (Monday, the person's Sunday/Saturday, or mid-week for a near race).
   const dateOf = (dow) => dateOfDow(weekStart, dow);
-  const dtr = (date) => (raceDate ? diffDays(date, raceDate) : Infinity);
+  // Days to the next race that shapes the day: the main race, or a B race within its short taper.
+  const dtr = (date) => {
+    const a = raceDate ? diffDays(date, raceDate) : Infinity;
+    const s = sideDtr(date);
+    return s != null && s < a ? s : a;
+  };
   const inPlanWeek = (d) => d >= weekStart && d <= weekEnd && d >= plan.startDate && (!raceDate || d < raceDate);
 
   // Days taken by a fixed commitment: this plan's own and those another plan enters for the person
@@ -1247,7 +1300,7 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
     const d = String(key).split('|')[1];
     if (d >= weekStart && d <= weekEnd && (!raceDate || d < raceDate)) coveredDates.add(d);
   }
-  const blocked = (d) => commitByDate.has(d) || coveredDates.has(d);
+  const blocked = (d) => commitByDate.has(d) || coveredDates.has(d) || !!sideOn(d);
 
   // Hard fixed commitments (football not "light", matches) – including those that another
   // plan enters, and the day before and after the week (match on Sunday → no tempo on Monday).
@@ -1256,13 +1309,13 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   // would suggest every week to drop exactly the key session.
   const hardCommit = new Set();
   for (const { date, commitment } of commitmentDates(planCommitments(plan), addDays(weekStart, -1), addDays(weekEnd, 1))) {
-    if ((!raceDate || date < raceDate) && isHardCommit(commitment)) hardCommit.add(date);
+    if ((!raceDate || date < raceDate) && !sideOn(date) && isHardCommit(commitment)) hardCommit.add(date);
   }
   for (const key of covered) {
     const [type, d] = String(key).split('|');
     if ((type === 'cross_football' || type === 'match') && d >= addDays(weekStart, -1) && d <= addDays(weekEnd, 1)) hardCommit.add(d);
   }
-  const calmDay = (d) => !hardCommit.has(d) && !hardCommit.has(addDays(d, -1)) && !hardCommit.has(addDays(d, 1));
+  const calmDay = (d) => !hardCommit.has(d) && !hardCommit.has(addDays(d, -1)) && !hardCommit.has(addDays(d, 1)) && !sideUneasy(d);
 
   // Roles that EVADE on a collision instead of being dropped: the stimuli that
   // carry the goal. Easy work (recovery/mobility/extra run) is deliberately dropped on
@@ -1276,6 +1329,11 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   const ctxAt = (date, dow) => ({ plan, event, date, week, phase, pz, sport, cfg, info, alloc, dow, daysToRace: dtr(date) });
   // One placement per template session: where it should be, where it goes, whether it is eased.
   const place = rows.flatMap((r) => r.units.map((u) => ({ role: u.role, wish: r.date, date: r.date, dow: r.dow, downgrade: false, drop: false })));
+  // A C race is the week's quality session; a race about as long as the long run is its long run.
+  for (const p of place) {
+    if (p.role === 'quality' && sideHere.some((r) => r.priority === 'C')) p.drop = true;
+    if (p.role === 'long' && sideHere.some((r) => r.km >= 0.7 * (alloc.long || 0))) p.drop = true;
+  }
 
   // Key sessions that must keep their distance: demanding ones (a base-phase "quality" run is easy),
   // before the last two days of the race build-up – and every key session whose day a commitment
@@ -1283,7 +1341,7 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   // run or quality session again.
   const demanding = (p) => KEY_ROLES.has(p.role) && dtr(p.wish) > 2
     && (blocked(p.wish) || isHard(resolveRole(p.role, ctxAt(p.wish, p.dow)) || {}));
-  const keys = place.filter(demanding).sort((a, b) => (a.role === 'long' ? 0 : 1) - (b.role === 'long' ? 0 : 1));
+  const keys = place.filter((p) => !p.drop && demanding(p)).sort((a, b) => (a.role === 'long' ? 0 : 1) - (b.role === 'long' ? 0 : 1));
   // Key days of the neighbouring weeks, as their template places them (a long run on Sunday must not be
   // followed by a tempo on Monday of the next week).
   const outsideKeys = new Set();
@@ -1327,7 +1385,7 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
     let best = null;
     for (let i = 0; i < 7; i++) {
       const d = addDays(weekStart, i);
-      if (!inPlanWeek(d) || dtr(d) <= 2 || blocked(d) || hardCommit.has(d) || hardCommit.has(addDays(d, -1)) || keyDates.has(d) || swapRow.has(d)) continue;
+      if (!inPlanWeek(d) || dtr(d) <= 2 || blocked(d) || hardCommit.has(d) || hardCommit.has(addDays(d, -1)) || sideUneasy(d) || keyDates.has(d) || swapRow.has(d)) continue;
       if (d !== k.wish && rowAt(d) && !rowAt(d).units.every((x) => SWAPPABLE.has(x.role))) continue;
       const score = (hardCommit.has(addDays(d, 1)) ? 1 : 0) + (nextToKey(d) ? 2 : 0) + Math.abs(diffDays(k.wish, d)) / 10;
       if (!best || score < best.score) best = { d, score };
@@ -1346,7 +1404,7 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   // easy work is dropped. A free day is as close as possible to the original day, never on race day
   // or in the two days before it, not next to a commitment if it can be helped, and for demanding
   // work not next to a key session.
-  const usedDates = new Set([...place.filter((p) => !p.drop).map((p) => p.date), ...commitByDate.keys(), ...coveredDates]);
+  const usedDates = new Set([...place.filter((p) => !p.drop).map((p) => p.date), ...commitByDate.keys(), ...coveredDates, ...sideHere.map((r) => r.date)]);
   const findFreeDay = (wishDate, hard) => {
     const cands = [];
     for (let i = 0; i < 7; i++) {
@@ -1386,6 +1444,14 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
       out.push(unit);
     }
   }
+  // Around a side race nothing demanding is left: what found no other day becomes an easy run
+  // (the day before a B race the shakeout).
+  for (let i = out.length - 1; i >= 0; i--) {
+    const u = out[i];
+    if (u.fixed || !isHard(u) || !sideUneasy(u.date)) continue;
+    const easy = resolveRole('recovery', ctxAt(u.date, isoDow(u.date)));
+    if (easy) { if (u.relocatedFrom) easy.relocatedFrom = u.relocatedFrom; out[i] = easy; } else out.splice(i, 1);
+  }
   // Strength that follows the plan phase (run plans with `strengthDays`, since 4.2): up to the chosen
   // number in the base phase, once in build and peak to keep it, none in the taper, one at most in a
   // deload week. Only on a day that is neither demanding itself nor next to a demanding session or
@@ -1406,7 +1472,7 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
       const cands = [];
       for (let i = 0; i < 7; i++) {
         const d = addDays(weekStart, i);
-        if (!inPlanWeek(d) || dtr(d) <= 6 || blocked(d) || hardDates.has(d) || hardDates.has(addDays(d, -1)) || hardDates.has(addDays(d, 1))) continue;
+        if (!inPlanWeek(d) || dtr(d) <= 6 || blocked(d) || sideNoStrength(d) || hardDates.has(d) || hardDates.has(addDays(d, -1)) || hardDates.has(addDays(d, 1))) continue;
         if (chosen.some((c) => Math.abs(diffDays(c, d)) <= 1)) continue;
         const afterEasy = out.some((u) => u.date === d && RUN_UNIT_TYPES.has(u.type));
         cands.push({ d, score: (afterEasy ? 0 : 10) + i / 10 });
@@ -1428,6 +1494,17 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   if (eve && eve >= weekStart && eve <= weekEnd && eve >= plan.startDate && !commitByDate.has(eve)
       && !out.some((u) => u.date === eve)) {
     const shake = nearRaceUnit('recovery', { plan, event, date: eve, week, phase, pz, sport, cfg, info, alloc, dow: isoDow(eve), daysToRace: 1 });
+    if (shake) out.push(shake);
+  }
+  // Side races of this week: the race session (with its own event), and before a B race the shakeout.
+  for (const r of sideHere) {
+    const ev = { id: r.eventId, name: r.name, date: r.date, distanceKm: r.km, targetTime: r.targetTime, sport: 'run' };
+    out.push({ ...makeRaceUnit(plan, ev, r.date, week, phase, { ...pz, race: null }), eventId: r.eventId, sideRace: r.priority });
+  }
+  for (const r of sides) {
+    const e = addDays(r.date, -1);
+    if (r.priority !== 'B' || e < weekStart || e > weekEnd || e < plan.startDate || blocked(e) || out.some((u) => u.date === e)) continue;
+    const shake = nearRaceUnit('recovery', { ...ctxAt(e, isoDow(e)), daysToRace: 1 });
     if (shake) out.push(shake);
   }
   // Insert fixed commitments as sessions – the plan was built around them.
@@ -1455,12 +1532,19 @@ function plannedRunKm(units) {
 /** Planned run kilometres of the last full week before `week` (no deload, no taper), or null at the
     start or right after the run-walk weeks. Builds that week if this call has not yet (opts._weekKm). */
 function lastFullKm(plan, event, profile, week, opts, cfg, targets) {
+  // A week around a side race is lighter by design: skipped like a deload – but the plan's build
+  // went on meanwhile, so each such week counts as one step (otherwise the plan would stay a step
+  // behind after every side race).
+  const sides = sideRacesOf(plan, targets);
+  let gap = 0;
   for (let w = week - 1; w >= 1; w--) {
     const tw = targets[w] || {};
     if (tw.deload || tw.taper) continue;
+    if (sideTouched(plan, w, sides)) { gap++; continue; }
     if (w <= cfg.runWalkWeeks) return null;
     if (!opts._weekKm.has(w)) buildWeekUnits(plan, event, profile, w, opts);
-    return opts._weekKm.get(w) || null;
+    const km = opts._weekKm.get(w) || null;
+    return km && gap ? km * (1 + cfg.step) ** gap : km;
   }
   return null;
 }

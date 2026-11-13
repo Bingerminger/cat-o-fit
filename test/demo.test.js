@@ -20,8 +20,11 @@ test('buildDemo: admin gets profile, location, goals, race, lots of history + fu
   const usage = d.settings.exerciseUsage || {};
   assert.ok(Object.keys(usage).length >= 8, 'exercise usage counters preset (v3.11.0)');
   assert.ok((usage.child_pose || 0) > 0 || (usage.superman || 0) > 0, 'new exercises with usage too');
-  assert.equal(d.self.events.length, 1);
-  assert.equal(d.self.events[0].kind, 'race');
+  // The A race first (the plan's race), then the season's C and B race inside its plan (since 4.2).
+  assert.deepEqual(d.self.events.map((e) => e.priority), ['A', 'C', 'B']);
+  assert.ok(d.self.events.every((e) => e.kind === 'race'));
+  assert.ok(d.self.events[1].date < d.self.events[2].date && d.self.events[2].date < d.self.events[0].date);
+  assert.ok(d.self.events.slice(1).every((e) => [6, 7].includes(new Date(`${e.date}T12:00:00`).getDay() || 7)), 'side races on a weekend');
   assert.ok(d.self.events[0].location, 'race has a location');
   assert.ok(d.self.sessions.length >= 28, `plenty of training history (was ${d.self.sessions.length})`);
   assert.ok(d.self.sessions.every((s) => s.status === 'erledigt'), 'history is completed');

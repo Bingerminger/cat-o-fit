@@ -897,6 +897,21 @@
         "2": "Die erste Planwoche, Entlastungs- und Taperwochen sowie die Wettkampfwoche bleiben unberührt. Jede Anpassung steht im Log „Zuletzt automatisch angepasst“ auf „Heute“ und lässt sich zurücknehmen – dann kommt sie in dieser Woche nicht wieder. Mehr Umfang kommt nie automatisch, den schlägt der Coach vor. Abschalten: Einstellungen → Training.",
         "3": "Einstellungen öffnen"
       }
+    },
+    "saisonrennen": {
+      "q": "Saisonrennen: A, B und C",
+      "aliases": "Priorität|Nebenrennen|Vorbereitungsrennen|Tune-up|Saison",
+      "blocks": {
+        "0": "Jeder Wettkampf hat eine Priorität. Der Trainingsplan läuft auf ein A-Rennen zu; B- und C-Rennen, die in seinem Zeitraum liegen, baut er ein – sie brauchen keinen eigenen Plan.",
+        "1": [
+          "B – wichtiger Wettkampf: am Vortag ein kurzer Shakeout, der Tag davor frei, über 10 km noch ein kurzer Tag davor; danach lockere Tage – 1 bis 5 km, 2 bis 10 km, sonst 3.",
+          "C – Rennen als Training: am Vortag nichts Forderndes, danach 1 lockerer Tag (über 10 km 2), und es ersetzt die Tempoeinheit der Woche.",
+          "Ist das Rennen etwa so lang wie der Long Run der Woche, ersetzt es auch ihn.",
+          "Nicht eingebaut werden Rennen über 25 km, Rennen im Tapering und Rennen, die schon einen eigenen Plan haben. Der Plan steigert danach weiter, als wäre die Woche normal gelaufen."
+        ],
+        "2": "Ein Plan ändert sich nie von selbst: Kommt ein B- oder C-Rennen dazu oder ändert es sich, zeigt der Plan das an – eingebaut wird beim Neuberechnen ab heute. Feste Termine am Renntag entfallen wie beim A-Rennen.",
+        "3": "Zu deinen Zielen"
+      }
     }
   },
   "labBest": "passt am besten"

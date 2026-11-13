@@ -14,7 +14,7 @@ import {
   fmtPaceRange, fmtDate, fmtDayMonth, addDays, diffDays, todayStr, parseHms, fmtNum, fmtInt,
   sectionHead, emptyState, toast, confirmDialog, openSheet, closeSheet,
   effectiveStatus, STATUS_META, input, field, segmented,
-  goOrRefresh, actionSheet, localizeUnits, fmtKmAuto, weekDows,
+  goOrRefresh, actionSheet, localizeUnits, fmtKmAuto, weekDows, infoButton,
 } from './ui.js';
 import { kmToShown, distanceUnit } from './units.js';
 import { setHeader } from './router.js';
@@ -30,7 +30,7 @@ import { estimateVdot, planPaces } from './vdot.js';
 import {
   PLAN_GEN, PLAN_LEVELS, RUN_DAYS, weekTemplateFor, planCommitments, generatePlanUnits, buildWeekUnits,
   trainingHistory, suggestLevel, levelOf, planWindow, planReadiness, racePlanPhases, coveredFixed, clampDays,
-  phaseForWeek,
+  phaseForWeek, sideRacesOf, weekVolumes, volumeConfig, SIDE_RACE_MAX_KM,
 } from './plangen.js';
 
 import { t, tp } from './i18n.js';
@@ -44,6 +44,75 @@ export {
 } from './plangen.js';
 
 /* ===================== Creating & updating ===================== */
+
+/* ----- Season: side races (B/C) inside a run plan (since 4.2) ----- */
+const isSideRace = (e) => !!e && !e.deleted && e.kind !== 'program' && (e.priority === 'B' || e.priority === 'C')
+  && (e.sport || 'run') === 'run' && Number(e.distanceKm) > 0;
+
+/** The B/C races a run plan for `mainEvent` takes in: inside its window, before the main race, without a
+    plan of their own (a race with its own plan stays in that one – never twice). A plan whose own race is
+    B or C takes none. Snapshot for `plan.sideRaces`; the generator decides what it builds in (sideRacesOf). */
+export function sideRaceCandidates(plan, mainEvent, events = store.get('events'), plans = store.get('plans')) {
+  if (!plan || !mainEvent || plan.kind === 'program' || mainEvent.kind === 'program') return [];
+  if ((mainEvent.sport || plan.sport || 'run') !== 'run' || mainEvent.priority === 'B' || mainEvent.priority === 'C') return [];
+  const own = new Set((plans || []).filter((p) => p && !p.deleted && p.id !== plan.id).map((p) => p.eventId));
+  return (events || [])
+    .filter((e) => isSideRace(e) && e.id !== mainEvent.id && !own.has(e.id) && e.date > plan.startDate && e.date < mainEvent.date)
+    .map((e) => ({ eventId: e.id, date: e.date, priority: e.priority, name: e.name || '', distanceKm: Number(e.distanceKm), targetTime: e.targetTime || null }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+/** Each side race of a plan with what happens to it: 'built' (with its recovery days), 'long'
+    (above SIDE_RACE_MAX_KM) or 'taper' (in the plan's taper) – the latter two are not built in. */
+export function sideRaceView(plan, mainEvent, list = plan.sideRaces || []) {
+  if (!list.length) return [];
+  const p = { ...plan, sideRaces: list };
+  const built = sideRacesOf(p, weekVolumes(p, volumeConfig(p, mainEvent, p.paces || {})));
+  return list.map((r) => {
+    const b = built.find((x) => x.eventId === r.eventId);
+    return { ...r, state: b ? 'built' : Number(r.distanceKm) > SIDE_RACE_MAX_KM ? 'long' : 'taper', recovery: b ? b.recovery : 0 };
+  });
+}
+
+/** One line per side race, for the plan card and the setup sheet. */
+export function sideRaceLine(r) {
+  const base = { prio: r.priority, name: r.name, date: fmtDate(r.date) };
+  if (r.state === 'long') return t('plans.sideRaces.long', { ...base, km: fmtKm(SIDE_RACE_MAX_KM, 0) });
+  if (r.state === 'taper') return t('plans.sideRaces.taper', base);
+  return r.priority === 'B' ? tp('plans.sideRaces.lineB', r.recovery, base) : tp('plans.sideRaces.lineC', r.recovery, base);
+}
+
+const sideKey = (list) => JSON.stringify((list || []).map((r) => [r.eventId, r.date, r.priority, r.distanceKm, r.name, r.targetTime || null]));
+/** Do the plan's side races differ from the events as they are now (from today on)? */
+export function sideRacesChanged(plan, mainEvent, today = todayStr()) {
+  const now = sideRaceCandidates(plan, mainEvent).filter((r) => r.date >= today);
+  const snap = (plan.sideRaces || []).filter((r) => r.date >= today);
+  return sideKey(now) !== sideKey(snap);
+}
+
+/** A B/C event inside a run plan: { plan, event (the main race), view, state } with state 'built'
+    (in the plan as it is now), 'pending' (the plan has not been recalculated since), 'long' or 'taper'
+    (not built in) – null when no plan holds it. */
+export function sideRaceStatus(event) {
+  const host = hostPlanFor(event);
+  if (!host) return null;
+  const cand = sideRaceCandidates(host.plan, host.event).find((r) => r.eventId === event.id);
+  const [view] = sideRaceView(host.plan, host.event, [cand]);
+  const snap = (host.plan.sideRaces || []).find((r) => r.eventId === event.id);
+  const inPlan = !!snap && sideKey([snap]) === sideKey([cand]) && (host.plan.units || []).some((u) => u.sideRace && u.eventId === event.id);
+  return { ...host, view, state: view.state !== 'built' ? view.state : inPlan ? 'built' : 'pending' };
+}
+
+/** The run plan whose window holds a B/C event without a plan of its own (for the event page). */
+export function hostPlanFor(event, plans = store.get('plans'), events = store.get('events')) {
+  if (!isSideRace(event) || (plans || []).some((p) => p && p.eventId === event.id)) return null;
+  for (const p of plans || []) {
+    if (!p || p.deleted || p.kind === 'program' || !(event.date > p.startDate && event.date < p.endDate)) continue;
+    const main = (events || []).find((e) => e.id === p.eventId);
+    if (main && sideRaceCandidates(p, main, events, plans).some((r) => r.eventId === event.id)) return { plan: p, event: main };
+  }
+  return null;
+}
 
 export function ensureGenerated() {
   const plans = store.get('plans');
@@ -108,6 +177,8 @@ export function createPlanForEvent(event, options = {}) {
     sport, gen: PLAN_GEN,
     units: [], generated: false, createdAt: nowIso(), updatedAt: nowIso(),
   };
+  // B/C races of the season inside the window are built in (see sideRaceCandidates).
+  plan.sideRaces = sideRaceCandidates(plan, event);
   store.upsert('plans', plan);
   const units = generatePlanUnits(plan, event, profile, { coveredFixed: coveredFixed(store.get('plans'), plan.id) });
   store.patch('plans', plan.id, { units, generated: true });
@@ -151,6 +222,7 @@ export function updatePlanFromToday(plan, event, options = {}) {
     paceInfo: pp ? paceInfoOf(pp) : (plan.paceInfo || null),
     goalTime: event.targetTime, gen: PLAN_GEN,
   };
+  next.sideRaces = sideRaceCandidates(next, event);
   const fresh = generatePlanUnits(next, event, profile, { coveredFixed: coveredFixed(store.get('plans'), plan.id) });
   const units = mergeFromDate(plan.units || [], fresh, today);
   const { id, units: _old, ...fields } = next;
@@ -247,6 +319,7 @@ export function openPlanSetup(event, { plan = null } = {}) {
         (v) => { strengthDays = parseInt(v, 10); strengthHint.textContent = t('plans.strengthHint', { n: Math.max(1, strengthDays) }); }))
       : null,
     sport === 'run' ? strengthHint : null,
+    ...setupSideRaces(event, plan, today),
     sectionHead(t('plans.targetPaces')),
     el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: paceText(paceInfoOf(pp), pp && pp.zones, event.targetTime) }),
   ]);
@@ -295,6 +368,39 @@ export function openPlanSetup(event, { plan = null } = {}) {
   }, [icon(update ? 'refresh' : 'sparkles'), update ? t('plans.recalcFromToday') : t('plans.createPlan')]);
 
   openSheet({ title: update ? t('plans.recalcPlanFromToday') : t('plans.setupTitle'), body, footer });
+}
+
+/** The season's B/C races the plan will build in – shown before creating or recalculating. */
+function setupSideRaces(event, plan, today) {
+  if ((event.sport || 'run') !== 'run') return [];
+  let draft = plan;
+  if (!draft) {
+    const { start, weeks } = planWindow(event.date, today);
+    draft = { startDate: start, endDate: event.date, weeks, phases: racePlanPhases(weeks, start, event.date, true), raceDayJoinsTaper: true, sport: 'run' };
+  }
+  const list = sideRaceCandidates(draft, event).filter((r) => r.date >= today);
+  if (!list.length) return [];
+  return [
+    sectionHead(t('plans.sideRaces.title'), null, { help: 'saisonrennen' }),
+    el('div', { class: 'muted', style: { fontSize: '.84rem' } }, sideRaceView(draft, event, list).map((r) => el('div', { text: sideRaceLine(r) }))),
+  ];
+}
+
+/** Plan card: the side races built in – and an offer to recalculate when they changed since. */
+function sideRacesCard(plan, event) {
+  const today = todayStr();
+  const list = sideRaceView(plan, event).filter((r) => r.date >= today);
+  const changed = sideRacesChanged(plan, event, today);
+  if (!list.length && !changed) return null;
+  return el('div', { class: 'card mt-2', style: changed ? { borderLeft: '4px solid var(--accent)' } : {} }, [
+    el('div', { class: 'row row--between', style: { alignItems: 'center' } }, [
+      el('div', { class: 'card__title', style: { fontSize: '.92rem' }, text: t('plans.sideRaces.title') }),
+      infoButton('saisonrennen', t('plans.sideRaces.title')),
+    ]),
+    ...list.map((r) => el('div', { class: 'muted', style: { fontSize: '.82rem', marginTop: '4px' }, text: sideRaceLine(r) })),
+    changed ? el('div', { class: 'muted', style: { fontSize: '.82rem', marginTop: '6px' }, text: t('plans.sideRaces.changed') }) : null,
+    changed ? el('button', { class: 'btn btn--soft btn--block mt-2', onclick: () => openPlanSetup(event, { plan }) }, [icon('refresh'), t('plans.recalcPlanFromToday')]) : null,
+  ]);
 }
 
 /* ===================== Plan view ===================== */
@@ -363,6 +469,8 @@ export function render(view, eventId) {
 
   // Fixed appointments (football/games) – configurable, the plan fits around them.
   if (!isProgram && event) view.appendChild(commitmentsCard(plan, event));
+  // Season races (B/C) built into the plan, and an offer when they changed since (never silently).
+  if (!isProgram && event) { const sc = sideRacesCard(plan, event); if (sc) view.appendChild(sc); }
 
   // Week check: collisions of the current week transparently prioritised (R3 triage)
   if (!isProgram) { const tc = triageCard(plan); if (tc) view.appendChild(tc); }

@@ -897,6 +897,21 @@
         "2": "La prima settimana del piano, le settimane di scarico e di tapering e la settimana della gara restano intatte. Ogni adattamento compare nel registro «Ultimi adattamenti automatici» in «Oggi» e si può annullare – in quella settimana non torna più. Più volume non arriva mai automaticamente: lo propone il coach. Per disattivarlo: Impostazioni → Allenamento.",
         "3": "Apri le Impostazioni"
       }
+    },
+    "saisonrennen": {
+      "q": "Gare della stagione: A, B e C",
+      "aliases": "priorità|gara secondaria|gara di preparazione|stagione",
+      "blocks": {
+        "0": "Ogni gara ha una priorità. Il piano di allenamento porta a una gara A; le gare B e C che cadono nel suo periodo vengono inserite – non serve un piano per ciascuna.",
+        "1": [
+          "B – gara importante: una corsetta breve il giorno prima, il giorno precedente libero, oltre 10 km ancora un giorno breve prima; poi giorni leggeri – 1 fino a 5 km, 2 fino a 10 km, altrimenti 3.",
+          "C – gara come allenamento: niente di impegnativo il giorno prima, 1 giorno leggero dopo (2 oltre 10 km), e sostituisce la seduta di qualità della settimana.",
+          "Se la gara è lunga circa quanto il lungo della settimana, sostituisce anche quello.",
+          "Non vengono inserite: gare oltre 25 km, gare durante lo scarico e gare che hanno già un piano proprio. Dopo il piano continua a crescere come se la settimana fosse stata normale."
+        ],
+        "2": "Un piano non cambia mai da solo: se si aggiunge o cambia una gara B o C, il piano lo segnala – viene inserita quando lo ricalcoli da oggi. Gli impegni fissi nel giorno della gara saltano, come per la gara A.",
+        "3": "Vai ai tuoi obiettivi"
+      }
     }
   },
   "labBest": "più adatto"

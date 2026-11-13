@@ -990,8 +990,8 @@
     },
     "priorityHint": {
       "A": "A – cima de la temporada: tu plan se construye hacia este día.",
-      "B": "B – carrera importante: córrela en serio, sin un plan completo previo.",
-      "C": "C – carrera de preparación o por diversión: tómala como estímulo de entrenamiento."
+      "B": "B – carrera importante: si cae dentro del plan de una carrera A, ese plan la integra, con una puesta a punto corta antes y días suaves después.",
+      "C": "C – carrera de preparación o por diversión: si cae dentro del plan de una carrera A, sustituye la sesión de calidad de esa semana."
     },
     "timesPerWeek": "{n}×/semana",
     "planWeeksShort": {
@@ -1105,6 +1105,14 @@
       "planned": "planificado",
       "active": "activo",
       "completed": "completado"
+    },
+    "sideRace": {
+      "built": "Esta carrera está integrada en «{plan}».",
+      "pending": "Esta carrera cae dentro de «{plan}» y aún no está integrada; no necesita un plan propio.",
+      "build": "Integrar en el plan",
+      "toPlan": "Ir al plan",
+      "chipBuilt": "en el plan",
+      "chipPending": "aún no está en el plan"
     }
   },
   "exerciseNames": {
@@ -1550,7 +1558,21 @@
     "regenWeekLost": "Los cambios de día y las modificaciones manuales de esta semana se perderán.",
     "strengthOff": "No",
     "strengthHint": "Fase de base hasta {n}× por semana, desarrollo y pico una vez para mantener, nada en la puesta a punto. Solo en días que no estén junto a una sesión exigente o a un compromiso fijo exigente.",
-    "levelLineStrength": "Fuerza hasta {n}× por semana"
+    "levelLineStrength": "Fuerza hasta {n}× por semana",
+    "sideRaces": {
+      "title": "Carreras de la temporada",
+      "lineB": {
+        "one": "{prio} · {name} · {date}: puesta a punto corta antes, {count} día suave después",
+        "other": "{prio} · {name} · {date}: puesta a punto corta antes, {count} días suaves después"
+      },
+      "lineC": {
+        "one": "{prio} · {name} · {date}: sustituye la sesión de calidad de la semana, {count} día suave después",
+        "other": "{prio} · {name} · {date}: sustituye la sesión de calidad de la semana, {count} días suaves después"
+      },
+      "long": "{prio} · {name} · {date}: más de {km}; no se integra, merece un plan propio",
+      "taper": "{prio} · {name} · {date}: cae en la puesta a punto; no se integra",
+      "changed": "Algunas carreras de la temporada han cambiado desde el último cálculo. Entran en el plan cuando lo vuelvas a calcular desde hoy."
+    }
   },
   "commitments": {
     "footballTraining": "Entrenamiento de fútbol",

@@ -990,8 +990,8 @@
     },
     "priorityHint": {
       "A": "A – ponto alto da temporada: o seu plano leva até este dia.",
-      "B": "B – prova importante: corra a sério, sem um plano completo de preparação.",
-      "C": "C – prova de preparação ou por diversão: aproveite como estímulo de treino."
+      "B": "B – prova importante: se cair no plano de uma prova A, esse plano a inclui – polimento curto antes, dias leves depois.",
+      "C": "C – prova de preparação ou por diversão: se cair no plano de uma prova A, substitui o treino de qualidade daquela semana."
     },
     "timesPerWeek": "{n}×/semana",
     "planWeeksShort": {
@@ -1105,6 +1105,14 @@
       "planned": "planejado",
       "active": "ativo",
       "completed": "concluído"
+    },
+    "sideRace": {
+      "built": "Esta prova está no plano “{plan}”.",
+      "pending": "Esta prova fica dentro de “{plan}” e ainda não está no plano – ela não precisa de um plano próprio.",
+      "build": "Colocar no plano",
+      "toPlan": "Ir para o plano",
+      "chipBuilt": "no plano",
+      "chipPending": "ainda fora do plano"
     }
   },
   "exerciseNames": {
@@ -1550,7 +1558,21 @@
     "regenWeekLost": "Mudanças de dia e alterações manuais nesta semana serão perdidas.",
     "strengthOff": "Não",
     "strengthHint": "Fase de base até {n}× por semana, construção e pico uma vez para manter, nada no polimento. Só em dias que não ficam ao lado de um treino exigente ou de um compromisso fixo exigente.",
-    "levelLineStrength": "Força até {n}× por semana"
+    "levelLineStrength": "Força até {n}× por semana",
+    "sideRaces": {
+      "title": "Provas da temporada",
+      "lineB": {
+        "one": "{prio} · {name} · {date}: polimento curto antes, {count} dia leve depois",
+        "other": "{prio} · {name} · {date}: polimento curto antes, {count} dias leves depois"
+      },
+      "lineC": {
+        "one": "{prio} · {name} · {date}: substitui o treino de qualidade da semana, {count} dia leve depois",
+        "other": "{prio} · {name} · {date}: substitui o treino de qualidade da semana, {count} dias leves depois"
+      },
+      "long": "{prio} · {name} · {date}: mais de {km} – não entra no plano, merece um plano próprio",
+      "taper": "{prio} · {name} · {date}: cai no polimento – não entra no plano",
+      "changed": "Provas da temporada mudaram desde o último cálculo. Elas entram no plano quando você o recalcular a partir de hoje."
+    }
   },
   "commitments": {
     "footballTraining": "Treino de futebol",

@@ -9,7 +9,7 @@ import {
   field, input, select, textarea, segmented, PRIORITIES, fieldError,
 } from './ui.js';
 import { setHeader } from './router.js';
-import { openPlanSetup } from './plans.js';
+import { openPlanSetup, sideRaceStatus, sideRaceLine } from './plans.js';
 import { PROGRAM_TYPES, programMeta, programPlanName, createProgramPlan, buildProgramUnits, programPhases } from './program.js';
 import { mergeFromDate } from './planflow.js';
 import { targetPaceSecPerKm, predictRace } from './suggestions.js';
@@ -95,6 +95,12 @@ function eventCard(e, dim = false) {
   const days = diffDays(todayStr(), e.date);
   const dist = DISTANCES[e.distanceType]?.label || (e.distanceKm ? fmtKm(e.distanceKm, 1) : '');
   const plan = store.get('plans').find((p) => p.eventId === e.id);
+  // A B/C race inside an A race's plan has no plan of its own – it is in that plan (since 4.2).
+  const side = !plan && !dim ? sideRaceStatus(e) : null;
+  const planChip = plan ? el('span', { class: 'chip chip--accent', text: tp('events.planWeeksShort', plan.weeks) })
+    : side && side.state === 'built' ? el('span', { class: 'chip chip--accent', text: t('events.sideRace.chipBuilt') })
+      : side && side.state === 'pending' ? el('span', { class: 'chip', text: t('events.sideRace.chipPending') })
+        : el('span', { class: 'chip', text: t('events.noPlan') });
   return el('a', { class: 'card card--link', href: `#/event/${e.id}`, style: dim ? { opacity: '0.7' } : {} }, [
     el('div', { class: 'row gap-3' }, [
       el('span', { class: `tag-prio tag-prio--${e.priority || 'C'}`, text: e.priority || '–' }),
@@ -109,7 +115,7 @@ function eventCard(e, dim = false) {
     ]),
     el('div', { class: 'row gap-2 mt-2 wrap' }, [
       e.targetTime ? el('span', { class: 'chip', text: t('events.targetChip', { time: e.targetTime }) }) : null,
-      plan ? el('span', { class: 'chip chip--accent', text: tp('events.planWeeksShort', plan.weeks) }) : el('span', { class: 'chip', text: t('events.noPlan') }),
+      planChip,
       el('span', { class: 'chip', text: statusChip(e.status) }),
     ]),
   ]);
@@ -193,10 +199,23 @@ export function renderDetail(view, id) {
         : t('events.racePastNoPlan') }),
     ]));
   } else {
-    view.appendChild(el('div', { class: 'card' }, [
-      el('p', { class: 'muted mb-4', text: t('events.noPlanYet') }),
-      el('button', { class: 'btn btn--primary btn--block', onclick: () => doCreatePlan(e) }, [icon('sparkles'), t('events.createPlan')]),
-    ]));
+    // A B/C race inside the plan of an A race is built into that plan (since 4.2) – no second plan.
+    const side = sideRaceStatus(e);
+    if (side && (side.state === 'built' || side.state === 'pending')) {
+      view.appendChild(el('div', { class: 'card' }, [
+        el('p', { class: 'muted', text: side.state === 'built' ? t('events.sideRace.built', { plan: side.plan.name }) : t('events.sideRace.pending', { plan: side.plan.name }) }),
+        el('p', { class: 'muted mt-2', style: { fontSize: '.84rem' }, text: sideRaceLine(side.view) }),
+        side.state === 'pending'
+          ? el('button', { class: 'btn btn--primary btn--block mt-3', onclick: () => openPlanSetup(side.event, { plan: side.plan }) }, [icon('refresh'), t('events.sideRace.build')])
+          : el('a', { class: 'btn btn--soft btn--block mt-3', href: `#/plan/${side.event.id}` }, [icon('calendar'), t('events.sideRace.toPlan')]),
+      ]));
+    } else {
+      view.appendChild(el('div', { class: 'card' }, [
+        side ? el('p', { class: 'muted mb-2', style: { fontSize: '.84rem' }, text: sideRaceLine(side.view) }) : null,
+        el('p', { class: 'muted mb-4', text: t('events.noPlanYet') }),
+        el('button', { class: 'btn btn--primary btn--block', onclick: () => doCreatePlan(e) }, [icon('sparkles'), t('events.createPlan')]),
+      ]));
+    }
   }
 
   // Race prediction (estimate)

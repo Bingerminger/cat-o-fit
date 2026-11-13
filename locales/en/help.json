@@ -897,6 +897,21 @@
         "2": "The first plan week, deload and taper weeks and the race week are left alone. Every adjustment is listed in the “Recent automatic adjustments” log on “Today” and can be undone – it is then not repeated that week. More volume is never added automatically; the coach suggests it. To switch off: Settings → Training.",
         "3": "Open Settings"
       }
+    },
+    "saisonrennen": {
+      "q": "Season races: A, B and C",
+      "aliases": "priority|side race|tune-up race|season",
+      "blocks": {
+        "0": "Every race has a priority. The training plan builds up to an A race; B and C races within its time span are built into it – they need no plan of their own.",
+        "1": [
+          "B – important race: a short shakeout the day before, the day before that free, above 10 km one more short day before; then easy days after – 1 up to 5 km, 2 up to 10 km, otherwise 3.",
+          "C – a race as training: nothing demanding the day before, 1 easy day after (2 above 10 km), and it replaces the week’s quality session.",
+          "If the race is about as long as the week’s long run, it replaces that too.",
+          "Not built in: races above 25 km, races in the taper and races that already have a plan of their own. Afterwards the plan keeps building as if the week had been a normal one."
+        ],
+        "2": "A plan never changes by itself: when a B or C race is added or changes, the plan says so – it is built in when you recalculate from today. Fixed commitments on race day drop out, as for the A race.",
+        "3": "Go to your goals"
+      }
     }
   },
   "labBest": "best fit"

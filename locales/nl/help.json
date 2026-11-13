@@ -897,6 +897,21 @@
         "2": "De eerste planweek, ontlastings- en taperweken en de wedstrijdweek blijven ongemoeid. Elke aanpassing staat in het logboek ‘Recente automatische aanpassingen’ onder ‘Vandaag’ en is terug te draaien – die week komt ze dan niet terug. Meer omvang komt nooit automatisch; die stelt de coach voor. Uitzetten: Instellingen → Training.",
         "3": "Instellingen openen"
       }
+    },
+    "saisonrennen": {
+      "q": "Wedstrijden van het seizoen: A, B en C",
+      "aliases": "prioriteit|tussenwedstrijd|voorbereidingswedstrijd|seizoen",
+      "blocks": {
+        "0": "Elke wedstrijd heeft een prioriteit. Het trainingsschema werkt toe naar een A-wedstrijd; B- en C-wedstrijden binnen die periode bouwt het in – daar is geen eigen schema voor nodig.",
+        "1": [
+          "B – belangrijke wedstrijd: de dag ervoor een korte shakeout, de dag daarvoor vrij, boven 10 km nog een korte dag ervoor; daarna rustige dagen – 1 tot 5 km, 2 tot 10 km, anders 3.",
+          "C – wedstrijd als training: de dag ervoor niets zwaars, 1 rustige dag erna (2 boven 10 km), en hij vervangt de kwaliteitstraining van de week.",
+          "Is de wedstrijd ongeveer zo lang als de lange duurloop van de week, dan vervangt hij die ook.",
+          "Niet ingebouwd: wedstrijden boven 25 km, wedstrijden in de taper en wedstrijden met een eigen schema. Daarna bouwt het schema verder op alsof de week normaal was."
+        ],
+        "2": "Een schema verandert nooit vanzelf: komt er een B- of C-wedstrijd bij of verandert er een, dan meldt het schema dat – ingebouwd wordt bij het opnieuw berekenen vanaf vandaag. Vaste afspraken op de wedstrijddag vervallen, net als bij de A-wedstrijd.",
+        "3": "Naar je doelen"
+      }
     }
   },
   "labBest": "beste match"

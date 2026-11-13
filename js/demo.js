@@ -394,6 +394,14 @@ export function buildDemo(today) {
     distanceType: 'HM', distanceKm: 21.0975, targetTime: '01:55:00',
     priority: 'A', location: 'Dresden, Altstadt', status: 'geplant', createdAt: D(-42),
   }];
+  // The season (since 4.2): a fun run as a C race and a 10 km race as a B race inside the plan – the
+  // plan builds both in (the C race is its week's quality session, the B race gets a short taper).
+  const sat = 13 + ((6 - isoDow(D(13)) + 7) % 7);   // the first Saturday from day 13
+  const sun = 34 + ((7 - isoDow(D(34)) + 7) % 7);   // the first Sunday from day 34
+  events.push(
+    { id: 'demo-e2', name: t('demo.raceFun'), kind: 'race', date: D(sat), distanceType: '5k', distanceKm: 5, priority: 'C', location: 'Dresden-Neustadt', status: 'geplant', createdAt: D(-20) },
+    { id: 'demo-e3', name: t('demo.raceTenK'), kind: 'race', date: D(sun), distanceType: '10k', distanceKm: 10, targetTime: '00:50:00', priority: 'B', location: 'Dresden, Elbufer', status: 'geplant', createdAt: D(-20) },
+  );
 
   // Enriched profile: HR/pace zones + goals; birthYear + sex feed the
   // basal metabolic rate (calorie balance). Target weight deliberately below the current value

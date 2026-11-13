@@ -33,7 +33,8 @@ This is how you set your goal:
 1. Open **More → Goals & plans**, tap **“+”** at the top and choose **Race**.
 2. Enter **name, date, distance** and **target time** (`h:mm:ss`, e.g. `1:55:00`; a full stop or comma
    also works) and choose the **priority**: **A** – season highlight, the day the plan builds up to;
-   **B** – important race; **C** – build-up or fun race. The date is deliberately left empty; if
+   **B** – important race; **C** – build-up or fun race (B and C races inside an A race’s plan are built
+   into it, see “A season with several races” below). The date is deliberately left empty; if
    something is missing, the app marks the field.
 3. **Save** – you land on the goal page with the countdown and target pace.
 4. Tap **“Create plan”**. A short set-up asks:
@@ -83,6 +84,23 @@ the place of the one the plan would put in its week. Plans from earlier versions
 logic available” for this; nothing changes unless you trigger it. Saving fixed commitments works the
 same way. “Recalculate this week” leaves everything before today untouched and replaces that week’s
 moves – it says so before.
+
+**A season with several races.** The plan builds up to its **A race**. B and C races within its time span
+(running, up to 25 km, before the taper) need no plan of their own – the plan builds them in, and their
+goal page and the list of goals say so:
+
+- **B race** – a short taper: a shakeout the day before, the day before that free (above 10 km one more
+  short day); after it easy days – 1 up to 5 km, 2 up to 10 km, otherwise 3.
+- **C race** – training with a start number: nothing demanding the day before, 1 easy day after (2 above
+  10 km), and it replaces the week’s quality session.
+- A race about as long as the week’s long run replaces the long run too. Fixed commitments on race day
+  drop out, as on the A race day. Afterwards the plan keeps building as if the week had been a normal
+  one – it does not stay a step behind.
+
+A new plan takes in the B/C races that exist when you create it. A race added or changed later shows up
+in the plan (“Season races”) and on its goal page; it goes into the plan when you **recalculate from
+today** – never by itself. A race that already has a plan of its own stays in that one, and a longer race
+(a marathon as a B race) deserves its own plan. Triathlon and Hyrox plans take no side races.
 
 <br clear="all" />
 

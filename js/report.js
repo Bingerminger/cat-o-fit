@@ -145,7 +145,8 @@ export function buildEventReport({ profile = {}, event = {}, plan = null, sessio
   const adh = start ? adherence(plan ? [plan] : [], { from: start, to: asOf, today: asOf, isProtectedDay }) : { due: 0, done: 0, pct: null };
 
   // Result: completed race session -> linked session, otherwise session on the event day
-  const raceUnit = plan ? (plan.units || []).find((u) => u.type === 'race') : null;
+  // The plan's own race – not a side race (B/C) built into it before (since 4.2).
+  const raceUnit = plan ? (plan.units || []).find((u) => u.type === 'race' && !u.sideRace) : null;
   let result = raceUnit && raceUnit.executedSessionId ? live(sessions).find((s) => s.id === raceUnit.executedSessionId) : null;
   if (!result) result = live(sessions).find((s) => s.date === end && (s.type === 'race' || s.eventId === event.id));
 

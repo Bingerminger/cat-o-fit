@@ -990,8 +990,8 @@
     },
     "priorityHint": {
       "A": "A – season highlight: your plan builds up to this day.",
-      "B": "B – important race: run it seriously, without a full plan leading up to it.",
-      "C": "C – build-up or fun race: take it along as a training stimulus."
+      "B": "B – important race: if it falls within the plan for an A race, that plan builds it in – a short taper before, easy days after.",
+      "C": "C – build-up or fun race: if it falls within the plan for an A race, it replaces that week’s quality session."
     },
     "timesPerWeek": "{n}×/week",
     "planWeeksShort": {
@@ -1105,6 +1105,14 @@
       "planned": "planned",
       "active": "active",
       "completed": "completed"
+    },
+    "sideRace": {
+      "built": "This race is built into “{plan}”.",
+      "pending": "This race falls within “{plan}” and is not built in yet – it needs no plan of its own.",
+      "build": "Build into the plan",
+      "toPlan": "To the plan",
+      "chipBuilt": "in the plan",
+      "chipPending": "not in the plan yet"
     }
   },
   "exerciseNames": {
@@ -1550,7 +1558,21 @@
     "regenWeekLost": "Moves and manual changes in this week will be lost.",
     "strengthOff": "Off",
     "strengthHint": "Base phase up to {n}× a week, build and peak once to keep it, none in the taper. Only on days that are not next to a demanding session or fixed commitment.",
-    "levelLineStrength": "Strength up to {n}× a week"
+    "levelLineStrength": "Strength up to {n}× a week",
+    "sideRaces": {
+      "title": "Season races",
+      "lineB": {
+        "one": "{prio} · {name} · {date}: a short taper before, {count} easy day after",
+        "other": "{prio} · {name} · {date}: a short taper before, {count} easy days after"
+      },
+      "lineC": {
+        "one": "{prio} · {name} · {date}: replaces the week’s quality session, {count} easy day after",
+        "other": "{prio} · {name} · {date}: replaces the week’s quality session, {count} easy days after"
+      },
+      "long": "{prio} · {name} · {date}: longer than {km} – not built in, it deserves a plan of its own",
+      "taper": "{prio} · {name} · {date}: falls in the taper – not built in",
+      "changed": "Season races have changed since the plan was last calculated. They go into the plan once you recalculate it from today."
+    }
   },
   "commitments": {
     "footballTraining": "Football training",

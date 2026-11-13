@@ -897,6 +897,21 @@
         "2": "La primera semana del plan, las semanas de descarga y de puesta a punto y la semana de la carrera no se tocan. Cada ajuste aparece en el registro «Últimos ajustes automáticos» en «Hoy» y se puede deshacer; entonces no vuelve esa semana. Más volumen nunca llega automáticamente: lo propone el coach. Para desactivarlo: Ajustes → Entrenamiento.",
         "3": "Abrir Ajustes"
       }
+    },
+    "saisonrennen": {
+      "q": "Carreras de la temporada: A, B y C",
+      "aliases": "prioridad|carrera secundaria|carrera de preparación|temporada",
+      "blocks": {
+        "0": "Cada carrera tiene una prioridad. El plan de entrenamiento lleva a una carrera A; las carreras B y C que caen dentro de su periodo se integran en él y no necesitan un plan propio.",
+        "1": [
+          "B – carrera importante: un trote corto la víspera, el día anterior libre, por encima de 10 km un día corto más antes; después días suaves: 1 hasta 5 km, 2 hasta 10 km, si no 3.",
+          "C – carrera como entrenamiento: nada exigente la víspera, 1 día suave después (2 por encima de 10 km), y sustituye la sesión de calidad de la semana.",
+          "Si la carrera es más o menos tan larga como la tirada larga de la semana, también la sustituye.",
+          "No se integran: carreras de más de 25 km, carreras en la puesta a punto y carreras que ya tienen un plan propio. Después el plan sigue progresando como si la semana hubiera sido normal."
+        ],
+        "2": "Un plan nunca cambia por sí solo: si se añade o cambia una carrera B o C, el plan lo indica y la integra cuando lo recalculas desde hoy. Los compromisos fijos del día de la carrera desaparecen, como en la carrera A.",
+        "3": "Ir a tus objetivos"
+      }
     }
   },
   "labBest": "la mejor opción"

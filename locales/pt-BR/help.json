@@ -897,6 +897,21 @@
         "2": "A primeira semana do plano, as semanas de descarga e de polimento e a semana da prova ficam intactas. Cada ajuste aparece no registro “Ajustes automáticos recentes” em “Hoje” e pode ser desfeito – aí ele não volta naquela semana. Mais volume nunca vem automaticamente; o coach é que sugere. Para desligar: Configurações → Treino.",
         "3": "Abrir Configurações"
       }
+    },
+    "saisonrennen": {
+      "q": "Provas da temporada: A, B e C",
+      "aliases": "prioridade|prova secundária|prova de preparação|temporada",
+      "blocks": {
+        "0": "Cada prova tem uma prioridade. O plano de treino leva a uma prova A; as provas B e C que caem no período dele entram no plano – não precisam de um plano próprio.",
+        "1": [
+          "B – prova importante: um trote curto na véspera, o dia anterior livre, acima de 10 km mais um dia curto antes; depois dias leves – 1 até 5 km, 2 até 10 km, senão 3.",
+          "C – prova como treino: nada exigente na véspera, 1 dia leve depois (2 acima de 10 km), e ela substitui o treino de qualidade da semana.",
+          "Se a prova for mais ou menos tão longa quanto o longão da semana, ela o substitui também.",
+          "Não entram no plano: provas acima de 25 km, provas no polimento e provas que já têm um plano próprio. Depois o plano continua progredindo como se a semana tivesse sido normal."
+        ],
+        "2": "Um plano nunca muda sozinho: quando uma prova B ou C é adicionada ou muda, o plano avisa – ela entra quando você recalcula a partir de hoje. Compromissos fixos no dia da prova saem, como na prova A.",
+        "3": "Ir para suas metas"
+      }
     }
   },
   "labBest": "melhor opção"

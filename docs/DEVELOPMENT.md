@@ -318,9 +318,16 @@ Do **not** break these rules in the store (`storage.js`) and backend (`storage.p
   `opts._weekKm`, so a week built alone equals that week of the whole plan), extra and recovery runs
   turn into walks only as far as needed. A standard marathon plan reaches the volume behind the race
   prediction (`suggestions.js PREDICTION_VOLUME`). Triathlon/Hyrox with their own frameworks (rest days,
-  formats, station progression). Tested in `test/plangen.test.js` and over a matrix of 624 plans in
-  `test/plangen-invariants.test.js` (`PLAN_INVARIANTS_ALL=1` lists every violation), workout phases in
-  `test/workout-engine.test.js`.
+  formats, station progression). **Side races (since 4.2)** from `plan.sideRaces` (B/C, run plans, ≤ 25 km,
+  not in the taper): B = shakeout −1, −2 free, above 10 km −3 short (via `dtr` → `nearRaceUnit`), recovery
+  1/2/3 days by distance; C = day before easy, 1 (above 10 km 2) easy days, replaces the week's quality
+  role; a race ≥ 70 % of the long run replaces it; commitments on race day drop out; the weeks touched are
+  skipped in `lastFullKm` but count as steps (`gap`), so the plan does not stay a step behind. Plans without
+  side races are unchanged by this (checked against the previous generator over 1,440 plans). Tested in
+  `test/plangen.test.js` and over a matrix of 624 plans in `test/plangen-invariants.test.js`
+  (`PLAN_INVARIANTS_ALL=1` lists every violation; PLAN-B adds side races in week 2, the first deload week
+  and the last build weeks, B/C × 5/10/21 km), the store side in `test/sideraces.test.js`, workout
+  phases in `test/workout-engine.test.js`.
 - **Smoothed form estimate (`vdot.js estimateVdot`, since v3.10.0).** The “current form” is NO longer
   a single run (sensitive to outliers) but robustly smoothed: (1) **weekly best** per calendar week
   (filters easy runs, dampens intra-week outliers), (2) **outlier capping** of the weekly values to

@@ -990,8 +990,8 @@
     },
     "priorityHint": {
       "A": "A – punto culminante della stagione: il piano costruisce verso questo giorno.",
-      "B": "B – gara importante: affrontala sul serio, senza un piano completo di avvicinamento.",
-      "C": "C – gara di preparazione o per divertimento: portala con te come stimolo di allenamento."
+      "B": "B – gara importante: se cade nel piano di una gara A, quel piano la inserisce – breve scarico prima, giorni leggeri dopo.",
+      "C": "C – gara di preparazione o per divertimento: se cade nel piano di una gara A, sostituisce la seduta di qualità di quella settimana."
     },
     "timesPerWeek": "{n}×/settimana",
     "planWeeksShort": {
@@ -1105,6 +1105,14 @@
       "planned": "pianificato",
       "active": "attivo",
       "completed": "completato"
+    },
+    "sideRace": {
+      "built": "Questa gara è inserita in «{plan}».",
+      "pending": "Questa gara cade nel periodo di «{plan}» e non è ancora inserita – non serve un piano tutto suo.",
+      "build": "Inserisci nel piano",
+      "toPlan": "Vai al piano",
+      "chipBuilt": "nel piano",
+      "chipPending": "non ancora nel piano"
     }
   },
   "exerciseNames": {
@@ -1550,7 +1558,21 @@
     "regenWeekLost": "Gli spostamenti e le modifiche manuali di questa settimana andranno persi.",
     "strengthOff": "No",
     "strengthHint": "Fase di base fino a {n}× a settimana, costruzione e picco una volta per mantenere, niente nello scarico. Solo nei giorni che non sono accanto a una seduta impegnativa o a un impegno fisso impegnativo.",
-    "levelLineStrength": "Forza fino a {n}× a settimana"
+    "levelLineStrength": "Forza fino a {n}× a settimana",
+    "sideRaces": {
+      "title": "Gare della stagione",
+      "lineB": {
+        "one": "{prio} · {name} · {date}: breve scarico prima, {count} giorno leggero dopo",
+        "other": "{prio} · {name} · {date}: breve scarico prima, {count} giorni leggeri dopo"
+      },
+      "lineC": {
+        "one": "{prio} · {name} · {date}: sostituisce la seduta di qualità della settimana, {count} giorno leggero dopo",
+        "other": "{prio} · {name} · {date}: sostituisce la seduta di qualità della settimana, {count} giorni leggeri dopo"
+      },
+      "long": "{prio} · {name} · {date}: oltre {km} – non inserita, merita un piano tutto suo",
+      "taper": "{prio} · {name} · {date}: cade nello scarico – non inserita",
+      "changed": "Alcune gare della stagione sono cambiate dall’ultimo calcolo. Entrano nel piano solo quando lo ricalcoli da oggi."
+    }
   },
   "commitments": {
     "footballTraining": "Allenamento di calcio",
