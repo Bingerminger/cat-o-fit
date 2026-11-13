@@ -83,6 +83,12 @@ check('Units: plan texts converted for miles, metres and km/h stay, metric untou
     server_localize_units('Long run 18 km at 5:20–5:34 min/km, 6×800 m, bike 25 km/h', 'en', $mi) === 'Long run 11.2 mi at 8:35–8:58 min/mi, 6×800 m, bike 25 km/h'
     && server_localize_units('Long run 18 km', 'de', ['distance' => 'km']) === 'Long run 18 km',
     server_localize_units('Long run 18 km at 5:20–5:34 min/km, 6×800 m, bike 25 km/h', 'en', $mi));
+check('Units: ranges of distances convert both ends (4.2)',
+    server_localize_units('Bike ~68–85 km, the last 1–2 km, 10-15 km', 'de', $mi) === 'Bike ~42,3–52,8 mi, the last 0,62–1,24 mi, 6,2-9,3 mi',
+    server_localize_units('Bike ~68–85 km, the last 1–2 km, 10-15 km', 'de', $mi));
+check('Units: a pace stored to a tenth of a second keeps its typed seconds per mile (4.2)',
+    server_pace(479 / KM_PER_MI, $mi) === '7:59' && server_pace(round(479 / KM_PER_MI, 1), $mi) === '7:59',
+    [server_pace(round(479 / KM_PER_MI, 1), $mi)]);
 check('Text: English', server_text('en', 'ics.alarmTomorrow', ['title' => 'Long run']) === 'Tomorrow: Long run');
 check('Text: French catalogue, unsupported language → English, unknown key → the key', server_text('fr', 'ics.race') === 'Course'
     && server_text('xx', 'ics.race') === 'Race' && server_text('de', 'ics.nope') === 'ics.nope');

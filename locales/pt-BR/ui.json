@@ -3800,7 +3800,7 @@
     "easierDescription": "Mais leve de propósito hoje por causa da baixa prontidão. Bem tranquilo em Z2 – você recupera o treino-chave quando estiver mais descansado."
   },
   "formCards": {
-    "basisSmoothed": "suavizado ao longo de {weeks} semanas · mais recente: {distance} em {time}, em {date}",
+    "basisSmoothed": "suavizado ao longo de {weeks} semanas · melhor corrida da semana mais recente: {distance} em {time}, em {date}",
     "basisEstimated": "estimado a partir de {distance} em {time} · {date}",
     "fasterThanPlan": "A sua forma está cerca de {sec} s/{unit} mais rápida do que os seus paces-alvo planejados – hora de afiá-los.",
     "slowerThanPlan": "Os seus paces-alvo planejados estão cerca de {sec} s/{unit} mais rápidos do que a sua forma mais recente – talvez valha defini-los de forma mais conservadora.",

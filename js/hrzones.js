@@ -49,7 +49,9 @@ export function hrZonesFrom({ maxHr, restHr = null, method = 'hfmax', lthr = nul
     return ZONE_DEFS.map(([, , nameOf, color], i) => {
       const [a, b] = LTHR_DEFS[i];
       const max = Math.round(lt * b / 100);
-      return { zone: i + 1, name: nameOf(), minPct: a, maxPct: b, min: Math.round(lt * a / 100), max: i === 4 && cap ? Math.max(cap, max) : max, color, basis: 'lthr' };
+      // A known HRmax closes zone 5 exactly: never above it (HRmax 175 at threshold 170 → 170–175, not
+      // 170–180), and up to it when it lies higher than 106 % of the threshold.
+      return { zone: i + 1, name: nameOf(), minPct: a, maxPct: b, min: Math.round(lt * a / 100), max: i === 4 && cap ? cap : max, color, basis: 'lthr' };
     });
   }
   const mh = Number(maxHr);

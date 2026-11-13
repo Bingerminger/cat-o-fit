@@ -116,7 +116,7 @@ function server_distance(float $km, int $decimals, string $lang, array $units): 
 }
 
 /** Pace from seconds per km as "m:ss" in the person's unit (per km or per mile). */
-function server_pace(int $secPerKm, array $units): string
+function server_pace(float $secPerKm, array $units): string
 {
     $sec = (int) round(($units['distance'] ?? 'km') === 'mi' ? $secPerKm * KM_PER_MI : $secPerKm);
     return sprintf('%d:%02d', intdiv($sec, 60), $sec % 60);
@@ -144,11 +144,13 @@ function server_localize_units(string $text, string $lang, array $units): string
     };
     $text = (string) preg_replace_callback('/(\d{1,2}:\d{2})(?:(\s?[–-]\s?)(\d{1,2}:\d{2}))?(\s?(?:min)?\s?)\/\s?km\b/u',
         static fn(array $m): string => $perMile($m[1]) . (($m[3] ?? '') !== '' ? $m[2] . $perMile($m[3]) : '') . $m[4] . '/mi', $text);
-    return (string) preg_replace_callback('/(\d+(?:[.,]\d+)?)(\s?|\x{00a0})km\b(?!\/h)/u', static function (array $m) use ($lang): string {
-        $mi = (float) str_replace(',', '.', $m[1]) / KM_PER_MI;
-        $num = server_number($mi, $mi >= 3 ? 1 : 2, $lang);
-        return $num . $m[2] . 'mi';
-    }, $text);
+    // A distance or a range of distances ("68–85 km", "10-15 km"): both ends are converted.
+    $toMi = static function (string $n) use ($lang): string {
+        $mi = (float) str_replace(',', '.', $n) / KM_PER_MI;
+        return server_number($mi, $mi >= 3 ? 1 : 2, $lang);
+    };
+    return (string) preg_replace_callback('/(\d+(?:[.,]\d+)?)(?:(\s?[–-]\s?)(\d+(?:[.,]\d+)?))?(\s?|\x{00a0})km\b(?!\/h)/u',
+        static fn(array $m): string => $toMi($m[1]) . (($m[3] ?? '') !== '' ? $m[2] . $toMi($m[3]) : '') . $m[4] . 'mi', $text);
 }
 
 /** Catalog of a language as a nested array ([] when it is missing or broken). */

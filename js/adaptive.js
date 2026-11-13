@@ -63,7 +63,11 @@ export function readinessScore(health, today) {
   // against one's own normal range of the last 28 days (mean ± 0.5 SD, after Plews/Buchheit).
   // Daily noise no longer tips anything; only a deviation over several days counts. Only values
   // of the SAME measurement type (SDNN ≠ RMSSD) – a change of watch would otherwise be an apparent jump.
-  const hrv = hrvBand(sorted, last, today || last.date);
+  // The reference is the latest entry WITH an HRV value: a day that so far holds only sleep or the resting
+  // pulse (entered by hand, or imported before the HRV value) must not drop the 7-day mean – the mean
+  // exists precisely to bridge single missing days (Plews et al. 2014: 3 values a week suffice).
+  const lastHrv = sorted.findLast((h) => h.hrv != null) || null;
+  const hrv = hrvBand(sorted, lastHrv, today || last.date);
   if (hrv) {
     if (hrv.state === 'low') { score -= 10; factors.push(t('adaptive.hrvLow')); }
     else if (hrv.state === 'high') { score += 5; factors.push(t('adaptive.hrvHigh')); }

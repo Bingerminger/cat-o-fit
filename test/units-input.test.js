@@ -84,7 +84,8 @@ test('helpers: miles and pounds in, kilometres and kilograms out – an unchange
   assert.equal(fromInput('160', 'weight'), 72.57, '160 lb is shown again as 160.0 lb');
   assert.equal(paceToInput(320), 515, '5:20/km = 8:35/mi');
   assert.equal(paceFromInput(515, 320), 320);
-  assert.equal(paceFromInput(483), 300, '8:03/mi ≈ 5:00/km');
+  assert.equal(paceFromInput(483), 300.1, '8:03/mi ≈ 5:00/km – to a tenth, so it comes back as 8:03 (4.2)');
+  assert.equal(paceToInput(paceFromInput(479)), 479, '7:59/mi stays 7:59 (whole seconds per km made it 8:00)');
   assert.equal(heightFromInput('5', '11', 180), 180, '5′ 11″ unchanged keeps 180 cm');
   assert.equal(heightFromInput('5', '11'), 180);
   assert.equal(heightFromInput('5', '9', 180), 175);
@@ -165,8 +166,8 @@ test('planned session editor: distance and target pace per mile; opening and sav
   u = planUnit();
   assert.equal(u.title, 'Langer Lauf 10 mi', 'a changed title is stored as typed');
   assert.equal(u.targetDistanceKm, 16.09);
-  assert.equal(u.targetPaceSecPerKm, 298, '8:00/mi ≈ 4:58/km');
-  assert.equal(u.targetPaceMaxSecPerKm, 308);
+  assert.equal(u.targetPaceSecPerKm, 298.3, '8:00/mi ≈ 4:58/km, stored to a tenth (4.2)');
+  assert.equal(u.targetPaceMaxSecPerKm, 308.3);
 });
 
 test('new planned session: distance and pace typed in miles', () => {
@@ -177,7 +178,7 @@ test('new planned session: distance and pace typed in miles', () => {
   button(modal, 'Speichern').click();
   const u = store.get('plans')[0].units.find((x) => x.id !== 'u-run');
   assert.equal(u.targetDistanceKm, 9.99);
-  assert.equal(u.targetPaceSecPerKm, 300);
+  assert.equal(u.targetPaceSecPerKm, 300.1);
 });
 
 /* ------------------------------ Workout mode ------------------------------ */

@@ -118,12 +118,15 @@ export function fromInput(value, kind, stored = null) {
 }
 /** A stored pace (s/km) as its field shows it: whole seconds per km or per mile; null without. */
 export const paceToInput = (secPerKm) => (Number(secPerKm) > 0 ? Math.round(paceToShown(Number(secPerKm))) : null);
-/** Seconds typed per unit shown → whole seconds per km; the stored pace stays while the field shows it. */
+/** Seconds typed per unit shown → seconds per km: whole ones on km; on miles to a tenth, so every whole
+    second per mile comes back as typed (1 s/km is 1.61 s/mi – whole seconds per km turned 7:59 min/mi
+    into 8:00). The stored pace stays while the field shows it. */
 export function paceFromInput(shownSec, stored = null) {
   const n = Number(shownSec);
   if (!shownSec || !Number.isFinite(n) || n <= 0) return null;
   if (paceToInput(stored) === Math.round(n)) return Number(stored);
-  return Math.round(shownToPace(n));
+  const metric = shownToPace(n);
+  return miles() ? round(metric, 1) : Math.round(metric);
 }
 /** Height typed in feet and inches → whole cm (null when both are empty or zero); the stored
     height stays while the fields show it. */

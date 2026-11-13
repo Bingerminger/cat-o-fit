@@ -329,10 +329,10 @@ Do **not** break these rules in the store (`storage.js`) and backend (`storage.p
   and the last build weeks, B/C × 5/10/21 km), the store side in `test/sideraces.test.js`, workout
   phases in `test/workout-engine.test.js`.
 - **Smoothed form estimate (`vdot.js estimateVdot`, since v3.10.0).** The “current form” is NO longer
-  a single run (sensitive to outliers) but robustly smoothed: (1) **weekly best** per calendar week
+  a single run (sensitive to outliers) but robustly smoothed: (1) **weekly best** per calendar week (the person's week start, `ui.weekStart`; since 4.2 – before, 7-day blocks back from today)
   (filters easy runs, dampens intra-week outliers), (2) **outlier capping** of the weekly values to
   median ± 3·MAD, (3) **recency-weighted mean** (exponential, half-life 2 weeks – the same EWMA idea
-  as CTL/ATL). Fallback to the best single run with < 3 weeks of history (the most recent session as the basis). Since
+  as CTL/ATL). Fallback to the best single run with < 3 weeks of history (that run is the basis; smoothed, the basis is the best run of the latest week). Since
   the plan overhaul only **hard runs** count (race/tempo/interval, RPE ≥ 7, average HR from zone 4);
   easy runs are a lower bound or, when there are no hard runs, a flagged estimate
   (`onlyEasy`). Return value `{ vdot, basis, weeks, onlyEasy, hardCount }`. `applyFormPaces` writes the
@@ -555,9 +555,11 @@ The app itself speaks seven languages (`de`, `en`, `fr`, `es`, `it`, `pt-BR`, `n
   `labUnits`) and the conversions. Display goes through the unit-aware formatters (`fmtKm`, `fmtPace`,
   `fmtWeight`, `fmtHeight`, `fmtTemp`, `fmtElevation`); inputs convert back with `shownToKm`,
   `shownToPace`, `shownToKg` and `feetInchesToCm`. Catalog strings never name a unit – they take
-  `{unit}`. Generated plan texts are stored metric and converted when shown (`localizeUnits`); the
-  calendar feed does the same on the server (`person_units()`, `server_localize_units()` in
-  `api/i18n.php`). Lab values stay canonical; `shownUnit()` and `toShown()` in `js/labs.js` give the
+  `{unit}`. Generated plan texts are stored metric and converted when shown (`localizeUnits`, also
+  ranges "68–85 km" since 4.2); the calendar feed does the same on the server (`person_units()`,
+  `server_localize_units()` in `api/i18n.php`). A pace typed per mile is stored to a tenth of a second
+  per km (`paceFromInput`, since 4.2), so every whole second per mile comes back as typed; per km it
+  stays whole seconds. Lab values stay canonical; `shownUnit()` and `toShown()` in `js/labs.js` give the
   conventional units. Reports are sealed with the units of the day they were written.
 - **Which language:** `js/language.js` – the person's `settings.language`, else the instance default
   (`familySettings().language`, written at first setup), else German for instances set up before

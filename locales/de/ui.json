@@ -3800,7 +3800,7 @@
     "easierDescription": "Heute bewusst lockerer wegen niedriger Bereitschaft. Ganz entspannt in Z2 – die Schlüsseleinheit holst du nach, wenn du erholter bist."
   },
   "formCards": {
-    "basisSmoothed": "geglättet über {weeks} Wochen · zuletzt {distance} in {time} am {date}",
+    "basisSmoothed": "geglättet über {weeks} Wochen · bester Lauf der jüngsten Woche: {distance} in {time} am {date}",
     "basisEstimated": "geschätzt aus {distance} in {time} · {date}",
     "fasterThanPlan": "Deine Form ist rund {sec} s/{unit} schneller als deine Plan-Zielpaces – Zeit, sie zu schärfen.",
     "slowerThanPlan": "Deine Plan-Zielpaces sind rund {sec} s/{unit} schneller als deine jüngste Form – evtl. konservativer ansetzen.",

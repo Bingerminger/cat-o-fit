@@ -3800,7 +3800,7 @@
     "easierDescription": "Volutamente più facile oggi per la bassa prontezza. Bella rilassata in Z2 – la sessione chiave la recuperi quando avrai ripreso le forze."
   },
   "formCards": {
-    "basisSmoothed": "mediata su {weeks} settimane · ultima: {distance} in {time} il {date}",
+    "basisSmoothed": "mediata su {weeks} settimane · miglior corsa dell’ultima settimana: {distance} in {time} il {date}",
     "basisEstimated": "stimata da {distance} in {time} · {date}",
     "fasterThanPlan": "La tua forma è circa {sec} s/{unit} più veloce dei tuoi passi obiettivo pianificati – è ora di affinarli.",
     "slowerThanPlan": "I tuoi passi obiettivo pianificati sono circa {sec} s/{unit} più veloci della tua forma più recente – magari conviene impostarli in modo più prudente.",

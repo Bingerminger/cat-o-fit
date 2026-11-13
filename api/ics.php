@@ -229,8 +229,8 @@ function vevent_unit(object $u, ?object $event, string $appUrl, string $host, st
         $descParts[] = server_text($lang, 'ics.distance', ['length' => server_distance((float) $u->targetDistanceKm, 1, $lang, $units)]);
     }
     if (!empty($u->targetPaceSecPerKm)) {
-        $pmin = server_pace((int) $u->targetPaceSecPerKm, $units);
-        $pmax = !empty($u->targetPaceMaxSecPerKm) ? '–' . server_pace((int) $u->targetPaceMaxSecPerKm, $units) : '';
+        $pmin = server_pace((float) $u->targetPaceSecPerKm, $units);
+        $pmax = !empty($u->targetPaceMaxSecPerKm) ? '–' . server_pace((float) $u->targetPaceMaxSecPerKm, $units) : '';
         $descParts[] = server_text($lang, 'ics.pace', ['pace' => $pmin . $pmax . ' ' . server_pace_unit($units)]);
     }
     if (!empty($u->targetHrZone)) {

@@ -3800,7 +3800,7 @@
     "easierDescription": "Volontairement plus facile aujourd’hui en raison d’une faible disponibilité. Bien tranquille en Z2 – tu rattraperas la séance clé quand tu auras mieux récupéré."
   },
   "formCards": {
-    "basisSmoothed": "moyenne lissée sur {weeks} semaines · dernière performance : {distance} en {time} le {date}",
+    "basisSmoothed": "moyenne lissée sur {weeks} semaines · meilleure sortie de la dernière semaine : {distance} en {time} le {date}",
     "basisEstimated": "estimation d’après {distance} en {time} · {date}",
     "fasterThanPlan": "Ta forme est environ {sec} s/{unit} plus rapide que tes allures cibles prévues – il est temps de les affûter.",
     "slowerThanPlan": "Tes allures cibles prévues sont environ {sec} s/{unit} plus rapides que ta dernière forme – tu voudras peut-être les fixer plus prudemment.",

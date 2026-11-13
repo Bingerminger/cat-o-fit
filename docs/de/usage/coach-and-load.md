@@ -101,10 +101,12 @@ wenn es etwas anzupassen gibt):
 **So liest du die „Aktuelle Form“:**
 
 1. Der **VDOT-Chip** (z. B. „VDOT 40,9“) ist deine geschätzte, **geglättete** Leistung.
-2. „**geglättet über 4 Wochen · zuletzt 8,0 km in 38:00 am Mi, 15. Juli**“ heißt: Die Form ist **kein
-   einzelner Lauf**, sondern ein geglätteter Wert aus deinen letzten Wochen – je Woche zählt dein bester
-   **harter** Lauf (Wettkampf, Tempo, Intervalle oder ein Lauf mit Anstrengung ab 7 bzw. Herzfrequenz ab
-   Zone 4), jüngere Wochen zählen mehr, und **einzelne Ausreißer werden gekappt**. Lockere Läufe
+2. „**geglättet über 4 Wochen · bester Lauf der jüngsten Woche: 8,0 km in 38:00 am Mi, 15. Juli**“ heißt:
+   Die Form ist **kein einzelner Lauf**, sondern ein geglätteter Wert aus deinen letzten Wochen – je
+   Kalenderwoche (so, wie du Wochen zählst) zählt dein bester **harter** Lauf (Wettkampf, Tempo, Intervalle
+   oder ein Lauf mit Anstrengung ab 7 bzw. Herzfrequenz ab Zone 4), jüngere Wochen zählen mehr, und
+   **einzelne Ausreißer werden gekappt**; genannt ist der beste Lauf der jüngsten dieser Wochen. Bei weniger
+   als drei Wochen zählt der beste Einzellauf, und die Karte nennt genau diesen („geschätzt aus …“). Lockere Läufe
    unterschätzen die Form deutlich und zählen nur als Untergrenze. Läufst du nur locker, steht dort
    „aus lockeren Trainingsläufen geschätzt – eher zu niedrig“, und die App rät nicht zu langsameren Paces.
 3. **Locker / Schwelle / Intervalle** sind die zu dieser Form passenden Paces. Long Run und lockere Läufe

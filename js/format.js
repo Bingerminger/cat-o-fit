@@ -133,7 +133,8 @@ export function fmtElevation(m) {
 /* Generated plan texts are stored with metric amounts ("Long run 18 km", "6×1 km at 4:45/km").
    For a person on miles they are converted when shown; metre intervals (track) stay. */
 const PACE_IN_TEXT = /(\d{1,2}:\d{2})(?:(\s?[–-]\s?)(\d{1,2}:\d{2}))?(\s?(?:min)?\s?)\/\s?km\b/g;
-const KM_IN_TEXT = /(\d+(?:[.,]\d+)?)(\s?| )km\b(?!\/h)/g;
+// A distance or a range of distances ("68–85 km", "10-15 km"): both ends are converted.
+const KM_IN_TEXT = /(\d+(?:[.,]\d+)?)(?:(\s?[–-]\s?)(\d+(?:[.,]\d+)?))?(\s?| )km\b(?!\/h)/g;
 const perMile = (mss) => {
   const [m, s] = mss.split(':').map(Number);
   const sec = Math.round((m * 60 + s) * KM_PER_MI);
@@ -143,13 +144,12 @@ export function localizeUnits(text) {
   if (typeof text !== 'string' || units().distance !== 'mi') return text;
   return text
     .replace(PACE_IN_TEXT, (_, a, dash, b, gap) => `${perMile(a)}${b ? dash + perMile(b) : ''}${gap}/mi`)
-    .replace(KM_IN_TEXT, (_, n, gap) => {
-      const km = Number(n.replace(',', '.'));
-      const mi = km / KM_PER_MI;
-      // Long distances to a tenth, short ones to a hundredth ("0.62 mi" for 1 km).
-      const digits = mi >= 3 ? 1 : 2;
-      return `${mi.toFixed(digits).replace(/\.?0+$/, '').replace('.', decimalSeparator())}${gap}mi`;
-    });
+    .replace(KM_IN_TEXT, (_, a, dash, b, gap) => `${kmTextToMi(a)}${b ? dash + kmTextToMi(b) : ''}${gap}mi`);
+}
+/** "18" or "12,5" (km) as miles: long distances to a tenth, short ones to a hundredth ("0.62" for 1 km). */
+function kmTextToMi(n) {
+  const mi = Number(n.replace(',', '.')) / KM_PER_MI;
+  return mi.toFixed(mi >= 3 ? 1 : 2).replace(/\.?0+$/, '').replace('.', decimalSeparator());
 }
 export function fmtNum(n, digits = 1) {
   if (n == null || Number.isNaN(n)) return '–';

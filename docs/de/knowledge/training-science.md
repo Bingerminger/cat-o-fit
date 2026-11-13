@@ -73,8 +73,9 @@ gegenüber deinem eigenen Schnitt gestiegen ist, nicht als Schutzversprechen.
   3 × MAD, Halbwertszeit zwei Wochen). Lockere Läufe zählen nur als Untergrenze.
 - **Prognose:** die Äquivalenzzeit deiner Form für die Wettkampfstrecke. Für Halbmarathon und
   Marathon gilt sie nur mit passendem Umfang (Marathon: ab ~50 km pro Woche und Long Run ab ~25 km;
-  Halbmarathon: ab ~30 km und ~15 km) – sonst trägt die Prognose einen Vorbehalt. Fehlen harte Läufe,
-  rechnet die App ersatzweise mit der Riegel-Formel.
+  Halbmarathon: ab ~30 km und ~15 km) – sonst trägt die Prognose einen Vorbehalt. Ohne harte Läufe
+  schätzt die App aus deinen lockeren Läufen und sagt dazu, dass das eher zu niedrig ist; nur ganz ohne
+  aktuelle Läufe (keiner ab 3 km in sechs Wochen) rechnet sie mit der Riegel-Formel aus einem älteren Lauf.
 - **Trainingstempo im Plan:** Training aus der langsameren von Ziel- und Formleistung, das
   **Renntempo** aus der Zielzeit. Ist die Zielzeit mehr als 3 VDOT-Punkte über deiner Form, sagt die
   App das und trainiert nach der Form.

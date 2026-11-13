@@ -3800,7 +3800,7 @@
     "easierDescription": "Hoy toca algo más suave a propósito, por la poca disposición. Tranquilo y relajado en Z2: la sesión clave la recuperarás cuando hayas descansado mejor."
   },
   "formCards": {
-    "basisSmoothed": "suavizado sobre {weeks} semanas · último: {distance} en {time} el {date}",
+    "basisSmoothed": "suavizado sobre {weeks} semanas · mejor carrera de la última semana: {distance} en {time} el {date}",
     "basisEstimated": "estimado a partir de {distance} en {time} · {date}",
     "fasterThanPlan": "Tu forma es unos {sec} s/{unit} más rápida que tus ritmos objetivo planificados: toca afinarlos.",
     "slowerThanPlan": "Tus ritmos objetivo planificados son unos {sec} s/{unit} más rápidos que tu forma más reciente: quizá convenga fijarlos con más prudencia.",

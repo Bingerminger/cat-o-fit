@@ -244,6 +244,25 @@ export function formToday(sessions = [], today, opts = {}) {
   return series.at(-1) || { date: today, ctl: 0, atl: 0, form: 0 };
 }
 
+/** Days the form curve is smoothed over (formToday: 42 visible + 180 warm-up). */
+const FORM_WINDOW_DAYS = 222;
+
+/**
+ * Form relative to fitness (TSB / CTL) with the start-up share taken out: both curves start at 0 on the
+ * first recorded day and reach only 1 − e^(−h/τ) of their level after h days – fitness (τ 42) far more
+ * slowly than fatigue (τ 7). Uncorrected, perfectly even training still read −13 % ("in training") at
+ * day 90 and only came within the ±10 % band at day 101. Dividing each curve by its start-up share
+ * gives even training 0 % from the first rated day on. Only the verdict uses this; the curves stay as
+ * they are. null without fitness.
+ */
+export function relativeForm(form = {}, hist = 0) {
+  if (!(form.ctl > 0)) return null;
+  const h = Math.max(1, Math.min(Number(hist) || 0, FORM_WINDOW_DAYS));
+  const ctl = form.ctl / (1 - Math.exp(-h / CTL_TAU));
+  const atl = (form.atl || 0) / (1 - Math.exp(-h / ATL_TAU));
+  return (ctl - atl) / ctl;
+}
+
 /**
  * Form relative to fitness (TSB as % of CTL) with a verbal classification. The curves
  * run in load points (minutes × RPE) – an absolute threshold such as "form > 5"
@@ -251,7 +270,7 @@ export function formToday(sessions = [], today, opts = {}) {
  * @returns {{key:'einschwingen'|'frisch'|'ausgeglichen'|'training'|'ermuedet', label:string, rel:number|null, reliable:boolean}}
  */
 export function formState(form = {}, hist = 0) {
-  const rel = form.ctl > 0 ? form.form / form.ctl : null;
+  const rel = relativeForm(form, hist);
   if (hist < FORM_MIN_DAYS || rel == null) return { key: 'einschwingen', label: t('load.formSettling'), rel, reliable: false };
   if (rel >= 0.1) return { key: 'frisch', label: t('load.formFresh'), rel, reliable: true };
   if (rel >= -0.1) return { key: 'ausgeglichen', label: t('load.formBalanced'), rel, reliable: true };
@@ -283,7 +302,9 @@ export function monotonyStrain(sessions = [], today, { win = 7, chronic = 28 } =
   const strain = Math.round(weekLoad * monotony);
   const before = series.slice(0, chronic - win).reduce((a, d) => a + d.load, 0);
   const chronicWeek = (chronic - win) > 0 ? (before / (chronic - win)) * win : 0;
-  const tone = (monotony >= 2 && weekLoad > 0 && chronicWeek > 0 && weekLoad >= chronicWeek * 1.1) ? 'warn' : 'good';
+  // "At least 10 % above" in whole numbers: 770 against 700 is exactly 1.1 ×, but 700 × 1.1 is
+  // 770.0000000000001 in floating point.
+  const tone = (monotony >= 2 && weekLoad > 0 && chronicWeek > 0 && weekLoad * 10 >= chronicWeek * 11 - 1e-9) ? 'warn' : 'good';
   return { monotony: Math.round(monotony * 100) / 100, strain, weekLoad: Math.round(weekLoad), chronicWeek: Math.round(chronicWeek), tone };
 }
 

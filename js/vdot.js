@@ -8,7 +8,7 @@
    Deliberately meant as guidance – not laboratory diagnostics.
    ========================================================================= */
 
-import { diffDays } from './ui.js';
+import { diffDays, weekStart } from './ui.js';
 
 import { t } from './i18n.js';
 
@@ -134,7 +134,8 @@ export function planPaces({ distanceKm, targetSec = null, formVdot = null } = {}
   zones.race = raceZone(racePace, km);
   return {
     zones, goalVdot, formVdot: form, trainingVdot,
-    ambitious: !!(goalVdot && form && goalVdot - form > 3),
+    // "More than 3 points" on the tenths both values are shown with (64.4 − 61.4 is 3.0000000000000071).
+    ambitious: !!(goalVdot && form && Math.round((goalVdot - form) * 10) > 30),
   };
 }
 
@@ -165,8 +166,8 @@ function median(xs) {
  * (race, tempo, intervals, RPE ≥ 7 or average HR from zone 4) – deliberately SMOOTHED,
  * so that a single training outlier does not make the form jump:
  *
- *   1) Weekly best: per calendar week the best VDOT; dampens outliers
- *      within a week.
+ *   1) Weekly best: per calendar week (as the person counts weeks) the best VDOT; dampens
+ *      outliers within a week.
  *   2) Robust outlier capping of the weekly values at median ± 3·MAD
  *      (median absolute deviation – classic robust statistics). A single
  *      faulty/lucky value (e.g. GPS error) is capped this way, genuine improvements
@@ -181,8 +182,8 @@ function median(xs) {
  * flags this (`onlyEasy`) – the display then calls the estimate "rather too
  * low" and does not advise slower paces.
  *
- * With fewer than 3 weeks of data the best single run counts (with the most recent
- * session as the basis). Returns { vdot, basis, weeks, onlyEasy, hardCount } or null.
+ * With fewer than 3 weeks of data the best single run counts (and is the basis); smoothed, the basis
+ * is the best run of the latest week. Returns { vdot, basis, weeks, onlyEasy, hardCount } or null.
  * `hrZones` (optional, profile) makes heart rate usable as a hardness feature.
  */
 export function estimateVdot(sessions = [], today, days = 42, { hrZones = null } = {}) {
@@ -198,7 +199,10 @@ export function estimateVdot(sessions = [], today, days = 42, { hrZones = null }
     const climb = Number(s.ascentM) > 0 && Number(s.ascentM) / s.distanceKm > 5 ? Number(s.ascentM) : 0;
     const v = vdotFromPerf(s.distanceKm * 1000 + 6 * climb, s.durationSec);
     if (!v) return;
-    const run = { v, week: Math.floor(d / 7), date: s.date, distanceKm: s.distanceKm, durationSec: s.durationSec, type: s.type };
+    // Calendar week as the person counts weeks (units().weekStart), 0 = the current one – not a block of
+    // 7 days back from today, which put Saturday and Sunday of one week into different "weeks".
+    const week = Math.round(diffDays(weekStart(s.date), weekStart(today)) / 7);
+    const run = { v, week, date: s.date, distanceKm: s.distanceKm, durationSec: s.durationSec, type: s.type };
     (isHardRun(s, z4 && z4.min) ? hard : easy).push(run);
   });
   if (!hard.length && !easy.length) return null;
@@ -220,14 +224,16 @@ function smoothVdot(runs) {
     if (!cur || r.v > cur.v || (r.v === cur.v && r.date > cur.date)) byWeek.set(r.week, r);
   });
   const weekly = [...byWeek.values()].sort((a, b) => a.week - b.week); // week 0 (current) first
-  const b0 = weekly[0];
-  const basis = { date: b0.date, distanceKm: b0.distanceKm, durationSec: b0.durationSec, type: b0.type };
+  const basisOf = (r) => ({ date: r.date, distanceKm: r.distanceKm, durationSec: r.durationSec, type: r.type });
 
-  // Too little history → best single run (previous, robust behaviour).
+  // Too little history → best single run (previous, robust behaviour) – and the basis is that run, the
+  // one the number comes from (the card says "estimated from …").
   if (weekly.length < 3) {
-    const best = Math.max(...weekly.map((w) => w.v));
-    return { vdot: Math.round(best * 10) / 10, basis, weeks: weekly.length };
+    const best = weekly.reduce((a, w) => (w.v > a.v || (w.v === a.v && w.date > a.date) ? w : a));
+    return { vdot: Math.round(best.v * 10) / 10, basis: basisOf(best), weeks: weekly.length };
   }
+  // Smoothed: the basis is the best run of the latest week that holds one (the card names it as such).
+  const basis = basisOf(weekly[0]);
 
   // (2) Robust capping at median ± 3·MAD (MAD lower bound 1.5 VDOT against over-capping of narrow weeks).
   const vals = weekly.map((w) => w.v);

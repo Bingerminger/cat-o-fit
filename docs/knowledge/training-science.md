@@ -73,7 +73,9 @@ risen compared with your own average, not as a promise of protection.
 - **Prediction:** the equivalent time of your form for the race distance. For the half marathon and
   the marathon it holds only with suitable volume (marathon: from about 50 km a week and a long run of
   about 25 km or more; half marathon: from about 30 km and about 15 km) – otherwise the prediction
-  carries a caveat. If hard runs are missing, the app uses the Riegel formula instead.
+  carries a caveat. Without hard runs the app estimates from your easy runs and says it is likely on the
+  low side; only without any recent run (none of 3 km or more in six weeks) does it fall back on the
+  Riegel formula from an older run.
 - **Training pace in the plan:** training from the slower of goal and form performance, the **race
   pace** from the goal time. If the goal time is more than 3 VDOT points above your form, the app says
   so and trains by your form.

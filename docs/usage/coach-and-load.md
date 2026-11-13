@@ -104,10 +104,12 @@ there is something to adjust):
 **How to read “Current form”:**
 
 1. The **VDOT chip** (e.g. “VDOT 40.9”) is your estimated, **smoothed** performance.
-2. “**smoothed over 4 weeks · latest 8.0 km in 38:00 on Wed 15 Jul**” means: the form is **not a single
-   run** but a smoothed value from your last weeks – each week your best **hard** run counts (race,
-   tempo, intervals, or a run with an effort of 7 or more or a heart rate from zone 4 upwards), more
-   recent weeks count more, and **individual outliers are capped**. Easy runs clearly underestimate your
+2. “**smoothed over 4 weeks · best run of the latest week: 8.0 km in 38:00 on Wed 15 Jul**” means: the
+   form is **not a single run** but a smoothed value from your last weeks – each calendar week (as you
+   count weeks) your best **hard** run counts (race, tempo, intervals, or a run with an effort of 7 or more
+   or a heart rate from zone 4 upwards), more recent weeks count more, and **individual outliers are
+   capped**; the run named is the best of the latest of those weeks. With fewer than three weeks the best
+   single run counts, and the card names exactly that one (“estimated from …”). Easy runs clearly underestimate your
    form and only count as a lower bound. If you only run easy, it says “estimated from easy training
    runs – likely on the low side”, and the app does not advise slower paces.
 3. **Easy / Threshold / Intervals** are the paces that match this form. The long run and easy runs share

@@ -3800,7 +3800,7 @@
     "easierDescription": "Deliberately easier today because of low readiness. Nice and relaxed in Z2 – you’ll catch up on the key session when you’re better rested."
   },
   "formCards": {
-    "basisSmoothed": "smoothed over {weeks} weeks · latest {distance} in {time} on {date}",
+    "basisSmoothed": "smoothed over {weeks} weeks · best run of the latest week: {distance} in {time} on {date}",
     "basisEstimated": "estimated from {distance} in {time} · {date}",
     "fasterThanPlan": "Your form is about {sec} s/{unit} faster than your planned target paces – time to sharpen them.",
     "slowerThanPlan": "Your planned target paces are about {sec} s/{unit} faster than your latest form – you may want to set them more conservatively.",

@@ -3800,7 +3800,7 @@
     "easierDescription": "Vandaag bewust rustiger vanwege lage gereedheid. Lekker ontspannen in Z2 – de sleuteltraining haal je in als je beter uitgerust bent."
   },
   "formCards": {
-    "basisSmoothed": "afgevlakt over {weeks} weken · laatste {distance} in {time} op {date}",
+    "basisSmoothed": "afgevlakt over {weeks} weken · beste loop van de laatste week: {distance} in {time} op {date}",
     "basisEstimated": "geschat op basis van {distance} in {time} · {date}",
     "fasterThanPlan": "Je vorm is ongeveer {sec} s/{unit} sneller dan je geplande streeftempo’s – tijd om ze aan te scherpen.",
     "slowerThanPlan": "Je geplande streeftempo’s liggen ongeveer {sec} s/{unit} sneller dan je laatste vorm – misschien wil je ze voorzichtiger instellen.",
