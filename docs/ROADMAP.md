@@ -2,8 +2,39 @@
 
 Planned development of Cat-O-Fit, in rough order of priority. What is already done is in the
 [CHANGELOG](../CHANGELOG.md). Suggestions and help are welcome – see [CONTRIBUTING](../CONTRIBUTING.md).
+Deutsch: [Roadmap](de/ROADMAP.md).
 
-**As of:** 31 October 2026, v4.1.1.
+**As of:** 13 November 2026, v4.1.1.
+
+**Where to follow it:** each release has a [milestone](https://github.com/Bingerminger/cat-o-fit/milestones)
+with a tracking issue, and the [board](https://github.com/users/Bingerminger/projects/2) shows what is
+accepted, planned, in progress and released. Ideas go into
+[Discussions › Ideas](https://github.com/Bingerminger/cat-o-fit/discussions/categories/ideas), where
+everyone can vote with 👍; bugs go into an [issue](https://github.com/Bingerminger/cat-o-fit/issues/new/choose).
+
+## In progress: v4.2 – Strength, movement and reliability
+
+Tracking issue: [#6](https://github.com/Bingerminger/cat-o-fit/issues/6).
+
+- **Strength in depth** – estimated 1RM, personal-record detection and a plate calculator; a rest
+  timer per exercise, starter programmes, sharing a plan as a file or PDF; your own exercises and saved
+  follow-along workouts; a workout assigned to a planned session.
+- **More realistic follow-along animations** for every exercise, and a male demonstrator figure as an
+  option next to the current one.
+- **A larger exercise library** – from 93 to about 120 animated exercises, in all seven languages and
+  with voice cues.
+- **Smarter plans** – the plan adjusts weekly volume itself from the load signals (today the coach
+  suggests a correction that you accept with one tap); a season with several races (main and secondary
+  races, short tapers and recovery in between); strength blocks that follow the plan phase (base,
+  race-specific, taper).
+- **Threshold pace, FTP and CSS** from a performance test, without a second pace source contradicting
+  the fitness estimate; **weather per session** – heat and treadmill runs count in the fitness estimate,
+  not just in a hint.
+- **Reliability** – sync between devices, starting without network, the plan generator, imports and
+  cycle and lab values at the edges; a reworked interface (contrast, focus, screen readers, empty views).
+- **Technical** – `storage.js` split into modules behind a facade (with a load test), an incremental
+  admin backup, tests in real browsers (Chromium and Safari's engine) and under a moved clock, and a
+  signed Docker image with a software bill of materials.
 
 ## Done: v4.1.0 – Your units
 
@@ -18,51 +49,27 @@ voice cues in every language, English for developers, the AGPL-3.0-or-later lice
 the import from Strong, Hevy and FitNotes, and templates for Unraid and CasaOS. Details are in the
 [CHANGELOG](../CHANGELOG.md).
 
-## After v4.1.0
+## After v4.2
+
+### v4.3 – Calendars and routes
+
+- **Club calendars (.ics)** – take games and training sessions as fixed appointments; a server-side
+  fetch only with protection against requests into the local network.
+- **GPX/FIT export** of your own activities. (A full JSON backup, the CSV export and read access for
+  your own tools such as an AI assistant already exist.)
+- **Routes as a simple drawing** without a map service.
+
+### v4.4 – Open connections
+
+- Cycle data from Apple Health.
+- Web Push for installed PWAs (iOS 16.4+) as an optional addition to the `.ics` reminders.
+- A real nutrition database next to the curated values and Open Food Facts.
+- Lab catalogue with LOINC codes, mapped carefully per unit; new analytes such as glucose and cholesterol.
 
 ### On demand
 
 - More languages (Polish, Swedish, Danish, Czech, Ukrainian …), and a translation platform once
   contributors ask for one.
-
-### v4.2 – Strength in depth
-
-- Estimated 1RM, personal-record detection and a plate calculator.
-- Rest timer per exercise, starter programmes, share a plan as a file or PDF.
-- Your own exercises and saved follow-along workouts; assign a workout to a planned session.
-- A male demonstrator figure as an option next to the current one.
-
-### v4.3 – Smarter plans
-
-- **Automatic volume tracking in the plan** – today the coach suggests a correction and you accept it
-  with one tap; the plan could adjust weekly volume itself from the load signals.
-- **Season planning with several races** – main and secondary races in one plan, with short tapers
-  and recovery in between.
-- **Strength that follows the plan phase** – strength blocks for runners that change with base,
-  race-specific and taper phases.
-- **Threshold pace, FTP and CSS** – use more performance diagnostics without a second pace source
-  contradicting the fitness estimate.
-- **Weather per session** – heat and treadmill runs count in the fitness estimate, not just in a hint.
-- **Club calendars (.ics)** – take games and training sessions as fixed appointments; a server-side
-  fetch only with protection against requests into the local network.
-
-### v4.4 – Open connections
-
-- Export in open formats (full JSON, CSV, GPX/FIT) – your data are never locked in.
-- Read access for your own AI assistant instead of a built-in AI coach.
-- Routes as a simple drawing without a map service.
-- Cycle data from Apple Health.
-- Web Push for installed PWAs (iOS 16.4+) as an optional addition to the `.ics` reminders.
-- A real nutrition database next to the curated values and Open Food Facts.
-- Lab catalogue with LOINC codes, mapped carefully per unit.
-
-### Technical
-
-- **Split `storage.js`** – state, sync, family, backup and login in separate modules behind a facade,
-  so that `import * as store` stays. Only together with a load test: the sync of all data hangs on it,
-  and the modules share mutable state today.
-- **Incremental admin backup** – the first scaling lever from the load test: back up only what changed
-  since the last backup instead of reading every area.
 
 ## v5.0.0 – Organisations: real authentication and privacy beyond 32 people
 

@@ -245,7 +245,8 @@ Alles auf einen Blick: **[Dokumentation](docs/de/README.md)** – nach Zielgrupp
   [Fehlersuche](docs/de/operations/troubleshooting.md)
 - **Mitentwickeln** (englisch, wie Code und Commits): [Architecture](docs/ARCHITECTURE.md) ·
   [Development](docs/DEVELOPMENT.md) · [Contributing](CONTRIBUTING.md) · [API](docs/API.md) ·
-  [Changelog](CHANGELOG.md) · [Roadmap](docs/ROADMAP.md)
+  [Changelog](CHANGELOG.md)
+- **Was kommt:** [Roadmap](docs/de/ROADMAP.md) · [Board](https://github.com/users/Bingerminger/projects/2)
 - **In der App:** Mehr → Hilfe & Wissen, dazu das ⓘ neben jeder Kennzahl.
 
 ## Datenschutz und externe Dienste

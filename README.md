@@ -228,8 +228,8 @@ Everything at a glance: **[documentation](docs/README.md)**, sorted by what you 
   [backup](docs/operations/backup.md) · [privacy](docs/operations/privacy.md) ·
   [troubleshooting](docs/operations/troubleshooting.md)
 - **Develop:** [architecture](docs/ARCHITECTURE.md) · [development](docs/DEVELOPMENT.md) ·
-  [contributing](CONTRIBUTING.md) · [API](docs/API.md) · [changelog](CHANGELOG.md) ·
-  [roadmap](docs/ROADMAP.md)
+  [contributing](CONTRIBUTING.md) · [API](docs/API.md) · [changelog](CHANGELOG.md)
+- **What's next:** [roadmap](docs/ROADMAP.md) · [board](https://github.com/users/Bingerminger/projects/2)
 
 ## Privacy and external services
 

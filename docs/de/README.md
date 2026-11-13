@@ -59,4 +59,4 @@ Entwicklung, Code und Commits sind auf Englisch.
 | [Architecture](../ARCHITECTURE.md) | Aufbau von Frontend und Backend, Datenfluss, Sync |
 | [Development](../DEVELOPMENT.md) | Lokal starten, Tests, Invarianten, Übersetzungen, Lasttest |
 | [Contributing](../../CONTRIBUTING.md) | Beiträge, Stil, Begriffe, Übersetzungen |
-| [Roadmap](../ROADMAP.md) · [Changelog](../../CHANGELOG.md) | Was kommt, was war |
+| [Roadmap](ROADMAP.md) · [Changelog](../../CHANGELOG.md) | Was kommt, was war |

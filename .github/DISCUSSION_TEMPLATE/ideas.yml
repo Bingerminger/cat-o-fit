@@ -1,0 +1,41 @@
+title: "Idea: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thanks for your idea!** Wishes live here so that everyone can vote with 👍. Please search first whether the idea already exists – the [roadmap](https://github.com/Bingerminger/cat-o-fit/blob/main/docs/ROADMAP.md) and the [board](https://github.com/users/Bingerminger/projects/2) show what is already planned.
+        **Danke für deine Idee!** Wünsche sammeln wir hier, damit alle mit 👍 abstimmen können. Bitte erst kurz suchen, ob es die Idee schon gibt – [Roadmap](https://github.com/Bingerminger/cat-o-fit/blob/main/docs/de/ROADMAP.md) und [Board](https://github.com/users/Bingerminger/projects/2) zeigen, was schon geplant ist.
+
+        Bugs go into an issue, security issues as described in [SECURITY.md](https://github.com/Bingerminger/cat-o-fit/blob/main/SECURITY.md).
+        Fehler bitte als Issue melden, Sicherheitslücken wie in SECURITY.md beschrieben.
+  - type: textarea
+    id: goal
+    attributes:
+      label: What do you want to achieve? / Was möchtest du erreichen?
+      description: The question or task, not the solution yet. / Die Frage oder Aufgabe, nicht schon die Lösung.
+      placeholder: "I would like to see whether … / Ich möchte sehen, ob …"
+    validations:
+      required: true
+  - type: textarea
+    id: today
+    attributes:
+      label: How do you do it today? / Wie machst du es heute?
+      description: With Cat-O-Fit, another app, a spreadsheet, not at all … / Mit Cat-O-Fit, einer anderen App, einer Tabelle, gar nicht …
+  - type: textarea
+    id: idea
+    attributes:
+      label: What could it look like? / Wie könnte es aussehen?
+      description: Optional. Sketch, example with made-up values, comparison with another app. Please no real health, lab or cycle values. / Optional. Skizze, Beispiel mit erfundenen Werten, Vergleich mit einer anderen App. Bitte keine echten Gesundheits-, Labor- oder Zykluswerte.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: At the very bottom of Settings / Ganz unten in den Einstellungen
+      placeholder: "4.2.0"
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checked first / Vorher geprüft
+      options:
+        - label: I searched for similar ideas. / Ich habe nach ähnlichen Ideen gesucht.
+          required: true
