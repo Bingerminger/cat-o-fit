@@ -220,10 +220,12 @@ if (want('demo')) {
     // Old demo addresses (the demo lived at the root until 4.1).
     {
       const w = await watchedContext(chromium, 'old demo addresses', { locale: 'en-GB', viewport: { width: 390, height: 844 }, origin });
-      for (const [from, to] of [['/#/calendar', '/demo/#/calendar'], ['/index.html#/', '/demo/#/'], ['/?lang=de', '/de/']]) {
+      for (const [from, to, lang] of [['/#/calendar', '/demo/#/calendar'], ['/index.html#/', '/demo/#/'], ['/?lang=de', '/de/', 'de'], ['/?lang=en', '/?lang=en', 'en'], ['/?lang=fr', '/?lang=fr', 'en']]) {
         await w.page.goto(`${base}${from}`);
         await w.page.waitForURL((u) => u.href.startsWith(`${base}${to}`), { timeout: 5000 }).catch(() => {});
+        await w.page.waitForTimeout(200);
         if (!w.page.url().startsWith(`${base}${to}`)) fail(w.where, `${from} leads to ${w.page.url().slice(base.length)}, not ${to}`);
+        else if (lang && await w.page.evaluate(() => document.documentElement.lang) !== lang) fail(w.where, `${from} does not show the ${lang} start page`);
       }
       await w.ctx.close();
     }

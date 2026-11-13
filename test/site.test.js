@@ -58,6 +58,9 @@ test('SITE-03: old demo addresses lead on', () => {
   assert.equal(legacyTarget('?lang=de', '#/stats'), 'demo/?lang=de#/stats');
   assert.equal(legacyTarget('?lang=de', ''), 'de/', 'the German README linked ?lang=de');
   assert.equal(legacyTarget('?lang=de-DE', ''), 'de/');
+  // English (and every language without its own start page) stays on the English start page.
+  assert.equal(legacyTarget('?lang=en', ''), null);
+  assert.equal(legacyTarget('?lang=en-GB', ''), null);
   assert.equal(legacyTarget('?lang=fr', ''), null);
   assert.equal(legacyTarget('', ''), null);
   assert.equal(legacyTarget('', '#install'), null, 'anchors on the start page stay');
