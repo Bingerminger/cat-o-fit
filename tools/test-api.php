@@ -368,6 +368,24 @@ $ctx = stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 5
 $webBody = @file_get_contents("http://127.0.0.1:{$port}/tools/reset-pin.php?x=1", false, $ctx);
 check('reset-pin does not run over the web (403, no output)', str_contains((string) ($http_response_header[0] ?? ''), ' 403') && $webBody === '', $http_response_header[0] ?? null);
 
+// --- Field-wise profile writes (op `merge`, v4.2) -------------------------
+$r = http('GET', '?action=ping', null, $nobody);
+check('ping announces merge-ops', in_array('merge-ops', $r['json']['features'] ?? [], true), $r['json']['features'] ?? null);
+http('POST', '?action=ops&area=profile&user=u-a', ['ops' => [['op' => 'upsert', 'record' => ['id' => 'profile', 'name' => 'Admin', 'heightCm' => 179, 'birthYear' => 1990, 'settings' => ['distanceUnit' => 'km', 'accent' => 'teal']]]]], $admin);
+$r = http('POST', '?action=ops&area=profile&user=u-a', ['ops' => [['op' => 'merge', 'record' => ['id' => 'profile', 'weightKg' => 71, 'targetWeightKg' => null, 'settings' => ['showVoice' => false]]]]], $admin);
+$p = $r['json']['records'][0] ?? [];
+check('merge: given fields set, others kept', ($p['weightKg'] ?? null) === 71 && ($p['heightCm'] ?? null) === 179 && ($p['birthYear'] ?? null) === 1990 && ($p['name'] ?? null) === 'Admin', $p);
+check('merge: settings combined per key', ($p['settings'] ?? null) === ['distanceUnit' => 'km', 'accent' => 'teal', 'showVoice' => false], $p['settings'] ?? null);
+check('merge: null clears a field', array_key_exists('targetWeightKg', $p) && $p['targetWeightKg'] === null, $p);
+check('merge: server sets rev and updatedAt', is_int($p['rev'] ?? null) && !empty($p['updatedAt']), $p);
+$r = http('POST', '?action=ops&area=sessions&user=u-a', ['ops' => [['op' => 'merge', 'record' => ['id' => 's1', 'note' => 'x']]]], $admin);
+check('merge: only for the profile', empty($r['json']['records']) && (($r['json']['rejected'][0]['code'] ?? '') === 'merge_not_allowed'), $r['json']);
+$r = http('POST', '?action=ops&area=family&scope=family', ['ops' => [['op' => 'merge', 'record' => ['id' => 'u-a', 'role' => 'user']]]], $admin);
+$fam = http('GET', '?action=changes&area=family&scope=family&since=0', null, $admin);
+$role = null;
+foreach ($fam['json']['records'] ?? [] as $rec) if (($rec['id'] ?? '') === 'u-a') $role = $rec['role'] ?? null;
+check('merge: never on family records (roles stay)', $role === 'admin' && !empty($r['json']['rejected']), ['role' => $role, 'resp' => $r['json']]);
+
 // --- Result --------------------------------------------------------------
 echo "\napi: {$pass} ok, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

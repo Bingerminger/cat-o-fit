@@ -34,7 +34,9 @@ export function applyUnits() {
 
 /** Saves the region defaults for settings the person has not chosen yet (once per setting). */
 export function ensureUnitDefaults() {
-  if (!store.activeUserId() || store.isManaging()) return;
+  // Only once the profile came from the server: a new device would otherwise save its region's
+  // guesses over the units the person chose elsewhere (and, before v4.2, wipe the profile).
+  if (!store.activeUserId() || store.isManaging() || !store.profileFetched()) return;
   const s = store.settings();
   const d = defaultUnits(browserLanguages());
   for (const [k, key] of Object.entries(KEYS)) if (s[key] == null) store.setSetting(key, d[k]);

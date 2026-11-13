@@ -26,13 +26,33 @@ export function createFakeServer() {
   const srv = (k) => (stores[k] ||= { rev: 0, records: {} });
   const resp = (o, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => o });
   const stripRev = (r) => { const c = { ...r }; delete c.rev; return c; };
-  function applyOps(s, ops) {
+  /** A stored record with a `merge` patch on top: given fields replace, `settings` merge per key. */
+  function mergeFields(prev, patch) {
+    const base = prev && !prev.deleted ? { ...prev } : {};
+    const isObj = (x) => x && typeof x === 'object' && !Array.isArray(x);
+    for (const [k, v] of Object.entries(patch)) {
+      if (['rev', 'updatedAt', 'deleted'].includes(k)) continue;
+      base[k] = k === 'settings' && isObj(v) && isObj(base.settings) ? { ...base.settings, ...v } : v;
+    }
+    return base;
+  }
+  /** Like apply_ops() in api/storage.php. `where` = { area, scope, rejected } for the checks of `merge`. */
+  function applyOps(s, ops, where = {}) {
     const now = new Date().toISOString();
     const applied = [];
     for (const op of ops) {
       if (op.op === 'upsert' && op.record && op.record.id) {
         const rec = { ...op.record, updatedAt: now, rev: ++s.rev }; delete rec.deleted;
         s.records[rec.id] = rec; applied.push(rec);
+      } else if (op.op === 'merge') {
+        // Field-wise profile write (v4.2): given fields replace, `settings` merge per key.
+        const id = op.record && op.record.id;
+        if (where.area !== 'profile' || where.scope !== 'user' || !id) {
+          where.rejected?.push({ op: 'merge', id: id || '', code: 'merge_not_allowed', reason: 'merge_not_allowed' });
+          continue;
+        }
+        const rec = { ...mergeFields(s.records[id], op.record), id, updatedAt: now, rev: ++s.rev };
+        s.records[id] = rec; applied.push(rec);
       } else if (op.op === 'delete' && op.id) {
         const prev = s.records[op.id] || {};
         const t = { id: op.id, deleted: true, updatedAt: now, rev: ++s.rev, ...(prev._kind ? { _kind: prev._kind } : {}) };
@@ -222,15 +242,16 @@ export function createFakeServer() {
           const checked = familyGuard(op, s);
           // Like api.php: a code (the app translates it) plus an English reason as fallback.
           if (typeof checked === 'string') rejected.push({ op: op.op, id: (op.record && op.record.id) || op.id || '', code: checked, reason: 'Only an admin with a server connection can do this.' });
-          else applied.push(...applyOps(s, [checked]));
+          else applied.push(...applyOps(s, [checked], { area, scope, rejected }));
         }
         return resp({ ok: true, area, rev: s.rev, records: out(applied), ...(rejected.length ? { rejected } : {}) });
       }
-      const applied = applyOps(s, ops);
+      const rejected = [];
+      const applied = applyOps(s, ops, { area, scope, rejected });
       const extra = opts.features.includes('ops-since') && Number.isInteger(body.since)
         ? { changes: { rev: s.rev, records: Object.values(s.records).filter((r) => (r.rev || 0) > body.since).sort((a, b) => a.rev - b.rev) } }
         : {};
-      return resp({ ok: true, area, rev: s.rev, records: applied, ...extra });
+      return resp({ ok: true, area, rev: s.rev, records: applied, ...extra, ...(rejected.length ? { rejected } : {}) });
     }
     const data = Object.values(s.records).filter((r) => !r.deleted).map(stripRev);
     return resp({ ok: true, area, data: area === 'profile' ? (data[0] || {}) : out(data) });
@@ -254,7 +275,7 @@ const DEMO_UNAVAILABLE = ['foodfacts', 'health-import', 'health-ingest', 'ics', 
     starts over. Requests elsewhere (weather, fonts) go to the network unchanged. */
 export function installDemoServer() {
   const server = createFakeServer();
-  server.opts.features = ['changes-all', 'ops-since'];
+  server.opts.features = ['changes-all', 'ops-since', 'merge-ops'];
   const network = globalThis.fetch.bind(globalThis);
   const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
   globalThis.fetch = async (input, init = {}) => {

@@ -7,7 +7,7 @@ monitoring, the Docker healthcheck) or by older app versions on devices. The fol
   removed or changed in meaning.
 - **`apiVersion`** (in `?action=ping`) only increases with an incompatible change. This
   page describes `apiVersion` **1**. Since v3.21.0, `ping` reports additional capabilities in
-  `features` (e.g. `changes-all`, `ops-since`) – clients use them only if they are listed there.
+  `features` (`changes-all`, `ops-since`, since v4.2 `merge-ops`) – clients use them only if they are listed there.
 - All endpoints live under `…/api/api.php`. Errors always come in the same format,
   `{"ok": false, "error": "<text>", "code": "<reason>"}`, with a matching HTTP status. `code` is
   authoritative (stable, snake_case; older codes such as `content-type` stay); since v4.0.0
@@ -69,7 +69,7 @@ set up the subscription once more (“Copy subscription link” in the “Export
 | Call | Purpose |
 |---|---|
 | `GET ?action=changes&area=<area>&user=<id>&since=<rev>` | Changes since a given state (`{ok, area, rev, records}`; deletions as `deleted: true`) |
-| `POST ?action=ops&area=<area>&user=<id>` with `{"ops":[…]}` | Operations `upsert` / `delete` / `replace` (optionally with `baseRev`), at most 2000 per request; response `{ok, area, rev, records, rejected?}`. With `"since": <rev>` in the body (capability `ops-since`), `changes: {rev, records}` also comes back – all changes since that marker |
+| `POST ?action=ops&area=<area>&user=<id>` with `{"ops":[…]}` | Operations `upsert` / `delete` / `replace` (optionally with `baseRev`) and – for `area=profile` only, capability `merge-ops` – `merge` (the given fields replace the stored ones, `settings` is merged per key, everything else stays; elsewhere it is rejected with `merge_not_allowed`), at most 2000 per request; response `{ok, area, rev, records, rejected?}`. With `"since": <rev>` in the body (capability `ops-since`), `changes: {rev, records}` also comes back – all changes since that marker |
 | `GET ?action=changes-all&user=<id>&since=<area>:<rev>,…` | Bulk fetch (capability `changes-all`): the changes of several areas in one response `{ok, revs, changes, locked}`; private areas without the person's own session are listed under `locked` |
 | `&scope=family` instead of `&user=` | the same calls for the family (members, teams, settings, pantry) |
 

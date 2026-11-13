@@ -53,19 +53,25 @@ beforeEach(async () => {
   await store.login('u-1', '');
 });
 
-test('the person: own settings first, else the region; saved once for the server', () => {
+test('the person: own settings first, else the region; saved once the profile came from the server', async () => {
   const original = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+  const realFetch = globalThis.fetch;
   Object.defineProperty(globalThis, 'navigator', { value: { ...globalThis.navigator, languages: ['en-US'], language: 'en-US' }, configurable: true, writable: true });
   try {
     assert.equal(personUnits().distance, 'mi', 'region default');
     store.setSetting('distanceUnit', 'km');
     assert.equal(personUnits().distance, 'km', 'own choice wins');
     ensureUnitDefaults();
+    assert.equal(store.settings().weightUnit, undefined, 'nothing saved before the profile was fetched');
+    globalThis.__fakeServer.install();
+    await store.syncNow();
+    ensureUnitDefaults();
     const s = store.settings();
     assert.deepEqual([s.distanceUnit, s.weightUnit, s.temperatureUnit, s.weekStart, s.labUnits], ['km', 'lb', 'f', 0, 'conventional']);
     assert.equal(applyUnits(), true);
     assert.equal(units().weight, 'lb');
   } finally {
+    globalThis.fetch = realFetch;
     if (original) Object.defineProperty(globalThis, 'navigator', original); else delete globalThis.navigator;
   }
 });

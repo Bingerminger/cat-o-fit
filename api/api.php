@@ -34,8 +34,9 @@ require __DIR__ . '/auth.php';
 
 /** Version of the interface (docs/API.md). Only raise on incompatible changes. */
 const API_VERSION = 1;
-/** Additive capabilities (older clients ignore them): bulk fetch, "since" in the ops response. */
-const API_FEATURES = ['changes-all', 'ops-since'];
+/** Additive capabilities (older clients ignore them): bulk fetch, "since" in the ops response,
+    field-wise profile writes (op `merge`, v4.2). */
+const API_FEATURES = ['changes-all', 'ops-since', 'merge-ops'];
 
 // ---------------------------------------------------------------------------
 // Headers: JSON responses, no caching of the dynamic data.

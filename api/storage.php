@@ -299,6 +299,8 @@ function store_unlock($fp): void
  * Applies a list of operations atomically and returns the new area rev, the
  * changed records (with their new rev) and rejected ops.
  * Ops: {op:'upsert', record:{…,id}} | {op:'delete', id} | {op:'replace', records:[…]}
+ *      | {op:'merge', record:{…,id}} – profile only (v4.2): the given fields replace the stored
+ *        ones, `settings` is merged per key; fields that are not given stay.
  * Optional `$guard(op, store)`: returns the (sanitised) op or a
  * rejection reason (string) – this is how the family, for example, checks roles and
  * PINs under the same lock under which it writes.
@@ -338,6 +340,34 @@ function apply_ops(string $area, string $scope, ?string $userId, array $ops, ?ca
                 $rec['rev'] = ++$store['rev'];
                 $store['records'][$id] = $rec;
                 $applied[] = $rec;
+            } elseif ($type === 'merge') {
+                // Field-wise write of the profile: a device that has not fetched it yet, or a second
+                // device writing at the same time, no longer wipes fields it did not touch. Only for
+                // a person's profile – family records go through family_guard as whole records.
+                $rec = (array) ($op['record'] ?? []);
+                $id = $rec['id'] ?? null;
+                if ($area !== 'profile' || $scope !== 'user' || !valid_record_id($id)) {
+                    $rejected[] = ['op' => 'merge', 'id' => is_string($id) ? $id : '', 'reason' => 'merge_not_allowed'];
+                    continue;
+                }
+                $prev = $store['records'][$id] ?? [];
+                $merged = is_array($prev) && empty($prev['deleted']) ? $prev : [];
+                foreach ($rec as $k => $v) {
+                    if (in_array($k, ['rev', 'updatedAt', 'deleted'], true)) {
+                        continue;
+                    }
+                    if ($k === 'settings' && is_array($v) && is_array($merged['settings'] ?? null)) {
+                        $merged['settings'] = array_replace($merged['settings'], $v);
+                    } else {
+                        $merged[$k] = $v;
+                    }
+                }
+                $merged['id'] = $id;
+                $merged['updatedAt'] = $now;
+                $merged['rev'] = ++$store['rev'];
+                unset($merged['deleted']);
+                $store['records'][$id] = $merged;
+                $applied[] = $merged;
             } elseif ($type === 'delete') {
                 $id = $op['id'] ?? null;
                 if (!valid_record_id($id)) {

@@ -228,7 +228,34 @@ function compactAppend(list, newOps) {
   adds.forEach((o, i) => { const id = opRecordId(o); if (id != null) lastIdx.set(id, i); });
   const addsKept = adds.filter((o, i) => { const id = opRecordId(o); return id == null || lastIdx.get(id) === i || o.op === 'replace'; });
   retire(dropped);
-  return [...kept, ...addsKept];
+  return foldMerges([...kept, ...addsKept]);
+}
+
+/** Field-wise profile writes (`merge`, v4.2) of one record that follow each other without another
+    op on that record become one op – the newer value of a field wins, `settings` per key. The
+    combined op gets a new opId: an op already on its way to the server stays untouched. */
+function foldMerges(list) {
+  const out = []; const at = new Map(); const dropped = [];
+  for (const o of list) {
+    const id = o.op === 'merge' ? (o.record && o.record.id) : opRecordId(o);
+    if (o.op === 'merge' && id != null && at.has(id)) {
+      const i = at.get(id);
+      dropped.push(out[i], o);
+      out[i] = withOpId({ op: 'merge', record: mergePatch(out[i].record, o.record) });
+      continue;
+    }
+    if (o.op === 'replace') at.clear(); else if (id != null) at.delete(id);
+    if (o.op === 'merge' && id != null) at.set(id, out.length);
+    out.push(o);
+  }
+  retire(dropped);
+  return out;
+}
+/** Two profile patches as one: fields of `b` win, `settings` are combined per key. */
+function mergePatch(a, b) {
+  const out = { ...a, ...b };
+  if (a.settings || b.settings) out.settings = { ...(a.settings || {}), ...(b.settings || {}) };
+  return out;
 }
 
 /** Appends ops to the active user's queue (compacted, with opId). */
@@ -323,7 +350,7 @@ async function pushAreaNow(area, user) {
     const since = user === activeUser && serverHas('ops-since') ? (revs[area] || 0) : null;
     let res;
     try {
-      res = await pushOps(area, batch, since != null ? { user, since } : { user });
+      res = await pushOps(area, wireOps(area, user, batch), since != null ? { user, since } : { user });
     } catch (e) {
       if (e && e.status === 413 && chunk > 1) { chunk = Math.max(1, Math.floor(chunk / 2)); continue; }
       if (e && (e.status === 401 || e.status === 403) && PRIVATE_AREAS.includes(area)) { sessionLost(); return; }
@@ -350,6 +377,14 @@ async function pushAreaNow(area, user) {
     }
   }
   setSyncState(hasPending() ? 'offline' : 'idle');
+}
+
+/** Ops as the server understands them: a server without field-wise profile writes (`merge-ops`,
+    before v4.2) gets the whole profile instead – the behaviour of v4.1 and earlier. */
+function wireOps(area, user, ops) {
+  if (area !== 'profile' || serverHas('merge-ops') || !ops.some((o) => o.op === 'merge')) return ops;
+  const full = user === activeUser ? state.profile : (readUserArea(user, 'profile') || {});
+  return ops.map((o) => (o.op === 'merge' ? { op: 'upsert', record: stripRev({ ...full, id: 'profile' }), opId: o.opId } : o));
 }
 
 /** Merge server records into the stored area of a (non-active) user. */
@@ -547,19 +582,31 @@ export function replaceArea(area, records) {
   return ok;
 }
 
-/** Update the profile. */
-export function setProfile(fields) {
-  const prev = state.profile;
-  state.profile = { ...prev, ...fields, id: 'profile', updatedAt: nowIso() };
-  const ok = commitLocal('profile', [{ op: 'upsert', record: stripRev(state.profile) }], () => { state.profile = prev; });
-  if (ok) notify('profile', 'local');
-  return state.profile;
-}
+/** Update the profile. Only the given fields go to the server (op `merge`, v4.2): a device that has
+    not fetched the profile yet, or a second device writing at the same time, no longer wipes fields
+    it did not touch. Clear a field with null, not by leaving it out. */
+export function setProfile(fields) { return writeProfile(fields, fields); }
 export function setSetting(key, value) {
   const s = { ...(state.profile.settings || {}) };
   s[key] = value;
-  return setProfile({ settings: s });
+  return writeProfile({ settings: s }, { settings: { [key]: value } });
 }
+/** `fields` change the local profile, `patch` is what is sent – both field by field. */
+function writeProfile(fields, patch) {
+  const prev = state.profile;
+  state.profile = { ...prev, ...fields, id: 'profile', updatedAt: nowIso() };
+  const record = stripRev({ ...patch, id: 'profile' });
+  delete record.updatedAt;
+  const ok = commitLocal('profile', [{ op: 'merge', record }], () => { state.profile = prev; });
+  if (ok) notify('profile', 'local');
+  return state.profile;
+}
+
+/** Has the active person's profile come from the server in this session? Automatic writes
+    (the region's unit defaults) wait for it – otherwise a new device saves its guesses over
+    the choices the person made elsewhere. */
+let profileFetchedFor = null;
+export function profileFetched() { return !!activeUser && profileFetchedFor === activeUser; }
 
 /* ------------------- Exercise usage (counters, per user) ----------------- */
 /** Map { exerciseId: count } of the exercises used so far by the signed-in user. */
@@ -594,10 +641,15 @@ async function applyPull(area, user, res, since) {
   // records are missing after a restart although the mark lists them as fetched.
   if (changed && !writeLS(area)) return;
   revs[area] = Math.max(revs[area] || 0, res.rev || 0);
+  writeUserMeta();
+  if (area === 'profile' && profileFetchedFor !== user) {
+    profileFetchedFor = user;
+    notify(area, 'sync');   // waiting automatic writes (unit defaults) may run now
+    return;
+  }
   // Redraw only for genuinely new content – not because our own records
   // come back with a server rev (FE-12).
   if (visible) notify(area, 'sync');
-  writeUserMeta();
 }
 
 /**
@@ -634,6 +686,7 @@ async function resyncArea(area, user) {
   if (!writeLS(area)) return;
   revs[area] = full.rev || 0;
   writeUserMeta();
+  if (area === 'profile') profileFetchedFor = user;
   notify(area, 'sync');
 }
 
@@ -1329,6 +1382,7 @@ export async function setActiveUser(id) {
     try { await pushAllAreas(prev); } catch { /* stays in the queue */ }
   }
   activeUser = id;
+  profileFetchedFor = null;
   loadUserFromLS();
   // Whoever only managed a member does not need their data permanently in storage.
   if (prev && prev !== id && prev !== identity) evictUserCache(prev);
@@ -1342,6 +1396,7 @@ export async function setActiveUser(id) {
 export function clearActiveUser() {
   identity = null;
   activeUser = null;
+  profileFetchedFor = null;
   serverUser = null;
   pendingServerPin = null;
   sessionAsked = false;

@@ -173,6 +173,14 @@ Do **not** break these rules in the store (`storage.js`) and backend (`storage.p
 - **Push first, then pull.** For each area, `syncPass` first sends its own ops, then
   `pullChanges(since=rev)`. This way a pull never overwrites unpushed local edits; a pull
   only wins if `record.rev` is higher.
+- **The profile is written field by field (since v4.2).** `setProfile`/`setSetting` queue an op
+  `merge` with only the changed fields (`settings` per key); the server merges it into the stored
+  record (`apply_ops`, profile only – never family records). A device that has not fetched the
+  profile yet, or a second device writing at the same time, therefore no longer wipes fields it did
+  not touch. Clear a field with `null`, never by leaving it out. Consecutive merges are folded into
+  one op (`foldMerges`); a server without the capability `merge-ops` gets the whole profile
+  (`wireOps`). Automatic profile writes (the region's unit defaults) wait for the first fetch of
+  the profile in the session (`profileFetched()`).
 - **The pull marker only advances through a pull (since v3.20.0).** The push response carries the
   GLOBAL area `rev` – taken over as the marker, it skipped other people's changes in between
   (second device, health ingest). `pushAreaNow`/`pushFamilyNow` therefore do not touch `revs`.
