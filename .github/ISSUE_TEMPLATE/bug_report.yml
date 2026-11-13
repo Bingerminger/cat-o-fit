@@ -90,6 +90,16 @@ body:
       label: View or address
       description: "Optional. Where in the app does it happen?"
       placeholder: "e.g. #/stats (Progress, Training tab)"
+  - type: dropdown
+    id: found
+    attributes:
+      label: How was it found?
+      description: "Reports from automated tests or AI agents are welcome – they get the label found-by-automation (see AGENTS.md)."
+      options:
+        - "While using the app"
+        - "With an automated test or agent"
+    validations:
+      required: true
   - type: textarea
     id: logs
     attributes:

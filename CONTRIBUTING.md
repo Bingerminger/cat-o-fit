@@ -134,6 +134,9 @@ plurals, formats), see [Translations in the development guide](docs/DEVELOPMENT.
 4. Open the PR with a clear description and fill in the [PR template](.github/PULL_REQUEST_TEMPLATE.md).
 5. CI (GitHub Actions) must be green.
 
+Working with an AI coding agent? [AGENTS.md](AGENTS.md) sums up these rules for it. Say in the pull
+request that an agent helped and what you checked yourself.
+
 ## Reporting bugs and ideas
 
 Use the [issue forms](.github/ISSUE_TEMPLATE/): **Bug** for reproducible bugs (they ask for the app
