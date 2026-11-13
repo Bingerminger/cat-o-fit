@@ -750,7 +750,8 @@
     "admin_add_member": "Só um admin com conexão ao servidor pode adicionar novos membros.",
     "admin_change_role": "Só um admin com conexão ao servidor pode alterar funções.",
     "admin_remove_member": "Só um admin com conexão ao servidor pode remover membros.",
-    "admin_replace_family": "Só um admin com conexão ao servidor pode substituir a família toda."
+    "admin_replace_family": "Só um admin com conexão ao servidor pode substituir a família toda.",
+    "demo": "Não disponível na demo – para isso é preciso uma instalação própria."
   },
   "app": {
     "title": "Cat-O-Fit · Planos de treino para a família toda",

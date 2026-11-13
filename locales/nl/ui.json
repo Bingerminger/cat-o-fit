@@ -750,7 +750,8 @@
     "admin_add_member": "Alleen een beheerder met een serververbinding kan nieuwe leden toevoegen.",
     "admin_change_role": "Alleen een beheerder met een serververbinding kan rollen wijzigen.",
     "admin_remove_member": "Alleen een beheerder met een serververbinding kan leden verwijderen.",
-    "admin_replace_family": "Alleen een beheerder met een serververbinding kan het hele gezin vervangen."
+    "admin_replace_family": "Alleen een beheerder met een serververbinding kan het hele gezin vervangen.",
+    "demo": "Niet beschikbaar in de demo – daarvoor is een eigen installatie nodig."
   },
   "app": {
     "title": "Cat-O-Fit · Trainingsschema’s voor het hele gezin",

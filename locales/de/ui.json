@@ -750,7 +750,8 @@
     "admin_add_member": "Neue Mitglieder kann nur eine Admin-Person mit Serververbindung anlegen.",
     "admin_change_role": "Rollen kann nur eine Admin-Person mit Serververbindung ändern.",
     "admin_remove_member": "Mitglieder kann nur eine Admin-Person mit Serververbindung entfernen.",
-    "admin_replace_family": "Die ganze Familie kann nur eine Admin-Person mit Serververbindung ersetzen."
+    "admin_replace_family": "Die ganze Familie kann nur eine Admin-Person mit Serververbindung ersetzen.",
+    "demo": "In der Demo nicht verfügbar – dafür braucht es eine eigene Installation."
   },
   "app": {
     "title": "Cat-O-Fit · Trainingsplanung für die ganze Familie",

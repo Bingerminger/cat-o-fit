@@ -750,7 +750,8 @@
     "admin_add_member": "Only an admin with a server connection can add new members.",
     "admin_change_role": "Only an admin with a server connection can change roles.",
     "admin_remove_member": "Only an admin with a server connection can remove members.",
-    "admin_replace_family": "Only an admin with a server connection can replace the whole family."
+    "admin_replace_family": "Only an admin with a server connection can replace the whole family.",
+    "demo": "Not available in the demo – this needs an installation of your own."
   },
   "app": {
     "title": "Cat-O-Fit · Training plans for the whole family",

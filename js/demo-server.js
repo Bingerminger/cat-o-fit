@@ -287,5 +287,33 @@ export function installDemoServer() {
     const res = await server.handler(url.href, init);
     return json(await res.json(), res.status);
   };
+  guardXhr();
   return server;
+}
+
+/** XMLHttpRequest (the health import uses it for its progress bar) is answered here too: a request
+    to the API never leaves the browser – in the demo a real health export must not reach the host.
+    Everything else goes to the network unchanged. */
+function guardXhr() {
+  const XHR = globalThis.XMLHttpRequest;
+  if (!XHR || XHR.prototype.__demoGuard) return;
+  const { open, send } = XHR.prototype;
+  XHR.prototype.__demoGuard = true;
+  XHR.prototype.open = function demoOpen(method, url, ...rest) {
+    this.__demoRequest = { method, url: new URL(String(url), location.href) };
+    return open.call(this, method, url, ...rest);
+  };
+  XHR.prototype.send = function demoSend(body) {
+    const req = this.__demoRequest;
+    if (!req || !req.url.pathname.endsWith('/api/api.php')) return send.call(this, body);
+    const answer = (status, text) => {
+      for (const [k, v] of Object.entries({ readyState: 4, status, responseText: text, response: text })) Object.defineProperty(this, k, { value: v, configurable: true });
+      this.onload?.(new Event('load'));
+      this.onloadend?.(new Event('loadend'));
+    };
+    // Through the demo's fetch above: unavailable actions answer 501 with code "demo".
+    globalThis.fetch(req.url.href, { method: req.method, body: typeof body === 'string' ? body : undefined })
+      .then(async (res) => answer(res.status, await res.text()))
+      .catch(() => this.onerror?.(new Event('error')));
+  };
 }
