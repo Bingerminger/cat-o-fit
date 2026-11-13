@@ -75,7 +75,9 @@ npm test     # node --import ./test-setup.js --test "test/**/*.test.js"
   CHANGELOG) and the help links; `test/help-context.test.js` checks the help articles,
   `test/ui-texts.test.js` the terms and number format of the views.
 - A **GitHub Actions CI** (`.github/workflows/ci.yml`) runs the tests on every push
-  and pull request.
+  and pull request, plus a smoke test of the Docker image as users run it (`tools/test-docker.sh`).
+  `test/release-consistency.test.js` keeps the bug form's version list, the environment variables of the
+  installation guide and templates, and the demo and CI workflows in step.
 
 ### Testing the PHP API in isolation (without touching real data)
 
@@ -626,6 +628,9 @@ attribute alone switches the demo on (`js/demo-mode.js`; a URL parameter could n
 instance can never be wiped by a link): every visit clears only this deployment's `catofit:<path>:`
 keys, `js/demo-server.js` answers the API in memory – the same emulation the tests use as
 `__fakeServer` – and the demo family with “Alex” (PIN 2468) is set up in the language of `?lang=`
-or the browser. Server-only features (Open Food Facts, health ingest, calendar files, read access)
-answer 501 there. Try it locally: `php -S 127.0.0.1:8090 -t dist/demo`. In the repository settings,
+or the browser. Server-only features (Open Food Facts, health import and ingest, calendar files, read
+access) answer 501 with `code: demo` there (translated as `server.demo`); requests to the API over
+`fetch` and `XMLHttpRequest` never leave the browser. The workflow builds the demo from the newest
+release tag – when a release is published, or by hand – so it shows what is released, not the state
+of `main`. Try it locally: `php -S 127.0.0.1:8090 -t dist/demo`. In the repository settings,
 Pages must use “GitHub Actions” as its source.
