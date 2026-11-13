@@ -4,6 +4,7 @@
      request, no raw catalog key, no text running out of its box;
    - WebKit (the engine of Safari on iPhone and iPad) on phone and tablet;
    - en-US: no metric figure left on screen (miles, pounds, °F by the region's defaults);
+   - the admin's full backup against the PHP server: one request per member, nothing private;
    - the service worker registers and the app starts without network (Chromium);
    - the built project site: the start page (both languages, phone and desktop, light and dark), old
      demo addresses leading on, and the demo under demo/ – every view, nothing leaves the browser
@@ -13,7 +14,7 @@
 
      npm install --no-save playwright@1.65.0 && npx playwright install --with-deps chromium webkit
      node tools/test-browser.mjs                    # all
-     node tools/test-browser.mjs --only=demo,webkit # parts: langs, webkit, offline, demo
+     node tools/test-browser.mjs --only=demo,webkit # parts: langs, webkit, backup, offline, demo
 
    Exit code 0 = all green. Runs in CI (.github/workflows/ci.yml, job "Browser test"). Without an
    installed WebKit (locally) that part is skipped with a note; in CI it is required. */
@@ -162,6 +163,40 @@ if (want('webkit')) {
     }
     await webkit.close();
   }
+}
+
+if (want('backup')) {
+  // The admin's full backup against the real PHP server: one changes-all request per member (since 4.2),
+  // every member of the demo family in the file, nothing private, no tombstones or revs.
+  console.log('== admin full backup against the PHP server (Chromium)');
+  const srv = await startServer();
+  try {
+    const w = await watchedContext(chromium, 'backup', { locale: 'en-GB', viewport: { width: 390, height: 844 }, origin: srv.base });
+    await seed(w.page, srv.base);
+    // The app's own sync also uses changes-all (with the person's own private areas) – count only the backup.
+    await w.page.evaluate(async () => { const store = await import('./js/storage.js'); await store.syncNow(); });
+    const bulk = [];
+    w.page.on('request', (r) => { if (r.url().includes('action=changes-all')) bulk.push(r.url()); });
+    const res = await w.page.evaluate(async () => {
+      const store = await import('./js/storage.js');
+      const dump = await store.exportFamilyAll();
+      const text = JSON.stringify(dump.users);
+      return {
+        members: store.members().length, users: Object.keys(dump.users).length,
+        private: Object.values(dump.users).some((b) => b.cycle || b.labs || b.supplements),
+        rev: /"rev":/.test(text), deleted: /"deleted":/.test(text),
+        sessions: Object.values(dump.users).reduce((n, b) => n + (b.sessions || []).length, 0),
+      };
+    });
+    if (res.users !== res.members) fail('backup', `${res.users} of ${res.members} members in the file`);
+    if (bulk.length !== res.members) fail('backup', `${bulk.length} changes-all requests for ${res.members} members`);
+    if (res.private) fail('backup', 'private areas in the file');
+    if (res.rev || res.deleted) fail('backup', 'revs or tombstones in the file');
+    if (!res.sessions) fail('backup', 'no sessions in the file');
+    if (bulk.some((u) => /(?:cycle|labs|supplements)%3A|(?:cycle|labs|supplements):/.test(decodeURIComponent(u)))) fail('backup', 'a private area was asked for');
+    if (w.errors.length) fail('backup', w.errors.join(' | ').slice(0, 300));
+    await w.ctx.close();
+  } finally { srv.stop(); }
 }
 
 if (want('offline')) {
