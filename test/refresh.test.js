@@ -33,8 +33,8 @@ test('location.reload() remains only for restart, restoring a backup, app update
     if (n) found[f] = n;
   }
   // settings.js: reset the app, restore a backup, restore a family backup –
-  // afterwards the whole data set is new. app.js: new service worker. boot-check.js: diagnosis.
-  assert.deepEqual(found, { 'app.js': 1, 'boot-check.js': 1, 'settings.js': 3 });
+  // afterwards the whole data set is new. sw-register.js: new service worker. boot-check.js: diagnosis.
+  assert.deepEqual(found, { 'boot-check.js': 1, 'settings.js': 3, 'sw-register.js': 1 });
 });
 
 test('refreshView: with the app shell the router redraws, without a shell the own fallback applies', () => {

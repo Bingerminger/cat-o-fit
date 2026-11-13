@@ -11,6 +11,7 @@ import { accentPalette } from './contrast.js';
 import { useHrReference } from './load.js';
 import { applyLanguage } from './language.js';
 import { applyUnits, ensureUnitDefaults } from './unit-prefs.js';
+import { registerServiceWorker } from './sw-register.js';
 import { loadLanguages, t, tp } from './i18n.js';
 
 import { render as renderDashboard } from './dashboard.js';
@@ -435,41 +436,8 @@ async function boot() {
     if (origin === 'sync') refreshSoon();
   });
 
-  // Service worker (app shell available offline) + reliable updates.
-  // Problem without this: an app installed as a home-screen PWA kept showing the
-  // old version after a new release. Solution:
-  //  - updateViaCache:'none' -> the SW script itself is never served
-  //    from the HTTP cache, so a new release is detected.
-  //  - regular reg.update() -> even long-open PWAs check for updates.
-  //  - controllerchange -> the new SW (skipWaiting+claim) takes over; reload the page
-  //    ONCE so that the new shell (JS/CSS) runs immediately. Do not reload on the
-  //    very first install (there was no controller before).
-  if ('serviceWorker' in navigator) {
-    const hadController = !!navigator.serviceWorker.controller;
-    let reloaded = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (reloaded || !hadController) return;
-      reloaded = true;
-      location.reload();
-    });
-    let swReg = null;
-    // When returning to the foreground (tab switch, reactivation of the PWA,
-    // bfcache) check for a new release IMMEDIATELY – otherwise a paused
-    // PWA shows the old version until the 30-minute timer or a manual close. If
-    // update() finds a new SW, it takes over (skipWaiting+claim) and controllerchange
-    // reloads once -> fresh shell.
-    const checkUpdate = () => { if (document.visibilityState !== 'hidden') swReg?.update?.(); };
-    window.addEventListener('load', async () => {
-      try {
-        swReg = await navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' });
-        swReg.update?.();
-        setInterval(checkUpdate, 30 * 60 * 1000);
-        document.addEventListener('visibilitychange', checkUpdate);
-        window.addEventListener('focus', checkUpdate);
-        window.addEventListener('pageshow', checkUpdate);
-      } catch { /* SW is optional – the app also runs without it */ }
-    });
-  }
+  // Service worker (app shell available offline) + reliable updates (js/sw-register.js).
+  registerServiceWorker();
 }
 
 boot();

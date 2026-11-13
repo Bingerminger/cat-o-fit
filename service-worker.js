@@ -55,6 +55,7 @@ const SHELL_ASSETS = [
   './js/demo-mode.js',
   './js/units.js',
   './js/unit-prefs.js',
+  './js/sw-register.js',
   './js/teamstats.js',
   './js/env.js',
   './js/i18n.js',
