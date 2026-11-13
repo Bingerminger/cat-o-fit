@@ -42,6 +42,9 @@ export function cycleGaps(starts = []) {
   return inRange.filter((d) => d <= 40 || ![2, 3].some((k) => Math.abs(d - k * m) <= 5));
 }
 
+/** Does an interval of `d` days between two of `starts` count as a real cycle (see cycleGaps)? */
+export function isCycleGap(d, starts = []) { return cycleGaps(starts).includes(d); }
+
 /** Average cycle length (days) – `fallback` as long as there are not two starts. */
 export function typicalCycleLength(starts = [], fallback = 28) {
   const g = cycleGaps(starts);

@@ -24,7 +24,7 @@ import { moduleOff } from './nutrition.js';
 import { gentleVariant } from './rolling.js';
 import { isOpen } from './planflow.js';
 import { applyAdapt } from './adapt.js';
-import { periodStarts, typicalCycleLength, longCycleCount, periodSignal, PERIOD_ANSWERS } from './cyclecalc.js';
+import { periodStarts, typicalCycleLength, longCycleCount, periodSignal, isCycleGap, PERIOD_ANSWERS } from './cyclecalc.js';
 import { periodFlag } from './redflags.js';
 
 import { t, tp } from './i18n.js';
@@ -114,18 +114,26 @@ export function nextPredictedStart(today = todayStr()) {
   return diffDays(last, s) > PREDICTION_MAX_AGE_DAYS ? null : s;
 }
 
-/** Relevant cycle start (real or forecast) <= date. */
+/**
+ * Relevant cycle start (real or forecast) <= date: `{ start, base, length }`.
+ * `base` = the real start the cycle continues from, `length` = the known length when the next
+ * real start closes a real cycle. Between two real starts the course is known: no forecast puts
+ * a period there afterwards (it used to stay protected after a later entry overtook it).
+ * Before the first entry nothing is known – no forecast backwards either.
+ */
 function cycleStartFor(dateStr) {
   const e = entries();
-  if (!e.length) return null;
+  let base = null, next = null;
+  for (const x of e) { if (x.startDate <= dateStr) base = x.startDate; else { next = x.startDate; break; } }
+  if (!base) return null;
+  if (next) {
+    const len = diffDays(base, next);
+    return { start: base, base, length: isCycleGap(len, periodStarts(store.get('cycle'))) ? len : null };
+  }
   const cl = avgCycleLength();
-  let best = null;
-  for (const x of e) if (x.startDate <= dateStr) best = x.startDate;
-  if (best) { while (addDays(best, cl) <= dateStr) best = addDays(best, cl); return best; }
-  // Date before all entries -> forecast backwards.
-  let s = e[0].startDate;
-  while (s > dateStr) s = addDays(s, -cl);
-  return s;
+  let s = base;
+  while (addDays(s, cl) <= dateStr) s = addDays(s, cl);
+  return { start: s, base, length: null };
 }
 
 /** How long a forecast without a new real entry is still considered reliable (days). */
@@ -140,14 +148,16 @@ export const PREDICTION_MAX_AGE_DAYS = 92; // ~3 months
  */
 export function cyclePhase(dateStr) {
   if (!cycleEnabled()) return null;
-  const start = cycleStartFor(dateStr);
-  if (!start) return null;
-  const cl = avgCycleLength(), pl = avgPeriodLength();
+  const c = cycleStartFor(dateStr);
+  if (!c) return null;
+  const { start } = c;
+  // A real cycle closed by the next entry has its known length (ovulation ~14 days before the next start).
+  const cl = c.length || avgCycleLength(), pl = avgPeriodLength();
   const day = diffDays(start, dateStr);
-  if (day < 0 || day >= cl + 3) return null;
-  const isReal = entries().some((x) => x.startDate === start);
-  const last = lastStart();
-  if (!isReal && last && diffDays(last, dateStr) > PREDICTION_MAX_AGE_DAYS) return null;
+  if (day < 0 || (!c.length && day >= cl + 3)) return null;
+  const isReal = start === c.base;
+  // The age limit counts from the real start the forecast continues from.
+  if (!isReal && diffDays(c.base, dateStr) > PREDICTION_MAX_AGE_DAYS) return null;
   let phase;
   if (day < pl) phase = 'menstruation';
   else if (hormonalContraception()) phase = 'neutral';
@@ -166,12 +176,9 @@ export function cyclePhase(dateStr) {
  * protected days would silently flatter plan adherence.
  */
 export function isProtectedDay(dateStr) {
+  // cyclePhase already drops forecasts older than PREDICTION_MAX_AGE_DAYS.
   const p = cyclePhase(dateStr);
-  if (!p || p.phase !== 'menstruation') return false;
-  if (!p.predicted) return true;              // real entry -> always protected
-  const last = lastStart();
-  if (!last) return false;
-  return diffDays(last, dateStr) <= PREDICTION_MAX_AGE_DAYS;
+  return !!p && p.phase === 'menstruation';
 }
 
 /* ------------------------------ Input --------------------------------- */

@@ -260,22 +260,65 @@ export function guessCategory(name) {
  * @param {Array<{ingredients:string[], servings:number}>} plannedMeals
  */
 export function aggregateNeeds(plannedMeals) {
-  const map = new Map();
+  const out = [];
   (plannedMeals || []).forEach(({ ingredients, servings }) => {
     const f = servings || 1;
     (ingredients || []).forEach((ing) => {
       const p = parseIngredient(ing);
       if (!p.name) return;
-      const key = p.name.toLowerCase() + '|' + (p.unit || '?');
-      const cur = map.get(key) || { name: p.name, unit: p.unit, amount: 0, hasAmount: false, category: guessCategory(p.name) };
+      let cur = out.find((x) => sameItem(x, p));
+      if (!cur) out.push(cur = { name: p.name, unit: p.unit, amount: 0, hasAmount: false, category: guessCategory(p.name) });
       if (p.amount != null) { cur.amount += p.amount * f; cur.hasAmount = true; }
-      map.set(key, cur);
     });
   });
-  return [...map.values()].sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name));
+  return out.sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name));
 }
 
-const sameItem = (a, b) => a.name.toLowerCase() === b.name.toLowerCase() && (a.unit || '?') === (b.unit || '?');
+/* Singular and plural are one item („1 Banane“ + „2 Bananen“, „Ei“/„Eier“, „Apfel“/„Äpfel“): the regular plurals of
+   the person's language, compared word by word without accents. Pairs that only look like singular and plural stay
+   apart (German „Ei“/„Eis“, Italian „pesca“/„pesce“). */
+const bare = (s) => fold(s).normalize('NFD').replace(/\p{M}/gu, '');
+const swapEnd = (w, a, b) => (w.endsWith(a) ? [w.slice(0, w.length - a.length) + b] : []);
+function dutchPlurals(w) {
+  const out = [w + 's', w + '’s', w + 'n', w + 'eren'];
+  for (const s of new Set([w, w.replace(/f$/, 'v').replace(/s$/, 'z')])) {   // druif → druiven, kaas → kazen
+    out.push(s + 'en');
+    const long = s.match(/^(.*)([aeou])\2([^aeiou])$/);                       // banaan → bananen, peer → peren
+    if (long) out.push(long[1] + long[2] + long[3] + 'en');
+    else if (/[aeiou][^aeiou]$/.test(s)) out.push(s + s.at(-1) + 'en');     // bes → bessen
+  }
+  return out;
+}
+const PLURALS = {
+  de: (w) => ['n', 'en', 'e', 's', 'er'].map((x) => w + x),
+  en: (w) => [w + 's', w + 'es', ...swapEnd(w, 'y', 'ies'), ...swapEnd(w, 'f', 'ves'), ...swapEnd(w, 'fe', 'ves')],
+  fr: (w) => [w + 's', w + 'x', ...swapEnd(w, 'al', 'aux'), ...swapEnd(w, 'ail', 'aux')],
+  es: (w) => [w + 's', w + 'es', ...swapEnd(w, 'z', 'ces')],
+  it: (w) => [['a', 'e'], ['o', 'i'], ['e', 'i'], ['ca', 'che'], ['ga', 'ghe'], ['co', 'chi'], ['go', 'ghi'], ['cia', 'ce'],
+    ['gia', 'ge'], ['uovo', 'uova']].flatMap(([a, b]) => swapEnd(w, a, b)),
+  pt: (w) => [w + 's', w + 'es', ...swapEnd(w, 'ao', 'oes'), ...swapEnd(w, 'ao', 'aes'), ...swapEnd(w, 'm', 'ns'), ...swapEnd(w, 'l', 'is')],
+  nl: dutchPlurals,
+};
+const NOT_PLURAL = new Set(['ei|eis', 'pesca|pesce', 'pate|pates']);
+function sameWord(a, b, plurals, umlautPlural) {
+  if (a === b) return true;
+  const x = bare(a), y = bare(b);
+  if (NOT_PLURAL.has(`${x}|${y}`) || NOT_PLURAL.has(`${y}|${x}`)) return false;
+  if (x === y) return umlautPlural;                    // only the accents differ: a plural by umlaut (Apfel/Äpfel), otherwise not
+  return plurals(x).includes(y) || plurals(y).includes(x);
+}
+/** Do two ingredient names mean the same thing (case, singular/plural)? */
+export function sameName(a, b, lang = locale()) {
+  const fa = fold(a).trim(), fb = fold(b).trim();
+  if (fa === fb) return true;
+  const plurals = PLURALS[String(lang).slice(0, 2)];
+  if (!plurals) return false;
+  const wa = fa.split(/\s+/), wb = fb.split(/\s+/);
+  return wa.length === wb.length && wa.every((w, i) => sameWord(w, wb[i], plurals, String(lang).startsWith('de')));
+}
+
+/** Same pantry/shopping item: the same name (see sameName) in the same unit. */
+export const sameItem = (a, b) => (a.unit || '?') === (b.unit || '?') && sameName(a.name, b.name);
 
 /** Deterministic, mergeable ID of a pantry/ingredient entry. */
 export function itemKey(name, unit) {

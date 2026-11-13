@@ -62,7 +62,7 @@ test('Strong: workouts with sets, bodyweight sets without weight, cardio skipped
   const [push, legs] = r.workouts;
   assert.equal(push.title, 'Push Day');
   assert.equal(push.durationSec, 3900);
-  assert.equal(push.rpe, 9, 'average of the set RPEs, rounded');
+  assert.equal(push.rpe, undefined, 'the set RPE is not the session effort');
   assert.deepEqual(push.exercises.map((x) => [x.name, x.exerciseId, x.sets.length]), [['Bench Press (Barbell)', null, 2], ['Push Up', 'pushup', 1]]);
   assert.deepEqual(push.exercises[1].sets[0], { reps: 15, kg: null });
   assert.deepEqual(legs.exercises.map((x) => x.exerciseId), ['squat', null, 'deadlift']);

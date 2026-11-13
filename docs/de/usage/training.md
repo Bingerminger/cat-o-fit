@@ -290,9 +290,11 @@ Was die App mit der Datei macht:
   Rumänisches Kreuzheben – ein falscher Treffer würde den Steigerungshinweis in die Irre führen.
 - **Titel und Anstrengung:** Jedes Workout wird an seinem Tag zu einem **freien Krafttraining** (ohne
   Bezug zu einer geplanten Einheit) mit dem Titel aus der Datei. Hat die Datei keinen – bei FitNotes
-  immer –, nennt die App es **„Kraft (Strong)“**, „Kraft (Hevy)“ bzw. „Kraft (FitNotes)“. Enthält die
-  Datei einen RPE je Satz (Strong, Hevy), wird der auf eine ganze Zahl gerundete **Durchschnitt** der
-  Sätze zur Anstrengung des Trainings.
+  immer –, nennt die App es **„Kraft (Strong)“**, „Kraft (Hevy)“ bzw. „Kraft (FitNotes)“. Ein RPE je
+  Satz (Strong, Hevy) wird **nicht** zur Anstrengung des Trainings: Er bewertet einen einzelnen Satz nach
+  den Wiederholungen in Reserve, die Anstrengung das ganze Training im Nachhinein – und die liegt meist
+  unter dem Durchschnitt der Sätze. Ohne Anstrengung rechnet die Belastung mit dem Schätzwert für
+  Krafttraining; bei Workouts der letzten drei Tage fragt „Heute“ „Wie hart war’s?“.
 - **Zweimal importieren ist unbedenklich:** Was schon da ist, erkennt die App und überspringt es („…
   schon vorhanden – werden übersprungen“); du kannst also auch einen neueren Export einlesen, der die
   alten Workouts noch enthält. Als schon übernommen gilt ein Workout, wenn an dem Tag ein Training aus

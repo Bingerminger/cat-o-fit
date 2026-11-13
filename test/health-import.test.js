@@ -40,6 +40,15 @@ test('FE-04: existing days are only supplemented, own values are kept', () => {
   assert.ok(store.get('health').some((h) => h.date === '2026-09-02'), 'new day created');
 });
 
+test('Full import: steps and active energy of a day are taken over', () => {
+  store.upsert('health', { id: 'h-1', date: '2026-10-10', weight: 70.1, source: 'manual' });
+  importResult({ health: [{ date: '2026-10-10', steps: 10000, activeEnergyKcal: 300 }, { date: '2026-10-11', steps: 8000 }], workouts: [] });
+  const day = store.find('health', 'h-1');
+  assert.equal(day.steps, 10000);
+  assert.equal(day.activeEnergyKcal, 300);
+  assert.equal(store.get('health').find((h) => h.date === '2026-10-11').steps, 8000);
+});
+
 test('A run exported twice on a day with a planned unit counts only once', () => {
   store.upsert('plans', { id: 'p-1', eventId: null, units: [{ id: 'un-1', date: '2026-09-03', type: 'easy', title: 'Lockerer Lauf', status: 'geplant' }] });
   const run = { date: '2026-09-03', distanceKm: 8.02, durationSec: 2890 };

@@ -85,6 +85,7 @@ function hx_parse_file(string $xmlPath, string $lang = SERVER_SOURCE_LANGUAGE): 
     $healthByDate = [];
     $sleep = [];          // day of waking => [source => seconds]
     $flowDays = [];       // days with bleeding (cycle)
+    $daySums = [];        // steps / active energy: field => day => [source => sum]
 
     while (@$reader->read()) {
         if ($reader->nodeType !== XMLReader::ELEMENT) continue;
@@ -135,6 +136,17 @@ function hx_parse_file(string $xmlPath, string $lang = SERVER_SOURCE_LANGUAGE): 
                     break;
                 case 'HKCategoryTypeIdentifierMenstrualFlow':
                     if ($day !== null && hi_is_flow($value)) $flowDays[] = $day;
+                    break;
+                case 'HKQuantityTypeIdentifierStepCount':
+                case 'HKQuantityTypeIdentifierActiveEnergyBurned':
+                    // Daily sums, kept separate per source: iPhone and watch count the same steps.
+                    if ($day !== null && is_numeric($value)) {
+                        $steps = $type === 'HKQuantityTypeIdentifierStepCount';
+                        $v = $steps ? (float) $value : (str_contains(strtolower($unit), 'kj') ? (float) $value / 4.184 : (float) $value);
+                        $src = (string) $reader->getAttribute('sourceName');
+                        $field = $steps ? 'steps' : 'activeEnergyKcal';
+                        $daySums[$field][$day][$src] = ($daySums[$field][$day][$src] ?? 0) + $v;
+                    }
                     break;
             }
             continue;
@@ -226,6 +238,18 @@ function hx_parse_file(string $xmlPath, string $lang = SERVER_SOURCE_LANGUAGE): 
         if (!isset($healthByDate[$date])) $healthByDate[$date] = ['date' => $date];
         $healthByDate[$date]['sleepHours'] = round($sec / 3600, 1);
         $nights++;
+    }
+
+    // Steps and active energy: per day the largest SINGLE source (like sleep – adding iPhone and watch would count
+    // twice); the same plausibility limits as the daily format.
+    foreach ($daySums as $field => $byDay) {
+        [, $min, $max] = HI_SIMPLE_FIELDS[$field];
+        foreach ($byDay as $date => $bySource) {
+            $v = (int) round(max($bySource));
+            if ($v <= $min || $v > $max) continue;
+            if (!isset($healthByDate[$date])) $healthByDate[$date] = ['date' => $date];
+            $healthByDate[$date][$field] = $v;
+        }
     }
 
     $health = array_values($healthByDate);

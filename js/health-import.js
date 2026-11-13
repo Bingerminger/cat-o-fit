@@ -557,7 +557,8 @@ export function importResult(result, { cycle = false } = {}) {
   let hImp = 0, wImp = 0, wSkip = 0, matched = 0, pImp = 0;
   // `leanMass` = Apple "Lean Body Mass" (fat-free mass); `muscleMass` stays for older servers
   // that still send it that way (reinterpreted on read). `hrvMethod` belongs to the HRV value.
-  const HKEYS = ['weight', 'bodyFat', 'muscleMass', 'leanMass', 'visceralFat', 'restingHr', 'hrv', 'hrvMethod', 'vo2max', 'sleepHours'];
+  const HKEYS = ['weight', 'bodyFat', 'muscleMass', 'leanMass', 'visceralFat', 'restingHr', 'hrv', 'hrvMethod', 'vo2max', 'sleepHours',
+    'steps', 'activeEnergyKcal'];
 
   // Look up once instead of searching the whole array per day, and save everything in ONE
   // write: a 10-year export is ~3,650 days – writing each day separately froze the UI for

@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   parseAmount, parseIngredient, guessCategory, aggregateNeeds, itemKey,
-  computeShoppingList, applyPurchase, applyConsumption, nextShoppingDay, fmtAmount,
+  computeShoppingList, applyPurchase, applyConsumption, nextShoppingDay, fmtAmount, sameName,
 } from '../js/food.js';
 
 test('parseAmount: integer, decimal (comma/point), fractions', () => {
@@ -152,4 +152,29 @@ test('fmtAmount: units, piece as ×, null as "nach Bedarf"', () => {
   assert.equal(fmtAmount(3, 'Stück'), '3×');
   assert.equal(fmtAmount(null, 'g'), 'nach Bedarf');
   assert.equal(fmtAmount(1.5, 'TL'), '1,5 TL');   // decimal comma in German
+});
+
+test('singular and plural are one item: summed, subtracted from the pantry, cooked off', () => {
+  const needs = aggregateNeeds([{ ingredients: ['2 Bananen', '1 Apfel'], servings: 1 }, { ingredients: ['1 Banane', '2 Äpfel', '3 Eier'], servings: 2 }]);
+  const banana = needs.filter((n) => /banane/i.test(n.name));
+  assert.equal(banana.length, 1);
+  assert.equal(banana[0].amount, 4);
+  assert.equal(needs.find((n) => /apfel/i.test(n.name)).amount, 5);
+  // Pantry in the other form: subtracted, and cooking books it off.
+  const list = computeShoppingList(needs, [{ name: 'Bananen', unit: 'Stück', amount: 4 }, { name: 'Ei', unit: 'Stück', amount: 2 }]);
+  assert.equal(list.some((x) => /banane/i.test(x.name)), false);
+  assert.equal(list.find((x) => /^ei/i.test(x.name)).buy, 4);
+  assert.equal(applyConsumption([{ name: 'Bananen', unit: 'Stück', amount: 4 }], ['1 Banane'], 1)[0].amount, 3);
+  assert.equal(applyPurchase([{ name: 'Banane', unit: 'Stück', amount: 1 }], [{ name: 'Bananen', unit: 'Stück', buy: 2 }]).length, 1);
+});
+
+test('sameName: the plurals of each language, and pairs that only look alike stay apart', () => {
+  const same = [['de', 'Zwiebel', 'Zwiebeln'], ['de', 'Nuss', 'Nüsse'], ['de', 'rote Paprika', 'rote Paprikas'],
+    ['en', 'berry', 'berries'], ['en', 'tomato', 'tomatoes'], ['fr', 'pomme de terre', 'pommes de terre'], ['fr', 'œuf', 'œufs'],
+    ['es', 'limón', 'limones'], ['es', 'nuez', 'nueces'], ['it', 'mela', 'mele'], ['it', 'uovo', 'uova'], ['it', 'albicocca', 'albicocche'],
+    ['pt-BR', 'pão', 'pães'], ['pt-BR', 'limão', 'limões'], ['nl', 'banaan', 'bananen'], ['nl', 'ei', 'eieren'], ['nl', 'druif', 'druiven']];
+  for (const [lang, a, b] of same) assert.equal(sameName(a, b, lang), true, `${lang}: ${a} = ${b}`);
+  const apart = [['de', 'Ei', 'Eis'], ['de', 'Banane', 'Ananas'], ['it', 'pesca', 'pesce'], ['fr', 'pâte', 'pâtes'], ['fr', 'pâte', 'pâté'],
+    ['en', 'rice', 'ice'], ['de', 'rote Zwiebel', 'Zwiebel']];
+  for (const [lang, a, b] of apart) assert.equal(sameName(a, b, lang), false, `${lang}: ${a} ≠ ${b}`);
 });

@@ -71,7 +71,8 @@ Mitglieder** – niemand pflegt sie von Hand.
 1. Jedes Mitglied plant in der **Ernährung** Gerichte mit **Portionen** für die Woche (Warenkorb-Symbol
    an jeder Mahlzeit).
 2. Cat-O-Fit **zieht die geplanten Gerichte aller zusammen**, **aggregiert** die Zutaten mit echten
-   Mengen (z. B. Haferflocken von zwei Personen zu einer Menge) und **zieht das gemeinsame Lager ab** –
+   Mengen (z. B. Haferflocken von zwei Personen zu einer Menge; Einzahl und Mehrzahl sind ein Posten, etwa
+   „1 Banane“ und „2 Bananen“) und **zieht das gemeinsame Lager ab** –
    die Liste zeigt nach Kategorien genau, was ihr noch **braucht**. Fällig zum zentralen
    **Einkaufstag** (von Admins in der Team-/Familienverwaltung gesetzt, Standard Dienstag).
 3. **„Alles eingekauft“** bucht die Mengen ins **gemeinsame Lager**. **„Gekocht“** (in der Ernährung)

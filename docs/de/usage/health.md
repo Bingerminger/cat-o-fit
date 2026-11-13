@@ -69,7 +69,7 @@ Health Connect an dieselbe Adresse (siehe [Android: Health Connect](apple-health
    oben (oder **Einstellungen → Daten & Sicherung → Apple Health & Datei-Import**).
 3. Cat-O-Fit übernimmt die **Workouts** (Laufen, Rad, Schwimmen, Gehen, Wandern, Kraft, Rudern … →
    durchgeführte Einheiten, automatisch zugeordnet) und **Körperwerte** (Gewicht, Ruhepuls, Schlaf,
-   HRV, VO₂max). Stehen Zyklusdaten im Export, fragt die App, ob sie die **Periodenbeginne**
+   HRV, VO₂max, Schritte, aktive Energie). Stehen Zyklusdaten im Export, fragt die App, ob sie die **Periodenbeginne**
    übernehmen soll – sie bleiben privat. Doppelte Einträge erkennt die App.
 
 **Aktivitäten aus Dateien (GPX, TCX, FIT, ZIP).** Auf derselben Seite lädst du auch Aufzeichnungen
@@ -77,7 +77,8 @@ deiner Uhr hoch – einzeln oder als ganzen Export (mehr unter
 [Aktivitäten aus Dateien übernehmen](training.md#aktivitäten-aus-dateien-übernehmen)). Sie werden
 direkt im Browser ausgewertet: **Sportart** (aus der Datei; fehlt sie, fragt die App nach),
 **Datum in deiner Zeitzone** (auch beim Neujahrslauf um 0:30 Uhr), **Bewegungszeit** ohne Pausen,
-Distanz, Ø- und Max-Herzfrequenz, **Kilometer- und Meilen-Splits** und – mit deinen HF-Zonen aus den Einstellungen –
+Distanz (eine Lücke zwischen zwei Track-Segmenten einer GPX-Datei, etwa eine für die Heimfahrt angehaltene
+Aufzeichnung, zählt weder als Strecke noch als Zeit; TCX-Runden werden addiert), Ø- und Max-Herzfrequenz, **Kilometer- und Meilen-Splits** und – mit deinen HF-Zonen aus den Einstellungen –
 die **Zeit in jeder Zone**. Vor dem Speichern siehst du eine Zusammenfassung: Passt eine geplante
 Einheit desselben Tages und derselben Sportart, wird die Aktivität ihr zugeordnet, sonst als freies
 Training gespeichert.
@@ -164,15 +165,19 @@ Eintrag unter „＋ Erfassen“).
    im Zyklus fühlst, ist sehr individuell, und die Studienlage zu Leistungsunterschieden je Phase ist schwach
    – richte dich nach deinem Befinden.
 3. An deinen **Menstruationstagen** sind Einheiten **geschützt**: Du kannst sie **schadfrei**
-   verschieben oder auslassen – sie zählen nicht als verpasst und schmälern weder Plan-Einhaltung
-   noch Momentum.
+   verschieben oder auslassen – sie zählen nicht als verpasst, schmälern weder Plan-Einhaltung
+   noch Momentum, und deine Wochenserie pausiert (wie bei Krankheit), statt abzureißen.
 4. Trägst du einen Periodenbeginn für heute oder morgen ein, fragt Cat-O-Fit, ob du es an dem Tag
    **lockerer** angehen möchtest – nur dann wird das Training angepasst.
 5. **Hormonelle Verhütung** (Pille, Hormonspirale, Implantat …): Mit dem Schalter unten auf der Seite zeigt
    Cat-O-Fit keine Phasen mehr, nur noch deine Blutungstage, und fragt bei einer ausbleibenden Blutung
-   nicht nach – unter hormoneller Verhütung sind Zyklusphasen nicht aussagekräftig.
+   nicht nach – weder auf der Zyklus- noch auf der Laborseite; unter hormoneller Verhütung sind
+   Zyklusphasen nicht aussagekräftig.
 6. **Ohne neuen Eintrag seit rund drei Monaten** pausiert die Prognose: keine Phasen, keine „nächste
-   Periode“, keine geschützten Tage. Trag den letzten Periodenbeginn nach, dann geht es weiter.
+   Periode“, keine geschützten Tage. Trag den letzten Periodenbeginn nach, dann geht es weiter. Zwischen
+   zwei deiner Einträge gelten deine Einträge: Sobald ein späterer Periodenbeginn eingetragen ist, bleibt
+   für die Zeit davor keine Prognose stehen (ein langer Zyklus zählt dann als der Zyklus, der er war), und
+   vor deinem ersten Eintrag gibt es keine Prognose.
 7. Das Abzeichen **„Zyklus im Blick“ 🌙** gibt es für drei eingetragene Periodenstarts.
 
 > 🔒 **Datenschutz:** Zyklusdaten sieht nur die Person selbst – auch Admins beim Verwalten nicht, und

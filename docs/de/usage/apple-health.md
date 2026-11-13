@@ -112,7 +112,8 @@ Umwege zusammenklicken lässt.
 | `activeEnergyKcal` | aktive Energie in kcal | bis 20 000 |
 
 Zahlen dürfen auch als Text mit Komma kommen („72,4“) – so gibt die Kurzbefehle-App sie auf Deutsch
-und in mehreren weiteren Sprachen aus. Werte außerhalb des Bereichs verwirft der Server und meldet
+und in mehreren weiteren Sprachen aus. Bei `steps` und `activeEnergyKcal` gelten Zifferngruppen
+(„12.345“, „12,345“, „12 345“) als Tausendertrennzeichen, solange die Zahl im Bereich bleibt. Werte außerhalb des Bereichs verwirft der Server und meldet
 sie in `warnings`; unbekannte Felder stehen in `ignoredMetrics`. Mehrere Tage auf einmal:
 `{ "days": [ { "date": … }, { "date": … } ] }`.
 
@@ -125,7 +126,8 @@ sie in `warnings`; unbekannte Felder stehen in `ignoredMetrics`. Mehrere Tage au
    `export.xml`).
 3. Übernommen werden die **Workouts** aller Sportarten, die Cat-O-Fit kennt (Laufen, Rad, Schwimmen,
    Gehen, Wandern, Kraft, Rudern …; passende geplante Einheiten werden erledigt), und die
-   **Körperwerte**. Enthält der Export Zyklusdaten, fragt die App vorher, ob sie die
+   **Körperwerte**, auch Schritte und aktive Energie je Tag (aus der größten einzelnen Quelle – iPhone
+   und Uhr zählen dieselben Schritte). Enthält der Export Zyklusdaten, fragt die App vorher, ob sie die
    **Periodenbeginne** übernehmen soll – sie bleiben privat. Doppelte Einträge erkennt die App.
 
 Gewicht und fettfreie Masse in Pfund werden in kg umgerechnet, Workout-Energie in kJ in kcal. Schlaf

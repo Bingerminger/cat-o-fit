@@ -62,10 +62,12 @@ const CRITICAL = [
 /**
  * Checks for constellations that belong with a doctor.
  * `gate` (pregnancy) and `cycleCheck` (answer to the "period missed?" question)
- * prevent false alarms when a period is missing.
+ * prevent false alarms when a period is missing. `period` (cycle.periodState) replaces that
+ * calculation with the state the cycle page and "Today" show – including hormonal contraception
+ * and a switched-off cycle module.
  * @returns {Array<{severity:'stop', text:string, advice:string}>}
  */
-export function redFlags({ labs = [], cycle = [], today = null, gate = {}, cycleCheck = null, avgLen = null } = {}) {
+export function redFlags({ labs = [], cycle = [], today = null, gate = {}, cycleCheck = null, avgLen = null, period } = {}) {
   const out = [];
   for (const c of CRITICAL) {
     const l = freshLatest(labs, c.key, today);   // a value from years ago is not a current medical case
@@ -82,7 +84,8 @@ export function redFlags({ labs = [], cycle = [], today = null, gate = {}, cycle
   // Missing period: classic warning sign of too little energy (RED-S) –
   // but only if it has really stopped (not with pregnancy,
   // hormonal contraception or discontinued tracking).
-  const signal = periodSignal({ starts: periodStarts(cycle), today, avgLen, gate, check: cycleCheck });
+  const signal = period !== undefined ? period
+    : periodSignal({ starts: periodStarts(cycle), today, avgLen, gate, check: cycleCheck });
   if (signal && signal.flag) out.push(periodFlag(signal));
   return out;
 }

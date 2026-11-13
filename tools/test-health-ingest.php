@@ -209,6 +209,37 @@ check('Apple: bleeding days become periods (a gap of up to 1 day belongs to it, 
     $r['periods'] === [['start' => '2026-08-01', 'length' => 4], ['start' => '2026-08-29', 'length' => 1]], $r['periods']);
 check('Apple: cycle does not show up as an unknown metric', !in_array('menstrual_flow', $r['ignoredMetrics'], true), $r['ignoredMetrics']);
 
+// --- 4.2: digit groups in daily sums, a long bleeding, a paused workout -----
+$r = hi_parse_simple(['days' => [
+    ['date' => '2026-10-01', 'steps' => '12.345', 'activeEnergyKcal' => '1.250', 'hrv' => '48,5'],
+    ['date' => '2026-10-02', 'steps' => '12,345', 'activeEnergyKcal' => '456,789'],
+    ['date' => '2026-10-03', 'steps' => "12\u{2019}345", 'activeEnergyKcal' => '980'],
+    ['date' => '2026-10-04', 'steps' => '12 345'],
+    ['date' => '2026-10-05', 'steps' => '1.234.567'],
+]]);
+$hb = $r['healthByDate'];
+check('steps "12.345" / "12,345" / "12’345" / "12 345" are 12345',
+    array_map(fn ($d) => $hb[$d]['steps'] ?? null, ['2026-10-01', '2026-10-02', '2026-10-03', '2026-10-04']) === [12345, 12345, 12345, 12345], $hb);
+check('active energy "1.250" = 1250 kcal, "456,789" stays 457', ($hb['2026-10-01']['activeEnergyKcal'] ?? null) === 1250
+    && ($hb['2026-10-02']['activeEnergyKcal'] ?? null) === 457 && ($hb['2026-10-03']['activeEnergyKcal'] ?? null) === 980, $hb);
+check('HRV keeps its decimal comma (48,5 → 49)', ($hb['2026-10-01']['hrv'] ?? null) === 49, $hb['2026-10-01'] ?? null);
+check('"1.234.567" steps: out of range, discarded with a warning', !isset($hb['2026-10-05']['steps'])
+    && (bool) array_filter($r['warnings'], fn ($w) => str_contains($w, 'steps')), $r['warnings']);
+
+$days = []; for ($i = 0; $i < 20; $i++) $days[] = date('Y-m-d', strtotime("2026-09-01 +{$i} days"));
+check('20 bleeding days are one period (length capped at 14), not two', hi_periods($days) === [['start' => '2026-09-01', 'length' => 14]], hi_periods($days));
+$days[] = '2026-09-29';
+check('the next period after it still counts', count(hi_periods($days)) === 2 && hi_periods($days)[1]['start'] === '2026-09-29', hi_periods($days));
+
+$r = hi_parse(['workouts' => [
+    ['id' => 'w-paused', 'name' => 'Running', 'start' => '2026-11-02 18:00:00 +0100', 'end' => '2026-11-02 19:10:00 +0100', 'duration' => 3600,
+        'distance' => ['qty' => 10, 'units' => 'km']],
+    ['id' => 'w-minutes', 'name' => 'Running', 'start' => '2026-11-03 18:00:00 +0100', 'end' => '2026-11-03 19:00:00 +0100', 'duration' => 60],
+]]);
+check('paused workout: its duration (moving time), like the full import', ($r['newSessions']['hk-w-paused']['durationSec'] ?? null) === 3600
+    && ($r['newSessions']['hk-w-paused']['paceSecPerKm'] ?? null) === 360, $r['newSessions']['hk-w-paused'] ?? null);
+check('a duration far below start–end is not a pause: start/end', ($r['newSessions']['hk-w-minutes']['durationSec'] ?? null) === 3600, $r['newSessions']['hk-w-minutes'] ?? null);
+
 // --- Result --------------------------------------------------------------
 echo "\nhealth-ingest mapping: {$pass} ok, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

@@ -53,12 +53,18 @@ export function illnessDays(plans = [], today, days = 60) {
  * it is still running, it does not break the streak. Rest days preserve the streak: what is
  * rewarded is regularity, not training without a break (previously "days in a row" counted, and the
  * highest badges demanded 60 days without a rest day). Weeks with an illness- or
- * injury-related absence pause the streak instead of breaking it.
+ * injury-related absence pause the streak instead of breaking it – so do weeks in which a
+ * planned session on a protected cycle day (`isProtectedDay`) was skipped or moved away.
  */
-export function weekStreak({ sessions = [], plans = [] } = {}, today = todayStr(), minDays = 3) {
+export function weekStreak({ sessions = [], plans = [], isProtectedDay: protectedDay = () => false } = {}, today = todayStr(), minDays = 3) {
   const active = activeDateSet(sessions, plans);
   const sick = new Set();
-  (plans || []).forEach((p) => ((p && p.units) || []).forEach((u) => { if (isHealthMiss(u)) sick.add(u.date); }));
+  (plans || []).forEach((p) => ((p && p.units) || []).forEach((u) => {
+    if (!u) return;
+    if (isHealthMiss(u)) sick.add(u.date);
+    else if (u.type !== 'rest' && u.status !== 'erledigt' && protectedDay(u.date)) sick.add(u.date);
+    if (u.movedFrom && u.type !== 'rest' && protectedDay(u.movedFrom)) sick.add(u.movedFrom);
+  }));
   const count = (ws) => { let n = 0; for (let i = 0; i < 7; i++) if (active.has(addDays(ws, i))) n++; return n; };
   const hasSick = (ws) => { for (let i = 0; i < 7; i++) if (sick.has(addDays(ws, i))) return true; return false; };
   let ws = weekStart(today);
@@ -92,7 +98,7 @@ export function computeStats(data = {}, today = todayStr()) {
   const qualityCount = run.filter((s) => ['tempo', 'interval'].includes(s.type)).length;
 
   // Weekly streak (calendar weeks with ≥ 3 training days); rest days preserve the streak.
-  const streak = weekStreak({ sessions: run, plans }, today);
+  const streak = weekStreak({ sessions: run, plans, isProtectedDay: protectedDay }, today);
 
   // Plan adherence – same definition as statistics, race page and monthly report.
   const adherence = planAdherence(plans, { today, isProtectedDay: protectedDay }).pct ?? 0;

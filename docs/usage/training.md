@@ -286,9 +286,11 @@ What the app does with the file:
   – a wrong match would mislead the progression hint.
 - **Title and effort:** each workout becomes a **free strength session** (not tied to a planned session)
   on its day, with the workout’s title from the file. Where the file has none – always with FitNotes –
-  the app calls it **“Strength (Strong)”**, “Strength (Hevy)” or “Strength (FitNotes)”. If the file has
-  an RPE per set (Strong, Hevy), the **average** of the sets, rounded to a whole number, becomes the
-  session’s effort.
+  the app calls it **“Strength (Strong)”**, “Strength (Hevy)” or “Strength (FitNotes)”. An RPE per set
+  (Strong, Hevy) does **not** become the session’s effort: it rates a single set by the repetitions left in
+  reserve, while the session effort rates the whole session afterwards – and is usually lower than the
+  average of the sets. Without an effort the load uses the estimate for strength training; for workouts of
+  the last three days “Today” asks “How hard was it?”.
 - **Importing twice is safe:** workouts that are already there are recognised and skipped (“… already
   there – skipped”), so you can import a newer export that still contains the old workouts. A workout
   counts as already imported if a session from the same app exists on that day – and, where the app

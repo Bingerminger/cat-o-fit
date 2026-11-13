@@ -61,8 +61,9 @@ test('Prompt "How hard was it?": only imported workouts of the last few days wit
     { id: 'e', date: T, type: 'walk', source: 'apple-health' },                  // walking: no question
     { id: 'f', date: addDays(T, -3), type: 'easy', source: 'apple-health' },     // too old
     { id: 'g', date: T, type: 'easy', source: 'health', rpeDismissed: true },    // dismissed
+    { id: 'h', date: T, type: 'strength', source: 'hevy' },                      // strength history: no set RPE as effort
   ], T);
-  assert.deepEqual(list.map((s) => s.id), ['a', 'b']);
+  assert.deepEqual(list.map((s) => s.id), ['a', 'h', 'b']);
 });
 
 test('"Today" asks – one tap saves the effort rating', () => {

@@ -73,3 +73,40 @@ test('parseActivityFile: TCX takes the largest DistanceMeters (not Haversine)', 
     </Track></Activity></Activities></TrainingCenterDatabase>`;
   assert.equal(parseActivityFile(tcx).distanceKm, 8);
 });
+
+/* A straight line north: 0.009° of latitude ≈ 1 km; one point a minute. */
+function line({ from = 0, n, km = 1, t0 = Date.parse('2026-06-23T07:00:00Z'), quote = '"', lat0 = 51 } = {}) {
+  return Array.from({ length: n }, (_, i) => `<trkpt lat=${quote}${(lat0 + (from + i) * 0.009 * km).toFixed(6)}${quote} lon=${quote}13.7${quote}><time>${new Date(t0 + (from + i) * 6e4).toISOString()}</time></trkpt>`).join('\n');
+}
+
+test('GPX: attributes in single quotes are read like double ones', () => {
+  const dbl = parseActivityFile(`<gpx><trk><trkseg>${line({ n: 11, km: 0.2 })}</trkseg></trk></gpx>`);
+  const sgl = parseActivityFile(`<gpx><trk><trkseg>${line({ n: 11, km: 0.2, quote: "'" })}</trkseg></trk></gpx>`);
+  assert.ok(sgl.distanceKm > 1.9, `${sgl.distanceKm}`);
+  assert.equal(sgl.distanceKm, dbl.distanceKm);
+  assert.ok(sgl.route);
+  const tcx = parseActivityFile(`<TrainingCenterDatabase><Activities><Activity Sport='Biking'><Lap><Track>
+    <Trackpoint><Time>2026-06-23T07:00:00Z</Time><DistanceMeters>0</DistanceMeters></Trackpoint>
+    <Trackpoint><Time>2026-06-23T07:30:00Z</Time><DistanceMeters>12000</DistanceMeters></Trackpoint>
+    </Track></Lap></Activity></Activities></TrainingCenterDatabase>`);
+  assert.equal(tcx.sportKnown, true);
+});
+
+test('GPX: two track segments are not joined – a transfer in between is neither distance nor moving time', () => {
+  // 5 km in 25 min, 20 min break and 15 km away, then 5 km more.
+  const t0 = Date.parse('2026-06-23T07:00:00Z');
+  const seg2 = Array.from({ length: 26 }, (_, i) => `<trkpt lat="${(51 + 0.135 + 0.0018 * i).toFixed(6)}" lon="13.7"><time>${new Date(t0 + (45 + i) * 6e4).toISOString()}</time></trkpt>`).join('\n');
+  const s = parseActivityFile(`<gpx><trk><trkseg>${line({ n: 26, km: 0.2 })}</trkseg><trkseg>${seg2}</trkseg></trk></gpx>`);
+  assert.ok(Math.abs(s.distanceKm - 10) < 0.1, `${s.distanceKm}`);
+  assert.equal(s.durationSec, 50 * 60);
+  assert.equal(s.splits.length, 10);
+});
+
+test('TCX: laps without trackpoint distance add up', () => {
+  const lap = (i) => `<Lap><TotalTimeSeconds>600</TotalTimeSeconds><DistanceMeters>2000</DistanceMeters><Track>
+    <Trackpoint><Time>2026-06-24T07:${String(i * 10).padStart(2, '0')}:00Z</Time></Trackpoint>
+    <Trackpoint><Time>2026-06-24T07:${String(i * 10 + 9).padStart(2, '0')}:59Z</Time></Trackpoint></Track></Lap>`;
+  const s = parseActivityFile(`<TrainingCenterDatabase><Activities><Activity Sport="Running">${lap(0)}${lap(1)}${lap(2)}</Activity></Activities></TrainingCenterDatabase>`);
+  assert.equal(s.distanceKm, 6);
+  assert.equal(s.durationSec, 1800);
+});

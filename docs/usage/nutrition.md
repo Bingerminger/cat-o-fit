@@ -73,7 +73,8 @@ nobody maintains it by hand.
 1. Each member plans meals with **servings** for the week in **Nutrition** (basket icon on every
    meal).
 2. Cat-O-Fit **pulls together everyone's planned meals**, **adds up** the ingredients with real
-   amounts (e.g. oats from two people become a single amount) and **subtracts the shared pantry** –
+   amounts (e.g. oats from two people become a single amount; singular and plural are one item, like
+   “1 banana” and “2 bananas”) and **subtracts the shared pantry** –
    the list shows, by category, exactly what you still **need**. Due on the central **shopping day**
    (set by admins in the team/family management, default Tuesday).
 3. **“Bought everything → add to pantry”** books the amounts into the **shared pantry**. **“Cooked”**

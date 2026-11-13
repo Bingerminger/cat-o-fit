@@ -110,7 +110,8 @@ Shortcuts.
 | `activeEnergyKcal` | active energy in kcal | up to 20,000 |
 
 Numbers may also arrive as text with a decimal comma (“72,4”) – that is how the Shortcuts app outputs
-them in German and several other languages. Values outside the range are discarded by the server and
+them in German and several other languages. For `steps` and `activeEnergyKcal`, digit groups (“12.345”,
+“12,345”, “12 345”) count as a thousands separator as long as the number stays within the range. Values outside the range are discarded by the server and
 reported in `warnings`; unknown fields are listed in `ignoredMetrics`. Several days at once:
 `{ "days": [ { "date": … }, { "date": … } ] }`.
 
@@ -123,7 +124,8 @@ reported in `warnings`; unknown fields are listed in `ignoredMetrics`. Several d
    contains).
 3. What is imported: the **workouts** of all sports Cat-O-Fit knows (running, cycling, swimming,
    walking, hiking, strength, rowing …; matching planned sessions are marked done) and the **body
-   values**. If the export contains cycle data, the app first asks whether to import the **period
+   values**, including steps and active energy per day (from the largest single source – iPhone and watch
+   count the same steps). If the export contains cycle data, the app first asks whether to import the **period
    starts** – they stay private. The app recognises duplicate entries.
 
 Weight and lean mass in pounds are converted to kg, workout energy in kJ to kcal. Sleep from several

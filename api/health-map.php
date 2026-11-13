@@ -155,7 +155,7 @@ const HI_SIMPLE_FIELDS = [
     // Field => [type, min, max]
     'weight' => ['kg', 20, 400], 'bodyFat' => ['pct', 1, 80], 'leanMass' => ['kg', 10, 200],
     'restingHr' => ['int', 25, 150], 'hrv' => ['int', 1, 400], 'vo2max' => ['vo2', 10, 100],
-    'sleepHours' => ['sleep', 0.1, 24], 'steps' => ['int', 0, 200000], 'activeEnergyKcal' => ['int', 0, 20000],
+    'sleepHours' => ['sleep', 0.1, 24], 'steps' => ['count', 0, 200000], 'activeEnergyKcal' => ['count', 0, 20000],
 ];
 
 /** Is this a day object (or a list of them) rather than a Health Auto Export payload? */
@@ -164,10 +164,17 @@ function hi_is_simple(array $data): bool {
     return isset($data['date']) || (isset($data['days']) && is_array($data['days']));
 }
 
-/** Number from a number or text ("72,4", "7.3 h"). */
-function hi_simple_num($v): ?float {
+/** Number from a number or text ("72,4", "7.3 h"). For a daily sum (`$max` set: steps, active energy) a text
+ *  with digit groups ("12.345", "12,345", "12 345", "12’345") is a thousands separator as long as the whole
+ *  number stays within the field's range – "456,789" kcal remains 456.789. */
+function hi_simple_num($v, ?float $max = null): ?float {
     if (is_int($v) || is_float($v)) return (float) $v;
     if (!is_string($v)) return null;
+    if ($max !== null && preg_match('/^\s*(\d{1,3}(?:[.,\x{2019}\x{0027} \x{00A0}\x{202F}]\d{3})+)(?!\d)/u', $v, $g)) {
+        $whole = (float) preg_replace('/\D/', '', $g[1]);
+        $groups = preg_match_all('/[^\d]/u', $g[1]);
+        if ($groups > 1 || !preg_match('/^\d+[.,]\d+$/', $g[1]) || $whole <= $max) return $whole;
+    }
     if (!preg_match('/-?\d+(?:[.,]\d+)?/', $v, $m)) return null;
     return (float) str_replace(',', '.', $m[0]);
 }
@@ -188,7 +195,7 @@ function hi_parse_simple(array $data, string $lang = SERVER_SOURCE_LANGUAGE): ar
                 continue;
             }
             [$tag, $min, $max] = HI_SIMPLE_FIELDS[$key];
-            $v = hi_simple_num($raw);
+            $v = hi_simple_num($raw, $tag === 'count' ? (float) $max : null);
             if ($v === null) continue;
             if ($key === 'weight' && strtolower((string) ($day['weightUnit'] ?? '')) === 'lb') $v *= 0.453592;
             if ($key === 'bodyFat' && $v > 0 && $v <= 1) $v *= 100;            // 0.185 → 18.5 %
@@ -197,7 +204,7 @@ function hi_parse_simple(array $data, string $lang = SERVER_SOURCE_LANGUAGE): ar
                 continue;
             }
             $healthByDate[$date][$key] = match ($tag) {
-                'int' => (int) round($v),
+                'int', 'count' => (int) round($v),
                 'pct', 'vo2', 'sleep' => round($v, 1),
                 default => round($v, 2),
             };
@@ -230,15 +237,16 @@ function hi_periods(array $dates): array {
     $dates = array_values(array_unique(array_filter($dates, fn ($d) => is_string($d) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $d))));
     sort($dates);
     $out = [];
+    $lastDay = null;   // the real last bleeding day – the stored length is capped at 14, the bleeding is not
     foreach ($dates as $d) {
         $n = count($out);
-        if ($n) {
-            $last = $out[$n - 1];
-            $end = date('Y-m-d', strtotime($last['start'] . ' +' . ($last['length'] - 1) . ' days'));
-            $gap = (int) round((strtotime($d) - strtotime($end)) / 86400);
-            if ($gap <= 2) { $out[$n - 1]['length'] = min(14, $last['length'] + $gap); continue; }
+        if ($n && (int) round((strtotime($d) - strtotime($lastDay)) / 86400) <= 2) {
+            $out[$n - 1]['length'] = min(14, (int) round((strtotime($d) - strtotime($out[$n - 1]['start'])) / 86400) + 1);
+            $lastDay = $d;
+            continue;
         }
         $out[] = ['start' => $d, 'length' => 1];
+        $lastDay = $d;
     }
     return $out;
 }
@@ -502,10 +510,15 @@ function hi_parse(array $data, string $lang = SERVER_SOURCE_LANGUAGE): array {
         $date = hi_date($startStr);
         if ($date === null) { $skippedWorkouts++; continue; }
 
-        // Duration: primarily from start/end, otherwise "duration" (SECONDS according to the docs).
+        // Duration: the workout's own "duration" (SECONDS according to the docs; Apple's workout duration leaves out
+        // pauses) as long as it fits the time between start and end – the full import (export.xml) reads the same
+        // duration, so a paused workout gets one length on both ways and counts once. Less than half the elapsed
+        // time is not a pause but a different unit: then start/end.
         $tsA = strtotime($startStr); $tsB = strtotime($endStr);
-        $durSec = ($tsA && $tsB && $tsB > $tsA) ? ($tsB - $tsA) : null;
-        if ($durSec === null) { $d = hi_num($w, ['duration', 'activeDuration']); if ($d !== null) $durSec = (int) round($d); }
+        $elapsed = ($tsA && $tsB && $tsB > $tsA) ? ($tsB - $tsA) : null;
+        $d = hi_num($w, ['duration', 'activeDuration']);
+        $durSec = ($d !== null && $d > 0 && ($elapsed === null || ($d >= 0.5 * $elapsed && $d <= $elapsed + 60)))
+            ? (int) round($d) : $elapsed;
 
         // Distance (object { qty, units }; mi -> km) + pace.
         $distKm = hi_num($w, ['distance', 'totalDistance', 'distanceKm']);

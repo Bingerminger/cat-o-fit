@@ -73,12 +73,18 @@ function readPoints(text, isTcx) {
       });
     }
   } else {
+    // Track segments are not connected (GPX 1.1: a new segment after lost reception or a switched-off receiver) –
+    // `seg` keeps them apart. Attributes may stand in single or double quotes (XML).
+    const segStarts = [...text.matchAll(/<trkseg\b/g)].map((m) => m.index);
+    let seg = 0;
     for (const m of text.matchAll(/<trkpt\b([^>]*?)(?:\/>|>([\s\S]*?)<\/trkpt>)/g)) {
+      while (seg < segStarts.length && segStarts[seg] < m.index) seg++;
       const attrs = m[1] || '', b = m[2] || '';
       const time = /<time>([^<]+)<\/time>/.exec(b);
       pts.push({
         t: time ? Date.parse(time[1].trim()) : NaN,
-        lat: num(/lat="([\d.-]+)"/, attrs), lon: num(/lon="([\d.-]+)"/, attrs),
+        lat: num(/\blat\s*=\s*["']\s*([\d.-]+)/, attrs), lon: num(/\blon\s*=\s*["']\s*([\d.-]+)/, attrs),
+        seg,
         d: null,
         hr: num(/<(?:gpxtpx:hr|ns3:hr|hr)>\s*(\d{2,3})\s*</, b),
         ele: num(/<ele>\s*([\d.-]+)\s*<\/ele>/, b),
@@ -222,7 +228,7 @@ export function buildActivity(pts = [], { type = null, totals = {}, hrZones = nu
     if (i > 0) {
       const q = pts[i - 1];
       if (p.d != null && q.d != null) cum = Math.max(cum, p.d);
-      else if (p.lat != null && q.lat != null) cum += dist2(q.lat, q.lon, p.lat, p.lon);
+      else if (p.lat != null && q.lat != null && p.seg === q.seg) cum += dist2(q.lat, q.lon, p.lat, p.lon);
     } else if (p.d != null) cum = p.d;
     return { ...p, cum };
   });
@@ -238,6 +244,7 @@ export function buildActivity(pts = [], { type = null, totals = {}, hrZones = nu
   else if (hasTrack) {
     let moving = 0;
     for (let i = 1; i < track.length; i++) {
+      if (track[i].seg !== track[i - 1].seg) continue;   // the gap between two segments is not moving time
       const dt = (track[i].t - track[i - 1].t) / 1000;
       const dd = track[i].cum - track[i - 1].cum;
       if (dt > 0 && dd / dt >= MOVING_MIN_MPS) moving += dt;
@@ -325,17 +332,26 @@ export function parseActivityFile(text, { hrZones = null } = {}) {
     const hrs = [...text.matchAll(/<(?:gpxtpx:hr|ns3:hr)>\s*(\d{2,3})\s*<|<HeartRateBpm[^>]*>\s*<Value>\s*(\d{2,3})/g)].map((m) => parseInt(m[1] || m[2], 10)).filter((n) => n > 0);
     if (hrs.length) { totals.avgHr = Math.round(hrs.reduce((a, b) => a + b, 0) / hrs.length); totals.maxHr = hrs.reduce((a, b) => Math.max(a, b), 0); }
   }
-  // Distance – TCX states it directly (largest value), otherwise the sum of the coordinates.
+  // Distance – TCX states it directly: cumulative in the trackpoints (largest value), otherwise per lap (sum of
+  // the laps; the trackpoint value is optional in the schema). Without either, the sum of the coordinates.
   if (isTcx) {
-    const dists = [...text.matchAll(/<DistanceMeters>\s*([\d.]+)/g)].map((m) => parseFloat(m[1]));
-    if (dists.length) totals.distanceM = dists.reduce((a, b) => Math.max(a, b), 0);
+    const tpDist = pts.map((p) => p.d).filter((d) => d != null);
+    const lapDist = [...text.matchAll(/<Lap\b[^>]*>([\s\S]*?)<\/Lap>/g)]
+      .map((m) => num(/<DistanceMeters>\s*([\d.]+)/, m[1].replace(/<Track>[\s\S]*?<\/Track>/g, '')))
+      .filter((d) => d != null);
+    if (tpDist.length) totals.distanceM = tpDist.reduce((a, b) => Math.max(a, b), 0);
+    else if (lapDist.length) totals.distanceM = lapDist.reduce((a, b) => a + b, 0);
+    else {
+      const dists = [...text.matchAll(/<DistanceMeters>\s*([\d.]+)/g)].map((m) => parseFloat(m[1]));
+      if (dists.length) totals.distanceM = dists.reduce((a, b) => Math.max(a, b), 0);
+    }
     // Moving time: TCX lap times (the watch's stopwatch).
     const laps = [...text.matchAll(/<TotalTimeSeconds>\s*([\d.]+)/g)].map((m) => parseFloat(m[1]));
     if (laps.length) totals.durationSec = laps.reduce((a, b) => a + b, 0);
   }
 
   // Sport: TCX `Sport="…"`, GPX `<type>…</type>`.
-  const tcxSport = /<Activity\b[^>]*\bSport="([^"]+)"/.exec(text);
+  const tcxSport = /<Activity\b[^>]*\bSport\s*=\s*["']([^"']+)["']/.exec(text);
   const gpxType = /<type>\s*([^<]+?)\s*<\/type>/.exec(text);
   const known = sportType(tcxSport ? tcxSport[1] : gpxType ? gpxType[1] : '');
   return buildActivity(pts, { type: known, totals, hrZones });

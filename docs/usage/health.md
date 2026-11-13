@@ -68,14 +68,16 @@ Cat-O-Fit in three ways – the setup is covered in detail under [Apple Health](
    (or **Settings → Data & backup → Apple Health & file import**).
 3. Cat-O-Fit takes over the **workouts** (running, cycling, swimming, walking, hiking, strength, rowing … →
    completed sessions, matched automatically) and **body stats** (weight, resting heart rate, sleep, HRV,
-   VO₂max). If the export contains cycle data, the app asks whether it should take over the **period
+   VO₂max, steps, active energy). If the export contains cycle data, the app asks whether it should take over the **period
    starts** – they stay private. The app recognises duplicate entries.
 
 **Activities from files (GPX, TCX, FIT, ZIP).** On the same page you can also upload recordings from your
 watch – one at a time or as a whole export (more under
 [Importing activities from files](training.md#import-activities-from-files)). They are analysed right
 in the browser: **sport** (from the file; if it is missing, the app asks), **date in your time zone** (even
-for the New Year’s Day run at 00:30), **moving time** without pauses, distance, average and max heart rate,
+for the New Year’s Day run at 00:30), **moving time** without pauses, distance (a gap between two track
+segments of a GPX file, such as a recording paused for a ride home, counts as neither distance nor time; TCX laps
+add up), average and max heart rate,
 **kilometre and mile splits** and – with your HR zones from the settings – the **time in each zone**. Before saving
 you see a summary: if a planned session of the same day and the same sport fits, the activity is matched to
 it, otherwise it is saved as a free workout.
@@ -158,14 +160,17 @@ switch it off under **Settings → Modules** (the menu item and the entry under 
    you feel across the cycle is very individual, and the evidence on performance differences between phases
    is weak – go by how you feel.
 3. On your **menstruation days**, sessions are **protected**: you can move or skip them **without penalty** –
-   they do not count as missed and reduce neither plan adherence nor momentum.
+   they do not count as missed, reduce neither plan adherence nor momentum, and pause your weekly streak
+   instead of breaking it (like an illness).
 4. If you enter a period start for today or tomorrow, Cat-O-Fit asks whether you would like to take it
    **easier** that day – only then is the training adjusted.
 5. **Hormonal contraception** (pill, hormonal coil, implant …): With the switch at the bottom of the page,
-   Cat-O-Fit no longer shows phases, only your bleeding days, and does not ask about a missed bleed – under
-   hormonal contraception cycle phases are not meaningful.
+   Cat-O-Fit no longer shows phases, only your bleeding days, and does not ask about a missed bleed – neither
+   on the cycle page nor on the lab page; under hormonal contraception cycle phases are not meaningful.
 6. **With no new entry for about three months** the forecast pauses: no phases, no “next period”, no
-   protected days. Add your last period start and it carries on.
+   protected days. Add your last period start and it carries on. Between two of your entries, your entries
+   count: once a later period start is entered, a forecast for the time before it no longer stands (a long
+   cycle then counts as the cycle it was), and before your first entry there is no forecast.
 7. The **“Cycle in view” 🌙** badge is awarded for three logged period starts.
 
 > 🔒 **Privacy:** Only the person themself sees cycle data – admins managing the profile don’t either, and

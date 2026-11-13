@@ -201,6 +201,8 @@ export function importedMatches(plans = [], sessions = [], today, days = 7) {
 
 /** Without asking: walking and mobility are easy anyway, football has its intensity. */
 const NO_RPE_ASK = new Set(['walk', 'mobility', 'cross_football']);
+/** Strength history from other apps (strength-import.js) comes without a session effort, too. */
+const RPE_ASK_SOURCES = [...IMPORT_SOURCES, 'strong', 'hevy', 'fitnotes'];
 /**
  * Imported workouts of the last `days` days without a recorded effort – for the prompt
  * "How hard was it?" on "Today". Without an answer the load estimates it from the
@@ -208,7 +210,7 @@ const NO_RPE_ASK = new Set(['walk', 'mobility', 'cross_football']);
  */
 export function rpeAskList(sessions = [], today, days = 3) {
   return (sessions || [])
-    .filter((s) => s && !s.deleted && IMPORT_SOURCES.includes(s.source) && !(Number(s.rpe) > 0) && !s.rpeDismissed
+    .filter((s) => s && !s.deleted && RPE_ASK_SOURCES.includes(s.source) && !(Number(s.rpe) > 0) && !s.rpeDismissed
       && !NO_RPE_ASK.has(s.type) && s.date && s.date <= today && diffDays(s.date, today) < days)
     .sort((a, b) => b.date.localeCompare(a.date));
 }

@@ -116,5 +116,27 @@ check('Cycling and swimming imported, unknown types not', $types === ['cross_bik
 check('Bike ride with distance and duration', ($r3['workouts'][0]['distanceKm'] ?? null) === 24.0 && ($r3['workouts'][0]['durationSec'] ?? null) === 3600, $r3['workouts'][0] ?? null);
 check('Cycle: period from 1 Sep (2 days), "no bleeding" does not count', $r3['periods'] === [['start' => '2026-09-01', 'length' => 2]], $r3['periods']);
 
+// 4.2: steps and active energy as daily values – per day the largest single source (iPhone and watch count the
+// same steps); a paused workout keeps its duration.
+$xml4 = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<HealthData>
+ <Record type="HKQuantityTypeIdentifierStepCount" sourceName="iPhone" unit="count" value="4000" startDate="2026-10-10 09:00:00 +0200" endDate="2026-10-10 10:00:00 +0200"/>
+ <Record type="HKQuantityTypeIdentifierStepCount" sourceName="iPhone" unit="count" value="6000" startDate="2026-10-10 17:00:00 +0200" endDate="2026-10-10 18:00:00 +0200"/>
+ <Record type="HKQuantityTypeIdentifierStepCount" sourceName="Watch" unit="count" value="9000" startDate="2026-10-10 09:00:00 +0200" endDate="2026-10-10 18:00:00 +0200"/>
+ <Record type="HKQuantityTypeIdentifierActiveEnergyBurned" sourceName="Watch" unit="kcal" value="200" startDate="2026-10-10 09:00:00 +0200" endDate="2026-10-10 10:00:00 +0200"/>
+ <Record type="HKQuantityTypeIdentifierActiveEnergyBurned" sourceName="Watch" unit="kJ" value="418.4" startDate="2026-10-10 17:00:00 +0200" endDate="2026-10-10 18:00:00 +0200"/>
+ <Workout workoutActivityType="HKWorkoutActivityTypeRunning" duration="60" durationUnit="min" totalDistance="10" totalDistanceUnit="km" startDate="2026-11-02 18:00:00 +0100" endDate="2026-11-02 19:10:00 +0100"/>
+</HealthData>
+XML;
+$file4 = tempnam(sys_get_temp_dir(), 'hxtest_');
+file_put_contents($file4, $xml4);
+$r4 = hx_parse_file($file4);
+@unlink($file4);
+$d4 = array_values(array_filter($r4['health'], fn ($h) => $h['date'] === '2026-10-10'))[0] ?? [];
+check('Steps: the larger single source (iPhone 10000), not iPhone + watch', ($d4['steps'] ?? null) === 10000, $d4);
+check('Active energy: kcal + kJ of the day (200 + 100)', ($d4['activeEnergyKcal'] ?? null) === 300, $d4);
+check('Paused workout: the duration of the workout (3600 s), not end − start', ($r4['workouts'][0]['durationSec'] ?? null) === 3600, $r4['workouts'][0] ?? null);
+
 echo "\nhealth-xml: $pass ok, $fail failed\n";
 exit($fail ? 1 : 0);

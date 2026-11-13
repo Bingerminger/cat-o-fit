@@ -36,7 +36,7 @@ import {
   redFlags, energyAvailability, energyAvailabilitySeries, leanMassNow, EA_OPTIMAL, eaLowFor,
 } from './redflags.js';
 import { currentEligibility, currentEnergyTargets, openGateSheet } from './wellness.js';
-import { cycleCheck, avgCycleLength } from './cycle.js';
+import { periodState } from './cycle.js';
 
 import { t, tp } from './i18n.js';
 
@@ -83,10 +83,7 @@ export function render(view) {
   }
 
 /* --- 1. Red flags ------------------------------------------------------ */
-  const flags = redFlags({
-    labs, cycle: store.get('cycle'), today,
-    gate: s.labsGate || {}, cycleCheck: cycleCheck(), avgLen: avgCycleLength(),
-  });
+  const flags = redFlags({ labs, today, period: periodState(today) });
   flags.forEach((f) => view.appendChild(el('div', { class: 'card mt-2', style: { borderLeft: '4px solid var(--bad)' } }, [
     el('div', { class: 'row gap-2', style: { alignItems: 'flex-start' } }, [
       el('span', { html: iconSvg('info'), style: { color: 'var(--bad-text)', width: '18px', flex: '0 0 auto', marginTop: '2px' } }),

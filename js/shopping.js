@@ -15,7 +15,7 @@ import {
 } from './ui.js';
 import { setHeader } from './router.js';
 import { moduleOff } from './nutrition.js';
-import { aggregateNeeds, computeShoppingList, applyPurchase, nextShoppingDay, fmtAmount, itemKey, guessCategory, unitLabel } from './food.js';
+import { aggregateNeeds, computeShoppingList, applyPurchase, nextShoppingDay, fmtAmount, itemKey, guessCategory, unitLabel, sameItem } from './food.js';
 
 import { t, tp } from './i18n.js';
 
@@ -183,7 +183,9 @@ function openPantryForm(existing = null) {
           const name = nameI.value.trim();
           if (!name) { toast(t('shopping.nameMissing'), 'bad'); return; }
           const unit = unitI.value;
-          upsertPantry({ id: existing?.id || itemKey(name, unit), name, unit, amount: parseFloat(amountI.value) || 0, category: guessCategory(name) });
+          // A new entry for an item already in stock („Banane“ next to „Bananen“) updates it instead of a second one.
+          const match = existing || store.familyPantry().find((p) => sameItem(p, { name, unit }));
+          upsertPantry({ id: match?.id || itemKey(name, unit), name, unit, amount: parseFloat(amountI.value) || 0, category: guessCategory(name) });
           closeSheet(); rerender();
         },
       }),
