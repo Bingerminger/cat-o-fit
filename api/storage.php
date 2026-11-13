@@ -305,6 +305,15 @@ function store_unlock($fp): void
  * rejection reason (string) – this is how the family, for example, checks roles and
  * PINs under the same lock under which it writes.
  */
+/** An op that cannot be applied, for the `rejected` list (v4.2: nothing is dropped silently). */
+function op_rejection(mixed $op, string $reason): array
+{
+    $op = is_array($op) ? $op : [];
+    $rec = is_array($op['record'] ?? null) ? $op['record'] : [];
+    $id = $rec['id'] ?? ($op['id'] ?? '');
+    return ['op' => is_string($op['op'] ?? null) ? $op['op'] : '', 'id' => is_scalar($id) ? (string) $id : '', 'reason' => $reason];
+}
+
 function apply_ops(string $area, string $scope, ?string $userId, array $ops, ?callable $guard = null): array
 {
     assert_area($area, $scope, $userId);
@@ -316,7 +325,10 @@ function apply_ops(string $area, string $scope, ?string $userId, array $ops, ?ca
         $rejected = [];
 
         foreach ($ops as $op) {
-            $op = (array) $op;
+            if (!is_array($op)) {
+                $rejected[] = op_rejection(null, 'invalid_op');
+                continue;
+            }
             if ($guard !== null) {
                 $checked = $guard($op, $store);
                 if (is_string($checked)) {
@@ -329,9 +341,10 @@ function apply_ops(string $area, string $scope, ?string $userId, array $ops, ?ca
             $type = $op['op'] ?? '';
 
             if ($type === 'upsert') {
-                $rec = (array) ($op['record'] ?? []);
+                $rec = is_array($op['record'] ?? null) ? $op['record'] : [];
                 $id = $rec['id'] ?? null;
                 if (!valid_record_id($id)) {
+                    $rejected[] = op_rejection($op, 'invalid_id');
                     continue;
                 }
                 $rec['id'] = $id;
@@ -371,6 +384,7 @@ function apply_ops(string $area, string $scope, ?string $userId, array $ops, ?ca
             } elseif ($type === 'delete') {
                 $id = $op['id'] ?? null;
                 if (!valid_record_id($id)) {
+                    $rejected[] = op_rejection($op, 'invalid_id');
                     continue;
                 }
                 $prev = $store['records'][$id] ?? [];
@@ -388,15 +402,17 @@ function apply_ops(string $area, string $scope, ?string $userId, array $ops, ?ca
                 // a late replacement does not overwrite more recent input.
                 $newRecs = $op['records'] ?? [];
                 if (!is_array($newRecs)) {
+                    $rejected[] = op_rejection($op, 'invalid_records');
                     continue;
                 }
                 $baseRev = isset($op['baseRev']) && is_numeric($op['baseRev']) ? (int) $op['baseRev'] : null;
                 $newer = static fn(array $r): bool => $baseRev !== null && (int) ($r['rev'] ?? 0) > $baseRev;
                 $keep = [];
                 foreach ($newRecs as $rec) {
-                    $rec = (array) $rec;
+                    $rec = is_array($rec) ? $rec : [];
                     $id = $rec['id'] ?? null;
                     if (!valid_record_id($id)) {
+                        $rejected[] = op_rejection(['op' => 'replace', 'record' => $rec], 'invalid_id');
                         continue;
                     }
                     if (isset($store['records'][$id]) && $newer($store['records'][$id])) {
@@ -421,6 +437,8 @@ function apply_ops(string $area, string $scope, ?string $userId, array $ops, ?ca
                         $applied[] = $tomb;
                     }
                 }
+            } else {
+                $rejected[] = op_rejection($op, 'unknown_op');
             }
         }
 

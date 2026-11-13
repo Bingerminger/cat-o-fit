@@ -505,7 +505,9 @@ function hi_parse(array $data, string $lang = SERVER_SOURCE_LANGUAGE): array {
         $kcalUnits = hi_units($w, isset($w['activeEnergyBurned']) ? 'activeEnergyBurned' : (isset($w['activeEnergy']) ? 'activeEnergy' : 'totalEnergy'));
         $kcal  = hi_kcal($kcal, $kcalUnits);
 
-        $uuid = (string) ($w['id'] ?? ($w['uuid'] ?? ''));
+        // Only characters the store accepts in an ID (`{8C1E…}` with braces or spaces was reported as
+        // imported but never stored); an ID that is fine already stays exactly as before.
+        $uuid = substr((string) preg_replace('/[^A-Za-z0-9_:.-]+/', '-', trim((string) ($w['id'] ?? ($w['uuid'] ?? '')), '{} ')), 0, 120);
         $id = 'hk-' . ($uuid !== '' ? $uuid : ($date . '-' . $type . '-' . (int) $tsA));
         $newSessions[$id] = [
             'id' => $id, 'plannedId' => null, 'eventId' => null, 'date' => $date,

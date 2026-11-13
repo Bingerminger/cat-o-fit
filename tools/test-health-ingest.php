@@ -117,6 +117,11 @@ check('RMSSD stays RMSSD', ($r['healthByDate']['2026-09-28']['hrvMethod'] ?? nul
 check('implausible values discarded (resting heart rate 400, sleep 30 h)', !isset($r['healthByDate']['2026-09-29']['restingHr']) && !isset($r['healthByDate']['2026-09-29']['sleepHours']) && ($r['healthByDate']['2026-09-29']['weight'] ?? null) === 71.9, $r['healthByDate']['2026-09-29'] ?? null);
 check('Warnings name what was discarded and the day without a date', count($r['warnings']) === 3, $r['warnings']);
 check('no workouts in the daily format', $r['newSessions'] === [] && $r['received'] === ['days' => 3]);
+// A workout ID with characters the store does not accept (braces, space) still gives a valid record ID
+// – before v4.2 the session was reported as imported but never stored.
+$r = hi_parse(['workouts' => [['id' => '{8C1E2B7A 0D4F}', 'name' => 'Running', 'start' => '2026-07-04 06:00:00 +0200', 'duration' => 1800]]]);
+$ids = array_keys($r['newSessions']);
+check('workout ID with braces/space → valid record ID', count($ids) === 1 && preg_match('/^[A-Za-z0-9_:.-]{1,128}$/', $ids[0]) === 1, $ids);
 $r = hi_parse_simple(['days' => [['date' => '2026-09-29', 'weight' => 72]],
     'workouts' => [['name' => 'Running', 'start' => '2026-09-29 18:00:00 +0200', 'duration' => 2700, 'distanceKm' => 8.1, 'avgHeartRate' => 151]]]);
 check('Daily values and sessions in the same package (Android scripts)', ($r['healthByDate']['2026-09-29']['weight'] ?? null) === 72.0

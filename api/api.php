@@ -67,6 +67,35 @@ function fail(string $message, int $status = 400, ?string $code = null, array $e
 }
 
 // ---------------------------------------------------------------------------
+// PHP's own error output never ends up in a response – on every server, not only in the Docker
+// image (with Apache on a NAS or `php -S` it is often on): it carries server paths, and it would break
+// the JSON. Whatever is not caught further down (a damaged data file at sign-in, in the calendar …)
+// still answers in the documented error format; the details go to the server log.
+// ---------------------------------------------------------------------------
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+/** The documented error answer for an error nobody caught (500, details only in the log). */
+function fail_uncaught(string $logLine): void
+{
+    error_log('Cat-O-Fit API: ' . $logLine);
+    if (headers_sent()) {
+        return;
+    }
+    http_response_code(500);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['ok' => false, 'error' => 'Server error – the details are in the server log.', 'code' => 'server_error']);
+}
+set_exception_handler(static function (Throwable $e): void {
+    fail_uncaught((string) $e);
+});
+register_shutdown_function(static function (): void {
+    $e = error_get_last();
+    if ($e !== null && in_array($e['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR], true)) {
+        fail_uncaught("{$e['message']} in {$e['file']}:{$e['line']}");
+    }
+});
+
+// ---------------------------------------------------------------------------
 // Optional host check against DNS rebinding: CATOFIT_ALLOWED_HOSTS="nas.local,fit.example.org"
 // (without the variable, any host is accepted as before). Loopback is always allowed (health check).
 // ---------------------------------------------------------------------------
@@ -392,6 +421,10 @@ if ($area === '') {
 if (!is_valid_area($area, $scope)) {
     fail("Unknown area: {$area}", 404, 'unknown_area', ['area' => $area]);
 }
+// A person's areas need a valid person – a client error (400), not a server error.
+if ($scope === 'user' && ($user === null || !is_valid_user($user))) {
+    fail('Invalid or missing user ID.', 400, 'invalid_or_missing_user');
+}
 
 // Private areas: only the signed-in person may read and write them.
 if ($scope === 'user' && in_array($area, PRIVATE_AREAS, true)) {
@@ -427,6 +460,10 @@ try {
         }
         if (count($decoded['ops']) > 2000) {
             fail('Too many operations in one batch.', 413, 'too_many_ops');
+        }
+        // A number JSON cannot hold (1e400 decodes to INF) could not be stored afterwards.
+        if (json_encode($decoded['ops']) === false) {
+            fail('The operations contain a value that cannot be stored (e.g. an infinite number).', 400, 'invalid_ops');
         }
         $guard = null;
         if ($scope === 'family') {

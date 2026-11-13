@@ -144,16 +144,18 @@ if (!empty($parsed['periods'])) {
 }
 
 // --- Write (atomic, with rev) ------------------------------------------
-if ($healthOps)  apply_ops('health',   'user', $user, $healthOps);
-if ($sessionOps) apply_ops('sessions', 'user', $user, $sessionOps);
-if ($cycleOps)   apply_ops('cycle',    'user', $user, $cycleOps);
+// The counts report what was really stored (v4.2), not what was sent to the store.
+$stored = static fn(array $ops, string $area): int => $ops ? count(apply_ops($area, 'user', $user, $ops)['records']) : 0;
+$healthStored  = $stored($healthOps, 'health');
+$sessionStored = $stored($sessionOps, 'sessions');
+$cycleStored   = $stored($cycleOps, 'cycle');
 
 respond([
     'ok' => true,
     'received'       => $parsed['received'],
-    'health'         => ['days' => count($healthOps), 'dates' => array_slice(array_keys($parsed['healthByDate']), 0, 10)],
-    'sessions'       => ['imported' => count($sessionOps), 'skippedDuplicate' => $skippedDup, 'skippedUnmappedType' => $parsed['skippedUnmappedType']],
-    'cycle'          => ['periods' => count($cycleOps)],
+    'health'         => ['days' => $healthStored, 'dates' => array_slice(array_keys($parsed['healthByDate']), 0, 10)],
+    'sessions'       => ['imported' => $sessionStored, 'skippedDuplicate' => $skippedDup, 'skippedUnmappedType' => $parsed['skippedUnmappedType']],
+    'cycle'          => ['periods' => $cycleStored],
     'ignoredMetrics' => $parsed['ignoredMetrics'],   // which metric names are not (yet) mapped
     'warnings'       => $parsed['warnings'],
 ]);

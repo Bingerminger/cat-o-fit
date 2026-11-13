@@ -431,6 +431,48 @@ check('sign-in active: the health intake itself is reached (its key decides)', i
 $base = $base1;
 proc_terminate($proc2); proc_close($proc2);
 
+// --- Nothing is lost silently, errors keep their format (v4.2) -------------
+$bad = [
+    ['op' => 'upsert', 'record' => ['id' => 5]],
+    ['op' => 'upsert', 'record' => ['id' => 'a/b']],
+    ['op' => 'upsert', 'record' => ['name' => 'no id']],
+    ['op' => 'upsert', 'record' => 'text'],
+    ['record' => ['id' => 'x1']],
+    'just a string',
+    ['op' => 'patch', 'record' => ['id' => 'x2']],
+    ['op' => 'delete', 'id' => 7],
+    ['op' => 'replace', 'records' => 'text'],
+    ['op' => 'upsert', 'record' => ['id' => 'ok-1', 'name' => 'valid']],
+];
+$r = http('POST', '?action=ops&area=checklist&user=u-a', ['ops' => $bad], $nobody);
+check('invalid ops: the valid one is stored', count($r['json']['records'] ?? []) === 1 && ($r['json']['records'][0]['id'] ?? '') === 'ok-1', $r['json']);
+check('invalid ops: every other one comes back in rejected', count($r['json']['rejected'] ?? []) === 9, $r['json']['rejected'] ?? null);
+foreach (['?action=changes&area=checklist&since=0', '?action=changes&area=checklist&user=..%2Fx&since=0', '?action=changes&area=checklist&user=' . str_repeat('a', 65) . '&since=0', '?area=checklist'] as $q) {
+    $r = http('GET', $q, null, $nobody);
+    check("missing or invalid person → 400 ({$q})", $r['status'] === 400 && ($r['json']['code'] ?? '') === 'invalid_or_missing_user', [$r['status'], $r['json']]);
+}
+$r = http('POST', '?action=ops&area=checklist&user=u-a', null, $nobody, [], '{"ops":[{"op":"upsert","record":{"id":"inf","v":1e400}}]}', 'application/json');
+check('a number JSON cannot hold → 400, nothing stored', $r['status'] === 400 && ($r['json']['code'] ?? '') === 'invalid_ops', [$r['status'], $r['json']]);
+// Damaged files: every entry point still answers in the error format (JSON), never with a PHP error.
+$famFile = $tmp . '/data/family/family.json';
+$famBackup = (string) file_get_contents($famFile);
+file_put_contents($famFile, substr($famBackup, 0, (int) (strlen($famBackup) / 2)));
+$jar = [];
+$r = http('POST', '?action=login', ['user' => 'u-a', 'pin' => '1357'], $jar);
+check('damaged family.json: login answers JSON, no PHP error', is_array($r['json']) && ($r['json']['ok'] ?? null) === false && $r['status'] >= 500 && !preg_match('/Fatal|Uncaught|\/data\//', $r['body']), [$r['status'], substr($r['body'], 0, 160)]);
+$r = http('GET', '?action=session', null, $fresh);
+check('damaged family.json: session answers JSON', is_array($r['json']) && !preg_match('/Fatal|Uncaught/', $r['body']), [$r['status'], substr($r['body'], 0, 160)]);
+file_put_contents($famFile, $famBackup);
+foreach (glob($tmp . '/data/family/family.json.corrupt-*') ?: [] as $f) @unlink($f);
+$evFile = $tmp . '/data/users/u-a/events.json';
+if (is_file($evFile)) {
+    $evBackup = (string) file_get_contents($evFile);
+    file_put_contents($evFile, substr($evBackup, 0, (int) (strlen($evBackup) / 2)));
+    $raw = (string) @file_get_contents("http://127.0.0.1:{$port}/api/api.php?action=ics&scope=event&id=e1&user=u-a", false, stream_context_create(['http' => ['ignore_errors' => true, 'header' => 'Cookie: ' . implode('; ', array_map(static fn($k, $v) => "{$k}={$v}", array_keys($fresh), $fresh))]]));
+    check('damaged events.json: calendar answers without a PHP error', !preg_match('/Fatal|Uncaught|\/data\//', $raw), substr($raw, 0, 160));
+    file_put_contents($evFile, $evBackup);
+}
+
 // --- Reset the app: the admin deletes themself, then the family (v4.2) -----
 // (last block: it empties the instance; $fresh = the session signed in with the new PIN above)
 $r = http('POST', '?action=delete-user&user=u-a', [], $fresh);

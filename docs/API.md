@@ -78,9 +78,16 @@ set up the subscription once more (“Copy subscription link” in the “Export
   `ops` response with `since` is suitable as a state for `since`).
 - Family responses never contain PIN hashes, only `hasPin` (plus the placeholder
   `pinHash: "server"` for older app versions).
-- `rejected` lists family ops that would have needed an admin sign-in. Each entry is
-  `{op, id, code, reason}`: `code` is stable (`admin_add_member`, `admin_change_role`,
-  `admin_remove_member`, `admin_replace_family`), `reason` is its English text.
+- `rejected` lists every op that was not applied – nothing is dropped silently (since v4.2). Each entry
+  is `{op, id, code, reason}`: `code` is stable – family ops that would have needed an admin sign-in
+  (`admin_add_member`, `admin_change_role`, `admin_remove_member`, `admin_replace_family`), and for
+  every area `invalid_op` (not an object), `invalid_id` (missing, or not `[A-Za-z0-9_:.-]{1,128}`),
+  `invalid_records` (`replace` without a list), `unknown_op` and `merge_not_allowed`; `reason` is
+  English text. The valid ops of the same request are applied.
+- A missing or invalid `user` for a person's area answers `400 invalid_or_missing_user`; a value JSON
+  cannot store (e.g. `1e400`) `400 invalid_ops`; a query parameter given twice `400 invalid_parameter`.
+  An error nobody expected (for example a damaged data file) answers `500 server_error` in the same
+  format; the details go to the server log, never into the response.
 
 ## Sign-in (server session)
 
