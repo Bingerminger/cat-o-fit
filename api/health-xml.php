@@ -158,12 +158,20 @@ function hx_parse_file(string $xmlPath, string $lang = SERVER_SOURCE_LANGUAGE): 
             // to capture heart-rate statistics (newer exports).
             $avgHr = null;
             $maxHr = null;
+            $indoor = null;
+            $tempRaw = null;
             $frag = $reader->readOuterXml();
             if ($frag) {
                 $prev = libxml_use_internal_errors(true);
                 $sx = simplexml_load_string($frag, 'SimpleXMLElement', LIBXML_NONET);
                 libxml_use_internal_errors($prev);
                 if ($sx !== false) {
+                    // Indoors (treadmill) and the weather Apple recorded with the workout (since 4.2).
+                    foreach ($sx->MetadataEntry as $me) {
+                        $key = (string) $me['key'];
+                        if ($key === 'HKIndoorWorkout') $indoor = (string) $me['value'] === '1';
+                        if ($key === 'HKWeatherTemperature') $tempRaw = (string) $me['value'];
+                    }
                     foreach ($sx->WorkoutStatistics as $st) {
                         if ((string) $st['type'] === 'HKQuantityTypeIdentifierHeartRate') {
                             $avgHr = isset($st['average']) ? (int) round((float) $st['average']) : $avgHr;
@@ -203,7 +211,7 @@ function hx_parse_file(string $xmlPath, string $lang = SERVER_SOURCE_LANGUAGE): 
                     'maxHr'       => $maxHr,
                     'kcal'        => hx_kcal($energy, $energyUnit),
                     'source'      => 'health',
-                ];
+                ] + hi_weather($indoor, $tempRaw);
             }
             continue;
         }

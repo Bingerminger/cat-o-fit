@@ -6,7 +6,7 @@
 
 import * as store from './storage.js';
 import {
-  el, icon, iconSvg, fmtKm, fmtPace, fmtPaceRange, fmtDuration, fmtDate, fmtNum, todayStr, toast, refreshView, infoButton,
+  el, icon, iconSvg, fmtKm, fmtPace, fmtPaceRange, fmtDuration, fmtDate, fmtNum, todayStr, toast, refreshView, infoButton, fmtTemp,
 } from './ui.js';
 import { paceToShown, paceUnit, distanceUnit } from './units.js';
 import { estimateVdot, pacesFromVdot, paceAdjustment, raceZone, racePaceFromVdot, formOptions } from './vdot.js';
@@ -55,6 +55,9 @@ export function formCard(today, { actionableOnly = false } = {}) {
           : t('formCards.basisSmoothed', { weeks: est.weeks, distance: fmtKm(est.basis.distanceKm, 1), time: fmtDuration(est.basis.durationSec), date: fmtDate(est.basis.date) }))
         : (test ? t('formCards.basisTest', test)
           : t('formCards.basisEstimated', { distance: fmtKm(est.basis.distanceKm, 1), time: fmtDuration(est.basis.durationSec), date: fmtDate(est.basis.date) }));
+  // The run named was hot: its time counts as in cool weather (heat.js) – said, not hidden.
+  const heatText = est.basis && est.basis.heatPct ? t('formCards.heatAdjusted', { temp: fmtTemp(est.basis.tempC), pct: est.basis.heatPct }) : '';
+  const basisLine = basisText && heatText ? `${basisText} · ${heatText}` : basisText;
   const card = el('div', { class: 'card mt-2' }, [
     el('div', { class: 'row row--between', style: { alignItems: 'baseline' } }, [
       el('div', { class: 'card__title', text: t('formCards.currentForm') }),
@@ -63,7 +66,7 @@ export function formCard(today, { actionableOnly = false } = {}) {
         infoButton('vdot', t('formCards.currentForm')),
       ]),
     ]),
-    basisText ? el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '2px' }, text: basisText }) : null,
+    basisLine ? el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '2px' }, text: basisLine }) : null,
     el('div', { class: 'mt-2' }, [paceRow(t('formCards.easy'), fresh.easy), paceRow(t('formCards.threshold'), fresh.threshold), paceRow(t('formCards.intervals'), fresh.vo2)]),
   ]);
   const faster = adj.deltaSec != null && adj.deltaSec >= 6;

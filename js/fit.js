@@ -185,6 +185,8 @@ export function parseFit(input, { hrZones = null } = {}) {
   const utcOffsetMin = a && a[253] != null && a[5] != null ? Math.round((a[5] - a[253]) / 60) : null;
   const act = buildActivity(pts, { type, totals, hrZones, utcOffsetMin: utcOffsetMin != null && Math.abs(utcOffsetMin) <= 14 * 60 ? utcOffsetMin : null });
   if (!act || !act.durationSec) return null;
+  // Treadmill (sub-sport 1): an indoor run – no weather correction in the form estimate (since 4.2).
+  if (s && s[6] === 1) act.indoor = true;
   return act;
 }
 

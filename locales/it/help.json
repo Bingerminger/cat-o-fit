@@ -717,7 +717,8 @@
         "0": [
           "Apri Impostazioni → “Posizione e meteo” e cerca la tua città.",
           "Nel calendario compaiono piccole icone meteo con la temperatura per i prossimi giorni.",
-          "Con caldo, pioggia o temporali, la sessione interessata mostra una nota adatta."
+          "Con caldo, pioggia o temporali, la sessione interessata mostra una nota adatta.",
+          "Una corsa al caldo conta nella stima della forma con il suo tempo al fresco – con la temperatura dell’aria da Apple Health o inserita quando la registri. «Al chiuso / tapis roulant» non ha correzione meteo."
         ],
         "1": "I dati meteo vengono da Open-Meteo. Senza internet restano gli ultimi dati caricati – l’app continua come al solito."
       }

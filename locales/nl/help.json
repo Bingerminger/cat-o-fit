@@ -717,7 +717,8 @@
         "0": [
           "Open Instellingen → “Locatie & weer” en zoek je stad.",
           "In de agenda verschijnen kleine weericoontjes met de temperatuur voor de komende dagen.",
-          "Bij hitte, regen of storm toont de betreffende training een passende melding."
+          "Bij hitte, regen of storm toont de betreffende training een passende melding.",
+          "Een loop in de hitte telt in de vormschatting met zijn tijd bij koel weer – met de luchttemperatuur uit Apple Health of ingevuld bij het vastleggen. ‘Binnen / loopband’ krijgt geen weercorrectie."
         ],
         "1": "Weergegevens komen van Open-Meteo. Zonder internet blijven de laatst geladen gegevens staan – de app werkt gewoon door."
       }

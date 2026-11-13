@@ -278,6 +278,8 @@ library. English is the source language; the other catalogs follow its keys.
   `updatePlanFromToday` (new from today, the past unchanged via `planflow.mergeFromDate`). The
   paces come from `vdot.planPaces` (target time + form) and are stored per plan in `plan.paces`; every
   running unit carries its zone key `paceKey`. `plan.gen` marks the generator version.
+- **Weather per session (since 4.2):** `heat.js` (pure) – the one heat rule for the weather hint and the
+  form estimate; `indoor`/`tempC` on sessions from imports and the log form.
 - **Performance test (since 4.2):** `perftest.js` (pure) – power zones from FTP, test validity; the
   threshold pace enters the form estimate through `vdot.formOptions`, the single set of inputs of every
   estimate.

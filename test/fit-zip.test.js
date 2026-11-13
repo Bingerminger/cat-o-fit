@@ -137,6 +137,11 @@ test('FIT: compressed timestamps, big-endian session, sports from sub-type', () 
   const bike = parseFit(fitFile({ records: runRecords(), session: { start: runRecords()[0].ts, sport: 2, elapsedMs: 1800000, timerMs: 1800000, distCm: 1500000, kcal: 300, avgHr: 130, maxHr: 150, ascent: 10 } }));
   assert.equal(bike.type, 'cross_bike');
   assert.deepEqual(bike.splits, [], 'no run splits for cycling');
+  // Treadmill (sub-sport 1) is an indoor run – no weather correction in the form estimate (4.2).
+  const session = { start: runRecords()[0].ts, sport: 1, elapsedMs: 1800000, timerMs: 1800000, distCm: 600000, kcal: 400, avgHr: 150, maxHr: 170, ascent: 0 };
+  const tread = parseFit(fitFile({ records: runRecords(), session: { ...session, sub: 1 } }));
+  assert.equal(tread.indoor, true);
+  assert.equal(parseFit(fitFile({ records: runRecords(), session })).indoor, undefined, 'an outdoor run carries no flag');
 });
 
 test('FIT: broken or foreign files → null', () => {

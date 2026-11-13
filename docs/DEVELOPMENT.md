@@ -328,6 +328,13 @@ Do **not** break these rules in the store (`storage.js`) and backend (`storage.p
   (`PLAN_INVARIANTS_ALL=1` lists every violation; PLAN-B adds side races in week 2, the first deload week
   and the last build weeks, B/C × 5/10/21 km), the store side in `test/sideraces.test.js`, workout
   phases in `test/workout-engine.test.js`.
+- **Weather per session (since 4.2, `js/heat.js`).** Sessions may carry `indoor: true` (FIT sub-sport 1,
+  Health Auto Export v2 `isIndoor`/`location: "Indoor"`, export.xml `HKIndoorWorkout`, the log form) and
+  `tempC`, the air temperature during the session (Health Auto Export `temperature` in degF/degC,
+  export.xml `HKWeatherTemperature`, the log form) – only when known (`sessionWeather`; PHP `hi_weather`).
+  `estimateVdot` divides a run's time by 1 + `sessionHeatPct` / 100 (the hint's rule, ≤ 8 %), never
+  indoors; sessions without the fields are estimated exactly as before. No daily high is ever stored as
+  a session's temperature.
 - **Performance test (since 4.2, `js/perftest.js`).** Flat profile fields with a date each:
   `thresholdPaceSecPerKm`/`thresholdPaceDate`, `ftpW`/`ftpDate`, `cssSecPer100m`/`cssDate`. Every form
   estimate gets its inputs from `vdot.formOptions(profile)` (heart rate zones + the dated threshold pace;

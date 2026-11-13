@@ -15,6 +15,7 @@ import {
 import { setHeader } from './router.js';
 import { uploadHealthExport } from './api-client.js';
 import { completeUnit } from './unit-actions.js';
+import { sessionWeather } from './heat.js';
 import { activitiesFrom, parseActivityBytes, sameActivity, guessType, ROUTE_DAYS } from './activity-import.js';
 import { isZip, isGzip } from './zip.js';
 import { findPlannedMatch } from './planflow.js';
@@ -303,6 +304,8 @@ export function activityData(data, type, { route = true } = {}) {
     kcal: data.kcal ?? null,
     ascentM: data.ascentM ?? null,
     route: route ? (data.route || null) : null,
+    // Treadmill from the file (FIT sub-sport): no weather correction in the form estimate.
+    ...sessionWeather(data),
     source: 'gpx',
   };
 }
@@ -594,7 +597,7 @@ export function importResult(result, { cycle = false } = {}) {
     const type = w.type || 'easy';
     const match = findPlannedMatch(store.get('plans'), { date: w.date, type });
 
-    const data = { distanceKm: w.distanceKm, durationSec: w.durationSec, paceSecPerKm: w.paceSecPerKm, avgHr: w.avgHr, maxHr: w.maxHr, kcal: w.kcal, source: 'health' };
+    const data = { distanceKm: w.distanceKm, durationSec: w.durationSec, paceSecPerKm: w.paceSecPerKm, avgHr: w.avgHr, maxHr: w.maxHr, kcal: w.kcal, ...sessionWeather(w), source: 'health' };
     // Remember matched workouts too, so a workout exported twice is skipped.
     if (match) { remember(completeUnit(match.plan, match.unit, data)); matched++; wImp++; }
     else {

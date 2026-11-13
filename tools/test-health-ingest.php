@@ -92,6 +92,19 @@ check('avgHr fallback from heartRateData (avg 130)', ($s['avgHr'] ?? null) === 1
 check('maxHr fallback from heartRateData (165)', ($s['maxHr'] ?? null) === 165, $s['maxHr'] ?? null);
 
 // --- 7) Unknown workout type -> skippedUnmappedType --------------------
+// Health Auto Export v2: indoors and the air temperature during the workout (since 4.2).
+$r = hi_parse(['workouts' => [
+    ['id' => 'w-out', 'name' => 'Running', 'start' => '2026-07-10 18:00:00 +0200', 'duration' => 2400, 'distance' => ['qty' => 8, 'units' => 'km'],
+        'isIndoor' => false, 'location' => 'Outdoor', 'temperature' => ['qty' => 86, 'units' => 'degF']],
+    ['id' => 'w-in', 'name' => 'Running', 'start' => '2026-07-11 18:00:00 +0200', 'duration' => 1800, 'distance' => ['qty' => 6, 'units' => 'km'],
+        'location' => 'Indoor', 'temperature' => ['qty' => 21, 'units' => 'degC']],
+    ['id' => 'w-none', 'name' => 'Running', 'start' => '2026-07-12 18:00:00 +0200', 'duration' => 1800],
+]]);
+$out = $r['newSessions']['hk-w-out'] ?? []; $in = $r['newSessions']['hk-w-in'] ?? []; $none = $r['newSessions']['hk-w-none'] ?? [];
+check('weather: 86 °F outdoors → 30 °C, indoors only "indoor", none without data (4.2)',
+    ($out['tempC'] ?? null) === 30.0 && !isset($out['indoor']) && ($in['indoor'] ?? null) === true && !isset($in['tempC'])
+    && !isset($none['tempC']) && !isset($none['indoor']), [$out, $in, $none]);
+
 $r = hi_parse(['workouts' => [['name' => 'Curling', 'start' => '2026-07-03 10:00:00 +0200', 'duration' => 600]]]);
 check('unknown workout type skipped', $r['skippedUnmappedType'] === 1 && empty($r['newSessions']), $r);
 

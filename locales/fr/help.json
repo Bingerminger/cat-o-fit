@@ -717,7 +717,8 @@
         "0": [
           "Ouvre Réglages → « Lieu & météo » et cherche ta ville.",
           "Dans le calendrier, de petites icônes météo avec la température apparaissent pour les prochains jours.",
-          "En cas de chaleur, de pluie ou d’orage, la séance concernée affiche une remarque adaptée."
+          "En cas de chaleur, de pluie ou d’orage, la séance concernée affiche une remarque adaptée.",
+          "Une sortie par forte chaleur compte dans l’estimation de la forme avec son temps par temps frais – avec la température de l’air d’Apple Health ou saisie lors de l’enregistrement. « En intérieur / tapis » n’a pas de correction météo."
         ],
         "1": "Les données météo viennent d’Open-Meteo. Sans internet, les dernières données chargées restent en place – l’appli continue normalement."
       }

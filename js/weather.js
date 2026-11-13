@@ -10,6 +10,7 @@ import { typeMeta, fmtTemp } from './ui.js';
 import { celsiusToShown } from './units.js';
 import { lsGet, lsSet } from './env.js';
 import { locale, t } from './i18n.js';
+import { heatSlowdownPct } from './heat.js';
 
 const GEO_URL = 'https://geocoding-api.open-meteo.com/v1/search';
 const FC_URL = 'https://api.open-meteo.com/v1/forecast';
@@ -98,16 +99,8 @@ export function wmo(code) {
   return { emoji: '⛈️', label: t('weather.wmo.thunderstorm') };
 }
 
-/**
- * How much slower in warm weather (percent of pace): from 20 °C roughly 0.4 % per degree above 15 °C,
- * at most 8 %. A rule of thumb from the running literature (humidity is left out) –
- * better a bit slower than collapsing at the end.
- */
-export function heatSlowdownPct(tMax) {
-  const temp = Number(tMax);
-  if (!Number.isFinite(temp) || temp < 20) return 0;
-  return Math.min(8, Math.round((temp - 15) * 0.4));
-}
+/* The heat rule lives in heat.js (pure): the hint here and the form estimate use the same numbers. */
+export { heatSlowdownPct };
 
 /**
  * Weather hint for a planned session (only sensible for runs).

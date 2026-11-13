@@ -1446,7 +1446,12 @@
     "power": "Potenza",
     "powerUpTo": "fino a {max} W",
     "css": "Riferimento CSS",
-    "cssValue": "{pace} min/100 m"
+    "cssValue": "{pace} min/100 m",
+    "indoor": "Al chiuso / tapis roulant",
+    "airTemp": "Temperatura dell’aria ({unit})",
+    "indoorNote": "Corsa al chiuso – nessuna correzione meteo nella stima della forma.",
+    "tempNote": "{temp} di temperatura dell’aria – troppo fresco per correggere il tempo.",
+    "heatNote": "{temp} di temperatura dell’aria – la stima della forma conta il tempo più veloce del {pct}%, come con il fresco."
   },
   "unitActions": {
     "missedReasons": {
@@ -3834,7 +3839,8 @@
     "pacesFit": "I tuoi passi obiettivo pianificati si adattano bene alla tua forma attuale.",
     "zonesAdjusted": "Zone di allenamento e passi pianificati ancora aperti adattati alla tua forma",
     "basisTest": "dal tuo test di prestazione del {date} (soglia {pace})",
-    "basisSmoothedTest": "mediata su {weeks} settimane · miglior valore dell’ultima settimana: test di prestazione del {date} (soglia {pace})"
+    "basisSmoothedTest": "mediata su {weeks} settimane · miglior valore dell’ultima settimana: test di prestazione del {date} (soglia {pace})",
+    "heatAdjusted": "a {temp}, corretta del {pct}% per il caldo"
   },
   "storage": {
     "syncing": "Sincronizzazione …",

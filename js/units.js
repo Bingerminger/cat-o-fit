@@ -68,6 +68,7 @@ export const kgToShown = (kg) => (kg == null ? kg : pounds() ? kg / KG_PER_LB : 
 export const shownToKg = (v) => (v == null ? v : pounds() ? v * KG_PER_LB : v);
 /** °C → °C or °F. */
 export const celsiusToShown = (c) => (c == null ? c : state.temperature === 'f' ? (c * 9) / 5 + 32 : c);
+export const shownToCelsius = (v) => (v == null ? v : state.temperature === 'f' ? ((v - 32) * 5) / 9 : v);
 /** Centimetres → { ft, in } (inches rounded, 12 in carry over). */
 export function cmToFeetInches(cm) {
   if (cm == null) return null;

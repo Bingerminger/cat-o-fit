@@ -42,6 +42,25 @@ function hi_units($w, string $field): string {
     if (is_array($w[$field] ?? null) && isset($w[$field]['units'])) return strtolower((string) $w[$field]['units']);
     return strtolower((string) ($w[$field . 'Units'] ?? ''));
 }
+/**
+ * Weather fields of a workout (since 4.2): `indoor` (treadmill, indoor) and `tempC`, the air temperature
+ * during the workout in °C. $temp may be a number or a string like "72 degF"/"21.5 degC"; $units from a
+ * { qty, units } object. Indoors no temperature is kept. Empty array when nothing is known.
+ */
+function hi_weather(?bool $indoor, $temp, string $units = ''): array {
+    if ($indoor === true) return ['indoor' => true];
+    $qty = null;
+    if (is_numeric($temp)) { $qty = (float) $temp; }
+    elseif (is_string($temp) && preg_match('/^\s*(-?\d+(?:[.,]\d+)?)\s*(\S*)/', $temp, $m)) {
+        $qty = (float) str_replace(',', '.', $m[1]);
+        if ($units === '') $units = $m[2];
+    }
+    if ($qty === null) return [];
+    $u = strtolower($units);
+    $c = (str_contains($u, 'f') && !str_contains($u, 'c')) ? ($qty - 32) * 5 / 9 : $qty;
+    return ($c >= -40 && $c <= 55) ? ['tempC' => round($c, 1)] : [];
+}
+
 /** Metric name -> [target field, type]. Exact first, then heuristic (robust against app versions). */
 function hi_map_metric(string $name): ?array {
     static $EXACT = [
@@ -509,6 +528,11 @@ function hi_parse(array $data, string $lang = SERVER_SOURCE_LANGUAGE): array {
         // imported but never stored); an ID that is fine already stays exactly as before.
         $uuid = substr((string) preg_replace('/[^A-Za-z0-9_:.-]+/', '-', trim((string) ($w['id'] ?? ($w['uuid'] ?? '')), '{} ')), 0, 120);
         $id = 'hk-' . ($uuid !== '' ? $uuid : ($date . '-' . $type . '-' . (int) $tsA));
+        // Indoors and the air temperature during the workout (Health Auto Export v2: isIndoor / location,
+        // temperature { qty, units "degF"|"degC" }) – for the heat rule of the form estimate.
+        $indoor = ($w['isIndoor'] ?? null) === true || (string) ($w['location'] ?? '') === 'Indoor';
+        $tempIn = $w['temperature'] ?? null;
+        $weather = hi_weather($indoor, is_array($tempIn) ? ($tempIn['qty'] ?? null) : $tempIn, hi_units($w, 'temperature'));
         $newSessions[$id] = [
             'id' => $id, 'plannedId' => null, 'eventId' => null, 'date' => $date,
             'type' => $type, 'title' => hi_title($type, 'appleHealth', $lang),
@@ -517,7 +541,7 @@ function hi_parse(array $data, string $lang = SERVER_SOURCE_LANGUAGE): array {
             'maxHr' => $maxHr !== null ? (int) round($maxHr) : null,
             'kcal'  => $kcal  !== null ? (int) round($kcal)  : null,
             'splits' => [], 'source' => 'apple-health',
-        ];
+        ] + $weather;
     }
 
     return [

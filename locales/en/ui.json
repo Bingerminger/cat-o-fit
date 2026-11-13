@@ -1446,7 +1446,12 @@
     "power": "Power",
     "powerUpTo": "up to {max} W",
     "css": "Reference CSS",
-    "cssValue": "{pace} min/100 m"
+    "cssValue": "{pace} min/100 m",
+    "indoor": "Indoors / treadmill",
+    "airTemp": "Air temperature ({unit})",
+    "indoorNote": "Run indoors – no weather correction in the form estimate.",
+    "tempNote": "{temp} air temperature – too cool to correct the time.",
+    "heatNote": "{temp} air temperature – the form estimate counts the time {pct}% faster, as in cool weather."
   },
   "unitActions": {
     "missedReasons": {
@@ -3834,7 +3839,8 @@
     "pacesFit": "Your planned target paces suit your current form well.",
     "zonesAdjusted": "Training zones & open planned paces adjusted to your form",
     "basisTest": "from your performance test on {date} (threshold {pace})",
-    "basisSmoothedTest": "smoothed over {weeks} weeks · best of the latest week: performance test on {date} (threshold {pace})"
+    "basisSmoothedTest": "smoothed over {weeks} weeks · best of the latest week: performance test on {date} (threshold {pace})",
+    "heatAdjusted": "at {temp}, adjusted {pct}% for the heat"
   },
   "storage": {
     "syncing": "Syncing …",

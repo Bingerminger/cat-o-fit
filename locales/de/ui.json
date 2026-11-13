@@ -1446,7 +1446,12 @@
     "power": "Leistung",
     "powerUpTo": "bis {max} W",
     "css": "Bezug CSS",
-    "cssValue": "{pace} min/100 m"
+    "cssValue": "{pace} min/100 m",
+    "indoor": "Drinnen / Laufband",
+    "airTemp": "Lufttemperatur ({unit})",
+    "indoorNote": "Drinnen gelaufen – in der Formschätzung ohne Wetterkorrektur.",
+    "tempNote": "{temp} Lufttemperatur – zu kühl, um die Zeit zu korrigieren.",
+    "heatNote": "{temp} Lufttemperatur – die Formschätzung rechnet die Zeit um {pct} % schneller, wie bei kühlem Wetter."
   },
   "unitActions": {
     "missedReasons": {
@@ -3834,7 +3839,8 @@
     "pacesFit": "Deine Plan-Zielpaces passen gut zu deiner aktuellen Form.",
     "zonesAdjusted": "Trainingsbereiche & offene Plan-Paces an deine Form angepasst",
     "basisTest": "aus deiner Leistungsdiagnostik vom {date} (Schwelle {pace})",
-    "basisSmoothedTest": "geglättet über {weeks} Wochen · bester Wert der jüngsten Woche: Leistungsdiagnostik vom {date} (Schwelle {pace})"
+    "basisSmoothedTest": "geglättet über {weeks} Wochen · bester Wert der jüngsten Woche: Leistungsdiagnostik vom {date} (Schwelle {pace})",
+    "heatAdjusted": "bei {temp}, um {pct} % hitzebereinigt"
   },
   "storage": {
     "syncing": "Sync …",

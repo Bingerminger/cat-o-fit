@@ -28,8 +28,9 @@ Sammel-Issue: [#6](https://github.com/Bingerminger/cat-o-fit/issues/6).
   (Haupt- und Nebenrennen, kurze Taper und Erholung dazwischen); Kraftblöcke, die der Planphase folgen
   (Grundlage, rennspezifisch, Taper).
 - **Schwellenpace, FTP und CSS** aus einer Leistungsdiagnostik, ohne dass eine zweite Pace-Quelle der
-  Formschätzung widerspricht; **Wetter je Einheit** – Hitze und Laufband zählen in der Formschätzung,
-  nicht nur in einem Hinweis.
+  Formschätzung widerspricht; **Wetter je Einheit** – ein Lauf in der Hitze zählt in der Formschätzung
+  mit seiner Zeit bei kühlem Wetter, nicht nur in einem Hinweis, und Laufband-Läufe bekommen keine
+  Wetterkorrektur.
 - **Verlässlichkeit** – Abgleich zwischen Geräten, Start ohne Netz, der Plan-Generator, Importe sowie
   Zyklus- und Laborwerte an den Rändern; eine überarbeitete Oberfläche (Kontrast, Fokus,
   Bildschirmleser, leere Ansichten).

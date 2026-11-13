@@ -9,6 +9,7 @@
    ========================================================================= */
 
 import { diffDays, weekStart } from './ui.js';
+import { sessionHeatPct } from './heat.js';
 
 import { t } from './i18n.js';
 
@@ -236,12 +237,15 @@ export function estimateVdot(sessions = [], today, days = FORM_WINDOW, { hrZones
     // Hilly runs underestimate form: every metre climbed counts like 6 m on the
     // flat (cautious rule of thumb) once there are more than 5 m per km (TRAIN-49).
     const climb = Number(s.ascentM) > 0 && Number(s.ascentM) / s.distanceKm > 5 ? Number(s.ascentM) : 0;
-    const v = vdotFromPerf(s.distanceKm * 1000 + 6 * climb, s.durationSec);
+    // A run in the heat counts with the time it would have taken in cool weather – the same rule as the
+    // weather hint (heat.js, at most 8 %), only with the air temperature of the run itself; indoors never.
+    const heatPct = sessionHeatPct(s);
+    const v = vdotFromPerf(s.distanceKm * 1000 + 6 * climb, s.durationSec / (1 + heatPct / 100));
     if (!v) return;
     // Calendar week as the person counts weeks (units().weekStart), 0 = the current one – not a block of
     // 7 days back from today, which put Saturday and Sunday of one week into different "weeks".
     const week = Math.round(diffDays(weekStart(s.date), weekStart(today)) / 7);
-    const run = { v, week, date: s.date, distanceKm: s.distanceKm, durationSec: s.durationSec, type: s.type };
+    const run = { v, week, date: s.date, distanceKm: s.distanceKm, durationSec: s.durationSec, type: s.type, ...(heatPct ? { heatPct, tempC: Number(s.tempC) } : {}) };
     (isHardRun(s, z4 && z4.min) ? hard : easy).push(run);
   });
   if (!hard.length && !easy.length) return null;
@@ -263,7 +267,10 @@ function smoothVdot(runs) {
     if (!cur || r.v > cur.v || (r.v === cur.v && r.date > cur.date)) byWeek.set(r.week, r);
   });
   const weekly = [...byWeek.values()].sort((a, b) => a.week - b.week); // week 0 (current) first
-  const basisOf = (r) => ({ date: r.date, distanceKm: r.distanceKm, durationSec: r.durationSec, type: r.type, ...(r.paceSecPerKm ? { paceSecPerKm: r.paceSecPerKm } : {}) });
+  const basisOf = (r) => ({
+    date: r.date, distanceKm: r.distanceKm, durationSec: r.durationSec, type: r.type,
+    ...(r.paceSecPerKm ? { paceSecPerKm: r.paceSecPerKm } : {}), ...(r.heatPct ? { heatPct: r.heatPct, tempC: r.tempC } : {}),
+  });
 
   // Too little history → best single run (previous, robust behaviour) – and the basis is that run, the
   // one the number comes from (the card says "estimated from …").

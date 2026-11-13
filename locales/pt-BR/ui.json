@@ -1446,7 +1446,12 @@
     "power": "Potência",
     "powerUpTo": "até {max} W",
     "css": "Referência CSS",
-    "cssValue": "{pace} min/100 m"
+    "cssValue": "{pace} min/100 m",
+    "indoor": "Em ambiente fechado / esteira",
+    "airTemp": "Temperatura do ar ({unit})",
+    "indoorNote": "Corrida em ambiente fechado – sem correção de clima na estimativa da forma.",
+    "tempNote": "{temp} de temperatura do ar – fresco demais para corrigir o tempo.",
+    "heatNote": "{temp} de temperatura do ar – a estimativa da forma conta o tempo {pct}% mais rápido, como em clima fresco."
   },
   "unitActions": {
     "missedReasons": {
@@ -3834,7 +3839,8 @@
     "pacesFit": "Os seus paces-alvo planejados combinam bem com a sua forma atual.",
     "zonesAdjusted": "Zonas de treino e paces planejados em aberto ajustados à sua forma",
     "basisTest": "do seu teste de desempenho de {date} (limiar {pace})",
-    "basisSmoothedTest": "suavizado ao longo de {weeks} semanas · melhor valor da semana mais recente: teste de desempenho de {date} (limiar {pace})"
+    "basisSmoothedTest": "suavizado ao longo de {weeks} semanas · melhor valor da semana mais recente: teste de desempenho de {date} (limiar {pace})",
+    "heatAdjusted": "a {temp}, corrigida em {pct}% pelo calor"
   },
   "storage": {
     "syncing": "Sincronizando …",

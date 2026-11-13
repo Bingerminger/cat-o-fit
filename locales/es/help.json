@@ -717,7 +717,8 @@
         "0": [
           "Abre Ajustes → “Ubicación y tiempo” y busca tu ciudad.",
           "En el calendario aparecen pequeños iconos del tiempo con la temperatura para los próximos días.",
-          "Con calor, lluvia o tormenta, la sesión afectada muestra una nota adecuada."
+          "Con calor, lluvia o tormenta, la sesión afectada muestra una nota adecuada.",
+          "Una carrera con calor cuenta en la estimación de la forma con su tiempo en clima fresco, usando la temperatura del aire de Apple Health o la que introduces al registrarla. «Interior / cinta» no lleva corrección por el tiempo."
         ],
         "1": "Los datos meteorológicos vienen de Open-Meteo. Sin internet se quedan los últimos datos cargados y la app sigue funcionando con normalidad."
       }

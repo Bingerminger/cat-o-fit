@@ -83,6 +83,7 @@ const SHELL_ASSETS = [
   './js/adapt.js',
   './js/autovolume.js',
   './js/perftest.js',
+  './js/heat.js',
   './js/events.js',
   './js/plans.js',
   './js/plangen.js',

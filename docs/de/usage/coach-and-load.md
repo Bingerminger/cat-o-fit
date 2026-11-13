@@ -115,6 +115,13 @@ wenn es etwas anzupassen gibt):
 4. Die Zeile darunter vergleicht Form und Plan: „Deine Form ist rund **11 s/km schneller** als deine
    Plan-Zielpaces – Zeit, sie zu schärfen.“ (Passt beides zusammen, steht dort „passen gut“.)
 
+**Hitze und Laufband (seit 4.2).** Ein Lauf in der Hitze zählt in der Form mit der Zeit, die er bei kühlem
+Wetter gebraucht hätte – dieselbe Regel wie der Wetterhinweis (ab 20 °C etwa 0,4 % je Grad über 15 °C,
+höchstens 8 %), aber mit der Lufttemperatur während des Laufs: aus Apple Health (Health Auto Export oder die
+Exportdatei) oder beim Erfassen eingetragen. Ein Lauf mit **Drinnen / Laufband** (aus der Uhrdatei oder dem
+Formular) bekommt keine Wetterkorrektur. Die Seite des Laufs sagt, was die Schätzung daraus macht, und die
+Formkarte ergänzt „hitzebereinigt“, wenn der genannte Lauf heiß war.
+
 **Leistungsdiagnostik (seit 4.2).** Unter **Einstellungen → Training → Leistungsdiagnostik** trägst du Werte
 aus einem Labor- oder Feldtest ein, jeweils mit dem Testtag. Eine **Schwellenpace** zählt in der Form wie ein
 harter Lauf an diesem Tag, sechs Wochen lang – die Karte nennt dann den Test als Grundlage, und ihr

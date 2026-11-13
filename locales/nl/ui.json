@@ -1446,7 +1446,12 @@
     "power": "Vermogen",
     "powerUpTo": "tot {max} W",
     "css": "Referentie CSS",
-    "cssValue": "{pace} min/100 m"
+    "cssValue": "{pace} min/100 m",
+    "indoor": "Binnen / loopband",
+    "airTemp": "Luchttemperatuur ({unit})",
+    "indoorNote": "Binnen gelopen – zonder weercorrectie in de vormschatting.",
+    "tempNote": "{temp} luchttemperatuur – te koel om de tijd te corrigeren.",
+    "heatNote": "{temp} luchttemperatuur – de vormschatting rekent de tijd {pct}% sneller, zoals bij koel weer."
   },
   "unitActions": {
     "missedReasons": {
@@ -3834,7 +3839,8 @@
     "pacesFit": "Je geplande streeftempo’s passen goed bij je huidige vorm.",
     "zonesAdjusted": "Trainingszones & openstaande geplande tempo’s aangepast aan je vorm",
     "basisTest": "uit je inspanningstest van {date} (drempel {pace})",
-    "basisSmoothedTest": "afgevlakt over {weeks} weken · beste waarde van de laatste week: inspanningstest van {date} (drempel {pace})"
+    "basisSmoothedTest": "afgevlakt over {weeks} weken · beste waarde van de laatste week: inspanningstest van {date} (drempel {pace})",
+    "heatAdjusted": "bij {temp}, {pct}% gecorrigeerd voor de hitte"
   },
   "storage": {
     "syncing": "Synchroniseren …",

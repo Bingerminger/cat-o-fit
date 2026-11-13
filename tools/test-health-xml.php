@@ -59,6 +59,29 @@ check('Run date from local time', ($w['date'] ?? null) === '2026-09-21', $w['dat
 check('Title in the language of the person (without one: English, de as before)', ($w['title'] ?? null) === 'Run (Health import)'
     && ($rDe['workouts'][0]['title'] ?? null) === 'Lauf (Health-Import)', [$w['title'] ?? null, $rDe['workouts'][0]['title'] ?? null]);
 
+// Indoors and the air temperature during a workout (metadata, since 4.2).
+$xml3 = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<HealthData>
+ <Workout workoutActivityType="HKWorkoutActivityTypeRunning" duration="40" durationUnit="min" totalDistance="8" totalDistanceUnit="km" startDate="2026-07-10 18:00:00 +0200" endDate="2026-07-10 18:40:00 +0200">
+  <MetadataEntry key="HKIndoorWorkout" value="0"/>
+  <MetadataEntry key="HKWeatherTemperature" value="86 degF"/>
+ </Workout>
+ <Workout workoutActivityType="HKWorkoutActivityTypeRunning" duration="30" durationUnit="min" totalDistance="6" totalDistanceUnit="km" startDate="2026-07-11 18:00:00 +0200" endDate="2026-07-11 18:30:00 +0200">
+  <MetadataEntry key="HKIndoorWorkout" value="1"/>
+  <MetadataEntry key="HKWeatherTemperature" value="86 degF"/>
+ </Workout>
+</HealthData>
+XML;
+$file3 = tempnam(sys_get_temp_dir(), 'hxtest_');
+file_put_contents($file3, $xml3);
+$r3 = hx_parse_file($file3);
+@unlink($file3);
+check('Weather: 86 °F outdoors → tempC 30, indoors → indoor without temperature (4.2)',
+    ($r3['workouts'][0]['tempC'] ?? null) === 30.0 && !isset($r3['workouts'][0]['indoor'])
+    && ($r3['workouts'][1]['indoor'] ?? null) === true && !isset($r3['workouts'][1]['tempC'])
+    && !isset($w['tempC']) && !isset($w['indoor']), [$r3['workouts'], $w]);
+
 // Impossible sleep (over 24 h from one source) is discarded.
 $xml2 = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>

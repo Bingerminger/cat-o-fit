@@ -717,7 +717,8 @@
         "0": [
           "Einstellungen → „Standort & Wetter“ öffnen und deine Stadt suchen.",
           "Im Kalender erscheinen für die nächsten Tage kleine Wettersymbole mit Temperatur.",
-          "Bei Hitze, Regen oder Sturm zeigt die jeweilige Einheit einen passenden Hinweis."
+          "Bei Hitze, Regen oder Sturm zeigt die jeweilige Einheit einen passenden Hinweis.",
+          "Lief ein Lauf in der Hitze, zählt er in der Formschätzung mit seiner Zeit bei kühlem Wetter – mit der Lufttemperatur aus Apple Health oder beim Erfassen eingetragen. „Drinnen / Laufband“ bekommt keine Wetterkorrektur."
         ],
         "1": "Wetterdaten kommen von Open-Meteo. Ohne Internet bleibt der zuletzt geladene Stand – die App läuft normal weiter."
       }

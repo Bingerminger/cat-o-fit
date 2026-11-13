@@ -717,7 +717,8 @@
         "0": [
           "Open Settings → “Location & weather” and search for your city.",
           "In the calendar, small weather icons with the temperature appear for the next few days.",
-          "In heat, rain or storms, the session concerned shows a suitable note."
+          "In heat, rain or storms, the session concerned shows a suitable note.",
+          "A run in the heat counts in the form estimate with its cool-weather time – using the air temperature from Apple Health or typed in when you log it. “Indoors / treadmill” gets no weather correction."
         ],
         "1": "Weather data comes from Open-Meteo. Without internet the last loaded data stays in place – the app carries on as normal."
       }

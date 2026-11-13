@@ -9,6 +9,7 @@
 
 import * as store from './storage.js';
 import { uid, nowIso, addDays } from './ui.js';
+import { sessionWeather } from './heat.js';
 
 import { t } from './i18n.js';
 
@@ -60,6 +61,8 @@ export function completeUnit(plan, unit, data) {
     kcal: data.kcal ?? null,
     ascentM: data.ascentM ?? null,
     route: data.route ?? null,
+    // Indoors / air temperature during the session (since 4.2) – only when known.
+    ...sessionWeather(data),
     strengthSets: Array.isArray(data.strengthSets) && data.strengthSets.length ? data.strengthSets : null,
     source: data.source || 'manual',
     notes: data.notes || '',

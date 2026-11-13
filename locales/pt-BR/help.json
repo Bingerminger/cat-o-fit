@@ -717,7 +717,8 @@
         "0": [
           "Abra Configurações → “Local e clima” e procure a sua cidade.",
           "No calendário, pequenos ícones de clima com a temperatura aparecem para os próximos dias.",
-          "Com calor, chuva ou tempestade, o treino em questão mostra um aviso adequado."
+          "Com calor, chuva ou tempestade, o treino em questão mostra um aviso adequado.",
+          "Uma corrida no calor conta na estimativa da forma com o tempo que teria em clima fresco – com a temperatura do ar do Apple Health ou informada ao registrar. “Em ambiente fechado / esteira” não tem correção de clima."
         ],
         "1": "Os dados de clima vêm do Open-Meteo. Sem internet, os últimos dados carregados permanecem – o app segue funcionando normalmente."
       }

@@ -118,6 +118,13 @@ there is something to adjust):
 4. The line below compares form and plan: “Your form is about **11 s/km faster** than your planned
    target paces – time to sharpen them.” (If both match, it says they “suit your current form well”.)
 
+**Heat and treadmill (since 4.2).** A run in the heat counts in the form with the time it would have taken
+in cool weather – the same rule as the weather hint (from 20 °C about 0.4 % per degree above 15 °C, at most
+8 %), but with the air temperature during the run: from Apple Health (Health Auto Export or the export file)
+or typed in when you log the run. A run marked **indoors / treadmill** (from the watch file or the log form)
+gets no weather correction. The run's page says what the estimate made of it, and the form card adds
+“adjusted for the heat” when the run it names was hot.
+
 **Performance test (since 4.2).** Under **Settings → Training → Performance test** you enter values from a lab
 or field test, each with the day of the test. A **threshold pace** counts in the form like one hard run on
 that day, for six weeks – the card then names the test as its basis, and its threshold range contains the

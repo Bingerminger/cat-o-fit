@@ -124,6 +124,30 @@ test('log training: distance typed in miles is stored in km, editing without a c
   assert.equal(store.find('sessions', s.id).distanceKm, 10.0423);
 });
 
+test('log training: air temperature in °F stored in °C, kept when saved unchanged, cleared when emptied; indoors (4.2)', () => {
+  openActivity({ date: today });
+  fieldInput('Distanz (mi)').value = '5';
+  modal.querySelector('input[aria-label="Dauer in Minuten"]').value = '40';
+  fieldInput('Lufttemperatur (°F)').value = '86';
+  button(modal, 'Speichern').click();
+  const s = store.get('sessions')[0];
+  assert.equal(s.tempC, 30);
+  assert.equal('indoor' in s, false);
+  // 21.46 °C shows as 71 °F; saved unchanged it stays 21.46.
+  store.patch('sessions', s.id, { tempC: 21.46 });
+  openActivity({ existing: store.find('sessions', s.id) });
+  assert.equal(String(fieldInput('Lufttemperatur (°F)').value), '71');
+  button(modal, 'Speichern').click();
+  assert.equal(store.find('sessions', s.id).tempC, 21.46);
+  // Indoors: the temperature goes, the flag is stored.
+  openActivity({ existing: store.find('sessions', s.id) });
+  const cb = modal.querySelector('input[aria-label="Drinnen / Laufband"]');
+  cb.checked = true;
+  cb.dispatchEvent({ type: 'change', target: cb });
+  button(modal, 'Speichern').click();
+  assert.deepEqual([store.find('sessions', s.id).indoor, store.find('sessions', s.id).tempC], [true, null]);
+});
+
 test('planned session: log it (planned distance kept), then correct the distance in miles', () => {
   planWithRun();
   session.render(view, 'u-run');

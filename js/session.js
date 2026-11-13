@@ -15,7 +15,7 @@ import {
   fmtDec, fmtNum, fmtMinSec, fmtTemp, fmtElevation, localizeUnits, fmtKmAuto,
 } from './ui.js';
 import {
-  units, kmToShown, kgToShown, celsiusToShown, distanceUnit, paceUnit, weightUnit, toInput, fromInput, paceFromInput,
+  units, kmToShown, kgToShown, celsiusToShown, shownToCelsius, temperatureUnit, distanceUnit, paceUnit, weightUnit, toInput, fromInput, paceFromInput,
 } from './units.js';
 import { sessionLoad, sessionRpeInfo, loadMinutes } from './load.js';
 import { findUnit, saveUnitPatch, completeUnit, linkSession, nextFreeDay, MISSED_REASONS } from './unit-actions.js';
@@ -24,6 +24,7 @@ import { openIcsSheet } from './ics-export.js';
 import { openHealthEntry } from './health.js';
 import { weatherForDate, weatherHint, wmo } from './weather.js';
 import { powerForZone } from './perftest.js';
+import { sessionWeather, sessionHeatPct } from './heat.js';
 import { isProtectedDay, PHASE_META } from './cycle.js';
 import { suggestOffsetUnit, weekLoad, rescheduleCheck, findPlannedMatch } from './planflow.js';
 import { compareToPlan, splitBarPct } from './sollist.js';
@@ -308,6 +309,17 @@ function renderEvaluation(view, plan, unit, ex) {
     }
   }
 
+  // Indoors / air temperature and what the form estimate makes of it (heat.js, since 4.2).
+  if (ex.indoor === true || ex.tempC != null) {
+    const pct = sessionHeatPct(ex);
+    const text = ex.indoor === true ? t('session.indoorNote')
+      : pct ? t('session.heatNote', { temp: fmtTemp(ex.tempC), pct }) : t('session.tempNote', { temp: fmtTemp(ex.tempC) });
+    view.appendChild(el('div', { class: 'card card--flat mt-2 row gap-2', style: { alignItems: 'flex-start' } }, [
+      el('span', { html: iconSvg(ex.indoor === true ? 'home' : 'sun'), style: { color: 'var(--accent)', width: '18px', flex: '0 0 auto' } }),
+      el('div', { class: 'muted', style: { fontSize: '.84rem' }, text }),
+    ]));
+  }
+
   // Time in zones
   if (ex.timeInZones) view.appendChild(zonesCard(ex.timeInZones));
 
@@ -471,6 +483,18 @@ export function openActivitySheet({ date = todayStr(), existing = null } = {}) {
   const { minI, secI } = dur;
   const avgI = input({ type: 'number', min: '30', max: '230', inputmode: 'numeric', value: ex.avgHr ?? '', placeholder: t('session.avgHrShort') });
   const notesI = textarea({ value: ex.notes ?? '', placeholder: t('session.howDidItGo') });
+  // Runs: indoors (treadmill) and the air temperature during the run – the form estimate takes the heat
+  // out of the time (heat.js); indoors never (since 4.2).
+  const indoorCb = el('input', { type: 'checkbox', checked: ex.indoor === true, 'aria-label': t('session.indoor') });
+  const tempI = input({ type: 'number', inputmode: 'decimal', step: '1', value: ex.tempC != null ? Math.round(celsiusToShown(ex.tempC)) : '', placeholder: temperatureUnit(), 'aria-label': t('session.airTemp', { unit: temperatureUnit() }) });
+  const weatherRow = el('div', { class: 'field__row' }, [
+    field(t('session.airTemp', { unit: temperatureUnit() }), tempI),
+    el('label', { class: 'row gap-2', style: { alignItems: 'center', cursor: 'pointer', marginTop: '22px' } }, [indoorCb, el('span', { text: t('session.indoor') })]),
+  ]);
+  const tempShown = tempI.value;   // left as shown, the stored value stays (no drift through rounding)
+  const syncIndoor = () => { tempI.disabled = indoorCb.checked; };
+  indoorCb.addEventListener('change', syncIndoor);
+  syncIndoor();
 
   let rpe = ex.rpe || 0;
   const rpeEl = rpeScale(rpe, (v) => { rpe = v; });
@@ -482,6 +506,7 @@ export function openActivitySheet({ date = todayStr(), existing = null } = {}) {
   const refresh = () => {
     type = typeSel.value;
     distField.hidden = !DISTANCE_CATS.has(distanceCat(type));
+    weatherRow.hidden = distanceCat(type) !== 'run';
     matchBox.innerHTML = '';
     linkTo = existing ? null : findPlannedMatch(store.get('plans'), { date: dateI.value, type });
     if (linkTo) {
@@ -507,6 +532,18 @@ export function openActivitySheet({ date = todayStr(), existing = null } = {}) {
       paceSecPerKm: km && durationSec && distanceCat(type) === 'run' ? Math.round(durationSec / km) : null,
       avgHr: hr >= 30 && hr <= 230 ? hr : null, rpe: rpe || null, notes: notesI.value.trim(),
     };
+    // Weather of a run: kept only when given; on editing an emptied field clears it.
+    const weather = weatherRow.hidden ? {} : sessionWeather({
+      indoor: indoorCb.checked,
+      tempC: String(tempI.value ?? '').trim() === '' ? null
+        : (String(tempI.value) === String(tempShown) && ex.tempC != null ? ex.tempC
+          : Math.round(shownToCelsius(Number(String(tempI.value).replace(',', '.'))) * 10) / 10),
+    });
+    Object.assign(data, weather);
+    if (existing && !weatherRow.hidden) {
+      if (!('indoor' in weather) && existing.indoor != null) data.indoor = null;
+      if (!('tempC' in weather) && existing.tempC != null) data.tempC = null;
+    }
     if (existing) {
       store.patch('sessions', existing.id, { ...data, type, date: dateI.value, title: textFromField(titleI.value, ex.title) || typeMeta(type).label });
     } else if (linkTo && linkOn) {
@@ -534,6 +571,7 @@ export function openActivitySheet({ date = todayStr(), existing = null } = {}) {
         distField,
       ]),
       field(t('session.avgHr'), avgI),
+      weatherRow,
       field(t('session.effortRpe'), rpeEl),
       field(t('session.notes'), notesI),
       matchBox,

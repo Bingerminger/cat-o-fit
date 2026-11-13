@@ -1446,7 +1446,12 @@
     "power": "Puissance",
     "powerUpTo": "jusqu’à {max} W",
     "css": "Référence CSS",
-    "cssValue": "{pace} min/100 m"
+    "cssValue": "{pace} min/100 m",
+    "indoor": "En intérieur / tapis",
+    "airTemp": "Température de l’air ({unit})",
+    "indoorNote": "Course en intérieur – sans correction météo dans l’estimation de la forme.",
+    "tempNote": "{temp} de température de l’air – trop frais pour corriger le temps.",
+    "heatNote": "{temp} de température de l’air – l’estimation de la forme compte le temps {pct} % plus rapide, comme par temps frais."
   },
   "unitActions": {
     "missedReasons": {
@@ -3834,7 +3839,8 @@
     "pacesFit": "Tes allures cibles prévues correspondent bien à ta forme actuelle.",
     "zonesAdjusted": "Zones d’entraînement et allures prévues des séances à venir adaptées à ta forme",
     "basisTest": "d’après ton test de performance du {date} (seuil {pace})",
-    "basisSmoothedTest": "moyenne lissée sur {weeks} semaines · meilleure valeur de la dernière semaine : test de performance du {date} (seuil {pace})"
+    "basisSmoothedTest": "moyenne lissée sur {weeks} semaines · meilleure valeur de la dernière semaine : test de performance du {date} (seuil {pace})",
+    "heatAdjusted": "à {temp}, corrigée de {pct} % pour la chaleur"
   },
   "storage": {
     "syncing": "Synchronisation …",

@@ -28,8 +28,8 @@ Tracking issue: [#6](https://github.com/Bingerminger/cat-o-fit/issues/6).
   races, short tapers and recovery in between); strength blocks that follow the plan phase (base,
   race-specific, taper).
 - **Threshold pace, FTP and CSS** from a performance test, without a second pace source contradicting
-  the fitness estimate; **weather per session** – heat and treadmill runs count in the fitness estimate,
-  not just in a hint.
+  the fitness estimate; **weather per session** – a run in the heat counts in the fitness estimate with
+  its cool-weather time, not just in a hint, and treadmill runs get no weather correction.
 - **Reliability** – sync between devices, starting without network, the plan generator, imports and
   cycle and lab values at the edges; a reworked interface (contrast, focus, screen readers, empty views).
 - **Technical** – `storage.js` split into modules behind a facade (with a load test), a faster admin
