@@ -173,7 +173,7 @@ All optional (Docker; with Option 3 through the server configuration):
 | Variable | Effect |
 |---|---|
 | `TZ` | Time zone, for example `Europe/Vienna` or `America/New_York`. Applies to PHP and to the times in the calendar files. Without it: `Europe/Berlin`. |
-| `CATOFIT_TZ` | Like `TZ`, but only for the calendar files – it takes precedence if `TZ` means something else on the host. |
+| `CATOFIT_TZ` | Like `TZ`, but only for the calendar files and the calendar day of Health Connect values – it takes precedence if `TZ` means something else on the host. |
 | `CATOFIT_BASIC_AUTH=1` with `CATOFIT_AUTH_USER` and `CATOFIT_AUTH_PASSWORD` | Sign-in (basic auth) in front of the whole app. The health ingest endpoint (with its own key) and the health check stay reachable. |
 | `CATOFIT_ALLOWED_HOSTS` | Comma-separated host names, for example `fit.example.org` – the API rejects requests to other names (protection against DNS rebinding). |
 

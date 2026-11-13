@@ -1,6 +1,6 @@
 <?php
 /**
- * icstz.php — time zone of the calendar files (pure functions, testable).
+ * icstz.php — time zone, text escaping and line folding of the calendar files (pure functions, testable).
  *
  * The times of the sessions are local times ("run at 18:00"). ics.php writes them with
  * TZID and supplies the matching VTIMEZONE. Which zone that is is determined by the
@@ -12,6 +12,45 @@
  */
 
 declare(strict_types=1);
+
+/** Escapes special characters in TEXT values (backslash, comma, semicolon, newline); other control characters
+ *  except the tab have no place in a TEXT value (RFC 5545 §3.3.11) and are left out. */
+function ics_escape(string $text): string
+{
+    $text = str_replace('\\', '\\\\', $text);
+    $text = str_replace(["\r\n", "\r", "\n"], '\\n', $text);
+    $text = preg_replace('/[\x00-\x08\x0B-\x1F\x7F]/', '', $text) ?? $text;
+    $text = str_replace(',', '\\,', $text);
+    $text = str_replace(';', '\\;', $text);
+    return $text;
+}
+
+/**
+ * Line folding per RFC 5545: lines may be at most 75 octets long (without the line break).
+ * A character that would no longer fit whole starts the next line – never a break inside a
+ * multi-byte UTF-8 character (an emoji takes four octets).
+ */
+function ics_fold(string $line): string
+{
+    $out = '';
+    $len = strlen($line);
+    $count = 0;
+    for ($i = 0; $i < $len; $i++) {
+        $byte = $line[$i];
+        $o = ord($byte);
+        // At the start of a UTF-8 character (no continuation byte 10xxxxxx): does it still fit?
+        if (($o & 0xC0) !== 0x80) {
+            $charLen = $o < 0x80 ? 1 : ($o >= 0xF0 ? 4 : ($o >= 0xE0 ? 3 : 2));
+            if ($count + $charLen > 75) {
+                $out .= "\r\n ";   // The continuation line starts with a space.
+                $count = 1;
+            }
+        }
+        $out .= $byte;
+        $count++;
+    }
+    return $out;
+}
 
 /** Time zone for DTSTART;TZID=… and the VTIMEZONE. */
 function ics_timezone(): string

@@ -14,7 +14,8 @@ monitoring, the Docker healthcheck) or by older app versions on devices. The fol
   `error` is English and only a fallback – the app translates the code (`server.<code>` in its
   language catalogs). Further values of an error (for example `retryAfter`, `left`, `action`,
   `area`) arrive as additional fields of the same response. Clients should therefore branch on the
-  HTTP status and `code`, not on the wording of `error`.
+  HTTP status and `code`, not on the wording of `error`. One exception: `?action=ics` answers errors
+  as `text/plain` in the person's language (the link opens in a browser or calendar, not in the app).
 
 ## For external programs
 
@@ -57,6 +58,8 @@ RMSSD), `steps` (`count`), `active_calories` (`calories`), `sleep`
 the server (`CATOFIT_TZ`/`TZ`). Periods land in the private area `cycle` (only what the source
 sends; period starts already logged ± 3 days stay).
 
+**Food lookup:** `GET ?action=foodfacts&q=<text>` (text search, at most 64 characters) returns
+`{found, name, kcal100, protein100, source, samples}` – the median of at least two products.
 **Barcode lookup** (since v3.21.0): `GET ?action=foodfacts&code=<EAN>` returns, like the
 text search, `{found, name, kcal100, protein100}`; only valid barcodes (8, 12, 13 or 14 digits
 with a check digit) go to Open Food Facts, anything else answers immediately with `found: false`.
@@ -106,12 +109,16 @@ set up the subscription once more (“Copy subscription link” in the “Export
 | `POST ?action=logout` | End the session |
 | `GET ?action=session` | `{ok, user, role}` of the running session (`user: null` without a session) |
 | `POST ?action=set-pin` with `{"user", "pin", "old"?}` | own PIN (with the previous one) or, as an admin, that of a member |
-| `POST ?action=ics-token` with `{"user"}` | Key for calendar links |
+| `POST ?action=ics-token` with `{"user", "rotate"?}` | Key for calendar links: `{ok, token}`; with `"rotate": true` a new key (old links stop working) |
+| `POST ?action=health-import` (multipart, field `file`: ZIP of the Apple Health export or its `export.xml`) | Full import, evaluated on the server and taken over by the app: `{ok, summary: {workouts, healthDays, sleepNights, periods}, workouts, health, periods}` |
+| `POST ?action=delete-user&user=<id>` | Delete a person's data (admin session): `{ok, deleted}` |
 
 - **Private areas** (`cycle`, `labs`, `supplements`) are read and written only by the signed-in
   person themselves: without a session `401` (`code: session`), someone else's session `403` (`code: private`).
 - **Writing calls** require `Content-Type: application/json` (otherwise `415`, `code: content-type`) and are
-  rejected when they come from other sites (`Sec-Fetch-Site`, `403`, `code: origin`).
+  rejected when they come from other sites (`Sec-Fetch-Site`, `403`, `code: origin`). Two exceptions:
+  `health-import` is a file upload (multipart), and `health-ingest` takes any content type – it is not
+  opened with the session cookie but with the person's key, so bridge apps can send what they send.
 - **Admin actions** (`delete-user`, new members, roles, removing members, replacing the
   family) require an admin session (`delete-user` answers `403`, `code: admin`; family ops that
   lack it are listed in `rejected`, see above).
@@ -126,5 +133,8 @@ set up the subscription once more (“Copy subscription link” in the “Export
   areas and without PIN hashes; `teams` is missing in files from before v3.20.0 (the teams
   are then kept when restoring).
 - **Tables (CSV)** from “Settings → Data & backup”: sessions, body values, lab values and
-  food diary, one file each – semicolon as separator, decimal comma, UTF-8 with BOM. Meant for
-  further processing; only the backup can be restored.
+  food diary, one file each, UTF-8 with BOM, date as `YYYY-MM-DD`. The format follows the language: with
+  a decimal comma (German, French …) semicolon-separated, with a decimal point (English)
+  comma-separated. Meant for further processing; only the backup can be restored.
+- **Logical view** (debug and older clients): `GET ?area=<area>&user=<id>` (or `&scope=family`) returns
+  `{ok, area, data}` – the area as a list or object, with the same access rules as `changes`.

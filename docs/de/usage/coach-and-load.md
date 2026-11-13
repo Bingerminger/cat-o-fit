@@ -35,7 +35,8 @@ Zahlenfriedhof. Das ⓘ in der Karte öffnet die Erklärung.
 
 > 💡 **Alle Sportarten zählen mit** – Kraft, Fußball, Rad und Schwimmen genauso wie Laufen.
 > Die Werte sind **Belastungspunkte (AU)**: Minuten × Anstrengung (RPE 1–10). Ohne erfasste Dauer
-> zählt die geplante Dauer der Einheit, erst dann eine Pauschale von 30 Minuten. Fehlt die
+> ergibt die Strecke die Minuten (Laufen 6 min/km, Rad 2,5, Rudern 5, Gehen 12, Wandern 15,
+> Schwimmen 25), danach zählt die geplante Dauer der Einheit, erst dann eine Pauschale von 30 Minuten. Fehlt die
 > Anstrengung, schätzt die App sie aus deiner **Ø-Herzfrequenz** im Verhältnis zu deiner Max-HF
 > (bei Intervallen, Tempo und Wettkampf nie unter dem typischen Wert der Einheit), sonst gilt dieser
 > typische Wert. Importierte Trainings fragt „Heute“ kurz nach: **„Wie hart war’s?“** – ein Tipp

@@ -10,7 +10,7 @@
 import * as store from './storage.js';
 import {
   el, icon, iconSvg, navigate, toast, openSheet, closeSheet, sectionHead, emptyState,
-  field, input, select, segmented, fmtDate, fmtDateLong, todayStr,
+  field, input, select, segmented, fmtDate, fmtDateLong, todayStr, toDateStr,
 } from './ui.js';
 import { setHeader } from './router.js';
 import { progressTabs } from './nav.js';
@@ -27,6 +27,13 @@ const TYPE_META = {
   goal:  { get label() { return t('reports.typeGoal'); }, icon: 'flag', color: '#18b48a' },
 };
 function tMeta(type) { return TYPE_META[type] || TYPE_META.month; }
+
+/** Day a report was created, on the device's calendar: `createdAt` is a UTC timestamp – its first ten characters
+    are the day before in Berlin between midnight and 1 a.m. */
+export function createdDay(iso) {
+  const d = new Date(iso || '');
+  return Number.isNaN(d.getTime()) ? String(iso || '').slice(0, 10) : toDateStr(d);
+}
 
 export function render(view) {
   setHeader({
@@ -58,7 +65,7 @@ export function render(view) {
       el('span', { class: 'type-icon type-icon--sm', style: { background: 'var(--accent-soft)', color: m.color }, html: iconSvg(m.icon) }),
       el('div', { class: 'list-item__body' }, [
         el('div', { class: 'list-item__title', text: r.title }),
-        el('div', { class: 'list-item__sub', text: `${m.label}${r.subtitle ? ' · ' + r.subtitle : ''} · ${t('reports.created', { date: fmtDate((r.createdAt || '').slice(0, 10)) })}` }),
+        el('div', { class: 'list-item__sub', text: `${m.label}${r.subtitle ? ' · ' + r.subtitle : ''} · ${t('reports.created', { date: fmtDate(createdDay(r.createdAt)) })}` }),
       ]),
       el('span', { class: 'list-item__chev', html: iconSvg('chevronRight') }),
     ]));
@@ -249,7 +256,7 @@ function buildCertificate(sheet, r) {
     ]));
   }));
   if (r.highlights?.length) sheet.appendChild(badgeTiles(r.highlights));
-  sheet.appendChild(el('div', { class: 'cert__foot', text: t('reports.awardedOn', { date: fmtDateLong((r.createdAt || '').slice(0, 10)) }) }));
+  sheet.appendChild(el('div', { class: 'cert__foot', text: t('reports.awardedOn', { date: fmtDateLong(createdDay(r.createdAt)) }) }));
   sheet.appendChild(el('div', { class: 'cert__seal-note', text: t('reports.permanentRecordCert') }));
 }
 
@@ -285,6 +292,6 @@ function buildReport(sheet, r, m) {
     body.appendChild(badgeTiles(r.highlights));
   }
 
-  body.appendChild(el('div', { class: 'report-foot', text: t('reports.createdOn', { date: fmtDateLong((r.createdAt || '').slice(0, 10)) }) }));
+  body.appendChild(el('div', { class: 'report-foot', text: t('reports.createdOn', { date: fmtDateLong(createdDay(r.createdAt)) }) }));
   sheet.appendChild(body);
 }

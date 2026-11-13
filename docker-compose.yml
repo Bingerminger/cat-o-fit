@@ -29,7 +29,7 @@ services:
     environment:
       # Time zone for PHP and the calendar files (e.g. Europe/Vienna, America/New_York).
       - TZ=Europe/Berlin
-      # Optional: a time zone only for the calendar files, if TZ means something else on the host.
+      # Optional: a time zone only for the calendar files and the day of Health Connect values, if TZ means something else on the host.
       # - CATOFIT_TZ=Europe/Berlin
       # Optional: login in front of the whole app (Basic Auth). Without these lines it behaves as before.
       # - CATOFIT_BASIC_AUTH=1

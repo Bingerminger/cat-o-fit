@@ -47,6 +47,13 @@ function textCell(v) {
   return /["\n\r]/.test(s) || s.includes(fieldSeparator()) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 
+/** Date cell: a calendar date as YYYY-MM-DD; anything else (a record from a backup or the API) as text –
+    defused like any text, so it neither becomes a formula nor shifts the columns. */
+function dateCell(v) {
+  const s = v == null ? '' : String(v);
+  return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : textCell(s);
+}
+
 /** Table from columns `[heading, (row) => cell]` – cells already as text. */
 export function toCsv(rows, columns) {
   const sep = fieldSeparator();
@@ -60,7 +67,7 @@ const live = (list) => (list || []).filter((x) => x && !x.deleted && !x._kind &&
 /** Workouts with duration, distance, heart rate, effort and load points. */
 export function sessionsCsv(sessions) {
   return toCsv(live(sessions), [
-    [t('csvExport.date'), (s) => s.date],
+    [t('csvExport.date'), (s) => dateCell(s.date)],
     [t('csvExport.sport'), (s) => textCell(typeMeta(s.type).label)],
     [t('csvExport.title'), (s) => textCell(s.title || '')],
     [t('csvExport.durationMin'), (s) => numCell(s.durationSec ? s.durationSec / 60 : null, 1)],
@@ -80,7 +87,7 @@ export function sessionsCsv(sessions) {
 /** Body measurements per day. */
 export function healthCsv(health) {
   return toCsv(live(health), [
-    [t('csvExport.date'), (h) => h.date],
+    [t('csvExport.date'), (h) => dateCell(h.date)],
     [t('csvExport.weight', { unit: weightUnit() }), (h) => numCell(shown(h.weight, kgToShown, 1))],
     [t('csvExport.bodyFatPct'), (h) => numCell(h.bodyFat)],
     [t('csvExport.muscleMass', { unit: weightUnit() }), (h) => numCell(shown(h.muscleMass, kgToShown, 1))],
@@ -102,7 +109,7 @@ export function healthCsv(health) {
     lab units the person chose. */
 export function labsCsv(labs) {
   return toCsv(live(labs), [
-    [t('csvExport.date'), (l) => l.date],
+    [t('csvExport.date'), (l) => dateCell(l.date)],
     [t('csvExport.analyte'), (l) => textCell((ANALYTES[l.analyte] && ANALYTES[l.analyte].label) || l.analyte || '')],
     [t('csvExport.result'), (l) => numCell(labShown(l, l.value))],
     [t('csvExport.unit'), (l) => textCell(ANALYTES[l.analyte] ? unitLabel(shownUnit(l.analyte)) : l.unit || '')],
@@ -115,7 +122,7 @@ export function labsCsv(labs) {
 /** Food diary (without the "day complete" markers). */
 export function diaryCsv(diary) {
   return toCsv(live(diary), [
-    [t('csvExport.date'), (d) => d.date],
+    [t('csvExport.date'), (d) => dateCell(d.date)],
     [t('csvExport.meal'), (d) => textCell(d.title || '')],
     ['kcal', (d) => numCell(d.kcal)],
     [t('csvExport.proteinG'), (d) => numCell(d.protein)],

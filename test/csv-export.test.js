@@ -47,6 +47,20 @@ test('Texts: separators and quotation marks escaped, formulas defused', () => {
   assert.ok(toCsv([], [['A', () => '']]).startsWith('﻿A'), 'empty table: header only');
 });
 
+test('Dates: a record whose date is not a calendar date is defused like text', () => {
+  const rows = lines(sessionsCsv([
+    { id: 'a', date: '=1+1', type: 'easy' },
+    { id: 'b', date: '2026-11-03;"x"', type: 'easy' },
+    { id: 'c', date: '2026-11-04', type: 'easy' },
+  ]));
+  const cols = (r) => r.match(/("([^"]|"")*"|[^;]*)(;|$)/g).filter((c) => c !== '').length;
+  assert.ok(rows.some((r) => r.startsWith("'=1+1;")), rows.join('\n'));
+  assert.ok(rows.some((r) => r.startsWith('"2026-11-03;""x""";')), rows.join('\n'));
+  assert.equal(new Set(rows.slice(1).map(cols)).size, 1, 'every row has the same number of columns');
+  assert.ok(rows.some((r) => r.startsWith('2026-11-04;')));
+  for (const f of [healthCsv, labsCsv, diaryCsv]) assert.ok(lines(f([{ id: 'x', date: '=1+1', analyte: 'ferritin', value: 1 }]))[1].startsWith("'=1+1"), f.name);
+});
+
 test('Body values, labs (with own reference range) and diary', () => {
   const h = lines(healthCsv([{ date: '2026-09-01', weight: 72.4, bodyFat: 24.7, hrv: 48, hrvMethod: 'rmssd', sleepHours: 7.5 }]));
   assert.match(h[1], /^2026-09-01;72,4;24,7;;;;;48;RMSSD;;7,5;/);

@@ -97,5 +97,21 @@ check('Number: decimal comma (de, fr), decimal point (en), no trailing zeros', s
     && server_number(21.0975, 2, 'en') === '21.1' && server_number(10.0, 1, 'fr') === '10' && server_number(8.25, 2, 'nl') === '8,25',
     [server_number(21.0975, 2, 'de'), server_number(21.0975, 2, 'en'), server_number(10.0, 1, 'fr')]);
 
+// --- Line folding and control characters (4.2) ------------------------------
+$maxOctets = function (string $folded): int { return max(array_map('strlen', explode("\r\n", $folded))); };
+$worst = 0; $broken = false;
+foreach (['a', 'ä', '€', '🏃'] as $ch) {
+    for ($pre = 60; $pre <= 80; $pre++) {
+        $line = 'SUMMARY:' . str_repeat('x', $pre) . $ch . str_repeat('y', 90) . $ch . 'z';
+        $f = ics_fold($line);
+        $worst = max($worst, $maxOctets($f));
+        if (str_replace("\r\n ", '', $f) !== $line || !mb_check_encoding(implode('', explode("\r\n", $f)), 'UTF-8')) $broken = true;
+        foreach (explode("\r\n", $f) as $part) if (!mb_check_encoding($part, 'UTF-8')) $broken = true;
+    }
+}
+check('folding: no line over 75 octets, also with a 4-byte emoji at any position', $worst <= 75, $worst);
+check('folding: unfolded again it is the same text, no character split', !$broken);
+check('control characters except tab are left out of TEXT values', ics_escape("Lauf\x07 mit\x0B Gruppe\t, 5;6") === "Lauf mit Gruppe\t\\, 5\\;6", ics_escape("Lauf\x07 mit\x0B Gruppe\t, 5;6"));
+
 echo "\nics: {$pass} ok, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

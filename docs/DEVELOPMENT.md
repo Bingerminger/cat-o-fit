@@ -669,8 +669,9 @@ docker compose build && docker compose up -d  # build it yourself
 The container deliberately starts with an **empty instance** (first-time setup wizard);
 developer seeds (`tools/seed/`) and runtime data do not go into the image (`.dockerignore`).
 Optional: `CATOFIT_BASIC_AUTH=1` with `CATOFIT_AUTH_USER`/`CATOFIT_AUTH_PASSWORD` (sign-in in front of
-the app; the entrypoint creates the Apache configuration), `CATOFIT_ALLOWED_HOSTS` and `TZ`
-(time zone for PHP and the calendar files).
+the app; the entrypoint creates the Apache configuration), `CATOFIT_ALLOWED_HOSTS`, `TZ`
+(time zone for PHP and the calendar files) and `CATOFIT_TZ` (the same only for the calendar files and the
+day of Health Connect values, when `TZ` means something else on the host).
 
 There is no build step – the files are served unchanged.
 

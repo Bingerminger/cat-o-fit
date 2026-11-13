@@ -18,7 +18,7 @@ services:
         protocol: tcp
     environment:
       TZ: $TZ
-      # Optional: a time zone only for the calendar files, if TZ means something else on the host.
+      # Optional: a time zone only for the calendar files and the day of Health Connect values, if TZ means something else on the host.
       CATOFIT_TZ: ""
       # Optional: sign-in in front of the whole app. Set CATOFIT_BASIC_AUTH to 1 and fill in user and password.
       CATOFIT_BASIC_AUTH: ""
@@ -38,8 +38,8 @@ services:
             de_DE: Zeitzone für die App und die Kalender-Dateien, z. B. Europe/Vienna oder America/New_York.
         - container: CATOFIT_TZ
           description:
-            en_US: Optional. Like TZ, but only for the calendar files – it takes precedence if TZ means something else on the host. Leave empty to use TZ.
-            de_DE: Optional. Wie TZ, aber nur für die Kalender-Dateien – hat Vorrang, wenn TZ auf dem Host etwas anderes meint. Leer lassen, um TZ zu nutzen.
+            en_US: Optional. Like TZ, but only for the calendar files and the day of Health Connect values – it takes precedence if TZ means something else on the host. Leave empty to use TZ.
+            de_DE: Optional. Wie TZ, aber nur für die Kalender-Dateien und den Tag der Health-Connect-Werte – hat Vorrang, wenn TZ auf dem Host etwas anderes meint. Leer lassen, um TZ zu nutzen.
         - container: CATOFIT_BASIC_AUTH
           description:
             en_US: Optional. Set to 1 to put a sign-in (basic auth) in front of the whole app. User and password below are then required. Recommended if the app is reachable from outside your home network.

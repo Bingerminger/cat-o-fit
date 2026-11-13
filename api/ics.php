@@ -105,39 +105,7 @@ $appUrl  = $scheme . '://' . $host . rtrim($appBase, '/');
 // Helper functions for RFC 5545-compliant output.
 // ---------------------------------------------------------------------------
 
-/** Escapes special characters in TEXT values (backslash, comma, semicolon, newline). */
-function ics_escape(string $text): string
-{
-    $text = str_replace('\\', '\\\\', $text);
-    $text = str_replace(["\r\n", "\r", "\n"], '\\n', $text);
-    $text = str_replace(',', '\\,', $text);
-    $text = str_replace(';', '\\;', $text);
-    return $text;
-}
-
-/**
- * Line folding per RFC 5545: lines may be at most 75 octets long.
- * We fold conservatively at ~73 bytes and never break inside a
- * multi-byte UTF-8 character.
- */
-function ics_fold(string $line): string
-{
-    $out = '';
-    $len = strlen($line);
-    $count = 0;
-    for ($i = 0; $i < $len; $i++) {
-        $byte = $line[$i];
-        // Detect the start of a UTF-8 character (no continuation byte 10xxxxxx).
-        $isCharStart = (ord($byte) & 0xC0) !== 0x80;
-        if ($count >= 73 && $isCharStart) {
-            $out .= "\r\n ";   // The continuation line starts with a space.
-            $count = 1;
-        }
-        $out .= $byte;
-        $count++;
-    }
-    return $out;
-}
+// ics_escape() and ics_fold() live in icstz.php (pure, tested in tools/test-ics.php).
 
 /** Local time (zone per ics_timezone()) as YYYYMMDDTHHMMSS for DTSTART;TZID=... */
 function dt_local(string $date, string $time): string

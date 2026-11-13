@@ -35,7 +35,8 @@ numbers. The ⓘ in the card opens the explanation.
 
 > 💡 **All sports count** – strength, football, cycling and swimming just like running.
 > The values are **load points (AU)**: minutes × effort (RPE 1–10). Without a recorded duration, the
-> planned duration of the session counts, and only then a flat 30 minutes. If the effort is missing,
+> distance gives the minutes (running 6 min/km, cycling 2.5, rowing 5, walking 12, hiking 15, swimming
+> 25), then the planned duration of the session counts, and only then a flat 30 minutes. If the effort is missing,
 > the app estimates it from your **average heart rate** relative to your max HR (for intervals, tempo and
 > races never below the typical value for the session), otherwise that typical value applies. For
 > imported workouts, “Today” briefly asks: **“How hard was it?”** – one tap is enough. A session’s
