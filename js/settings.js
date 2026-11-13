@@ -519,36 +519,48 @@ function perfTestCard(p) {
     ]),
     el('div', { class: 'dim', style: { fontSize: '.78rem', marginBottom: '6px' }, text: t('settings.perfTest.intro') }),
   ]);
-  const row = ({ label, value, placeholder, inputmode, dateKey, onSave, note }) => {
+  // Saving updates the field's note in place – no redraw of the page, so moving on from the value to the
+  // date of the test keeps the focus where it is.
+  const row = ({ label, value, placeholder, inputmode, dateKey, onSave, noteOf }) => {
     const valueI = input({ value: value ?? '', placeholder, inputmode, 'aria-label': label });
     const dateI = input({ type: 'date', value: p[dateKey] || '', max: today, 'aria-label': t('settings.perfTest.dateOf', { what: label }) });
-    const save = () => { onSave(valueI.value.trim(), dateI.value || today); refreshView(); };
+    const note = el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '-4px', marginBottom: '6px' }, text: noteOf(p) });
+    const save = () => {
+      onSave(String(valueI.value ?? '').trim(), dateI.value || today);
+      const now = store.profile();
+      dateI.value = now[dateKey] || '';
+      note.textContent = noteOf(now);
+    };
     valueI.addEventListener('change', save);
-    dateI.addEventListener('change', () => { if (valueI.value.trim()) save(); });
+    dateI.addEventListener('change', () => { if (String(valueI.value ?? '').trim()) save(); });
     card.appendChild(field(label, el('div', { class: 'row gap-2' }, [valueI, dateI])));
-    if (note) card.appendChild(el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '-4px', marginBottom: '6px' }, text: note }));
+    card.appendChild(note);
   };
-  // Threshold pace in the person's unit; counts in the form estimate for six weeks.
-  const tv = testValidity(p.thresholdPaceDate, today);
+  // Threshold pace in the person's unit (the pace held for about an hour); counts in the form estimate for six weeks.
   row({
     label: t('settings.perfTest.threshold', { unit: paceUnit() }), value: p.thresholdPaceSecPerKm ? fmtMinSec(paceToInput(p.thresholdPaceSecPerKm)) : '',
     placeholder: '4:45', inputmode: 'numeric', dateKey: 'thresholdPaceDate',
     onSave: (v, date) => {
-      const sec = paceFromInput(parseMinSec(v), p.thresholdPaceSecPerKm);
+      const sec = paceFromInput(parseMinSec(v), store.profile().thresholdPaceSecPerKm);
       store.setProfile(sec ? { thresholdPaceSecPerKm: sec, thresholdPaceDate: date } : { thresholdPaceSecPerKm: null, thresholdPaceDate: null });
     },
-    note: !p.thresholdPaceSecPerKm || !tv ? t('settings.perfTest.thresholdHint')
-      : tv.counts ? t('settings.perfTest.countsUntil', { date: fmtDate(tv.until) }) : t('settings.perfTest.expired'),
+    noteOf: (q) => {
+      const tv = testValidity(q.thresholdPaceDate, today);
+      return !q.thresholdPaceSecPerKm || !tv ? t('settings.perfTest.thresholdHint')
+        : tv.counts ? t('settings.perfTest.countsUntil', { date: fmtDate(tv.until) }) : t('settings.perfTest.expired');
+    },
   });
   // FTP in watts, with the power zones it gives.
-  const zones = powerZones(p.ftpW);
   row({
     label: t('settings.perfTest.ftp'), value: p.ftpW || '', placeholder: '220', inputmode: 'numeric', dateKey: 'ftpDate',
     onSave: (v, date) => {
       const w = Math.round(Number(v));
       store.setProfile(w >= 50 && w <= 600 ? { ftpW: w, ftpDate: date } : { ftpW: null, ftpDate: null });
     },
-    note: zones.length ? zones.map((z) => (z.min ? t('settings.perfTest.powerZone', { zone: z.zone, min: z.min, max: z.max }) : t('settings.perfTest.powerZoneUpTo', { zone: z.zone, max: z.max }))).join(' · ') : t('settings.perfTest.ftpHint'),
+    noteOf: (q) => {
+      const zones = powerZones(q.ftpW);
+      return zones.length ? zones.map((z) => (z.min ? t('settings.perfTest.powerZone', { zone: z.zone, min: z.min, max: z.max }) : t('settings.perfTest.powerZoneUpTo', { zone: z.zone, max: z.max }))).join(' · ') : t('settings.perfTest.ftpHint');
+    },
   });
   // CSS per 100 m.
   row({
@@ -557,7 +569,7 @@ function perfTestCard(p) {
       const sec = parseMinSec(v);
       store.setProfile(sec >= 50 && sec <= 300 ? { cssSecPer100m: sec, cssDate: date } : { cssSecPer100m: null, cssDate: null });
     },
-    note: t('settings.perfTest.cssHint'),
+    noteOf: () => t('settings.perfTest.cssHint'),
   });
   return card;
 }

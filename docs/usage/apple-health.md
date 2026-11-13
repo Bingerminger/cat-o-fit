@@ -187,7 +187,7 @@ After “Run now” or the first shortcut run, the endpoint answers with a summa
 | Sleep Analysis | Sleep (h) |
 | Step Count | Steps |
 | Active Energy | Active energy (kcal) |
-| Workouts | Training, de-duplicated by HealthKit UUID – with the measured active energy, which then replaces the estimate in the training burn |
+| Workouts | Training, de-duplicated by HealthKit UUID – with the measured active energy, which then replaces the estimate in the training burn; indoors/outdoors and the air temperature where the watch recorded them (for the heat in the form estimate). Sent again, a workout keeps what you added in the app (effort, notes, link to a planned session); one you deleted stays deleted |
 | Menstrual Flow | Cycle (period start and duration, private) – with the automatic export, if it is sent along; with the full import after asking |
 
 Existing **manual** entries are not overwritten: daily values are merged field by field (your mood,

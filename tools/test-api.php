@@ -339,6 +339,21 @@ $s = http('GET', '?area=sessions&user=u-a', null, $admin);
 $hcs = array_values(array_filter($s['json']['data'] ?? [], fn ($x) => ($x['source'] ?? '') === 'health-connect'));
 check('… one session with average HR, origin Health Connect', count($hcs) === 1 && ($hcs[0]['avgHr'] ?? null) === 148 && ($hcs[0]['date'] ?? '') === '2026-09-25', $hcs);
 check('… title in the language of the person (here: instance default, English)', ($hcs[0]['title'] ?? '') === 'Run (Health Connect)', $hcs[0]['title'] ?? null);
+// What the person adds in the app survives the next resend (4.2): effort, notes, the planned link, indoors.
+$own = array_merge($hcs[0], ['rpe' => 6, 'notes' => 'windig', 'plannedId' => 'u-plan', 'type' => 'tempo', 'indoor' => true]);
+unset($own['rev'], $own['updatedAt']);
+http('POST', '?action=ops&area=sessions&user=u-a', ['ops' => [['op' => 'upsert', 'record' => $own]]], $admin);
+http('POST', '?action=health-ingest&user=u-a', $hc, $nobody, ["X-Catofit-Token: {$hkToken}"]);
+$s = http('GET', '?area=sessions&user=u-a', null, $admin);
+$again = array_values(array_filter($s['json']['data'] ?? [], fn ($x) => ($x['id'] ?? '') === $hcs[0]['id']))[0] ?? [];
+check('… resent: the device values stay, effort/notes/link/sport/indoors added in the app too',
+    ($again['rpe'] ?? null) === 6 && ($again['notes'] ?? '') === 'windig' && ($again['plannedId'] ?? null) === 'u-plan'
+    && ($again['type'] ?? '') === 'tempo' && ($again['indoor'] ?? null) === true && ($again['avgHr'] ?? null) === 148, $again);
+http('POST', '?action=ops&area=sessions&user=u-a', ['ops' => [['op' => 'delete', 'id' => $hcs[0]['id']]]], $admin);
+http('POST', '?action=health-ingest&user=u-a', $hc, $nobody, ["X-Catofit-Token: {$hkToken}"]);
+$s = http('GET', '?area=sessions&user=u-a', null, $admin);
+check('… deleted in the app: a resend does not bring it back',
+    !array_filter($s['json']['data'] ?? [], fn ($x) => ($x['id'] ?? '') === $hcs[0]['id'] && !($x['deleted'] ?? false)), $s['json']['data'] ?? null);
 $c = http('GET', '?area=cycle&user=u-a', null, $admin);
 $per = array_values(array_filter($c['json']['data'] ?? [], fn ($x) => ($x['startDate'] ?? '') === '2026-09-10'));
 check('… period in the private cycle area (4 days)', count($per) === 1 && ($per[0]['periodLength'] ?? null) === 4, $c['json']['data'] ?? null);

@@ -794,7 +794,8 @@ export function rpeScale(value, onChange) {
   let cur = value || 0;
   const wrap = el('div', { class: 'rpe-scale', role: 'radiogroup' });
   const hint = el('div', { class: 'rpe-hint', 'aria-hidden': 'true' });
-  const setHint = () => { hint.textContent = cur ? `${cur} = ${RPE_WORDS[cur]}` : '1 sehr leicht · 3 locker · 5 mittel · 7 hart · 10 maximal'; };
+  // The anchors in the active language (until 4.2 a German line in every language).
+  const setHint = () => { hint.textContent = cur ? `${cur} = ${RPE_WORDS[cur]}` : [1, 3, 5, 7, 10].map((i) => `${i} ${RPE_WORDS[i]}`).join(' · '); };
   const values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const buttons = values.map((i) => el('button', {
     type: 'button', role: 'radio', class: `rpe-dot ${i === cur ? 'is-active' : ''}`,

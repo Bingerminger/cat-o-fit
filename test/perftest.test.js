@@ -87,10 +87,14 @@ test('settings: threshold pace, FTP and CSS are stored with the day of the test'
   pace.value = '4:45';
   pace.dispatchEvent({ type: 'change', target: pace });
   assert.deepEqual([store.profile().thresholdPaceSecPerKm, store.profile().thresholdPaceDate], [285, todayStr()]);
+  assert.match(view.textContent, /am Testtag – bis /, 'the note says until when it counts – updated in place, no redraw');
+  assert.doesNotMatch(view.textContent, /\.\.FTP/, 'no double full stop after the date');
+  assert.ok(view.querySelectorAll('input').includes(pace), 'the same field is still there');
   const ftp = inputByLabel(view, 'FTP (Watt)');
   ftp.value = '230';
   ftp.dispatchEvent({ type: 'change', target: ftp });
   assert.deepEqual([store.profile().ftpW, store.profile().ftpDate], [230, todayStr()]);
+  assert.match(view.textContent, /Z2 129–173[\s ]W/);
   const css = inputByLabel(view, 'CSS (min/100 m)');
   css.value = '1:52';
   css.dispatchEvent({ type: 'change', target: css });

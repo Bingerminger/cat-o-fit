@@ -36,7 +36,16 @@ Health Auto Export format. Details: [Apple Health](usage/apple-health.md#free-wi
 **Workouts in the daily format** (since v3.21.0): `workouts` may come along with `days` – fields as in
 Health Auto Export: `name` (e.g. `Running`, `Cycling`), `start`, `end` or `duration` (seconds),
 `distanceKm` or `distance` (`{qty, units}`), `avgHeartRate`, `maxHeartRate`, `activeEnergyBurned`
-(kJ are converted to kcal).
+(kJ are converted to kcal); since 4.2 also `isIndoor` / `location` (`"Indoor"`) and `temperature`
+(`{qty, units: "degF"|"degC"}`, the air temperature during the workout). A workout sent again (same id)
+keeps what the person added in the app; one deleted there stays deleted.
+
+**Fields added in 4.2 (additive):** sessions may carry `indoor: true` and `tempC` (air temperature in
+°C during the session); a pace typed per mile is stored to a tenth of a second per km. The profile may
+carry `thresholdPaceSecPerKm`/`thresholdPaceDate`, `ftpW`/`ftpDate`, `cssSecPer100m`/`cssDate` (read
+access includes them) and `settings.autoVolume`. Plans may carry `strengthDays` (0–2), `sideRaces`
+(`[{eventId, date, priority, name, distanceKm, targetTime}]`), `autoVolume` (`{week, factor, date}`);
+sessions of a plan may carry `sideRace` (`"B"`/`"C"`), `autoVolume` (the factor) and `manual: true`.
 
 **Health Connect (Android)** (since v3.21.0): arrays per data type with ISO timestamps, as sent by
 bridge apps (e.g. “HC Webhook”) – `weight` (`kilograms`), `body_fat` (`percentage`),

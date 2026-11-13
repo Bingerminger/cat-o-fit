@@ -189,7 +189,7 @@ Nach „Run now“ bzw. dem ersten Kurzbefehl antwortet der Endpunkt mit einer Z
 | Sleep Analysis | Schlaf (h) |
 | Step Count | Schritte |
 | Active Energy | Aktive Energie (kcal) |
-| Workouts | Training, dedupliziert per HealthKit-UUID – mit der gemessenen aktiven Energie, die dann die Schätzung im Trainingsverbrauch ersetzt |
+| Workouts | Training, dedupliziert per HealthKit-UUID – mit der gemessenen aktiven Energie, die dann die Schätzung im Trainingsverbrauch ersetzt; drinnen/draußen und die Lufttemperatur, wo die Uhr sie aufgezeichnet hat (für die Hitze in der Formschätzung). Erneut gesendet, behält ein Workout, was du in der App ergänzt hast (Anstrengung, Notizen, Verknüpfung mit einer geplanten Einheit); ein gelöschtes bleibt gelöscht |
 | Menstrual Flow | Zyklus (Periodenbeginn und -dauer, privat) – beim Auto-Export, wenn er mitgeschickt wird; beim Voll-Import nach Rückfrage |
 
 Vorhandene **manuelle** Einträge werden nicht überschrieben: Tageswerte werden feldweise gemergt (deine

@@ -116,6 +116,18 @@ if ($parsed['newSessions']) {
                 if ($dd < 0.4 && $dt < 120) { $skippedDup++; continue 2; }   // the manual session wins
             }
         }
+        if ($isReimport && is_array($store['records'][$id])) {
+            $old = $store['records'][$id];
+            // Deleted in the app: stays deleted (the bridge resends a rolling 48 h).
+            if ($old['deleted'] ?? false) { $skippedDup++; continue; }
+            // Sent again: the device's measured values win; what the person added or changed in the app
+            // stays – effort, feeling, notes, the link to a planned session, sport, title, and indoors or
+            // a temperature set by hand. Before 4.2 the whole record was replaced.
+            unset($old['rev'], $old['updatedAt']);
+            $measured = array_intersect_key($s, array_flip(['distanceKm', 'durationSec', 'paceSecPerKm', 'avgHr', 'maxHr', 'kcal']));
+            $weather = (array_key_exists('indoor', $old) || array_key_exists('tempC', $old)) ? [] : array_intersect_key($s, array_flip(['indoor', 'tempC']));
+            $s = array_merge($old, array_filter($measured, fn ($v) => $v !== null), $weather);
+        }
         $s['createdAt'] = $store['records'][$id]['createdAt'] ?? $now;
         $sessionOps[] = ['op' => 'upsert', 'record' => $s];
     }
