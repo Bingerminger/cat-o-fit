@@ -194,6 +194,7 @@
       "button": "Reset / clear app",
       "hint": "Irrevocably deletes ALL members and data and restarts the first-time setup.",
       "needServer": "To reset, the app needs a connection to the server and your sign-in with PIN.",
+      "failed": "Resetting on the server did not complete. This device keeps its data – please try again while connected to the server.",
       "intro": "This removes ALL members, sessions, plans, values and settings – on this device and on the server. It cannot be undone. The first-time setup starts afterwards.",
       "confirmButton": "Delete everything and reset",
       "title": "Reset app"

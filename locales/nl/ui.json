@@ -194,6 +194,7 @@
       "button": "App resetten / wissen",
       "hint": "Verwijdert ALLE leden en gegevens onherroepelijk en start de eerste installatie opnieuw.",
       "needServer": "Om te resetten heeft de app verbinding met de server nodig en moet je met je pincode zijn aangemeld.",
+      "failed": "Het resetten op de server is niet helemaal gelukt. Dit apparaat houdt zijn gegevens – probeer het opnieuw met verbinding met de server.",
       "intro": "Dit verwijdert ALLE leden, trainingen, schema’s, waarden en instellingen – op dit apparaat en op de server. Het kan niet ongedaan worden gemaakt. Daarna start de eerste installatie.",
       "confirmButton": "Alles verwijderen en resetten",
       "title": "App resetten"

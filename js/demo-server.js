@@ -216,6 +216,8 @@ export function createFakeServer() {
     if (action === 'delete-user') {
       if (sessionRole() !== 'admin') { entry.status = 401; return resp({ ok: false, error: auth.session ? 'Only an admin can delete members.' : 'Please sign in – the sign-in at the server is missing or has expired.', code: auth.session ? 'admin' : 'session' }, auth.session ? 403 : 401); }
       for (const k of Object.keys(stores)) if (k.startsWith(`user|${user}|`)) delete stores[k];
+      // Like sessions_delete_user(): the deleted person's sessions end, except the caller's own
+      // (this simulated browser) – it ends once the family no longer holds the person.
       return resp({ ok: true, deleted: user });
     }
     // Private areas: only the signed-in person themself (like api.php).

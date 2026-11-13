@@ -108,6 +108,22 @@ test('FE-03: full device storage – change is rolled back and reported', async 
   } finally { globalThis.dispatchEvent = prev; localStorage.__setQuota(Infinity); }
 });
 
+test('FE-03: storage full after the queue was written – the rolled-back change never reaches the server', async () => {
+  await store.syncNow();
+  const prev = globalThis.dispatchEvent;
+  globalThis.dispatchEvent = () => true;
+  try {
+    // Room for the grown queue, but not for the area written right after it.
+    localStorage.__setQuota(localStorage.__used() + 4500);
+    store.upsert('sessions', { id: 's-gross', notes: 'x'.repeat(3000) });
+    assert.equal(store.find('sessions', 's-gross'), null, 'not in the state');
+    assert.ok(!((meta('u-1').ops || {}).sessions || []).some((o) => o.record && o.record.id === 's-gross'), 'no op left in the stored queue');
+  } finally { globalThis.dispatchEvent = prev; localStorage.__setQuota(Infinity); }
+  await store.syncNow();
+  assert.equal(srv.store('sessions', { user: 'u-1' }).records['s-gross'], undefined, 'not on the server');
+  assert.equal(store.find('sessions', 's-gross'), null, 'and not back on the device');
+});
+
 test('FE-03: managing a member leaves no data ballast', async () => {
   srv.store('sessions', { user: 'u-2' }).records['s-k'] = { id: 's-k', updatedAt: new Date().toISOString(), rev: 1 };
   srv.store('sessions', { user: 'u-2' }).rev = 1;

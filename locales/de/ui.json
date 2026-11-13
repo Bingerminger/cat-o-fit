@@ -194,6 +194,7 @@
       "button": "App zurücksetzen / leeren",
       "hint": "Löscht ALLE Mitglieder und Daten unwiderruflich und startet die Ersteinrichtung neu.",
       "needServer": "Zum Zurücksetzen braucht die App eine Verbindung zum Server und deine Anmeldung mit PIN.",
+      "failed": "Das Zurücksetzen auf dem Server ist nicht vollständig gelungen. Dieses Gerät behält seine Daten – bitte mit Verbindung zum Server noch einmal versuchen.",
       "intro": "Das entfernt ALLE Mitglieder, Trainings, Pläne, Werte und Einstellungen – auf diesem Gerät und auf dem Server. Es lässt sich nicht rückgängig machen. Danach startet die Ersteinrichtung.",
       "confirmButton": "Alles löschen und zurücksetzen",
       "title": "App zurücksetzen"

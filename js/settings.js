@@ -569,7 +569,15 @@ function openResetSheet() {
       return;
     }
     busy = true;
-    try { await store.resetApp(); } catch { /* restart anyway */ }
+    let ok = false;
+    try { ok = await store.resetApp(); } catch { ok = false; }
+    if (!ok) {
+      // Not everything is gone on the server: the device keeps its data, no restart into a setup
+      // the server would refuse.
+      busy = false;
+      toast(t('settings.reset.failed'), 'bad', 7000);
+      return;
+    }
     location.hash = '#/login';
     location.reload();   // clean restart into the initial setup
   };

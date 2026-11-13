@@ -194,6 +194,7 @@
       "button": "Restablecer / borrar la app",
       "hint": "Elimina de forma irreversible TODOS los miembros y datos y reinicia la configuración inicial.",
       "needServer": "Para restablecer, la app necesita conexión con el servidor y que hayas iniciado sesión con tu PIN.",
+      "failed": "El restablecimiento en el servidor no se completó. Este dispositivo conserva sus datos: vuelve a intentarlo con conexión al servidor.",
       "intro": "Esto elimina TODOS los miembros, sesiones, planes, valores y ajustes, tanto en este dispositivo como en el servidor. No se puede deshacer. Después empieza la configuración inicial.",
       "confirmButton": "Borrar todo y restablecer",
       "title": "Restablecer la app"

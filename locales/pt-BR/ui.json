@@ -194,6 +194,7 @@
       "button": "Redefinir / limpar app",
       "hint": "Exclui de forma irreversível TODOS os membros e dados e reinicia a configuração inicial.",
       "needServer": "Para redefinir, o app precisa de conexão com o servidor e do seu login com PIN.",
+      "failed": "A redefinição no servidor não foi concluída. Este aparelho mantém os dados – tente de novo com conexão ao servidor.",
       "intro": "Isto remove TODOS os membros, treinos, planos, valores e configurações – neste dispositivo e no servidor. Não dá para desfazer. A configuração inicial começa em seguida.",
       "confirmButton": "Excluir tudo e redefinir",
       "title": "Redefinir app"

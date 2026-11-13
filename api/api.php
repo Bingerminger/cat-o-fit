@@ -325,7 +325,10 @@ if ($action === 'delete-user') {
     }
     try {
         delete_user($user);
-        sessions_delete_user($user);
+        // Every session of the deleted person ends – except the caller's own when deleting
+        // themself: "reset the app" deletes the others and the family afterwards with that session
+        // (it ends anyway once the family no longer holds the person, see current_session()).
+        sessions_delete_user($user, $user === $session['user'] ? $session['token'] : null);
         fails_reset($user);
         respond(['ok' => true, 'deleted' => $user]);
     } catch (Throwable $e) {

@@ -194,6 +194,7 @@
       "button": "Réinitialiser / effacer l’appli",
       "hint": "Supprime de façon irréversible TOUS les membres et toutes les données, puis relance la configuration initiale.",
       "needServer": "Pour réinitialiser, l’appli a besoin d’une connexion au serveur et de ta connexion avec ton code PIN.",
+      "failed": "La réinitialisation sur le serveur n’a pas abouti. Cet appareil garde ses données – réessaie une fois connecté au serveur.",
       "intro": "Cela supprime TOUS les membres, séances, plans, valeurs et réglages – sur cet appareil et sur le serveur. C’est irréversible. La configuration initiale redémarre ensuite.",
       "confirmButton": "Tout supprimer et réinitialiser",
       "title": "Réinitialiser l’appli"

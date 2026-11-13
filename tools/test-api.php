@@ -431,6 +431,17 @@ check('sign-in active: the health intake itself is reached (its key decides)', i
 $base = $base1;
 proc_terminate($proc2); proc_close($proc2);
 
+// --- Reset the app: the admin deletes themself, then the family (v4.2) -----
+// (last block: it empties the instance; $fresh = the session signed in with the new PIN above)
+$r = http('POST', '?action=delete-user&user=u-a', [], $fresh);
+check('reset: the admin deletes their own data', $r['status'] === 200, [$r['status'], $r['json']]);
+$r = http('GET', '?action=session', null, $fresh);
+check('reset: their own session stays for the rest of the reset', ($r['json']['user'] ?? null) === 'u-a', $r['json']);
+$r = http('POST', '?action=ops&area=family&scope=family', ['ops' => [['op' => 'replace', 'records' => []]]], $fresh);
+check('reset: then the family can be emptied', $r['status'] === 200 && empty($r['json']['rejected']), $r['json']);
+$r = http('GET', '?action=session', null, $fresh);
+check('reset: with the family gone, the session ends', ($r['json']['user'] ?? null) === null, $r['json']);
+
 // --- Result --------------------------------------------------------------
 echo "\napi: {$pass} ok, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

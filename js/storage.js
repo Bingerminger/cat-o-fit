@@ -273,9 +273,14 @@ function queueOps(area, ops) {
 function commitLocal(area, ops, rollback) {
   const before = (pendingOps[area] || []).slice();
   queueOps(area, ops);
+  const beforeIds = new Set(before.map((o) => o.opId));
+  const added = (pendingOps[area] || []).filter((o) => !beforeIds.has(o.opId));
   const undo = () => {
     pendingOps[area] = before;
     before.forEach((o) => retired.delete(o.opId));
+    // The grown queue may already be on disk: mark its new ops as taken back, or the next
+    // writeUserMeta() would adopt them there as another tab's ops and send them after all.
+    retire(added);
     rollback();
   };
   if (!writeUserMeta()) { undo(); return false; }
@@ -337,6 +342,7 @@ function metaLacksOpIds(user) {
 }
 
 async function pushAreaNow(area, user) {
+  if (resetting) return;
   let chunk = PUSH_CHUNK;
   for (;;) {
     if (user === activeUser) adoptForeignOps();
@@ -803,7 +809,11 @@ async function syncPass(u) {
  * is already running, the call waits for its end plus another round – previously it
  * returned immediately, and whoever reported (or checked) "done" afterwards saw a half state.
  */
+/** "Reset the app" is deleting on the server: no sync and no push may run in between. */
+let resetting = false;
+
 export function syncNow() {
+  if (resetting) return Promise.resolve();
   if (!activeUser) { setSyncState('idle'); return Promise.resolve(); }
   if (!isOnline()) { setSyncState('offline'); return Promise.resolve(); }
   if (syncRun) { syncPending = true; return syncRun; }
@@ -1856,13 +1866,23 @@ export async function seedDemo(today = todayStr()) {
  */
 export async function resetApp() {
   if (!isAdmin()) return false;
-  const ids = (family.members || []).map((m) => m.id);
-  if (isOnline()) {
-    for (const id of ids) { try { await deleteUserData(id); } catch { /* carry on */ } }
+  // The server first: the device starts over only once everything is gone there. Offline, or if
+  // the server refuses a step, the device keeps its data and the caller says so (Settings).
+  if (!isOnline() || !(await ping(REACH_TIMEOUT))) return false;
+  resetting = true;   // no sync meanwhile – a pending push used to recreate files after the deletion
+  try {
+    if (syncRun) await syncRun.catch(() => {});
+    const ids = (family.members || []).map((m) => m.id);
+    // The others first, the own person last: the server keeps the caller's session for that, and
+    // the family is replaced with it afterwards (the session ends with it).
+    for (const id of [...ids.filter((x) => x !== identity), ...ids.filter((x) => x === identity)]) {
+      if (!(await deleteUserData(id))) return false;
+    }
+    const res = await pushOps('family', [withOpId({ op: 'replace', records: [] })], { scope: 'family' }).catch(() => null);
+    if (!res || (res.rejected && res.rejected.length)) return false;
+  } finally {
+    resetting = false;
   }
-  // Clear the family authoritatively (tombstones on the server).
-  familyReplaceFrom({ members: [], settings: {}, pantry: [], teams: [] });
-  if (isOnline()) { try { await pushFamily(); } catch { /* ignore */ } }
   // Discard local app storage – ONLY the keys of THIS environment (scopeKey prefix),
   // so that resetting the acceptance instance does not also wipe the storage of production
   // on the same origin.

@@ -194,6 +194,7 @@
       "button": "Reimposta / svuota l’app",
       "hint": "Elimina in modo irrevocabile TUTTI i membri e i dati e riavvia la configurazione iniziale.",
       "needServer": "Per reimpostare, l’app ha bisogno della connessione al server e del tuo accesso con il PIN.",
+      "failed": "Il ripristino sul server non è stato completato. Questo dispositivo conserva i suoi dati – riprova quando sei connesso al server.",
       "intro": "Questo rimuove TUTTI i membri, le sessioni, i piani, i valori e le impostazioni – su questo dispositivo e sul server. Non si può annullare. Poi parte la configurazione iniziale.",
       "confirmButton": "Elimina tutto e reimposta",
       "title": "Reimposta l’app"
