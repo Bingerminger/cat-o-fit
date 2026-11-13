@@ -38,7 +38,7 @@ says so.
 | Elevation gain in the form estimate | Rule of thumb: from 5 m of climbing per km, every metre climbed counts like 6 m on the flat | based on the energy cost of uphill running: Minetti AE et al.: Energy cost of walking and running at extreme uphill and downhill slopes. *J Appl Physiol* 93 (2002), 1039–1046 |
 | Heat hint (“about …% slower than planned”) | Rule of thumb: from a daily high of 20 °C, about 0.4% per degree above 15 °C, at most 8% | based on Ely MR et al.: Impact of weather on marathon-running performance. *Med Sci Sports Exerc* 39 (2007), 487–493 |
 | Strength: next step | first raise the repetitions up to 12, then the weight (double progression) | Ratamess NA et al.: ACSM Position Stand: Progression models in resistance training for healthy adults. *Med Sci Sports Exerc* 41 (2009), 687–708 |
-| Weekly goals, programmes | 150–300 minutes of endurance per week, strength on two days | WHO: *Guidelines on physical activity and sedentary behaviour*, Geneva 2020 |
+| Weekly goals, programmes | 150–300 minutes of endurance per week, strength on two days – the fitness and weight-loss programmes reach it from 3 days a week; the strength programme puts strength first (60–100 min endurance), the mobility programme grows to 150 min in 12 weeks | WHO: *Guidelines on physical activity and sedentary behaviour*, Geneva 2020 |
 
 ---
 

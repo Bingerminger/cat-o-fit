@@ -22,7 +22,7 @@ import { t, tp } from './i18n.js';
 
 /** Generator version. Plans without this field come from earlier versions: they
     stay unchanged until someone chooses "Recalculate from today". */
-export const PLAN_GEN = 2;
+export const PLAN_GEN = 3;
 
 export const PLAN_LEVELS = {
   einsteiger: { get label() { return t('plangen.levels.einsteiger.label'); }, get hint() { return t('plangen.levels.einsteiger.hint'); } },

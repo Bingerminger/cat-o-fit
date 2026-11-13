@@ -123,3 +123,36 @@ test('TRAIN-19: regenerating from today leaves the past untouched (missed, moved
   assert.ok(!ids.includes('n3'), 'done today → nothing new next to it');
   assert.ok(ids.includes('n4') && !ids.includes('e'), 'future is planned anew');
 });
+
+test('TRAIN-19b: recalculating from today keeps the person\'s own sessions from today on (added, moved, made up)', () => {
+  const g = (id, date, type, extra = {}) => ({ id, date, type, status: 'geplant', phase: 'build', week: 5, ...extra });
+  const existing = [
+    g('gen', addDays(T, 1), 'easy'),                                               // generated: planned anew
+    g('own', addDays(T, 2), 'easy', { phase: undefined, week: undefined, manual: true }),     // added (since 4.2)
+    { id: 'own-old', date: addDays(T, 3), type: 'strength', status: 'geplant' },   // added before 4.2 (no phase)
+    g('moved', addDays(T, 4), 'tempo', { movedFrom: addDays(T, 3) }),             // moved Thu → Fri
+    g('overdue', addDays(T, 1), 'long', { movedFrom: addDays(T, -2), week: 4 }),  // overdue, moved to tomorrow
+    g('legacy', addDays(T, 5), 'interval', { status: 'verschoben' }),             // legacy status
+  ];
+  const fresh = [
+    g('n-easy', addDays(T, 1), 'easy'),
+    g('n-tempo', addDays(T, 3), 'tempo'),            // the moved tempo's twin (same week, same class)
+    g('n-long', addDays(T, 6), 'long'),
+    g('n-int', addDays(T, 5), 'interval', { week: 6 }),
+  ];
+  const ids = mergeFromDate(existing, fresh, T).map((u) => u.id);
+  for (const id of ['own', 'own-old', 'moved', 'overdue', 'legacy']) assert.ok(ids.includes(id), `${id} stays`);
+  assert.ok(!ids.includes('gen'), 'generated sessions are planned anew');
+  assert.ok(!ids.includes('n-tempo'), 'the moved tempo replaces its regenerated twin – no second tempo that week');
+  assert.ok(ids.includes('n-long') && ids.includes('n-easy'), 'the rest of the fresh plan is there');
+  assert.ok(ids.includes('n-int'), 'a legacy "verschoben" of week 5 does not take away week 6\'s interval');
+
+  // "Recalculate this week" replaces the week's moves, as its dialog says.
+  const week = mergeFromDate(existing, fresh, T, { keepOwn: false }).map((u) => u.id);
+  assert.ok(!week.includes('moved') && week.includes('n-tempo'));
+
+  // Old programmes carry no `phase` at all: their sessions are not mistaken for added ones.
+  const prog = [{ id: 'p1', date: addDays(T, 1), type: 'cross', status: 'geplant' }];
+  const progFresh = [{ id: 'p2', date: addDays(T, 1), type: 'cross', status: 'geplant', phase: 'intro' }];
+  assert.deepEqual(mergeFromDate(prog, progFresh, T).map((u) => u.id), ['p2']);
+});

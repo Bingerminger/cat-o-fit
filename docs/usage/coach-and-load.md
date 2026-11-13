@@ -187,10 +187,13 @@ commitment is in two plans, it still appears only once per day:
   afterwards, the coach suggests taking it **easier**. “Light” stays an easy day.
 - **Recurring matches** with a start date (e.g. “from 19 Aug, every Sunday, 2 h”). On a match day the
   planned training session drops out; everything counts towards your load.
-- **No hard day next to a hard commitment:** The plan never puts a quality session or long run directly
-  next to a demanding fixed commitment (not even on the Monday after a Sunday match). It moves to a quiet
-  day; if there is none, the quality session becomes “**Easy with strides**” – that week the commitment
-  provides the intensity.
+- **No hard day next to a hard commitment:** The plan never puts a quality session or long run on or
+  directly next to a demanding fixed commitment – also one of another plan – (not even on the Monday after
+  a Sunday match), nor the two of them on consecutive days. It moves them to a quiet day and may swap
+  with easy work (long run on Sunday, the recovery run on Saturday after football). If there is no quiet
+  day, the quality session becomes “**Easy with strides**” – that week the commitment provides the
+  intensity – and the long run takes the least affected day: never the day after a commitment, at most
+  the day before.
 
 ### Rolling planning & automatic recovery day
 

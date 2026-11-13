@@ -38,7 +38,7 @@ Kennzahl, sagt die App das.
 | Höhenmeter in der Form-Schätzung | Faustregel: ab 5 Hm je km zählt jeder Höhenmeter bergauf wie 6 m in der Ebene | angelehnt an die Energiekosten bergauf: Minetti AE et al.: Energy cost of walking and running at extreme uphill and downhill slopes. *J Appl Physiol* 93 (2002), 1039–1046 |
 | Hitze-Hinweis („rund … % langsamer“) | Faustregel: ab 20 °C Tageshöchstwert etwa 0,4 % je Grad über 15 °C, höchstens 8 % | angelehnt an Ely MR et al.: Impact of weather on marathon-running performance. *Med Sci Sports Exerc* 39 (2007), 487–493 |
 | Kraft: nächster Schritt | erst die Wiederholungen bis 12 steigern, dann das Gewicht (doppelte Progression) | Ratamess NA et al.: ACSM Position Stand: Progression models in resistance training for healthy adults. *Med Sci Sports Exerc* 41 (2009), 687–708 |
-| Wochenziele, Programme | 150–300 Minuten Ausdauer pro Woche, Kraft an zwei Tagen | WHO: *Guidelines on physical activity and sedentary behaviour*, Genf 2020 |
+| Wochenziele, Programme | 150–300 Minuten Ausdauer pro Woche, Kraft an zwei Tagen – die Programme Fitness und Abnehmen erreichen das ab 3 Tagen pro Woche; das Kraftprogramm stellt die Kraft voran (60–100 min Ausdauer), das Beweglichkeitsprogramm wächst in 12 Wochen auf 150 min | WHO: *Guidelines on physical activity and sedentary behaviour*, Genf 2020 |
 
 ---
 

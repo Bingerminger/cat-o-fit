@@ -1505,7 +1505,7 @@
     "recalcPlan": "Plan neu berechnen",
     "raceDay": "Wettkampf!",
     "newLogic": "Neue Planlogik verfügbar",
-    "newLogicText": "Renneinheit an jedem Wochentag, Zielpaces aus deiner Zielzeit, Umfang passend zu Niveau und Lauftagen. Auf Wunsch rechnet die App deinen Plan ab heute neu – Vergangenes bleibt unverändert.",
+    "newLogicText": "Verbesserte Planlogik: Jede Woche hält ihre Umfangsregeln ein, lange Läufe und Qualitätseinheiten liegen nie neben einem fordernden festen Termin, und der Tag vor dem Rennen ist ein kurzer Shakeout. Auf Wunsch rechnet die App deinen Plan ab heute neu – Vergangenes bleibt unverändert, ebenso Einheiten, die du selbst angelegt oder verschoben hast.",
     "statRunKm": "Geplante Lauf-{unit}",
     "statSessions": "Einheiten",
     "statDone": "Erledigt",

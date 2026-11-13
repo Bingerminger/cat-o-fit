@@ -183,10 +183,13 @@ Termin in zwei Plänen, erscheint er trotzdem nur einmal am Tag:
   schlägt der Coach vor, sie **lockerer** anzugehen. „Leicht“ bleibt ein lockerer Tag.
 - **Wiederkehrende Spiele** mit Startdatum (z. B. „ab 19.08. jeden Sonntag, 2 h“). An einem Spieltag entfällt
   die geplante Trainingseinheit; alles zählt in die Belastung mit.
-- **Kein harter Tag neben einem harten Termin:** Der Plan legt Qualitätseinheit und Long Run nie direkt neben
-  einen fordernden festen Termin (auch nicht auf den Montag nach einem Sonntagsspiel). Er weicht auf einen
-  ruhigen Tag aus; gibt es keinen, wird aus der Qualitätseinheit „**Locker mit Steigerungen**“ – die
-  Intensität liefert in dieser Woche der Termin.
+- **Kein harter Tag neben einem harten Termin:** Der Plan legt Qualitätseinheit und Long Run nie auf oder
+  direkt neben einen fordernden festen Termin – auch nicht den eines anderen Plans – (auch nicht auf den
+  Montag nach einem Sonntagsspiel) und die beiden nie auf aufeinanderfolgende Tage. Er weicht auf einen
+  ruhigen Tag aus und darf mit lockeren Einheiten tauschen (Long Run am Sonntag, der Erholungslauf am
+  Samstag nach dem Fußball). Gibt es keinen ruhigen Tag, wird aus der Qualitätseinheit „**Locker mit
+  Steigerungen**“ – die Intensität liefert in dieser Woche der Termin –, und der Long Run nimmt den am
+  wenigsten betroffenen Tag: nie den Tag nach einem Termin, höchstens den davor.
 
 ### Rollierende Planung & automatischer Erholungstag
 

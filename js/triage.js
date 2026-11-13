@@ -38,8 +38,11 @@ export function weekUnits(units = [], dateStr, planStart = null) {
 }
 
 /** Priority class of a session (higher = keeps precedence in a collision). */
-export const PRIORITY_RANK = { fixed: 5, key: 4, strength: 3, endurance: 2, recovery: 1, other: 0 };
+// The race itself ranks above everything: its date is fixed and the goal of the plan – in a collision
+// with a fixed commitment the suggestion is about the commitment (go easy or skip it), never the race.
+export const PRIORITY_RANK = { race: 6, fixed: 5, key: 4, strength: 3, endurance: 2, recovery: 1, other: 0 };
 export function unitPriority(u) {
+  if (u && u.type === 'race') return 'race';
   if (u && u.fixed) return 'fixed';
   const c = loadClass(u ? u.type : 'other');
   if (c === 'quality' || (u && (u.type === 'long' || u.type === 'race'))) return 'key';

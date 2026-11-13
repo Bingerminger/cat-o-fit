@@ -138,6 +138,30 @@ export function spreadDays(daysPerWeek) {
 }
 
 /**
+ * Which `k` of the training days (ISO weekdays) carry strength: the choice with the largest smallest
+ * gap around the week (Saturday → Monday is two days), the earliest such choice on a tie. Spreading
+ * the positions in the list instead put Monday and Tuesday next to each other with four days.
+ * @returns {Set<number>} indices into `days`
+ */
+export function spacedIndices(days, k) {
+  if (k <= 0) return new Set();
+  if (k >= days.length) return new Set(days.map((_, i) => i));
+  let best = null;
+  const pick = (start, chosen) => {
+    if (chosen.length === k) {
+      const d = chosen.map((i) => days[i]);
+      const gaps = d.map((x, i) => (i + 1 < d.length ? d[i + 1] - x : d[0] + 7 - x));
+      const score = Math.min(...gaps);
+      if (!best || score > best.score) best = { score, chosen: chosen.slice() };
+      return;
+    }
+    for (let i = start; i < days.length; i++) pick(i + 1, [...chosen, i]);
+  };
+  pick(0, []);
+  return new Set(best.chosen);
+}
+
+/**
  * The building blocks of a training week (without dates): one main block per day
  * (`block`) and, where applicable, additions on the same day (`extra`, e.g. strength after endurance).
  * Strength days are placed as far apart as possible.
@@ -147,7 +171,7 @@ export function programWeekBlocks(type, daysPerWeek) {
   const days = spreadDays(daysPerWeek);
   const n = days.length;
   const k = Math.min(n, meta.strengthDays(n));
-  const strengthIdx = new Set(Array.from({ length: k }, (_, i) => Math.round((i * n) / k)));
+  const strengthIdx = spacedIndices(days, k);
   const strengthOnly = type === 'strength';
   const plan = days.map((dow, i) => {
     const strength = strengthIdx.has(i);
@@ -173,8 +197,10 @@ export function programWeekBlocks(type, daysPerWeek) {
 /* ---- Building block -> concrete session --------------------------------- */
 function r5(v) { return Math.max(5, Math.round(v / 5) * 5); }
 
-function strengthUnit(meta, week, weeks) {
-  const s = meta.gentle ? GENTLE_STRENGTH : STRENGTH_ROTATION[(week - 1) % STRENGTH_ROTATION.length];
+/** `nth`: the how-manieth strength session of the week (0-based) – the focus alternates within the
+    week as well as from week to week. */
+function strengthUnit(meta, week, weeks, nth = 0) {
+  const s = meta.gentle ? GENTLE_STRENGTH : STRENGTH_ROTATION[(week - 1 + nth) % STRENGTH_ROTATION.length];
   const phase = phaseKeyAt(weeks, week);
   const easy = isEasyWeek(week, weeks);
   let rounds, dur, how;
@@ -190,11 +216,11 @@ function strengthUnit(meta, week, weeks) {
 }
 
 function blockUnit(block, ctx) {
-  const { meta, week, weeks, cardioMin, weekCardio } = ctx;
+  const { meta, week, weeks, cardioMin, weekCardio, nthStrength } = ctx;
   const total = t('program.block.total', { minutes: weekCardio });
   switch (block) {
     case 'strength':
-      return strengthUnit(meta, week, weeks);
+      return strengthUnit(meta, week, weeks, nthStrength);
     case 'cardio':
       return { type: 'cross', dur: cardioMin, title: t('program.block.cardioTitle', { min: cardioMin }), desc: t('program.block.cardioDesc', { total }) };
     case 'walk':
@@ -218,12 +244,16 @@ export function buildProgramUnits(program, planId, startDate) {
   const out = [];
   for (let w = 1; w <= weeks; w++) {
     const weekStart = addDays(startDate, (w - 1) * 7);
-    const cardioMin = Math.max(20, Math.min(90, r5(cardio[w] / cardioBlocks)));
+    // At least 20 min per block – 15 in a lighter week, or with many days the lighter week would come
+    // out as long as the others.
+    const cardioMin = Math.max(isEasyWeek(w, weeks) ? 15 : 20, Math.min(90, r5(cardio[w] / cardioBlocks)));
     const phase = phases.find((p) => w >= p.startWeek && w <= p.endWeek) || phases.at(-1);
+    let nthStrength = 0;
     for (const { dow, block, extra } of layout) {
       const date = dateOfDow(weekStart, dow);   // ISO weekday inside this 7-day week, from any first day
       for (const b of [block, ...extra]) {
-        const u = blockUnit(b, { meta, week: w, weeks, cardioMin, weekCardio: cardio[w] });
+        const u = blockUnit(b, { meta, week: w, weeks, cardioMin, weekCardio: cardio[w], nthStrength });
+        if (b === 'strength') nthStrength++;
         out.push({
           id: uid('u'), planId, eventId: null,
           date, dow: isoDow(date), week: w, phase: phase.key,

@@ -5,7 +5,7 @@ import {
   PROGRAM_TYPES, programMeta, spreadDays, programWeekBlocks,
   programPhases, buildProgramUnits, createProgramPlan, weeklyCardioMinutes, migratePlan,
 } from '../js/program.js';
-import { isoDow, addDays } from '../js/ui.js';
+import { isoDow, addDays, diffDays } from '../js/ui.js';
 
 test('PROGRAM_TYPES: four templates with label, focus, endurance target and strength days', () => {
   const keys = Object.keys(PROGRAM_TYPES);
@@ -125,6 +125,31 @@ test('Programmes: progression, easier 4th week and different phases (TRAIN-29)',
   assert.match(k11, /Festigen/);
   assert.ok(s11.cardio > s1.cardio);
   assert.deepEqual(programPhases(12).map((p) => p.key), ['intro', 'build', 'consolidate']);
+});
+
+test('Programmes: strength days never back to back, the focus alternates, the 4th week is lighter – every type and day count', () => {
+  const bad = [];
+  for (const type of Object.keys(PROGRAM_TYPES)) {
+    for (const days of [2, 3, 4, 5, 6]) {
+      for (const weeks of [4, 8, 12]) {
+        const units = buildProgramUnits({ programType: type, weeks, daysPerWeek: days }, 'p', '2026-07-06');
+        for (let w = 1; w <= weeks; w++) {
+          const str = units.filter((u) => u.week === w && u.type === 'strength').sort((a, b) => a.date.localeCompare(b.date));
+          for (let i = 1; i < str.length; i++) {
+            if (diffDays(str[i - 1].date, str[i].date) === 1) bad.push(`${type}/${days}d/${weeks}w W${w}: strength ${str[i - 1].date} and ${str[i].date}`);
+          }
+          if (str.length >= 2 && !PROGRAM_TYPES[type].gentle && new Set(str.map((u) => u.title)).size < Math.min(str.length, 3)) {
+            bad.push(`${type}/${days}d/${weeks}w W${w}: the same focus ${str.length}× (${str[0].title})`);
+          }
+          if (w % 4 === 0 && w < weeks) {
+            const mins = (k) => units.filter((u) => u.week === k).reduce((a, u) => a + (u.targetDurationMin || 0), 0);
+            if (!(mins(w) < mins(w - 1))) bad.push(`${type}/${days}d/${weeks}w W${w}: lighter week ${mins(w)} min, week before ${mins(w - 1)} min`);
+          }
+        }
+      }
+    }
+  }
+  assert.deepEqual(bad, [], bad.slice(0, 10).join('\n'));
 });
 
 test('migratePlan: programme units with `dur`/`desc` get the plan fields when read (TRAIN-06)', () => {

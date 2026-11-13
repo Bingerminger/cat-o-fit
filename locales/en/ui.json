@@ -1505,7 +1505,7 @@
     "recalcPlan": "Recalculate plan",
     "raceDay": "Race day!",
     "newLogic": "New plan logic available",
-    "newLogicText": "Race session on any weekday, target paces from your target time, volume to match your level and run days. If you like, the app recalculates your plan from today – the past stays as it is.",
+    "newLogicText": "Improved plan logic: every week keeps its volume rules, long runs and quality sessions never sit next to a demanding fixed commitment, and the day before the race is a short shakeout. If you like, the app recalculates your plan from today – the past stays as it is, and so do sessions you added or moved yourself.",
     "statRunKm": "Planned run {unit}",
     "statSessions": "Sessions",
     "statDone": "Done",

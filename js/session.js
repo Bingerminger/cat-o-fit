@@ -634,7 +634,7 @@ function openUnitEditor(plan, unit) { unitFormSheet(plan, unit, false); }
 export function openUnitCreator(plan, dateStr) {
   const tpl = {
     id: uid('u'), planId: plan.id, eventId: plan.eventId, date: dateStr || todayStr(),
-    type: 'easy', title: typeMeta('easy').label, status: 'geplant', executedSessionId: null,
+    type: 'easy', title: typeMeta('easy').label, status: 'geplant', executedSessionId: null, manual: true,
     targetDistanceKm: null, targetDurationMin: null, targetPaceSecPerKm: null,
     targetPaceMaxSecPerKm: null, targetHrZone: null, description: '', intervals: null,
   };
@@ -721,6 +721,8 @@ function unitFormSheet(plan, unit, isNew) {
       if (offset) { offerOffset(plan, newUnit, offset); return; }
       toast(t('session.unitAdded'), 'good'); refreshView();
     } else {
+      // A new date is a move: recalculating from today keeps it (planflow.mergeFromDate).
+      if (fields.date !== unit.date && !unit.manual) fields.movedFrom = unit.movedFrom || unit.date;
       saveUnitPatch(plan.id, unit.id, fields);
       closeSheet(); toast(t('session.saved'), 'good'); refreshView();
     }

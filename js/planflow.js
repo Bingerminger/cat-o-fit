@@ -100,13 +100,39 @@ export function mergeRegeneratedWeek(existing = [], fresh = []) {
  * regenerating also rebuilt the past: reasons for absence were lost and
  * past days suddenly became overdue.
  */
-export function mergeFromDate(existing = [], fresh = [], fromDate) {
+export function mergeFromDate(existing = [], fresh = [], fromDate, { keepOwn = true } = {}) {
   const past = existing.filter((u) => u.date < fromDate);
   const current = existing.filter((u) => u.date >= fromDate);
   const kept = current.filter((u) => u.status === 'erledigt' || u.status === 'verpasst');
   const keptDates = new Set(kept.map((u) => u.date));
-  const added = fresh.filter((u) => u.date >= fromDate && !keptDates.has(u.date));
-  return [...past, ...kept, ...added].sort((a, b) => a.date.localeCompare(b.date));
+  // Since 4.2 the person's own decisions from the cut-off date on stay as well: sessions added by
+  // hand and sessions moved (also via "Make up"). A moved session replaces its regenerated twin –
+  // the fresh session of the same load class in the same plan week. (`keepOwn: false`: "Recalculate
+  // this week", which says beforehand that moves of that week are replaced.)
+  const tagged = existing.some((u) => u && u.phase);
+  const own = keepOwn ? current.filter((u) => !kept.includes(u) && isOpen(u) && isOwnSession(u, tagged)) : [];
+  let added = fresh.filter((u) => u.date >= fromDate && !keptDates.has(u.date));
+  for (const m of own.filter((u) => !isAddedSession(u, tagged))) {
+    const twins = added.filter((f) => f.week === m.week && loadClass(f.type) === loadClass(m.type) && !f.fixed && f.type !== 'race');
+    if (!twins.length) continue;
+    const from = m.movedFrom || m.date;
+    const twin = twins.find((f) => f.type === m.type && f.date === from) || twins.find((f) => f.type === m.type) || twins[0];
+    added = added.filter((f) => f !== twin);
+  }
+  return [...past, ...kept, ...own, ...added].sort((a, b) => a.date.localeCompare(b.date));
+}
+
+/** A session the person added by hand: marked `manual` (since 4.2) – or, in a plan whose generated
+    sessions carry a `phase`, any session without one (added before 4.2). Old programmes carry no
+    `phase` at all, so there nothing counts as added. */
+export function isAddedSession(u, planTagged) {
+  return !!u && !u.fixed && (u.manual === true || (planTagged && !u.phase));
+}
+
+/** The person's own decision about a session: added by hand, or moved (`movedFrom`, also the
+    legacy status 'verschoben'). */
+export function isOwnSession(u, planTagged) {
+  return isAddedSession(u, planTagged) || (!!u && (!!u.movedFrom || u.status === 'verschoben'));
 }
 
 /** Category for matching a workout ↔ planned session (running, cycling, swimming,

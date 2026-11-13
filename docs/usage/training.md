@@ -53,11 +53,14 @@ This is how you set your goal:
    **Base → Build → Peak → Taper**:
    - The **weekly volume** starts at your current level (lower if you run little) and rises by at
      most 8–12% per week – every **4th week is easier**, and the last two weeks are the **taper**
-     (about 70% and 50% of the peak).
+     (about 70% and 50% of the peak). This holds for the sessions you see, not only for a target
+     behind them: in a small week the quality session gets a shorter warm-up and cool-down or becomes
+     an easy run with strides, and short extra runs turn into brisk walks.
    - The **long run** is capped: as a share of the weekly volume, at about 2:30 h (beginners) or
      about 3 h at most, and clearly shorter in the weeks before the race.
    - The **race session** falls on your race day – whether that is a Saturday or Easter Monday. The
-     day before is a short shakeout, and two days before is a rest day.
+     day before is a short shakeout, and two days before is a rest day (a fixed commitment you entered
+     stays on its day).
    - **Beginners** training for 5 or 10 km without a running base start with **run/walk intervals**
      (e.g. 6 × 2 min run / 1 min walk) that get longer week by week.
    - **Triathlon and Hyrox** (beta) have their own weeks with a rest day, taper and race format –
@@ -69,9 +72,12 @@ adjusted at any time.
 
 **Recalculate the plan from today.** Via **“…”** at the top of the plan, the app recalculates a running
 plan with the current plan logic – with your level and run days, **from today**. Past sessions stay
-unchanged: completed, missed (including the reason) and rescheduled ones. Plans from earlier
-versions show a card “New plan logic available” for this; nothing changes unless you trigger it.
-“Recalculate this week” and saving fixed commitments also leave everything before today untouched.
+unchanged: completed, missed (including the reason) and rescheduled ones. From today on, sessions
+you **added or moved yourself** stay as well (also those moved with “Make up”); a moved session takes
+the place of the one the plan would put in its week. Plans from earlier versions show a card “New plan
+logic available” for this; nothing changes unless you trigger it. Saving fixed commitments works the
+same way. “Recalculate this week” leaves everything before today untouched and replaces that week’s
+moves – it says so before.
 
 <br clear="all" />
 
@@ -91,10 +97,11 @@ You simply want to get **fitter, stronger or healthier** – with no race at all
      on two days.
    - **🏋️ Strength & muscle** – two to three strength days (full body, alternating), complemented by
      endurance and mobility.
-   - **⚖️ Weight loss** – plenty of activity (from about 150 to 225–240 minutes a week) plus strength
-     on two days; it works together with the **calorie balance**.
+   - **⚖️ Weight loss** – plenty of activity (from about 150 to 225–240 minutes a week in a programme
+     of 8 or 12 weeks; a 4-week programme stays near 200) plus strength on two days; it works together
+     with the **calorie balance**.
    - **🧘 Mobility & health** – a gentle start: mobility, gentle strength and activity that grows to
-     150 minutes a week.
+     150 minutes a week in a 12-week programme (shorter ones stay at 120–140).
 3. Set the **training days per week** (3–5) and the **duration** (4, 8 or 12 weeks). Some days have
    two sessions – for example endurance followed by strength.
 4. The name is pre-filled with the focus – change it if you like. **Save & create plan** – the weekly

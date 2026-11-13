@@ -27,6 +27,21 @@ test('unitPriority: fixed appointments > key > strength > volume > recovery', ()
   assert.ok(PRIORITY_RANK.fixed > PRIORITY_RANK.key && PRIORITY_RANK.key > PRIORITY_RANK.strength);
 });
 
+test('weekCollisions: a race next to fixed football – the suggestion is about the football, never the race', async () => {
+  const { setLocale, t } = await import('../js/i18n.js');
+  await setLocale('en');
+  try {
+    const race = U('2026-07-12', 'race', { title: 'Half marathon' });
+    for (const fb of [U('2026-07-11', 'cross_football', { fixed: true, title: 'Football' }), U('2026-07-13', 'cross_football', { fixed: true, title: 'Football' })]) {
+      const b2b = weekCollisions([race, fb], '2026-07-06').find((x) => x.kind === 'hard-b2b');
+      assert.ok(b2b, 'the back-to-back is still reported');
+      assert.equal(b2b.suggest, t('triage.lowerFixed', { title: 'Football' }));
+      assert.ok(!b2b.suggest.includes('Half marathon'), b2b.suggest);
+    }
+    assert.ok(PRIORITY_RANK.race > PRIORITY_RANK.fixed);
+  } finally { await setLocale('de'); }
+});
+
 test('weekCollisions: hard back-to-backs detected (with suggestion)', () => {
   const c = weekCollisions([U('2026-07-06', 'tempo'), U('2026-07-07', 'interval')], '2026-07-06');
   const b2b = c.find((x) => x.kind === 'hard-b2b');

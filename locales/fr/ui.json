@@ -1505,7 +1505,7 @@
     "recalcPlan": "Recalculer le plan",
     "raceDay": "Jour de course !",
     "newLogic": "Nouvelle logique de plan disponible",
-    "newLogicText": "Séance de course n’importe quel jour de la semaine, allures cibles d’après ton temps cible, volume adapté à ton niveau et à tes jours de course. Si tu veux, l’appli recalcule ton plan à partir d’aujourd’hui – le passé reste tel quel.",
+    "newLogicText": "Logique de plan améliorée : chaque semaine respecte ses règles de volume, les sorties longues et les séances de qualité ne tombent jamais à côté d’un engagement fixe exigeant, et la veille de la course est un court décrassage. Si tu le souhaites, l’app recalcule ton plan à partir d’aujourd’hui – le passé reste tel quel, tout comme les séances que tu as ajoutées ou déplacées toi-même.",
     "statRunKm": "{unit} de course prévus",
     "statSessions": "Séances",
     "statDone": "Faites",

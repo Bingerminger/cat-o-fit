@@ -53,11 +53,13 @@ So legst du dein Ziel an:
    **Grundlage → Aufbau → Spitze → Tapering**:
    - Der **Wochenumfang** startet bei deinem aktuellen Stand (auch darunter, wenn du wenig läufst) und
      steigt je Woche höchstens um 8–12 % – jede **4. Woche ist leichter**, die letzten zwei Wochen sind
-     **Tapering** (etwa 70 % und 50 % der Spitze).
+     **Tapering** (etwa 70 % und 50 % der Spitze). Das gilt für die Einheiten, die du siehst, nicht nur
+     für ein Ziel dahinter: In einer kleinen Woche bekommt die Qualitätseinheit ein kürzeres Ein- und
+     Auslaufen oder wird ein lockerer Lauf mit Steigerungen, und kurze Zusatzläufe werden zu zügigem Gehen.
    - Der **Long Run** ist gedeckelt: als Anteil am Wochenumfang, auf höchstens ~2:30 h (Einsteiger)
      bzw. ~3 h, und in den Wochen vor dem Rennen deutlich kürzer.
    - Die **Renneinheit** steht an deinem Wettkampftag – egal ob Samstag oder Ostermontag. Der Tag davor
-     ist ein kurzer Shakeout, zwei Tage vorher ist frei.
+     ist ein kurzer Shakeout, zwei Tage vorher ist frei (ein eingetragener fester Termin bleibt an seinem Tag).
    - **Einsteiger:innen** über 5 oder 10 km ohne Laufbasis starten mit **Lauf-Geh-Wechseln**
      (z. B. 6× 2 min laufen / 1 min gehen), die sich Woche für Woche verlängern.
    - **Triathlon und Hyrox** (Beta) haben eigene Wochen mit Ruhetag, Tapering und Wettkampfformat –
@@ -69,9 +71,12 @@ jederzeit anpassbar.
 
 **Plan ab heute neu berechnen.** Über **„…“** oben im Plan rechnet die App einen laufenden Plan mit
 der aktuellen Planlogik neu – mit Niveau und Lauftagen, **ab heute**. Vergangene Einheiten bleiben
-unverändert: erledigte, verpasste (samt Grund) und verschobene. Pläne aus früheren Versionen zeigen
-dafür eine Karte „Neue Planlogik verfügbar“; geändert wird nur, wenn du es auslöst. Auch „Diese Woche
-neu berechnen“ und das Speichern fester Termine rühren nichts vor heute an.
+unverändert: erledigte, verpasste (samt Grund) und verschobene. Ab heute bleiben außerdem Einheiten,
+die du **selbst angelegt oder verschoben** hast (auch über „Nachholen“); eine verschobene Einheit nimmt
+den Platz der Einheit ein, die der Plan in ihre Woche legen würde. Pläne aus früheren Versionen zeigen
+dafür eine Karte „Neue Planlogik verfügbar“; geändert wird nur, wenn du es auslöst. Das Speichern
+fester Termine wirkt genauso. „Diese Woche neu berechnen“ rührt nichts vor heute an und ersetzt die
+Verschiebungen dieser Woche – das sagt die Rückfrage vorher.
 
 <br clear="all" />
 
@@ -91,10 +96,11 @@ statt eines Wettkampfs ein **Trainingsprogramm** an:
      Kraft an zwei Tagen.
    - **🏋️ Kraft & Muskelaufbau** – zwei bis drei Krafttage (Ganzkörper im Wechsel), ergänzt um
      Ausdauer und Mobilität.
-   - **⚖️ Abnehmen & Gewicht** – viel Bewegung (von rund 150 auf 225–240 Minuten pro Woche) plus
-     Kraft an zwei Tagen; wirkt zusammen mit der **Kalorienbilanz**.
+   - **⚖️ Abnehmen & Gewicht** – viel Bewegung (von rund 150 auf 225–240 Minuten pro Woche in einem
+     Programm über 8 oder 12 Wochen; mit 4 Wochen bleibt es bei rund 200) plus Kraft an zwei Tagen; wirkt
+     zusammen mit der **Kalorienbilanz**.
    - **🧘 Beweglichkeit & Gesundheit** – sanfter Einstieg: Beweglichkeit, sanfte Kraft und Bewegung,
-     die auf 150 Minuten pro Woche wächst.
+     die in einem 12-Wochen-Programm auf 150 Minuten pro Woche wächst (kürzere bleiben bei 120–140).
 3. Lege **Trainingstage pro Woche** (3–5) und die **Dauer** (4, 8 oder 12 Wochen) fest. An manchen
    Tagen stehen zwei Einheiten – etwa Ausdauer und danach Kraft.
 4. Der Name ist mit dem Schwerpunkt vorbelegt – ändere ihn, wenn du magst. **Speichern & Plan

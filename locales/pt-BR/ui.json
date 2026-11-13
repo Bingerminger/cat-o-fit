@@ -1505,7 +1505,7 @@
     "recalcPlan": "Recalcular plano",
     "raceDay": "Dia de prova!",
     "newLogic": "Nova lógica de plano disponível",
-    "newLogicText": "Treino de prova em qualquer dia da semana, paces-alvo a partir do seu tempo-alvo, volume de acordo com o seu nível e os dias de corrida. Se quiser, o app recalcula o seu plano a partir de hoje – o passado fica como está.",
+    "newLogicText": "Lógica do plano aprimorada: cada semana respeita suas regras de volume, longões e treinos de qualidade nunca ficam ao lado de um compromisso fixo exigente, e o dia antes da prova é um trote de soltura curto. Se quiser, o app recalcula seu plano a partir de hoje – o passado continua como está, assim como os treinos que você adicionou ou mudou de dia.",
     "statRunKm": "{unit} de corrida planejados",
     "statSessions": "Treinos",
     "statDone": "Feitos",

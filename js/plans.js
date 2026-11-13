@@ -644,7 +644,8 @@ async function regenerateWeek(plan, event, week) {
   if (!ok) return;
   const fresh = buildWeekUnits(plan, event, store.profile(), week, { coveredFixed: coveredFixed(store.get('plans'), plan.id) });
   const others = all.filter((u) => u.date < ws || u.date > we);
-  const units = [...others, ...mergeFromDate(inWeek, fresh, from)].sort((a, b) => a.date.localeCompare(b.date));
+  // This week only: the dialog said that moves and manual changes of the week are replaced.
+  const units = [...others, ...mergeFromDate(inWeek, fresh, from, { keepOwn: false })].sort((a, b) => a.date.localeCompare(b.date));
   store.patch('plans', plan.id, { units });
   toast(t('plans.regenWeekDone', { week }), 'good');
   goOrRefresh(`#/plan/${event.id}`);

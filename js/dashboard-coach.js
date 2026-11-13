@@ -274,7 +274,7 @@ function makeupCard(unit, targetDay) {
 function makeupMove(unit, targetDay) {
   const plan = store.get('plans').find((p) => (p.units || []).some((x) => x.id === unit.id));
   if (!plan) return;
-  store.patch('plans', plan.id, { units: plan.units.map((x) => (x.id === unit.id ? { ...x, date: targetDay, dow: isoDow(targetDay), status: 'geplant', missedReason: null, updatedAt: nowIso() } : x)) });
+  store.patch('plans', plan.id, { units: plan.units.map((x) => (x.id === unit.id ? { ...x, date: targetDay, dow: isoDow(targetDay), status: 'geplant', missedReason: null, movedFrom: x.movedFrom || x.date, updatedAt: nowIso() } : x)) });
   toast(t('dashboardCoach.makeupToast'), 'good');
   refreshView();
 }

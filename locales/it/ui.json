@@ -1505,7 +1505,7 @@
     "recalcPlan": "Ricalcola piano",
     "raceDay": "Giorno della gara!",
     "newLogic": "Nuova logica del piano disponibile",
-    "newLogicText": "Sessione di gara in qualsiasi giorno della settimana, passi obiettivo dal tuo tempo obiettivo, volume adatto al tuo livello e ai giorni di corsa. Se vuoi, l’app ricalcola il tuo piano da oggi – il passato resta com’è.",
+    "newLogicText": "Logica del piano migliorata: ogni settimana rispetta le sue regole di volume, i lunghi e le sedute di qualità non cadono mai accanto a un impegno fisso impegnativo, e il giorno prima della gara è uno shakeout breve. Se vuoi, l’app ricalcola il tuo piano da oggi: il passato resta com’è, così come le sedute che hai aggiunto o spostato tu.",
     "statRunKm": "{unit} di corsa pianificati",
     "statSessions": "Sessioni",
     "statDone": "Svolte",
@@ -2257,7 +2257,7 @@
       "upperBody": {
         "title": "Forza – Parte alta del corpo e core",
         "moves": "Flessioni 8–12× · Rematore (manubrio/elastico) 12× · Shoulder press 12× · Plank 40 s · Plank laterale 30 s/lato · Dead bug 10×/lato",
-        "harder": "flessioni a presa stretta, un elastico più forte o un manubrio più pesante, plank laterale con sollevamento della gamba"
+        "harder": "flessioni a presa stretta, un elastico più forte o un manubrio più pesante, plank laterale con sollevamenti delle gambe"
       }
     },
     "gentle": {

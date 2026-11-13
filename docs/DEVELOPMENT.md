@@ -307,9 +307,18 @@ Do **not** break these rules in the store (`storage.js`) and backend (`storage.p
   running days (3–6): starting point from `trainingHistory` (also downwards), +8/10/12 % per week over the
   last full week, every 4th week 85 %, taper 70/50 % (an extra 85 % for long taper phases). Long
   run: share of 33 % (5/10 km), 38 % (half marathon), 40 % (marathon) of the actual weekly total, time cap 150/180
-  min, in the taper ≤ 75/55 % of the peak. Race week by days to the race (−1 shakeout, −2 rest, −3…−6
-  activation/short), race session on any weekday. Triathlon/Hyrox with their own frameworks (rest days,
-  formats, station progression). Tested in `test/plangen.test.js`, workout phases in `test/workout-engine.test.js`.
+  min, in the taper ≤ 75/55 % of the peak. Race week by days to the race (−1 shakeout – also inserted
+  when the template has no run that day –, −2 rest, −3…−6 activation/short), race session on any
+  weekday. Since 4.2 the rules hold for the **sessions**, not only the targets (`buildWeekUnits`): the
+  quality session is shaped first (≤ 40 % of the week, never longer than the long run; else compact
+  warm-up/cool-down, else easy with strides), the easy runs fill the week to its target, a week rises
+  at most by the step over the last full week *as actually planned* (`lastFullKm`, memoised per call in
+  `opts._weekKm`, so a week built alone equals that week of the whole plan), extra and recovery runs
+  turn into walks only as far as needed. A standard marathon plan reaches the volume behind the race
+  prediction (`suggestions.js PREDICTION_VOLUME`). Triathlon/Hyrox with their own frameworks (rest days,
+  formats, station progression). Tested in `test/plangen.test.js` and over a matrix of 624 plans in
+  `test/plangen-invariants.test.js` (`PLAN_INVARIANTS_ALL=1` lists every violation), workout phases in
+  `test/workout-engine.test.js`.
 - **Smoothed form estimate (`vdot.js estimateVdot`, since v3.10.0).** The “current form” is NO longer
   a single run (sensitive to outliers) but robustly smoothed: (1) **weekly best** per calendar week
   (filters easy runs, dampens intra-week outliers), (2) **outlier capping** of the weekly values to
