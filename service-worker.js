@@ -146,6 +146,7 @@ const SHELL_ASSETS = [
   './js/stage-gl.js',
   './js/stage-worlds.js',
   './js/stage-show.js',
+  './js/stage-body.js',
   './js/workout-show.js',
   './js/workouts.js',
   './js/voice.js',

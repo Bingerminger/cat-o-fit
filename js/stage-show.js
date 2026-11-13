@@ -19,10 +19,11 @@
    after a jump.
    ========================================================================= */
 
-import { BODY, cycleOf, keyPose, solvePose } from './motion-rig.js';
+import { BODY, cycleOf } from './motion-rig.js';
 import { MOTIONS } from './exercise-motions.js';
-import { vec as V, bodyFlow, createFollower, blendBodies, aboveFloor, bodyPoints, solveLimb3, lift } from './body3d.js';
-import { clipAt, showStateAt } from './show-program.js';
+import { vec as V, bodyFlow, createFollower, blendBodies, aboveFloor, bodyPoints, solveLimb3 } from './body3d.js';
+import { showStateAt } from './show-program.js';
+import { createBodyDirector } from './stage-body.js';
 import { createMesh, buildTrainer, buildCat, plaitAnchor, STRIDE } from './stage-mesh.js';
 import { createStage, projectPoint } from './stage-gl.js';
 import { DEFAULT_WORLD } from './stage-worlds.js';
@@ -83,7 +84,6 @@ function shotAt(seg, local, view) {
 export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } = {}) {
   const stage = createStage(canvas);
   if (!stage) return null;
-  const prog = show.program;
   const trainer = createMesh(9000, 48000);
   const cat = createMesh(3000, 15000);
   const bits = createMesh(1600, 2400);
@@ -94,69 +94,8 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
   const plait = []; let plaitPrev = [];
   let confetti = []; let lastIndex = -1; let doneAt = null;
   const follower = createFollower();
-  const ends = new Map(); const starts = new Map(); const bounds = new Map();
-  // Between standing and the floor she goes through a crouch with the hands down – nobody tips over like a board.
-  const crouch = MOTIONS.burpee && MOTIONS.burpee.keys.squat ? lift(solvePose(keyPose(MOTIONS.burpee, 'squat'), 'side'), MOTIONS.burpee) : null;
-  // Upright (also in the middle of a squat or a lunge) · on the floor or propped on it (plank, all fours, lying).
-  const standing = (b) => b.chest[1] > 70 && b.chest[1] - b.pelvis[1] > 24;
-  const down = (b) => b.pelvis[1] < 50 && b.chest[1] - b.pelvis[1] < 18;
-  // Onto the back and up from it she goes over sitting.
-  const sit = lift(solvePose({ hip: [-6, -9], torso: -16, legs: { r: { at: [38, -BODY.ankle] }, l: { at: [36, -BODY.ankle] } }, arms: { r: { at: [-24, -BODY.wrist], bend: 'back' }, l: { at: [-26, -BODY.wrist], bend: 'back' } } }, 'side'), {});
-  const onBack = (b) => down(b) && b.fwd[1] > 0.5;
-  /** The poses she passes through on the way from A to B (none when both are standing or both are down). */
-  function wayOf(A, B0) {
-    if (!crouch) return [];
-    if (standing(A) && down(B0)) return onBack(B0) ? [crouch, sit] : [crouch];
-    if (down(A) && standing(B0)) return onBack(A) ? [sit, crouch] : [crouch];
-    return [];
-  }
-
-  const motionOf = (seg) => prog.items[seg.i].m;
-
-  /** Body of section k at its local time. */
-  function segBody(k, local) {
-    const seg = show.segs[k];
-    const a = clipAt(seg.clips, local);
-    return bodyFlow(motionOf(seg), a.t, a.list, { once: !a.clip.loop });
-  }
-  /** Where section k begins. */
-  function startOf(k) {
-    if (!starts.has(k)) starts.set(k, segBody(k, 0));
-    return starts.get(k);
-  }
-  /** Where section k ends (the pose the next one flows out of). */
-  function endOf(k) {
-    if (!ends.has(k)) ends.set(k, segBody(k, show.segs[k].dur - 1e-3));
-    return ends.get(k);
-  }
-  const gap = (A, B) => {
-    const a = bodyPoints(A); const b = bodyPoints(B);
-    let d = 0;
-    for (let i = 0; i < a.length; i++) d = Math.max(d, V.dist(a[i], b[i]));
-    return d;
-  };
-
-  /** The trainer's body at a state of the show: the exercise, flowing in from what came before. */
-  function bodyOf(st) {
-    const B = segBody(st.index, st.local);
-    if (st.index === 0) return B;
-    const A = endOf(st.index - 1);
-    const B0 = startOf(st.index);
-    const d = gap(A, B0);
-    if (d < 1.5) return B;
-    const way = wayOf(A, B0);
-    const dur = Math.min(st.seg.dur * 0.6, way.length ? 1.3 * (way.length + 1) : clamp(0.55 + d / 55, 0.6, 2.4));
-    if (st.local >= dur) return B;
-    const k = smooth(st.local / dur);
-    if (way.length) {
-      const stops = [A, ...way, B];
-      const x = k * (stops.length - 1);
-      const i = Math.min(stops.length - 2, Math.floor(x));
-      return blendBodies(stops[i], stops[i + 1], x - i);
-    }
-    const low = A.pelvis[1] < 30 && B.pelvis[1] < 30;
-    return blendBodies(A, B, k, { rise: low && d > 30 ? 9 : 0 });
-  }
+  const bounds = new Map();
+  const { bodyOf, endOf, motionOf } = createBodyDirector(show);
 
   /** The space an exercise takes (centre and half extents), from a walk through its cycle. */
   function boundsOf(seg) {

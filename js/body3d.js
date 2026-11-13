@@ -334,7 +334,7 @@ const ramp = (x, a, b) => { const k = clamp((x - a) / (b - a), 0, 1); return k *
  * that is nearly straight has no side of its own – it then bends the way such a joint does (`rest`: a knee to the
  * front of the body, an elbow to its back), never by chance to the other one.
  */
-function poleOf(root, end, root0, joint0, end0, rest) {
+export function poleOf(root, end, root0, joint0, end0, rest) {
   const u = V.norm(V.sub(end0, root0));
   const d = V.sub(V.sub(joint0, root0), V.mul(u, V.dot(V.sub(joint0, root0), u)));
   const w = clamp(V.len(d) / 4, 0, 1);
