@@ -6,8 +6,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = new URL('..', import.meta.url).pathname;
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const JS = join(ROOT, 'js');
 const parts = readdirSync(JS).filter((f) => /^store-[\w-]+\.js$/.test(f));
 const read = (f) => readFileSync(join(JS, f), 'utf8');

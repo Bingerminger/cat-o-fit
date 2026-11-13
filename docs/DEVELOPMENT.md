@@ -111,8 +111,7 @@ Integrity checked: no lost updates, `rev` unique, JSON on disk valid, user isola
 import consistency. Output as a table. Both scripts check the writes by **sets of IDs** (every acknowledged
 ID is on the server, and nothing is there that was never sent) instead of by a counter total – under load
 a request can reach the server whose response never reaches the client, and one that fails on the way
-(a connection reset by the built-in server at 200 parallel connections and more) counts as an error,
-not as lost data.
+(e.g. a connection reset at 200 parallel connections) counts as an error, not as lost data.
 
 ```bash
 QA=scratch/lt-app
@@ -148,16 +147,19 @@ the numbers will differ): **Apple M1 Max · 10 cores · 64 GB RAM · macOS 26 ·
 | very heavy | 11,580 | 200 | 4.31 s | 2,684/s | 132 ms | 122 ms | 0 | ✓ |
 | Soak run 60 s | 65,523 (49,105 writes) | 500 | 60 s | 1,075/s | 779 ms | 674 ms | 0 | ✓ |
 
-Before 4.2 the backup read every area in its own request: backup p95 110 / 290 / 836 ms and 4,426 ms
-in the soak run (3.21, PHP 8.5.7). In the soak run more writes now fit into the minute (49,105 instead
-of 45,161), the files grow faster, and the write p95 rises with them (478 → 779 ms).
+The earlier table (summer 2026, before 3.20, PHP 8.5.7 on an older macOS; the backup then read all
+13 areas, one request each) showed backup p95 110 / 290 / 836 ms and 4,426 ms in the soak run. Its write
+figures are **not comparable** with the ones above: measured side by side on the same machine, the server
+of v4.1.1 and that of 4.2 give the same write p95 (55–63 ms and 55–58 ms at 100 parallel), so the
+difference lies in the environment, not in the code.
 
 **Assessment:**
 - **Integrity: rock solid** – even with 10,000 concurrent writes or 49,000 writes / 14 MB in the
   soak run, no lost update and no corruption.
 - **Throughput ceiling ≈ 3,500 req/s** on a single host (saturated at ~100 concurrent). More
-  concurrency only brings latency; at 200 parallel connections and more the built-in server now and
-  then resets a connection (the request never reaches PHP, the client gets an error, nothing is stored).
+  concurrency only brings latency. At 200 parallel connections, some runs showed connections reset by
+  the server (`Errno 54`) – the load test counts them as errors; no acknowledged write went missing.
+  The cause (presumably the connection backlog of the built-in server) is not examined.
 - **Most expensive path: the writes** – each one rewrites the whole area JSON (~O(n)), so they grow with
   the amount of data. The full backup reads every area once per member in one request since 4.2; the
   server still reads whole files, an incremental backup would save only the transfer. For a family

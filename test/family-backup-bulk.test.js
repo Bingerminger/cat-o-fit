@@ -1,7 +1,9 @@
 /* The admin's full backup in one request per member (since 4.2), against the protocol-faithful test
    server (test-setup.js). Before, the app asked member × area one after another (10 members: 100
-   requests); now one `changes-all` per member, a few members at a time. The file must stay the same:
+   requests); now one `changes-all` per member, a few members at a time. The file keeps its content
+   (the records of an area may come in another order, which a restore does not care about):
    - one request per member, the same content as area by area,
+   - a file from the bundled backup restores to the same content (round trip),
    - the private areas are never asked for and never in the file (also not one's own),
    - tombstones and revs stay out, the profile has no id (as the server's logical view),
    - if the server cannot do it or the request fails, the backup asks area by area as before,
@@ -113,6 +115,23 @@ test('BACKUP-04: if the request per member fails, the backup asks area by area',
   const dump = await store.exportFamilyAll();
   assert.equal(count(isAreaGet), IDS.length * 10);
   assert.deepEqual(canon(dump.users), full);
+});
+
+test('BACKUP-06: a file from the bundled backup restores to the same content', async () => {
+  const first = await store.exportFamilyAll();
+  // Change something after the backup, then restore: the backup's state comes back.
+  await ops('u-4', 'events', [{ op: 'upsert', record: { id: 'e-u-4-1', name: 'Changed after the backup', date: '2026-12-01' } }]);
+  await ops('u-5', 'sessions', [{ op: 'delete', id: 's-u-5' }]);
+  const res = await store.importFamilyAll(JSON.parse(JSON.stringify(first)));
+  assert.equal(res.pending, 0, 'the server confirmed every area');
+  const again = await store.exportFamilyAll();
+  // The server stamps updatedAt when it stores the restored records; the content is the same.
+  const content = (users) => JSON.parse(JSON.stringify(canon(users), (k, v) => (k === 'updatedAt' ? undefined : v)));
+  assert.deepEqual(content(again.users), content(first.users));
+  assert.notDeepEqual(canon(again.users)['u-4'].events, [], 'u-4 has events again');
+  assert.ok(canon(again.users)['u-5'].sessions.some((s) => s.id === 's-u-5'), 'the session deleted after the backup is back');
+  assert.ok(canon(again.users)['u-4'].events.every((e) => e.name !== 'Changed after the backup'), 'the change after the backup is undone');
+  assert.deepEqual(again.family.members.map((m) => m.id), IDS);
 });
 
 test('BACKUP-05: the members keep the family\'s order in the file', async () => {
