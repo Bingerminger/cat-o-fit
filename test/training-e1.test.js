@@ -88,6 +88,10 @@ test('plan texts on miles: ranges of distances convert both ends', () => {
     assert.equal(localizeUnits('Rad-Alternative: ~68–85 km'), 'Rad-Alternative: ~42,3–52,8 mi');
     assert.equal(localizeUnits('die letzten 1–2 km'), 'die letzten 0,62–1,24 mi');
     assert.equal(localizeUnits('10-15 km, 18 km bei 5:20–5:34 min/km'), '6,2-9,3 mi, 11,2 mi bei 8:35–8:58 min/mi');
+    // A sentence dash is no range: only the distance after it changes.
+    assert.equal(localizeUnits('in Z2 – 10 km'), 'in Z2 – 6,2 mi');
+    assert.equal(localizeUnits('1:55:00 – 21,1 km'), '1:55:00 – 13,1 mi');
+    assert.equal(localizeUnits('Woche 3 – 12 km'), 'Woche 3 – 7,5 mi');
   } finally { setUnits(METRIC); }
 });
 

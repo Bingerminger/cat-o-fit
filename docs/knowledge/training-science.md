@@ -54,7 +54,7 @@ All load verdicts have **one source**: the load points of each session.
 | **Load points (AU, session RPE)** | Duration in minutes × effort (RPE 1–10). If the duration is missing: from the distance per sport, then the planned duration, finally 30 minutes. If the effort is missing: a typical value for the type of session. |
 | **Load ratio (ACWR)** | Load of the last 7 days ÷ weekly average of the 21 days before (“uncoupled” – the acute days are not part of the comparison value). 0.8–1.3 means: close to your average. There is no verdict yet in the first four weeks. |
 | **Fitness (CTL) and fatigue (ATL)** | Exponentially smoothed daily load with time constants of 42 and 7 days (after Banister). |
-| **Form (TSB)** | Fitness − fatigue, classified **relative to fitness**: fresh (above +10%), balanced, in training (down to −30%), clearly tired. Judged only from about 90 days of data. |
+| **Form (TSB)** | Fitness − fatigue, classified **relative to fitness**: fresh (above +10%), balanced, in training (down to −30%), clearly tired. Judged only from about 90 days of data; the rating takes the rest of the curves' start-up out (each divided by 1 − e^(−days/τ)), so even training reads “balanced” from then on while the curve may still run slightly negative for some weeks. |
 | **Monotony and strain** | Weekly average of the daily load ÷ its standard deviation (after Foster); strain = weekly load × monotony. A hint appears only at a monotony of 2 or more **and** a week at least 10% above your usual weekly load; sessions up to RPE 3 do not count. |
 
 The limits 0.8/1.3/1.5 come from observational data in team sports. That training by this traffic

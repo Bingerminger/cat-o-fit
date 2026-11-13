@@ -133,8 +133,9 @@ export function fmtElevation(m) {
 /* Generated plan texts are stored with metric amounts ("Long run 18 km", "6×1 km at 4:45/km").
    For a person on miles they are converted when shown; metre intervals (track) stay. */
 const PACE_IN_TEXT = /(\d{1,2}:\d{2})(?:(\s?[–-]\s?)(\d{1,2}:\d{2}))?(\s?(?:min)?\s?)\/\s?km\b/g;
-// A distance or a range of distances ("68–85 km", "10-15 km"): both ends are converted.
-const KM_IN_TEXT = /(\d+(?:[.,]\d+)?)(?:(\s?[–-]\s?)(\d+(?:[.,]\d+)?))?(\s?| )km\b(?!\/h)/g;
+// A distance or a range of distances ("68–85 km", "10-15 km"): both ends are converted. A range only
+// without spaces around the dash (as the plan writes them) – "in Z2 – 10 km" is a sentence dash.
+const KM_IN_TEXT = /(\d+(?:[.,]\d+)?)(?:([–-])(\d+(?:[.,]\d+)?))?(\s?| )km\b(?!\/h)/g;
 const perMile = (mss) => {
   const [m, s] = mss.split(':').map(Number);
   const sec = Math.round((m * 60 + s) * KM_PER_MI);

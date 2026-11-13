@@ -55,7 +55,7 @@ Alle Belastungsurteile haben **eine Quelle**: die Belastungspunkte jeder Einheit
 | **Belastungspunkte (AU, Session-RPE)** | Dauer in Minuten × Anstrengung (RPE 1–10). Fehlt die Dauer: aus der Strecke je Sportart, dann die geplante Dauer, zuletzt 30 Minuten. Fehlt die Anstrengung: ein typischer Wert der Einheitenart. |
 | **Lastverhältnis (ACWR)** | Belastung der letzten 7 Tage ÷ Wochenschnitt der 21 Tage davor („entkoppelt“ – die akuten Tage stecken nicht im Vergleichswert). 0,8–1,3 heißt: nah an deinem Schnitt. In den ersten vier Wochen gibt es noch kein Urteil. |
 | **Fitness (CTL) und Ermüdung (ATL)** | Exponentiell geglättete Tageslast mit Zeitkonstanten von 42 bzw. 7 Tagen (nach Banister). |
-| **Form (TSB)** | Fitness − Ermüdung, eingeordnet **relativ zur Fitness**: frisch (über +10 %), ausgeglichen, im Training (bis −30 %), deutlich ermüdet. Bewertet erst ab rund 90 Tagen Daten. |
+| **Form (TSB)** | Fitness − Ermüdung, eingeordnet **relativ zur Fitness**: frisch (über +10 %), ausgeglichen, im Training (bis −30 %), deutlich ermüdet. Bewertet erst ab rund 90 Tagen Daten; die Einstufung rechnet den Rest des Einschwingens der Kurven heraus (jede geteilt durch 1 − e^(−Tage/τ)), sodass gleichmäßiges Training ab dann „ausgeglichen“ heißt, während die Kurve noch einige Wochen leicht im Minus liegen kann. |
 | **Monotonie und Strain** | Wochenschnitt der Tageslast ÷ ihre Standardabweichung (nach Foster); Strain = Wochenlast × Monotonie. Hinweis nur bei Monotonie ab 2 **und** einer Woche mindestens 10 % über deiner üblichen Wochenlast; Einheiten bis RPE 3 zählen nicht. |
 
 Die Grenzen 0,8/1,3/1,5 stammen aus Beobachtungsdaten im Teamsport. Dass Training nach dieser Ampel

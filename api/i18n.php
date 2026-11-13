@@ -144,12 +144,13 @@ function server_localize_units(string $text, string $lang, array $units): string
     };
     $text = (string) preg_replace_callback('/(\d{1,2}:\d{2})(?:(\s?[–-]\s?)(\d{1,2}:\d{2}))?(\s?(?:min)?\s?)\/\s?km\b/u',
         static fn(array $m): string => $perMile($m[1]) . (($m[3] ?? '') !== '' ? $m[2] . $perMile($m[3]) : '') . $m[4] . '/mi', $text);
-    // A distance or a range of distances ("68–85 km", "10-15 km"): both ends are converted.
+    // A distance or a range of distances ("68–85 km", "10-15 km"): both ends are converted; a range only
+    // without spaces around the dash – "in Z2 – 10 km" is a sentence dash.
     $toMi = static function (string $n) use ($lang): string {
         $mi = (float) str_replace(',', '.', $n) / KM_PER_MI;
         return server_number($mi, $mi >= 3 ? 1 : 2, $lang);
     };
-    return (string) preg_replace_callback('/(\d+(?:[.,]\d+)?)(?:(\s?[–-]\s?)(\d+(?:[.,]\d+)?))?(\s?|\x{00a0})km\b(?!\/h)/u',
+    return (string) preg_replace_callback('/(\d+(?:[.,]\d+)?)(?:([–-])(\d+(?:[.,]\d+)?))?(\s?|\x{00a0})km\b(?!\/h)/u',
         static fn(array $m): string => $toMi($m[1]) . (($m[3] ?? '') !== '' ? $m[2] . $toMi($m[3]) : '') . $m[4] . 'mi', $text);
 }
 
