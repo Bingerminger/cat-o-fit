@@ -219,16 +219,49 @@ test('PLAN-M: a standard marathon plan reaches the volume behind the race predic
   report('marathon', bad);
 });
 
+/* ---------------- S: strength that follows the plan phase ---------------- */
+test('PLAN-S: strength in run plans follows the phase, never next to a demanding day, never a fourth demanding session', () => {
+  const bad = [];
+  const S_MASKS = ['none', 'football Tue+Thu', 'football Fri', 'football Mon+Wed', 'match Sun'];
+  for (const key of ['10k', 'hm', 'marathon']) for (const days of DAYS) for (const mask of S_MASKS) for (const strengthDays of [1, 2]) {
+    const { plan, event, units } = makePlan({ key, level: 'fortgeschritten', days, commitments: MASKS[mask] });
+    const withS = generatePlanUnits({ ...plan, strengthDays }, event, {});
+    const tag = `${key}/${days}d/${mask}/strength ${strengthDays}`;
+    bad.push(...placementViolations(withS, plan, event, tag));
+    for (let w = 1; w <= plan.weeks; w++) {
+      const list = withS.filter((u) => u.week === w || (u.fixed && u.week === w));
+      const str = list.filter((u) => u.type === 'strength');
+      const phase = plan.phases.find((p) => w >= p.startWeek && w <= p.endWeek).key;
+      const target = weekVolumes(plan, volumeConfig(plan, event, plan.paces || {}))[w] || {};
+      const max = target.taper || phase === 'taper' ? 0 : phase === 'base' && !target.deload ? strengthDays : 1;
+      if (str.length > max) bad.push(`${tag} W${w} (${phase}): ${str.length} strength sessions, at most ${max}`);
+      if (str.some((s) => diffDays(s.date, event.date) <= 6)) bad.push(`${tag} W${w}: strength in the race week`);
+      const hardWithout = units.filter((u) => u.week === w && isHard(u)).length;
+      const hardWith = list.filter(isHard).length;
+      if (str.length && hardWith > Math.max(3, hardWithout)) bad.push(`${tag} W${w}: strength makes ${hardWith} demanding sessions`);
+      if (mask === 'none' && days >= 4 && !target.deload && !target.taper && phase !== 'taper' && str.length < max) {
+        bad.push(`${tag} W${w} (${phase}): only ${str.length} of ${max} strength sessions although the week has room`);
+      }
+      // The run sessions do not change.
+      const runs = (l) => l.filter((u) => u.type !== 'strength').map((u) => `${u.date}|${u.type}|${u.targetDistanceKm}`).sort().join();
+      if (runs(list.filter((u) => u.week === w)) !== runs(units.filter((u) => u.week === w))) bad.push(`${tag} W${w}: the runs changed`);
+    }
+  }
+  report('strength', bad);
+});
+
 /* ---------------- W: one week alone equals the whole plan ---------------- */
 test('PLAN-W: a week built alone equals that week of the whole plan', () => {
   const bad = [];
   const shape = (u) => `${u.date}|${u.type}|${u.targetDistanceKm ?? ''}|${u.targetDurationMin ?? ''}|${u.relocatedFrom || ''}`;
-  for (const [mask, commitments] of Object.entries(MASKS)) for (const days of DAYS) {
-    const { plan, event, units } = makePlan({ key: 'hm', level: 'fortgeschritten', days, commitments });
+  for (const [mask, commitments] of Object.entries(MASKS)) for (const days of DAYS) for (const strengthDays of [0, 2]) {
+    const made = makePlan({ key: 'hm', level: 'fortgeschritten', days, commitments });
+    const plan = { ...made.plan, strengthDays };
+    const units = strengthDays ? generatePlanUnits(plan, made.event, {}) : made.units;
     for (let w = 1; w <= plan.weeks; w++) {
-      const alone = buildWeekUnits(plan, event, {}, w).map(shape).sort().join('\n');
+      const alone = buildWeekUnits(plan, made.event, {}, w).map(shape).sort().join('\n');
       const inPlan = units.filter((u) => u.week === w).map(shape).sort().join('\n');
-      if (alone !== inPlan) bad.push(`hm/${days}d/${mask} W${w}`);
+      if (alone !== inPlan) bad.push(`hm/${days}d/${mask}/strength ${strengthDays} W${w}`);
     }
   }
   report('single week', bad);

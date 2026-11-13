@@ -1473,6 +1473,7 @@
     "setupIntro": "Quelques détails pour que le plan te corresponde. Tu pourras tout modifier plus tard.",
     "level": "Niveau",
     "runDaysPerWeek": "Jours de course à pied par semaine",
+    "strengthInPlan": "Renforcement dans le plan",
     "triathlonNote": "Triathlon (bêta) : une structure hebdomadaire fixe avec un jour de repos le lundi – deux séances de natation, deux de vélo et trois de course, affûtage et format de course.",
     "hyroxNote": "Hyrox (bêta) : une structure hebdomadaire fixe avec deux jours de repos – intervalles de course, renforcement, entraînement aux stations jusqu’à une simulation de course, affûtage.",
     "targetPaces": "Allures cibles",
@@ -1541,7 +1542,10 @@
       "one": "{count} séance déjà faite est conservée.",
       "other": "{count} séances déjà faites sont conservées."
     },
-    "regenWeekLost": "Les déplacements et modifications manuelles de cette semaine seront perdus."
+    "regenWeekLost": "Les déplacements et modifications manuelles de cette semaine seront perdus.",
+    "strengthOff": "Non",
+    "strengthHint": "Phase de fondation jusqu’à {n}× par semaine, développement et pic une fois pour entretenir, rien pendant l’affûtage. Seulement les jours qui ne sont pas voisins d’une séance exigeante ou d’un engagement fixe exigeant.",
+    "levelLineStrength": "Renforcement jusqu’à {n}× par semaine"
   },
   "commitments": {
     "footballTraining": "Entraînement de football",
@@ -2203,6 +2207,20 @@
       "title": "Facile avec accélérations",
       "raceWeekDesc": "La séance d’activation tomberait juste à côté d’un rendez-vous fixe dur – ce rendez-vous réveille déjà tes jambes. Donc juste du facile en Z2 avec 4 accélérations d’environ 20 s à la fin. Reste frais pour la course.",
       "desc": "Cette semaine, ta séance de qualité tomberait juste à côté d’un rendez-vous fixe dur – le rendez-vous apporte l’intensité. Donc un footing facile en Z2 avec 4–6 accélérations d’environ 20 s à la fin (soutenues, sans sprinter ; trottine tranquillement entre les deux). Tu gardes ta vitesse sans deux jours durs d’affilée."
+    },
+    "runStrength": {
+      "base": {
+        "title": "Renfo – fondation",
+        "desc": "3 tours : Squats 10× · Fentes 8×/jambe · Soulevé de terre à une jambe 8×/jambe · Montées sur pointes 15× · Gainage 40 s. Assez lourd pour que les deux dernières répétitions soient difficiles – idéalement juste après le footing."
+      },
+      "build": {
+        "title": "Renfo – explosivité",
+        "desc": "2 tours : Squats sautés 6× · Fentes 8×/jambe · Soulevé de terre à une jambe 8×/jambe · Montées sur pointes 12× · Gainage latéral 30 s/côté. Sauter de façon explosive, atterrir en douceur – une force qui se retrouve dans la foulée."
+      },
+      "peak": {
+        "title": "Renfo – entretien",
+        "desc": "2 tours, tranquille : Squats 10× · Step-ups 8×/jambe · Montées sur pointes 15× · Gainage 30 s. Court et frais – la séance de qualité passe d’abord."
+      }
     }
   },
   "program": {

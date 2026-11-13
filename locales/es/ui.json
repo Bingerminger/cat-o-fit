@@ -1473,6 +1473,7 @@
     "setupIntro": "Unos pocos datos para que el plan se ajuste a ti. Puedes cambiarlo todo más adelante.",
     "level": "Nivel",
     "runDaysPerWeek": "Días de carrera por semana",
+    "strengthInPlan": "Fuerza en el plan",
     "triathlonNote": "Triatlón (beta): una estructura semanal fija con día de descanso el lunes: dos sesiones de natación, dos de bici y tres de carrera, además de la puesta a punto y el formato de carrera.",
     "hyroxNote": "Hyrox (beta): una estructura semanal fija con dos días de descanso: series de carrera, fuerza y entrenamiento de estaciones hasta un simulacro de carrera, además de la puesta a punto.",
     "targetPaces": "Ritmos objetivo",
@@ -1541,7 +1542,10 @@
       "one": "Se conserva {count} sesión que ya hiciste.",
       "other": "Se conservan {count} sesiones que ya hiciste."
     },
-    "regenWeekLost": "Los cambios de día y las modificaciones manuales de esta semana se perderán."
+    "regenWeekLost": "Los cambios de día y las modificaciones manuales de esta semana se perderán.",
+    "strengthOff": "No",
+    "strengthHint": "Fase de base hasta {n}× por semana, desarrollo y pico una vez para mantener, nada en la puesta a punto. Solo en días que no estén junto a una sesión exigente o a un compromiso fijo exigente.",
+    "levelLineStrength": "Fuerza hasta {n}× por semana"
   },
   "commitments": {
     "footballTraining": "Entrenamiento de fútbol",
@@ -2203,6 +2207,20 @@
       "title": "Suave con progresivos",
       "raceWeekDesc": "La carrera de activación caería justo al lado de una cita fija intensa, y esa cita ya despierta tus piernas. Así que solo suave en Z2 con 4 progresivos de ~20 s al final. Mantén la frescura para la carrera.",
       "desc": "Esta semana tu sesión de calidad caería justo al lado de una cita fija intensa: la cita ya aporta la intensidad. Por eso, una carrera suave en Z2 con 4–6 progresivos de ~20 s al final (a buen ritmo, sin esprintar; trota suave entre medias). Así conservas la velocidad sin dos días intensos seguidos."
+    },
+    "runStrength": {
+      "base": {
+        "title": "Fuerza – base",
+        "desc": "3 rondas: Sentadillas 10× · Zancadas 8×/pierna · Peso muerto a una pierna 8×/pierna · Elevaciones de talones 15× · Plancha 40 s. Con carga suficiente para que las dos últimas repeticiones cuesten; mejor justo después del rodaje suave."
+      },
+      "build": {
+        "title": "Fuerza – potencia",
+        "desc": "2 rondas: Sentadillas con salto 6× · Zancadas 8×/pierna · Peso muerto a una pierna 8×/pierna · Elevaciones de talones 12× · Plancha lateral 30 s/lado. Salta con explosividad y aterriza suave: fuerza que se nota en la zancada."
+      },
+      "peak": {
+        "title": "Fuerza – mantenimiento",
+        "desc": "2 rondas, suave: Sentadillas 10× · Subidas al escalón 8×/pierna · Elevaciones de talones 15× · Plancha 30 s. Corta y fresca: la sesión de calidad va primero."
+      }
     }
   },
   "program": {

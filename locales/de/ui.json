@@ -1473,6 +1473,7 @@
     "setupIntro": "Ein paar Angaben, damit der Plan zu dir passt. Alles lässt sich später ändern.",
     "level": "Niveau",
     "runDaysPerWeek": "Lauftage pro Woche",
+    "strengthInPlan": "Kraft im Plan",
     "triathlonNote": "Triathlon (Beta): festes Wochengerüst mit Ruhetag am Montag – zwei Schwimm-, zwei Rad- und drei Laufeinheiten, Tapering und Wettkampfformat.",
     "hyroxNote": "Hyrox (Beta): festes Wochengerüst mit zwei Ruhetagen – Lauf-Intervalle, Kraft, Stationstraining bis zur Wettkampfsimulation, Tapering.",
     "targetPaces": "Zielpaces",
@@ -1541,7 +1542,10 @@
       "one": "{count} bereits erledigte Einheit bleibt erhalten.",
       "other": "{count} bereits erledigte Einheiten bleiben erhalten."
     },
-    "regenWeekLost": "Verschiebungen und manuelle Änderungen dieser Woche gehen verloren."
+    "regenWeekLost": "Verschiebungen und manuelle Änderungen dieser Woche gehen verloren.",
+    "strengthOff": "Aus",
+    "strengthHint": "Grundlage bis zu {n}× pro Woche, Aufbau und Spitze 1× zur Erhaltung, im Tapering keine. Nur an Tagen, die nicht neben einer harten Einheit oder einem harten Termin liegen.",
+    "levelLineStrength": "Kraft bis {n}× pro Woche"
   },
   "commitments": {
     "footballTraining": "Fußballtraining",
@@ -2203,6 +2207,20 @@
       "title": "Locker mit Steigerungen",
       "raceWeekDesc": "Die Aktivierung läge direkt neben einem harten festen Termin – der Termin weckt die Beine schon. Deshalb nur locker in Z2 mit 4 Steigerungen à ~20 s am Ende. Frisch bleiben fürs Rennen.",
       "desc": "Diese Woche läge die Qualitätseinheit direkt neben einem harten festen Termin – die Intensität liefert der Termin. Deshalb ein lockerer Dauerlauf in Z2 mit 4–6 Steigerungen à ~20 s am Ende (zügig, nicht sprinten; dazwischen locker traben). So bleibt die Spritzigkeit, ohne zwei harte Tage hintereinander."
+    },
+    "runStrength": {
+      "base": {
+        "title": "Kraft – Grundlage",
+        "desc": "3 Runden: Kniebeugen 10× · Ausfallschritte 8×/Bein · einbeiniges Kreuzheben 8×/Bein · Wadenheben 15× · Plank 40 s. So schwer, dass die letzten zwei Wiederholungen fordern – gern direkt nach dem lockeren Lauf."
+      },
+      "build": {
+        "title": "Kraft – Sprungkraft",
+        "desc": "2 Runden: Sprungkniebeugen 6× · Ausfallschritte 8×/Bein · einbeiniges Kreuzheben 8×/Bein · Wadenheben 12× · Seitstütz 30 s/Seite. Explosiv springen, leise landen – Kraft, die im Laufschritt ankommt."
+      },
+      "peak": {
+        "title": "Kraft – Erhalt",
+        "desc": "2 Runden, locker: Kniebeugen 10× · Step-ups 8×/Bein · Wadenheben 15× · Plank 30 s. Kurz und frisch – die Qualitätseinheit hat Vorrang."
+      }
     }
   },
   "program": {

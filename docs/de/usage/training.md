@@ -41,6 +41,12 @@ So legst du dein Ziel an:
      letzten vier Wochen vor (Wochenumfang, längster Lauf); du kannst es ändern.
    - **Lauftage pro Woche** – 3 bis 6. Mehr Tage tragen mehr Umfang; die zwei Schlüsseleinheiten
      (Dienstag, Samstag) liegen nie direkt nebeneinander.
+   - **Kraft im Plan** – aus (Voreinstellung), 1× oder 2×. Die Kraft folgt der Planphase: allgemeine
+     Kraft bis zur gewählten Zahl in der Grundlage, einmal im Aufbau (Sprünge für die Sprungkraft) und in
+     der Spitze (kurz, zum Erhalten), keine im Tapering. Sie kommt nur auf einen Tag, der nicht neben einer
+     harten Einheit oder einem harten Termin liegt, am liebsten direkt nach einem lockeren Lauf, und nur so
+     lange die Woche bei drei harten Einheiten bleibt – mit zweimal Fußball pro Woche ist kein Platz mehr,
+     und der Plan legt keine an.
    - **Feste Termine** – etwa Vereinstraining oder Spiele. Standardmäßig gibt es **keine**; du kannst
      sie eintragen oder aus einem anderen laufenden Plan übernehmen (dann erscheinen sie nicht doppelt).
    - Dazu siehst du die **Zielpaces**: Sie kommen aus deiner **Zielzeit**. Liegt die Zielzeit deutlich

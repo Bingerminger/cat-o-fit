@@ -1473,6 +1473,7 @@
     "setupIntro": "A few details so the plan fits you. You can change everything later.",
     "level": "Level",
     "runDaysPerWeek": "Run days per week",
+    "strengthInPlan": "Strength in the plan",
     "triathlonNote": "Triathlon (beta): a fixed weekly structure with a rest day on Monday – two swim, two bike and three run sessions, taper and race format.",
     "hyroxNote": "Hyrox (beta): a fixed weekly structure with two rest days – run intervals, strength, station training up to a race simulation, taper.",
     "targetPaces": "Target paces",
@@ -1541,7 +1542,10 @@
       "one": "{count} session you’ve already done is kept.",
       "other": "{count} sessions you’ve already done are kept."
     },
-    "regenWeekLost": "Moves and manual changes in this week will be lost."
+    "regenWeekLost": "Moves and manual changes in this week will be lost.",
+    "strengthOff": "Off",
+    "strengthHint": "Base phase up to {n}× a week, build and peak once to keep it, none in the taper. Only on days that are not next to a demanding session or fixed commitment.",
+    "levelLineStrength": "Strength up to {n}× a week"
   },
   "commitments": {
     "footballTraining": "Football training",
@@ -2203,6 +2207,20 @@
       "title": "Easy with strides",
       "raceWeekDesc": "The activation run would sit right next to a hard fixed appointment – that appointment already wakes your legs up. So just easy in Z2 with 4 strides of ~20 s at the end. Stay fresh for the race.",
       "desc": "This week your quality session would sit right next to a hard fixed appointment – the appointment provides the intensity. So an easy run in Z2 with 4–6 strides of ~20 s at the end (brisk, no sprinting; jog easily in between). That keeps your speed without two hard days in a row."
+    },
+    "runStrength": {
+      "base": {
+        "title": "Strength – base",
+        "desc": "3 rounds: Squats 10× · Lunges 8×/leg · Single-leg deadlift 8×/leg · Calf raises 15× · Plank 40 s. Heavy enough that the last two reps are hard – ideally straight after the easy run."
+      },
+      "build": {
+        "title": "Strength – power",
+        "desc": "2 rounds: Jump squats 6× · Lunges 8×/leg · Single-leg deadlift 8×/leg · Calf raises 12× · Side plank 30 s/side. Jump explosively, land softly – strength that shows in your stride."
+      },
+      "peak": {
+        "title": "Strength – maintain",
+        "desc": "2 rounds, easy: Squats 10× · Step-ups 8×/leg · Calf raises 15× · Plank 30 s. Short and fresh – the quality session comes first."
+      }
     }
   },
   "program": {

@@ -1473,6 +1473,7 @@
     "setupIntro": "Nog een paar gegevens, zodat het schema bij je past. Je kunt alles later wijzigen.",
     "level": "Niveau",
     "runDaysPerWeek": "Loopdagen per week",
+    "strengthInPlan": "Kracht in het plan",
     "triathlonNote": "Triatlon (beta): een vaste weekstructuur met een rustdag op maandag – twee zwem-, twee fiets- en drie looptrainingen, afbouw en wedstrijdformaat.",
     "hyroxNote": "Hyrox (beta): een vaste weekstructuur met twee rustdagen – looptrainingen met intervallen, kracht, stationtraining tot een wedstrijdsimulatie, afbouw.",
     "targetPaces": "Streeftempo’s",
@@ -1541,7 +1542,10 @@
       "one": "{count} training die je al hebt gedaan blijft behouden.",
       "other": "{count} trainingen die je al hebt gedaan blijven behouden."
     },
-    "regenWeekLost": "Verplaatsingen en handmatige wijzigingen in deze week gaan verloren."
+    "regenWeekLost": "Verplaatsingen en handmatige wijzigingen in deze week gaan verloren.",
+    "strengthOff": "Uit",
+    "strengthHint": "Basisfase tot {n}× per week, opbouw en piek één keer om het te onderhouden, niets in de taper. Alleen op dagen die niet naast een zware training of een zware vaste afspraak liggen.",
+    "levelLineStrength": "Kracht tot {n}× per week"
   },
   "commitments": {
     "footballTraining": "Voetbaltraining",
@@ -2203,6 +2207,20 @@
       "title": "Rustig met versnellingen",
       "raceWeekDesc": "De activeringsloop zou vlak naast een zware vaste afspraak vallen – die afspraak maakt je benen al wakker. Dus gewoon rustig in Z2 met aan het eind 4 versnellingen van ~20 s. Blijf fris voor de wedstrijd.",
       "desc": "Deze week zou je kwaliteitstraining vlak naast een zware vaste afspraak vallen – de afspraak zorgt voor de intensiteit. Dus een rustige loop in Z2 met aan het eind 4–6 versnellingen van ~20 s (flink, geen sprint; jog rustig tussendoor). Zo behoud je je snelheid zonder twee zware dagen achter elkaar."
+    },
+    "runStrength": {
+      "base": {
+        "title": "Kracht – basis",
+        "desc": "3 rondes: Squats 10× · Lunges 8×/been · Deadlift op één been 8×/been · Kuitheffen 15× · Plank 40 s. Zwaar genoeg dat de laatste twee herhalingen pittig zijn – het liefst direct na de rustige duurloop."
+      },
+      "build": {
+        "title": "Kracht – explosief",
+        "desc": "2 rondes: Jump squats 6× · Lunges 8×/been · Deadlift op één been 8×/been · Kuitheffen 12× · Zijplank 30 s/kant. Explosief springen, zacht landen – kracht die je terugziet in je pas."
+      },
+      "peak": {
+        "title": "Kracht – onderhoud",
+        "desc": "2 rondes, rustig: Squats 10× · Step-ups 8×/been · Kuitheffen 15× · Plank 30 s. Kort en fris – de kwaliteitstraining gaat voor."
+      }
     }
   },
   "program": {

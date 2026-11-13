@@ -41,6 +41,11 @@ This is how you set your goal:
      four weeks (weekly volume, longest run); you can change it.
    - **Run days per week** – 3 to 6. More days carry more volume; the two key sessions
      (Tuesday, Saturday) never fall on consecutive days.
+   - **Strength in the plan** – off (default), 1× or 2×. Strength follows the plan phase: general
+     strength up to the chosen number in the base phase, once in build (jumps for power) and peak (short,
+     to keep it), none in the taper. It goes only on a day that is not next to a demanding session or
+     commitment, preferably right after an easy run, and only while the week stays at three demanding
+     sessions – with football twice a week there is no room left, and the plan adds none.
    - **Fixed commitments** – such as club training or matches. By default there are **none**; you can
      enter them or copy them from another running plan (then they do not appear twice).
    - You also see the **target paces**. They come from your **target time**. If the target time is

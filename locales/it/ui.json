@@ -1473,6 +1473,7 @@
     "setupIntro": "Qualche dettaglio perché il piano ti stia a pennello. Puoi cambiare tutto più tardi.",
     "level": "Livello",
     "runDaysPerWeek": "Giorni di corsa a settimana",
+    "strengthInPlan": "Forza nel piano",
     "triathlonNote": "Triathlon (beta): una struttura settimanale fissa con giorno di riposo il lunedì – due sessioni di nuoto, due di bici e tre di corsa, tapering e formato di gara.",
     "hyroxNote": "Hyrox (beta): una struttura settimanale fissa con due giorni di riposo – ripetute di corsa, forza, allenamento alle stazioni fino a una simulazione di gara, tapering.",
     "targetPaces": "Passi obiettivo",
@@ -1541,7 +1542,10 @@
       "one": "{count} sessione già svolta viene mantenuta.",
       "other": "{count} sessioni già svolte vengono mantenute."
     },
-    "regenWeekLost": "Gli spostamenti e le modifiche manuali di questa settimana andranno persi."
+    "regenWeekLost": "Gli spostamenti e le modifiche manuali di questa settimana andranno persi.",
+    "strengthOff": "No",
+    "strengthHint": "Fase di base fino a {n}× a settimana, costruzione e picco una volta per mantenere, niente nello scarico. Solo nei giorni che non sono accanto a una seduta impegnativa o a un impegno fisso impegnativo.",
+    "levelLineStrength": "Forza fino a {n}× a settimana"
   },
   "commitments": {
     "footballTraining": "Allenamento di calcio",
@@ -2203,6 +2207,20 @@
       "title": "Facile con allunghi",
       "raceWeekDesc": "La corsa di attivazione cadrebbe proprio accanto a un impegno fisso intenso – quell’impegno sveglia già le tue gambe. Quindi solo facile in Z2 con 4 allunghi di ~20 s alla fine. Conserva la freschezza per la gara.",
       "desc": "Questa settimana la tua sessione di qualità cadrebbe proprio accanto a un impegno fisso intenso – è l’impegno a fornire l’intensità. Quindi una corsa facile in Z2 con 4–6 allunghi di ~20 s alla fine (sostenuti, senza scattare; trotta piano in mezzo). Così mantieni la velocità senza due giorni intensi di fila."
+    },
+    "runStrength": {
+      "base": {
+        "title": "Forza – base",
+        "desc": "3 giri: Squat 10× · Affondi 8×/gamba · Stacco a una gamba 8×/gamba · Sollevamenti sui polpacci 15× · Plank 40 s. Abbastanza pesante che le ultime due ripetizioni costino fatica – meglio subito dopo la corsa lenta."
+      },
+      "build": {
+        "title": "Forza – esplosività",
+        "desc": "2 giri: Squat jump 6× · Affondi 8×/gamba · Stacco a una gamba 8×/gamba · Sollevamenti sui polpacci 12× · Plank laterale 30 s/lato. Salta in modo esplosivo, atterra morbido: forza che si sente nella falcata."
+      },
+      "peak": {
+        "title": "Forza – mantenimento",
+        "desc": "2 giri, leggeri: Squat 10× · Step-up 8×/gamba · Sollevamenti sui polpacci 15× · Plank 30 s. Breve e fresca: la seduta di qualità viene prima."
+      }
     }
   },
   "program": {

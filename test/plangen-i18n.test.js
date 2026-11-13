@@ -15,7 +15,7 @@ function raceUnits(key, sport) {
   const distanceType = key === 'tri_olympic' ? 'tri-olympic' : null;
   const event = { id: 'e', name: 'Race', date: addDays(START, 11 * 7 + 5), distanceKm: km, sport, distanceType };
   const plan = { id: 'p', eventId: 'e', startDate: START, weeks: 12, phases: makePhases(12), level: 'fortgeschritten', daysPerWeek: 5,
-    weekTemplate: weekTemplateFor(sport, 5), commitments: [], paces: null, sport };
+    weekTemplate: weekTemplateFor(sport, 5), commitments: [], paces: null, sport, strengthDays: sport === 'run' ? 2 : 0 };
   return generatePlanUnits(plan, event, {});
 }
 const programUnits = () => Object.keys(PROGRAM_TYPES).flatMap((type) =>

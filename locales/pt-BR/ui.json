@@ -1473,6 +1473,7 @@
     "setupIntro": "Alguns detalhes para o plano combinar com você. Dá para mudar tudo depois.",
     "level": "Nível",
     "runDaysPerWeek": "Dias de corrida por semana",
+    "strengthInPlan": "Força no plano",
     "triathlonNote": "Triatlo (beta): uma estrutura semanal fixa com dia de descanso na segunda-feira – dois treinos de natação, dois de bike e três de corrida, polimento e formato da prova.",
     "hyroxNote": "Hyrox (beta): uma estrutura semanal fixa com dois dias de descanso – intervalados de corrida, força, treino de estações até uma simulação de prova, polimento.",
     "targetPaces": "Paces-alvo",
@@ -1541,7 +1542,10 @@
       "one": "{count} treino que você já fez é mantido.",
       "other": "{count} treinos que você já fez são mantidos."
     },
-    "regenWeekLost": "Mudanças de dia e alterações manuais nesta semana serão perdidas."
+    "regenWeekLost": "Mudanças de dia e alterações manuais nesta semana serão perdidas.",
+    "strengthOff": "Não",
+    "strengthHint": "Fase de base até {n}× por semana, construção e pico uma vez para manter, nada no polimento. Só em dias que não ficam ao lado de um treino exigente ou de um compromisso fixo exigente.",
+    "levelLineStrength": "Força até {n}× por semana"
   },
   "commitments": {
     "footballTraining": "Treino de futebol",
@@ -2203,6 +2207,20 @@
       "title": "Leve com acelerações",
       "raceWeekDesc": "A corrida de ativação cairia bem ao lado de um compromisso fixo pesado – esse compromisso já acorda as suas pernas. Então só leve em Z2, com 4 acelerações de ~20 s no final. Mantenha o frescor para a prova.",
       "desc": "Nesta semana o seu treino de qualidade cairia bem ao lado de um compromisso fixo pesado – o compromisso fornece a intensidade. Então uma corrida leve em Z2 com 4–6 acelerações de ~20 s no final (rápidas, sem sprint; trote leve entre elas). Assim você mantém a velocidade sem dois dias fortes seguidos."
+    },
+    "runStrength": {
+      "base": {
+        "title": "Força – base",
+        "desc": "3 rodadas: Agachamentos 10× · Afundos 8×/perna · Levantamento terra unilateral 8×/perna · Elevações de panturrilha 15× · Prancha 40 s. Pesado o bastante para as duas últimas repetições serem difíceis – de preferência logo depois do trote leve."
+      },
+      "build": {
+        "title": "Força – potência",
+        "desc": "2 rodadas: Agachamentos com salto 6× · Afundos 8×/perna · Levantamento terra unilateral 8×/perna · Elevações de panturrilha 12× · Prancha lateral 30 s/lado. Salte com explosão e aterrisse suave – força que aparece na passada."
+      },
+      "peak": {
+        "title": "Força – manutenção",
+        "desc": "2 rodadas, leves: Agachamentos 10× · Subidas no banco 8×/perna · Elevações de panturrilha 15× · Prancha 30 s. Curto e com energia – o treino de qualidade vem primeiro."
+      }
     }
   },
   "program": {

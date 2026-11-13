@@ -103,6 +103,8 @@ export function createPlanForEvent(event, options = {}) {
     raceDayJoinsTaper: true,   // v4.1: see raceOnlyLastWeek – older plans keep their taper
     // No default appointments: fixed appointments only if they are chosen on creation.
     commitments: Array.isArray(options.commitments) ? options.commitments : [],
+    // Strength that follows the plan phase (run plans, 0–2 days, since 4.2): off unless chosen.
+    strengthDays: sport === 'run' ? Math.max(0, Math.min(2, options.strengthDays | 0)) : 0,
     sport, gen: PLAN_GEN,
     units: [], generated: false, createdAt: nowIso(), updatedAt: nowIso(),
   };
@@ -141,6 +143,7 @@ export function updatePlanFromToday(plan, event, options = {}) {
     ...plan, startDate, endDate: event.date, weeks, phases, level, daysPerWeek, sport,
     weekTemplate: weekTemplateFor(sport, daysPerWeek),
     commitments: Array.isArray(options.commitments) ? options.commitments : planCommitments(plan),
+    strengthDays: sport === 'run' ? Math.max(0, Math.min(2, (options.strengthDays ?? plan.strengthDays) | 0)) : 0,
     baseWeekKm: hist.weekKm ?? (running ? plannedLastWeekKm(plan.units, today) : null) ?? plan.baseWeekKm ?? null,
     baseLongKm: hist.longKm ?? plan.baseLongKm ?? null,
     anchorWeek: running ? currentWeek : 1,
@@ -202,6 +205,8 @@ export function openPlanSetup(event, { plan = null } = {}) {
 
   let level = update ? levelOf(plan) : suggestLevel(hist);
   let days = sport === 'run' ? clampDays((plan && plan.daysPerWeek) || 4) : null;
+  let strengthDays = sport === 'run' ? Math.max(0, Math.min(2, (plan && plan.strengthDays) | 0)) : 0;
+  const strengthHint = el('div', { class: 'dim', style: { fontSize: '.76rem', marginTop: '-4px' }, text: t('plans.strengthHint', { n: Math.max(1, strengthDays) }) });
   const others = store.get('plans').filter((p) => p.id !== (plan && plan.id) && p.kind !== 'program'
     && (p.endDate || '') >= today && planCommitments(p).length);
   let commitChoice = 'none';
@@ -237,6 +242,11 @@ export function openPlanSetup(event, { plan = null } = {}) {
       : noteBox(sport === 'triathlon'
         ? t('plans.triathlonNote')
         : t('plans.hyroxNote')),
+    sport === 'run'
+      ? field(t('plans.strengthInPlan'), segmented([{ value: '0', label: t('plans.strengthOff') }, { value: '1', label: '1×' }, { value: '2', label: '2×' }], String(strengthDays),
+        (v) => { strengthDays = parseInt(v, 10); strengthHint.textContent = t('plans.strengthHint', { n: Math.max(1, strengthDays) }); }))
+      : null,
+    sport === 'run' ? strengthHint : null,
     sectionHead(t('plans.targetPaces')),
     el('div', { class: 'muted', style: { fontSize: '.84rem' }, text: paceText(paceInfoOf(pp), pp && pp.zones, event.targetTime) }),
   ]);
@@ -266,7 +276,7 @@ export function openPlanSetup(event, { plan = null } = {}) {
     class: 'btn btn--primary btn--block',
     onclick: () => {
       if (update) {
-        updatePlanFromToday(plan, event, { level, daysPerWeek: days });
+        updatePlanFromToday(plan, event, { level, daysPerWeek: days, strengthDays });
         closeSheet();
         toast(t('plans.updatedFromToday'), 'good');
         goOrRefresh(`#/plan/${event.id}`);
@@ -275,7 +285,7 @@ export function openPlanSetup(event, { plan = null } = {}) {
       const commitments = commitChoice === 'copy' && others.length
         ? planCommitments(others[0]).map(({ id, ...c }) => mkCommit(c.type, c.dow, c))
         : [];
-      const created = createPlanForEvent(event, { level, daysPerWeek: days, commitments });
+      const created = createPlanForEvent(event, { level, daysPerWeek: days, commitments, strengthDays });
       closeSheet();
       if (!created) { toast(t('plans.cannotCreate'), 'bad'); return; }
       toast(t('plans.created'), 'good');
@@ -377,6 +387,7 @@ export function render(view, eventId) {
         days: plan.daysPerWeek ? t('plans.levelLineDays', { days: plan.daysPerWeek }) : '',
         base: plan.baseWeekKm ? t('plans.levelLineBase', { km: fmtKm(plan.baseWeekKm) }) : '',
       }));
+      if (plan.strengthDays) lines.push(t('plans.levelLineStrength', { n: plan.strengthDays }));
       lines.push(paceText(plan.paceInfo, plan.paces, event.targetTime));
     } else if (plan.baseLongKm) {
       lines.push(t('plans.adaptedToForm', { km: fmtKmAuto(plan.baseLongKm) }));

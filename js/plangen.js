@@ -1119,6 +1119,27 @@ function isHardCommit(c) {
   return type === 'match' || (type === 'cross_football' && c.intensity !== 'leicht');
 }
 
+/** Strength sessions a run plan carries in a week (see buildWeekUnits): `strengthDays` (0–2) in the
+    base phase, one in build and peak, none in the taper, at most one in a deload week. */
+export function runStrengthDose(strengthDays, phaseKey, info = {}) {
+  const max = Math.max(0, Math.min(2, strengthDays | 0));
+  if (!max || info.taper || phaseKey === 'taper') return 0;
+  const dose = phaseKey === 'base' ? max : 1;
+  return info.deload ? Math.min(dose, 1) : dose;
+}
+
+/** Strength for runners by phase: general strength in the base phase, power (jumps) in the build
+    phase, short maintenance in the peak phase. Exercises the follow-along player reads in every language. */
+const RUN_STRENGTH = {
+  base: { dur: 40, get title() { return t('plangen.runStrength.base.title'); }, get desc() { return t('plangen.runStrength.base.desc'); } },
+  build: { dur: 30, get title() { return t('plangen.runStrength.build.title'); }, get desc() { return t('plangen.runStrength.build.desc'); } },
+  peak: { dur: 25, get title() { return t('plangen.runStrength.peak.title'); }, get desc() { return t('plangen.runStrength.peak.desc'); } },
+};
+function runStrengthUnit(ctx) {
+  const s = RUN_STRENGTH[ctx.phase.key] || RUN_STRENGTH.peak;
+  return mkUnit(ctx, 'strength', { dur: s.dur, title: s.title, desc: s.desc });
+}
+
 /** Substitute for a quality session that would otherwise sit directly next to a hard commitment,
     or that does not fit a small week (`dist`: its length then). */
 function stridesUnit(ctx, dist = null) {
@@ -1168,7 +1189,7 @@ export function coveredFixed(plans = [], excludePlanId = null) {
     plan already enters – they shape the week but do not appear twice. */
 export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   // Kilometres actually planned per week, shared by the weeks of one call (see lastFullKm).
-  if (!opts._weekKm) opts = { ...opts, _weekKm: new Map() };
+  if (!opts._weekKm) opts = { ...opts, _weekKm: new Map(), _weekHard: new Map() };
   const pz = plan.paces || (profile && profile.paceZones) || {};
   const sport = (event && event.sport) || plan.sport || 'run';
   const cfg = volumeConfig(plan, event || {}, pz);
@@ -1365,6 +1386,38 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
       out.push(unit);
     }
   }
+  // Strength that follows the plan phase (run plans with `strengthDays`, since 4.2): up to the chosen
+  // number in the base phase, once in build and peak to keep it, none in the taper, one at most in a
+  // deload week. Only on a day that is neither demanding itself nor next to a demanding session or
+  // commitment – preferably after an easy run – and only while the week stays at three demanding
+  // sessions (with more, the week check warns, and rightly so).
+  const wanted = sport === 'run' && isRunTemplate(tpl) ? runStrengthDose(plan.strengthDays, phase.key, info) : 0;
+  if (wanted) {
+    const inWeekHard = [...hardCommit].filter((d) => d >= weekStart && d <= weekEnd).length;
+    // The demanding days of the week before as actually planned (a long run moved to Sunday), and
+    // the template's key days of the week after; the last day of the week stays free of strength,
+    // the next week may move its quality session to its first day.
+    if (week > 1 && !opts._weekHard.has(week - 1)) buildWeekUnits(plan, event, profile, week - 1, opts);
+    const prevHard = week > 1 ? opts._weekHard.get(week - 1) || [] : [];
+    const hardDates = new Set([...out.filter(isHard).map((u) => u.date), ...hardCommit, ...outsideKeys, ...prevHard, addDays(weekEnd, 1)]);
+    let n = Math.min(wanted, Math.max(0, 3 - out.filter(isHard).length - inWeekHard));
+    const chosen = [];
+    while (n-- > 0) {
+      const cands = [];
+      for (let i = 0; i < 7; i++) {
+        const d = addDays(weekStart, i);
+        if (!inPlanWeek(d) || dtr(d) <= 6 || blocked(d) || hardDates.has(d) || hardDates.has(addDays(d, -1)) || hardDates.has(addDays(d, 1))) continue;
+        if (chosen.some((c) => Math.abs(diffDays(c, d)) <= 1)) continue;
+        const afterEasy = out.some((u) => u.date === d && RUN_UNIT_TYPES.has(u.type));
+        cands.push({ d, score: (afterEasy ? 0 : 10) + i / 10 });
+      }
+      if (!cands.length) break;
+      cands.sort((a, b) => a.score - b.score);
+      chosen.push(cands[0].d);
+      out.push(runStrengthUnit({ plan, event, date: cands[0].d, week, phase, pz, sport, cfg, info, alloc, dow: isoDow(cands[0].d), daysToRace: dtr(cands[0].d) }));
+    }
+  }
+
   // The race session falls on race day – on any weekday.
   if (event && raceDate >= weekStart && raceDate <= weekEnd && raceDate >= plan.startDate) {
     out.push(makeRaceUnit(plan, event, raceDate, week, phase, pz));
@@ -1387,6 +1440,7 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   }
   out.sort((a, b) => a.date.localeCompare(b.date));
   opts._weekKm.set(week, plannedRunKm(out));
+  opts._weekHard.set(week, out.filter(isHard).map((u) => u.date));
   return out;
 }
 
@@ -1413,7 +1467,7 @@ function lastFullKm(plan, event, profile, week, opts, cfg, targets) {
 
 export function generatePlanUnits(plan, event, profile = {}, opts = {}) {
   const units = [];
-  const o = { ...opts, _weekKm: new Map() };
+  const o = { ...opts, _weekKm: new Map(), _weekHard: new Map() };
   for (let w = 1; w <= plan.weeks; w++) units.push(...buildWeekUnits(plan, event, profile, w, o));
   units.sort((a, b) => a.date.localeCompare(b.date));
   return units;
