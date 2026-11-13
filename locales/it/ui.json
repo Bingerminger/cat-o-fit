@@ -3597,6 +3597,12 @@
     "sayDone": "Fatto! Ottimo lavoro.",
     "logDone": "Segna come svolta",
     "counted": "Conteggiata come svolta",
+    "cheer1": "Grande!",
+    "cheer2": "Continua così!",
+    "cheer3": "Inarrestabile!",
+    "cheer4": "Fantastico!",
+    "pointsLabel": "punti",
+    "comboLabel": "Combo",
     "exercises": {
       "one": "{count} esercizio",
       "other": "{count} esercizi"

@@ -3597,6 +3597,12 @@
     "sayDone": "¡Hecho! Buen trabajo.",
     "logDone": "Registrar como hecha",
     "counted": "Contada como hecha",
+    "cheer1": "¡Bien hecho!",
+    "cheer2": "¡Sigue así!",
+    "cheer3": "¡Imparable!",
+    "cheer4": "¡Genial!",
+    "pointsLabel": "puntos",
+    "comboLabel": "Combo",
     "exercises": {
       "one": "{count} ejercicio",
       "other": "{count} ejercicios"

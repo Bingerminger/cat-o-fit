@@ -3597,6 +3597,12 @@
     "sayDone": "Geschafft! Stark gemacht.",
     "logDone": "Als erledigt erfassen",
     "counted": "Als gemacht gezählt",
+    "cheer1": "Stark!",
+    "cheer2": "Weiter so!",
+    "cheer3": "Läuft bei dir!",
+    "cheer4": "Mega!",
+    "pointsLabel": "Punkte",
+    "comboLabel": "Combo",
     "exercises": {
       "one": "{count} Übung",
       "other": "{count} Übungen"

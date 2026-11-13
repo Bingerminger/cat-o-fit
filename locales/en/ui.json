@@ -3597,6 +3597,12 @@
     "sayDone": "Done! Great work.",
     "logDone": "Log as done",
     "counted": "Counted as done",
+    "cheer1": "Strong!",
+    "cheer2": "Keep going!",
+    "cheer3": "On fire!",
+    "cheer4": "Awesome!",
+    "pointsLabel": "points",
+    "comboLabel": "Combo",
     "exercises": {
       "one": "{count} exercise",
       "other": "{count} exercises"

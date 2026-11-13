@@ -21,6 +21,8 @@ import * as store from './storage.js';
 import { categoryMeta, loadExerciseTexts } from './exercises.js';
 import { exerciseArt } from './exercise-art.js';
 import { mountFigure } from './motion-figure.js';
+import { frameAt } from './motion-rig.js';
+import { mountStage } from './stage-show.js';
 import { buildShow, showStateAt, doseLabel, nextWorkAfter } from './show-program.js';
 import { createMusic } from './music.js';
 import { unlockAudio, releaseAudio, tone, speak, speaking, stopSpeaking, wakeAudio, canSpeak, keepAwake, audioContext } from './audio.js';
@@ -29,6 +31,8 @@ import { doseKeys, preloadClips, sayClips } from './voice.js';
 import { t, tp } from './i18n.js';
 
 const SVGNS = 'http://www.w3.org/2000/svg';
+/** The 3D stage is for devices that can draw it and people who have not asked for less motion. */
+const wantsStage = () => typeof window !== 'undefined' && typeof window.matchMedia === 'function' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const mmss = (s) => { const v = Math.max(0, Math.ceil(s)); return `${Math.floor(v / 60)}:${String(v % 60).padStart(2, '0')}`; };
 
 /** "12 min · 5 exercises · 3 rounds" – the rounds only when there is more than one. */
@@ -212,9 +216,39 @@ export function openShow(program, { onFinish = null } = {}) {
     const svg = document.createElementNS(SVGNS, 'svg');
     svg.setAttribute('preserveAspectRatio', 'xMidYMax meet');
     svg.setAttribute('class', 'mf mf--coach');   // before the first measurement: stage dimensions instead of 300×150
+    // The 3D stage (stage-show.js) fills the whole screen behind everything; without WebGL the drawn figure stays.
+    const canvas = wantsStage() ? el('canvas', { class: 'show__gl', 'aria-hidden': 'true' }) : null;
+    let gl3d = null;
+    try { gl3d = canvas && typeof canvas.getContext === 'function' ? mountStage(canvas, show) : null; } catch { gl3d = null; }
     const kicker = el('div', { class: 'show__kicker' });
     const side = el('span', { class: 'show__side' });
-    const stage = el('div', { class: 'show__stage' }, [svg, el('div', { class: 'show__chips' }, [kicker, side])]);
+    // The game of it (3D stage only, kept for this session only): points for every repetition and second, more of them
+    // with every exercise done in a row without skipping; a word of praise when an exercise is done.
+    const game = { score: 0, combo: 0, done: 0, rep: 0, sec: 0 };
+    const cheers = [t('workoutShow.cheer1'), t('workoutShow.cheer2'), t('workoutShow.cheer3'), t('workoutShow.cheer4')];
+    const scoreNum = el('span', { class: 'show__score-num', text: '0' });
+    const comboEl = el('span', { class: 'show__combo' });
+    const scoreEl = el('div', { class: 'show__score', 'aria-hidden': 'true' }, [scoreNum, comboEl]);
+    const cheerEl = el('div', { class: 'show__cheer', 'aria-hidden': 'true' });
+    const again = (node, cls) => { node.classList.remove(cls); if (node.offsetWidth >= 0) node.classList.add(cls); };
+    const mult = () => 1 + Math.min(4, game.combo);
+    function gain(n) {
+      game.score += n * mult();
+      scoreNum.textContent = String(game.score);
+      again(scoreEl, 'is-pop');
+    }
+    function paintCombo() { comboEl.textContent = game.combo > 0 ? `${t('workoutShow.comboLabel')} ×${mult()}` : ''; }
+    /** An exercise done to its end: bonus, the row grows, praise, confetti. */
+    function award() {
+      gain(50);
+      game.combo += 1; game.done += 1;
+      paintCombo();
+      cheerEl.textContent = cheers[(game.done - 1) % cheers.length];
+      again(cheerEl, 'is-on');
+    }
+    const stage = el('div', { class: 'show__stage' }, gl3d
+      ? [el('div', { class: 'show__chips' }, [kicker, el('span', { class: 'show__chips-end' }, [side, scoreEl])]), cheerEl]
+      : [svg, el('div', { class: 'show__chips' }, [kicker, side])]);
     const meta = el('div', { class: 'show__meta' });
     const name = el('h1', { class: 'show__name' });
     const dose = el('div', { class: 'show__dose' });
@@ -250,7 +284,13 @@ export function openShow(program, { onFinish = null } = {}) {
       el('button', { class: 'show__ctl', type: 'button', title: t('workoutShow.end'), 'aria-label': t('workoutShow.end'), onclick: close }, [icon('x')]),
     ]);
     const paused = el('button', { class: 'show__paused', type: 'button', onclick: () => toggle() }, [icon('play'), el('span', { text: t('workoutShow.pausedResume') })]);
-    const runEl = el('div', { class: 'show__run' }, [stage, info, chapters, controls, paused]);
+    const runEl = el('div', { class: gl3d ? 'show__run show__run--gl' : 'show__run' }, [gl3d ? canvas : null, stage, info, chapters, controls, paused]);
+    /** The part of the screen the figure has to itself (the stage cell of the layout), in shares of the canvas. */
+    const freeArea = () => {
+      const c = canvas.getBoundingClientRect(); const s = stage.getBoundingClientRect();
+      if (!c.width || !c.height || !s.width || !s.height) return { x: 0, y: 0, w: 1, h: 1 };
+      return { x: (s.left - c.left) / c.width, y: (s.top - c.top) / c.height, w: s.width / c.width, h: s.height / c.height };
+    };
     root.appendChild(runEl);
     root.addEventListener('pointerdown', wake);
     root.addEventListener('pointermove', wake);
@@ -308,7 +348,9 @@ export function openShow(program, { onFinish = null } = {}) {
       const seg = st.seg;
       const it = prog.items[seg.i];
       const color = categoryMeta(it.ex.category).color;
-      if (figItem !== seg.i) {
+      if (gl3d) {
+        if (figItem !== seg.i) { figItem = seg.i; if (stage.style.setProperty) stage.style.setProperty('--show-hi', color); }
+      } else if (figItem !== seg.i) {
         // View section in the aspect ratio of the stage – the figure as large as possible.
         // If the stage has no size yet (just mounted), this follows with the next frame.
         const r = svg.getBoundingClientRect ? svg.getBoundingClientRect() : { width: 0, height: 0 };
@@ -353,11 +395,21 @@ export function openShow(program, { onFinish = null } = {}) {
     /* ---- Frame ---- */
     function render() {
       const st = showStateAt(show, T);
-      if (st.done) { finish(); return; }
-      if (!fitted && svg.getBoundingClientRect && svg.getBoundingClientRect().width > 0) { figItem = -1; segIndex = -1; }
-      if (st.index !== segIndex) { segIndex = st.index; enter(st); }
+      if (st.done) { if (gl3d && segIndex === show.segs.length - 1 && playing) award(); finish(); return; }
+      if (!gl3d && !fitted && svg.getBoundingClientRect && svg.getBoundingClientRect().width > 0) { figItem = -1; segIndex = -1; }
+      if (st.index !== segIndex) {
+        // Reached by the clock, not by a jump: the exercise before counts as done.
+        if (gl3d && playing && segIndex >= 0 && st.index === segIndex + 1 && show.segs[segIndex].kind === 'work') award();
+        segIndex = st.index; enter(st);
+        game.rep = 0; game.sec = Math.floor(st.local);
+      }
       const seg = st.seg;
-      const fr = fig.update(st.anim.t, st.anim.list);
+      if (gl3d && playing && seg.kind === 'work') {
+        if (seg.timed) { const s = Math.floor(st.local); if (s > game.sec) { game.sec = s; gain(2); } }
+        else if (st.rep !== game.rep) { if (game.rep > 0 && st.rep === game.rep + 1) { gain(10); again(big, 'is-pop'); } game.rep = st.rep; }
+      }
+      const fr = gl3d ? frameAt(prog.items[seg.i].m, st.anim.t, st.anim.list) : fig.update(st.anim.t, st.anim.list);
+      if (gl3d) gl3d.render(T, st, { area: freeArea() });
       // Counter
       let bigTxt = ''; let unitTxt = '';
       if (seg.kind === 'work' && !seg.timed) { bigTxt = `${st.rep}`; unitTxt = t('workoutShow.ofReps', { reps: seg.reps }); }
@@ -432,6 +484,8 @@ export function openShow(program, { onFinish = null } = {}) {
     function skip(dir) {
       const st = showStateAt(show, T);
       if (st.done) return;
+      // Skipping an exercise ends the row.
+      if (dir > 0 && st.seg.kind === 'work') { game.combo = 0; paintCombo(); }
       if (dir > 0) seek(st.seg.t0 + st.seg.dur + 0.001);
       else seek(st.local > 3 || st.index === 0 ? st.seg.t0 + 0.001 : show.segs[st.index - 1].t0 + 0.001);
     }
@@ -483,9 +537,12 @@ export function openShow(program, { onFinish = null } = {}) {
       try { store.bumpExerciseUsage(ids); } catch { /* counter optional */ }
       const durationSec = Math.round(show.total);
       root.innerHTML = '';
-      root.appendChild(el('div', { class: 'show-done' }, [
+      // The stage stays behind the result: the trainer celebrates.
+      if (gl3d) { root.appendChild(canvas); raf = requestAnimationFrame(doneFrame); }
+      root.appendChild(el('div', { class: gl3d ? 'show-done show-done--gl' : 'show-done' }, [
         el('div', { class: 'show-done__kicker', text: localizeUnits(prog.title) }),
         el('h2', { class: 'show-done__title', text: t('workoutShow.done') }),
+        gl3d ? doneScore() : null,
         el('p', { class: 'show-done__stats', text: summaryLine(mmss(durationSec), n, prog.rounds) }),
         el('div', { class: 'show-done__actions' }, [
           onFinish ? el('button', { class: 'show-ov__go', type: 'button', onclick: () => { close(); onFinish({ durationSec, ids }); } }, [icon('check'), el('span', { text: t('workoutShow.logDone') })]) : null,
@@ -496,8 +553,26 @@ export function openShow(program, { onFinish = null } = {}) {
       toast(t('workoutShow.counted'), 'good');
     }
 
+    /** Stars for the share of exercises done to their end, and the points. */
+    function doneScore() {
+      const works = show.segs.filter((s) => s.kind === 'work').length;
+      const stars = game.done >= works ? 3 : game.done >= works * 0.6 ? 2 : 1;
+      return el('div', { class: 'show-done__game' }, [
+        el('div', { class: 'show-done__stars', 'aria-hidden': 'true' }, [1, 2, 3].map((k) => el('span', { class: k <= stars ? 'is-on' : '', text: '★' }))),
+        el('p', { class: 'show-done__score', text: `${game.score} ${t('workoutShow.pointsLabel')}` }),
+      ]);
+    }
+
+    function doneFrame() {
+      raf = 0;
+      if (!gl3d || !root.isConnected || !canvas.isConnected) return;
+      try { gl3d.render(show.total, showStateAt(show, show.total), { area: { x: 0, y: 0.03, w: 1, h: 0.5 } }); } catch { /* the picture behind the result is decoration */ }
+      raf = requestAnimationFrame(doneFrame);
+    }
+
     function stopRun() {
       finished = true;
+      if (gl3d) { gl3d.destroy(); gl3d = null; }
       if (raf && typeof cancelAnimationFrame === 'function') cancelAnimationFrame(raf);
       raf = 0;
       clearTimeout(idleTimer);

@@ -3597,6 +3597,12 @@
     "sayDone": "Klaar! Goed gedaan.",
     "logDone": "Vastleggen als gedaan",
     "counted": "Geteld als gedaan",
+    "cheer1": "Sterk!",
+    "cheer2": "Ga zo door!",
+    "cheer3": "Je bent op dreef!",
+    "cheer4": "Top!",
+    "pointsLabel": "punten",
+    "comboLabel": "Combo",
     "exercises": {
       "one": "{count} oefening",
       "other": "{count} oefeningen"
