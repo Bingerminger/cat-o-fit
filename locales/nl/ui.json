@@ -1231,7 +1231,7 @@
     "bear_crawl": "Bear crawl"
   },
   "exerciseAliases": {
-    "squat": "Squat|Air squats|Kniebuigingen",
+    "squat": "Squat|Air squats|Kniebuigingen|Opstaan uit een stoel",
     "lunge": "Lunge|Uitvalspassen|Voorwaartse lunges",
     "pushup": "Push-up|Opdrukken|Pushups",
     "deadlift": "Deadlift|Romanian deadlifts|Heupscharnier",
@@ -1255,7 +1255,7 @@
     "leg_raise": "Leg raise|Leg raises|Liggend beenheffen",
     "hollow_hold": "Hollow|Hollow body hold",
     "superman": "Superman|Superman hold|Rugstrekking",
-    "bird_dog": "Bird dogs|Arm en been tegengesteld heffen",
+    "bird_dog": "Bird dogs|Arm en been tegengesteld heffen|Op handen en knieën",
     "child_pose": "Child's pose|Balasana|Houding van het kind",
     "supine_twist": "Liggende wervelkolomdraai|Rugdraai liggend|Spinal twist",
     "figure_four": "Figuur-vier-rek|Figuur vier|Figure four",
@@ -1317,7 +1317,8 @@
     "burpee": "Burpee",
     "mountain_climber": "Mountain climber|Climbers|Bergbeklimmers",
     "skater_jump": "Skaters|Skater hops|Speed skaters|Schaatssprongen",
-    "bear_crawl": "Bear crawls|Bear walk|Berengang"
+    "bear_crawl": "Bear crawls|Bear walk|Berengang",
+    "incline_pushup": "Push-ups tegen de muur"
   },
   "session": {
     "rpeFromHr": "geschat op basis van de hartslag",
@@ -2344,7 +2345,7 @@
       },
       "upperBody": {
         "title": "Kracht – bovenlichaam & core",
-        "moves": "Push-ups 8–12× · Roeien (dumbbell/band) 12× · Schouderpress 12× · Plank 40 s · Zijplank 30 s/kant · Dead bug 10×/kant",
+        "moves": "Push-ups 8–12× · Voorovergebogen roeien (dumbbell/band) 12× · Schouderpress 12× · Plank 40 s · Zijplank 30 s/kant · Dead bug 10×/kant",
         "harder": "smallere push-ups, een sterkere band of zwaardere dumbbell, zijplank met beenheffen"
       },
       "starterHomeA": {

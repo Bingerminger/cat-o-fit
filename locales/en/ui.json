@@ -1231,7 +1231,7 @@
     "bear_crawl": "Bear crawl"
   },
   "exerciseAliases": {
-    "squat": "Squat|Bodyweight squats",
+    "squat": "Squat|Bodyweight squats|Sit-to-stand",
     "lunge": "Lunge|Forward lunges",
     "pushup": "Push-up|Press-ups",
     "deadlift": "Deadlift|Romanian deadlifts|Hip hinge",
@@ -1255,7 +1255,7 @@
     "leg_raise": "Leg raise|Lying leg raises",
     "hollow_hold": "Hollow|Hollow body hold",
     "superman": "Superman|Superman hold",
-    "bird_dog": "Bird dogs|Opposite arm and leg raise",
+    "bird_dog": "Bird dogs|Opposite arm and leg raise|On all fours",
     "child_pose": "Child's pose|Balasana",
     "supine_twist": "Lying spinal twist|Spinal twist",
     "figure_four": "Figure-four stretch|Figure four",
@@ -1317,7 +1317,8 @@
     "burpee": "Burpee",
     "mountain_climber": "Mountain climber|Climbers",
     "skater_jump": "Skaters|Skater hops|Speed skaters",
-    "bear_crawl": "Bear crawls|Bear walk"
+    "bear_crawl": "Bear crawls|Bear walk",
+    "incline_pushup": "Wall push-ups|Wall push-up"
   },
   "session": {
     "rpeFromHr": "estimated from heart rate",
@@ -2344,7 +2345,7 @@
       },
       "upperBody": {
         "title": "Strength – Upper body & core",
-        "moves": "Push-ups 8–12× · Rows (dumbbell/band) 12× · Shoulder press 12× · Plank 40 s · Side plank 30 s/side · Dead bug 10×/side",
+        "moves": "Push-ups 8–12× · Bent-over rows (dumbbell/band) 12× · Shoulder press 12× · Plank 40 s · Side plank 30 s/side · Dead bug 10×/side",
         "harder": "close-grip push-ups, a stronger band or heavier dumbbell, side plank with leg raises"
       },
       "starterHomeA": {

@@ -1231,7 +1231,7 @@
     "bear_crawl": "Marche de l’ours"
   },
   "exerciseAliases": {
-    "squat": "Squat|Squats au poids du corps",
+    "squat": "Squat|Squats au poids du corps|Se lever d’une chaise",
     "lunge": "Fente|Fentes avant",
     "pushup": "Pompe|Push-ups|Push-up",
     "deadlift": "Soulevé de terre|Soulevés de terre roumains|Charnière de hanches",
@@ -1255,7 +1255,7 @@
     "leg_raise": "Relevé de jambes|Relevés de jambes allongé",
     "hollow_hold": "Hollow|Hollow body|Hollow body hold|Position creuse",
     "superman": "Superman|Extensions du dos|Superman hold",
-    "bird_dog": "Bird dogs|Oiseau-chien|Extension bras-jambe opposés",
+    "bird_dog": "Bird dogs|Oiseau-chien|Extension bras-jambe opposés|À quatre pattes",
     "child_pose": "Position de l’enfant|Balasana",
     "supine_twist": "Torsion allongée sur le dos|Torsion lombaire allongée",
     "figure_four": "Figure 4|Étirement du piriforme|Étirement en 4",
@@ -1317,7 +1317,8 @@
     "burpee": "Burpee",
     "mountain_climber": "Mountain climber|Grimpeurs|Escalade en planche",
     "skater_jump": "Sauts du patineur|Patineurs|Skaters",
-    "bear_crawl": "Marche à quatre pattes|Bear crawl|Déplacement de l’ours"
+    "bear_crawl": "Marche à quatre pattes|Bear crawl|Déplacement de l’ours",
+    "incline_pushup": "Pompes contre le mur"
   },
   "session": {
     "rpeFromHr": "estimé d’après la fréquence cardiaque",
@@ -2344,7 +2345,7 @@
       },
       "upperBody": {
         "title": "Renforcement – Haut du corps & tronc",
-        "moves": "Pompes 8–12× · Tirages (haltère/élastique) 12× · Développé épaules 12× · Gainage 40 s · Gainage latéral 30 s/côté · Dead bug 10×/côté",
+        "moves": "Pompes 8–12× · Rowing buste penché (haltère/élastique) 12× · Développé épaules 12× · Gainage 40 s · Gainage latéral 30 s/côté · Dead bug 10×/côté",
         "harder": "pompes mains rapprochées, un élastique plus fort ou un haltère plus lourd, gainage latéral avec relevés de jambes"
       },
       "starterHomeA": {

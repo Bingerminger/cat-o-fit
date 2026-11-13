@@ -36,6 +36,23 @@ const round5 = (s) => Math.max(5, Math.round(s / 5) * 5);
 
 /* ------------------------------ Reading the plan text ------------------------------ */
 
+/** Seconds per repetition when a hold exercise is given in repetitions. */
+const REP_HOLD_S = 3;
+
+/** Of the parts a colon separates, the one with the most doses ("12×", "30 s") – the exercise list of a plan
+    text ("Consolidate: 4 rounds, heavier variants: …. Exercises per round: squats 12× · …"). Without a
+    colon, or without doses, the whole text. */
+export function doseList(text = '') {
+  const parts = String(text).split(/:\s/);
+  if (parts.length < 2) return text;
+  const doses = (s) => (s.match(/\d+\s*(?:[–-]\s*\d+)?\s*(?:×|s\b|min\b)/g) || []).length;
+  let best = null;
+  for (const p of parts) if (!best || doses(p) > doses(best)) best = p;
+  // Only a real list (two doses or more) – "4× (1 km + one station in race order: SkiErg, …)" names its
+  // stations without doses, so the whole text counts.
+  return doses(best) >= 2 ? best : text;
+}
+
 /** Amount from the text piece of an exercise: { reps, holdS, perSide } (missing values null). */
 export function doseOf(snippet = '') {
   const s = String(snippet);
@@ -58,10 +75,13 @@ export function doseOf(snippet = '') {
  */
 export function dosesFromText(text = '') {
   text = String(text || '');
-  const mentions = exerciseMentions(text);
+  // The exercises come from the list with the doses: a sentence before it ("heavier variants: split squats
+  // instead of step-ups") names exercises that are not part of the round.
+  const list = doseList(text);
+  const mentions = exerciseMentions(list);
   const items = mentions.map(({ e, first }, i) => {
-    const next = i + 1 < mentions.length ? mentions[i + 1].first : text.length;
-    let snippet = text.slice(first, next);
+    const next = i + 1 < mentions.length ? mentions[i + 1].first : list.length;
+    let snippet = list.slice(first, next);
     const cut = snippet.search(/·|;|\.\s|\n/);
     if (cut > 0) snippet = snippet.slice(0, cut);
     // "Chest opener & spine rotation 8×/side": without a number of its own, that of the next one applies.
@@ -137,7 +157,8 @@ export function doseLabel(it, program) {
   const side = it.m.sides ? ` ${tr('showProgram.perSide')}` : '';
   const eachSide = each ? ` ${tr('showProgram.perSide')}` : '';
   if (program.format === 'interval') return `${it.work || 40} s${eachSide}`;
-  if (it.m.holdS != null) return `${it.holdS || it.m.holdS} s${eachSide}`;
+  // A hold exercise the plan gives in repetitions ("chest opener 8×/side") keeps them.
+  if (it.m.holdS != null && !(it.reps && !it.holdS)) return `${it.holdS || it.m.holdS} s${eachSide}`;
   return `${it.reps || it.m.reps || 10}×${side}`;
 }
 
@@ -254,7 +275,8 @@ export function buildShow(program) {
         }
         const list = retime(cycleOf(it.m, side), tp);
         if (program.format === 'interval' || it.m.holdS != null) {
-          const secs = program.format === 'interval' ? (it.work || 40) : (it.holdS || it.m.holdS);
+          // Repetitions of a hold exercise from the plan: about 3 s each ("8×/side" ≈ 24 s a side).
+          const secs = program.format === 'interval' ? (it.work || 40) : (it.holdS || (it.reps ? it.reps * REP_HOLD_S : null) || it.m.holdS);
           // Timed exercises keep running on the beat; the duration ends on a whole beat.
           const dur = Math.max(tp.beat, Math.round(secs / tp.beat) * tp.beat);
           push({ kind: 'work', i, round: r, side, dur, bpm: tp.bpm, style, intensity: 2, timed: true, cyc: tp.cyc, clips: [{ at: 0, dur, list, speed: 1, loop: true }] });

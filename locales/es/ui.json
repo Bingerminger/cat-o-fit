@@ -1231,7 +1231,7 @@
     "bear_crawl": "Caminata del oso"
   },
   "exerciseAliases": {
-    "squat": "Sentadilla|Squats|Squat|Sentadillas con peso corporal",
+    "squat": "Sentadilla|Squats|Squat|Sentadillas con peso corporal|Levantarse de una silla",
     "lunge": "Zancada|Lunges|Lunge|Desplantes|Zancadas hacia delante",
     "pushup": "Flexión|Flexiones de brazos|Push-ups|Push-up|Lagartijas",
     "deadlift": "Peso muerto|Bisagra de cadera|Deadlift|Deadlifts",
@@ -1255,7 +1255,7 @@
     "leg_raise": "Elevación de piernas|Elevaciones de pierna|Elevación de pierna|Elevaciones de piernas tumbado",
     "hollow_hold": "Hollow body|Hollow|Posición hollow|Hollow body hold",
     "superman": "Superman|Supermán|Extensión de espalda|Extensiones de espalda",
-    "bird_dog": "Perro de caza|Bird dogs|Perro pájaro",
+    "bird_dog": "Perro de caza|Bird dogs|Perro pájaro|A cuatro patas",
     "child_pose": "Pose del niño|Posición del niño|Balasana|Child's pose",
     "supine_twist": "Torsión de columna|Rotación de columna tumbado|Rotación de columna|Torsión espinal|Torsión lumbar tumbado",
     "figure_four": "Estiramiento del glúteo|Estiramiento de glúteo|Figura 4|Figura cuatro|Estiramiento en figura 4",
@@ -1317,7 +1317,8 @@
     "burpee": "Burpee|Burpees con salto",
     "mountain_climber": "Mountain climbers|Mountain climber|Escalador|Escaladores|Trepadores",
     "skater_jump": "Salto de patinador|Saltos laterales de patinador|Patinadores|Skater jumps|Skaters",
-    "bear_crawl": "Gateo del oso|Arrastre del oso|Bear crawl|Bear crawls"
+    "bear_crawl": "Gateo del oso|Arrastre del oso|Bear crawl|Bear crawls",
+    "incline_pushup": "Flexiones en la pared"
   },
   "session": {
     "rpeFromHr": "estimado a partir de la frecuencia cardíaca",
@@ -2344,7 +2345,7 @@
       },
       "upperBody": {
         "title": "Fuerza: tren superior y core",
-        "moves": "Flexiones 8–12× · Remos (mancuerna/banda) 12× · Press de hombros 12× · Plancha 40 s · Plancha lateral 30 s/lado · Dead bug 10×/lado",
+        "moves": "Flexiones 8–12× · Remo inclinado (mancuerna/banda) 12× · Press de hombros 12× · Plancha 40 s · Plancha lateral 30 s/lado · Dead bug 10×/lado",
         "harder": "flexiones con las manos más juntas, una banda más fuerte o una mancuerna más pesada, plancha lateral con elevación de piernas"
       },
       "starterHomeA": {

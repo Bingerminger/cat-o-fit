@@ -1231,7 +1231,7 @@
     "bear_crawl": "Bear crawl"
   },
   "exerciseAliases": {
-    "squat": "Squat a corpo libero|Accosciata|Accosciate",
+    "squat": "Squat a corpo libero|Accosciata|Accosciate|Alzarsi e sedersi da una sedia",
     "lunge": "Affondo|Affondi in avanti|Lunge",
     "pushup": "Flessione|Piegamenti sulle braccia|Push-up",
     "deadlift": "Stacco|Stacchi rumeni|Cerniera d’anca|Romanian deadlift",
@@ -1255,7 +1255,7 @@
     "leg_raise": "Sollevamenti delle gambe|Leg raise|Alzate di gambe",
     "hollow_hold": "Hollow|Hollow body",
     "superman": "Superman|Estensione della schiena|Estensioni lombari",
-    "bird_dog": "Bird dogs|Braccio e gamba opposti",
+    "bird_dog": "Bird dogs|Braccio e gamba opposti|A quattro zampe",
     "child_pose": "Posizione del bimbo|Balasana|Child’s pose",
     "supine_twist": "Torsione della colonna|Torsione da sdraiati|Torsione vertebrale",
     "figure_four": "Figura 4|Figura quattro|Stretching dei glutei|Figure four",
@@ -1317,7 +1317,8 @@
     "burpee": "Burpees",
     "mountain_climber": "Mountain climbers|Scalatore|Scalatori",
     "skater_jump": "Skaters|Skater hops|Salti del pattinatore|Salti da pattinatore",
-    "bear_crawl": "Bear crawls|Camminata dell’orso"
+    "bear_crawl": "Bear crawls|Camminata dell’orso",
+    "incline_pushup": "Flessioni al muro"
   },
   "session": {
     "rpeFromHr": "stimato dalla frequenza cardiaca",
@@ -2344,7 +2345,7 @@
       },
       "upperBody": {
         "title": "Forza – Parte alta del corpo e core",
-        "moves": "Flessioni 8–12× · Rematore (manubrio/elastico) 12× · Shoulder press 12× · Plank 40 s · Plank laterale 30 s/lato · Dead bug 10×/lato",
+        "moves": "Flessioni 8–12× · Rematore con busto inclinato (manubrio/elastico) 12× · Shoulder press 12× · Plank 40 s · Plank laterale 30 s/lato · Dead bug 10×/lato",
         "harder": "flessioni a presa stretta, un elastico più forte o un manubrio più pesante, plank laterale con sollevamenti delle gambe"
       },
       "starterHomeA": {

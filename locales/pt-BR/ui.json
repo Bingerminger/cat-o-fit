@@ -1231,7 +1231,7 @@
     "bear_crawl": "Caminhada do urso"
   },
   "exerciseAliases": {
-    "squat": "Agachamento|Agachamento livre|Agachamento com o peso do corpo",
+    "squat": "Agachamento|Agachamento livre|Agachamento com o peso do corpo|Levantar e sentar da cadeira",
     "lunge": "Afundo|Avanço|Avanços|Lunge|Lunges",
     "pushup": "Flexão|Flexões|Flexão de braço|Flexão no chão",
     "deadlift": "Levantamento terra|Terra romeno|Stiff|Dobradiça de quadril",
@@ -1255,7 +1255,7 @@
     "leg_raise": "Elevação de perna|Elevações de perna|Elevação de pernas deitado|Elevações de pernas",
     "hollow_hold": "Posição hollow|Hollow body|Hollow body hold|Hollow|Barquinha",
     "superman": "Superman com pausa|Extensão de costas|Extensão lombar",
-    "bird_dog": "Bird dogs|Elevação de braço e perna opostos|Cachorro-pássaro",
+    "bird_dog": "Bird dogs|Elevação de braço e perna opostos|Cachorro-pássaro|Em quatro apoios",
     "child_pose": "Pose da criança|Posição da criança|Balasana",
     "supine_twist": "Rotação deitada|Rotação da coluna deitado|Torção deitada|Torção da coluna deitado",
     "figure_four": "Figura 4|Alongamento figura 4|Alongamento em figura 4|Alongamento do piriforme",
@@ -1317,7 +1317,8 @@
     "burpee": "Burpee",
     "mountain_climber": "Mountain climber|Escalador|Escaladores|Alpinista",
     "skater_jump": "Salto de patinador|Patinador|Skater jumps|Salto lateral de patinador",
-    "bear_crawl": "Urso rastejando|Bear crawl|Bear crawls|Caminhada de urso"
+    "bear_crawl": "Urso rastejando|Bear crawl|Bear crawls|Caminhada de urso",
+    "incline_pushup": "Flexões na parede"
   },
   "session": {
     "rpeFromHr": "estimado pela frequência cardíaca",
@@ -2344,7 +2345,7 @@
       },
       "upperBody": {
         "title": "Força – Parte superior e core",
-        "moves": "Flexões 8–12× · Remadas (halter/elástico) 12× · Desenvolvimento de ombros 12× · Prancha 40 s · Prancha lateral 30 s/lado · Dead bug 10×/lado",
+        "moves": "Flexões 8–12× · Remada curvada (halter/elástico) 12× · Desenvolvimento de ombros 12× · Prancha 40 s · Prancha lateral 30 s/lado · Dead bug 10×/lado",
         "harder": "flexões com as mãos mais próximas, um elástico mais forte ou um halter mais pesado, prancha lateral com elevações de perna"
       },
       "starterHomeA": {

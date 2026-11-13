@@ -250,6 +250,8 @@ export function exerciseMentions(text = '') {
   const spans = [];
   for (const e of EXERCISES) {
     for (const term of termsOf(e)) {
+      // Only at the start of a word ("Hantel-Ausfallschritte" are lunges); a compound that names another
+      // exercise ("Wand-Liegestütz", a wall push-up) is its own, longer term and wins below.
       for (const m of hay.matchAll(new RegExp(`(?<![\\p{L}])${escapeRe(term)}`, 'giu'))) {
         spans.push({ e, start: m.index, end: m.index + m[0].length });
       }
