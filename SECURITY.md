@@ -24,6 +24,35 @@ a reasonable period for a fix before details are made public (responsible disclo
 | the current minor version on `main` (Docker tag `latest`) | ✅ |
 | older versions | ❌ – please update |
 
+## Container image: scans and deadlines
+
+The image on GHCR (`ghcr.io/bingerminger/cat-o-fit`) is checked for known vulnerabilities right
+after every release (Grype). Only findings with an available fix are reported; they appear under
+Security → Code scanning. Dependabot proposes updates of the base image (`php:…-apache`) every week.
+
+- **Critical or high finding with an available fix** in the base image: the image of the current
+  release is rebuilt within **7 days** of the fix being available.
+- A vulnerability in Cat-O-Fit's own code is fixed in a new release; the advisory is published with it.
+
+## Checking the image
+
+Since 4.2.0 every published image is signed with [cosign](https://docs.sigstore.dev/) (keyless: the
+certificate names the GitHub workflow that built it, the signature is recorded in the public
+transparency log). With cosign 3 or newer:
+
+```bash
+cosign verify ghcr.io/bingerminger/cat-o-fit:4.2 \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+  --certificate-identity-regexp '^https://github\.com/Bingerminger/cat-o-fit/\.github/workflows/docker\.yml@refs/'
+```
+
+Every image also carries a software bill of materials (SBOM) and a provenance attestation:
+
+```bash
+docker buildx imagetools inspect ghcr.io/bingerminger/cat-o-fit:4.2 --format '{{ json .SBOM }}'
+docker buildx imagetools inspect ghcr.io/bingerminger/cat-o-fit:4.2 --format '{{ json .Provenance }}'
+```
+
 ## Security model
 
 Cat-O-Fit is built to run on your **own, trusted network** (e.g. a Synology NAS on a home

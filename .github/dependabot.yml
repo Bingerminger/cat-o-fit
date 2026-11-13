@@ -5,3 +5,8 @@ updates:
     directory: /
     schedule:
       interval: monthly
+  # The base image of the Docker image (php:…-apache) – security updates arrive as pull requests.
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
