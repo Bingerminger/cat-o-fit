@@ -16,6 +16,12 @@
  */
 declare(strict_types=1);
 
+// Part of api.php (included there, after its checks); called directly it would only end in a PHP error.
+if (!function_exists('respond')) {
+    http_response_code(404);
+    exit;
+}
+
 /** Areas that the read access may hand out. */
 const READ_AREAS = ['events', 'plans', 'sessions', 'health', 'nutrition', 'diary', 'checklist', 'reports'];
 /** Profile fields that are useful for an analysis – no keys, no settings. */

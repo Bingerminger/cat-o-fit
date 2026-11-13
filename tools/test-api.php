@@ -386,6 +386,51 @@ $role = null;
 foreach ($fam['json']['records'] ?? [] as $rec) if (($rec['id'] ?? '') === 'u-a') $role = $rec['role'] ?? null;
 check('merge: never on family records (roles stay)', $role === 'admin' && !empty($r['json']['rejected']), ['role' => $role, 'resp' => $r['json']]);
 
+// --- One value per parameter (v4.2) ---------------------------------------
+// A rule that reads the raw query string sees the first `action`, PHP the last – both must never
+// disagree about what runs. Twice, percent-encoded or as a list: rejected before anything happens.
+foreach ([
+    'twice' => '?action=ping&action=changes-all&user=u-a&since=sessions:0',
+    'percent-encoded name' => '?action=ping&%61ction=changes-all&user=u-a&since=sessions:0',
+    'list' => '?action[]=changes-all&user=u-a&since=sessions:0',
+    'list after a value' => '?action=ping&action[]=x',
+    'area as a list' => '?action=changes&area[]=sessions&user=u-a&since=0',
+    'user twice' => '?action=changes&area=sessions&user=u-a&user=u-x&since=0',
+] as $label => $q) {
+    $r = http('GET', $q, null, $admin);
+    check("parameter {$label}: 400 invalid_parameter", $r['status'] === 400 && ($r['json']['code'] ?? '') === 'invalid_parameter', [$r['status'], $r['json']]);
+}
+$ctx = stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 5]]);
+foreach (['foodfacts.php?code=x', 'read-access.php', 'health-ingest.php', 'health-import.php', 'ics.php'] as $part) {
+    $body = (string) @file_get_contents("http://127.0.0.1:{$port}/api/{$part}", false, $ctx);
+    check("api/{$part} called directly: 404 without a PHP error", str_contains((string) ($http_response_header[0] ?? ''), ' 404') && !preg_match('/Fatal|Warning|Uncaught|\/api\//', $body), [$http_response_header[0] ?? null, substr($body, 0, 120)]);
+}
+
+// --- Sign-in in front of the app (CATOFIT_BASIC_AUTH, Docker) --------------
+// The web server lets the health intake through without the sign-in; PHP checks the action it
+// really runs. php -S cannot sign in, so here every request counts as "not signed in".
+$probe = stream_socket_server('tcp://127.0.0.1:0');
+$port2 = (int) substr(strrchr(stream_socket_get_name($probe, false), ':'), 1);
+fclose($probe);
+$proc2 = proc_open([PHP_BINARY, '-S', "127.0.0.1:{$port2}", '-t', $tmp], [1 => ['file', '/dev/null', 'w'], 2 => ['file', '/dev/null', 'w']], $pipes2, $tmp, array_merge($env, ['CATOFIT_BASIC_AUTH_ACTIVE' => '1']));
+$base1 = $base;
+$base = "http://127.0.0.1:{$port2}/api/api.php";
+$ready2 = false;
+for ($i = 0; $i < 50 && !$ready2; $i++) { usleep(100000); $none = []; $ready2 = http('GET', '?action=ping', null, $none)['status'] > 0; }
+$none = [];
+$r = http('GET', '?action=ping', null, $none);
+check('sign-in active: the local health check (ping) still answers', $r['status'] === 200, [$r['status'], $r['json']]);
+$r = http('GET', '?action=changes-all&user=u-a&since=sessions:0', null, $none);
+check('sign-in active: another action without sign-in → 401', $r['status'] === 401 && ($r['json']['code'] ?? '') === 'basic_auth', [$r['status'], $r['json']]);
+$r = http('POST', '?action=ops&area=sessions&user=u-a', ['ops' => [['op' => 'upsert', 'record' => ['id' => 's-x']]]], $none);
+check('sign-in active: writing without sign-in → 401', $r['status'] === 401, [$r['status'], $r['json']]);
+$r = http('GET', '?action=health-ingest&action=changes-all&user=u-a&since=sessions:0', null, $none);
+check('sign-in active: health-ingest plus a second action → 400, no data', $r['status'] === 400 && !isset($r['json']['changes']), [$r['status'], $r['json']]);
+$r = http('POST', '?action=health-ingest&user=u-a', ['data' => []], $none, ['X-Catofit-Token: wrong']);
+check('sign-in active: the health intake itself is reached (its key decides)', in_array($r['status'], [400, 401, 403], true) && ($r['json']['code'] ?? '') !== 'basic_auth', [$r['status'], $r['json']]);
+$base = $base1;
+proc_terminate($proc2); proc_close($proc2);
+
 // --- Result --------------------------------------------------------------
 echo "\napi: {$pass} ok, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

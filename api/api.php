@@ -81,11 +81,52 @@ if ($allowedHosts !== '') {
     }
 }
 
+/**
+ * A query parameter as text (v4.2). Given more than once – literally, percent-encoded or as a list
+ * (`name[]=`) – the request is rejected before anything runs: PHP keeps the LAST value, while a rule
+ * that reads the raw query string (the web server's exception for the health intake) sees the FIRST,
+ * and the two must never disagree about what runs or for whom.
+ */
+function query_param(string $name): ?string
+{
+    $seen = 0;
+    foreach (explode('&', (string) ($_SERVER['QUERY_STRING'] ?? '')) as $pair) {
+        if ($pair === '') {
+            continue;
+        }
+        // Like PHP's own parsing: decoded, leading spaces dropped, `[…]` marks a list.
+        $key = ltrim(urldecode(explode('=', $pair, 2)[0]), ' ');
+        if ((string) preg_replace('/\[.*$/s', '', $key) === $name) {
+            $seen++;
+        }
+    }
+    $value = $_GET[$name] ?? null;
+    if ($seen > 1 || is_array($value)) {
+        fail("The parameter {$name} may be given only once.", 400, 'invalid_parameter', ['parameter' => $name]);
+    }
+    return $value === null ? null : (string) $value;
+}
+
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-$action = isset($_GET['action']) ? (string) $_GET['action'] : '';
-$area   = isset($_GET['area']) ? (string) $_GET['area'] : '';
-$scope  = (isset($_GET['scope']) && $_GET['scope'] === 'family') ? 'family' : 'user';
-$user   = isset($_GET['user']) ? (string) $_GET['user'] : null;
+$action = query_param('action') ?? '';
+$area   = query_param('area') ?? '';
+$scope  = query_param('scope') === 'family' ? 'family' : 'user';
+$user   = query_param('user');
+
+// ---------------------------------------------------------------------------
+// Sign-in in front of the app (Docker image, CATOFIT_BASIC_AUTH; the entrypoint sets
+// CATOFIT_BASIC_AUTH_ACTIVE): the web server lets the health intake through without it, because that
+// carries its own key, and the container's own health check. PHP checks the action it really runs,
+// so that exception can never cover another one.
+// ---------------------------------------------------------------------------
+$basicAuth = (string) (($_SERVER['CATOFIT_BASIC_AUTH_ACTIVE'] ?? '') ?: (getenv('CATOFIT_BASIC_AUTH_ACTIVE') ?: ''));
+if ($basicAuth === '1' && $action !== 'health-ingest' && (string) ($_SERVER['REMOTE_USER'] ?? '') === '') {
+    $local = in_array((string) ($_SERVER['REMOTE_ADDR'] ?? ''), ['127.0.0.1', '::1'], true);
+    if (!($local && $action === 'ping')) {
+        header('WWW-Authenticate: Basic realm="Cat-O-Fit"');
+        fail('Please sign in.', 401, 'basic_auth');
+    }
+}
 
 /** State-changing calls: JSON only and not from foreign sites (CSRF). */
 function require_write_request(): void

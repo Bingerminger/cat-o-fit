@@ -154,6 +154,7 @@ Beide Plattformen sind für das eigene Heimnetz gedacht. Bevor du die App ins In
    location ~ /(data|tools|test|docs|docker)(/|$)   { deny all; }
    location ~ /\.                                    { deny all; }   # .git, .htaccess …
    location ~ \.(md)$                                { deny all; }
+   location ~ ^/api/(?!api\.php$)[^/]+\.php$             { deny all; }   # nur api.php ist ein Einstieg
    add_header X-Frame-Options "DENY" always;
    add_header Referrer-Policy "no-referrer" always;
    add_header X-Content-Type-Options "nosniff" always;

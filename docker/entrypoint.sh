@@ -29,8 +29,11 @@ case "${CATOFIT_BASIC_AUTH:-}" in
     chown root:www-data "$PASSWD"
     chmod 640 "$PASSWD"
     # Exceptions: the container health check (local) and the health intake, which is protected
-    # by its own key (Health Auto Export).
+    # by its own key (Health Auto Export). CATOFIT_BASIC_AUTH_ACTIVE tells api.php that the sign-in
+    # is in front of the app: it checks the action it really runs again, so the exception for the
+    # health intake can never cover another action.
     cat > "$AUTH_CONF" <<'EOF'
+SetEnv CATOFIT_BASIC_AUTH_ACTIVE 1
 <Location />
     AuthType Basic
     AuthName "Cat-O-Fit"

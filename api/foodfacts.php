@@ -18,6 +18,12 @@
    only the generic ingredient name (e.g. "rolled oats") – no user data whatsoever.
    ========================================================================= */
 
+// Part of api.php (included there, after its checks); called directly it would only end in a PHP error.
+if (!function_exists('respond')) {
+    http_response_code(404);
+    exit;
+}
+
 /** Is the barcode valid? 8, 12, 13 or 14 digits with a correct GS1 check digit. */
 function ff_valid_gtin(string $code): bool
 {

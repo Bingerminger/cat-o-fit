@@ -19,6 +19,12 @@
 
 declare(strict_types=1);
 
+// Part of api.php (included there, after its checks); called directly it would only end in a PHP error.
+if (!function_exists('respond')) {
+    http_response_code(404);
+    exit;
+}
+
 // storage.php/auth.php are already loaded via api.php; ensure it again, defensively.
 require_once __DIR__ . '/storage.php';
 require_once __DIR__ . '/auth.php';

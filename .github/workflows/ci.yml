@@ -36,3 +36,18 @@ jobs:
       # PHP test server with an empty temporary data directory.
       - name: PHP tests (health mapping, persistence, API, calendar)
         run: php tools/test-health-ingest.php && php tools/test-health-xml.php && php tools/test-storage.php && php tools/test-api.php && php tools/test-ics.php
+
+  docker:
+    name: Docker image smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # The image as users run it (Apache, the image's PHP settings, the entrypoint): health
+      # check, data/ blocked, no PHP errors in responses, the optional sign-in in front of the app.
+      - name: Build image
+        run: docker build -t cat-o-fit:smoke .
+
+      - name: Smoke test
+        run: IMAGE=cat-o-fit:smoke bash tools/test-docker.sh

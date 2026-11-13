@@ -27,6 +27,12 @@
  */
 declare(strict_types=1);
 
+// Part of api.php (included there, after its checks); called directly it would only end in a PHP error.
+if (!function_exists('respond')) {
+    http_response_code(404);
+    exit;
+}
+
 require_once __DIR__ . '/health-map.php';
 
 // --- User + token -------------------------------------------------------

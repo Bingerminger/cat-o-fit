@@ -1,0 +1,8 @@
+# Only api.php is an entry point (v4.2); the other files are parts of it. Called directly they
+# answer 404 anyway – this keeps them from being reached at all where .htaccess applies.
+<FilesMatch "\.php$">
+  Require all denied
+</FilesMatch>
+<Files "api.php">
+  Require all granted
+</Files>
