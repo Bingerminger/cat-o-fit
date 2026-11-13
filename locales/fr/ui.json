@@ -4101,7 +4101,12 @@
       "hormones": "Hormones & métabolisme",
       "loadRecovery": "Charge & récupération",
       "inflammation": "Inflammation"
-    }
+    },
+    "crpOtherDay": {
+      "one": "(CRP du {date}, à {count} jour d’écart)",
+      "other": "(CRP du {date}, à {count} jours d’écart)"
+    },
+    "crpNormalOtherDay": "CRP {crp} mg/l – sans particularité, mais pas du même jour ; une CRP reflète surtout les un ou deux derniers jours."
   },
   "supplements": {
     "vitaminD": {

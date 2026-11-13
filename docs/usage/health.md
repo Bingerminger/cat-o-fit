@@ -127,7 +127,7 @@ you answer, the app suggests no weight-loss deficit.
 |---|---|
 | Illness or regular medication | Labs & supplements for documentation only, no recommendations |
 | Pregnancy/breastfeeding or (past) eating disorder | in addition no weight-loss or deficit goals, no weight-loss programme, no weight and body-fat goals |
-| Under 18 (from the **year of birth** in the profile) | **Child and youth profile:** no calorie and weight goals, no target weight, no weight-loss programme, no performance supplements, lab values only documented, calorie figures hidden |
+| Under 18 (from the **year of birth** in the profile – the birthday is unknown, so until the year you turn 19) | **Child and youth profile:** no calorie and weight goals, no target weight, no weight-loss programme, no performance supplements, lab values only documented, calorie figures hidden |
 
 **Hide calorie figures:** The switch below hides kcal figures in Nutrition, on “Today” and in energy
 availability – for anyone who doesn’t feel good about numbers around eating. You can still log everything.

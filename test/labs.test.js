@@ -37,7 +37,7 @@ test('labs: unit conversion (the classic vitamin D trap)', () => {
 });
 
 test('labs: the reference range depends on sex where it is clinically necessary', () => {
-  assert.deepEqual(refRange('hb', 'm'), [13.5, 17.5]);
+  assert.deepEqual(refRange('hb', 'm'), [13.0, 17.5], 'lower limit as in the source shown (WHO 2024: 13.0)');
   assert.deepEqual(refRange('hb', 'w'), [12.0, 16.0]);
   assert.deepEqual(refRange('ferritin', 'w'), [15, 300]); // no sex difference
 });

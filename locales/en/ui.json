@@ -4101,7 +4101,12 @@
       "hormones": "Hormones & metabolism",
       "loadRecovery": "Load & recovery",
       "inflammation": "Inflammation"
-    }
+    },
+    "crpOtherDay": {
+      "one": "(CRP of {date}, {count} day apart)",
+      "other": "(CRP of {date}, {count} days apart)"
+    },
+    "crpNormalOtherDay": "CRP {crp} mg/l – unremarkable, but not from the same day; a CRP mainly reflects the last day or two."
   },
   "supplements": {
     "vitaminD": {

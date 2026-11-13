@@ -20,8 +20,8 @@
    makes no diagnosis and does not replace a medical assessment.
    ========================================================================= */
 
-import { diffDays, fmtDec } from './ui.js';
-import { locale, t } from './i18n.js';
+import { diffDays, fmtDec, fmtDate } from './ui.js';
+import { locale, t, tp } from './i18n.js';
 import { units } from './units.js';
 
 /* ----------------------------- Analyte catalogue ---------------------------- */
@@ -59,14 +59,16 @@ export const ANALYTES = {
   },
   hb: {
     get label() { return t('labs.analyte.hb.label'); }, unit: 'g/dl', group: 'Eisenstatus',
-    alt: { 'mmol/l': 1.6114 }, bySex: { m: [13.5, 17.5], w: [12.0, 16.0] }, needsSex: true,
+    // Lower limits as in the source the app names (WHO 2024 anaemia: 13.0 men, 12.0 women, 11.0 pregnancy);
+    // until 4.2 men started at 13.5, a common lab range that contradicted the source shown.
+    alt: { 'mmol/l': 1.6114 }, bySex: { m: [13.0, 17.5], w: [12.0, 16.0] }, needsSex: true,
     pregnancyLow: 11.0, higherBetter: true, rcv: 9, validDays: 365,
     get source() { return t('labs.analyte.hb.source'); },
     get hint() { return t('labs.analyte.hb.hint'); },
   },
   crp: {
     get label() { return t('labs.analyte.crp.label'); }, unit: 'mg/l', alt: { 'mg/dl': 10 }, group: 'Entzündung',
-    ref: [0, 5], lowerBetter: true, exercise: true, validDays: 60,
+    ref: [0, 5], lowerBetter: true, exercise: true, rcv: 97, validDays: 60,
     get source() { return t('labs.analyte.crp.source'); },
     get hint() { return t('labs.analyte.crp.hint'); },
   },
@@ -126,7 +128,7 @@ export const ANALYTES = {
   },
   tsh: {
     get label() { return t('labs.analyte.tsh.label'); }, unit: 'mU/l', alt: { 'µIU/ml': 1 }, group: 'Hormone & Stoffwechsel',
-    ref: [0.4, 4.0], biotin: true, validDays: 365,
+    ref: [0.4, 4.0], biotin: true, rcv: 52, validDays: 365,
     get source() { return t('labs.analyte.tsh.source'); },
     get hint() { return t('labs.analyte.tsh.hint'); },
   },
@@ -152,7 +154,7 @@ export const ANALYTES = {
     get label() { return t('labs.analyte.ck.label'); }, unit: 'U/l', alt: { 'µkat/l': 60 }, group: 'Belastung & Regeneration',
     bySex: { m: [0, 190], w: [0, 170] }, ref: [0, 170],
     sportBySex: { m: [0, 1083], w: [0, 513] }, sport: [0, 513], sportFirst: true,
-    lowerBetter: true, exercise: true, validDays: 60,
+    lowerBetter: true, exercise: true, rcv: 42, validDays: 60,
     get source() { return t('labs.analyte.ck.source'); },
     get hint() { return t('labs.analyte.ck.hint'); },
   },
@@ -385,7 +387,8 @@ export function freshLatest(labs = [], key, today = null) {
   return l && !isStale(key, l, today) ? l : null;
 }
 
-/** CRP from the same blood draw (± 3 days) – a value from another appointment says nothing. */
+/** CRP from the same blood draw (± 3 days, for values entered with the report's instead of the draw's date)
+    – a value from another appointment says nothing. The texts name the date when it is not the same day. */
 export function sameDrawCrp(labs = [], record) {
   if (!record || !record.date) return null;
   const near = series(labs, 'crp').filter((c) => Math.abs(diffDays(c.date, record.date)) <= 3);
@@ -394,6 +397,14 @@ export function sameDrawCrp(labs = [], record) {
 }
 
 const fmt = fmtDec;
+
+/* A value on a shown limit lies within it. Limits are shown to three significant digits, in the unit the
+   person reads (ng/ml, pg/ml …); typed back and converted, a value on that shown limit lands up to 0.5 %
+   beside the stored one (20 ng/ml vitamin D → 49.92 nmol/l against 50). Compared with that tolerance,
+   the same limit is judged alike in every unit. */
+const LIMIT_TOLERANCE = 0.005;
+const below = (v, lim) => v < lim - Math.abs(lim) * LIMIT_TOLERANCE;
+const above = (v, lim) => v > lim + Math.abs(lim) * LIMIT_TOLERANCE;
 
 /**
  * Rates a single lab value.
@@ -437,32 +448,37 @@ export function assess(key, value, { sex = null, labs = [], today = null, record
   // Ferritin: CRP from the SAME blood draw. With inflammation a high value says nothing,
   // a low one very much does (WHO 2020: below 70 µg/l then points to iron deficiency).
   if (a.context === 'crp') {
+    const ownDate = (rec && rec.date) || today;
     const crp = sameDrawCrp(labs, rec || { date: today });
+    // From another day than the value (up to 3): say so – CRP peaks about 48 h after a trigger.
+    const gap = crp && ownDate ? Math.abs(diffDays(crp.date, ownDate)) : 0;
+    const otherDay = gap ? ` ${tp('labs.crpOtherDay', gap, { date: fmtDate(crp.date) })}` : '';
     if (crp && Number(crp.value) > 5) {
       if (v < 70) {
         const clearlyLow = v < ref[0] || v < 30;
         return {
           ...base, status: clearlyLow ? 'niedrig' : 'grenzwertig', side: 'low', tone: clearlyLow ? 'bad' : 'warn', inflamed: true,
           label: clearlyLow ? t('labs.inflamedLow') : t('labs.inflamedSuspicious'),
-          caveats: [...caveats, t('labs.caveatCrp', { crp: fmt(crp.value) })],
+          caveats: [...caveats, `${t('labs.caveatCrp', { crp: fmt(crp.value) })}${otherDay}`],
         };
       }
-      return blockedResult(t('labs.blockedCrp', { crp: fmt(crp.value), label: a.label }));
+      return blockedResult(`${t('labs.blockedCrp', { crp: fmt(crp.value), label: a.label })}${otherDay}`);
     }
+    if (crp && otherDay) caveats.push(`${t('labs.crpNormalOtherDay', { crp: fmt(crp.value) })}${otherDay}`);
     if (!crp && rec && rec.date) caveats.push(t('labs.caveatNoCrp'));
   }
 
   // Above the lab range but within the sport range (CK): common in people who train.
-  if (a.sportFirst && sport && ref[1] != null && v > ref[1] && (sport[1] == null || v <= sport[1])) {
+  if (a.sportFirst && sport && ref[1] != null && above(v, ref[1]) && (sport[1] == null || !above(v, sport[1]))) {
     return { ...base, status: 'grenzwertig', side: 'high', label: t('labs.highForAthletes'), tone: 'warn' };
   }
-  if (v < ref[0]) {
-    const deficient = a.deficiencyBelow != null && v < a.deficiencyBelow;
+  if (below(v, ref[0])) {
+    const deficient = a.deficiencyBelow != null && below(v, a.deficiencyBelow);
     return { ...base, status: 'niedrig', side: 'low', label: deficient ? t('labs.belowRangeDeficient') : t('labs.belowRange'), tone: 'bad', deficient };
   }
-  if (ref[1] != null && v > ref[1]) return { ...base, status: 'hoch', side: 'high', label: t('labs.aboveRange'), tone: 'bad' };
-  if (sport && v < sport[0]) return { ...base, status: 'grenzwertig', side: 'low', label: a.greyLabel || t('labs.normalButTight'), tone: 'warn' };
-  if (sport && sport[1] != null && v > sport[1]) return { ...base, status: 'grenzwertig', side: 'high', label: t('labs.normalButHigh'), tone: 'warn' };
+  if (ref[1] != null && above(v, ref[1])) return { ...base, status: 'hoch', side: 'high', label: t('labs.aboveRange'), tone: 'bad' };
+  if (sport && below(v, sport[0])) return { ...base, status: 'grenzwertig', side: 'low', label: a.greyLabel || t('labs.normalButTight'), tone: 'warn' };
+  if (sport && sport[1] != null && above(v, sport[1])) return { ...base, status: 'grenzwertig', side: 'high', label: t('labs.normalButHigh'), tone: 'warn' };
   return { ...base, status: 'gut', side: null, label: t('labs.favourable'), tone: 'good' };
 }
 

@@ -50,11 +50,11 @@ Kennzahl, sagt die App das.
 
 | Kennzahl in Cat-O-Fit | Methode | Quelle |
 |---|---|---|
-| Grundumsatz (ab 19 Jahren) | Mifflin-St Jeor | Mifflin MD, St Jeor ST et al.: A new predictive equation for resting energy expenditure in healthy individuals. *Am J Clin Nutr* 51 (1990), 241–247 |
+| Grundumsatz (ab 19 Jahren; nur mit dem Geburtsjahr ab dem Jahr, in dem man 19 wird) | Mifflin-St Jeor | Mifflin MD, St Jeor ST et al.: A new predictive equation for resting energy expenditure in healthy individuals. *Am J Clin Nutr* 51 (1990), 241–247 |
 | Energieverfügbarkeit, Schwelle 30 | (Energie − Trainingsverbrauch) ÷ fettfreie Masse | Loucks AB, Thuma JR: Luteinizing hormone pulsatility is disrupted at a threshold of energy availability in regularly menstruating women. *J Clin Endocrinol Metab* 88 (2003), 297–311 |
 | RED-S, niedrigere Grenze bei Männern (25) | Einordnung, keine Diagnose | Mountjoy M et al.: 2023 International Olympic Committee's (IOC) consensus statement on Relative Energy Deficiency in Sport (REDs). *Br J Sports Med* 57 (2023), 1073–1097 |
 | Eiweiß 1,2–2,0 g je kg | Richtwert für Sporttreibende | Thomas DT, Erdman KA, Burke LM: Nutrition and Athletic Performance (Positionspapier ACSM, Academy of Nutrition and Dietetics, Dietitians of Canada). *J Acad Nutr Diet* 116 (2016), 501–528 |
-| Trainingsverbrauch (in der Bilanz netto, in der Anzeige brutto) | Läufe über die Strecke (rund 1 kcal je kg und km), andere Sportarten über MET-Werte × Körpergewicht × Dauer, angelehnt an das Kompendium; netto ohne den Alltagsumsatz derselben Zeit | Ainsworth BE et al.: 2011 Compendium of Physical Activities. *Med Sci Sports Exerc* 43 (2011), 1575–1581 |
+| Trainingsverbrauch (in der Bilanz netto, in der Anzeige brutto) | Läufe über die Strecke (rund 1 kcal je kg und km), andere Sportarten über MET-Werte × Körpergewicht × Dauer (nur mit einer Strecke: die Dauer, die die Belastung für die Sportart annimmt, z. B. 2,5 min/km Rad, 25 min/km Schwimmen), angelehnt an das Kompendium; netto ohne den Alltagsumsatz derselben Zeit | Ainsworth BE et al.: 2011 Compendium of Physical Activities. *Med Sci Sports Exerc* 43 (2011), 1575–1581 |
 | Trainingsverbrauch aus der Uhr | wo Apple Health aktive Kalorien liefert, zählen diese statt der Schätzung (netto wie oben); die Energieverfügbarkeit sagt, ob gemessen, teils gemessen oder geschätzt | Uhren schätzen selbst – mit spürbarer Abweichung: Shcherbina A et al.: Accuracy in wrist-worn, sensor-based measurements of heart rate and energy expenditure in a diverse cohort. *J Pers Med* 7 (2017), 3 |
 | Nährwerte der Zutaten | kuratierte, gerundete Durchschnittswerte je 100 g bzw. ml; optional Open Food Facts (auch per Strichcode) | Open Food Facts (ODbL), siehe [CREDITS](../../../CREDITS.md) |
 
@@ -69,14 +69,15 @@ sportbezogene Ebene.
 | Thema | Quelle |
 |---|---|
 | Sportkorridor Ferritin und Transferrinsättigung | Peeling P, Sim M, McKay AKA: Eisenstatus im Sport, Gatorade Sports Science Institute (GSSI), *Sports Science Exchange* |
-| Ferritin bei Entzündung (CRP derselben Blutentnahme) | WHO: *Guideline on use of ferritin concentrations to assess iron status in individuals and populations*, Genf 2020 |
+| Ferritin bei Entzündung (CRP derselben Blutentnahme – bis 3 Tage daneben für Werte mit dem Befund- statt Entnahmedatum; der Text nennt dann den Tag) | WHO: *Guideline on use of ferritin concentrations to assess iron status in individuals and populations*, Genf 2020 |
 | Anämie-Grenzen Hämoglobin (12,0 / 13,0 / 11,0 g/dl) | WHO: *Guideline on haemoglobin cutoffs to define anaemia in individuals and populations*, Genf 2024 |
 | Hohe Transferrinsättigung abklären | EASL Clinical Practice Guidelines on haemochromatosis. *J Hepatol* 77 (2022), 479–502 |
 | Vitamin D ab 50 nmol/l ausreichend; kein Konsens für höhere Zielwerte | DGE-Referenzwert Vitamin D (2012); Maughan RJ et al., IOC-Konsens 2018 (siehe unten); Demay MB et al.: Vitamin D for the Prevention of Disease (Endocrine Society). *J Clin Endocrinol Metab* 109 (2024), 1907–1947 |
 | Holo-TC-Einordnung | LADR Laborverbund (unter 35 Mangel wahrscheinlich, 35–50 Graubereich) |
 | CRP, CK und Harnstoff nach Ausdauerbelastung | Thomas L (Hrsg.): *Labor und Diagnose*, Kap. 51; IQWiG, gesundheitsinformation.de (CRP) |
 | fT3, Testosteron, Östradiol als Hinweis auf Energiemangel | IOC-Konsens 2023 (REDs), siehe oben |
-| Trend erst über der natürlichen Schwankung (RCV) | EFLM Biological Variation Database (biologicalvariation.eu); biologische Variation von Ferritin laut *Scand J Clin Lab Invest* 2023 |
+| Trend erst über der natürlichen Schwankung (RCV) | EFLM Biological Variation Database (biologicalvariation.eu); biologische Variation von Ferritin laut *Scand J Clin Lab Invest* 2023; für CRP, TSH und CK der Schwellenwert nach Fraser (RCV = √2 · 1,96 · √(CVA² + CVI²), CVI aus EFLM, CVA mit 5 % angenommen): 97 %, 52 %, 42 %; übrige Werte 25 % – Fraser CG: *Clin Chem Lab Med* 50 (2012), 807–812 |
+| Laborwert auf der angezeigten Grenze | liegt im Bereich: Grenzen werden mit drei gültigen Stellen angezeigt, ein Wert darauf, in einer anderen Einheit eingetragen, wird mit 0,5 % Toleranz verglichen | – |
 | Magnesium Vollblut und Serum | laborübliche Bereiche großer deutscher Labore (in der App je Wert genannt) |
 
 ---

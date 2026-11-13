@@ -4101,7 +4101,12 @@
       "hormones": "Hormônios e metabolismo",
       "loadRecovery": "Carga e recuperação",
       "inflammation": "Inflamação"
-    }
+    },
+    "crpOtherDay": {
+      "one": "(PCR de {date}, {count} dia de diferença)",
+      "other": "(PCR de {date}, {count} dias de diferença)"
+    },
+    "crpNormalOtherDay": "PCR {crp} mg/l – sem alteração, mas não do mesmo dia; uma PCR reflete principalmente os últimos um ou dois dias."
   },
   "supplements": {
     "vitaminD": {

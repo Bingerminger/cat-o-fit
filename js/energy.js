@@ -13,6 +13,7 @@
 
 import { parseIngredient, fold, keywordIn, wordIn } from './food.js';
 import { fmtInt } from './format.js';
+import { loadMinutes } from './load.js';
 import { t } from './i18n.js';
 
 /** MET reference values per session type (intensity as a multiple of the resting metabolic rate; the
@@ -79,7 +80,13 @@ export function trainingKcal(session = {}, weightKg, { net = false, activityFact
 
   const met = MET[session.type] || MET.other;
   if (hours) return Math.max(0, Math.round(Math.max(0, met - baseline) * kg * hours));
-  if (session.distanceKm) return Math.round(kg * session.distanceKm);
+  // Only a distance, not a run: the duration the load assumes for that sport (load.js loadMinutes:
+  // cycling 2.5 min/km, swimming 25 …) with the sport's MET – not ~1 kcal/kg/km as if running (60 km
+  // by bike counted 4,200 kcal).
+  if (session.distanceKm) {
+    const h = loadMinutes({ type: session.type, distanceKm: Number(session.distanceKm) }).min / 60;
+    return Math.max(0, Math.round(Math.max(0, met - baseline) * kg * h));
+  }
   return 0;
 }
 
@@ -149,12 +156,14 @@ export function weightGoalStatus({ current = null, target = null, start = null }
   };
 }
 
-/** BMI of a weight at the profile height (or null). */
-export function bmiFor(kg, profile = {}) {
+/** BMI of a weight at the profile height (or null), to a tenth – `exact` unrounded, for comparing with a
+    limit: rounded, a target BMI of 18.46 read 18.5 and slipped past the protective limit of 18.5. */
+export function bmiFor(kg, profile = {}, { exact = false } = {}) {
   const m = Number(profile.heightCm) / 100;
   const w = Number(kg);
   if (!m || !Number.isFinite(w) || w <= 0) return null;
-  return Math.round((w / (m * m)) * 10) / 10;
+  const bmi = w / (m * m);
+  return exact ? bmi : Math.round(bmi * 10) / 10;
 }
 
 /**
@@ -273,7 +282,7 @@ export function energyTargets({
   if (elig && elig.minor) block = 'minor';
   else if (elig && elig.noWeightGoals && status && status.status === 'abnehmen') block = 'eligibility';
   else if (status && status.status === 'abnehmen') {
-    const bmiTarget = bmiFor(profile.targetWeightKg, profile);
+    const bmiTarget = bmiFor(profile.targetWeightKg, profile, { exact: true });
     if (bmiTarget != null && bmiTarget < 18.5) block = 'bmi';
   }
   const goal = block ? 'halten' : (status ? status.status : 'halten');

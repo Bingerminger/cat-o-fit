@@ -50,11 +50,11 @@ says so.
 
 | Figure in Cat-O-Fit | Method | Source |
 |---|---|---|
-| Basal metabolic rate (from age 19) | Mifflin-St Jeor | Mifflin MD, St Jeor ST et al.: A new predictive equation for resting energy expenditure in healthy individuals. *Am J Clin Nutr* 51 (1990), 241–247 |
+| Basal metabolic rate (from age 19; with only the year of birth, from the year someone turns 19) | Mifflin-St Jeor | Mifflin MD, St Jeor ST et al.: A new predictive equation for resting energy expenditure in healthy individuals. *Am J Clin Nutr* 51 (1990), 241–247 |
 | Energy availability, threshold 30 | (energy − exercise expenditure) ÷ fat-free mass | Loucks AB, Thuma JR: Luteinizing hormone pulsatility is disrupted at a threshold of energy availability in regularly menstruating women. *J Clin Endocrinol Metab* 88 (2003), 297–311 |
 | RED-S, lower limit for men (25) | Classification, not a diagnosis | Mountjoy M et al.: 2023 International Olympic Committee's (IOC) consensus statement on Relative Energy Deficiency in Sport (REDs). *Br J Sports Med* 57 (2023), 1073–1097 |
 | Protein 1.2–2.0 g per kg | Guideline for people who exercise | Thomas DT, Erdman KA, Burke LM: Nutrition and Athletic Performance (position statement of the ACSM, the Academy of Nutrition and Dietetics and Dietitians of Canada). *J Acad Nutr Diet* 116 (2016), 501–528 |
-| Exercise expenditure (net in the balance, gross in the display) | Runs by distance (about 1 kcal per kg and km), other sports by MET values × body weight × duration, based on the Compendium; net of the everyday expenditure of the same time | Ainsworth BE et al.: 2011 Compendium of Physical Activities. *Med Sci Sports Exerc* 43 (2011), 1575–1581 |
+| Exercise expenditure (net in the balance, gross in the display) | Runs by distance (about 1 kcal per kg and km), other sports by MET values × body weight × duration (with only a distance: the duration the load assumes for the sport, e.g. 2.5 min/km cycling, 25 min/km swimming), based on the Compendium; net of the everyday expenditure of the same time | Ainsworth BE et al.: 2011 Compendium of Physical Activities. *Med Sci Sports Exerc* 43 (2011), 1575–1581 |
 | Exercise expenditure from the watch | where Apple Health supplies active calories, they count instead of the estimate (net as above); energy availability says whether measured, partly measured or estimated | Watches estimate too – with noticeable deviation: Shcherbina A et al.: Accuracy in wrist-worn, sensor-based measurements of heart rate and energy expenditure in a diverse cohort. *J Pers Med* 7 (2017), 3 |
 | Nutrition values of the ingredients | curated, rounded average values per 100 g or ml; optionally Open Food Facts (also by barcode) | Open Food Facts (ODbL), see [CREDITS](../../CREDITS.md) |
 
@@ -69,14 +69,15 @@ sport-related layer.
 | Topic | Source |
 |---|---|
 | Sport corridor for ferritin and transferrin saturation | Peeling P, Sim M, McKay AKA: Iron status in sport (German edition: *Eisenstatus im Sport*), Gatorade Sports Science Institute (GSSI), *Sports Science Exchange* |
-| Ferritin with inflammation (CRP from the same blood draw) | WHO: *Guideline on use of ferritin concentrations to assess iron status in individuals and populations*, Geneva 2020 |
+| Ferritin with inflammation (CRP from the same blood draw – up to 3 days apart for values entered with the report's date; the text then names the day) | WHO: *Guideline on use of ferritin concentrations to assess iron status in individuals and populations*, Geneva 2020 |
 | Anaemia cut-offs for haemoglobin (12.0 / 13.0 / 11.0 g/dl) | WHO: *Guideline on haemoglobin cutoffs to define anaemia in individuals and populations*, Geneva 2024 |
 | Following up a high transferrin saturation | EASL Clinical Practice Guidelines on haemochromatosis. *J Hepatol* 77 (2022), 479–502 |
 | Vitamin D sufficient from 50 nmol/l; no consensus on higher targets | DGE reference value for vitamin D (2012; German Nutrition Society); Maughan RJ et al., IOC consensus 2018 (see below); Demay MB et al.: Vitamin D for the Prevention of Disease (Endocrine Society). *J Clin Endocrinol Metab* 109 (2024), 1907–1947 |
 | Classification of holo-TC | LADR laboratory network (below 35 deficiency likely, 35–50 grey area) |
 | CRP, CK and urea after endurance exercise | Thomas L (ed.): *Labor und Diagnose* (German laboratory-medicine reference), ch. 51; IQWiG, gesundheitsinformation.de (CRP) |
 | fT3, testosterone, oestradiol as a sign of low energy | IOC consensus 2023 (REDs), see above |
-| A trend only counts above natural variation (RCV) | EFLM Biological Variation Database (biologicalvariation.eu); biological variation of ferritin according to *Scand J Clin Lab Invest* 2023 |
+| A trend only counts above natural variation (RCV) | EFLM Biological Variation Database (biologicalvariation.eu); biological variation of ferritin according to *Scand J Clin Lab Invest* 2023; for CRP, TSH and CK the change value after Fraser (RCV = √2 · 1.96 · √(CVA² + CVI²), CVI from EFLM, CVA assumed 5 %): 97 %, 52 %, 42 %; other values 25 % – Fraser CG: *Clin Chem Lab Med* 50 (2012), 807–812 |
+| A lab value on its shown limit | lies within the range: limits are shown to three significant digits, so a value on them, typed in another unit, is compared with 0.5 % tolerance | – |
 | Magnesium, whole blood and serum | usual ranges of large German laboratories (named per value in the app) |
 
 ---

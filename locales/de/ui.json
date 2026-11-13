@@ -4101,7 +4101,12 @@
       "hormones": "Hormone & Stoffwechsel",
       "loadRecovery": "Belastung & Regeneration",
       "inflammation": "Entzündung"
-    }
+    },
+    "crpOtherDay": {
+      "one": "(CRP vom {date}, {count} Tag daneben)",
+      "other": "(CRP vom {date}, {count} Tage daneben)"
+    },
+    "crpNormalOtherDay": "CRP {crp} mg/l – unauffällig, aber nicht vom selben Tag; ein CRP spiegelt vor allem die letzten ein, zwei Tage."
   },
   "supplements": {
     "vitaminD": {

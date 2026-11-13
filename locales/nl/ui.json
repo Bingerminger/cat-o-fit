@@ -4101,7 +4101,12 @@
       "hormones": "Hormonen & stofwisseling",
       "loadRecovery": "Belasting & herstel",
       "inflammation": "Ontsteking"
-    }
+    },
+    "crpOtherDay": {
+      "one": "(CRP van {date}, {count} dag ernaast)",
+      "other": "(CRP van {date}, {count} dagen ernaast)"
+    },
+    "crpNormalOtherDay": "CRP {crp} mg/l – niet afwijkend, maar niet van dezelfde dag; een CRP weerspiegelt vooral de laatste een à twee dagen."
   },
   "supplements": {
     "vitaminD": {

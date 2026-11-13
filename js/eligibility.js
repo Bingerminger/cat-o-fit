@@ -39,6 +39,10 @@ export function ageOf(profile = {}, today = null) {
   return age >= 0 && age < 130 ? age : null;
 }
 
+/** Child and youth profile by age from the year of birth (see eligibilityFor): under 19 by year, because
+    the birthday is unknown. The one rule for the gate and the profile form. */
+export function minorByYear(age) { return age != null && age < 19; }
+
 /** Which questions this person has to answer (age is only asked of those without a birth year). */
 export function gateQuestionsFor(profile = {}, today = null) {
   return ageOf(profile, today) != null ? GATE_QUESTIONS.filter((q) => q.key !== 'minor') : GATE_QUESTIONS;
@@ -53,11 +57,14 @@ export function gateQuestionsFor(profile = {}, today = null) {
 export function eligibilityFor({ profile = {}, settings = {}, today = null } = {}) {
   const gate = (settings && settings.labsGate) || {};
   const age = ageOf(profile, today);
-  const minor = age != null ? age < 18 : gate.minor === true;
+  // Only the year of birth is known: in the year someone turns 18 they may still be 17. The youth profile
+  // therefore holds until the year they turn 19 – also the first year the basal metabolic rate (Mifflin,
+  // studied from 19) applies. Before 4.2 an 18 by year counted as adult from 1 January.
+  const minor = age != null ? minorByYear(age) : gate.minor === true;
   const questions = gateQuestionsFor(profile, today);
   const answered = questions.every((q) => typeof gate[q.key] === 'boolean');
   const reasons = questions.filter((q) => gate[q.key] === true).map((q) => q.label);
-  if (minor && age != null) reasons.push(tp('eligibility.minorByYear', age));
+  if (minor && age != null) reasons.push(tp('eligibility.minorByYear', age, age === 18 ? { count: '17–18' } : {}));
   const pregnancy = gate.pregnancy === true;
   const eatingDisorder = gate.eatingDisorder === true;
   return {

@@ -131,7 +131,7 @@ nicht vorbelegt – bis zur Antwort schlägt die App kein Abnehm-Defizit vor.
 |---|---|
 | Erkrankung oder regelmäßige Medikamente | Labor & Ergänzung nur dokumentierend, ohne Empfehlungen |
 | Schwangerschaft/Stillzeit oder (frühere) Essstörung | zusätzlich keine Abnehm- oder Defizitziele, kein Abnehmprogramm, keine Gewichts- und Körperfettziele |
-| Unter 18 (aus dem **Geburtsjahr** im Profil) | **Kinder- und Jugendprofil:** keine Kalorien- und Gewichtsziele, kein Zielgewicht, kein Abnehmprogramm, keine Leistungspräparate, Laborwerte nur dokumentiert, Kalorienzahlen ausgeblendet |
+| Unter 18 (aus dem **Geburtsjahr** im Profil – der Geburtstag ist unbekannt, also bis zum Jahr, in dem du 19 wirst) | **Kinder- und Jugendprofil:** keine Kalorien- und Gewichtsziele, kein Zielgewicht, kein Abnehmprogramm, keine Leistungspräparate, Laborwerte nur dokumentiert, Kalorienzahlen ausgeblendet |
 
 **Kalorienzahlen ausblenden:** Der Schalter darunter verbirgt kcal-Angaben in der Ernährung, auf
 „Heute“ und bei der Energieversorgung – für alle, denen Zahlen beim Essen nicht guttun. Erfassen kannst

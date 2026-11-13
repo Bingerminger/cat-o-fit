@@ -19,10 +19,10 @@ import { setHeader } from './router.js';
 import { syncNow } from './storage.js';
 import { geocode, refreshWeather, placeLabel } from './weather.js';
 import { APP_VERSION } from './version.js';
-import { weeklyGoals, DEFAULT_GOALS } from './healthgoals.js';
+import { weeklyGoals, defaultGoals } from './healthgoals.js';
 import { GOAL_METRICS, metricMeta, latestMetric, shownMetric } from './goals.js';
 import { currentEligibility, openGateSheet } from './wellness.js';
-import { ageOf, weightGoalBlockReason } from './eligibility.js';
+import { ageOf, weightGoalBlockReason, minorByYear } from './eligibility.js';
 import { weightNow, bmiFor } from './energy.js';
 import { currentHrvMethod, hrvLabel } from './healthdata.js';
 import { hrZonesFrom, estimateMaxHr, zoneName } from './hrzones.js';
@@ -148,8 +148,8 @@ export function render(view) {
     const am = parseInt(minI.value, 10);
     const td = parseInt(daysI.value, 10);
     store.setSetting('weeklyGoals', {
-      activeMinutes: Number.isFinite(am) && am > 0 ? am : DEFAULT_GOALS.activeMinutes,
-      trainingDays: Number.isFinite(td) && td > 0 ? Math.min(7, td) : DEFAULT_GOALS.trainingDays,
+      activeMinutes: Number.isFinite(am) && am > 0 ? am : defaultGoals(p).activeMinutes,
+      trainingDays: Number.isFinite(td) && td > 0 ? Math.min(7, td) : defaultGoals(p).trainingDays,
     });
     toast(t('settings.weeklyGoals.saved'), 'good');
   };
@@ -603,7 +603,7 @@ function jumpNav(view) {
 function eligibilityCard(elig, s, onChange) {
   let status;
   if (elig.minor) {
-    status = elig.age != null ? t('settings.gate.minorAge', { age: elig.age }) : t('settings.gate.minor');
+    status = elig.age != null ? t('settings.gate.minorAge', { age: elig.age === 18 ? '17–18' : elig.age }) : t('settings.gate.minor');
   } else if (!elig.answered) {
     status = t('settings.gate.notAnswered');
   } else if (elig.mode === 'full') {
@@ -765,9 +765,10 @@ function goalWarning(metric, target, profile = {}) {
 
 /** Hint when the target weight corresponds to a BMI below 18.5 (or null). */
 function targetWeightWarning(target, profile = {}) {
-  const bmi = bmiFor(target, profile);
+  const bmi = bmiFor(target, profile, { exact: true });
   if (bmi == null || bmi >= 18.5) return null;
-  return t('settings.bmiWarning', { height: fmtHeight(profile.heightCm), bmi: fmtDec(bmi) });
+  // Shown rounded down: 18.46 is "18.4", not a contradicting "18.5".
+  return t('settings.bmiWarning', { height: fmtHeight(profile.heightCm), bmi: fmtDec(Math.floor(bmi * 10) / 10) });
 }
 
 /**
@@ -841,7 +842,7 @@ function openProfileSheet() {
   const gate = store.settings().labsGate || {};
   const isMinor = () => {
     const age = ageOf({ birthYear: parseInt(byI.value) || null }, todayStr());
-    return age != null ? age < 18 : gate.minor === true;
+    return age != null ? minorByYear(age) : gate.minor === true;
   };
   const twField = field(t('settings.profile.targetWeight', { unit: weightUnit() }), twI);
   const twNote = el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '-4px', marginBottom: '8px' } });

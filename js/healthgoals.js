@@ -11,17 +11,29 @@
 import { weekStart, addDays } from './ui.js';
 import { sessionMinutes } from './fitness.js';
 import { weightNow, weightGoalStatus } from './energy.js';
+import { ageOf, minorByYear } from './eligibility.js';
 
 // Based on the WHO physical-activity recommendations (≥150 min/week, several days active).
 export const DEFAULT_GOALS = { activeMinutes: 150, trainingDays: 3 };
+// Children and adolescents (WHO 2020, 5–17 years): on average 60 minutes a day across the week, vigorous
+// activity and muscle and bone strengthening on at least 3 days – the adults' 150 min is not their goal.
+export const DEFAULT_GOALS_YOUTH = { activeMinutes: 420, trainingDays: 3 };
+
+/** Default weekly goals for a person: the youth goal for the child and youth profile (eligibility.js). */
+export function defaultGoals(profile = {}, today = null) {
+  const age = ageOf(profile, today);
+  const minor = age != null ? minorByYear(age) : !!(profile.settings && profile.settings.labsGate && profile.settings.labsGate.minor === true);
+  return minor ? DEFAULT_GOALS_YOUTH : DEFAULT_GOALS;
+}
 
 /** Configured weekly goals (with defaults). */
-export function weeklyGoals(profile = {}) {
+export function weeklyGoals(profile = {}, today = null) {
   const g = (profile.settings && profile.settings.weeklyGoals) || {};
   const num = (v, d) => (Number.isFinite(v) && v > 0 ? v : d);
+  const def = defaultGoals(profile, today);
   return {
-    activeMinutes: num(g.activeMinutes, DEFAULT_GOALS.activeMinutes),
-    trainingDays: num(g.trainingDays, DEFAULT_GOALS.trainingDays),
+    activeMinutes: num(g.activeMinutes, def.activeMinutes),
+    trainingDays: num(g.trainingDays, def.trainingDays),
   };
 }
 

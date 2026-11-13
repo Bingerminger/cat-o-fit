@@ -307,7 +307,8 @@ export function recommend({
       const perKg = [...byDay.values()].reduce((a, b) => a + b, 0) / byDay.size / kg;
       if (perKg < 1.2) {
         items.push(mk('protein', 3,
-          t('supplements.proteinReason', { value: fmtDec(Math.round(perKg * 10) / 10), days: byDay.size }),
+          // Rounded DOWN: 1.186 g/kg showed as "1.2", inside the range the same sentence recommends.
+          t('supplements.proteinReason', { value: fmtDec(Math.floor(perKg * 10) / 10), days: byDay.size }),
           t('supplements.proteinAction')));
       }
     }
