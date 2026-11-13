@@ -65,10 +65,11 @@ def op_write(u):
 def op_read(u):
     ok,ms,pl=req("GET", f"{BASE}?area=sessions&user={u}&action=changes&since=0"); rec("read",ok and isinstance(pl,dict) and pl.get("ok"),ms,bk())
 def op_backup(u):
-    t0=time.perf_counter(); a_ok=True
-    for a in BACKUP_AREAS:
-        ok,ms,pl=req("GET", f"{BASE}?area={a}&user={u}"); a_ok=a_ok and ok and isinstance(pl,dict) and pl.get("ok")
-    rec("backup",a_ok,(time.perf_counter()-t0)*1000,bk())
+    # As the app's full backup since 4.2: one changes-all request per member (before: one GET per area).
+    since=",".join(f"{a}:0" for a in BACKUP_AREAS)
+    ok,ms,pl=req("GET", f"{BASE}?action=changes-all&user={u}&since={since}")
+    good=ok and isinstance(pl,dict) and pl.get("ok") and all(a in (pl.get("revs") or {}) for a in BACKUP_AREAS)
+    rec("backup",good,ms,bk())
 def op_import(u):
     recs=[{"id":f"h-{u}-{k:03d}","date":"2026-06-15","weight":round(70+k*0.01,2)} for k in range(IMPORT_RECS)]
     ok,ms,pl=req("POST", f"{BASE}?area=health&user={u}&action=ops", {"ops":[{"op":"replace","records":recs}]}); rec("import",ok and isinstance(pl,dict) and pl.get("ok"),ms,bk())
@@ -125,7 +126,7 @@ totw=sum(succ.values())
 print("\n=== PERFORMANCE (latency ms) ===")
 L=lambda: print("+"+"-"*22+"+"+"-"*8+"+"+"-"*8+"+"+"-"*7+"+"+"-"*9+"+"+"-"*9+"+")
 L(); print(f"| {'Operation':20} | {'Reqs':>6} | {'OK':>6} | {'Err':>5} | {'avg ms':>7} | {'p95':>7} |"); L()
-for t,lab in [("write","Write (upsert)"),("read","Read (changes)"),("backup",f"Backup ({len(BACKUP_AREAS)} areas)"),("import",f"Import ({IMPORT_RECS})")]:
+for t,lab in [("write","Write (upsert)"),("read","Read (changes)"),("backup",f"Backup (1×{len(BACKUP_AREAS)} areas)"),("import",f"Import ({IMPORT_RECS})")]:
     n,okc,err,avg,p50,p95=stx(t); print(f"| {lab:20} | {n:>6} | {okc:>6} | {err:>5} | {avg:>7.1f} | {p95:>7.1f} |")
 L()
 print(f"\nTotal: {tot} requests · {totw} writes in {wall:.1f}s · {tot/wall:.0f} req/s · {terr} errors")

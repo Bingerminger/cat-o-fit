@@ -33,8 +33,8 @@ Sammel-Issue: [#6](https://github.com/Bingerminger/cat-o-fit/issues/6).
 - **Verlässlichkeit** – Abgleich zwischen Geräten, Start ohne Netz, der Plan-Generator, Importe sowie
   Zyklus- und Laborwerte an den Rändern; eine überarbeitete Oberfläche (Kontrast, Fokus,
   Bildschirmleser, leere Ansichten).
-- **Technik** – `storage.js` in Module hinter einer Fassade aufgeteilt (mit Lasttest), ein
-  inkrementelles Admin-Backup, Tests in echten Browsern (Chromium und die Engine von Safari) und unter
+- **Technik** – `storage.js` in Module hinter einer Fassade aufgeteilt (mit Lasttest), ein schnelleres
+  Admin-Backup (eine Anfrage je Mitglied statt je Bereich), Tests in echten Browsern (Chromium und die Engine von Safari) und unter
   verstellter Uhr sowie ein signiertes Docker-Image mit Stückliste (SBOM).
 
 ## Erledigt: v4.1.0 – Deine Einheiten

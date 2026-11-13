@@ -145,7 +145,10 @@ layers; each part imports only lower ones (no import cycle, `test/store-layers.t
   Backs up the data of the **active person** – including their private cycle data.
 - **Admin full backup (emergency recovery):** `exportFamilyAll()` / `importFamilyAll()` (admin
   only). Bundles the family configuration (including **teams**, since v3.20.0) **and** all areas of
-  every member – except the strictly private ones (`cycle`, `labs`, `supplements`). The restore
+  every member – except the strictly private ones (`cycle`, `labs`, `supplements`). Since 4.2 the
+  export fetches each member in **one** `changes-all` request (four members at a time) and turns it into
+  the same logical view as `GET ?area=` (no tombstones, no `rev`, the profile without `id`); a server
+  without `changes-all`, or a failed request, falls back to one request per area. The restore
   sets the family and all contained member areas on the server and locally (via a **`replace` op**
   per user). Since v3.20.0 the `replace` op carries the server state at the time of restoring as `baseRev`:
   if it is sent later (offline), it does not overwrite newer entries. The

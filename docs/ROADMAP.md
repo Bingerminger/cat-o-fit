@@ -32,8 +32,8 @@ Tracking issue: [#6](https://github.com/Bingerminger/cat-o-fit/issues/6).
   not just in a hint.
 - **Reliability** – sync between devices, starting without network, the plan generator, imports and
   cycle and lab values at the edges; a reworked interface (contrast, focus, screen readers, empty views).
-- **Technical** – `storage.js` split into modules behind a facade (with a load test), an incremental
-  admin backup, tests in real browsers (Chromium and Safari's engine) and under a moved clock, and a
+- **Technical** – `storage.js` split into modules behind a facade (with a load test), a faster admin
+  backup (one request per member instead of one per area), tests in real browsers (Chromium and Safari's engine) and under a moved clock, and a
   signed Docker image with a software bill of materials.
 
 ## Done: v4.1.0 – Your units

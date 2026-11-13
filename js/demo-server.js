@@ -256,7 +256,9 @@ export function createFakeServer() {
       return resp({ ok: true, area, rev: s.rev, records: applied, ...extra, ...(rejected.length ? { rejected } : {}) });
     }
     const data = Object.values(s.records).filter((r) => !r.deleted).map(stripRev);
-    return resp({ ok: true, area, data: area === 'profile' ? (data[0] || {}) : out(data) });
+    // Like store_to_logical in api/storage.php: the profile without rev and id.
+    const profileView = () => { const p = { ...(data.find((r) => r.id === 'profile') || {}) }; delete p.id; return p; };
+    return resp({ ok: true, area, data: area === 'profile' ? profileView() : out(data) });
   }
   return {
     opts, requests, handler, auth,

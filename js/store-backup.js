@@ -5,7 +5,7 @@
 
 import { nowIso } from './ui.js';
 import { t as tr } from './i18n.js';
-import { apiGet, isOnline, pullChanges } from './api-client.js';
+import { apiGet, isOnline, pullAllChanges, pullChanges, serverHas } from './api-client.js';
 import { addReport, replaceArea } from './store-data.js';
 import { activeMember, familyReplaceFrom, isAdmin, isManaging, pushFamily, syncFamily } from './store-family.js';
 import { loadUserFromLS, notify, readUserArea, writeUserArea } from './store-local.js';
@@ -81,15 +81,58 @@ export async function exportFamilyAll() {
     users: {},
   };
   const areas = fullBackupAreas();
-  for (const m of (family.members || [])) {
-    const bucket = {};
-    for (const a of areas) {
-      const data = await peekUserArea(m.id, a);
-      if (data != null) bucket[a] = data;
-    }
-    dump.users[m.id] = bucket;
-  }
+  // Since 4.2 one request per member (BACKUP_PARALLEL at a time) instead of one per member and area;
+  // the order of the members in the file stays the family's order.
+  const list = family.members || [];
+  const buckets = new Array(list.length);
+  let next = 0;
+  const worker = async () => {
+    for (let i = next++; i < list.length; i = next++) buckets[i] = await memberBucket(list[i].id, areas);
+  };
+  await Promise.all(Array.from({ length: Math.min(BACKUP_PARALLEL, list.length) }, worker));
+  list.forEach((m, i) => { dump.users[m.id] = buckets[i]; });
   return dump;
+}
+
+/** How many members the full backup fetches at the same time. */
+export const BACKUP_PARALLEL = 4;
+
+/** The backup areas of one member: in one request if the server can, otherwise area by area. */
+async function memberBucket(userId, areas) {
+  const bulk = await peekUserAreas(userId, areas);
+  if (bulk) return bulk;
+  const bucket = {};
+  for (const a of areas) {
+    const data = await peekUserArea(userId, a);
+    if (data != null) bucket[a] = data;
+  }
+  return bucket;
+}
+
+/**
+ * Logical view of several areas of a member in ONE request (server with `changes-all`): the same as
+ * peekUserArea per area – lists without tombstones and revs, the profile without rev and id. Only the
+ * given areas are asked for (the full backup never names the private ones). null = the server cannot
+ * do that or did not answer; the caller then asks area by area.
+ */
+export async function peekUserAreas(userId, areas) {
+  if (!isOnline() || !serverHas('changes-all')) return null;
+  let res;
+  try { res = await pullAllChanges(userId, Object.fromEntries(areas.map((a) => [a, 0]))); } catch { return null; }
+  if (areas.some((a) => res.revs[a] == null)) return null;   // an area the server did not hand out
+  const out = {};
+  for (const a of areas) {
+    const recs = res.changes[a] || [];
+    if (a === 'profile') {
+      const p = recs.filter((r) => r.id === 'profile').reduce((best, r) => (!best || (r.rev || 0) > (best.rev || 0) ? r : best), null);
+      const view = p && !p.deleted ? stripRev(p) : {};
+      delete view.id;
+      out[a] = view;
+    } else {
+      out[a] = recs.filter((r) => !r.deleted).map(stripRev);
+    }
+  }
+  return out;
 }
 
 /** Restores a complete family backup (admin only, authoritative). */

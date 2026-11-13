@@ -105,11 +105,14 @@ default – real flock contention only shows with several workers (`PHP_CLI_SERV
 
 **Method:** an isolated app copy with an empty `data/`, 8-worker PHP, load generator `tools/loadtest.py`
 (python3 stdlib, `ThreadPoolExecutor`): 10 users, a parallel mix of **write** (single upsert),
-**read** (`changes`), **backup** (read all areas) and **import** (`replace` with N records).
+**read** (`changes`), **backup** (as the app's full backup since 4.2: one `changes-all` request per
+member for the ten non-private areas) and **import** (`replace` with N records).
 Integrity checked: no lost updates, `rev` unique, JSON on disk valid, user isolation,
-import consistency. Output as a table. The soak run checks the writes by **sets of IDs** (every acknowledged
+import consistency. Output as a table. Both scripts check the writes by **sets of IDs** (every acknowledged
 ID is on the server, and nothing is there that was never sent) instead of by a counter total – under load
-a request can reach the server whose response never reaches the client.
+a request can reach the server whose response never reaches the client, and one that fails on the way
+(a connection reset by the built-in server at 200 parallel connections and more) counts as an error,
+not as lost data.
 
 ```bash
 QA=scratch/lt-app
@@ -128,29 +131,37 @@ python3 tools/loadtest_soak.py http://127.0.0.1:8078/api/api.php "$QA/data" 10 5
 lsof -ti :8078 | xargs kill   # stop the server
 ```
 
-Both scripts check all **13** user areas for integrity (including `labs` and
-`supplements` since v3.17.0).
+Both scripts write `sessions` (and `health` by import) and check those for integrity, plus the JSON
+validity of every file on disk; the backup step reads the ten non-private areas (`cycle`, `labs`,
+`supplements` go only to the person themself with a session, and the full backup leaves them out).
+A new data area goes into `USER_AREAS` of both scripts.
 
 **Reference platform** (anonymised – only a rough guide; on the Synology or other hardware
-the numbers will differ): **Apple M1 Max · 10 cores · 64 GB RAM · macOS 26.5.1 · PHP 8.5.7**
-(built-in server, 8 workers) · Python 3.14. Synthetic, anonymous test data (`u-load-NN`).
+the numbers will differ): **Apple M1 Max · 10 cores · 64 GB RAM · macOS 26 · PHP 8.5.12**
+(built-in server, 8 workers) · Python 3.15. Synthetic, anonymous test data (`u-load-NN`). Measured
+13 November 2026 (4.2, backup in one request per member).
 
 | Load | Requests | Concurrent | Duration | Throughput | Write p95 | Backup p95 | Errors | Integrity |
 |---|--:|--:|--:|--:|--:|--:|--:|:--:|
-| light | 900 | 40 | 0.31 s | 2,908/s | 17 ms | 110 ms | 0 | ✓ |
-| heavy | 3,880 | 100 | 1.13 s | 3,421/s | 42 ms | 290 ms | 0 | ✓ |
-| very heavy | 11,580 | 200 | 3.81 s | 3,039/s | 94 ms | 836 ms | 0 | ✓ |
-| Soak run 60 s | 60,277 (45,161 writes) | 500 | 60 s | 1,002/s | 478 ms | 4,426 ms | 0 | ✓ |
+| light | 900 | 40 | 0.25 s | 3,541/s | 18 ms | 16 ms | 0 | ✓ |
+| heavy | 3,880 | 100 | 1.19 s | 3,266/s | 51 ms | 47 ms | 0 | ✓ |
+| very heavy | 11,580 | 200 | 4.31 s | 2,684/s | 132 ms | 122 ms | 0 | ✓ |
+| Soak run 60 s | 65,523 (49,105 writes) | 500 | 60 s | 1,075/s | 779 ms | 674 ms | 0 | ✓ |
+
+Before 4.2 the backup read every area in its own request: backup p95 110 / 290 / 836 ms and 4,426 ms
+in the soak run (3.21, PHP 8.5.7). In the soak run more writes now fit into the minute (49,105 instead
+of 45,161), the files grow faster, and the write p95 rises with them (478 → 779 ms).
 
 **Assessment:**
-- **Integrity: rock solid** – even with 10,000 concurrent writes or 45,000 writes / 13 MB in the
+- **Integrity: rock solid** – even with 10,000 concurrent writes or 49,000 writes / 14 MB in the
   soak run, no lost update and no corruption.
-- **Throughput ceiling ≈ 3,400 req/s** on a single host (saturated at ~100 concurrent). More
-  concurrency only brings latency, not errors.
-- **Most expensive path: the full backup** (reads all areas) – it grows with the amount of data; so
-  do the writes (each one rewrites the whole area JSON → ~O(n)). For a family (≤ 10 users, hardly any
-  concurrency, hundreds of records over the years) this is a **huge reserve**. The first scaling lever
-  would be an incremental backup instead of "read all areas".
+- **Throughput ceiling ≈ 3,500 req/s** on a single host (saturated at ~100 concurrent). More
+  concurrency only brings latency; at 200 parallel connections and more the built-in server now and
+  then resets a connection (the request never reaches PHP, the client gets an error, nothing is stored).
+- **Most expensive path: the writes** – each one rewrites the whole area JSON (~O(n)), so they grow with
+  the amount of data. The full backup reads every area once per member in one request since 4.2; the
+  server still reads whole files, an incremental backup would save only the transfer. For a family
+  (≤ 10 users, hardly any concurrency, hundreds of records over the years) this is a **huge reserve**.
 
 ## Browser verification
 
