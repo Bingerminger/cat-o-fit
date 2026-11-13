@@ -201,9 +201,9 @@ small { font-size: 0.82em; }
   font-size: 0.8rem; font-weight: 600;
   border-bottom: 1px solid var(--border);
 }
-.demo-bar__pin { font-weight: 550; opacity: .85; }
+.demo-bar__pin { font-weight: 550; }
 .demo-bar__lang { font: inherit; padding: 2px 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); }
-.demo-bar a { margin-left: auto; color: inherit; font-weight: 700; }
+.demo-bar a { margin-left: auto; color: inherit; font-weight: 700; display: inline-flex; align-items: center; min-height: 32px; }
 .header-back { margin-left: -6px; }
 
 /* ---------- Buttons ---------- */
@@ -481,6 +481,8 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
   color: var(--text-2);
   white-space: nowrap;
 }
+/* A chip that is a button (filters by region, team …): at least 32 px to tap. */
+button.chip { min-height: 32px; }
 .chip--accent { background: var(--accent-soft); color: var(--accent-strong); }
 .chip--good { background: color-mix(in srgb, var(--good) 16%, transparent); color: var(--good-text); }
 .chip--warn { background: color-mix(in srgb, var(--warn) 18%, transparent); color: var(--warn-text); }
@@ -501,7 +503,8 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
 }
 .section-head:first-child { margin-top: var(--sp-1); }
 .section-head__title { font-size: 1.04rem; font-weight: 750; }
-.section-head__action { font-size: 0.84rem; font-weight: 650; color: var(--accent-text); }
+/* Small text action next to a heading: a target of at least 32 px without moving the line (WCAG 2.5.8). */
+.section-head__action { font-size: 0.84rem; font-weight: 650; color: var(--accent-text); display: inline-flex; align-items: center; min-height: 32px; padding: 0 4px; margin: -6px -4px; }
 
 /* ---------- Modal / bottom sheet ---------- */
 .modal-root {

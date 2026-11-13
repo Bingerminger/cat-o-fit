@@ -431,7 +431,7 @@ export function render(view, eventId) {
       { icon: 'more', label: t('plans.moreActions'), onClick: () => actionSheet(t('plans.plan'), [
         (!isProgram && event) ? { icon: 'calendar', label: t('plans.fixedCommitments'), hint: t('plans.commitActionHint'), onClick: () => openCommitmentsEditor(plan, event) } : null,
         { icon: 'download', label: t('plans.toCalendar'), hint: t('plans.toCalendarHint'), onClick: () => openIcsSheet({ scope: 'event', id: eventId, event }) },
-        { icon: 'download', label: t('plans.sharePlan'), hint: t('plans.sharePlanHint'), onClick: () => import('./plan-share.js').then((m) => m.openPlanShare(plan, plan.name || (event && event.name) || t('plans.trainingPlan'))) },
+        { icon: 'upload', label: t('plans.sharePlan'), hint: t('plans.sharePlanHint'), onClick: () => import('./plan-share.js').then((m) => m.openPlanShare(plan, plan.name || (event && event.name) || t('plans.trainingPlan'))) },
         { icon: 'refresh', label: t('plans.recalcPlanFromToday'), hint: t('plans.recalcHint'), onClick: () => regenerate(plan, event) },
       ]) },
     ] : [],

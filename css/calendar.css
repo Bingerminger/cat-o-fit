@@ -30,7 +30,10 @@
   display: flex; flex-direction: column; gap: 3px;
   overflow: hidden;
 }
-.cal-cell--out { opacity: 0.4; }
+/* Days of the neighbouring months: quieter, but the day number stays readable (opacity 0.4 left it at
+   1.8:1) – the cell fades, the number keeps the faint text colour. */
+.cal-cell--out > :not(.cal-cell__head), .cal-cell--out .cal-cell__head > :not(.cal-cell__num) { opacity: 0.45; }
+.cal-cell--out .cal-cell__num { color: var(--text-3); font-weight: 500; }
 .cal-cell--today { box-shadow: inset 0 0 0 2px var(--accent); }
 .cal-cell--race { background: color-mix(in srgb, var(--warn) 14%, var(--surface)); }
 .cal-cell__num { font-size: 0.74rem; font-weight: 700; color: var(--text-2); }

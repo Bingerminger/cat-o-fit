@@ -189,7 +189,7 @@ export function render(view) {
       view.appendChild(el('div', { class: 'card mt-2' }, [
         el('div', { class: 'row row--between', style: { alignItems: 'baseline' } }, [
           el('div', { class: 'card__title', style: { fontSize: '.9rem' }, text: t('labsView.adherence') }),
-          el('div', { class: 'num', style: { fontWeight: '800', color: ad.pct >= 80 ? 'var(--good)' : ad.pct >= 50 ? 'var(--warn)' : 'var(--bad)' }, text: t('labsView.percent', { pct: ad.pct }) }),
+          el('div', { class: 'num', style: { fontWeight: '800', color: ad.pct >= 80 ? 'var(--good-text)' : ad.pct >= 50 ? 'var(--warn-text)' : 'var(--bad-text)' }, text: t('labsView.percent', { pct: ad.pct }) }),
         ]),
         el('div', { class: 'dim', style: { fontSize: '.76rem' }, text: tp('labsView.adherenceCaption', ad.expected, { taken: ad.taken, extra: plans.some((p) => !isDaily(p)) ? ` · ${t('labsView.adherenceAsNeeded')}` : '' }) }),
         // 100 % as a fixed anchor: without it, a consistently halved intake looked like a full one.
@@ -343,7 +343,7 @@ function labStats(rows, labs, evaluate = true) {
           el('span', { class: 'muted', style: { fontSize: '.82rem' }, text: t('labsView.inSportTarget') }),
         ]),
         el('div', { class: 'row gap-2', style: { alignItems: 'baseline', marginTop: '2px' } }, [
-          el('span', { class: 'num', style: { fontWeight: '800', color: attention ? 'var(--warn)' : 'var(--text-3)' }, text: String(attention) }),
+          el('span', { class: 'num', style: { fontWeight: '800', color: attention ? 'var(--warn-text)' : 'var(--text-3)' }, text: String(attention) }),
           el('span', { class: 'muted', style: { fontSize: '.82rem' }, text: t('labsView.toWatch') }),
         ]),
         el('div', { class: 'dim', style: { fontSize: '.74rem', marginTop: '6px' }, text: counts }),

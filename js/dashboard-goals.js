@@ -134,7 +134,7 @@ export function weekGoalsCard(today) {
   const children = [
     el('div', { class: 'row row--between mb-2' }, [
       el('div', { class: 'card__title', text: t('dashboardGoals.weekGoals') }),
-      el('button', { style: { fontSize: '.78rem', color: 'var(--accent-strong)', background: 'none', border: 'none', fontWeight: '650', cursor: 'pointer' }, onclick: () => navigate('#/settings'), text: t('dashboardGoals.adjust') }),
+      el('button', { class: 'section-head__action', type: 'button', style: { fontSize: '.78rem', background: 'none', border: 'none', cursor: 'pointer' }, onclick: () => navigate('#/settings'), text: t('dashboardGoals.adjust') }),
     ]),
     el('div', { class: 'row', style: { gap: '12px' } }, [
       ring(prog.minutes, t('dashboardGoals.activeMinutes'), 'var(--accent)'),
@@ -173,7 +173,7 @@ export function healthGoalsCard(today) {
     return el('div', { style: { marginBottom: '11px' } }, [
       el('div', { class: 'row row--between', style: { fontSize: '.84rem', marginBottom: '3px' } }, [
         el('span', { style: { fontWeight: '650' }, text: m.label }),
-        el('span', { style: { fontSize: '.76rem', color: it.reached ? 'var(--good)' : 'var(--text-2)' }, text: status + dl }),
+        el('span', { style: { fontSize: '.76rem', color: it.reached ? 'var(--good-text)' : 'var(--text-2)' }, text: status + dl }),
       ]),
       el('div', { style: { height: '8px', borderRadius: '999px', background: 'var(--surface-3)', overflow: 'hidden' } }, [
         el('div', { style: { height: '100%', width: Math.round(it.pct * 100) + '%', background: it.reached ? 'var(--good)' : 'var(--accent)', borderRadius: '999px', transition: 'width .3s ease' } }),
@@ -184,7 +184,7 @@ export function healthGoalsCard(today) {
   return el('div', { class: 'card mt-3' }, [
     el('div', { class: 'row row--between mb-2' }, [
       el('div', { class: 'card__title', text: t('dashboardGoals.healthGoals') }),
-      el('button', { style: { fontSize: '.78rem', color: 'var(--accent-strong)', background: 'none', border: 'none', fontWeight: '650', cursor: 'pointer' }, onclick: () => navigate('#/settings'), text: t('dashboardGoals.manage') }),
+      el('button', { class: 'section-head__action', type: 'button', style: { fontSize: '.78rem', background: 'none', border: 'none', cursor: 'pointer' }, onclick: () => navigate('#/settings'), text: t('dashboardGoals.manage') }),
     ]),
     ...rows,
   ]);

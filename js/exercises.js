@@ -418,9 +418,11 @@ export function render(view) {
 
   const cats = [{ value: 'all', label: t('common.all') }, ...EX_CATEGORIES.map((c) => ({ value: c.key, label: c.label }))];
   // Five categories do not fit side by side on narrow phones – the bar then scrolls sideways.
-  view.appendChild(el('div', { class: 'mt-2', style: { overflowX: 'auto', paddingBottom: '2px' } }, [
-    segmented(cats, uiState.category, (v) => { uiState.category = v; drawGrid(); }, { label: t('exerciseLib.category') }),
-  ]));
+  // As wide as its labels: on a narrow phone the bar scrolls instead of breaking "Beweg-lichkeit".
+  const catBar = segmented(cats, uiState.category, (v) => { uiState.category = v; drawGrid(); }, { label: t('exerciseLib.category') });
+  catBar.style.width = 'max-content';
+  catBar.style.minWidth = '100%';
+  view.appendChild(el('div', { class: 'mt-2', style: { overflowX: 'auto', paddingBottom: '2px' } }, [catBar]));
 
   // Additional body-region filter (chips, horizontally scrollable).
   const regionRow = el('div', { class: 'mt-2', style: { display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '2px' } });
