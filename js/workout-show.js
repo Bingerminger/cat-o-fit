@@ -23,6 +23,7 @@ import { exerciseArt } from './exercise-art.js';
 import { mountFigure } from './motion-figure.js';
 import { frameAt } from './motion-rig.js';
 import { mountStage } from './stage-show.js';
+import { stageError } from './stage-gl.js';
 import { buildShow, showStateAt, doseLabel, nextWorkAfter } from './show-program.js';
 import { createMusic } from './music.js';
 import { unlockAudio, releaseAudio, tone, speak, speaking, stopSpeaking, wakeAudio, canSpeak, keepAwake, audioContext } from './audio.js';
@@ -220,6 +221,11 @@ export function openShow(program, { onFinish = null } = {}) {
     const canvas = wantsStage() ? el('canvas', { class: 'show__gl', 'aria-hidden': 'true' }) : null;
     let gl3d = null;
     try { gl3d = canvas && typeof canvas.getContext === 'function' ? mountStage(canvas, show) : null; } catch { gl3d = null; }
+    // Why the drawn figure is shown instead – said on the stage, so nobody wonders where the 3D stage went.
+    const inBrowser = typeof window !== 'undefined' && typeof window.matchMedia === 'function';
+    const why = () => { const e = stageError(); return e ? `${t('workoutShow.stageOffDevice')} (${e.slice(0, 90)})` : t('workoutShow.stageOffDevice'); };
+    const offNote = el('div', { class: 'show__stage-off', text: !inBrowser || gl3d ? '' : canvas ? why() : t('workoutShow.stageOffMotion') });
+    offNote.hidden = !offNote.textContent;
     const kicker = el('div', { class: 'show__kicker' });
     const side = el('span', { class: 'show__side' });
     // The game of it (3D stage only, kept for this session only): points for every repetition and second, more of them
@@ -247,8 +253,8 @@ export function openShow(program, { onFinish = null } = {}) {
       again(cheerEl, 'is-on');
     }
     const stage = el('div', { class: 'show__stage' }, gl3d
-      ? [el('div', { class: 'show__chips' }, [kicker, el('span', { class: 'show__chips-end' }, [side, scoreEl])]), cheerEl]
-      : [svg, el('div', { class: 'show__chips' }, [kicker, side])]);
+      ? [el('div', { class: 'show__chips' }, [kicker, el('span', { class: 'show__chips-end' }, [side, scoreEl])]), cheerEl, offNote]
+      : [svg, el('div', { class: 'show__chips' }, [kicker, side]), offNote]);
     const meta = el('div', { class: 'show__meta' });
     const name = el('h1', { class: 'show__name' });
     const dose = el('div', { class: 'show__dose' });
@@ -343,6 +349,20 @@ export function openShow(program, { onFinish = null } = {}) {
       });
     }
 
+    /** The 3D stage failed while running: back to the drawn figure, and say so. */
+    function dropStage(e) {
+      console.warn('Stage:', e);
+      try { gl3d.destroy(); } catch { /* already gone */ }
+      gl3d = null;
+      if (canvas.remove) canvas.remove();
+      runEl.classList.remove('show__run--gl');
+      stage.insertBefore(svg, stage.firstChild);
+      scoreEl.hidden = true; cheerEl.hidden = true;
+      offNote.textContent = `${t('workoutShow.stageOffDevice')} (${String((e && e.message) || e).slice(0, 90)})`;
+      offNote.hidden = false;
+      figItem = -1; segIndex = -1;
+    }
+
     /* ---- Section begins ---- */
     function enter(st) {
       const seg = st.seg;
@@ -409,7 +429,8 @@ export function openShow(program, { onFinish = null } = {}) {
         else if (st.rep !== game.rep) { if (game.rep > 0 && st.rep === game.rep + 1) { gain(10); again(big, 'is-pop'); } game.rep = st.rep; }
       }
       const fr = gl3d ? frameAt(prog.items[seg.i].m, st.anim.t, st.anim.list) : fig.update(st.anim.t, st.anim.list);
-      if (gl3d) gl3d.render(T, st, { area: freeArea() });
+      // The stage is a picture, the session is the clock: a failing stage must never stop counters, music or tones.
+      if (gl3d) { try { gl3d.render(T, st, { area: freeArea() }); } catch (e) { dropStage(e); } }
       // Counter
       let bigTxt = ''; let unitTxt = '';
       if (seg.kind === 'work' && !seg.timed) { bigTxt = `${st.rep}`; unitTxt = t('workoutShow.ofReps', { reps: seg.reps }); }

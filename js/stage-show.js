@@ -19,9 +19,9 @@
    after a jump.
    ========================================================================= */
 
-import { BODY, cycleOf } from './motion-rig.js';
+import { BODY, cycleOf, keyPose, solvePose } from './motion-rig.js';
 import { MOTIONS } from './exercise-motions.js';
-import { vec as V, bodyAt, blendBodies, aboveFloor, bodyPoints, solveLimb3 } from './body3d.js';
+import { vec as V, bodyAt, blendBodies, aboveFloor, bodyPoints, solveLimb3, lift } from './body3d.js';
 import { clipAt } from './show-program.js';
 import { createMesh, buildTrainer, buildCat, plaitAnchor } from './stage-mesh.js';
 import { createStage, projectPoint } from './stage-gl.js';
@@ -91,7 +91,22 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
   let lastT = null;
   const plait = []; let plaitPrev = [];
   let confetti = []; let lastIndex = -1; let doneAt = null;
-  const ends = new Map(); const bounds = new Map();
+  const ends = new Map(); const starts = new Map(); const bounds = new Map();
+  // Between standing and the floor she goes through a crouch with the hands down – nobody tips over like a board.
+  const crouch = MOTIONS.burpee && MOTIONS.burpee.keys.squat ? lift(solvePose(keyPose(MOTIONS.burpee, 'squat'), 'side'), MOTIONS.burpee) : null;
+  // Upright (also in the middle of a squat or a lunge) · on the floor or propped on it (plank, all fours, lying).
+  const standing = (b) => b.chest[1] > 70 && b.chest[1] - b.pelvis[1] > 24;
+  const down = (b) => b.pelvis[1] < 50 && b.chest[1] - b.pelvis[1] < 18;
+  // Onto the back and up from it she goes over sitting.
+  const sit = lift(solvePose({ hip: [-6, -9], torso: -16, legs: { r: { at: [38, -BODY.ankle] }, l: { at: [36, -BODY.ankle] } }, arms: { r: { at: [-24, -BODY.wrist], bend: 'back' }, l: { at: [-26, -BODY.wrist], bend: 'back' } } }, 'side'), {});
+  const onBack = (b) => down(b) && b.fwd[1] > 0.5;
+  /** The poses she passes through on the way from A to B (none when both are standing or both are down). */
+  function wayOf(A, B0) {
+    if (!crouch) return [];
+    if (standing(A) && down(B0)) return onBack(B0) ? [crouch, sit] : [crouch];
+    if (down(A) && standing(B0)) return onBack(A) ? [sit, crouch] : [crouch];
+    return [];
+  }
 
   const motionOf = (seg) => prog.items[seg.i].m;
 
@@ -99,7 +114,12 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
   function segBody(k, local) {
     const seg = show.segs[k];
     const a = clipAt(seg.clips, local);
-    return bodyAt(motionOf(seg), a.t, a.list);
+    return bodyAt(motionOf(seg), a.t, a.list, { once: !a.clip.loop });
+  }
+  /** Where section k begins. */
+  function startOf(k) {
+    if (!starts.has(k)) starts.set(k, segBody(k, 0));
+    return starts.get(k);
   }
   /** Where section k ends (the pose the next one flows out of). */
   function endOf(k) {
@@ -118,12 +138,21 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
     const B = segBody(st.index, st.local);
     if (st.index === 0) return B;
     const A = endOf(st.index - 1);
-    const d = gap(A, segBody(st.index, 0));
+    const B0 = startOf(st.index);
+    const d = gap(A, B0);
     if (d < 1.5) return B;
-    const dur = Math.min(st.seg.dur * 0.5, clamp(0.55 + d / 55, 0.6, 2.4));
+    const way = wayOf(A, B0);
+    const dur = Math.min(st.seg.dur * 0.6, way.length ? 1.3 * (way.length + 1) : clamp(0.55 + d / 55, 0.6, 2.4));
     if (st.local >= dur) return B;
+    const k = smooth(st.local / dur);
+    if (way.length) {
+      const stops = [A, ...way, B];
+      const x = k * (stops.length - 1);
+      const i = Math.min(stops.length - 2, Math.floor(x));
+      return blendBodies(stops[i], stops[i + 1], x - i);
+    }
     const low = A.pelvis[1] < 30 && B.pelvis[1] < 30;
-    return blendBodies(A, B, smooth(st.local / dur), { rise: low && d > 30 ? 9 : 0 });
+    return blendBodies(A, B, k, { rise: low && d > 30 ? 9 : 0 });
   }
 
   /** The space an exercise takes (centre and half extents), from a walk through its cycle. */
@@ -261,7 +290,8 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
   function render(T, st, env = {}) {
     const area = env.area || { x: 0, y: 0, w: 1, h: 1 };
     const wall = (typeof performance !== 'undefined' ? performance.now() : Date.now()) / 1000;
-    const wdt = lastWall == null ? 0 : clamp(wall - lastWall, 0, 0.1);
+    const raw = lastWall == null ? 0 : wall - lastWall;
+    const wdt = clamp(raw, 0, 0.1);
     lastWall = wall; wallT += wdt;
     const jumped = lastT == null || Math.abs(T - lastT) > 0.5;
     lastT = T;
@@ -358,7 +388,7 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
       lastAxes = { r: V.mul(drawn.r, 1 / rl), u: V.mul(drawn.u, 1 / ul) };
     }
     // A device that cannot keep up gets a coarser picture rather than a jerky one.
-    if (wdt > 0.03 && wdt < 0.1) slow += 1; else slow = Math.max(0, slow - 0.25);
+    if (raw > 0.03 && raw < 0.5) slow += 1; else slow = Math.max(0, slow - 0.25);
     if (slow > 45 && dpr > 1) { dpr = Math.max(1, dpr - 0.25); slow = 0; }
     return drawn ? { head: projectPoint(drawn.vp, body.head), ms: (typeof performance !== 'undefined' ? performance.now() : 0) - t0, dpr } : null;
   }

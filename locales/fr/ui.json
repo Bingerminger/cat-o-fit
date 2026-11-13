@@ -3603,6 +3603,8 @@
     "cheer4": "Génial !",
     "pointsLabel": "points",
     "comboLabel": "Combo",
+    "stageOffMotion": "Figure dessinée : « Réduire les animations » est activé sur cet appareil",
+    "stageOffDevice": "Figure dessinée : cet appareil ne peut pas afficher la scène 3D",
     "exercises": {
       "one": "{count} exercice",
       "other": "{count} exercices"

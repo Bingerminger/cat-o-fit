@@ -201,14 +201,19 @@ const MAXLAG = 2;
 
 /**
  * The body at time `t` (seconds) of a section list (cycleOf / introOf, also retimed), natural in its movement.
- * Stateless. `speed` scales the blur for sequences that are played faster or slower than authored.
+ * Stateless. `speed` scales the blur for sequences that are played faster or slower than authored; `once` for a
+ * list that does not repeat.
  */
-export function bodyAt(m, t, list, { speed = 1 } = {}) {
+export function bodyAt(m, t, list, { speed = 1, once = false } = {}) {
   const dt = STEP * speed;
+  // A list that is played once (a way into a position) does not wrap: before its start and after its end the body
+  // rests in the first and the last pose instead of being mixed with the other end.
+  const end = once ? list.reduce((s, p) => s + p.dur, 0) - 1e-4 : 0;
+  const when = (x) => (once ? clamp(x, 0, end) : x);
   // Skeletons at t + i·dt for i = −(2 + MAXLAG) … 2.
   const lo = -(2 + MAXLAG);
   const sk = [];
-  for (let i = lo; i <= 2; i++) sk.push(lift(solvePose(frameAt(m, t + i * dt, list).pose, m.view), m));
+  for (let i = lo; i <= 2; i++) sk.push(lift(solvePose(frameAt(m, when(t + i * dt), list).pose, m.view), m));
   const at = (i) => sk[i - lo];
   /** Blurred value of a joint, `lag` steps behind. */
   const blur = (get, lag) => {

@@ -117,6 +117,10 @@ export function projectPoint(vp, p) {
 
 /* ------------------------------ Stage ------------------------------ */
 
+let lastError = '';
+/** Why the last `createStage()` gave no stage (empty when it did). */
+export const stageError = () => lastError;
+
 function compile(gl, type, src) {
   const s = gl.createShader(type);
   gl.shaderSource(s, src); gl.compileShader(s);
@@ -144,8 +148,9 @@ function program(gl, vs, fs, attribs) {
 export function createStage(canvas) {
   const opts = { alpha: false, antialias: true, stencil: true, depth: true, powerPreference: 'high-performance' };
   let gl = null;
+  lastError = '';
   try { gl = canvas.getContext('webgl', opts) || canvas.getContext('experimental-webgl', opts); } catch { gl = null; }
-  if (!gl) return null;
+  if (!gl) { lastError = 'WebGL'; return null; }
   let res = null; let lost = false;
   const blobs = new Float32Array(24);
 
@@ -167,7 +172,7 @@ export function createStage(canvas) {
     }
     return { prog: res.worlds[key], def: WORLDS[key] };
   }
-  try { res = build(); worldProgram(DEFAULT_WORLD); } catch (e) { console.warn('[stage]', e.message); return null; }
+  try { res = build(); worldProgram(DEFAULT_WORLD); } catch (e) { lastError = String(e.message || e); console.warn('[stage]', lastError); return null; }
 
   const onLost = (e) => { e.preventDefault(); lost = true; };
   const onBack = () => { try { res = build(); lost = false; } catch { lost = true; } };

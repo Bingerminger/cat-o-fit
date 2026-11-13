@@ -3603,6 +3603,8 @@
     "cheer4": "Top!",
     "pointsLabel": "punten",
     "comboLabel": "Combo",
+    "stageOffMotion": "Getekende figuur: ‘Verminder beweging’ staat aan op dit apparaat",
+    "stageOffDevice": "Getekende figuur: dit apparaat kan het 3D-podium niet tonen",
     "exercises": {
       "one": "{count} oefening",
       "other": "{count} oefeningen"

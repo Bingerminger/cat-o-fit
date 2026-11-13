@@ -3603,6 +3603,8 @@
     "cheer4": "Fantastico!",
     "pointsLabel": "punti",
     "comboLabel": "Combo",
+    "stageOffMotion": "Figura disegnata: su questo dispositivo è attivo «Riduci movimento»",
+    "stageOffDevice": "Figura disegnata: questo dispositivo non può mostrare il palco 3D",
     "exercises": {
       "one": "{count} esercizio",
       "other": "{count} esercizi"
