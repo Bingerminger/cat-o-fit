@@ -97,11 +97,13 @@ function renderPage(lang, fig, images) {
     claims.add(item.c);
     return `<${tag}${cls ? ` class="${cls}"` : ''} data-c="${item.c}">${esc(fill(item.t))}</${tag}>`;
   };
-  const img = (file, alt, cls = 'shot') => {
+  const img = (file, alt, { first = false } = {}) => {
     const src = `assets/${lang}/${file}`;
     images.add(`${lang}/${file}`);
     const size = pngSize(join(ROOT, 'docs', 'assets', lang, file));
-    return `<img class="${cls}" src="${up}${src}" width="${size.width}" height="${size.height}" alt="${esc(alt)}" loading="lazy" decoding="async">`;
+    // The image at the top loads at once; the others when they come into view.
+    const load = first ? 'fetchpriority="high"' : 'loading="lazy" decoding="async"';
+    return `<img class="shot" src="${up}${src}" width="${size.width}" height="${size.height}" alt="${esc(alt)}" ${load}>`;
   };
   const other = LANGS.find((l) => l !== lang);
   const demo = `${up}demo/?lang=${lang}`;
@@ -162,7 +164,7 @@ ${said('p', T.hero.lead, 'lead')}
 </div>
 ${said('p', T.hero.demoNote, 'note')}
 </div>
-${img(T.hero.image.file, T.hero.image.alt)}
+${img(T.hero.image.file, T.hero.image.alt, { first: true })}
 </div></section>
 <section id="features"><div class="wrap">
 <h2>${esc(T.featuresTitle)}</h2>

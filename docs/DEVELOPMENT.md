@@ -647,4 +647,6 @@ versions linked, no download or user figures, counts (exercises, people, languag
 code, and inline scripts that neither store nor send anything. Images come from `docs/assets/` at
 build time. Because the workflow builds from the newest tag, the start page changes only with a
 release – a manual run before the first tag that contains `tools/build-site.mjs` builds the plain
-demo at the root, as before. Try it locally: `node tools/build-site.mjs && php -S 127.0.0.1:8090 -t dist/site`.
+demo at the root, as before. Try it locally: `node tools/build-site.mjs && php -S 127.0.0.1:8090 -t dist/site`
+(`dist/` stays out of the image and of deployments). Before every release, read what changed on the
+start page against `tools/site/claims.md`.

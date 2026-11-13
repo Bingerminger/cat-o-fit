@@ -9,8 +9,8 @@ English and German pages back different ids.
 Paths are in this repository. Where a test is named, it holds the statement in the code. Numbers in
 braces come from the code at build time and are checked against it (rule S6).
 
-**Review before every release** (release checklist, steps 5 and 6): what a release adds or changes on
-the start page – new functions, figures, images – is read against this register.
+**Review before every release:** what a release adds or changes on the start page – new functions,
+figures, images – is read against this register (see “Project site” in `docs/DEVELOPMENT.md`).
 
 ## Start
 

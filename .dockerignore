@@ -14,6 +14,8 @@ tools
 !tools/reset-pin.php
 node_modules
 scratch
+# Static builds of the demo and the project site (tools/build-demo.mjs, tools/build-site.mjs)
+dist
 package.json
 *.md
 

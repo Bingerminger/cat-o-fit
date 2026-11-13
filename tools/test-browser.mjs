@@ -190,28 +190,36 @@ if (want('offline')) {
 
 if (want('demo')) {
   console.log('== built site: start page and demo (Chromium)');
+  // Served under /cat-o-fit/ as on GitHub Pages, so the 404 page's absolute paths are checked too.
   const dir = mkdtempSync(join(tmpdir(), 'catofit-site-'));
-  execFileSync(process.execPath, [join(ROOT, 'tools/build-site.mjs'), '--out', dir], { stdio: 'ignore' });
+  execFileSync(process.execPath, [join(ROOT, 'tools/build-site.mjs'), '--out', join(dir, 'cat-o-fit')], { stdio: 'ignore' });
   const port = 18000 + Math.floor(Math.random() * 2000);
   const php = spawn(process.env.PHP || 'php', ['-S', `127.0.0.1:${port}`, '-t', dir], { stdio: 'ignore' });
-  const base = `http://127.0.0.1:${port}`;
+  const origin = `http://127.0.0.1:${port}`;
+  const base = `${origin}/cat-o-fit`;
   try {
     for (let i = 0; i < 50; i++) { try { if ((await fetch(`${base}/index.html`)).ok) break; } catch { /* starting */ } await new Promise((r) => setTimeout(r, 100)); }
     // The start page in both languages, on a phone and on a desktop, light and dark: no error, nothing
     // from other servers, nothing sideways.
-    for (const [path, viewport, colorScheme] of [['/', { width: 390, height: 844 }, 'light'], ['/de/', { width: 390, height: 844 }, 'dark'], ['/', { width: 1280, height: 900 }, 'dark']]) {
-      const w = await watchedContext(chromium, `start page ${path} ${viewport.width}`, { locale: 'en-GB', viewport, origin: base });
+    for (const [path, viewport, colorScheme] of [['/', { width: 390, height: 844 }, 'light'], ['/de/', { width: 390, height: 844 }, 'dark'], ['/', { width: 1280, height: 900 }, 'dark'], ['/404.html', { width: 390, height: 844 }, 'light']]) {
+      const w = await watchedContext(chromium, `start page ${path} ${viewport.width}`, { locale: 'en-GB', viewport, origin });
       await w.page.emulateMedia({ colorScheme });
       await w.page.goto(`${base}${path}`);
       await w.page.waitForTimeout(300);
       if (w.errors.length) fail(w.where, w.errors.join(' | ').slice(0, 300));
       if (w.outside.length) fail(w.where, `requests to other hosts: ${w.outside.slice(0, 3).join(', ')}`);
       if (await w.page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)) fail(w.where, 'the page scrolls sideways');
+      // Every link on the site itself leads to a page that exists.
+      const own = await w.page.evaluate((o) => [...document.querySelectorAll('a[href]')].map((a) => a.href.split('#')[0]).filter((h) => h.startsWith(o)), origin);
+      for (const href of [...new Set(own)]) {
+        const r = await fetch(href).catch(() => null);
+        if (!r || !r.ok) fail(w.where, `link to ${href.slice(origin.length)} answers ${r ? r.status : 'nothing'}`);
+      }
       await w.ctx.close();
     }
     // Old demo addresses (the demo lived at the root until 4.1).
     {
-      const w = await watchedContext(chromium, 'old demo addresses', { locale: 'en-GB', viewport: { width: 390, height: 844 }, origin: base });
+      const w = await watchedContext(chromium, 'old demo addresses', { locale: 'en-GB', viewport: { width: 390, height: 844 }, origin });
       for (const [from, to] of [['/#/calendar', '/demo/#/calendar'], ['/index.html#/', '/demo/#/'], ['/?lang=de', '/de/']]) {
         await w.page.goto(`${base}${from}`);
         await w.page.waitForURL((u) => u.href.startsWith(`${base}${to}`), { timeout: 5000 }).catch(() => {});
@@ -219,9 +227,9 @@ if (want('demo')) {
       }
       await w.ctx.close();
     }
-    const w = await watchedContext(chromium, 'demo', { locale: 'en-GB', viewport: { width: 390, height: 844 }, origin: base });
+    const w = await watchedContext(chromium, 'demo', { locale: 'en-GB', viewport: { width: 390, height: 844 }, origin });
     const api = [];
-    w.page.on('request', (r) => { if (r.url().includes('/api/')) api.push(`${r.method()} ${r.url().slice(base.length)}`); });
+    w.page.on('request', (r) => { if (r.url().includes('/api/')) api.push(`${r.method()} ${r.url().slice(origin.length)}`); });
     await w.page.goto(`${base}/demo/?lang=en`);
     await booted(w.page);
     await w.page.waitForTimeout(1500);
