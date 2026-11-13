@@ -206,6 +206,7 @@ test('app: waits until plans and sessions came from the server in this session',
   await store.syncNow();
   assert.equal(store.areaFetched('plans'), true);
   assert.equal(store.areaFetched('sessions'), true);
+  assert.equal(store.profileFetched(), true, 'the switch came from the server too');
   assert.equal(ensureAutoVolume(TUE3), 1);
 });
 

@@ -64,7 +64,8 @@ function signalText(s) {
  */
 export function ensureAutoVolume(today = todayStr()) {
   if (store.isManaging() || store.settings().autoVolume === false) return 0;
-  if (!store.areaFetched('plans') || !store.areaFetched('sessions')) return 0;
+  // The switch too: turned off on another device, it must not count as on before the profile arrived.
+  if (!store.profileFetched() || !store.areaFetched('plans') || !store.areaFetched('sessions')) return 0;
   const sessions = store.get('sessions');
   const plans = store.get('plans');
   const allUnits = plans.flatMap((p) => p.units || []);
