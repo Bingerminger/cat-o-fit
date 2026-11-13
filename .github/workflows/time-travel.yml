@@ -1,0 +1,68 @@
+name: Time travel
+
+# All tests under a moved clock (libfaketime) at the moments where date logic breaks: the turn of
+# the year, the changes to and from summer time, a leap day, the end of a month, the turn of a week
+# (Sunday → Monday, people start their week on Monday, Saturday or Sunday), and the end of the
+# transition period for calendar links without a key (ICS_LEGACY_UNTIL). A few moments also run in
+# other time zones (west of UTC, far east, half-hour offset).
+#
+# A workflow of its own instead of a job in ci.yml: it should not hold up every push. It runs once a
+# week and by hand (Actions › Time travel › Run workflow).
+on:
+  schedule:
+    - cron: '41 3 * * 0'   # Sundays 03:41 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  time-travel:
+    name: ${{ matrix.when }} (${{ matrix.tz }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { when: '2026-12-31 23:30:00', tz: Europe/Berlin }
+          - { when: '2027-01-01 00:30:00', tz: Europe/Berlin }
+          - { when: '2027-03-28 01:30:00', tz: Europe/Berlin }   # an hour before summer time
+          - { when: '2027-03-28 03:30:00', tz: Europe/Berlin }   # just after
+          - { when: '2027-10-31 02:30:00', tz: Europe/Berlin }   # the hour that happens twice
+          - { when: '2028-02-29 12:00:00', tz: Europe/Berlin }   # leap day
+          - { when: '2027-02-28 23:30:00', tz: Europe/Berlin }   # end of a short month
+          - { when: '2027-01-03 23:30:00', tz: Europe/Berlin }   # Sunday night
+          - { when: '2027-01-04 00:30:00', tz: Europe/Berlin }   # Monday morning
+          - { when: '2026-12-01 00:30:00', tz: Europe/Berlin }   # after ICS_LEGACY_UNTIL
+          - { when: '2026-12-31 23:30:00', tz: America/Los_Angeles }
+          - { when: '2027-03-14 01:30:00', tz: America/New_York }   # US summer time starts earlier
+          - { when: '2027-01-01 00:30:00', tz: Pacific/Auckland }
+          - { when: '2027-06-30 23:45:00', tz: Asia/Kolkata }
+    env:
+      TZ: ${{ matrix.tz }}
+      # The monotonic clock stays real: timers in Node and PHP run as without time travel.
+      FAKETIME_DONT_FAKE_MONOTONIC: '1'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.x'
+
+      - name: Install libfaketime
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq faketime
+
+      - name: Node tests at ${{ matrix.when }}
+        run: faketime -f "@${{ matrix.when }}" npm test
+
+      - name: PHP tests at ${{ matrix.when }}
+        run: |
+          faketime -f "@${{ matrix.when }}" php tools/test-health-ingest.php
+          faketime -f "@${{ matrix.when }}" php tools/test-health-xml.php
+          faketime -f "@${{ matrix.when }}" php tools/test-storage.php
+          faketime -f "@${{ matrix.when }}" php tools/test-api.php
+          faketime -f "@${{ matrix.when }}" php tools/test-ics.php
