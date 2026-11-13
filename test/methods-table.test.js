@@ -10,6 +10,7 @@ import { estimateVdot } from '../js/vdot.js';
 import { estimateMaxHr } from '../js/hrzones.js';
 import { POWER_ZONES } from '../js/perftest.js';
 import { loadMinutes } from '../js/load.js';
+import { estimateOneRm, nextWeight, ONE_RM_MAX_REPS, REP_TOP_SMALL_STEP } from '../js/strength.js';
 
 const doc = (p) => readFileSync(new URL(`../docs/${p}`, import.meta.url), 'utf8');
 const methods = { en: doc('knowledge/methods-and-sources.md'), de: doc('de/knowledge/methods-and-sources.md') };
@@ -42,6 +43,19 @@ test('max HR 208 − 0.7 × age, power levels as in the table', () => {
   const bounds = POWER_ZONES.map(([a, b]) => [a, b]);
   assert.deepEqual(bounds.map(([, b]) => b), [55, 75, 90, 105, 120]);
   assert.ok(row(methods.en, 'Power zones').includes('below 55 %, 56–75 %, 76–90 %, 91–105 %, 106–120 %'));
+});
+
+test('strength: 1RM up to 10 reps, about 5 % on the smallest step, 15 reps when that step is over 10 %', () => {
+  assert.equal(ONE_RM_MAX_REPS, 10);
+  assert.equal(estimateOneRm({ reps: 10, kg: 60 }), 60 * 36 / 27);
+  assert.equal(REP_TOP_SMALL_STEP, 15);
+  assert.equal(nextWeight(100).text, '105 kg');
+  assert.equal(nextWeight(20).text, '21 kg');
+  const en = row(methods.en, 'Strength: next step'), de = row(methods.de, 'Kraft: nächster Schritt');
+  for (const s of ['about 5 %', '2–10 %', '1 kg below 25 kg', 'up to 15 repetitions']) assert.ok(en.includes(s), s);
+  for (const s of ['etwa 5 %', '2–10 %', '1 kg unter 25 kg', 'bis 15 Wiederholungen']) assert.ok(de.includes(s), s);
+  assert.ok(row(methods.en, 'Strength: estimated 1RM').includes('up to 10 repetitions'));
+  assert.ok(row(methods.de, 'Kraft: geschätztes 1RM').includes('bis 10 Wiederholungen'));
 });
 
 test('load minutes from the distance: the minutes per km the guide names', () => {

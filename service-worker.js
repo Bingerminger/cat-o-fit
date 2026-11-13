@@ -107,6 +107,7 @@ const SHELL_ASSETS = [
   './js/strength-import.js',
   './js/csv-export.js',
   './js/strength.js',
+  './js/strength-ui.js',
   './js/barcode.js',
   './js/ics-export.js',
   './js/nutrition.js',

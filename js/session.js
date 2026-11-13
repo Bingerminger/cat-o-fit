@@ -30,7 +30,8 @@ import { suggestOffsetUnit, weekLoad, rescheduleCheck, findPlannedMatch } from '
 import { compareToPlan, splitBarPct } from './sollist.js';
 import { simulateAdd, simulateMove, impactText } from './whatif.js';
 import { exercisesForUnit, openExercise, difficultyLabel, findExercise } from './exercises.js';
-import { fmtSet, volume } from './strength.js';
+import { fmtSet, volume, exerciseRecords, exerciseKey, newRecords } from './strength.js';
+import { newRecordText } from './strength-ui.js';
 import { exerciseArt } from './exercise-art.js';
 import { programForUnit, buildShow } from './show-program.js';
 import { routeMap } from './charts.js';
@@ -328,14 +329,18 @@ function renderEvaluation(view, plan, unit, ex) {
   if (Array.isArray(ex.strengthSets) && ex.strengthSets.length) {
     view.appendChild(sectionHead(t('session.sets')));
     const list = el('div', { class: 'list-card' });
+    const all = store.get('sessions');
     ex.strengthSets.forEach((x) => {
       const e = findExercise(x.exerciseId);
       const vol = volume(x.sets);
+      // A personal record against the sessions before this one (a first time is none).
+      const pr = newRecordText(newRecords(exerciseRecords(all, exerciseKey(x), { beforeDate: ex.date, excludeId: ex.id }), x.sets));
       list.appendChild(el('button', { class: 'list-item', type: 'button', style: { width: '100%', textAlign: 'left' }, onclick: () => e && openExercise(e.id) }, [
         el('div', { class: 'list-item__body' }, [
           // An exercise imported from another app that the library does not know keeps its own name.
           el('div', { class: 'list-item__title', text: e ? e.name : (x.name || x.exerciseId) }),
           el('div', { class: 'list-item__sub', style: { whiteSpace: 'normal' }, text: `${x.sets.map(fmtSet).join(' · ')}${vol ? ` · ${t('session.volumeMoved', { weight: `${fmtInt(kgToShown(vol))} ${weightUnit()}` })}` : ''}` }),
+          pr ? el('div', { class: 'list-item__sub', style: { whiteSpace: 'normal', color: 'var(--good-text)', fontWeight: '600' }, text: t('strength.recordInSession', { what: pr }) }) : null,
         ]),
       ]));
     });

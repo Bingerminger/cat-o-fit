@@ -20,7 +20,8 @@ import { findUnit, completeUnit, saveUnitPatch } from './unit-actions.js';
 import { exercisesForUnit, openExercise, difficultyLabel } from './exercises.js';
 import { exerciseArt } from './exercise-art.js';
 import { buildPhases, advance, phaseRemaining, unitTarget } from './workout-engine.js';
-import { cleanSet, fmtSet, lastSetsFor, progressionHint, toStrengthSets } from './strength.js';
+import { cleanSet, fmtSet, recentSetsFor, progressionHint, toStrengthSets, exerciseRecords, newRecords } from './strength.js';
+import { recordsLine, newRecordText, plateButton } from './strength-ui.js';
 import { tone, unlockAudio } from './audio.js';
 import { programForUnit, buildShow } from './show-program.js';
 import { distanceUnit, weightUnit, toInput, fromInput } from './units.js';
@@ -440,12 +441,17 @@ function setLogger(ex, unit, setLog) {
   const draw = () => {
     box.innerHTML = '';
     const sets = setLog.log[ex.id] || [];
-    const last = lastSetsFor(store.get('sessions'), ex.id, unit.date);
+    const sessions = store.get('sessions');
+    const [last, before] = recentSetsFor(sessions, ex.id, unit.date, 2);
     if (last) {
       box.appendChild(el('div', { class: 'workout__sets-last', text: t('workoutMode.lastTime', { sets: last.sets.map(fmtSet).join(' · ') }) }));
-      const hint = progressionHint(last.sets);
+      const hint = progressionHint(last.sets, before ? before.sets : null);
       if (hint) box.appendChild(el('div', { class: 'workout__sets-hint', text: hint }));
     }
+    // Best values so far (estimated 1RM, heaviest set, most reps) – a new one is announced right away.
+    const rec = exerciseRecords(sessions, ex.id, { beforeDate: unit.date });
+    const best = recordsLine(rec);
+    if (best) box.appendChild(el('div', { class: 'workout__sets-last', text: t('strength.bestLine', { list: best }) }));
     if (sets.length) {
       box.appendChild(el('div', { class: 'workout__sets-done' }, sets.map((x, i) => el('span', { class: 'chip', text: `${i + 1}. ${fmtSet(x)}` }))));
     }
@@ -460,9 +466,15 @@ function setLogger(ex, unit, setLog) {
       el('button', { class: 'btn btn--soft', type: 'button', onclick: () => {
         const clean = cleanSet({ reps: repsI.value, kg: fromInput(kgI.value, 'weight', prevKg) });
         if (!clean) { toast(t('workoutMode.enterReps'), 'bad'); return; }
+        // Only what this set adds beyond the earlier sessions and the sets already logged today.
+        const already = newRecords(rec, sets);
+        const now = newRecords(rec, [...sets, clean]);
+        const gain = Object.fromEntries(Object.keys(now).map((k) => [k, now[k] != null && now[k] > (already[k] ?? -Infinity) ? now[k] : null]));
+        const what = newRecordText(gain);
         setLog.log[ex.id] = [...sets, clean];
         setLog.onChange();
         draw();
+        if (what) toast(t('strength.newRecord', { what }), 'good', 4000);
       } }, t('workoutMode.addSet')),
       sets.length ? el('button', { class: 'icon-btn', type: 'button', 'aria-label': t('workoutMode.removeLastSet'), onclick: () => {
         setLog.log[ex.id] = sets.slice(0, -1);
@@ -470,6 +482,7 @@ function setLogger(ex, unit, setLog) {
         draw();
       } }, icon('x')) : null,
     ]));
+    box.appendChild(plateButton(() => fromInput(kgI.value, 'weight', prevKg)));
   };
   draw();
   return box;

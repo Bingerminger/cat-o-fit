@@ -158,9 +158,15 @@ Every session has its own page with the **target**: distance, target pace and he
    using your target pace. In strength training you count sets with a large plus/minus; the **rest
    between sets** runs as a large countdown (tap again to restart it). For every linked exercise you
    enter **repetitions and weight for each set**; above it you see what you managed **last time**, plus
-   a progression hint: if you get 12 repetitions in all sets, a little more weight is due next time
-   (otherwise increase the repetitions first). The sets then appear in the session summary – with the
-   total weight moved. Hold exercises such as the forearm plank or wall sit are counted by time and
+   a progression hint: if you get 12 repetitions in all sets **twice in a row**, about 5 % more weight is
+   due next time, on the smallest step there is (with light dumbbells, where that step would be more
+   than 10 %, first up to 15 repetitions or a set more; otherwise increase the repetitions first). Below
+   it are your **best values** in this exercise – the **estimated one-repetition maximum (1RM)** from
+   sets of up to 10 repetitions, the heaviest set and, without weight, the most repetitions; a set that
+   beats one of them is announced as a **new personal record**. **Plates** opens the plate calculator:
+   total weight and bar (20/15/10 kg or 45/35/15 lb) → the plates per side. The sets then appear in the
+   session summary – with the total weight moved and a 🏆 for a personal record. The exercise sheet in
+   the library shows your best values too. Hold exercises such as the forearm plank or wall sit are counted by time and
    therefore have no set logging.
 4. At the end tap **“End workout”** → enter distance, effort (RPE) and feeling → done. To **discard**
    without saving, the app asks once more.

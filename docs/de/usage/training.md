@@ -159,9 +159,16 @@ Jede Einheit hat eine eigene Seite mit dem **Soll**: Distanz, Zielpace und Herzf
    Zeit um. Beim Krafttraining zählst du Sätze per großem Plus/Minus; die **Satzpause** läuft als
    großer Countdown (erneut tippen startet sie neu). Zu jeder verknüpften Übung trägst du
    **Wiederholungen und Gewicht je Satz** ein; darüber steht, was du **letztes Mal** geschafft hast,
-   und ein Hinweis zur Steigerung: Schaffst du in allen Sätzen 12 Wiederholungen, ist beim nächsten
-   Mal etwas mehr Gewicht dran (sonst erst die Wiederholungen steigern). Die Sätze stehen danach in
-   der Auswertung der Einheit – mit dem bewegten Gesamtgewicht. Halteübungen wie Unterarmstütz oder
+   und ein Hinweis zur Steigerung: Schaffst du **zweimal in Folge** in allen Sätzen 12 Wiederholungen,
+   ist beim nächsten Mal etwa 5 % mehr Gewicht dran, auf der kleinsten vorhandenen Stufe (bei leichten
+   Kurzhanteln, wo diese Stufe mehr als 10 % wäre, erst bis 15 Wiederholungen oder ein Satz mehr; sonst
+   erst die Wiederholungen steigern). Darunter stehen deine **Bestwerte** in der Übung – das
+   **geschätzte Einwiederholungsmaximum (1RM)** aus Sätzen bis 10 Wiederholungen, der schwerste Satz und
+   ohne Gewicht die meisten Wiederholungen; ein Satz, der einen davon übertrifft, wird als **neue
+   Bestleistung** gemeldet. **Scheiben** öffnet den Scheibenrechner: Gesamtgewicht und Stange
+   (20/15/10 kg bzw. 45/35/15 lb) → die Scheiben je Seite. Die Sätze stehen danach in der Auswertung der
+   Einheit – mit dem bewegten Gesamtgewicht und einem 🏆 bei einer Bestleistung. Das Übungsblatt in
+   der Bibliothek zeigt deine Bestwerte ebenfalls. Halteübungen wie Unterarmstütz oder
    Wandsitz zählen nach Zeit und haben deshalb keine Satz-Erfassung.
 4. Am Ende **„Beenden“** → Distanz, Anstrengung (RPE) und Gefühl eintragen → fertig. Zum
    **Verwerfen** ohne Speichern fragt die App noch einmal nach.

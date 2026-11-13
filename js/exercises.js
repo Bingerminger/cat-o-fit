@@ -11,7 +11,9 @@ import { el, icon, iconSvg, segmented, input, sectionHead, openSheet, toast } fr
 import { setHeader } from './router.js';
 import { exerciseArt } from './exercise-art.js';
 import { onAccent } from './contrast.js';
-import { exerciseUsage, bumpExerciseUsage } from './storage.js';
+import { exerciseUsage, bumpExerciseUsage, get as getArea } from './storage.js';
+import { exerciseRecords } from './strength.js';
+import { recordsCard, plateButton } from './strength-ui.js';
 import { MOTIONS, motionFor } from './exercise-motions.js';
 import { mountPlayer } from './motion-player.js';
 import { WORKOUTS, WORKOUT_CATS, workoutIds } from './workouts.js';
@@ -464,6 +466,9 @@ function openDetail(e) {
       usedEl,
     ]),
     el('div', { class: 'dim mt-3', style: { fontSize: '.82rem' }, text: t('exerciseLib.muscles', { list: (e.muscles || []).join(', ') }) }),
+    // Since 4.2: the person's best values in this exercise, and the plate calculator for loaded ones.
+    recordsCard(exerciseRecords(getArea('sessions'), e.id)),
+    e.category === 'strength' && !e.hold ? plateButton(() => exerciseRecords(getArea('sessions'), e.id).weight?.value ?? null) : null,
     sectionHead(t('exerciseLib.howTo')),
     el('ol', { class: 'ex-steps' }, (e.steps || []).map((s) => el('li', { text: s }))),
     el('div', { class: 'card card--flat mt-3 row gap-2', style: { alignItems: 'flex-start' } }, [

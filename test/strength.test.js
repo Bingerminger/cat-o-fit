@@ -34,8 +34,15 @@ test('Last time and double progression', () => {
   ];
   assert.equal(lastSetsFor(sessions, 'squat', '2026-09-24').date, '2026-09-17', 'before the current day');
   assert.equal(lastSetsFor(sessions, 'lunge'), null);
-  assert.match(progressionHint([{ reps: REP_TOP, kg: 40 }, { reps: REP_TOP, kg: 40 }]), /etwa 42,5 kg/);
-  assert.match(progressionHint([{ reps: 12, kg: 6 }]), /etwa 7 kg/, 'light dumbbells: +1 kg');
+  const top40 = [{ reps: REP_TOP, kg: 40 }, { reps: REP_TOP, kg: 40 }];
+  // ACSM 2009: more weight after two sessions in a row at the top, about 5 % (2–10 %).
+  assert.match(progressionHint(top40), /beim nächsten Mal wieder/, 'once is not yet enough');
+  assert.match(progressionHint(top40, top40), /etwa 42,5 kg/);
+  assert.match(progressionHint(top40, [{ reps: 12, kg: 37.5 }]), /beim nächsten Mal wieder/, 'the session before at a lighter weight');
+  assert.match(progressionHint([{ reps: 12, kg: 100 }], [{ reps: 12, kg: 100 }]), /etwa 105 kg/, '5 % of 100 kg');
+  assert.match(progressionHint([{ reps: 12, kg: 10 }], [{ reps: 12, kg: 10 }]), /etwa 11 kg/, '+1 kg = 10 % is still fine');
+  // Light dumbbells: the smallest step (+1 kg on 6 kg = 17 %) is too big – first 15 reps or a set more.
+  assert.match(progressionHint([{ reps: 12, kg: 6 }], [{ reps: 12, kg: 6 }]), /7 kg.*15 Wiederholungen/);
   assert.match(progressionHint([{ reps: 9, kg: 40 }, { reps: 12, kg: 40 }]), /Wiederholungen steigern/);
   assert.match(progressionHint([{ reps: 15, kg: null }]), /schwerere Variante/);
 });
@@ -57,12 +64,13 @@ test('Assigning to the planned unit carries over sets, calories, ascent and rout
 test('Workout mode: record sets per linked exercise and save them on finishing', () => {
   const doc = globalThis.document;
   doc.body.childNodes = [];
-  for (const id of ['header-title', 'header-subtitle', 'header-back', 'header-actions', 'modal-root']) {
+  for (const id of ['header-title', 'header-subtitle', 'header-back', 'header-actions', 'modal-root', 'toast-root']) {
     const e = doc.createElement('div'); e.setAttribute('id', id); doc.body.appendChild(e);
   }
   const view = doc.createElement('div'); view.setAttribute('id', 'view'); doc.body.appendChild(view);
   const unit = { id: 'k1', date: todayStr(), type: 'strength', title: 'Kraft', exerciseIds: ['squat'], status: 'geplant' };
   store.upsert('plans', { id: 'p2', eventId: 'e2', units: [unit] });
+  store.upsert('sessions', { id: 'alt0', date: '2026-01-01', type: 'strength', strengthSets: [{ exerciseId: 'squat', sets: [{ reps: 12, kg: 30 }, { reps: 12, kg: 30 }] }] });
   store.upsert('sessions', { id: 'alt', date: '2026-01-05', type: 'strength', strengthSets: [{ exerciseId: 'squat', sets: [{ reps: 12, kg: 30 }, { reps: 12, kg: 30 }] }] });
   renderWorkout(view, 'k1');
   assert.match(view.textContent, /Letztes Mal: 12 × 30\u00a0kg · 12 × 30\u00a0kg/);
@@ -71,7 +79,10 @@ test('Workout mode: record sets per linked exercise and save them on finishing',
   const kg = view.querySelectorAll('input').find((i) => /Gewicht \(kg\)$/.test(i.getAttribute('aria-label') || ''));
   assert.ok(reps && kg, 'inputs for repetitions and weight');
   reps.value = '10'; kg.value = '32,5';
+  assert.match(view.textContent, /Bestwerte: schwerster Satz 12 × 30/, 'the best so far');
+  assert.ok(view.querySelectorAll('button').some((b) => b.textContent === 'Scheiben'), 'plate calculator at hand');
   view.querySelectorAll('button').find((b) => b.textContent === '+ Satz').click();
+  assert.match(doc.body.textContent, /Neue Bestleistung: 32,5\skg bewegt/, 'a heavier set is announced');
   assert.match(view.textContent, /1\. 10 × 32,5\u00a0kg/);
   view.querySelectorAll('button').find((b) => b.textContent.includes('Training beenden')).click();
   doc.querySelector('#modal-root').querySelectorAll('button').find((b) => b.textContent.includes('Speichern & abschließen')).click();
