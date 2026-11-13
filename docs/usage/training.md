@@ -120,6 +120,12 @@ You simply want to get **fitter, stronger or healthier** – with no race at all
      on two days.
    - **🏋️ Strength & muscle** – two to three strength days (full body, alternating), complemented by
      endurance and mobility.
+   - **🌱 Strength starter at home** and **🏋️‍♀️ Strength starter in the gym** – for a first start: up to
+     three full-body sessions a week, workout A and B in turn, the other days brisk walking. At home with
+     your body weight (squats, push-ups on a bench, glute bridge, table rows, plank …), in the gym with
+     dumbbells and a bench (goblet squat, single-arm row, shoulder press, hip thrust, Romanian deadlift …).
+     Technique first, then more rounds; you log sets and weights in the workout, and the app suggests
+     the next step.
    - **⚖️ Weight loss** – plenty of activity (from about 150 to 225–240 minutes a week in a programme
      of 8 or 12 weeks; a 4-week programme stays near 200) plus strength on two days; it works together
      with the **calorie balance**.
@@ -163,7 +169,9 @@ Every session has its own page with the **target**: distance, target pace and he
    than 10 %, first up to 15 repetitions or a set more; otherwise increase the repetitions first). Below
    it are your **best values** in this exercise – the **estimated one-repetition maximum (1RM)** from
    sets of up to 10 repetitions, the heaviest set and, without weight, the most repetitions; a set that
-   beats one of them is announced as a **new personal record**. **Plates** opens the plate calculator:
+   beats one of them is announced as a **new personal record**. After each logged set the **rest**
+   countdown starts by itself – choose 60, 90, 120 or 180 s per exercise, the app remembers it (heavy
+   lifts usually want 2–3 minutes, lighter ones 1–2). **Plates** opens the plate calculator:
    total weight and bar (20/15/10 kg or 45/35/15 lb) → the plates per side. The sets then appear in the
    session summary – with the total weight moved and a 🏆 for a personal record. The exercise sheet in
    the library shows your best values too. Hold exercises such as the forearm plank or wall sit are counted by time and
@@ -415,7 +423,16 @@ The link points to the server you copy it from and contains your **personal cale
 gets their own. Anyone who knows it can read the appointments, so share it only with people who are
 allowed to see your plan. Calendars poll subscriptions on their own schedule; with Outlook a change
 can take over 24 hours, according to Microsoft. Links from versions before 3.20.0 (without a key)
-remain valid until 30 November 2026; after that, set the subscription up once more.
+remain valid until 30 November 2026; after that, set the subscription up once more (the export
+dialog says so too).
+
+### Share a plan as a file or PDF
+
+In the plan, **“…” → “Share plan (file/PDF)”** puts the whole plan on one page, week by week with day,
+session, target and description – for a coach, your family or the fridge door. **Share as a file**
+hands over an HTML file (on the iPhone via the share sheet) that opens in any browser, even without
+Cat-O-Fit, and prints to PDF there; **Print or save as PDF** opens the print dialog straight away.
+Nothing leaves your device unless you share the file.
 
 ---
 

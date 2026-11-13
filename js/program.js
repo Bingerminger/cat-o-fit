@@ -51,6 +51,25 @@ export const PROGRAM_TYPES = {
     cardio: [150, 240], strengthDays: () => 2, walkDays: (d) => (d >= 5 ? 2 : d >= 4 ? 1 : 0), mobility: null,
     defaultDays: 4,
   },
+  // Starter programmes (since 4.2): full body A and B in turn, up to three strength days, the other days
+  // brisk walking. At home with the body's weight, in the gym with free weights – the sets and weights are
+  // logged in the workout, and the app suggests the next step (strength.js).
+  starterHome: {
+    get label() { return t('program.types.starterHome.label'); },
+    emoji: '🌱',
+    get focus() { return t('program.types.starterHome.focus'); },
+    get desc() { return t('program.types.starterHome.desc'); },
+    cardio: [60, 90], strengthDays: (d) => Math.min(3, d), walkDays: (d) => Math.max(0, d - 3), mobility: 'extra',
+    defaultDays: 3, strengthOnly: true, rotation: 'starterHome',
+  },
+  starterGym: {
+    get label() { return t('program.types.starterGym.label'); },
+    emoji: '🏋️‍♀️',
+    get focus() { return t('program.types.starterGym.focus'); },
+    get desc() { return t('program.types.starterGym.desc'); },
+    cardio: [60, 90], strengthDays: (d) => Math.min(3, d), walkDays: (d) => Math.max(0, d - 3), mobility: 'extra',
+    defaultDays: 3, strengthOnly: true, rotation: 'starterGym',
+  },
   mobility: {
     get label() { return t('program.types.mobility.label'); },
     emoji: '🧘',
@@ -78,6 +97,19 @@ const STRENGTH_ROTATION = [
   { get title() { return t('program.rotation.upperBody.title'); }, get moves() { return t('program.rotation.upperBody.moves'); }, get harder() { return t('program.rotation.upperBody.harder'); } },
 ];
 const GENTLE_STRENGTH = { get title() { return t('program.gentle.title'); }, get moves() { return t('program.gentle.moves'); }, get harder() { return t('program.gentle.harder'); } };
+/** Full body A and B of the starter programmes, in turn (literal keys, so the catalog check sees them). */
+const ROTATIONS = {
+  starterHome: [
+    { get title() { return t('program.rotation.starterHomeA.title'); }, get moves() { return t('program.rotation.starterHomeA.moves'); }, get harder() { return t('program.rotation.starterHomeA.harder'); } },
+    { get title() { return t('program.rotation.starterHomeB.title'); }, get moves() { return t('program.rotation.starterHomeB.moves'); }, get harder() { return t('program.rotation.starterHomeB.harder'); } },
+  ],
+  starterGym: [
+    { get title() { return t('program.rotation.starterGymA.title'); }, get moves() { return t('program.rotation.starterGymA.moves'); }, get harder() { return t('program.rotation.starterGymA.harder'); } },
+    { get title() { return t('program.rotation.starterGymB.title'); }, get moves() { return t('program.rotation.starterGymB.moves'); }, get harder() { return t('program.rotation.starterGymB.harder'); } },
+  ],
+};
+/** How many different strength sessions a type rotates through (3 by default, A/B for the starters). */
+export function rotationLength(type) { return (ROTATIONS[programMeta(type).rotation] || STRENGTH_ROTATION).length; }
 
 /* ---- Phases ---------------------------------------------------------------
    Familiarisation (technique, 2 rounds) → build-up (3 rounds, progress) → from 8 weeks
@@ -172,7 +204,7 @@ export function programWeekBlocks(type, daysPerWeek) {
   const n = days.length;
   const k = Math.min(n, meta.strengthDays(n));
   const strengthIdx = spacedIndices(days, k);
-  const strengthOnly = type === 'strength';
+  const strengthOnly = type === 'strength' || !!meta.strengthOnly;
   const plan = days.map((dow, i) => {
     const strength = strengthIdx.has(i);
     if (strength && strengthOnly) return { dow, block: 'strength', extra: [] };
@@ -200,7 +232,8 @@ function r5(v) { return Math.max(5, Math.round(v / 5) * 5); }
 /** `nth`: the how-manieth strength session of the week (0-based) – the focus alternates within the
     week as well as from week to week. */
 function strengthUnit(meta, week, weeks, nth = 0) {
-  const s = meta.gentle ? GENTLE_STRENGTH : STRENGTH_ROTATION[(week - 1 + nth) % STRENGTH_ROTATION.length];
+  const rotation = ROTATIONS[meta.rotation] || STRENGTH_ROTATION;
+  const s = meta.gentle ? GENTLE_STRENGTH : rotation[(week - 1 + nth) % rotation.length];
   const phase = phaseKeyAt(weeks, week);
   const easy = isEasyWeek(week, weeks);
   let rounds, dur, how;

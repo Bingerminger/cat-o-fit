@@ -1016,6 +1016,7 @@
     "endTraining": "Training beenden",
     "roundsDone": "Absolvierte Runden / Übungen",
     "setRest": "Satzpause",
+    "restAfterSet": "Pause nach jedem Satz",
     "restOver": "Pause vorbei – nächster Satz",
     "restHint": "Durchatmen, nächsten Satz vorbereiten",
     "discardSure": "Wirklich verwerfen?",
@@ -1539,6 +1540,8 @@
     "commitActionHint": "Fußball, Kurse – der Plan richtet sich danach",
     "toCalendar": "In Kalender übernehmen (.ics)",
     "toCalendarHint": "Alle Einheiten als Kalenderdatei",
+    "sharePlan": "Plan teilen (Datei/PDF)",
+    "sharePlanHint": "Alle Einheiten als Datei für Trainer, Familie oder zum Ausdrucken",
     "recalcHint": "Vergangenes bleibt, mit Rückfrage",
     "noPlan": "Noch kein Plan",
     "noPlanText": "Für dieses Ziel gibt es noch keinen Trainingsplan.",
@@ -2316,6 +2319,16 @@
         "label": "Beweglichkeit & Gesundheit",
         "focus": "Sanft beweglich und gesund bleiben",
         "desc": "Schonender Einstieg: Beweglichkeit, sanfte Kraft an zwei Tagen und Bewegung, die von rund 90 auf 150 Minuten pro Woche wächst – ideal für Einsteiger:innen oder zum Wiedereinstieg."
+      },
+      "starterHome": {
+        "label": "Kraft-Einstieg zu Hause",
+        "focus": "Mit dem eigenen Körpergewicht anfangen",
+        "desc": "Bis zu drei kurze Ganzkörper-Einheiten pro Woche ohne Geräte, Training A und B im Wechsel, an den übrigen Tagen zügig gehen. Erst die Technik, dann mehr Runden und schwerere Varianten."
+      },
+      "starterGym": {
+        "label": "Kraft-Einstieg im Studio",
+        "focus": "Mit Kurzhanteln und Bank sicher anfangen",
+        "desc": "Bis zu drei Ganzkörper-Einheiten pro Woche mit freien Gewichten, Training A und B im Wechsel, an den übrigen Tagen zügig gehen. Sätze und Gewichte trägst du im Training ein – die App schlägt die nächste Steigerung vor."
       }
     },
     "rotation": {
@@ -2333,6 +2346,26 @@
         "title": "Kraft – Oberkörper & Rumpf",
         "moves": "Liegestütz 8–12× · Rudern (Hantel/Band) 12× · Schulterdrücken 12× · Plank 40 s · Seitstütz 30 s/Seite · Dead Bug 10×/Seite",
         "harder": "engere Liegestütz, stärkeres Band oder schwerere Hantel, Seitstütz mit Beinheben"
+      },
+      "starterHomeA": {
+        "title": "Kraft-Einstieg A – Ganzkörper",
+        "moves": "Kniebeugen 12× · Liegestütz an der Bank 8–12× · Hüftheben (Glute Bridge) 15× · Rudern am Tisch 8–12× · Unterarmstütz (Plank) 20–30 s",
+        "harder": "Liegestütz auf dem Boden, einbeiniges Hüftheben, Plank 45 s"
+      },
+      "starterHomeB": {
+        "title": "Kraft-Einstieg B – Ganzkörper",
+        "moves": "Ausfallschritt rückwärts 8×/Bein · Knie-Liegestütz 8–12× · Superman 10× · Bird Dog 8×/Seite · Seitstütz 20 s/Seite",
+        "harder": "Ausfallschritte mit Wasserflaschen, Liegestütz an der Bank, Seitstütz 30 s"
+      },
+      "starterGymA": {
+        "title": "Studio-Einstieg A – Ganzkörper",
+        "moves": "Goblet Squat 10× · Einarmiges Rudern an der Bank 10×/Arm · Schulterdrücken 10× · Hip Thrust an der Bank 12× · Unterarmstütz (Plank) 30 s",
+        "harder": "schwerere Hanteln – so, dass 1–2 Wiederholungen in Reserve bleiben"
+      },
+      "starterGymB": {
+        "title": "Studio-Einstieg B – Ganzkörper",
+        "moves": "Kreuzheben (Hüft-Hinge) 10× · Liegestütz 8–12× · Vorgebeugtes Rudern 10× · Ausfallschritt rückwärts 8×/Bein · Farmers Walk (Tragen) 30–40 s",
+        "harder": "schwerere Gewichte – so, dass 1–2 Wiederholungen in Reserve bleiben"
       }
     },
     "gentle": {
@@ -4623,5 +4656,17 @@
     "reasonEffort": "Anstrengung zuletzt Ø {rpe}",
     "reasonFatigue": "Form: deutlich ermüdet",
     "reasonCompletion": "Vorwoche zu {pct} % gelaufen"
+  },
+  "planShare": {
+    "title": "Plan teilen",
+    "intro": "Der Plan Woche für Woche mit Tag, Einheit, Ziel und Beschreibung. Die Datei öffnet sich in jedem Browser – auch ohne Cat-O-Fit – und lässt sich dort als PDF drucken.",
+    "asFile": "Als Datei teilen",
+    "print": "Drucken oder als PDF sichern",
+    "ready": "Plan bereit",
+    "notShared": "Nicht geteilt.",
+    "week": "Woche {n}",
+    "created": "erstellt am {date}",
+    "footer": "Erstellt mit Cat-O-Fit – Pläne sind eine Orientierung; hör auf deinen Körper.",
+    "hrZone": "HF-Zone {zone}"
   }
 }

@@ -832,6 +832,7 @@
     "endTraining": "Termina allenamento",
     "roundsDone": "Giri / esercizi svolti",
     "setRest": "Riposo tra le serie",
+    "restAfterSet": "Pausa dopo ogni serie",
     "restOver": "Riposo finito – prossima serie",
     "restHint": "Respira e preparati per la prossima serie",
     "discardSure": "Scartare davvero?",
@@ -1539,6 +1540,8 @@
     "commitActionHint": "Calcio, corsi – il piano li aggira",
     "toCalendar": "Aggiungi al calendario (.ics)",
     "toCalendarHint": "Tutte le sessioni come file di calendario",
+    "sharePlan": "Condividi il piano (file/PDF)",
+    "sharePlanHint": "Tutte le sedute in un file per l’allenatore, la famiglia o da stampare",
     "recalcHint": "Il passato resta; chiede conferma",
     "noPlan": "Ancora nessun piano",
     "noPlanText": "Per questo obiettivo non c’è ancora un piano di allenamento.",
@@ -2316,6 +2319,16 @@
         "label": "Mobilità e salute",
         "focus": "Restare elastici e in salute, con dolcezza",
         "desc": "Un inizio dolce: mobilità, forza leggera in due giorni e un’attività che cresce da circa 90 a 150 minuti a settimana – ideale per chi è alle prime armi o ricomincia."
+      },
+      "starterHome": {
+        "label": "Iniziare la forza a casa",
+        "focus": "Iniziare a corpo libero",
+        "desc": "Fino a tre brevi sedute total body a settimana senza attrezzi, allenamento A e B alternati, camminata veloce negli altri giorni. Prima la tecnica, poi più giri e varianti più difficili."
+      },
+      "starterGym": {
+        "label": "Iniziare la forza in palestra",
+        "focus": "Iniziare in sicurezza con manubri e panca",
+        "desc": "Fino a tre sedute total body a settimana con pesi liberi, allenamento A e B alternati, camminata veloce negli altri giorni. Registri serie e pesi durante l’allenamento – l’app propone il passo successivo."
       }
     },
     "rotation": {
@@ -2333,6 +2346,26 @@
         "title": "Forza – Parte alta del corpo e core",
         "moves": "Flessioni 8–12× · Rematore (manubrio/elastico) 12× · Shoulder press 12× · Plank 40 s · Plank laterale 30 s/lato · Dead bug 10×/lato",
         "harder": "flessioni a presa stretta, un elastico più forte o un manubrio più pesante, plank laterale con sollevamenti delle gambe"
+      },
+      "starterHomeA": {
+        "title": "Iniziare A – total body",
+        "moves": "Squat 12× · Flessioni inclinate 8–12× · Ponte glutei 15× · Rematore inverso 8–12× · Plank 20–30 s",
+        "harder": "flessioni a terra, ponte glutei su una gamba, plank 45 s"
+      },
+      "starterHomeB": {
+        "title": "Iniziare B – total body",
+        "moves": "Affondi indietro 8×/gamba · Flessioni sulle ginocchia 8–12× · Superman 10× · Bird dog 8×/lato · Plank laterale 20 s/lato",
+        "harder": "affondi con bottiglie d’acqua, flessioni inclinate, plank laterale 30 s"
+      },
+      "starterGymA": {
+        "title": "Palestra, iniziare A – total body",
+        "moves": "Goblet squat 10× · Rematore a un braccio con manubrio 10×/braccio · Shoulder press 10× · Hip thrust su panca 12× · Plank 30 s",
+        "harder": "manubri più pesanti – lasciando 1–2 ripetizioni di riserva"
+      },
+      "starterGymB": {
+        "title": "Palestra, iniziare B – total body",
+        "moves": "Stacco rumeno 10× · Flessioni 8–12× · Rematore con busto inclinato 10× · Affondi indietro 8×/gamba · Farmer’s carry 30–40 s",
+        "harder": "pesi più alti – lasciando 1–2 ripetizioni di riserva"
       }
     },
     "gentle": {
@@ -4623,5 +4656,17 @@
     "reasonEffort": "Fatica recente media {rpe}",
     "reasonFatigue": "Forma: chiaramente stanca",
     "reasonCompletion": "Settimana scorsa corsa al {pct}%"
+  },
+  "planShare": {
+    "title": "Condividi il piano",
+    "intro": "Il piano settimana per settimana con giorno, seduta, obiettivo e descrizione. Il file si apre in qualsiasi browser – anche senza Cat-O-Fit – e si stampa in PDF.",
+    "asFile": "Condividi come file",
+    "print": "Stampa o salva come PDF",
+    "ready": "Piano pronto",
+    "notShared": "Non condiviso.",
+    "week": "Settimana {n}",
+    "created": "creato il {date}",
+    "footer": "Creato con Cat-O-Fit – i piani sono un orientamento; ascolta il tuo corpo.",
+    "hrZone": "Zona FC {zone}"
   }
 }

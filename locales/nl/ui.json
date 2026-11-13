@@ -832,6 +832,7 @@
     "endTraining": "Workout beëindigen",
     "roundsDone": "Rondes / oefeningen gedaan",
     "setRest": "Rust tussen sets",
+    "restAfterSet": "Rust na elke set",
     "restOver": "Rust is voorbij – volgende set",
     "restHint": "Adem door en maak je klaar voor de volgende set",
     "discardSure": "Echt weggooien?",
@@ -1539,6 +1540,8 @@
     "commitActionHint": "Voetbal, lessen – het schema werkt eromheen",
     "toCalendar": "Aan agenda toevoegen (.ics)",
     "toCalendarHint": "Alle trainingen als agendabestand",
+    "sharePlan": "Schema delen (bestand/pdf)",
+    "sharePlanHint": "Alle trainingen als bestand voor een coach, familie of om te printen",
     "recalcHint": "Het verleden blijft; vraagt eerst",
     "noPlan": "Nog geen schema",
     "noPlanText": "Voor dit doel is er nog geen trainingsschema.",
@@ -2316,6 +2319,16 @@
         "label": "Mobiliteit & gezondheid",
         "focus": "Soepel en gezond blijven, op een rustige manier",
         "desc": "Een zachte start: mobiliteit, rustige kracht op twee dagen en activiteit die groeit van ongeveer 90 naar 150 minuten per week – ideaal voor beginners of om weer op gang te komen."
+      },
+      "starterHome": {
+        "label": "Krachtstart thuis",
+        "focus": "Beginnen met je eigen lichaamsgewicht",
+        "desc": "Tot drie korte full-body-trainingen per week zonder materiaal, training A en B om en om, op de andere dagen stevig wandelen. Eerst de techniek, dan meer rondes en zwaardere varianten."
+      },
+      "starterGym": {
+        "label": "Krachtstart in de sportschool",
+        "focus": "Veilig beginnen met dumbbells en een bank",
+        "desc": "Tot drie full-body-trainingen per week met vrije gewichten, training A en B om en om, op de andere dagen stevig wandelen. Je noteert sets en gewichten tijdens de training – de app stelt de volgende stap voor."
       }
     },
     "rotation": {
@@ -2333,6 +2346,26 @@
         "title": "Kracht – bovenlichaam & core",
         "moves": "Push-ups 8–12× · Roeien (dumbbell/band) 12× · Schouderpress 12× · Plank 40 s · Zijplank 30 s/kant · Dead bug 10×/kant",
         "harder": "smallere push-ups, een sterkere band of zwaardere dumbbell, zijplank met beenheffen"
+      },
+      "starterHomeA": {
+        "title": "Krachtstart A – full body",
+        "moves": "Squats 12× · Incline push-ups 8–12× · Heupbrug 15× · Omgekeerd roeien 8–12× · Plank 20–30 s",
+        "harder": "push-ups op de grond, heupbrug op één been, plank 45 s"
+      },
+      "starterHomeB": {
+        "title": "Krachtstart B – full body",
+        "moves": "Achterwaartse lunges 8×/been · Push-ups op de knieën 8–12× · Superman 10× · Bird dog 8×/kant · Zijplank 20 s/kant",
+        "harder": "lunges met waterflessen, incline push-ups, zijplank 30 s"
+      },
+      "starterGymA": {
+        "title": "Sportschool-start A – full body",
+        "moves": "Goblet squat 10× · Roeien met één arm 10×/arm · Schouderpress 10× · Hip thrusts op een bank 12× · Plank 30 s",
+        "harder": "zwaardere dumbbells – zodat er 1–2 herhalingen over blijven"
+      },
+      "starterGymB": {
+        "title": "Sportschool-start B – full body",
+        "moves": "Romanian deadlift 10× · Push-ups 8–12× · Voorovergebogen roeien 10× · Achterwaartse lunges 8×/been · Farmer’s carry 30–40 s",
+        "harder": "zwaardere gewichten – zodat er 1–2 herhalingen over blijven"
       }
     },
     "gentle": {
@@ -4623,5 +4656,17 @@
     "reasonEffort": "Inspanning recent gem. {rpe}",
     "reasonFatigue": "Vorm: duidelijk moe",
     "reasonCompletion": "Vorige week voor {pct}% gelopen"
+  },
+  "planShare": {
+    "title": "Schema delen",
+    "intro": "Het schema week voor week met dag, training, doel en beschrijving. Het bestand opent in elke browser – ook zonder Cat-O-Fit – en is daar als pdf af te drukken.",
+    "asFile": "Delen als bestand",
+    "print": "Afdrukken of als pdf bewaren",
+    "ready": "Schema klaar",
+    "notShared": "Niet gedeeld.",
+    "week": "Week {n}",
+    "created": "gemaakt op {date}",
+    "footer": "Gemaakt met Cat-O-Fit – schema’s zijn een richtlijn; luister naar je lichaam.",
+    "hrZone": "HS-zone {zone}"
   }
 }

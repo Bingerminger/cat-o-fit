@@ -13,14 +13,14 @@
 import * as store from './storage.js';
 import {
   el, icon, iconSvg, navigate, typeMeta, fmtClock, fmtPaceRange, stepper, toast,
-  openSheet, closeSheet, field, input, textarea, rpeScale, feelingPicker, durationFields, localizeUnits,
+  openSheet, closeSheet, field, input, textarea, rpeScale, feelingPicker, durationFields, localizeUnits, segmented,
 } from './ui.js';
 import { lsGet, lsSet, lsRemove } from './env.js';
 import { findUnit, completeUnit, saveUnitPatch } from './unit-actions.js';
 import { exercisesForUnit, openExercise, difficultyLabel } from './exercises.js';
 import { exerciseArt } from './exercise-art.js';
 import { buildPhases, advance, phaseRemaining, unitTarget } from './workout-engine.js';
-import { cleanSet, fmtSet, recentSetsFor, progressionHint, toStrengthSets, exerciseRecords, newRecords } from './strength.js';
+import { cleanSet, fmtSet, recentSetsFor, progressionHint, toStrengthSets, exerciseRecords, newRecords, REST_CHOICES, DEFAULT_REST_SEC } from './strength.js';
 import { recordsLine, newRecordText, plateButton } from './strength-ui.js';
 import { tone, unlockAudio } from './audio.js';
 import { programForUnit, buildShow } from './show-program.js';
@@ -121,7 +121,7 @@ export function render(view, id) {
   root.appendChild(exPanel);
   // Strength: per linked exercise, sets with repetitions and weight (kept across a reload).
   st.counters.log = st.counters.log || {};
-  renderWorkoutExercises(exPanel, plan, unit, isSetBased ? { log: st.counters.log, onChange: () => persist() } : null);
+  renderWorkoutExercises(exPanel, plan, unit, isSetBased ? { log: st.counters.log, onChange: () => persist(), startRest: (sec) => restTimer(sec) } : null);
   root.appendChild(hint);
   view.appendChild(root);
 
@@ -432,6 +432,12 @@ function renderWorkoutExercises(host, plan, unit, setLog = null) {
   paint();
 }
 
+/** Rest after a set of this exercise (s): the person's choice for it, otherwise the default. */
+function restFor(exerciseId) {
+  const v = Number((store.settings().restByExercise || {})[exerciseId]);
+  return REST_CHOICES.includes(v) ? v : DEFAULT_REST_SEC;
+}
+
 /**
  * Log the sets of an exercise: repetitions and (optionally) weight, below them the sets
  * already logged and – from earlier sessions – "last time" with a progression hint.
@@ -474,6 +480,8 @@ function setLogger(ex, unit, setLog) {
         setLog.log[ex.id] = [...sets, clean];
         setLog.onChange();
         draw();
+        // The rest after a set starts by itself, with this exercise's rest time (since 4.2).
+        if (setLog.startRest) setLog.startRest(restFor(ex.id));
         if (what) toast(t('strength.newRecord', { what }), 'good', 4000);
       } }, t('workoutMode.addSet')),
       sets.length ? el('button', { class: 'icon-btn', type: 'button', 'aria-label': t('workoutMode.removeLastSet'), onclick: () => {
@@ -481,6 +489,13 @@ function setLogger(ex, unit, setLog) {
         setLog.onChange();
         draw();
       } }, icon('x')) : null,
+    ]));
+    // Rest after each set of this exercise, remembered per exercise.
+    box.appendChild(el('div', { class: 'row gap-2 mt-1', style: { alignItems: 'center', flexWrap: 'wrap' } }, [
+      el('span', { class: 'dim', style: { fontSize: '.78rem' }, text: t('workoutMode.restAfterSet') }),
+      segmented(REST_CHOICES.map((s) => ({ value: String(s), label: `${s} s` })), String(restFor(ex.id)), (v) => {
+        store.setSetting('restByExercise', { ...(store.settings().restByExercise || {}), [ex.id]: Number(v) });
+      }, { label: t('workoutMode.restAfterSet') }),
     ]));
     box.appendChild(plateButton(() => fromInput(kgI.value, 'weight', prevKg)));
   };

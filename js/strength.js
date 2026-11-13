@@ -129,6 +129,12 @@ export function nextWeight(topKg) {
   return { text: `${fmtDec(value)} ${lb ? 'lb' : 'kg'}`, pct: step / shown };
 }
 
+/* ------------------------------- Rest between sets ------------------------------- */
+
+/** Rest after a set to choose per exercise (s) – ACSM 2009: 1–2 min for most, 2–3 min for heavy lifts. */
+export const REST_CHOICES = [60, 90, 120, 180];
+export const DEFAULT_REST_SEC = 90;
+
 /* ----------------------- One-repetition maximum and records ----------------------- */
 
 /** Repetitions up to which the estimate holds; beyond that it gets unreliable (Brzycki 1993). */

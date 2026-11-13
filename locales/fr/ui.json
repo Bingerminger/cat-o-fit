@@ -832,6 +832,7 @@
     "endTraining": "Terminer l’entraînement",
     "roundsDone": "Tours / exercices faits",
     "setRest": "Repos entre les séries",
+    "restAfterSet": "Repos après chaque série",
     "restOver": "Repos terminé – série suivante",
     "restHint": "Respire et prépare-toi pour la série suivante",
     "discardSure": "Vraiment abandonner ?",
@@ -1539,6 +1540,8 @@
     "commitActionHint": "Football, cours – le plan s’organise autour",
     "toCalendar": "Ajouter au calendrier (.ics)",
     "toCalendarHint": "Toutes les séances dans un fichier calendrier",
+    "sharePlan": "Partager le plan (fichier/PDF)",
+    "sharePlanHint": "Toutes les séances en un fichier pour un coach, la famille ou à imprimer",
     "recalcHint": "Le passé reste ; demande confirmation",
     "noPlan": "Pas encore de plan",
     "noPlanText": "Il n’y a pas encore de plan d’entraînement pour cet objectif.",
@@ -2316,6 +2319,16 @@
         "label": "Mobilité & santé",
         "focus": "Rester souple et en bonne santé, en douceur",
         "desc": "Un démarrage en douceur : mobilité, renforcement doux deux jours et activité qui passe d’environ 90 à 150 minutes par semaine – idéal pour débuter ou reprendre."
+      },
+      "starterHome": {
+        "label": "Débuter la force à la maison",
+        "focus": "Commencer avec le poids du corps",
+        "desc": "Jusqu’à trois courtes séances complètes par semaine sans matériel, séance A et B en alternance, marche rapide les autres jours. D’abord la technique, puis plus de tours et des variantes plus dures."
+      },
+      "starterGym": {
+        "label": "Débuter la force en salle",
+        "focus": "Commencer en sécurité avec haltères et banc",
+        "desc": "Jusqu’à trois séances complètes par semaine avec poids libres, séance A et B en alternance, marche rapide les autres jours. Tu notes séries et charges pendant la séance – l’app propose la prochaine progression."
       }
     },
     "rotation": {
@@ -2333,6 +2346,26 @@
         "title": "Renforcement – Haut du corps & tronc",
         "moves": "Pompes 8–12× · Tirages (haltère/élastique) 12× · Développé épaules 12× · Gainage 40 s · Gainage latéral 30 s/côté · Dead bug 10×/côté",
         "harder": "pompes mains rapprochées, un élastique plus fort ou un haltère plus lourd, gainage latéral avec relevés de jambes"
+      },
+      "starterHomeA": {
+        "title": "Débuter la force A – corps complet",
+        "moves": "Squats 12× · Pompes inclinées 8–12× · Pont fessier 15× · Tirage inversé 8–12× · Gainage 20–30 s",
+        "harder": "pompes au sol, pont fessier sur une jambe, gainage 45 s"
+      },
+      "starterHomeB": {
+        "title": "Débuter la force B – corps complet",
+        "moves": "Fentes arrière 8×/jambe · Pompes sur les genoux 8–12× · Superman 10× · Bird dog 8×/côté · Gainage latéral 20 s/côté",
+        "harder": "fentes avec des bouteilles d’eau, pompes inclinées, gainage latéral 30 s"
+      },
+      "starterGymA": {
+        "title": "Salle, débuter A – corps complet",
+        "moves": "Goblet squat 10× · Rowing haltère à un bras 10×/bras · Développé épaules 10× · Hip thrust sur banc 12× · Gainage 30 s",
+        "harder": "haltères plus lourds – en gardant 1–2 répétitions en réserve"
+      },
+      "starterGymB": {
+        "title": "Salle, débuter B – corps complet",
+        "moves": "Soulevé de terre roumain 10× · Pompes 8–12× · Rowing buste penché 10× · Fentes arrière 8×/jambe · Farmer’s carry 30–40 s",
+        "harder": "charges plus lourdes – en gardant 1–2 répétitions en réserve"
       }
     },
     "gentle": {
@@ -4623,5 +4656,17 @@
     "reasonEffort": "Effort récent moy. {rpe}",
     "reasonFatigue": "Forme : fatigue marquée",
     "reasonCompletion": "Semaine passée courue à {pct} %"
+  },
+  "planShare": {
+    "title": "Partager le plan",
+    "intro": "Le plan semaine par semaine avec jour, séance, objectif et description. Le fichier s’ouvre dans n’importe quel navigateur – même sans Cat-O-Fit – et s’imprime en PDF.",
+    "asFile": "Partager en fichier",
+    "print": "Imprimer ou enregistrer en PDF",
+    "ready": "Plan prêt",
+    "notShared": "Non partagé.",
+    "week": "Semaine {n}",
+    "created": "créé le {date}",
+    "footer": "Créé avec Cat-O-Fit – les plans sont un repère ; écoute ton corps.",
+    "hrZone": "Zone FC {zone}"
   }
 }

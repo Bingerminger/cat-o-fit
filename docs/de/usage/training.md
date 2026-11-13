@@ -121,6 +121,12 @@ statt eines Wettkampfs ein **Trainingsprogramm** an:
      Kraft an zwei Tagen.
    - **🏋️ Kraft & Muskelaufbau** – zwei bis drei Krafttage (Ganzkörper im Wechsel), ergänzt um
      Ausdauer und Mobilität.
+   - **🌱 Kraft-Einstieg zu Hause** und **🏋️‍♀️ Kraft-Einstieg im Studio** – für den Anfang: bis zu drei
+     Ganzkörper-Einheiten pro Woche, Training A und B im Wechsel, an den übrigen Tagen zügig gehen. Zu Hause
+     mit dem eigenen Körpergewicht (Kniebeugen, Liegestütz an der Bank, Hüftheben, Rudern am Tisch, Plank …),
+     im Studio mit Kurzhanteln und Bank (Goblet Squat, einarmiges Rudern, Schulterdrücken, Hip Thrust,
+     Kreuzheben …). Erst die Technik, dann mehr Runden; Sätze und Gewichte trägst du im Training ein, die
+     App schlägt die nächste Steigerung vor.
    - **⚖️ Abnehmen & Gewicht** – viel Bewegung (von rund 150 auf 225–240 Minuten pro Woche in einem
      Programm über 8 oder 12 Wochen; mit 4 Wochen bleibt es bei rund 200) plus Kraft an zwei Tagen; wirkt
      zusammen mit der **Kalorienbilanz**.
@@ -165,7 +171,9 @@ Jede Einheit hat eine eigene Seite mit dem **Soll**: Distanz, Zielpace und Herzf
    erst die Wiederholungen steigern). Darunter stehen deine **Bestwerte** in der Übung – das
    **geschätzte Einwiederholungsmaximum (1RM)** aus Sätzen bis 10 Wiederholungen, der schwerste Satz und
    ohne Gewicht die meisten Wiederholungen; ein Satz, der einen davon übertrifft, wird als **neue
-   Bestleistung** gemeldet. **Scheiben** öffnet den Scheibenrechner: Gesamtgewicht und Stange
+   Bestleistung** gemeldet. Nach jedem eingetragenen Satz startet die **Satzpause** von selbst – 60, 90,
+   120 oder 180 s wählst du je Übung, die App merkt es sich (schwere Übungen brauchen meist 2–3 Minuten,
+   leichtere 1–2). **Scheiben** öffnet den Scheibenrechner: Gesamtgewicht und Stange
    (20/15/10 kg bzw. 45/35/15 lb) → die Scheiben je Seite. Die Sätze stehen danach in der Auswertung der
    Einheit – mit dem bewegten Gesamtgewicht und einem 🏆 bei einer Bestleistung. Das Übungsblatt in
    der Bibliothek zeigt deine Bestwerte ebenfalls. Halteübungen wie Unterarmstütz oder
@@ -421,7 +429,16 @@ Der Link zeigt auf den Server, von dem du ihn kopierst, und enthält deinen **pe
 Kalender-Schlüssel** – jede Person holt sich ihren eigenen. Wer ihn kennt, kann die Termine lesen; teile
 ihn also nur mit Menschen, die deinen Plan sehen dürfen. Kalender fragen Abos in ihrem eigenen Takt ab,
 bei Outlook kann eine Änderung laut Microsoft über 24 Stunden brauchen. Links aus Versionen vor 3.20.0
-(ohne Schlüssel) gelten noch bis 30.11.2026; danach das Abo einmal neu einrichten.
+(ohne Schlüssel) gelten noch bis 30.11.2026; danach das Abo einmal neu einrichten (das sagt auch der
+Export-Dialog).
+
+### Plan als Datei oder PDF teilen
+
+Im Plan legt **„…“ → „Plan teilen (Datei/PDF)“** den ganzen Plan auf eine Seite, Woche für Woche mit Tag,
+Einheit, Ziel und Beschreibung – für Trainerin oder Trainer, die Familie oder die Kühlschranktür. **Als
+Datei teilen** gibt eine HTML-Datei weiter (auf dem iPhone über das Teilen-Menü), die sich in jedem
+Browser öffnet, auch ohne Cat-O-Fit, und sich dort als PDF drucken lässt; **Drucken oder als PDF sichern**
+öffnet direkt den Druckdialog. Nichts verlässt dein Gerät, solange du die Datei nicht teilst.
 
 ---
 

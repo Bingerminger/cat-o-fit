@@ -81,7 +81,11 @@ test('Workout mode: record sets per linked exercise and save them on finishing',
   reps.value = '10'; kg.value = '32,5';
   assert.match(view.textContent, /Bestwerte: schwerster Satz 12 × 30/, 'the best so far');
   assert.ok(view.querySelectorAll('button').some((b) => b.textContent === 'Scheiben'), 'plate calculator at hand');
+  // Rest per exercise: chosen once, remembered, and started by the set itself.
+  view.querySelectorAll('button').find((b) => /^120\ss$/.test(b.textContent)).click();
+  assert.equal(store.settings().restByExercise.squat, 120);
   view.querySelectorAll('button').find((b) => b.textContent === '+ Satz').click();
+  assert.match(view.textContent, /Satzpause2:00|Satzpause02:00/, 'the rest of this exercise runs');
   assert.match(doc.body.textContent, /Neue Bestleistung: 32,5\skg bewegt/, 'a heavier set is announced');
   assert.match(view.textContent, /1\. 10 × 32,5\u00a0kg/);
   view.querySelectorAll('button').find((b) => b.textContent.includes('Training beenden')).click();

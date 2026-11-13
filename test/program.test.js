@@ -3,13 +3,12 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   PROGRAM_TYPES, programMeta, spreadDays, programWeekBlocks,
-  programPhases, buildProgramUnits, createProgramPlan, weeklyCardioMinutes, migratePlan,
-} from '../js/program.js';
+  programPhases, buildProgramUnits, createProgramPlan, weeklyCardioMinutes, migratePlan, rotationLength } from '../js/program.js';
 import { isoDow, addDays, diffDays } from '../js/ui.js';
 
-test('PROGRAM_TYPES: four templates with label, focus, endurance target and strength days', () => {
+test('PROGRAM_TYPES: six templates with label, focus, endurance target and strength days', () => {
   const keys = Object.keys(PROGRAM_TYPES);
-  assert.deepEqual(keys.sort(), ['fitness', 'mobility', 'strength', 'weightloss']);
+  assert.deepEqual(keys.sort(), ['fitness', 'mobility', 'starterGym', 'starterHome', 'strength', 'weightloss']);
   for (const k of keys) {
     const m = PROGRAM_TYPES[k];
     assert.ok(m.label && m.focus && m.desc);
@@ -138,7 +137,7 @@ test('Programmes: strength days never back to back, the focus alternates, the 4t
           for (let i = 1; i < str.length; i++) {
             if (diffDays(str[i - 1].date, str[i].date) === 1) bad.push(`${type}/${days}d/${weeks}w W${w}: strength ${str[i - 1].date} and ${str[i].date}`);
           }
-          if (str.length >= 2 && !PROGRAM_TYPES[type].gentle && new Set(str.map((u) => u.title)).size < Math.min(str.length, 3)) {
+          if (str.length >= 2 && !PROGRAM_TYPES[type].gentle && new Set(str.map((u) => u.title)).size < Math.min(str.length, rotationLength(type))) {
             bad.push(`${type}/${days}d/${weeks}w W${w}: the same focus ${str.length}× (${str[0].title})`);
           }
           if (w % 4 === 0 && w < weeks) {

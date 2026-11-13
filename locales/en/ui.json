@@ -832,6 +832,7 @@
     "endTraining": "End workout",
     "roundsDone": "Rounds / exercises done",
     "setRest": "Rest between sets",
+    "restAfterSet": "Rest after each set",
     "restOver": "Rest’s over – next set",
     "restHint": "Breathe and get ready for the next set",
     "discardSure": "Really discard?",
@@ -1539,6 +1540,8 @@
     "commitActionHint": "Football, classes – the plan works around them",
     "toCalendar": "Add to calendar (.ics)",
     "toCalendarHint": "All sessions as a calendar file",
+    "sharePlan": "Share plan (file/PDF)",
+    "sharePlanHint": "All sessions as a file for a coach, family or to print",
     "recalcHint": "The past stays; asks first",
     "noPlan": "No plan yet",
     "noPlanText": "There’s no training plan for this goal yet.",
@@ -2316,6 +2319,16 @@
         "label": "Mobility & health",
         "focus": "Stay supple and healthy, gently",
         "desc": "A gentle start: mobility, gentle strength on two days and activity that grows from about 90 to 150 minutes a week – ideal for beginners or for getting back into it."
+      },
+      "starterHome": {
+        "label": "Strength starter at home",
+        "focus": "Start with your own body weight",
+        "desc": "Up to three short full-body sessions a week without equipment, workout A and B in turn, brisk walking on the other days. Technique first, then more rounds and harder variations."
+      },
+      "starterGym": {
+        "label": "Strength starter in the gym",
+        "focus": "Start safely with dumbbells and a bench",
+        "desc": "Up to three full-body sessions a week with free weights, workout A and B in turn, brisk walking on the other days. You log sets and weights in the workout – the app suggests the next step."
       }
     },
     "rotation": {
@@ -2333,6 +2346,26 @@
         "title": "Strength – Upper body & core",
         "moves": "Push-ups 8–12× · Rows (dumbbell/band) 12× · Shoulder press 12× · Plank 40 s · Side plank 30 s/side · Dead bug 10×/side",
         "harder": "close-grip push-ups, a stronger band or heavier dumbbell, side plank with leg raises"
+      },
+      "starterHomeA": {
+        "title": "Strength starter A – full body",
+        "moves": "Squats 12× · Incline push-ups 8–12× · Glute bridge 15× · Inverted row 8–12× · Plank 20–30 s",
+        "harder": "push-ups on the floor, single-leg glute bridge, plank 45 s"
+      },
+      "starterHomeB": {
+        "title": "Strength starter B – full body",
+        "moves": "Reverse lunges 8×/leg · Knee push-ups 8–12× · Superman 10× · Bird dog 8×/side · Side plank 20 s/side",
+        "harder": "lunges holding water bottles, incline push-ups, side plank 30 s"
+      },
+      "starterGymA": {
+        "title": "Gym starter A – full body",
+        "moves": "Goblet squat 10× · Single-arm dumbbell row 10×/arm · Shoulder press 10× · Bench hip thrusts 12× · Plank 30 s",
+        "harder": "heavier dumbbells – so that 1–2 reps stay in reserve"
+      },
+      "starterGymB": {
+        "title": "Gym starter B – full body",
+        "moves": "Romanian deadlift 10× · Push-ups 8–12× · Bent-over row 10× · Reverse lunges 8×/leg · Farmer’s carry 30–40 s",
+        "harder": "heavier weights – so that 1–2 reps stay in reserve"
       }
     },
     "gentle": {
@@ -4623,5 +4656,17 @@
     "reasonEffort": "Recent effort avg. {rpe}",
     "reasonFatigue": "Form: clearly tired",
     "reasonCompletion": "Last week {pct}% run"
+  },
+  "planShare": {
+    "title": "Share plan",
+    "intro": "The plan week by week with day, session, target and description. The file opens in any browser – even without Cat-O-Fit – and prints to PDF there.",
+    "asFile": "Share as a file",
+    "print": "Print or save as PDF",
+    "ready": "Plan ready",
+    "notShared": "Not shared.",
+    "week": "Week {n}",
+    "created": "created on {date}",
+    "footer": "Created with Cat-O-Fit – plans are a guide; listen to your body.",
+    "hrZone": "HR zone {zone}"
   }
 }

@@ -832,6 +832,7 @@
     "endTraining": "Terminar entrenamiento",
     "roundsDone": "Rondas / ejercicios completados",
     "setRest": "Descanso entre series",
+    "restAfterSet": "Descanso tras cada serie",
     "restOver": "Se acabó el descanso: siguiente serie",
     "restHint": "Respira y prepárate para la siguiente serie",
     "discardSure": "¿Descartar de verdad?",
@@ -1539,6 +1540,8 @@
     "commitActionHint": "Fútbol, clases: el plan se organiza en torno a ellos",
     "toCalendar": "Añadir al calendario (.ics)",
     "toCalendarHint": "Todas las sesiones como archivo de calendario",
+    "sharePlan": "Compartir el plan (archivo/PDF)",
+    "sharePlanHint": "Todas las sesiones en un archivo para el entrenador, la familia o para imprimir",
     "recalcHint": "Lo pasado se queda; antes pregunta",
     "noPlan": "Aún no hay plan",
     "noPlanText": "Todavía no hay ningún plan de entrenamiento para este objetivo.",
@@ -2316,6 +2319,16 @@
         "label": "Movilidad y salud",
         "focus": "Mantener la flexibilidad y la salud, con suavidad",
         "desc": "Un comienzo suave: movilidad, fuerza suave dos días y una actividad que crece de unos 90 a 150 minutos por semana; ideal para empezar o para retomarlo."
+      },
+      "starterHome": {
+        "label": "Iniciación a la fuerza en casa",
+        "focus": "Empezar con el peso corporal",
+        "desc": "Hasta tres sesiones cortas de cuerpo completo por semana sin material, entrenamiento A y B alternos y caminar a paso ligero los demás días. Primero la técnica, luego más rondas y variantes más duras."
+      },
+      "starterGym": {
+        "label": "Iniciación a la fuerza en el gimnasio",
+        "focus": "Empezar con seguridad con mancuernas y banco",
+        "desc": "Hasta tres sesiones de cuerpo completo por semana con peso libre, entrenamiento A y B alternos y caminar a paso ligero los demás días. Anotas series y pesos en el entrenamiento y la app propone el siguiente paso."
       }
     },
     "rotation": {
@@ -2333,6 +2346,26 @@
         "title": "Fuerza: tren superior y core",
         "moves": "Flexiones 8–12× · Remos (mancuerna/banda) 12× · Press de hombros 12× · Plancha 40 s · Plancha lateral 30 s/lado · Dead bug 10×/lado",
         "harder": "flexiones con las manos más juntas, una banda más fuerte o una mancuerna más pesada, plancha lateral con elevación de piernas"
+      },
+      "starterHomeA": {
+        "title": "Iniciación A – cuerpo completo",
+        "moves": "Sentadillas 12× · Flexiones inclinadas 8–12× · Puente de glúteos 15× · Remo invertido 8–12× · Plancha 20–30 s",
+        "harder": "flexiones en el suelo, puente de glúteos a una pierna, plancha 45 s"
+      },
+      "starterHomeB": {
+        "title": "Iniciación B – cuerpo completo",
+        "moves": "Zancadas hacia atrás 8×/pierna · Flexiones de rodillas 8–12× · Superman 10× · Bird dog 8×/lado · Plancha lateral 20 s/lado",
+        "harder": "zancadas con botellas de agua, flexiones inclinadas, plancha lateral 30 s"
+      },
+      "starterGymA": {
+        "title": "Gimnasio, iniciación A – cuerpo completo",
+        "moves": "Sentadilla goblet 10× · Remo a un brazo en banco 10×/brazo · Press de hombros 10× · Hip thrust en banco 12× · Plancha 30 s",
+        "harder": "mancuernas más pesadas, dejando 1–2 repeticiones en reserva"
+      },
+      "starterGymB": {
+        "title": "Gimnasio, iniciación B – cuerpo completo",
+        "moves": "Peso muerto rumano 10× · Flexiones 8–12× · Remo inclinado 10× · Zancadas hacia atrás 8×/pierna · Paseo del granjero 30–40 s",
+        "harder": "pesos más altos, dejando 1–2 repeticiones en reserva"
       }
     },
     "gentle": {
@@ -4623,5 +4656,17 @@
     "reasonEffort": "Esfuerzo reciente media {rpe}",
     "reasonFatigue": "Forma: con claro cansancio",
     "reasonCompletion": "Semana pasada corrida al {pct} %"
+  },
+  "planShare": {
+    "title": "Compartir el plan",
+    "intro": "El plan semana a semana con día, sesión, objetivo y descripción. El archivo se abre en cualquier navegador, incluso sin Cat-O-Fit, y se puede imprimir en PDF.",
+    "asFile": "Compartir como archivo",
+    "print": "Imprimir o guardar como PDF",
+    "ready": "Plan listo",
+    "notShared": "No compartido.",
+    "week": "Semana {n}",
+    "created": "creado el {date}",
+    "footer": "Creado con Cat-O-Fit: los planes son una orientación; escucha a tu cuerpo.",
+    "hrZone": "Zona FC {zone}"
   }
 }

@@ -86,6 +86,7 @@ const SHELL_ASSETS = [
   './js/heat.js',
   './js/events.js',
   './js/plans.js',
+  './js/plan-share.js',
   './js/plangen.js',
   './js/coach.js',
   './js/hrzones.js',

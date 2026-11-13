@@ -125,8 +125,21 @@
 .report-badge__name { font-size: .68rem; font-weight: 650; line-height: 1.2; color: var(--text-2); overflow-wrap: break-word; }
 .report-sheet--cert .report-badge__name { color: #7a5e1e; }
 
+/* A plan to print (plan-share.js): only for the print dialog, never on the screen. */
+.plan-print { display: none; color: #1d2433; font-size: 12px; line-height: 1.4; }
+.plan-print h1 { font-size: 18px; margin: 0 0 4px; }
+.plan-print h2 { font-size: 13px; margin: 16px 0 4px; padding-bottom: 2px; border-bottom: 2px solid #18b48a; break-after: avoid; }
+.plan-print .meta, .plan-print .foot { color: #5b6475; font-size: 11px; }
+.plan-print table { width: 100%; border-collapse: collapse; }
+.plan-print tr { break-inside: avoid; }
+.plan-print td { vertical-align: top; padding: 4px 6px; border-bottom: 1px solid #e3e7ee; }
+.plan-print td.day, .plan-print td.target { white-space: nowrap; width: 1%; }
+.plan-print td.target { text-align: right; }
+.plan-print .desc { color: #4a5363; font-size: 11px; }
+
 /* ---------------------------------- Druck -------------------------------- */
 @media print {
+  .plan-print { display: block; }
   body * { visibility: hidden !important; }
   #report-print, #report-print * { visibility: visible !important; }
   #report-print {
