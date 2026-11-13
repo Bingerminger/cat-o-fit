@@ -6,9 +6,9 @@
    it was. Since 4.2 a small reduction happens by itself – once per plan week and
    only downwards:
 
-     · load ratio (acute:chronic) above 1.3 → −10 %, above 1.5 → −15 %
+     · load ratio (acute:chronic) above 1.3 → −10 %, above 1.5 → −15 %   ┐ only when the last 7 days
+     · form "tired" (fatigue clearly above fitness) → −10 %                ┘ were > 115 % of the plan
      · effort of the last three weeks consistently very high (RPE trend 'ease') → −10 %
-     · form "tired" (fatigue clearly above fitness) → −10 %
      · last plan week: more than 30 % of the planned running km missed → −10 %, more than half → −15 %
        (counted once every run of that week is settled – done or missed)
 
@@ -20,9 +20,9 @@
    more volume needs the person's yes.
    ========================================================================= */
 
-import { addDays, typeMeta } from './ui.js';
+import { addDays, diffDays, typeMeta } from './ui.js';
 import { fmtNum } from './format.js';
-import { acwr, formToday, formState } from './load.js';
+import { acwr, formToday, formState, loadMinutes, sessionRpe } from './load.js';
 import { isOpen, rpeProgression, weekOfDate, isAddedSession } from './planflow.js';
 
 /** Never more than this: −15 % of a session's volume. */
@@ -44,20 +44,51 @@ function plannedRuns(units, from, to) {
 const kmOf = (units) => units.reduce((n, u) => n + Number(u.targetDistanceKm), 0);
 function plannedRunKm(units, from, to) { return kmOf(plannedRuns(units, from, to)); }
 
+/** Minutes per km the person actually runs: runs of the last 28 days with distance and duration
+    (6 min/km without them) – so a planned 10 km costs a slow runner more than a fast one. */
+export function ownMinPerKm(sessions = [], today) {
+  let km = 0, sec = 0;
+  for (const s of sessions || []) {
+    if (!s || s.deleted || s.date > today || diffDays(s.date, today) >= 28 || typeMeta(s.type).cat !== 'run') continue;
+    const d = Number(s.distanceKm) || 0, t = Number(s.durationSec) || 0;
+    if (d > 0 && t > 0) { km += d; sec += t; }
+  }
+  const v = km >= 5 ? sec / 60 / km : 6;
+  return Math.min(12, Math.max(3, v));
+}
+
+/** Load the plan intended for the last 7 days (today included), in the same points as the actual
+    load: duration × the type's effort; runs given as a distance at the person's own pace. */
+export function plannedAcuteLoad(units = [], today, minPerKm = 6) {
+  return (units || []).reduce((sum, u) => {
+    if (!u || u.type === 'rest' || u.date > today || diffDays(u.date, today) >= 7) return sum;
+    const km = Number(u.targetDistanceKm) || 0;
+    const min = Number(u.targetDurationMin)
+      || (km ? (typeMeta(u.type).cat === 'run' ? km * minPerKm : loadMinutes({ type: u.type, distanceKm: km }).min) : 40);
+    return sum + min * sessionRpe({ type: u.type, intensity: u.intensity }, null);
+  }, 0);
+}
+
 /**
- * The signals that speak for less volume this week, each with its factor.
+ * The signals that speak for less volume this week, each with its factor. Load ratio and form
+ * count only when the last 7 days were clearly MORE than planned (as for the coach's recovery
+ * day): following a plan that builds up is not a warning sign, even though the ratio rises
+ * and the form turns "tired" by the plan's own design.
+ * `allUnits` = the sessions of all plans (two goals) for the planned load; default: this plan's.
  * @returns {Array<{key:'load'|'effort'|'fatigue'|'completion', factor:number, value?:number}>}
  */
-export function autoVolumeSignals({ plan, sessions = [], today, weekStart }) {
+export function autoVolumeSignals({ plan, sessions = [], today, weekStart, allUnits = null }) {
   const out = [];
   const ac = acwr(sessions, today);
-  if (ac.ratio != null && !ac.sparse && ac.ratio > 1.3) {
+  const planned = plannedAcuteLoad(allUnits || (plan && plan.units) || [], today, ownMinPerKm(sessions, today));
+  const overPlan = planned <= 0 || ac.acuteWeek > planned * 1.15;
+  if (overPlan && ac.ratio != null && !ac.sparse && ac.ratio > 1.3) {
     out.push({ key: 'load', factor: ac.ratio > 1.5 ? 0.85 : 0.9, value: Math.round(ac.ratio * 100) / 100 });
   }
   const prog = rpeProgression(sessions, today);
   if (prog && prog.trend === 'ease') out.push({ key: 'effort', factor: 0.9, value: prog.avgRpe });
   const fs = formState(formToday(sessions, today), ac.historyDays);
-  if (fs.key === 'ermuedet') out.push({ key: 'fatigue', factor: 0.9 });
+  if (overPlan && fs.key === 'ermuedet') out.push({ key: 'fatigue', factor: 0.9 });
   const done = lastWeekShare(plan, weekStart);
   if (done != null && done < 0.7) out.push({ key: 'completion', factor: done < 0.5 ? 0.85 : 0.9, value: Math.round(done * 100) });
   return out;
@@ -113,7 +144,7 @@ function shortens(unit, factor) {
  * @returns {{week:number, weekStart:string, factor:number, signals:Array, unitIds:string[],
  *   beforeKm:number, afterKm:number}|null}
  */
-export function autoVolumeDecision({ plan, sessions = [], today }) {
+export function autoVolumeDecision({ plan, sessions = [], today, allUnits = null }) {
   if (!plan || plan.deleted || plan.kind === 'program' || !plan.startDate || !plan.endDate) return null;
   if (today < plan.startDate || today > plan.endDate) return null;
   const week = weekOfDate(plan, today);
@@ -130,7 +161,7 @@ export function autoVolumeDecision({ plan, sessions = [], today }) {
   const prevKm = plannedRunKm(units, addDays(weekStart, -7), addDays(weekStart, -1));
   if (prevKm > 0 && thisKm < prevKm * 0.9) return null;
 
-  const signals = autoVolumeSignals({ plan, sessions, today, weekStart });
+  const signals = autoVolumeSignals({ plan, sessions, today, weekStart, allUnits });
   if (!signals.length) return null;
   const factor = combineFactors(signals);
   if (factor >= 1) return null;

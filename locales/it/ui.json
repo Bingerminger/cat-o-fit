@@ -433,7 +433,7 @@
     },
     "training": {
       "autoVolume": "Adatta il volume automaticamente",
-      "autoVolumeHint": "Se il carico è alto, la fatica resta molto alta, la forma è stanca o la settimana scorsa è stata corsa solo in parte, l’app accorcia del 10–15% le corse lente della settimana in corso del piano – al massimo una volta a settimana, mai le sedute di qualità, le gare, gli impegni fissi o le tue sedute. Ogni adattamento compare in «Oggi» e si può annullare. Più volume viene solo proposto."
+      "autoVolumeHint": "Se il tuo carico supera nettamente quanto previsto, la fatica resta molto alta o la settimana scorsa è stata corsa solo in parte, l’app accorcia del 10–15% le corse lente della settimana in corso del piano – al massimo una volta a settimana, mai le sedute di qualità, le gare, gli impegni fissi o le tue sedute. Chi si allena secondo il piano non viene toccato. Ogni adattamento compare in «Oggi» e si può annullare. Più volume viene solo proposto."
     }
   },
   "common": {

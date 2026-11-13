@@ -433,7 +433,7 @@
     },
     "training": {
       "autoVolume": "Umfang automatisch anpassen",
-      "autoVolumeHint": "Ist die Belastung hoch, die Anstrengung dauerhaft groß, die Form müde oder die Vorwoche nur zum Teil gelaufen, kürzt die App die ruhigen Läufe der laufenden Planwoche um 10–15 % – höchstens einmal pro Woche, nie Tempoeinheiten, Wettkämpfe, feste Termine oder eigene Einheiten. Jede Anpassung steht unter „Heute“ und lässt sich zurücknehmen. Mehr Umfang schlägt die App nur vor."
+      "autoVolumeHint": "Liegt deine Belastung deutlich über dem Geplanten, ist die Anstrengung dauerhaft groß oder hast du die Vorwoche nur zum Teil geschafft, kürzt die App die ruhigen Läufe der laufenden Planwoche um 10–15 % – höchstens einmal pro Woche, nie Tempoeinheiten, Wettkämpfe, feste Termine oder eigene Einheiten. Wer nach Plan trainiert, bleibt unberührt. Jede Anpassung steht unter „Heute“ und lässt sich zurücknehmen. Mehr Umfang schlägt die App nur vor."
     }
   },
   "common": {

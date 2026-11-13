@@ -9,7 +9,8 @@ import {
 import { weekDeloadCandidates } from '../js/planflow.js';
 import { addDays } from '../js/ui.js';
 import * as store from '../js/storage.js';
-import { ensureAutoVolume, undoAdapt } from '../js/adapt.js';
+import { ensureAutoVolume, undoAdapt, applyAdapt, canUndo } from '../js/adapt.js';
+import { gentleVariant } from '../js/rolling.js';
 
 const START = '2026-11-02';   // Monday; week 3 = 16.–22.11.
 const TUE3 = '2026-11-17';
@@ -224,6 +225,27 @@ test('app: shortens once per week, logs it and can be undone', async () => {
   await store.syncNow();
   const srvPlan = globalThis.__fakeServer.store('plans', { user: 'u-1' }).records.p1;
   assert.equal(srvPlan.autoVolume.week, 3);
+});
+
+test('app: undoing the automatic cut leaves a session that a newer adjustment changed again', () => {
+  assert.equal(ensureAutoVolume(TUE3), 1);
+  const auto = store.find('plans', 'p1').adaptLog[0];
+  const longId = store.find('plans', 'p1').units.find((u) => u.date === '2026-11-21').id;
+  // Then the coach's recovery day lands on the shortened long run.
+  applyAdapt('p1', [longId], (u) => gentleVariant(u, { title: 'Erholungstag', description: '' }), { kind: 'rest', title: 'Erholungstag', reason: '' });
+  const rested = store.find('plans', 'p1').units.find((u) => u.id === longId);
+  assert.notEqual(rested.type, 'long');
+  assert.equal(canUndo(store.find('plans', 'p1').units, auto, store.find('plans', 'p1').adaptLog), true, 'the easy run can still go back');
+  const res = undoAdapt('p1', auto.id);
+  assert.deepEqual([res.restored, res.skipped], [1, 1]);
+  const after = store.find('plans', 'p1').units;
+  assert.deepEqual(after.find((u) => u.id === longId), rested, 'the recovery day stays as it is');
+  assert.equal(after.find((u) => u.date === TUE3 && u.type === 'easy').targetDistanceKm, 8);
+  // Undoing the recovery day brings back the shortened long run – consistent.
+  const rest = store.find('plans', 'p1').adaptLog[0];
+  undoAdapt('p1', rest.id);
+  const back = store.find('plans', 'p1').units.find((u) => u.id === longId);
+  assert.deepEqual([back.type, back.targetDistanceKm, back.title], ['long', 12.5, 'Long Run 12,5 km']);
 });
 
 test('app: not with the setting off, not while managing another person', async () => {

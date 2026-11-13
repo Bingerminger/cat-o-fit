@@ -433,7 +433,7 @@
     },
     "training": {
       "autoVolume": "Ajuster le volume automatiquement",
-      "autoVolumeHint": "Si la charge est élevée, l’effort reste très élevé, la forme est fatiguée ou la semaine passée n’a été courue qu’en partie, l’app raccourcit de 10 à 15 % les footings de la semaine en cours du plan – au plus une fois par semaine, jamais les séances de qualité, les courses, les engagements fixes ni tes propres séances. Chaque ajustement apparaît sous « Aujourd’hui » et peut être annulé. Plus de volume n’est jamais que proposé."
+      "autoVolumeHint": "Si ta charge dépasse nettement ce qui était prévu, si l’effort reste très élevé ou si la semaine passée n’a été courue qu’en partie, l’app raccourcit de 10 à 15 % les footings de la semaine en cours du plan – au plus une fois par semaine, jamais les séances de qualité, les courses, les engagements fixes ni tes propres séances. S’entraîner selon le plan ne déclenche rien. Chaque ajustement apparaît sous « Aujourd’hui » et peut être annulé. Plus de volume n’est jamais que proposé."
     }
   },
   "common": {

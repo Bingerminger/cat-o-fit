@@ -203,7 +203,7 @@ function destackApply(unit, target) {
 export function adaptLogCard() {
   const entries = [];
   // "Undo" only as long as at least one affected session is still open.
-  store.get('plans').forEach((p) => (p.adaptLog || []).forEach((e) => entries.push({ ...e, planId: p.id, undoable: canUndo(p.units || [], e) })));
+  store.get('plans').forEach((p) => (p.adaptLog || []).forEach((e) => entries.push({ ...e, planId: p.id, undoable: canUndo(p.units || [], e, p.adaptLog) })));
   if (!entries.length) return null;
   entries.sort((a, b) => String(b.ts).localeCompare(String(a.ts)));
   const KIND_ICON = { rest: 'moon', deload: 'feather', boost: 'zap', easier: 'feather', makeup: 'calendar', pace: 'refresh', cycle: 'heart', destack: 'calendar', autovolume: 'feather' };

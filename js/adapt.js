@@ -66,9 +66,11 @@ export function ensureAutoVolume(today = todayStr()) {
   if (store.isManaging() || store.settings().autoVolume === false) return 0;
   if (!store.areaFetched('plans') || !store.areaFetched('sessions')) return 0;
   const sessions = store.get('sessions');
+  const plans = store.get('plans');
+  const allUnits = plans.flatMap((p) => p.units || []);
   let n = 0;
-  store.get('plans').forEach((plan) => {
-    const d = autoVolumeDecision({ plan, sessions, today });
+  plans.forEach((plan) => {
+    const d = autoVolumeDecision({ plan, sessions, today, allUnits });
     if (!d) return;
     const pct = Math.round((1 - d.factor) * 100);
     const signals = d.signals.map(signalText).join(' · ');
@@ -93,20 +95,34 @@ const NEVER_RESTORE = ['id', 'status', 'executedSessionId', 'missedReason', 'upd
     adjustment was exactly the date. */
 const KEEP_POSITION = ['date', 'dow', 'movedFrom'];
 
+/** Sessions that an adjustment NEWER than `entry` changed again (the log runs newest first).
+    Undoing the older one would lay its old fields over the newer change – a long run shortened
+    automatically and then turned into a recovery day would come back as "Long Run 17 km" of
+    type recovery. Those sessions stay; the newer adjustment can be undone first. */
+function changedLater(entry, log = []) {
+  const ids = new Set();
+  for (const e of log || []) {
+    if (!e || e.id === entry.id) break;
+    ((e.undo && e.undo.units) || []).forEach((u) => ids.add(u.id));
+  }
+  return ids;
+}
+
 /**
  * Restores the sessions of a logged adjustment – but only while they are still
- * open, and only the fields the adjustment changed. Completed or missed sessions
- * remain unchanged. Pure function.
+ * open, only those no newer adjustment changed again (`log` = the plan's adaptLog), and only
+ * the fields the adjustment changed. Completed or missed sessions remain unchanged. Pure function.
  * @returns {{units:object[], restored:number, skipped:number}}
  */
-export function undoUnits(units = [], entry = {}) {
+export function undoUnits(units = [], entry = {}, log = []) {
   const snaps = new Map(((entry.undo && entry.undo.units) || []).map((u) => [u.id, u]));
   const known = entry.undo && Array.isArray(entry.undo.fields) ? entry.undo.fields : null;
+  const later = changedLater(entry, log);
   let restored = 0, skipped = 0;
   const out = (units || []).map((u) => {
     const snap = snaps.get(u.id);
     if (!snap) return u;
-    if (!isOpen(u)) { skipped++; return u; }
+    if (!isOpen(u) || later.has(u.id)) { skipped++; return u; }
     const keys = known || [...new Set([...Object.keys(snap), ...Object.keys(u)])]
       .filter((k) => entry.kind === 'destack' || !KEEP_POSITION.includes(k));
     const next = { ...u };
@@ -120,11 +136,13 @@ export function undoUnits(units = [], entry = {}) {
   return { units: out, restored, skipped };
 }
 
-/** Can the adjustment still be reverted? (at least one affected session still open) */
-export function canUndo(units = [], entry = {}) {
+/** Can the adjustment still be reverted? (at least one affected session still open and not
+    changed again by a newer adjustment) */
+export function canUndo(units = [], entry = {}, log = []) {
   if (!entry || !entry.undo) return false;
   const ids = new Set((entry.undo.units || []).map((u) => u.id));
-  return (units || []).some((u) => ids.has(u.id) && isOpen(u));
+  const later = changedLater(entry, log);
+  return (units || []).some((u) => ids.has(u.id) && isOpen(u) && !later.has(u.id));
 }
 
 /**
@@ -136,8 +154,8 @@ export function undoAdapt(planId, logId) {
   const plan = store.find('plans', planId);
   if (!plan) return false;
   const entry = (plan.adaptLog || []).find((e) => e.id === logId);
-  if (!entry || !entry.undo || !canUndo(plan.units || [], entry)) return false;
-  const res = undoUnits(plan.units || [], entry);
+  if (!entry || !entry.undo || !canUndo(plan.units || [], entry, plan.adaptLog)) return false;
+  const res = undoUnits(plan.units || [], entry, plan.adaptLog);
   const adaptLog = (plan.adaptLog || []).filter((e) => e.id !== logId);
   store.patch('plans', planId, { units: res.units, adaptLog });
   return { restored: res.restored, skipped: res.skipped };

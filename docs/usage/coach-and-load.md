@@ -215,9 +215,10 @@ people train as normal that day; both are fine.
 Since 4.2 the plan adjusts its volume by itself – only **downwards** and only a little. Once per plan week the
 app looks at four signals:
 
-- **Load ratio** above 1.3 → −10 % (above 1.5 → −15 %),
+- **Load ratio** above 1.3 → −10 % (above 1.5 → −15 %) and **form** clearly tired → −10 % – both only when
+  your last 7 days were more than 15 % above the load the plan intended (planned runs at your own pace). A plan
+  that builds up raises the ratio and tires you by design; following it is no warning sign,
 - **effort** of the last three weeks consistently very high (average RPE 7.5 or more) → −10 %,
-- **form** clearly tired → −10 %,
 - **last plan week** more than 30 % of the planned running km missed → −10 % (more than half → −15 %) –
   counted once every run of that week is done or marked as missed, so a run that only arrives with the next
   import does not count as missed.
