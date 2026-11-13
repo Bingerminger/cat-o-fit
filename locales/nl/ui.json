@@ -339,6 +339,7 @@
       "healthGoals": "Gezondheidsdoelen",
       "hrZones": "Hartslagzones",
       "paceZones": "Trainingszones (tempo)",
+      "training": "Training",
       "appearance": "Weergave",
       "modules": "Modules",
       "bodyMetrics": "Zichtbare lichaamswaarden",
@@ -429,6 +430,10 @@
       "labsSi": "SI (mmol/l)",
       "labsConventional": "Conventioneel (mg/dL)",
       "hint": "Alles wordt metrisch opgeslagen – omschakelen verandert alleen hoe waarden worden getoond en ingevoerd. Nieuwe plannen beginnen op de gekozen eerste dag van de week."
+    },
+    "training": {
+      "autoVolume": "Omvang automatisch aanpassen",
+      "autoVolumeHint": "Is de belasting hoog, de inspanning aanhoudend zwaar, de vorm moe of is vorige week maar deels gelopen, dan kort de app de rustige duurlopen van de lopende planweek met 10–15% in – hooguit één keer per week, nooit kwaliteitstrainingen, wedstrijden, vaste afspraken of je eigen trainingen. Elke aanpassing staat onder ‘Vandaag’ en is terug te draaien. Meer omvang stelt de app alleen voor."
     }
   },
   "common": {
@@ -4521,5 +4526,14 @@
       "other": "{count} krachttrainingen geïmporteerd"
     },
     "sessionTitle": "Kracht ({app})"
+  },
+  "autoVolume": {
+    "logTitle": "Omvang automatisch aangepast (−{pct}%)",
+    "logReason": "{signals} – de rustige duurlopen van deze week zijn korter: {after} in plaats van {before}.",
+    "logReasonShort": "{signals} – de rustige duurlopen van deze week zijn iets korter.",
+    "reasonLoad": "Belasting: verhouding {ratio}",
+    "reasonEffort": "Inspanning recent gem. {rpe}",
+    "reasonFatigue": "Vorm: duidelijk moe",
+    "reasonCompletion": "Vorige week voor {pct}% gelopen"
   }
 }

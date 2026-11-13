@@ -339,6 +339,7 @@
       "healthGoals": "Objectifs de santé",
       "hrZones": "Zones de fréquence cardiaque",
       "paceZones": "Zones d’entraînement (allure)",
+      "training": "Entraînement",
       "appearance": "Apparence",
       "modules": "Modules",
       "bodyMetrics": "Valeurs corporelles visibles",
@@ -429,6 +430,10 @@
       "labsSi": "SI (mmol/l)",
       "labsConventional": "Conventionnelles (mg/dL)",
       "hint": "Tout est enregistré en métrique – le changement ne modifie que l’affichage et la saisie des valeurs. Les nouveaux plans commencent au premier jour de la semaine choisi."
+    },
+    "training": {
+      "autoVolume": "Ajuster le volume automatiquement",
+      "autoVolumeHint": "Si la charge est élevée, l’effort reste très élevé, la forme est fatiguée ou la semaine passée n’a été courue qu’en partie, l’app raccourcit de 10 à 15 % les footings de la semaine en cours du plan – au plus une fois par semaine, jamais les séances de qualité, les courses, les engagements fixes ni tes propres séances. Chaque ajustement apparaît sous « Aujourd’hui » et peut être annulé. Plus de volume n’est jamais que proposé."
     }
   },
   "common": {
@@ -4521,5 +4526,14 @@
       "other": "{count} séances de musculation importées"
     },
     "sessionTitle": "Musculation ({app})"
+  },
+  "autoVolume": {
+    "logTitle": "Volume ajusté automatiquement (−{pct} %)",
+    "logReason": "{signals} – les footings de cette semaine sont plus courts : {after} au lieu de {before}.",
+    "logReasonShort": "{signals} – les footings de cette semaine sont un peu plus courts.",
+    "reasonLoad": "Charge : ratio {ratio}",
+    "reasonEffort": "Effort récent moy. {rpe}",
+    "reasonFatigue": "Forme : fatigue marquée",
+    "reasonCompletion": "Semaine passée courue à {pct} %"
   }
 }

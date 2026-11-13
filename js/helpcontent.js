@@ -80,6 +80,7 @@ const STRUCTURE = [
     ['bereitschaft', ['p', 'steps', 'tip']],
     ['feste-termine', ['p', 'steps', 'tip']],
     ['erholungstag', ['p', 'steps', 'tip']],
+    ['umfang-automatisch', ['p', 'steps', 'tip', ['link', '#/settings']]],
     ['wochen-check', ['p', 'steps']],
     ['ziel-cockpit', ['p', 'steps', 'tip']],
     ['gesundheitsziel', ['p', 'steps', ['tip', '#/settings']]],

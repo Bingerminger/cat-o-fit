@@ -184,14 +184,19 @@ export async function applyPull(area, user, res, since) {
   if (changed && !writeLS(area)) return;
   vars.revs[area] = Math.max(vars.revs[area] || 0, res.rev || 0);
   writeUserMeta();
+  const first = vars.fetchedFor[area] !== user;
+  vars.fetchedFor[area] = user;
   if (area === 'profile' && vars.profileFetchedFor !== user) {
     vars.profileFetchedFor = user;
     notify(area, 'sync');   // waiting automatic writes (unit defaults) may run now
     return;
   }
   // Redraw only for genuinely new content – not because our own records
-  // come back with a server rev (FE-12).
+  // come back with a server rev (FE-12). The first fetch of an area in this session
+  // is announced without a redraw ('fetched'): automatic writes that waited for it
+  // (plan volume) may run now.
   if (visible) notify(area, 'sync');
+  else if (first) notify(area, 'fetched');
 }
 
 /** Full sync of an area (after a restore, or weekly). */
@@ -216,6 +221,7 @@ export async function resyncArea(area, user) {
   vars.revs[area] = full.rev || 0;
   writeUserMeta();
   if (area === 'profile') vars.profileFetchedFor = user;
+  vars.fetchedFor[area] = user;
   notify(area, 'sync');
 }
 

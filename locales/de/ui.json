@@ -339,6 +339,7 @@
       "healthGoals": "Gesundheitsziele",
       "hrZones": "Herzfrequenz-Zonen",
       "paceZones": "Trainingsbereiche (Pace)",
+      "training": "Training",
       "appearance": "Darstellung",
       "modules": "Module",
       "bodyMetrics": "Sichtbare Körperwerte",
@@ -429,6 +430,10 @@
       "labsSi": "SI (mmol/l)",
       "labsConventional": "Konventionell (mg/dL)",
       "hint": "Gespeichert wird immer metrisch – das Umschalten ändert nur, wie Werte angezeigt und eingegeben werden. Neue Pläne beginnen am gewählten ersten Wochentag."
+    },
+    "training": {
+      "autoVolume": "Umfang automatisch anpassen",
+      "autoVolumeHint": "Ist die Belastung hoch, die Anstrengung dauerhaft groß, die Form müde oder die Vorwoche nur zum Teil gelaufen, kürzt die App die ruhigen Läufe der laufenden Planwoche um 10–15 % – höchstens einmal pro Woche, nie Tempoeinheiten, Wettkämpfe, feste Termine oder eigene Einheiten. Jede Anpassung steht unter „Heute“ und lässt sich zurücknehmen. Mehr Umfang schlägt die App nur vor."
     }
   },
   "common": {
@@ -4521,5 +4526,14 @@
       "other": "{count} Krafttrainings übernommen"
     },
     "sessionTitle": "Kraft ({app})"
+  },
+  "autoVolume": {
+    "logTitle": "Umfang automatisch angepasst (−{pct} %)",
+    "logReason": "{signals} – die ruhigen Läufe dieser Woche sind kürzer: {after} statt {before}.",
+    "logReasonShort": "{signals} – die ruhigen Läufe dieser Woche sind etwas kürzer.",
+    "reasonLoad": "Belastung: Verhältnis {ratio}",
+    "reasonEffort": "Anstrengung zuletzt Ø {rpe}",
+    "reasonFatigue": "Form: deutlich ermüdet",
+    "reasonCompletion": "Vorwoche zu {pct} % gelaufen"
   }
 }

@@ -210,6 +210,27 @@ planned that day, Cat-O-Fit briefly asks how you are: “**As planned**” or �
 your request is the training eased on day 1 (runs → easy, strength → mobility) – logged and undoable. Many
 people train as normal that day; both are fine.
 
+### Automatic volume adjustment
+
+Since 4.2 the plan adjusts its volume by itself – only **downwards** and only a little. Once per plan week the
+app looks at four signals:
+
+- **Load ratio** above 1.3 → −10 % (above 1.5 → −15 %),
+- **effort** of the last three weeks consistently very high (average RPE 7.5 or more) → −10 %,
+- **form** clearly tired → −10 %,
+- **last plan week** more than 30 % of the planned running km missed → −10 % (more than half → −15 %) –
+  counted once every run of that week is done or marked as missed, so a run that only arrives with the next
+  import does not count as missed.
+
+Several signals multiply, but a session never loses more than **15 %**. Only the easy volume of the current
+plan week from today on gets shorter – easy runs, long run, recovery runs; quality sessions keep their
+stimulus, and races, fixed commitments and sessions you added yourself stay as they are. The first plan week,
+deload and taper weeks and the race week are left alone. The change appears in the log on **Today** and can
+be undone – that week it is then not repeated. **More** volume is never added automatically: the coach
+suggests it (“More in the tank”) and you decide. You can switch it off under **Settings → Training → Adjust
+volume automatically**. The app adjusts only after plans and sessions came from the server, so an old state
+on a second device cannot overwrite a newer plan.
+
 ### Week check & preview (what-if)
 
 The **week check** in the plan shows clashes and the order of triage: **fixed commitments → key runs →
@@ -219,8 +240,10 @@ load – what is rated is the **change**: “hardly any effect”, “a bit hard
 hard session) or “much harder” (more than ~25% or two hard days back to back – even if you only move
 within the week and the total load stays the same).
 
-> **Note:** Running plans contain mobility but no fixed strength days. If you want strength, you plan it
-> through a **training programme of its own** (strength focus); triathlon and Hyrox plans include strength.
+> **Note:** Running plans contain mobility; strength comes in only if you choose it when creating the plan
+> (**Strength in the plan**, up to twice a week, following the plan phase – see
+> [Training](training.md)). Otherwise you plan strength through a **training programme of its own** (strength
+> focus); triathlon and Hyrox plans include strength.
 
 ### Goal cockpit: two goals in one plan
 

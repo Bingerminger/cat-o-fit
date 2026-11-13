@@ -32,7 +32,7 @@ export {
   activeMember, activeUserId, familyPantry, familySettings, getFamily, identityId, identityMember, isAdmin, isManaging, isViewingSelf, members, refreshFamily, saveFamily, serverWasReset, setFamilyPantry,
 } from './store-family.js';
 export {
-  addReport, areaAllowed, bumpExerciseUsage, exerciseUsage, find, foodLookupEnabled, get, getRaw, patch, profile, profileFetched, remove, replaceArea, setProfile, setSetting, settings, upsert, upsertMany,
+  addReport, areaAllowed, bumpExerciseUsage, exerciseUsage, find, foodLookupEnabled, get, getRaw, patch, profile, profileFetched, areaFetched, remove, replaceArea, setProfile, setSetting, settings, upsert, upsertMany,
 } from './store-data.js';
 export {
   clearActiveUser, init, logout, setActiveUser, syncNow,

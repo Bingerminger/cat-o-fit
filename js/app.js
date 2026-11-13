@@ -32,6 +32,7 @@ import { loadHelpTexts } from './helpcontent.js';
 import { render as renderFamily } from './family.js';
 import { render as renderLogin } from './login.js';
 import { ensureGenerated } from './plans.js';
+import { ensureAutoVolume } from './adapt.js';
 import { refreshWeather } from './weather.js';
 import { APP_VERSION } from './version.js';
 import { gate, menusVisible, safeReturnTo } from './session-gate.js';
@@ -131,7 +132,9 @@ function wakeSync() {
   const now = Date.now();
   if (now - lastWakeSync < 4000) return;
   lastWakeSync = now;
-  store.syncNow().catch(() => {});
+  // After the sync also the weekly volume check: an app left open across the
+  // start of a new plan week would otherwise only check on the next change.
+  store.syncNow().then(() => { if (ensureAutoVolume()) refreshSoon(); }).catch(() => {});
 }
 document.addEventListener('visibilitychange', wakeSync);
 window.addEventListener('focus', wakeSync);
@@ -402,6 +405,7 @@ async function boot() {
   });
   if (demo) await demo.startDemo();   // the demo family exists before the first view
   ensureGenerated();
+  ensureAutoVolume();   // only once plans and sessions were fetched (at a normal start: later, from onSync)
   maybeRefreshWeather();
   router.onAfterRender(highlightNav);
   router.onAfterRender(updateManageBanner);
@@ -433,7 +437,10 @@ async function boot() {
     // Sign-in, switching person or a language picked on another device.
     if (area === 'profile' || area === 'family') applyLanguage().then((changed) => { if (changed) { router.refresh(); demo?.showBar(); } });
     if (area === 'events' || area === 'plans') ensureGenerated();
-    if (origin === 'sync') refreshSoon();
+    // Once plans and sessions came from the server: shorten the easy runs of this plan week
+    // if load, effort, form or last week speak for it (once per week, logged with undo).
+    if ((area === 'plans' || area === 'sessions') && ensureAutoVolume()) refreshSoon();
+    else if (origin === 'sync') refreshSoon();
   });
 
   // Service worker (app shell available offline) + reliable updates (js/sw-register.js).

@@ -206,7 +206,7 @@ export function adaptLogCard() {
   store.get('plans').forEach((p) => (p.adaptLog || []).forEach((e) => entries.push({ ...e, planId: p.id, undoable: canUndo(p.units || [], e) })));
   if (!entries.length) return null;
   entries.sort((a, b) => String(b.ts).localeCompare(String(a.ts)));
-  const KIND_ICON = { rest: 'moon', deload: 'feather', boost: 'zap', easier: 'feather', makeup: 'calendar', pace: 'refresh', cycle: 'heart', destack: 'calendar' };
+  const KIND_ICON = { rest: 'moon', deload: 'feather', boost: 'zap', easier: 'feather', makeup: 'calendar', pace: 'refresh', cycle: 'heart', destack: 'calendar', autovolume: 'feather' };
   const wrap = el('div', { class: 'card' }, [
     el('div', { class: 'row gap-2', style: { alignItems: 'center', marginBottom: '4px' } }, [
       el('span', { html: iconSvg('activity'), style: { color: 'var(--accent-text)', width: '18px', flex: '0 0 auto' } }),

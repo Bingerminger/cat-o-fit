@@ -339,6 +339,7 @@
       "healthGoals": "Metas de saúde",
       "hrZones": "Zonas de frequência cardíaca",
       "paceZones": "Zonas de treino (pace)",
+      "training": "Treino",
       "appearance": "Aparência",
       "modules": "Módulos",
       "bodyMetrics": "Medidas corporais visíveis",
@@ -429,6 +430,10 @@
       "labsSi": "SI (mmol/l)",
       "labsConventional": "Convencionais (mg/dL)",
       "hint": "Tudo é salvo no sistema métrico – trocar só muda como os valores são mostrados e digitados. Planos novos começam no primeiro dia da semana escolhido."
+    },
+    "training": {
+      "autoVolume": "Ajustar o volume automaticamente",
+      "autoVolumeHint": "Se a carga estiver alta, o esforço continuar muito alto, a forma estiver cansada ou a semana passada tiver sido corrida só em parte, o app encurta em 10–15% os trotes leves da semana atual do plano – no máximo uma vez por semana, nunca treinos de qualidade, provas, compromissos fixos ou treinos seus. Cada ajuste aparece em “Hoje” e pode ser desfeito. Mais volume o app só sugere."
     }
   },
   "common": {
@@ -4521,5 +4526,14 @@
       "other": "{count} treinos de musculação importados"
     },
     "sessionTitle": "Musculação ({app})"
+  },
+  "autoVolume": {
+    "logTitle": "Volume ajustado automaticamente (−{pct}%)",
+    "logReason": "{signals} – os trotes leves desta semana ficam mais curtos: {after} em vez de {before}.",
+    "logReasonShort": "{signals} – os trotes leves desta semana ficam um pouco mais curtos.",
+    "reasonLoad": "Carga: razão {ratio}",
+    "reasonEffort": "Esforço recente média {rpe}",
+    "reasonFatigue": "Forma: com cansaço evidente",
+    "reasonCompletion": "Semana passada corrida a {pct}%"
   }
 }

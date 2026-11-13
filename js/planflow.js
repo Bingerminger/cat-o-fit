@@ -264,10 +264,11 @@ export function softenSuggestion(todaysUnits = [], readiness) {
 
 /** Open, load-relevant sessions of the next `horizon` days – candidates for a
     deload or an increase. Fixed commitments (club training, matches) are taboo for all
-    automations: previously football became "Easy (deload)". */
+    automations: previously football became "Easy (deload)". Sessions the automatic volume
+    adjustment already shortened (`autoVolume`) are left to it – its log entry can be undone. */
 export function weekDeloadCandidates(units = [], today, horizon = 7) {
   const end = addDays(today, horizon);
-  return units.filter((u) => isOpen(u) && !u.fixed && countsToLoad(u) && u.date >= today && u.date <= end);
+  return units.filter((u) => isOpen(u) && !u.fixed && !u.autoVolume && countsToLoad(u) && u.date >= today && u.date <= end);
 }
 
 /** Absence due to illness or injury – never make up, never compensate. */

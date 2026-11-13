@@ -530,7 +530,7 @@
           "Als laatste progressie (“Er zit meer in”) – alleen zonder waarschuwingssignaal, met belasting in het gebruikelijke bereik en niet in de 14 dagen na een onderbreking.",
           "Daaronder informatie zonder eigen oordeel: gereedheid (HRV, rusthartslag, slaap), vormprognose, hartslag bij rustige duurlopen, inspanning van recente trainingen (gemiddelde RPE)."
         ],
-        "2": "“Waarom deze aanbeveling?” onder de kaart laat zien wat er nog meer had gepast. Trainen volgens schema is geen waarschuwingssignaal, en de coach raakt nooit vaste afspraken aan. Wijzigingen in het schema gebeuren alleen wanneer jij ze in gang zet."
+        "2": "“Waarom deze aanbeveling?” onder de kaart laat zien wat er nog meer had gepast. Trainen volgens schema is geen waarschuwingssignaal, en de coach raakt nooit vaste afspraken aan. Wijzigingen in het schema gebeuren alleen wanneer jij ze in gang zet – met één uitzondering: de automatische omvangaanpassing kort bij waarschuwingssignalen de rustige duurlopen van de week met hooguit 15% in, zichtbaar in het logboek en terug te draaien."
       }
     },
     "belastung-form": {
@@ -880,6 +880,22 @@
           "VDOT – fitheidswaarde volgens Jack Daniels; voorspelling en trainingstempo’s komen daaruit voort.",
           "Vetvrije massa (FFM, magere lichaamsmassa) – lichaamsgewicht zonder vet; gemeten of berekend uit het vetpercentage."
         ]
+      }
+    },
+    "umfang-automatisch": {
+      "q": "Automatische omvangaanpassing",
+      "aliases": "omvang|weekomvang|inkorten|minder km",
+      "blocks": {
+        "0": "Sinds 4.2 past je loopschema zelf zijn omvang aan – alleen omlaag en alleen een beetje. Eén keer per planweek kijkt de app naar vier signalen:",
+        "1": [
+          "Belastingsverhouding boven 1,3 → −10% (boven 1,5 → −15%).",
+          "Inspanning van de laatste drie weken aanhoudend zeer hoog (gemiddelde RPE 7,5 of meer) → −10%.",
+          "Vorm duidelijk moe → −10%.",
+          "Vorige planweek meer dan 30% van de geplande loopkilometers gemist → −10% (meer dan de helft → −15%) – pas geteld als elke loop van die week gedaan of als gemist gemarkeerd is.",
+          "Meerdere signalen vermenigvuldigen zich, maar een training verliest nooit meer dan 15%. Alleen rustige duurlopen, de lange duurloop en herstellopen van de lopende week vanaf vandaag worden korter – kwaliteitstrainingen, wedstrijden, vaste afspraken en trainingen die je zelf hebt toegevoegd blijven."
+        ],
+        "2": "De eerste planweek, ontlastings- en taperweken en de wedstrijdweek blijven ongemoeid. Elke aanpassing staat in het logboek ‘Recente automatische aanpassingen’ onder ‘Vandaag’ en is terug te draaien – die week komt ze dan niet terug. Meer omvang komt nooit automatisch; die stelt de coach voor. Uitzetten: Instellingen → Training.",
+        "3": "Instellingen openen"
       }
     }
   },

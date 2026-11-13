@@ -530,7 +530,7 @@
           "Last, progression (“More in the tank”) – only without a warning sign, with load in the usual range and not in the 14 days after a lay-off.",
           "Below that, information without a verdict of its own: readiness (HRV, resting heart rate, sleep), form forecast, heart rate on easy runs, effort of recent sessions (average RPE)."
         ],
-        "2": "“Why this recommendation?” below the card shows what else would have fitted. Training according to plan is not a warning sign, and the coach never touches fixed dates. Changes to the plan only happen when you trigger them."
+        "2": "“Why this recommendation?” below the card shows what else would have fitted. Training according to plan is not a warning sign, and the coach never touches fixed dates. Changes to the plan only happen when you trigger them – with one exception: the automatic volume adjustment shortens the easy runs of the week by at most 15% when there are warning signs, visible in the log and undoable."
       }
     },
     "belastung-form": {
@@ -880,6 +880,22 @@
           "Tapering – the weeks before a race with less volume so you start fresh.",
           "VDOT – fitness value after Jack Daniels; forecast and training paces come from it."
         ]
+      }
+    },
+    "umfang-automatisch": {
+      "q": "Automatic volume adjustment",
+      "aliases": "volume|weekly volume|shorten|fewer km",
+      "blocks": {
+        "0": "Since 4.2 your running plan adjusts its volume by itself – only downwards and only a little. Once per plan week the app looks at four signals:",
+        "1": [
+          "Load ratio above 1.3 → −10% (above 1.5 → −15%).",
+          "Effort of the last three weeks consistently very high (average RPE 7.5 or more) → −10%.",
+          "Form clearly tired → −10%.",
+          "Last plan week more than 30% of the planned running km missed → −10% (more than half → −15%) – counted once every run of that week is done or marked as missed.",
+          "Several signals multiply, but a session never loses more than 15%. Only easy runs, the long run and recovery runs of the current week from today get shorter – quality sessions, races, fixed commitments and sessions you added yourself stay."
+        ],
+        "2": "The first plan week, deload and taper weeks and the race week are left alone. Every adjustment is listed in the “Recent automatic adjustments” log on “Today” and can be undone – it is then not repeated that week. More volume is never added automatically; the coach suggests it. To switch off: Settings → Training.",
+        "3": "Open Settings"
       }
     }
   },

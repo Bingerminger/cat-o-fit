@@ -45,6 +45,9 @@ export async function startDemo() {
   if (wanted && languages()[wanted] && wanted !== locale()) await setLocale(wanted);
   await store.createFirstAdmin({ name: 'Alex', pin: DEMO_PIN });
   await store.seedDemo(todayStr());
+  // The demo server answers in the browser: fetch the seeded areas back once, so the automatic
+  // volume adjustment (app.js, after the start) sees them as fetched and the demo shows it.
+  await store.syncNow();
   await applyLanguage();
   // The seeded history unlocks a dozen badges at once – they count as seen, not as news.
   const { badgeData, markAllSeen } = await import('./badges.js');

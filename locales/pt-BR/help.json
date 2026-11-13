@@ -530,7 +530,7 @@
           "Por último, a progressão (“Dá para mais”) – só sem sinal de alerta, com carga na faixa habitual e não nos 14 dias depois de uma pausa.",
           "Abaixo disso, informações sem veredito próprio: prontidão (HRV, frequência cardíaca de repouso, sono), previsão de forma, frequência cardíaca nos treinos leves, esforço dos treinos recentes (RPE médio)."
         ],
-        "2": "“Por que esta recomendação?”, abaixo do cartão, mostra o que mais teria combinado. Treinar conforme o plano não é sinal de alerta, e o coach nunca mexe em compromissos fixos. Alterações no plano só acontecem quando você as aciona."
+        "2": "“Por que esta recomendação?”, abaixo do cartão, mostra o que mais teria combinado. Treinar conforme o plano não é sinal de alerta, e o coach nunca mexe em compromissos fixos. Alterações no plano só acontecem quando você as aciona – com uma exceção: o ajuste automático de volume encurta em no máximo 15% os trotes leves da semana quando há sinais de alerta, visível no registro e reversível."
       }
     },
     "belastung-form": {
@@ -880,6 +880,22 @@
           "VDOT – valor de condicionamento segundo Jack Daniels; a previsão e os paces de treino vêm dele.",
           "Zonas de FC (Z1–Z5) – faixas de frequência cardíaca da recuperação ao VO₂max."
         ]
+      }
+    },
+    "umfang-automatisch": {
+      "q": "Ajuste automático de volume",
+      "aliases": "volume|volume semanal|encurtar|menos km",
+      "blocks": {
+        "0": "Desde a 4.2 seu plano de corrida ajusta o volume sozinho – só para baixo e só um pouco. Uma vez por semana do plano, o app olha quatro sinais:",
+        "1": [
+          "Razão de carga acima de 1,3 → −10% (acima de 1,5 → −15%).",
+          "Esforço das últimas três semanas sempre muito alto (RPE médio de 7,5 ou mais) → −10%.",
+          "Forma com cansaço evidente → −10%.",
+          "Última semana do plano com mais de 30% dos km previstos perdidos → −10% (mais da metade → −15%) – conta só quando cada corrida daquela semana está feita ou marcada como perdida.",
+          "Vários sinais se multiplicam, mas um treino nunca perde mais de 15%. Só encurtam os trotes leves, o longão e os trotes regenerativos da semana atual a partir de hoje – treinos de qualidade, provas, compromissos fixos e treinos que você mesmo criou ficam."
+        ],
+        "2": "A primeira semana do plano, as semanas de descarga e de polimento e a semana da prova ficam intactas. Cada ajuste aparece no registro “Ajustes automáticos recentes” em “Hoje” e pode ser desfeito – aí ele não volta naquela semana. Mais volume nunca vem automaticamente; o coach é que sugere. Para desligar: Configurações → Treino.",
+        "3": "Abrir Configurações"
       }
     }
   },

@@ -24,6 +24,7 @@ export const vars = {
   syncState: 'idle',         // idle | syncing | offline | error
   storageFullAt: 0,
   profileFetchedFor: null,   // whose profile came from the server in this session (store-data profileFetched)
+  fetchedFor: {},            // area -> whose area came from the server in this session (store-data areaFetched)
   syncRun: null,             // running sync (promise)
   syncPending: false,        // requested again during the run -> one more round
   // "Reset the app" is deleting on the server: no sync and no push may run in between.

@@ -195,7 +195,9 @@ Do **not** break these rules in the store (`storage.js`) and backend (`storage.p
   not touch. Clear a field with `null`, never by leaving it out. Consecutive merges are folded into
   one op (`foldMerges`); a server without the capability `merge-ops` gets the whole profile
   (`wireOps`). Automatic profile writes (the region's unit defaults) wait for the first fetch of
-  the profile in the session (`profileFetched()`).
+  the profile in the session (`profileFetched()`); automatic plan writes (volume adjustment) wait
+  for plans and sessions (`areaFetched(area)`, since 4.2 – the first fetch of an area is announced
+  as `onSync(area, 'fetched')`, without a redraw).
 - **The pull marker only advances through a pull (since v3.20.0).** The push response carries the
   GLOBAL area `rev` – taken over as the marker, it skipped other people's changes in between
   (second device, health ingest). `pushAreaNow`/`pushFamilyNow` therefore do not touch `revs`.
@@ -442,6 +444,14 @@ Do **not** break these rules in the store (`storage.js`) and backend (`storage.p
   (3) **Football** – `cross_football` carries an **intensity** (light/normal/intense, `commitments.js`),
   counts as hard from “normal” (`planflow.isHard`, `rolling.dayIsHard`), flows into the load via `fitness.footballRpe`/
   `sessionLoad`, and `rolling.footballFollowupEase` suggests the easy following day.
+  (4) **Volume (since 4.2)** – `autovolume.js autoVolumeDecision` shortens the remaining easy runs
+  (`easy`/`long`/`recovery`/`run`) of the current plan week by 10–15 % when the load ratio is above
+  1.3, the RPE trend is `ease`, the form is `ermuedet` or more than 30 % of last plan week's running
+  km were missed (`lastWeekShare`, only once every run of that week is settled – an import that
+  arrives on Monday must not look like a miss); never in week 1, deload/taper/race weeks, never fixed, race or own sessions, once
+  per plan week (`plan.autoVolume.week`, kept after an undo). Only downwards – increases stay the
+  coach's `boost` suggestion. `weekDeloadCandidates` skips `autoVolume` sessions. Setting
+  `autoVolume` (default on, Settings → Training).
 - **Teams (since v3.9.0).** Teams are additional `_kind:'team'` records in `family.json`
   (`{id, name, emoji, color, memberIds}`) – ALONGSIDE members/`__settings`/`__pantry`; they sync
   along record-agnostically (no sync rework). A member can be in SEVERAL teams (multiple membership:

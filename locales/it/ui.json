@@ -339,6 +339,7 @@
       "healthGoals": "Obiettivi di salute",
       "hrZones": "Zone di frequenza cardiaca",
       "paceZones": "Zone di allenamento (passo)",
+      "training": "Allenamento",
       "appearance": "Aspetto",
       "modules": "Moduli",
       "bodyMetrics": "Valori corporei visibili",
@@ -429,6 +430,10 @@
       "labsSi": "SI (mmol/l)",
       "labsConventional": "Convenzionali (mg/dL)",
       "hint": "Tutto viene salvato nel sistema metrico – cambiare modifica solo come i valori vengono mostrati e inseriti. I nuovi piani iniziano dal primo giorno della settimana scelto."
+    },
+    "training": {
+      "autoVolume": "Adatta il volume automaticamente",
+      "autoVolumeHint": "Se il carico è alto, la fatica resta molto alta, la forma è stanca o la settimana scorsa è stata corsa solo in parte, l’app accorcia del 10–15% le corse lente della settimana in corso del piano – al massimo una volta a settimana, mai le sedute di qualità, le gare, gli impegni fissi o le tue sedute. Ogni adattamento compare in «Oggi» e si può annullare. Più volume viene solo proposto."
     }
   },
   "common": {
@@ -4521,5 +4526,14 @@
       "other": "{count} allenamenti di forza importati"
     },
     "sessionTitle": "Forza ({app})"
+  },
+  "autoVolume": {
+    "logTitle": "Volume adattato automaticamente (−{pct}%)",
+    "logReason": "{signals} – le corse lente di questa settimana sono più brevi: {after} invece di {before}.",
+    "logReasonShort": "{signals} – le corse lente di questa settimana sono un po’ più brevi.",
+    "reasonLoad": "Carico: rapporto {ratio}",
+    "reasonEffort": "Fatica recente media {rpe}",
+    "reasonFatigue": "Forma: chiaramente stanca",
+    "reasonCompletion": "Settimana scorsa corsa al {pct}%"
   }
 }

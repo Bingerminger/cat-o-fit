@@ -321,6 +321,10 @@ Pure logic in argument-based, testable modules; the views only consume it:
 - **adapt.js:** central apply/undo core (`applyAdapt`/`undoAdapt`) with the transparency log `plan.adaptLog`
   – used by dashboard cards **and** `cycle.js` (easing the first period day only on request). The
   log stores the changed fields; `undoUnits` restores only open units and only those fields.
+  Since 4.2 it also runs the **automatic volume adjustment** (`ensureAutoVolume`, from `app.js` after a
+  sync): the decision is the pure `autovolume.js` (load ratio, RPE trend, form, missed share of the last
+  plan week → at most −15 % on the easy runs of the current plan week, once per week, marker
+  `plan.autoVolume`); it waits for `store.areaFetched('plans')` and `('sessions')`.
 - **triage.js + whatif.js:** week check (prioritising collisions: fixed appointments → key runs → strength
   → volume) and what-if preview of the effect on the weekly load before adding/moving something.
 - **dualgoal.js:** goal cockpit (half-marathon performance + weight loss) with a phase-dependent focus,

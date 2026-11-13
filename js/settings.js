@@ -266,6 +266,16 @@ export function render(view) {
     view.appendChild(pc);
   }
 
+/* ----- Training: automatic volume adjustment of the plan week (autovolume.js) ----- */
+  view.appendChild(sectionHead(t('settings.sections.training'), null, { help: 'umfang-automatisch' }));
+  view.appendChild(el('div', { class: 'card' }, [
+    el('div', { class: 'row row--between', style: { alignItems: 'center' } }, [
+      el('span', { text: t('settings.training.autoVolume') }),
+      toggle(s.autoVolume !== false, (v) => store.setSetting('autoVolume', v), t('settings.training.autoVolume')),
+    ]),
+    el('div', { class: 'dim mt-2', style: { fontSize: '.78rem' }, text: t('settings.training.autoVolumeHint') }),
+  ]));
+
 /* ----- Appearance ----- */
   view.appendChild(sectionHead(t('settings.sections.appearance'), null, { help: 'masseinheiten' }));
   const disp = el('div', { class: 'card' });

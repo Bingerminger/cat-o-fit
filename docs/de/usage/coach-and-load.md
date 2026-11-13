@@ -206,6 +206,28 @@ dem Tag eine fordernde Einheit an, fragt Cat-O-Fit kurz, wie es dir geht: „**W
 machen**“. Nur auf deinen Wunsch wird das Training am 1. Tag entschärft (Läufe → locker, Kraft → Mobility) –
 protokolliert und rückgängig. Viele trainieren an dem Tag ganz normal; beides ist okay.
 
+### Automatische Umfangsanpassung
+
+Seit 4.2 passt der Plan seinen Umfang selbst an – nur **nach unten** und nur ein wenig. Einmal pro Planwoche
+schaut die App auf vier Signale:
+
+- **Belastungsverhältnis** über 1,3 → −10 % (über 1,5 → −15 %),
+- **Anstrengung** der letzten drei Wochen dauerhaft sehr hoch (RPE im Schnitt 7,5 oder mehr) → −10 %,
+- **Form** deutlich ermüdet → −10 %,
+- **letzte Planwoche** mehr als 30 % der geplanten Laufkilometer verpasst → −10 % (mehr als die Hälfte
+  → −15 %) – gezählt erst, wenn jeder Lauf dieser Woche erledigt oder als verpasst markiert ist; ein Lauf,
+  der erst mit dem nächsten Import kommt, gilt also nicht als verpasst.
+
+Mehrere Signale multiplizieren sich, eine Einheit verliert aber nie mehr als **15 %**. Kürzer wird nur der
+ruhige Umfang der laufenden Planwoche ab heute – lockere Läufe, Long Run, Regenerationsläufe; Tempoeinheiten
+behalten ihren Reiz, Wettkämpfe, feste Termine und selbst angelegte Einheiten bleiben, wie sie sind. Die erste
+Planwoche, Entlastungs- und Taperwochen sowie die Wettkampfwoche bleiben unberührt. Die Änderung steht im Log
+unter **Heute** und lässt sich zurücknehmen – in dieser Woche kommt sie dann nicht wieder. **Mehr** Umfang
+kommt nie automatisch: Den schlägt der Coach vor („Noch Reserven“), und du entscheidest. Abschalten kannst
+du das unter **Einstellungen → Training → Umfang automatisch anpassen**. Die App passt erst an, wenn Pläne
+und Einheiten vom Server geholt sind – so kann ein alter Stand auf einem zweiten Gerät keinen neueren Plan
+überschreiben.
+
 ### Wochen-Check & Vorschau (What-if)
 
 Der **Wochen-Check** im Plan zeigt Kollisionen und die Reihenfolge der Triage:
@@ -216,8 +238,10 @@ Auswirkung“, „etwas fordernder“ (mehr als ~8 % oder eine harte Einheit meh
 (mehr als ~25 % oder zwei harte Tage direkt hintereinander – auch wenn du nur innerhalb der Woche
 verschiebst und die Gesamtlast gleich bleibt).
 
-> **Hinweis:** Laufpläne enthalten Mobility, aber keine festen Krafttage. Kraft planst du bei Bedarf über
-> ein **eigenes Trainingsprogramm** (Schwerpunkt Kraft); Triathlon- und Hyrox-Pläne bringen Kraft mit.
+> **Hinweis:** Laufpläne enthalten Mobility; Kraft kommt nur hinein, wenn du sie beim Anlegen wählst
+> (**Kraft im Plan**, bis zu zweimal pro Woche, passend zur Planphase – siehe [Training](training.md)).
+> Sonst planst du Kraft über ein **eigenes Trainingsprogramm** (Schwerpunkt Kraft); Triathlon- und
+> Hyrox-Pläne bringen Kraft mit.
 
 ### Ziel-Cockpit: zwei Ziele in einem Plan
 

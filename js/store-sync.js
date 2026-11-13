@@ -188,6 +188,7 @@ export async function setActiveUser(id) {
   }
   vars.activeUser = id;
   vars.profileFetchedFor = null;
+  vars.fetchedFor = {};
   loadUserFromLS();
   // Whoever only managed a member does not need their data permanently in storage.
   if (prev && prev !== id && prev !== vars.identity) evictUserCache(prev);
@@ -202,6 +203,7 @@ export function clearActiveUser() {
   vars.identity = null;
   vars.activeUser = null;
   vars.profileFetchedFor = null;
+  vars.fetchedFor = {};
   vars.serverUser = null;
   vars.pendingServerPin = null;
   vars.sessionAsked = false;

@@ -339,6 +339,7 @@
       "healthGoals": "Objetivos de salud",
       "hrZones": "Zonas de frecuencia cardíaca",
       "paceZones": "Zonas de entrenamiento (ritmo)",
+      "training": "Entrenamiento",
       "appearance": "Apariencia",
       "modules": "Módulos",
       "bodyMetrics": "Valores corporales visibles",
@@ -429,6 +430,10 @@
       "labsSi": "SI (mmol/l)",
       "labsConventional": "Convencionales (mg/dL)",
       "hint": "Todo se guarda en el sistema métrico: cambiar solo modifica cómo se muestran e introducen los valores. Los planes nuevos empiezan el primer día de la semana que elijas."
+    },
+    "training": {
+      "autoVolume": "Ajustar el volumen automáticamente",
+      "autoVolumeHint": "Si la carga es alta, el esfuerzo sigue muy alto, la forma está cansada o la semana pasada solo se corrió en parte, la app acorta un 10–15 % los rodajes suaves de la semana actual del plan: como mucho una vez por semana y nunca las sesiones de calidad, las carreras, los compromisos fijos ni tus propias sesiones. Cada ajuste aparece en «Hoy» y se puede deshacer. Más volumen solo se propone."
     }
   },
   "common": {
@@ -4521,5 +4526,14 @@
       "other": "{count} entrenamientos de fuerza importados"
     },
     "sessionTitle": "Fuerza ({app})"
+  },
+  "autoVolume": {
+    "logTitle": "Volumen ajustado automáticamente (−{pct} %)",
+    "logReason": "{signals}: los rodajes suaves de esta semana son más cortos, {after} en lugar de {before}.",
+    "logReasonShort": "{signals}: los rodajes suaves de esta semana son algo más cortos.",
+    "reasonLoad": "Carga: ratio {ratio}",
+    "reasonEffort": "Esfuerzo reciente media {rpe}",
+    "reasonFatigue": "Forma: con claro cansancio",
+    "reasonCompletion": "Semana pasada corrida al {pct} %"
   }
 }

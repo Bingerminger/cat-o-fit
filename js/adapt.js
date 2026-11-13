@@ -10,9 +10,12 @@
    ========================================================================= */
 
 import * as store from './storage.js';
-import { nowIso } from './ui.js';
+import { nowIso, todayStr } from './ui.js';
+import { fmtNum } from './format.js';
 import { pushAdaptLog } from './rolling.js';
 import { isOpen } from './planflow.js';
+import { autoVolumeDecision, autoVolumeVariant } from './autovolume.js';
+import { t } from './i18n.js';
 
 /**
  * Applies unit patches to a plan and logs the adjustment
@@ -21,9 +24,10 @@ import { isOpen } from './planflow.js';
  * @param {string[]} unitIds  IDs of the sessions to change
  * @param {(u:object)=>object} patchFor  returns the patch fields per session
  * @param {object} logEntry  { kind, title, reason } – appears in the adjustment log
+ * @param {object} [planPatch]  further plan fields, written in the same change
  * @returns {string|null} the id of the new log entry (or null if there is no plan)
  */
-export function applyAdapt(planId, unitIds, patchFor, logEntry) {
+export function applyAdapt(planId, unitIds, patchFor, logEntry, planPatch = {}) {
   const plan = store.find('plans', planId);
   if (!plan) return null;
   const ids = new Set(unitIds);
@@ -36,8 +40,48 @@ export function applyAdapt(planId, unitIds, patchFor, logEntry) {
     return { ...u, ...patch, updatedAt: nowIso() };
   });
   const adaptLog = pushAdaptLog(plan.adaptLog || [], { ...logEntry, undo: { units: undoUnits, fields: [...fields] } });
-  store.patch('plans', planId, { units, adaptLog });
+  store.patch('plans', planId, { ...planPatch, units, adaptLog });
   return adaptLog[0] && adaptLog[0].id;
+}
+
+const kmText = (km) => `${fmtNum(km, km % 1 ? 1 : 0)} km`;
+
+/** One line per signal for the log (literal keys, so the catalog check sees them). */
+function signalText(s) {
+  if (s.key === 'load') return t('autoVolume.reasonLoad', { ratio: fmtNum(s.value, 2) });
+  if (s.key === 'effort') return t('autoVolume.reasonEffort', { rpe: fmtNum(s.value, 1) });
+  if (s.key === 'fatigue') return t('autoVolume.reasonFatigue');
+  return t('autoVolume.reasonCompletion', { pct: s.value });
+}
+
+/**
+ * Automatic volume adjustment (autovolume.js): shortens the remaining easy runs of the
+ * current plan week when load, effort, form or the last week speak for it – once per
+ * plan week, logged with undo. Runs only for the person themself, only with the
+ * setting on, and only after plans and sessions came from the server in this session
+ * (an old local state must never overwrite a plan changed on another device).
+ * @returns {number} number of plans adjusted
+ */
+export function ensureAutoVolume(today = todayStr()) {
+  if (store.isManaging() || store.settings().autoVolume === false) return 0;
+  if (!store.areaFetched('plans') || !store.areaFetched('sessions')) return 0;
+  const sessions = store.get('sessions');
+  let n = 0;
+  store.get('plans').forEach((plan) => {
+    const d = autoVolumeDecision({ plan, sessions, today });
+    if (!d) return;
+    const pct = Math.round((1 - d.factor) * 100);
+    const signals = d.signals.map(signalText).join(' · ');
+    applyAdapt(plan.id, d.unitIds, (u) => autoVolumeVariant(u, d.factor), {
+      kind: 'autovolume',
+      title: t('autoVolume.logTitle', { pct }),
+      reason: d.beforeKm > d.afterKm
+        ? t('autoVolume.logReason', { signals, before: kmText(d.beforeKm), after: kmText(d.afterKm) })
+        : t('autoVolume.logReasonShort', { signals }),
+    }, { autoVolume: { week: d.week, factor: d.factor, date: today } });
+    n++;
+  });
+  return n;
 }
 
 /** Fields that an undo never touches: they belong to the state AFTER the adjustment

@@ -530,7 +530,7 @@
           "Per ultima la progressione (“Ancora energia da spendere”) – solo senza segnali d’allarme, con il carico nella norma e non nei 14 giorni dopo uno stop.",
           "Sotto, informazioni senza un verdetto proprio: prontezza (HRV, frequenza cardiaca a riposo, sonno), previsione della forma, frequenza cardiaca nelle corse facili, sforzo delle ultime sessioni (RPE medio)."
         ],
-        "2": "“Perché questo consiglio?” sotto la scheda mostra che cos’altro sarebbe andato bene. Allenarsi secondo il piano non è un segnale d’allarme, e il coach non tocca mai gli appuntamenti fissi. Le modifiche al piano avvengono solo quando le attivi tu."
+        "2": "“Perché questo consiglio?” sotto la scheda mostra che cos’altro sarebbe andato bene. Allenarsi secondo il piano non è un segnale d’allarme, e il coach non tocca mai gli appuntamenti fissi. Le modifiche al piano avvengono solo quando le attivi tu – con un’eccezione: l’adattamento automatico del volume accorcia al massimo del 15% le corse lente della settimana se ci sono segnali d’allarme, visibile nel registro e annullabile."
       }
     },
     "belastung-form": {
@@ -880,6 +880,22 @@
           "VDOT – valore di forma secondo Jack Daniels; previsioni e passi di allenamento derivano da qui.",
           "Zone FC (Z1–Z5) – intervalli di frequenza cardiaca dal recupero al VO₂max."
         ]
+      }
+    },
+    "umfang-automatisch": {
+      "q": "Adattamento automatico del volume",
+      "aliases": "volume|volume settimanale|accorciare|meno km",
+      "blocks": {
+        "0": "Dalla 4.2 il tuo piano di corsa adatta da solo il volume – solo verso il basso e solo di poco. Una volta per settimana del piano l’app guarda quattro segnali:",
+        "1": [
+          "Rapporto di carico sopra 1,3 → −10% (sopra 1,5 → −15%).",
+          "Fatica delle ultime tre settimane sempre molto alta (RPE medio di 7,5 o più) → −10%.",
+          "Forma chiaramente stanca → −10%.",
+          "Ultima settimana del piano con più del 30% dei km previsti saltati → −10% (più della metà → −15%) – conta solo quando ogni corsa di quella settimana è fatta o segnata come saltata.",
+          "Più segnali si moltiplicano, ma una seduta non perde mai più del 15%. Si accorciano solo le corse lente, il lungo e le corse di recupero della settimana in corso da oggi – sedute di qualità, gare, impegni fissi e sedute aggiunte da te restano."
+        ],
+        "2": "La prima settimana del piano, le settimane di scarico e di tapering e la settimana della gara restano intatte. Ogni adattamento compare nel registro «Ultimi adattamenti automatici» in «Oggi» e si può annullare – in quella settimana non torna più. Più volume non arriva mai automaticamente: lo propone il coach. Per disattivarlo: Impostazioni → Allenamento.",
+        "3": "Apri le Impostazioni"
       }
     }
   },

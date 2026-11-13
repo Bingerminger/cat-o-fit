@@ -530,7 +530,7 @@
           "Zuletzt Steigerung („Noch Reserven“) – nur ohne Warnsignal, mit Belastung im üblichen Rahmen und nicht in den 14 Tagen nach einem Ausfall.",
           "Darunter Informationen ohne eigenes Urteil: Bereitschaft (HRV, Ruhepuls, Schlaf), Formprognose, Herzfrequenz lockerer Läufe, Anstrengung der letzten Einheiten (Ø RPE)."
         ],
-        "2": "„Warum diese Empfehlung?“ unter der Karte zeigt, was sonst noch gepasst hätte. Plangemäßes Training ist kein Warnsignal, und feste Termine fasst der Coach nie an. Änderungen am Plan passieren nur, wenn du sie auslöst."
+        "2": "„Warum diese Empfehlung?“ unter der Karte zeigt, was sonst noch gepasst hätte. Plangemäßes Training ist kein Warnsignal, und feste Termine fasst der Coach nie an. Änderungen am Plan passieren nur, wenn du sie auslöst – mit einer Ausnahme: Die automatische Umfangsanpassung kürzt bei Warnsignalen die ruhigen Läufe der Woche um höchstens 15 %, sichtbar im Log und rückgängig."
       }
     },
     "belastung-form": {
@@ -880,6 +880,22 @@
           "VDOT – Formwert nach Jack Daniels; daraus entstehen Prognose und Trainingstempo.",
           "Ziel – ein Wettkampf oder ein Trainingsprogramm; beides mit eigenem Plan."
         ]
+      }
+    },
+    "umfang-automatisch": {
+      "q": "Automatische Umfangsanpassung",
+      "aliases": "Umfang|Wochenumfang|Kilometer kürzen|weniger km",
+      "blocks": {
+        "0": "Seit 4.2 passt dein Laufplan seinen Umfang selbst an – nur nach unten und nur ein wenig. Einmal pro Planwoche schaut die App auf vier Signale:",
+        "1": [
+          "Belastungsverhältnis über 1,3 → −10 % (über 1,5 → −15 %).",
+          "Anstrengung der letzten drei Wochen dauerhaft sehr hoch (RPE im Schnitt 7,5 oder mehr) → −10 %.",
+          "Form deutlich ermüdet → −10 %.",
+          "Letzte Planwoche mehr als 30 % der geplanten Laufkilometer verpasst → −10 % (mehr als die Hälfte → −15 %) – gezählt erst, wenn jeder Lauf der Woche erledigt oder als verpasst markiert ist.",
+          "Mehrere Signale multiplizieren sich, eine Einheit verliert aber nie mehr als 15 %. Kürzer werden nur lockere Läufe, Long Run und Regenerationsläufe der laufenden Woche ab heute – Tempoeinheiten, Wettkämpfe, feste Termine und selbst angelegte Einheiten bleiben."
+        ],
+        "2": "Die erste Planwoche, Entlastungs- und Taperwochen sowie die Wettkampfwoche bleiben unberührt. Jede Anpassung steht im Log „Zuletzt automatisch angepasst“ auf „Heute“ und lässt sich zurücknehmen – dann kommt sie in dieser Woche nicht wieder. Mehr Umfang kommt nie automatisch, den schlägt der Coach vor. Abschalten: Einstellungen → Training.",
+        "3": "Einstellungen öffnen"
       }
     }
   },

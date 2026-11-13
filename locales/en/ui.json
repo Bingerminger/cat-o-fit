@@ -339,6 +339,7 @@
       "healthGoals": "Health goals",
       "hrZones": "Heart rate zones",
       "paceZones": "Training zones (pace)",
+      "training": "Training",
       "appearance": "Appearance",
       "modules": "Modules",
       "bodyMetrics": "Visible body values",
@@ -429,6 +430,10 @@
       "labsSi": "SI (mmol/l)",
       "labsConventional": "Conventional (mg/dL)",
       "hint": "Everything is stored metric – switching only changes how values are shown and entered. Plans you create from now on start on the first day of the week you choose."
+    },
+    "training": {
+      "autoVolume": "Adjust volume automatically",
+      "autoVolumeHint": "When the load is high, the effort stays very high, the form is tired or last week was only partly run, the app shortens the easy runs of the current plan week by 10–15% – at most once a week, never quality sessions, races, fixed commitments or your own sessions. Every adjustment is listed on “Today” and can be undone. More volume is only ever suggested."
     }
   },
   "common": {
@@ -4521,5 +4526,14 @@
       "other": "{count} strength workouts imported"
     },
     "sessionTitle": "Strength ({app})"
+  },
+  "autoVolume": {
+    "logTitle": "Volume adjusted automatically (−{pct}%)",
+    "logReason": "{signals} – the easy runs of this week are shorter: {after} instead of {before}.",
+    "logReasonShort": "{signals} – the easy runs of this week are a little shorter.",
+    "reasonLoad": "Load: ratio {ratio}",
+    "reasonEffort": "Recent effort avg. {rpe}",
+    "reasonFatigue": "Form: clearly tired",
+    "reasonCompletion": "Last week {pct}% run"
   }
 }

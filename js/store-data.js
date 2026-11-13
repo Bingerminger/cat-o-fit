@@ -169,6 +169,10 @@ export function writeProfile(fields, patch) {
     (the region's unit defaults) wait for it – otherwise a new device saves its guesses over
     the choices the person made elsewhere. */
 export function profileFetched() { return !!vars.activeUser && vars.profileFetchedFor === vars.activeUser; }
+/** Has this area of the active person come from the server in this session? Automatic
+    writes (plan volume) wait for it – a device with an old local state must not overwrite
+    what another device changed in the meantime. */
+export function areaFetched(area) { return !!vars.activeUser && vars.fetchedFor[area] === vars.activeUser; }
 
 /** Map { exerciseId: count } of the exercises used so far by the signed-in user. */
 export function exerciseUsage() { return (state.profile.settings || {}).exerciseUsage || {}; }

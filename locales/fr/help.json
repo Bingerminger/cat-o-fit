@@ -530,7 +530,7 @@
           "Enfin la progression (« Encore de la réserve ») – seulement sans signal d’alerte, avec une charge dans la plage habituelle et pas dans les 14 jours après une interruption.",
           "En dessous, des informations sans verdict propre : la disponibilité (HRV, fréquence cardiaque au repos, sommeil), la prévision de forme, la fréquence cardiaque en footing facile, l’effort des séances récentes (RPE moyen)."
         ],
-        "2": "« Pourquoi cette recommandation ? » sous la carte montre ce qui aurait aussi convenu. S’entraîner selon le plan n’est pas un signal d’alerte, et le coach ne touche jamais aux rendez-vous fixes. Les modifications du plan n’ont lieu que quand tu les déclenches."
+        "2": "« Pourquoi cette recommandation ? » sous la carte montre ce qui aurait aussi convenu. S’entraîner selon le plan n’est pas un signal d’alerte, et le coach ne touche jamais aux rendez-vous fixes. Les modifications du plan n’ont lieu que quand tu les déclenches – à une exception près : l’ajustement automatique du volume raccourcit de 15 % au plus les footings de la semaine en cas de signal d’alerte, visible dans le journal et annulable."
       }
     },
     "belastung-form": {
@@ -880,6 +880,22 @@
           "Affûtage – les semaines avant une course avec moins de volume pour arriver frais au départ.",
           "VDOT – valeur de forme selon Jack Daniels ; la prévision et les allures d’entraînement en découlent."
         ]
+      }
+    },
+    "umfang-automatisch": {
+      "q": "Ajustement automatique du volume",
+      "aliases": "volume|volume hebdomadaire|raccourcir|moins de km",
+      "blocks": {
+        "0": "Depuis la 4.2, ton plan de course ajuste lui-même son volume – seulement à la baisse et seulement un peu. Une fois par semaine du plan, l’app regarde quatre signaux :",
+        "1": [
+          "Ratio de charge au-dessus de 1,3 → −10 % (au-dessus de 1,5 → −15 %).",
+          "Effort des trois dernières semaines toujours très élevé (RPE moyen de 7,5 ou plus) → −10 %.",
+          "Forme : fatigue marquée → −10 %.",
+          "Semaine passée du plan : plus de 30 % des km prévus manqués → −10 % (plus de la moitié → −15 %) – compté seulement quand chaque sortie de la semaine est faite ou marquée comme manquée.",
+          "Plusieurs signaux se multiplient, mais une séance ne perd jamais plus de 15 %. Seuls les footings, la sortie longue et les footings de récupération de la semaine en cours à partir d’aujourd’hui raccourcissent – séances de qualité, courses, engagements fixes et séances ajoutées par toi restent."
+        ],
+        "2": "La première semaine du plan, les semaines d’allègement et d’affûtage ainsi que la semaine de course restent intactes. Chaque ajustement figure dans le journal « Derniers ajustements automatiques » sous « Aujourd’hui » et peut être annulé – il ne revient alors plus cette semaine. Plus de volume ne vient jamais automatiquement ; c’est le coach qui le propose. Pour désactiver : Réglages → Entraînement.",
+        "3": "Ouvrir les Réglages"
       }
     }
   },
