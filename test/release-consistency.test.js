@@ -3,7 +3,8 @@
    - every environment variable of the installation guide is in docker-compose.yml and in the
      Unraid and CasaOS templates,
    - the public demo is built from the newest release, never from a push to main,
-   - the Docker image is tested in CI as users run it. */
+   - the Docker image is tested in CI as users run it, the app in real browsers, and every test runs
+     once a week under a moved clock. */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -45,4 +46,12 @@ test('CI tests the Docker image as users run it', () => {
   const ci = read('.github/workflows/ci.yml');
   assert.match(ci, /docker build -t cat-o-fit:smoke \./);
   assert.match(ci, /bash tools\/test-docker\.sh/);
+});
+
+test('CI tests the app in real browsers, and the weekly time travel exists', () => {
+  const ci = read('.github/workflows/ci.yml');
+  assert.match(ci, /npx playwright install --with-deps chromium webkit/);
+  assert.match(ci, /node tools\/test-browser\.mjs/);
+  const tt = read('.github/workflows/time-travel.yml');
+  assert.match(tt, /faketime -f "@\$\{\{ matrix\.when \}\}" npm test/);
 });

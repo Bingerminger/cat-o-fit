@@ -25,9 +25,12 @@ npm test                                            # all Node suites (node:test
 php tools/test-health-ingest.php && php tools/test-health-xml.php \
   && php tools/test-storage.php && php tools/test-api.php && php tools/test-ics.php
 docker build -t cat-o-fit:smoke . && IMAGE=cat-o-fit:smoke bash tools/test-docker.sh
+npm install --no-save playwright@1.65.0 && npx playwright install chromium webkit
+node tools/test-browser.mjs                         # real browsers, seven languages, demo, offline start
 ```
 
-The CI runs the same on every push and pull request (`.github/workflows/ci.yml`).
+The CI runs the same on every push and pull request (`.github/workflows/ci.yml`); a weekly workflow
+runs all tests under a moved clock (`.github/workflows/time-travel.yml`).
 
 Every change brings its test. Do the **counter-check**: turn the new safeguard in the code back for a
 moment – the test must fail; only then does it guard anything. Prefer fixed dates in tests and pass
