@@ -323,6 +323,20 @@ const SUBSTEP = 1 / 120;
 const ramp = (x, a, b) => { const k = clamp((x - a) / (b - a), 0, 1); return k * k * (3 - 2 * k); };
 
 /**
+ * Where a limb root → end has to bend to: the side on which the target limb (root0 → joint0 → end0) bends. A limb
+ * that is nearly straight has no side of its own – it then bends the way such a joint does (`rest`: a knee to the
+ * front of the body, an elbow to its back), never by chance to the other one.
+ */
+function poleOf(root, end, root0, joint0, end0, rest) {
+  const u = V.norm(V.sub(end0, root0));
+  const d = V.sub(V.sub(joint0, root0), V.mul(u, V.dot(V.sub(joint0, root0), u)));
+  const w = clamp(V.len(d) / 4, 0, 1);
+  const r = V.sub(rest, V.mul(u, V.dot(rest, u)));
+  const dir = V.add(V.mul(V.len(d) > 1e-6 ? V.norm(d) : [0, 0, 0], w), V.mul(V.len(r) > 1e-6 ? V.norm(r) : [0, 0, 0], 1 - w));
+  return V.add(V.lerp(root, end, 0.5), V.mul(V.len(dir) > 1e-6 ? V.norm(dir) : [1, 0, 0], 40));
+}
+
+/**
  * Makes a body follow a target body the way a real one moves: the middle leads, the far ends come after and swing
  * out, nothing starts or stops at once. Hands and feet that stand on the floor stay exactly where they are.
  * `step(target, dt)` returns the body for this frame; `reset()` after a jump in time.
@@ -396,13 +410,12 @@ export function createFollower() {
       const g = T.legs[side]; const a = T.arms[side];
       const sgn = V.dot(V.sub(g.hip, T.pelvis), lat) >= 0 ? 1 : -1;
       const hip = V.add(pelvis, V.mul(lat, sgn * BODY.hipW));
-      const moved = V.sub(ankle[side], g.ankle);
-      const leg = solveLimb3(hip, ankle[side], BODY.thigh, BODY.shin, V.add(g.knee, V.add(V.mul(V.sub(hip, g.hip), 0.5), V.mul(moved, 0.5))));
+      const leg = solveLimb3(hip, ankle[side], BODY.thigh, BODY.shin, poleOf(hip, ankle[side], g.hip, g.knee, g.ankle, T.fwd));
       const shift = V.sub(leg.end, g.ankle);
       legs[side] = { hip, knee: leg.joint, ankle: leg.end, heel: V.add(g.heel, shift), toe: V.add(g.toe, shift) };
       const ssgn = V.dot(V.sub(a.sh, T.chest), latSh) >= 0 ? 1 : -1;
       const sh = V.add(chest, V.mul(latSh, ssgn * BODY.shoulderW));
-      const arm = solveLimb3(sh, wrist[side], BODY.upper, BODY.fore, V.add(a.elbow, V.add(V.mul(V.sub(sh, a.sh), 0.5), V.mul(V.sub(wrist[side], a.wrist), 0.5))));
+      const arm = solveLimb3(sh, wrist[side], BODY.upper, BODY.fore, poleOf(sh, wrist[side], a.sh, a.elbow, a.wrist, V.mul(T.fwd, -1)));
       arms[side] = { sh, elbow: arm.joint, wrist: arm.end };
     }
     return { view: T.view, pelvis, chest, spine, lat, latSh, fwd: T.fwd, up, head, headUp, headFwd, legs, arms };
@@ -463,6 +476,26 @@ export function aboveFloor(body) {
     const g = body.legs[side]; const a = body.arms[side];
     out.legs[side] = { hip: up(g.hip), knee: up(g.knee), ankle: up(g.ankle), heel: up(g.heel), toe: up(g.toe) };
     out.arms[side] = { sh: up(a.sh), elbow: up(a.elbow), wrist: up(a.wrist) };
+  }
+  return out;
+}
+
+/* ------------------------------ Hinges ------------------------------ */
+
+/**
+ * How far each knee and elbow of a body bends the wrong way: 0 = fine, up to 1 = folded backwards (the sine of the
+ * wrong-way angle, measured where the joint's hinge lies across the body). A knee folds the shin back, an elbow the
+ * forearm forward – never the other way. { kneeR, kneeL, elbowR, elbowL }.
+ */
+export function hingeOf(b) {
+  const out = {};
+  const right = b.lat;
+  for (const side of ['r', 'l']) {
+    const g = b.legs[side]; const a = b.arms[side];
+    const knee = V.dot(V.cross(V.norm(V.sub(g.knee, g.hip)), V.norm(V.sub(g.ankle, g.knee))), right);
+    const elbow = -V.dot(V.cross(V.norm(V.sub(a.elbow, a.sh)), V.norm(V.sub(a.wrist, a.elbow))), b.latSh);
+    out[`knee${side.toUpperCase()}`] = Math.max(0, knee);
+    out[`elbow${side.toUpperCase()}`] = Math.max(0, elbow);
   }
   return out;
 }
