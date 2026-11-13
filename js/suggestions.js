@@ -53,10 +53,16 @@ export function runVolume(sessions = [], today = todayStr()) {
     (Vickers & Vertosick 2016). */
 export function volumeCaveat(distanceKm, vol) {
   if (!vol) return false;
-  if (distanceKm >= 40) return vol.weekKm < 50 || vol.longestKm < 25;
-  if (distanceKm >= 20) return vol.weekKm < 30 || vol.longestKm < 15;
-  return false;
+  const need = distanceKm >= 40 ? PREDICTION_VOLUME.marathon : distanceKm >= 20 ? PREDICTION_VOLUME.hm : null;
+  return !!need && (vol.weekKm < need.weekKm || vol.longestKm < need.longKm);
 }
+
+/** The volume behind a marathon or half-marathon prediction: average km of the last four weeks and
+    longest run of the last six. The plan generator builds its standard plans to reach it. */
+export const PREDICTION_VOLUME = Object.freeze({
+  marathon: Object.freeze({ weekKm: 50, longKm: 25 }),
+  hm: Object.freeze({ weekKm: 30, longKm: 15 }),
+});
 
 /**
  * Estimates a race time for `distanceKm`.

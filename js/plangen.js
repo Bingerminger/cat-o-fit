@@ -16,6 +16,7 @@
 import { uid, nowIso, typeMeta, fmtNum, fmtMinSec, addDays, isoDow, diffDays, nextWeekStart, dateOfDow } from './ui.js';
 import { commitmentDates, commitMeta, defaultCommitments } from './commitments.js';
 import { isHard } from './planflow.js';
+import { PREDICTION_VOLUME } from './suggestions.js';
 
 import { t, tp } from './i18n.js';
 
@@ -448,31 +449,102 @@ export function supportRunKm(baseKm, frac, { min = 4, max = 16 } = {}) {
     four runs of 2–3 km would not be sensible training for beginners. */
 const WALK_BELOW_KM = 16;
 
+/** The long run of a week before the week is fitted: its share of the weekly volume – also for
+    experienced runners (whose higher volume then gives it room) –, capped by distance and time,
+    and shorter in the taper. */
+function longTarget(cfg, info) {
+  let long = Math.min(info.km * cfg.longShare, cfg.longCapKm);
+  if (info.taper === 'w2') long = Math.min(long, cfg.peakLongKm * 0.75);
+  if (info.taper === 'w1') long = Math.min(long, cfg.peakLongKm * 0.55);
+  return long;
+}
+
 /** Distributes the weekly volume over the roles of the week. The long run keeps
     its share also of the actual weekly total and becomes clearly shorter in the
     taper (two weeks before ≤ 75 %, one week before ≤ 55 % of the peak). */
-function allocate(cfg, info, roles, phaseKey) {
+function allocate(cfg, info, roles, phaseKey, qualityKm = null) {
+  // Brisk walking instead of short extra and recovery runs below WALK_BELOW_KM; above it, the extra
+  // runs and then the recovery run turn into walks only as far as the shortest sensible runs (3 km
+  // each) would otherwise exceed the week's target – the least walking that fits, or the closest.
+  if (info.km < WALK_BELOW_KM) return allocateWith(cfg, info, roles, phaseKey, qualityKm, { extra: true, recovery: true });
+  const tries = [{ extra: false, recovery: false }];
+  if (roles.extra) tries.push({ extra: true, recovery: false });
+  if (roles.recovery) tries.push({ extra: true, recovery: true });
+  let best = null;
+  for (const walk of tries) {
+    const a = allocateWith(cfg, info, roles, phaseKey, qualityKm, walk);
+    if (a.fitTotal <= info.km + 0.75) return a;
+    if (!best || Math.abs(a.fitTotal - info.km) < Math.abs(best.fitTotal - info.km)) best = a;
+  }
+  return best;
+}
+
+function allocateWith(cfg, info, roles, phaseKey, qualityKm, walk) {
   const V = info.km;
-  const walk = V < WALK_BELOW_KM;
   // Base phase: continuous run with strides (≤ 12 km), otherwise a structured session (≤ 16 km).
   const qMax = phaseKey === 'base' && !info.taper ? 12 : 16;
-  const quality = r05(clamp(V * (cfg.key === 'hyrox' || cfg.key.startsWith('tri') ? 0.3 : 0.25), 3, qMax));
-  const recovery = roles.recovery && !walk ? supportRunKm(V, 0.12, { min: 3, max: 8 }) : 0;
-  // The long run follows its share of the weekly volume – also for experienced runners
-  // (whose higher volume then gives it room), capped by distance and time.
-  let long = Math.min(V * cfg.longShare, cfg.longCapKm);
-  if (info.taper === 'w2') long = Math.min(long, cfg.peakLongKm * 0.75);
-  if (info.taper === 'w1') long = Math.min(long, cfg.peakLongKm * 0.55);
-  const nExtra = roles.extra && !walk ? roles.extra : 0;
+  const budget = r05(clamp(V * (cfg.key === 'hyrox' || cfg.key.startsWith('tri') ? 0.3 : 0.25), 3, qMax));
+  // `qualityKm`: the length of the session actually built for this week (see qualityUnit).
+  const quality = qualityKm ?? budget;
+  let recovery = roles.recovery && !walk.recovery ? supportRunKm(V, 0.12, { min: 3, max: 8 }) : 0;
+  let long = longTarget(cfg, info);
+  const nExtra = roles.extra && !walk.extra ? roles.extra : 0;
+  const nEnd = roles.endurance || 0;
+  const nQ = roles.quality ? 1 : 0;
+  const nRec = recovery ? 1 : 0;
   const rest = V - long - quality - recovery;
   // The continuous run (Thu) remains the second-longest run; extra runs share the rest.
-  const endurance = roles.endurance
-    ? r05(clamp(nExtra ? Math.max(V * 0.2, rest * 0.4) : rest / roles.endurance, 3, ENDURANCE_MAX[cfg.level]))
+  let endurance = nEnd
+    ? r05(clamp(nExtra ? Math.max(V * 0.2, rest * 0.4) : rest / nEnd, 3, ENDURANCE_MAX[cfg.level]))
     : 0;
-  const extra = nExtra ? r05(clamp((rest - endurance * (roles.endurance || 0)) / nExtra, 3, 10)) : 0;
-  const others = quality + recovery + extra * nExtra + endurance * (roles.endurance || 0);
-  long = Math.min(long, (others * cfg.longShare) / (1 - cfg.longShare));
-  return { V, walk, long: r05(Math.max(3, long)), quality, recovery, extra, endurance };
+  let extra = nExtra ? r05(clamp((rest - endurance * nEnd) / nExtra, 3, 10)) : 0;
+  const others = () => quality * nQ + recovery * nRec + extra * nExtra + endurance * nEnd;
+  // The long run keeps its share of what is actually run, not only of the target.
+  const capLong = () => { long = Math.min(long, Math.floor(((others() * cfg.longShare) / (1 - cfg.longShare)) * 2) / 2); };
+  capLong();
+  long = Math.max(3, r05(long));
+  // The week's sessions add up to the week's target: the easy runs give or take in steps of 0.5 km,
+  // within their limits (3 km up to their caps). The quality session and the long run stay.
+  const upTo = (cap) => () => cap;
+  const flex = [
+    { n: nEnd, min: 3, max: upTo(ENDURANCE_MAX[cfg.level]), get: () => endurance, set: (v) => { endurance = v; } },
+    { n: nExtra, min: 3, max: upTo(10), get: () => extra, set: (v) => { extra = v; } },
+    { n: nRec, min: 3, max: upTo(8), get: () => recovery, set: (v) => { recovery = v; } },
+  ].filter((f) => f.n);
+  const total = () => others() + long * (roles.long ? 1 : 0);
+  for (let round = 0; round < 2; round++) {
+    for (let guard = 0; guard < 200; guard++) {
+      const S = total();
+      if (S > V + 0.75) {
+        const f = flex.filter((x) => x.get() > x.min).sort((a, b) => b.get() - a.get())[0];
+        if (!f) break;
+        f.set(f.get() - 0.5);
+      } else if (S < V - 0.25) {   // up to the target, not to just below it (else a week stalls there)
+        const f = flex.filter((x) => x.get() < x.max()).sort((a, b) => a.get() - b.get())[0];
+        if (!f) break;
+        f.set(f.get() + 0.5);
+      } else break;
+    }
+    const before = long;
+    capLong();
+    long = Math.max(3, long);
+    if (long === before) break;
+  }
+  const fitTotal = total();   // before the step below: whether the week must walk is decided on it
+  // A long run that misses the distance behind the race prediction by rounding only (e.g. 24.5 km
+  // for a marathon) gets there; the easy runs grow so that the long run keeps its share.
+  const need = PREDICTION_VOLUME[cfg.key];
+  if (need && roles.long && !info.deload && !info.taper && long < need.longKm
+      && longTarget(cfg, info) >= need.longKm - 0.5 && need.longKm <= cfg.longCapKm) {
+    const othersNeeded = (need.longKm * (1 - cfg.longShare)) / cfg.longShare;
+    for (let guard = 0; guard < 100 && others() < othersNeeded; guard++) {
+      const f = flex.filter((x) => x.get() < Math.min(x.max() + 1, ENDURANCE_MAX[cfg.level])).sort((a, b) => a.get() - b.get())[0];
+      if (!f) break;
+      f.set(f.get() + 0.5);
+    }
+    if (others() >= othersNeeded) long = need.longKm;
+  }
+  return { V, walk, long, quality, qualityBudget: budget, recovery, extra, endurance, fitTotal };
 }
 
 /* ===================== Sessions ===================== */
@@ -527,12 +599,17 @@ export function alternatingSegments(rounds = 6, fastSec = 60, floatSec = 60) {
   return Array.from({ length: rounds }, () => ({ workSec: fastSec, restSec: floatSec, label: t('plangen.segments.fast'), floatRest: true }));
 }
 
-/** Warm-up/cool-down distance by level. */
-function warmCool(cfg) {
+/** Warm-up/cool-down distance by level; `compact` (a small weekly volume): the shortest that still
+    prepares the body for the faster part. */
+function warmCool(cfg, compact = false) {
+  if (compact) return { warm: 1.5, cool: 1 };
   if (cfg.level === 'einsteiger' || cfg.key === 'hyrox') return { warm: 1.5, cool: 1.5 };
   if (cfg.level === 'leistung' && cfg.key === 'marathon') return { warm: 3, cool: 2 };
   return { warm: 2, cool: 2 };
 }
+
+/** The kilometres the week has for its quality session (before the session is shaped). */
+const qualityBudget = (alloc) => alloc.qualityBudget ?? alloc.quality;
 
 /** Repetitions by level, shortened so that the session fits the weekly budget. */
 function fitReps(base, min, kmOf, budget, cfg) {
@@ -544,10 +621,10 @@ function fitReps(base, min, kmOf, budget, cfg) {
 /** Time blocks (threshold): n × workMin with restMin jog recovery. */
 function timeBlocks(ctx, { base, min = 2, workMin, restMin, paceKey, type = 'tempo', title, desc }) {
   const { cfg, pz, alloc } = ctx;
-  const { warm, cool } = warmCool(cfg);
+  const { warm, cool } = warmCool(cfg, ctx.compact);
   const z = pz[paceKey];
   const kmOf = (n) => warm + cool + n * (kmForSec(workMin * 60, midPace(z)) + jogKm(restMin * 60));
-  const n = fitReps(base, min, kmOf, alloc.quality, cfg);
+  const n = fitReps(base, min, kmOf, qualityBudget(alloc), cfg);
   const segments = Array.from({ length: n }, (_, i) => ({ workSec: workMin * 60, restSec: restMin * 60, label: `${i + 1}/${n}` }));
   return mkUnit(ctx, type, {
     dist: r05(kmOf(n)), pace: pace(pz, paceKey), paceKey, title: title(n),
@@ -559,11 +636,11 @@ function timeBlocks(ctx, { base, min = 2, workMin, restMin, paceKey, type = 'tem
 /** Distance repetitions: n × workM with jog recovery (s). */
 function distanceReps(ctx, { base, min = 2, workM, restSec, paceKey, type = 'interval', title, desc }) {
   const { cfg, pz, alloc } = ctx;
-  const { warm, cool } = warmCool(cfg);
+  const { warm, cool } = warmCool(cfg, ctx.compact);
   const z = pz[paceKey];
   const workSec = Math.round((workM / 1000) * (midPace(z) || 300));
   const kmOf = (n) => warm + cool + n * (workM / 1000 + jogKm(restSec));
-  const n = fitReps(base, min, kmOf, alloc.quality, cfg);
+  const n = fitReps(base, min, kmOf, qualityBudget(alloc), cfg);
   const label = workM >= 1000 && workM % 1000 === 0 ? `${workM / 1000} km` : `${workM} m`;
   const segments = Array.from({ length: n }, (_, i) => ({ workM, workSec, restSec, label: `${label} · ${i + 1}/${n}` }));
   return mkUnit(ctx, type, {
@@ -573,8 +650,33 @@ function distanceReps(ctx, { base, min = 2, workM, restSec, paceKey, type = 'int
   });
 }
 
-/** Key session of the week – depends on phase, distance and level. */
+/** Largest share of the weekly volume the quality session may take; above it the week's other runs
+    would have to shrink below anything sensible (a build-phase tempo of 9.5 km in a 13.5-km week). */
+const QUALITY_MAX_SHARE = 0.4;
+
+/**
+ * Key session of the week, fitted to the week: it may exceed its budget a little, but never take
+ * more than QUALITY_MAX_SHARE of the week or be longer than the week's long run. Too long → the same
+ * session with the shortest warm-up and cool-down; still too long → an easy run with strides.
+ */
 function qualityUnit(ctx) {
+  const u = qualitySession(ctx);
+  if (!u || ctx.daysToRace <= 6 || u.type === 'easy') return u;
+  const { alloc, info, cfg } = ctx;
+  // Only from the week's target and budget, so that measuring the session first (buildWeekUnits)
+  // and building it gives the same session.
+  const room = Math.min(info.km * QUALITY_MAX_SHARE, longTarget(cfg, info) + 0.5);
+  // A very small week has no room for a structured session: an easy run with strides instead.
+  if (room < 4) return stridesUnit(ctx, Math.max(3, Math.floor(room * 2) / 2));
+  const limit = room;
+  if (u.targetDistanceKm <= limit) return u;
+  const compact = qualitySession({ ...ctx, compact: true });
+  if (compact && compact.targetDistanceKm <= limit) return compact;
+  return stridesUnit({ ...ctx, alloc: { ...alloc, quality: Math.min(qualityBudget(alloc), limit) } });
+}
+
+/** Key session of the week – depends on phase, distance and level. */
+function qualitySession(ctx) {
   const { week, cfg, pz, alloc, sport, info } = ctx;
   // In the taper weeks the taper session applies, even if the phase is still called "Peak".
   const phase = info.taper ? { key: 'taper' } : ctx.phase;
@@ -594,7 +696,7 @@ function qualityUnit(ctx) {
 
   if (phase.key === 'base') {
     return mkUnit(ctx, 'easy', {
-      dist: r05(clamp(alloc.quality, 4, 12)), pace: pace(pz, 'easy'), paceKey: 'easy', title: t('plangen.baseRun.title'),
+      dist: r05(clamp(Math.min(qualityBudget(alloc), longTarget(cfg, info) + 0.5), 3, 12)), pace: pace(pz, 'easy'), paceKey: 'easy', title: t('plangen.baseRun.title'),
       desc: t('plangen.baseRun.desc'),
     });
   }
@@ -608,8 +710,8 @@ function qualityUnit(ctx) {
       });
     }
     if (even) { // variety: fartlek with flowing changes instead of a threshold run
-      const { warm, cool } = warmCool(ctx.cfg);
-      const n = fitReps(8, 4, (k) => warm + cool + k * (kmForSec(60, midPace(pz.threshold)) + kmForSec(60, midPace(pz.easy) || 380)), alloc.quality, cfg);
+      const { warm, cool } = warmCool(ctx.cfg, ctx.compact);
+      const n = fitReps(8, 4, (k) => warm + cool + k * (kmForSec(60, midPace(pz.threshold)) + kmForSec(60, midPace(pz.easy) || 380)), qualityBudget(alloc), cfg);
       return mkUnit(ctx, 'tempo', {
         dist: r05(warm + cool + n * (kmForSec(60, midPace(pz.threshold)) + kmForSec(60, midPace(pz.easy) || 380))),
         pace: pace(pz, 'threshold'), paceKey: 'threshold', title: t('plangen.fartlek.title', { n }),
@@ -655,7 +757,7 @@ function qualityUnit(ctx) {
       if (even) { // pyramid: beginners 1-2-3-2-1, otherwise 1-2-3-4-3-2-1 min
         const peakSec = cfg.level === 'einsteiger' ? 180 : 240;
         const segments = pyramidSegments(peakSec, 60, 90);
-        const { warm, cool } = warmCool(cfg);
+        const { warm, cool } = warmCool(cfg, ctx.compact);
         const workSec = segments.reduce((a, s) => a + s.workSec, 0);
         const seq = segments.map((s) => s.workSec / 60).join('-');
         return mkUnit(ctx, 'interval', {
@@ -860,7 +962,8 @@ function nearRaceUnit(role, ctx) {
   const { pz, cfg } = ctx;
   const isRun = RUN_ROLES.includes(role);
   const short = cfg.level === 'einsteiger' ? 3 : cfg.level === 'leistung' ? 5 : 4;
-  if (role === 'mobility') return undefined;
+  // Mobility stays in the race week, but not on the two days before the race (shakeout, rest day).
+  if (role === 'mobility') return dtr <= 2 ? null : undefined;
   if (dtr === 1) {
     if (isRun) return mkUnit(ctx, 'recovery', { dist: 3, pace: pace(pz, 'recovery'), paceKey: 'recovery', title: t('plangen.near.shakeoutTitle'), desc: t('plangen.near.shakeoutDesc') });
     if (role === 'bike' || role === 'long_bike') return mkUnit(ctx, 'cross_bike', { dur: 20, hrZone: 1, title: t('plangen.near.bikeCheckTitle'), desc: t('plangen.near.bikeCheckDesc') });
@@ -909,7 +1012,7 @@ function resolveRole(role, ctx) {
     if (role === 'long') return runWalkUnit(ctx, 'long');
     if (role === 'recovery' || role === 'extra') return walkUnit(ctx);
   }
-  if ((role === 'recovery' || role === 'extra') && alloc.walk) return walkUnit(ctx);
+  if ((role === 'recovery' && alloc.walk.recovery) || (role === 'extra' && alloc.walk.extra)) return walkUnit(ctx);
 
   switch (role) {
     case 'cross_football': // legacy plans with football in the template
@@ -1016,12 +1119,13 @@ function isHardCommit(c) {
   return type === 'match' || (type === 'cross_football' && c.intensity !== 'leicht');
 }
 
-/** Substitute for a quality session that would otherwise sit directly next to a hard commitment. */
-function stridesUnit(ctx) {
+/** Substitute for a quality session that would otherwise sit directly next to a hard commitment,
+    or that does not fit a small week (`dist`: its length then). */
+function stridesUnit(ctx, dist = null) {
   const raceWeek = ctx.daysToRace <= 6;
   const short = ctx.cfg.level === 'einsteiger' ? 3 : ctx.cfg.level === 'leistung' ? 5 : 4;
   const unit = mkUnit(ctx, 'easy', {
-    dist: raceWeek ? short : r05(clamp(ctx.alloc.quality || ctx.alloc.endurance || 6, 4, 12)), pace: pace(ctx.pz, 'easy'), paceKey: 'easy',
+    dist: raceWeek ? short : dist ?? r05(clamp(ctx.alloc.quality || ctx.alloc.endurance || 6, 4, 12)), pace: pace(ctx.pz, 'easy'), paceKey: 'easy',
     title: t('plangen.strides.title'),
     desc: raceWeek
       ? t('plangen.strides.raceWeekDesc')
@@ -1063,17 +1167,43 @@ export function coveredFixed(plans = [], excludePlanId = null) {
     selective weekly recalculation. `opts.coveredFixed`: fixed commitments that another
     plan already enters – they shape the week but do not appear twice. */
 export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
+  // Kilometres actually planned per week, shared by the weeks of one call (see lastFullKm).
+  if (!opts._weekKm) opts = { ...opts, _weekKm: new Map() };
   const pz = plan.paces || (profile && profile.paceZones) || {};
   const sport = (event && event.sport) || plan.sport || 'run';
   const cfg = volumeConfig(plan, event || {}, pz);
-  const info = weekVolumes(plan, cfg)[week] || { km: cfg.start, deload: false, taper: null };
+  const targets = weekVolumes(plan, cfg);
+  const target = targets[week] || { km: cfg.start, deload: false, taper: null };
+  // The rules hold for what the person sees, not only for the targets: a week rises at most by the
+  // level's step over the last full week as actually planned, a deload week stays below it and the
+  // taper never above it (a week with a short quality session, or with walks instead of short runs,
+  // may stay under its target – the next one must not jump from there).
+  let info = target;
+  const prev = target.taper === 'race' ? null : lastFullKm(plan, event, profile, week, opts, cfg, targets);
+  if (prev) {
+    const cap = target.deload ? prev * DELOAD : target.taper ? prev : prev * (1 + cfg.step);
+    info = { ...target, km: Math.min(target.km, r05(cap)) };
+  }
   const tpl = plan.weekTemplate || DEFAULT_WEEK_TEMPLATE;
   const phase = phaseForWeek(plan, week);
-  const alloc = allocate(cfg, info, countRoles(tpl), phase.key);
+  const roles = countRoles(tpl);
   const weekStart = addDays(plan.startDate, (week - 1) * 7);
   const weekEnd = addDays(weekStart, 6);
   const raceDate = event ? event.date : null;
   const covered = opts.coveredFixed || new Set();
+  let alloc = allocate(cfg, info, roles, phase.key);
+  // The quality session is shaped first; the week's other runs are fitted around its real length
+  // (otherwise its fixed warm-up and cool-down push a small week far above its target).
+  const qRow = tpl.find((row) => row.units.some((x) => x.role === 'quality'));
+  if (qRow) {
+    const qDate = dateOfDow(weekStart, qRow.dow);
+    const dq = raceDate ? diffDays(qDate, raceDate) : Infinity;
+    const runWalkWeek = week <= cfg.runWalkWeeks && week < plan.weeks - 1;
+    if (dq > 6 && !runWalkWeek) {
+      const q = qualityUnit({ plan, event, date: qDate, week, phase, pz, sport, cfg, info, alloc, dow: qRow.dow, daysToRace: dq });
+      if (q && q.targetDistanceKm) alloc = allocate(cfg, info, roles, phase.key, q.targetDistanceKm);
+    }
+  }
 
   // Collect the fixed commitments of this week (race day always takes precedence).
   const commitByDate = new Map();
@@ -1086,37 +1216,24 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   // The template stays keyed by ISO weekday; each one lands inside this plan week, whichever day
   // the plan began on (Monday, the person's Sunday/Saturday, or mid-week for a near race).
   const dateOf = (dow) => dateOfDow(weekStart, dow);
-  const usedDates = new Set([...tpl.map((row) => dateOf(row.dow)), ...commitByDate.keys()]);
   const dtr = (date) => (raceDate ? diffDays(date, raceDate) : Infinity);
+  const inPlanWeek = (d) => d >= weekStart && d <= weekEnd && d >= plan.startDate && (!raceDate || d < raceDate);
 
-  /** Free day of this week for a displaced session – as close as possible to the
-      original day, never on race day or in the two days before it, never directly
-      next to a fixed commitment (otherwise the next double load arises). */
-  const findFreeDay = (wishDate) => {
-    const cands = [];
-    for (let d = 0; d < 7; d++) {
-      const date = addDays(weekStart, d);
-      if (usedDates.has(date) || date < plan.startDate) continue;
-      if (raceDate && (date >= raceDate || dtr(date) <= 2)) continue;
-      const neighborCommit = commitByDate.has(addDays(date, -1)) || commitByDate.has(addDays(date, 1));
-      cands.push({ date, dist: Math.abs(diffDays(wishDate, date)), neighborCommit });
-    }
-    if (!cands.length) return null;
-    cands.sort((a, b) => (a.neighborCommit - b.neighborCommit) || (a.dist - b.dist));
-    return cands[0].date;
-  };
-
-  // Roles that EVADE on a collision instead of being dropped: the stimuli that
-  // carry the goal. Easy work (recovery/mobility/extra run) is deliberately dropped on
-  // a commitment day – the fixed commitment is the load on that day.
-  const RELOCATABLE = new Set(['quality', 'long', 'endurance', 'strength', 'swim', 'bike', 'long_bike', 'functional']);
+  // Days taken by a fixed commitment: this plan's own and those another plan enters for the person
+  // (they are not entered twice, but nothing else of this plan goes on that day either).
+  const coveredDates = new Set();
+  for (const key of covered) {
+    const d = String(key).split('|')[1];
+    if (d >= weekStart && d <= weekEnd && (!raceDate || d < raceDate)) coveredDates.add(d);
+  }
+  const blocked = (d) => commitByDate.has(d) || coveredDates.has(d);
 
   // Hard fixed commitments (football not "light", matches) – including those that another
-  // plan enters. Quality session and long run never sit directly next to them: otherwise
-  // the plan itself would build hard days in a row, the weekly check would criticise its own
-  // structure, and the coach would suggest every week to drop exactly the key session.
+  // plan enters, and the day before and after the week (match on Sunday → no tempo on Monday).
+  // Quality session and long run never sit on or directly next to them: otherwise the plan itself
+  // would build hard days in a row, the weekly check would criticise its own structure, and the coach
+  // would suggest every week to drop exactly the key session.
   const hardCommit = new Set();
-  // Including the day before and the day after the week (match on Sunday → no tempo on Monday).
   for (const { date, commitment } of commitmentDates(planCommitments(plan), addDays(weekStart, -1), addDays(weekEnd, 1))) {
     if ((!raceDate || date < raceDate) && isHardCommit(commitment)) hardCommit.add(date);
   }
@@ -1124,65 +1241,141 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
     const [type, d] = String(key).split('|');
     if ((type === 'cross_football' || type === 'match') && d >= addDays(weekStart, -1) && d <= addDays(weekEnd, 1)) hardCommit.add(d);
   }
-  const nextToHard = (date) => hardCommit.has(addDays(date, -1)) || hardCommit.has(addDays(date, 1));
-  const keyDates = new Set(tpl.filter((row) => row.units.some((x) => KEY_ROLES.has(x.role))).map((row) => dateOf(row.dow)));
-  /** Calm day for a key session: free, not next to a hard commitment and
-      not next to another key session, never in the two days before the race. */
-  const findCalmDay = (wishDate) => {
-    const cands = [];
-    for (let d = 0; d < 7; d++) {
-      const date = addDays(weekStart, d);
-      if (usedDates.has(date) || date < plan.startDate || hardCommit.has(date)) continue;
-      if (raceDate && (date >= raceDate || dtr(date) <= 2)) continue;
-      if (nextToHard(date)) continue;
-      if ([...keyDates].some((k) => k !== wishDate && Math.abs(diffDays(k, date)) === 1)) continue;
-      cands.push({ date, dist: Math.abs(diffDays(wishDate, date)) });
+  const calmDay = (d) => !hardCommit.has(d) && !hardCommit.has(addDays(d, -1)) && !hardCommit.has(addDays(d, 1));
+
+  // Roles that EVADE on a collision instead of being dropped: the stimuli that
+  // carry the goal. Easy work (recovery/mobility/extra run) is deliberately dropped on
+  // a commitment day – the fixed commitment is the load on that day.
+  const RELOCATABLE = new Set(['quality', 'long', 'endurance', 'strength', 'swim', 'bike', 'long_bike', 'functional']);
+  // Days whose sessions may trade places with a key session: easy work only.
+  const SWAPPABLE = new Set(['recovery', 'mobility', 'extra', 'endurance']);
+
+  const rows = tpl.map((row) => ({ dow: row.dow, date: dateOf(row.dow), units: row.units })).filter((r) => inPlanWeek(r.date));
+  const rowAt = (d) => rows.find((r) => r.date === d) || null;
+  const ctxAt = (date, dow) => ({ plan, event, date, week, phase, pz, sport, cfg, info, alloc, dow, daysToRace: dtr(date) });
+  // One placement per template session: where it should be, where it goes, whether it is eased.
+  const place = rows.flatMap((r) => r.units.map((u) => ({ role: u.role, wish: r.date, date: r.date, dow: r.dow, downgrade: false, drop: false })));
+
+  // Key sessions that must keep their distance: demanding ones (a base-phase "quality" run is easy),
+  // before the last two days of the race build-up – and every key session whose day a commitment
+  // takes: on its own day it may be an easy run of the race week, on an earlier day it is a real long
+  // run or quality session again.
+  const demanding = (p) => KEY_ROLES.has(p.role) && dtr(p.wish) > 2
+    && (blocked(p.wish) || isHard(resolveRole(p.role, ctxAt(p.wish, p.dow)) || {}));
+  const keys = place.filter(demanding).sort((a, b) => (a.role === 'long' ? 0 : 1) - (b.role === 'long' ? 0 : 1));
+  // Key days of the neighbouring weeks, as their template places them (a long run on Sunday must not be
+  // followed by a tempo on Monday of the next week).
+  const outsideKeys = new Set();
+  for (const r of tpl) {
+    if (!r.units.some((x) => KEY_ROLES.has(x.role))) continue;
+    for (const off of [-7, 7]) {
+      const d = addDays(dateOf(r.dow), off);
+      if (d >= plan.startDate && dtr(d) > 2) outsideKeys.add(d);
     }
-    cands.sort((a, b) => a.dist - b.dist);
-    return cands.length ? cands[0].date : null;
+  }
+  const keyDates = new Set();
+  const nextToKey = (d) => [...keyDates, ...outsideKeys].some((k) => Math.abs(diffDays(k, d)) === 1);
+  const swapRow = new Map();   // day of a template row → day its sessions move to
+  /** Can key placement `k` go on day `d`? Free or its own day or a day of easy work only; calm; apart from the other key session. */
+  const fits = (k, d) => inPlanWeek(d) && dtr(d) > 2 && !blocked(d) && calmDay(d) && !keyDates.has(d) && !nextToKey(d)
+    && !swapRow.has(d) && (d === k.wish || !rowAt(d) || rowAt(d).units.every((x) => SWAPPABLE.has(x.role)));
+  for (const k of keys) {
+    if (fits(k, k.wish)) { keyDates.add(k.wish); continue; }
+    const cands = [];
+    for (let i = 0; i < 7; i++) {
+      const d = addDays(weekStart, i);
+      if (d !== k.wish && fits(k, d)) cands.push({ d, swap: rowAt(d) ? 1 : 0, dist: Math.abs(diffDays(k.wish, d)) });
+    }
+    cands.sort((a, b) => (a.dist - b.dist) || (a.swap - b.swap) || b.d.localeCompare(a.d));
+    if (cands.length) {
+      const d = cands[0].d;
+      k.date = d;
+      keyDates.add(d);
+      // The easy sessions of that day take the key session's day – if it is free for them.
+      if (rowAt(d)) swapRow.set(d, k.wish);
+      continue;
+    }
+    if (k.role === 'quality') {
+      // No calm day free: in this week the commitment provides the intensity – the run session stays
+      // easy with strides (on its own day, or relocated like easy work if a commitment takes that day).
+      k.downgrade = true;
+      continue;
+    }
+    // The long run without a calm day: the least affected day – never on a hard commitment or the day
+    // after it, rather the day before one than next to the quality session.
+    let best = null;
+    for (let i = 0; i < 7; i++) {
+      const d = addDays(weekStart, i);
+      if (!inPlanWeek(d) || dtr(d) <= 2 || blocked(d) || hardCommit.has(d) || hardCommit.has(addDays(d, -1)) || keyDates.has(d) || swapRow.has(d)) continue;
+      if (d !== k.wish && rowAt(d) && !rowAt(d).units.every((x) => SWAPPABLE.has(x.role))) continue;
+      const score = (hardCommit.has(addDays(d, 1)) ? 1 : 0) + (nextToKey(d) ? 2 : 0) + Math.abs(diffDays(k.wish, d)) / 10;
+      if (!best || score < best.score) best = { d, score };
+    }
+    if (!best) { k.drop = true; continue; }
+    k.date = best.d;
+    keyDates.add(best.d);
+    if (best.d !== k.wish && rowAt(best.d)) swapRow.set(best.d, k.wish);
+  }
+  // Sessions of a swapped day move to the key session's day.
+  for (const p of place) {
+    if (!keys.includes(p) && swapRow.has(p.wish)) p.date = swapRow.get(p.wish);
+  }
+
+  // A session on a day a commitment takes: the stimuli that carry the goal move to a free day,
+  // easy work is dropped. A free day is as close as possible to the original day, never on race day
+  // or in the two days before it, not next to a commitment if it can be helped, and for demanding
+  // work not next to a key session.
+  const usedDates = new Set([...place.filter((p) => !p.drop).map((p) => p.date), ...commitByDate.keys(), ...coveredDates]);
+  const findFreeDay = (wishDate, hard) => {
+    const cands = [];
+    for (let i = 0; i < 7; i++) {
+      const date = addDays(weekStart, i);
+      if (usedDates.has(date) || !inPlanWeek(date) || dtr(date) <= 2) continue;
+      if (hard && (!calmDay(date) || nextToKey(date))) continue;
+      const neighborCommit = blocked(addDays(date, -1)) || blocked(addDays(date, 1));
+      cands.push({ date, dist: Math.abs(diffDays(wishDate, date)), neighborCommit });
+    }
+    if (!cands.length) return null;
+    cands.sort((a, b) => (a.neighborCommit - b.neighborCommit) || (a.dist - b.dist));
+    return cands[0].date;
   };
+  for (const p of place) {
+    if (p.drop || !blocked(p.date)) continue;
+    if (!RELOCATABLE.has(p.role)) { p.drop = true; continue; }
+    // A key role keeps its distance wherever it lands: at its own day it may have been an easy run of
+    // the race build-up, on an earlier day it is a real long run or quality session again.
+    let alt = KEY_ROLES.has(p.role) && !p.downgrade ? findFreeDay(p.date, true) : null;
+    if (alt) keyDates.add(alt);
+    else {
+      if (p.role === 'quality') p.downgrade = true;
+      alt = findFreeDay(p.date, false);
+    }
+    if (!alt) { p.drop = true; continue; }
+    p.date = alt;
+    usedDates.add(alt);
+  }
 
   const out = [];
-  for (const row of tpl) {
-    const date = dateOf(row.dow);
-    if (date < plan.startDate || date > weekEnd) continue;
-    if (raceDate && date >= raceDate) continue;
-    const blocked = commitByDate.has(date);
-    for (const u of row.units) {
-      let useDate = date;
-      let downgrade = false;
-      if (blocked) {
-        if (!RELOCATABLE.has(u.role)) continue;
-        const alt = findFreeDay(date);
-        if (!alt) continue;
-        useDate = alt;
-        usedDates.add(alt);
-      } else if (KEY_ROLES.has(u.role) && nextToHard(date) && dtr(date) > 2
-        && isHard(resolveRole(u.role, { plan, event, date, week, phase, pz, sport, cfg, info, alloc, dow: row.dow, daysToRace: dtr(date) }) || {})) {
-        const alt = findCalmDay(date);
-        if (alt) {
-          useDate = alt;
-          usedDates.add(alt);
-          keyDates.delete(date);
-          keyDates.add(alt);
-        } else if (u.role === 'quality') {
-          // No calm day free: in this week the commitment provides the intensity –
-          // the run session stays easy with strides.
-          downgrade = true;
-          keyDates.delete(date);
-        }
-      }
-      const ctx = { plan, event, date: useDate, week, phase, pz, sport, cfg, info, alloc, dow: row.dow, daysToRace: dtr(useDate) };
-      const unit = downgrade ? stridesUnit(ctx) : resolveRole(u.role, ctx);
-      if (unit) {
-        if (useDate !== date) unit.relocatedFrom = date;
-        out.push(unit);
-      }
+  for (const p of place) {
+    if (p.drop) continue;
+    const ctx = ctxAt(p.date, p.dow);
+    const unit = p.downgrade ? stridesUnit(ctx) : resolveRole(p.role, ctx);
+    if (unit) {
+      if (p.date !== p.wish) unit.relocatedFrom = p.wish;
+      out.push(unit);
     }
   }
   // The race session falls on race day – on any weekday.
   if (event && raceDate >= weekStart && raceDate <= weekEnd && raceDate >= plan.startDate) {
     out.push(makeRaceUnit(plan, event, raceDate, week, phase, pz));
+  }
+  // The day before the race is always a short shakeout – also when the weekly template has no run on
+  // that day (a Saturday race: Friday carries no session), unless a fixed commitment takes the day.
+  const eve = raceDate ? addDays(raceDate, -1) : null;
+  if (eve && eve >= weekStart && eve <= weekEnd && eve >= plan.startDate && !commitByDate.has(eve)
+      && !out.some((u) => u.date === eve)) {
+    const shake = nearRaceUnit('recovery', { plan, event, date: eve, week, phase, pz, sport, cfg, info, alloc, dow: isoDow(eve), daysToRace: 1 });
+    if (shake) out.push(shake);
   }
   // Insert fixed commitments as sessions – the plan was built around them.
   for (const [date, cs] of commitByDate) {
@@ -1193,12 +1386,35 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
     }
   }
   out.sort((a, b) => a.date.localeCompare(b.date));
+  opts._weekKm.set(week, plannedRunKm(out));
   return out;
+}
+
+const RUN_UNIT_TYPES = new Set(['easy', 'long', 'tempo', 'interval', 'recovery', 'run']);
+/** Run kilometres of a week's generated sessions: no fixed commitments, no race, no run-walk
+    (whose distance includes the walking). */
+function plannedRunKm(units) {
+  return units.reduce((a, u) => (RUN_UNIT_TYPES.has(u.type) && !u.fixed
+    && !(u.intervals && (u.intervals.segments || []).some((s) => s.walk)) ? a + (Number(u.targetDistanceKm) || 0) : a), 0);
+}
+
+/** Planned run kilometres of the last full week before `week` (no deload, no taper), or null at the
+    start or right after the run-walk weeks. Builds that week if this call has not yet (opts._weekKm). */
+function lastFullKm(plan, event, profile, week, opts, cfg, targets) {
+  for (let w = week - 1; w >= 1; w--) {
+    const tw = targets[w] || {};
+    if (tw.deload || tw.taper) continue;
+    if (w <= cfg.runWalkWeeks) return null;
+    if (!opts._weekKm.has(w)) buildWeekUnits(plan, event, profile, w, opts);
+    return opts._weekKm.get(w) || null;
+  }
+  return null;
 }
 
 export function generatePlanUnits(plan, event, profile = {}, opts = {}) {
   const units = [];
-  for (let w = 1; w <= plan.weeks; w++) units.push(...buildWeekUnits(plan, event, profile, w, opts));
+  const o = { ...opts, _weekKm: new Map() };
+  for (let w = 1; w <= plan.weeks; w++) units.push(...buildWeekUnits(plan, event, profile, w, o));
   units.sort((a, b) => a.date.localeCompare(b.date));
   return units;
 }
