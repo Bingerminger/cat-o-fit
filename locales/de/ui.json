@@ -3605,6 +3605,10 @@
     "comboLabel": "Combo",
     "stageOffMotion": "Gezeichnete Figur: Am Gerät ist „Bewegung reduzieren“ eingeschaltet",
     "stageOffDevice": "Gezeichnete Figur: Dieses Gerät kann die 3D-Bühne nicht zeigen",
+    "pace": "Tempo",
+    "paceCalm": "Ruhig",
+    "paceBrisk": "Flott",
+    "paceFast": "Schnell",
     "exercises": {
       "one": "{count} Übung",
       "other": "{count} Übungen"

@@ -34,6 +34,8 @@ import { t, tp } from './i18n.js';
 const SVGNS = 'http://www.w3.org/2000/svg';
 /** The 3D stage is for devices that can draw it and people who have not asked for less motion. */
 const wantsStage = () => typeof window !== 'undefined' && typeof window.matchMedia === 'function' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+/** How much faster than written the exercises run. */
+const PACES = { calm: 1, brisk: 1.4, fast: 1.8 };
 const mmss = (s) => { const v = Math.max(0, Math.ceil(s)); return `${Math.floor(v / 60)}:${String(v % 60).padStart(2, '0')}`; };
 
 /** "12 min · 5 exercises · 3 rounds" – the rounds only when there is more than one. */
@@ -105,6 +107,8 @@ export function openShow(program, { onFinish = null } = {}) {
   let voiceOn = prefs.showVoice !== false && canSpeak();
   let rounds = program.rounds;
   let rest = program.rest;
+  // Workouts start brisk, like a video to follow along; a plan session keeps the calm tempo its exercises are written in.
+  let pace = PACES[prefs.showPace] ? prefs.showPace : (program.format === 'interval' ? 'brisk' : 'calm');
 
   const root = el('div', { class: 'show', role: 'dialog', 'aria-modal': 'true', 'aria-label': localizeUnits(program.title) });
   document.body.appendChild(root);
@@ -133,7 +137,7 @@ export function openShow(program, { onFinish = null } = {}) {
   /* ------------------------------ Overview ------------------------------ */
   function overview() {
     root.innerHTML = '';
-    const current = () => ({ ...program, rounds, rest });
+    const current = () => ({ ...program, rounds, rest, pace: PACES[pace] });
     const total = el('span', { class: 'show-ov__total' });
     const paint = () => {
       const s = buildShow(current());
@@ -154,6 +158,11 @@ export function openShow(program, { onFinish = null } = {}) {
     const music = segmented([{ value: 'app', label: t('workoutShow.music') }, { value: 'own', label: t('workoutShow.ownMusic') }, { value: 'off', label: t('workoutShow.musicOff') }], musicMode,
       (v) => { musicMode = v; store.setSetting('showMusic', v); hint.textContent = musicHint(); }, { label: t('workoutShow.music') });
     const hint = el('p', { class: 'show-ov__hint', text: musicHint() });
+    const tempo = el('div', { class: 'show-ov__stepper' }, [
+      el('span', { class: 'show-ov__label', text: t('workoutShow.pace') }),
+      segmented([{ value: 'calm', label: t('workoutShow.paceCalm') }, { value: 'brisk', label: t('workoutShow.paceBrisk') }, { value: 'fast', label: t('workoutShow.paceFast') }], pace,
+        (v) => { pace = v; store.setSetting('showPace', v); paint(); }, { label: t('workoutShow.pace') }),
+    ]);
     const voice = el('button', { class: `show-ov__toggle${voiceOn ? ' is-on' : ''}`, type: 'button', 'aria-pressed': String(voiceOn), disabled: !canSpeak(), onclick: () => {
       voiceOn = !voiceOn; store.setSetting('showVoice', voiceOn);
       voice.classList.toggle('is-on', voiceOn); voice.setAttribute('aria-pressed', String(voiceOn));
@@ -178,7 +187,7 @@ export function openShow(program, { onFinish = null } = {}) {
             stepper(t('workoutShow.roundsLabel'), () => rounds, (v) => { rounds = v; }, 1, 1, 6),
             stepper(t('motion.rest'), () => rest, (v) => { rest = v; }, 5, 5, 90, ' s'),
           ]),
-          music, hint, voice, go,
+          tempo, music, hint, voice, go,
         ]),
       ]),
     ]));

@@ -21,9 +21,9 @@
 
 import { BODY, cycleOf, keyPose, solvePose } from './motion-rig.js';
 import { MOTIONS } from './exercise-motions.js';
-import { vec as V, bodyAt, blendBodies, aboveFloor, bodyPoints, solveLimb3, lift } from './body3d.js';
-import { clipAt } from './show-program.js';
-import { createMesh, buildTrainer, buildCat, plaitAnchor } from './stage-mesh.js';
+import { vec as V, bodyFlow, createFollower, blendBodies, aboveFloor, bodyPoints, solveLimb3, lift } from './body3d.js';
+import { clipAt, showStateAt } from './show-program.js';
+import { createMesh, buildTrainer, buildCat, plaitAnchor, STRIDE } from './stage-mesh.js';
 import { createStage, projectPoint } from './stage-gl.js';
 import { DEFAULT_WORLD } from './stage-worlds.js';
 
@@ -36,8 +36,8 @@ const TAU = Math.PI * 2;
 const MAT = [0, 0, 104, 38];
 /** The space of the celebration at the end (a body standing, arms up, and the cat). */
 const CHEER_SPACE = { c: [14, 70, 10], h: [62, 82, 30], view: 'front' };
-/** Where the cat sits (next to the front end of the mat). */
-const CAT_AT = [96, 0, 62];
+/** Where the cat sits: at the head end of the mat, on its far side – it never sits between the camera and the trainer. */
+const CAT_AT = [102, 0, -48];
 
 /* ------------------------------ Shots ------------------------------ */
 
@@ -46,6 +46,8 @@ const SHOTS = {
   side: [[22, 7, 1.0, 9], [-30, 11, 1.06, -9], [50, 6, 0.96, 7], [-10, 19, 1.14, 11], [36, 26, 1.12, -10]],
   front: [[10, 6, 1.0, -11], [-27, 10, 1.02, 9], [30, 13, 1.06, -9], [3, 3, 0.93, 7]],
 };
+/** How far ahead of the clock the body aims (seconds) – about what its weight makes it run behind. */
+const LEAD = 0.07;
 /** Bars per camera angle during the work. */
 const SHOT_BARS = 4;
 
@@ -86,11 +88,12 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
   const cat = createMesh(3000, 15000);
   const bits = createMesh(1600, 2400);
   bits.flat = true; bits.noShadow = true;
-  let dpr = Math.min(2, (typeof window !== 'undefined' && window.devicePixelRatio) || 1);
+  let dpr = Math.min(1.6, (typeof window !== 'undefined' && window.devicePixelRatio) || 1);
   let slow = 0; let lastWall = null; let wallT = 0;
   let lastT = null;
   const plait = []; let plaitPrev = [];
   let confetti = []; let lastIndex = -1; let doneAt = null;
+  const follower = createFollower();
   const ends = new Map(); const starts = new Map(); const bounds = new Map();
   // Between standing and the floor she goes through a crouch with the hands down – nobody tips over like a board.
   const crouch = MOTIONS.burpee && MOTIONS.burpee.keys.squat ? lift(solvePose(keyPose(MOTIONS.burpee, 'squat'), 'side'), MOTIONS.burpee) : null;
@@ -114,7 +117,7 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
   function segBody(k, local) {
     const seg = show.segs[k];
     const a = clipAt(seg.clips, local);
-    return bodyAt(motionOf(seg), a.t, a.list, { once: !a.clip.loop });
+    return bodyFlow(motionOf(seg), a.t, a.list, { once: !a.clip.loop });
   }
   /** Where section k begins. */
   function startOf(k) {
@@ -163,7 +166,7 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
     const total = list.reduce((s, p) => s + p.dur, 0) || 1;
     const lo = [Infinity, Infinity, Infinity]; const hi = [-Infinity, -Infinity, -Infinity];
     for (let i = 0; i < 10; i++) {
-      for (const p of bodyPoints(bodyAt(m, (i / 10) * total, list))) for (let a = 0; a < 3; a++) { lo[a] = Math.min(lo[a], p[a]); hi[a] = Math.max(hi[a], p[a]); }
+      for (const p of bodyPoints(bodyFlow(m, (i / 10) * total, list))) for (let a = 0; a < 3; a++) { lo[a] = Math.min(lo[a], p[a]); hi[a] = Math.max(hi[a], p[a]); }
     }
     hi[1] += BODY.head + 3; lo[1] = 0;
     const b = { c: [(lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2, (lo[2] + hi[2]) / 2], h: [(hi[0] - lo[0]) / 2 + 9, (hi[1] - lo[1]) / 2 + 6, (hi[2] - lo[2]) / 2 + 9], view: m.view === 'front' ? 'front' : 'side' };
@@ -191,11 +194,13 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
   /* ---- What makes her a person ---- */
 
   /** Moves the upper body (and what hangs on it) sideways – weight from one leg to the other. */
-  function sway(body, time) {
+  function sway(body, time, beats) {
     const upright = body.chest[1] - body.pelvis[1] > BODY.torso * 0.8 && body.pelvis[1] > 45;
     if (!upright) return body;
     const s = Math.sin(time * 0.8) * 1.5; const s2 = Math.sin(time * 0.8 - 0.6) * 0.9;
-    const dp = V.mul(body.lat, s); const dc = V.mul(body.lat, s2);
+    // Waiting, she keeps the beat in her knees.
+    const dip = -1.5 * (0.5 - 0.5 * Math.cos(beats * TAU)) ** 2;
+    const dp = V.add(V.mul(body.lat, s), [0, dip, 0]); const dc = V.add(V.mul(body.lat, s2), [0, dip, 0]);
     const add = (p, d) => V.add(p, d);
     const out = { ...body, pelvis: add(body.pelvis, dp), spine: add(body.spine, V.lerp(dp, dc, 0.5)), chest: add(body.chest, dc), head: add(body.head, V.mul(dc, 0.7)), legs: {}, arms: {} };
     for (const side of ['r', 'l']) {
@@ -274,12 +279,12 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
       const ax = [camR[0] * cs + camU[0] * sn, camR[1] * cs + camU[1] * sn, camR[2] * cs + camU[2] * sn];
       const ay = V.mul([camU[0] * cs - camR[0] * sn, camU[1] * cs - camR[1] * sn, camU[2] * cs - camR[2] * sn], Math.cos(q.spin * 1.7));
       const fade = clamp((q.life - q.age) * 2, 0, 1);
-      const o = bits.nv * 10; const v = bits.v;
+      const o = bits.nv * STRIDE; const v = bits.v;
       const corners = [[-s, -s * 0.6], [s, -s * 0.6], [s, s * 0.6], [-s, s * 0.6]];
       for (let k = 0; k < 4; k++) {
-        const [cx, cy] = corners[k]; const j = o + k * 10;
+        const [cx, cy] = corners[k]; const j = o + k * STRIDE;
         v[j] = q.p[0] + ax[0] * cx + ay[0] * cy * fade; v[j + 1] = q.p[1] + ax[1] * cx + ay[1] * cy * fade; v[j + 2] = q.p[2] + ax[2] * cx + ay[2] * cy * fade;
-        v[j + 3] = 0; v[j + 4] = 1; v[j + 5] = 0; v[j + 6] = q.c[0]; v[j + 7] = q.c[1]; v[j + 8] = q.c[2]; v[j + 9] = 0;
+        v[j + 3] = 0; v[j + 4] = 1; v[j + 5] = 0; v[j + 6] = q.c[0]; v[j + 7] = q.c[1]; v[j + 8] = q.c[2]; v[j + 9] = 0; v[j + 10] = 0;
       }
       const b = bits.nv; bits.nv += 4;
       bits.i[bits.ni++] = b; bits.i[bits.ni++] = b + 1; bits.i[bits.ni++] = b + 2; bits.i[bits.ni++] = b; bits.i[bits.ni++] = b + 2; bits.i[bits.ni++] = b + 3;
@@ -294,6 +299,8 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
     const wdt = clamp(raw, 0, 0.1);
     lastWall = wall; wallT += wdt;
     const jumped = lastT == null || Math.abs(T - lastT) > 0.5;
+    // The body lives on the time of the session; while that stands still (pause), on the clock on the wall.
+    const moved = lastT == null ? 0 : T - lastT;
     lastT = T;
     const W = canvas.clientWidth || canvas.width; const H = canvas.clientHeight || canvas.height;
     stage.resize(W, H, dpr);
@@ -310,11 +317,19 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
       if (doneAt == null) doneAt = wallT;
       const jj = MOTIONS.jumping_jack || motionOf(seg);
       const list = cycleOf(jj);
-      const cheer = bodyAt(jj, (wallT - doneAt) * 1.1, list);
+      const cheer = bodyFlow(jj, (wallT - doneAt) * 1.1, list);
       body = blendBodies(endOf(show.segs.length - 1), cheer, smooth((wallT - doneAt) / 0.9));
-    } else { doneAt = null; body = bodyOf(st); }
+    } else {
+      doneAt = null;
+      // The body with weight runs a moment behind what it follows: aim that moment ahead, so it stays on the beat.
+      const ahead = showStateAt(show, T + LEAD);
+      body = bodyOf(ahead.done ? st : ahead);
+    }
     const waiting = !done && st.anim && st.anim.clip && st.anim.clip.speed === 0;
-    if (waiting) body = sway(body, wallT);
+    if (waiting) body = sway(body, wallT, local / beat);
+    if (jumped) follower.reset();
+    const bodyDt = !jumped && moved > 1e-6 ? moved : wdt;
+    body = follower.step(body, bodyDt);
 
     // Camera.
     const camSeg = done ? { ...seg, kind: 'rest' } : seg;
@@ -339,7 +354,7 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
     }
     const m = motionOf(seg);
     trainer.reset();
-    buildTrainer(trainer, body, look, new Set(done ? [] : m.focus || []), swingPlait(body, wdt, jumped && lastIndex < 0), fx);
+    buildTrainer(trainer, body, look, new Set(done ? [] : m.focus || []), swingPlait(body, bodyDt, jumped && lastIndex < 0), fx);
 
     // Confetti when an exercise is done, and a lot of it at the end.
     if (!jumped && lastIndex >= 0 && st.index !== lastIndex && show.segs[lastIndex].kind === 'work') burst([body.pelvis[0], 70, body.pelvis[2]], 70);
@@ -389,7 +404,7 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
     }
     // A device that cannot keep up gets a coarser picture rather than a jerky one.
     if (raw > 0.03 && raw < 0.5) slow += 1; else slow = Math.max(0, slow - 0.25);
-    if (slow > 45 && dpr > 1) { dpr = Math.max(1, dpr - 0.25); slow = 0; }
+    if (slow > 18 && dpr > 0.85) { dpr = Math.max(0.85, dpr - 0.2); slow = 0; }
     return drawn ? { head: projectPoint(drawn.vp, body.head), ms: (typeof performance !== 'undefined' ? performance.now() : 0) - t0, dpr } : null;
   }
   let lastAxes = { r: [1, 0, 0], u: [0, 1, 0] };

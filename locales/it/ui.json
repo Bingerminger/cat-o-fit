@@ -3605,6 +3605,10 @@
     "comboLabel": "Combo",
     "stageOffMotion": "Figura disegnata: su questo dispositivo è attivo «Riduci movimento»",
     "stageOffDevice": "Figura disegnata: questo dispositivo non può mostrare il palco 3D",
+    "pace": "Ritmo",
+    "paceCalm": "Calmo",
+    "paceBrisk": "Sostenuto",
+    "paceFast": "Veloce",
     "exercises": {
       "one": "{count} esercizio",
       "other": "{count} esercizi"

@@ -3605,6 +3605,10 @@
     "comboLabel": "Combo",
     "stageOffMotion": "Getekende figuur: ‘Verminder beweging’ staat aan op dit apparaat",
     "stageOffDevice": "Getekende figuur: dit apparaat kan het 3D-podium niet tonen",
+    "pace": "Tempo",
+    "paceCalm": "Rustig",
+    "paceBrisk": "Vlot",
+    "paceFast": "Snel",
     "exercises": {
       "one": "{count} oefening",
       "other": "{count} oefeningen"

@@ -3605,6 +3605,10 @@
     "comboLabel": "Combo",
     "stageOffMotion": "Figure dessinée : « Réduire les animations » est activé sur cet appareil",
     "stageOffDevice": "Figure dessinée : cet appareil ne peut pas afficher la scène 3D",
+    "pace": "Rythme",
+    "paceCalm": "Calme",
+    "paceBrisk": "Soutenu",
+    "paceFast": "Rapide",
     "exercises": {
       "one": "{count} exercice",
       "other": "{count} exercices"

@@ -24,10 +24,10 @@ void main() { vRay = uCamF + (aPos.x - uShift.x) * uCamR + (aPos.y - uShift.y) *
 `;
 
 const BODY_VS = `
-attribute vec3 aPos; attribute vec3 aNor; attribute vec3 aCol; attribute float aGlow;
+attribute vec3 aPos; attribute vec3 aNor; attribute vec3 aCol; attribute float aGlow; attribute float aSkin;
 uniform mat4 uVP;
-varying vec3 vPos; varying vec3 vNor; varying vec3 vCol; varying float vGlow;
-void main() { vPos = aPos; vNor = aNor; vCol = aCol; vGlow = aGlow; gl_Position = uVP * vec4(aPos, 1.0); }
+varying vec3 vPos; varying vec3 vNor; varying vec3 vCol; varying float vGlow; varying float vSkin;
+void main() { vPos = aPos; vNor = aNor; vCol = aCol; vGlow = aGlow; vSkin = aSkin; gl_Position = uVP * vec4(aPos, 1.0); }
 `;
 
 const BODY_FS = `
@@ -36,7 +36,7 @@ precision highp float;
 #else
 precision mediump float;
 #endif
-varying vec3 vPos; varying vec3 vNor; varying vec3 vCol; varying float vGlow;
+varying vec3 vPos; varying vec3 vNor; varying vec3 vCol; varying float vGlow; varying float vSkin;
 uniform vec3 uEye; uniform vec3 uSun;
 uniform vec3 uKey; uniform vec3 uSky; uniform vec3 uBounce; uniform vec3 uFill; uniform vec3 uRim;
 uniform vec3 uGlowCol; uniform float uGlow; uniform float uFlat;
@@ -50,12 +50,15 @@ void main() {
   vec3 lit = vCol * (amb + uKey * key + uFill * fill);
   float fr = pow(1.0 - max(dot(n, v), 0.0), 3.0);
   lit += uRim * fr * (0.2 + 0.8 * smoothstep(-0.4, 0.6, nl)) * (0.25 + 0.75 * vCol);
-  lit += uKey * pow(max(dot(n, normalize(uSun + v)), 0.0), 36.0) * 0.14;
+  // Skin lets light in: a warm edge where light turns to shade, and a soft sheen. Cloth is matt.
+  lit += vSkin * vCol * vec3(0.6, 0.17, 0.1) * uKey * smoothstep(-0.6, 0.05, nl) * (1.0 - smoothstep(0.05, 0.8, nl)) * 0.55;
+  float ndh = max(dot(n, normalize(uSun + v)), 0.0);
+  lit += uKey * mix(pow(ndh, 40.0) * 0.05, pow(ndh, 18.0) * 0.1 + pow(ndh, 90.0) * 0.12, vSkin);
   // Close to the floor less sky reaches the body.
   lit *= mix(0.74, 1.0, smoothstep(0.0, 16.0, vPos.y));
   // The muscles at work: a warm light from inside, strongest at the edge.
   float g = vGlow * uGlow;
-  lit += uGlowCol * g * (0.05 + fr * 0.75);
+  lit += uGlowCol * g * fr * fr * 0.55;
   lit = mix(lit, vCol, uFlat);
   lit = lit / (1.0 + 0.12 * lit);
   gl_FragColor = vec4(pow(max(lit, 0.0), vec3(1.0 / 2.2)), 1.0);
@@ -157,7 +160,7 @@ export function createStage(canvas) {
   function build() {
     gl.getExtension('OES_standard_derivatives');
     const r = { worlds: {} };
-    r.body = program(gl, BODY_VS, BODY_FS, ['aPos', 'aNor', 'aCol', 'aGlow']);
+    r.body = program(gl, BODY_VS, BODY_FS, ['aPos', 'aNor', 'aCol', 'aGlow', 'aSkin']);
     r.shadow = program(gl, SHADOW_VS, SHADOW_FS, ['aPos']);
     r.quad = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, r.quad);
@@ -200,7 +203,7 @@ export function createStage(canvas) {
     gl.useProgram(prog.p);
     gl.bindBuffer(gl.ARRAY_BUFFER, res.quad);
     gl.enableVertexAttribArray(0); gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-    for (let i = 1; i < 4; i++) gl.disableVertexAttribArray(i);
+    for (let i = 1; i < 5; i++) gl.disableVertexAttribArray(i);
     gl.uniform3fv(prog.u.uCamR, cam.r); gl.uniform3fv(prog.u.uCamU, cam.u); gl.uniform3fv(prog.u.uCamF, cam.f); gl.uniform2fv(prog.u.uShift, cam.shift);
     gl.uniform1f(prog.u.uPulse, frame.pulse || 0); gl.uniform2fv(prog.u.uPulseAt, frame.pulseAt || [0, 0]);
     gl.uniform3fv(prog.u.uEye, frame.cam.eye); gl.uniform3fv(prog.u.uSun, def.sun);
@@ -224,6 +227,7 @@ export function createStage(canvas) {
         gl.enableVertexAttribArray(1); gl.vertexAttribPointer(1, 3, gl.FLOAT, false, stride, 12);
         gl.enableVertexAttribArray(2); gl.vertexAttribPointer(2, 3, gl.FLOAT, false, stride, 24);
         gl.enableVertexAttribArray(3); gl.vertexAttribPointer(3, 1, gl.FLOAT, false, stride, 36);
+        gl.enableVertexAttribArray(4); gl.vertexAttribPointer(4, 1, gl.FLOAT, false, stride, 40);
       }
     };
 

@@ -3605,6 +3605,10 @@
     "comboLabel": "Combo",
     "stageOffMotion": "Drawn figure: “Reduce motion” is switched on for this device",
     "stageOffDevice": "Drawn figure: this device cannot show the 3D stage",
+    "pace": "Pace",
+    "paceCalm": "Calm",
+    "paceBrisk": "Brisk",
+    "paceFast": "Fast",
     "exercises": {
       "one": "{count} exercise",
       "other": "{count} exercises"
