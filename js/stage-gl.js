@@ -127,7 +127,7 @@ vec3 hsv2rgb(vec3 c) {
 void main() {
   if (uInk > 0.5) { gl_FragColor = vec4(0.09, 0.06, 0.12, 1.0); return; }
   vec4 t = texture2D(uTex, vUV);
-  if (uKind > 3.5 && t.a < 0.35) discard;
+  if (uKind > 3.5 && t.a < 0.5) discard;
   vec3 base = t.rgb;
   if (uKind > 0.5 && uKind < 1.5) { vec3 h = rgb2hsv(base); base = hsv2rgb(vec3(fract(h.x + uHsv.x), clamp(h.y * uHsv.y, 0.0, 1.0), clamp(h.z * uHsv.z, 0.0, 1.0))); }
   vec3 alb = pow(base, vec3(2.2));

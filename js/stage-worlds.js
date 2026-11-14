@@ -79,7 +79,7 @@ export const WORLDS = {
   /* Morning on the beach: the sun low over the sea behind the trainer, long shadows towards the viewer. */
   beach: {
     sun: dir(-38, 21),
-    key: [1.25, 0.9, 0.62], sky: [0.5, 0.56, 0.74], bounce: [0.62, 0.47, 0.34], fill: [0.34, 0.3, 0.3], rim: [1.5, 1.0, 0.62],
+    key: [1.25, 0.9, 0.62], sky: [0.6, 0.64, 0.8], bounce: [0.66, 0.5, 0.38], fill: [0.58, 0.52, 0.5], rim: [1.5, 1.0, 0.62],
     shadow: [0.5, 0.47, 0.62], mat: [0.1, 0.5, 0.52], glow: [1.0, 0.82, 0.3],
     glsl: `
 vec3 sky(vec3 d) {
@@ -152,7 +152,7 @@ vec3 world(vec3 ro, vec3 rd) {
      behind far ridges, stars. Light in two colours from the sides. */
   neon: {
     sun: dir(-20, 16),
-    key: [0.5, 0.3, 0.55], sky: [0.16, 0.14, 0.34], bounce: [0.2, 0.06, 0.24], fill: [0.62, 0.56, 0.7], rim: [2.2, 0.25, 1.5], rimB: [0.15, 1.5, 2.1],
+    key: [0.5, 0.3, 0.55], sky: [0.16, 0.14, 0.34], bounce: [0.2, 0.06, 0.24], fill: [0.8, 0.74, 0.88], rim: [1.3, 0.18, 0.95], rimB: [0.1, 0.9, 1.25],
     shadow: [0.42, 0.36, 0.6], mat: [0.03, 0.2, 0.26], glow: [1.0, 0.4, 0.9],
     glsl: `
 vec3 sky(vec3 d) {
@@ -177,11 +177,12 @@ vec3 world(vec3 ro, vec3 rd) {
   if (rd.y > -0.0005) return sky(rd);
   float t = -ro.y / rd.y;
   vec3 p = ro + rd * t;
-  float far = 1.0 - exp(-t * 0.0007);
-  vec3 col = vec3(0.022, 0.016, 0.06);
+  float far = 1.0 - exp(-t * 0.00035);
+  vec3 col = vec3(0.018, 0.014, 0.05);
   // The floor mirrors the sky a little.
   float fres = pow(1.0 - max(-rd.y, 0.0), 4.0);
-  col += sky(reflect(rd, vec3(0.0, 1.0, 0.0))) * (0.1 + 0.5 * fres);
+  vec3 up = reflect(rd, vec3(0.0, 1.0, 0.0));
+  col += mix(vec3(0.42, 0.06, 0.4), vec3(0.015, 0.012, 0.07), pow(max(up.y, 0.0), 0.42)) * (0.04 + 0.4 * fres);
   // The grid: lines of light, brighter on the beat.
   vec2 cell = p.xz / 58.0;
   vec2 g = abs(fract(cell) - 0.5);
@@ -189,7 +190,7 @@ vec3 world(vec3 ro, vec3 rd) {
   float line = max(smoothstep(0.5 - w.x, 0.5, g.x), smoothstep(0.5 - w.y, 0.5, g.y));
   col += vec3(1.0, 0.12, 0.78) * line * (0.75 + 0.7 * uBeat * uBeat) * (1.0 - far);
   col = ground(col, p.xz);
-  return mix(col, vec3(0.42, 0.06, 0.4), far * 0.9);
+  return mix(col, vec3(0.24, 0.035, 0.28), far * 0.55);
 }
 `,
   },

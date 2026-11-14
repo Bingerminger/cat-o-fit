@@ -42,7 +42,7 @@ const MAT = [0, 0, 104, 38];
 /** The space of the celebration at the end (a body standing, arms up, and the cat). */
 const CHEER_SPACE = { c: [14, 70, 10], h: [62, 82, 30], view: 'front' };
 /** Where the cat sits: at the head end of the mat, on its far side – it never sits between the camera and the trainer. */
-const CAT_AT = [102, 0, -48];
+const CAT_AT = [34, 0, -80];
 
 /* ------------------------------ Shots ------------------------------ */
 
@@ -134,7 +134,7 @@ export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {})
     // Distance at which the space of the exercise fits into the free area.
     const wide = b.h[0] * Math.abs(Math.cos(yaw)) + b.h[2] * Math.abs(Math.sin(yaw));
     const tall = b.h[1] * Math.cos(pitch) + (b.h[0] + b.h[2]) * 0.5 * Math.sin(pitch);
-    const dist = Math.max(tall / (tan * area.h), wide / (tan * aspect * area.w)) * shot.zoom * 1.2 + Math.max(b.h[0], b.h[2]) * 0.5;
+    const dist = Math.max(tall / (tan * area.h), wide / (tan * aspect * area.w)) * shot.zoom * 1.06 + Math.max(b.h[0], b.h[2]) * 0.5;
     const target = [b.c[0] + 1.2 * Math.sin(time * 0.31), b.c[1] + 0.8 * Math.sin(time * 0.23 + 1), b.c[2]];
     const eye = [target[0] + Math.sin(yaw) * Math.cos(pitch) * dist, Math.max(7, target[1] + Math.sin(pitch) * dist), target[2] + Math.cos(yaw) * Math.cos(pitch) * dist];
     // The free area is not the middle of the canvas: shift the picture there.
