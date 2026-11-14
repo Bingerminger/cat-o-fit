@@ -349,8 +349,9 @@ export function mountStage(canvas, show, { style = 'natural', trainer = DEFAULT_
       const base = done || m.view === 'front' ? CAT_BESIDE : CAT_AT;
       catSpot = (cam.eye[2] - body.pelvis[2]) * base[2] > 0 ? [base[0], 0, -base[2]] : base;
     }
-    const spot = catSpot;
-    if (jumped || !catAt) catAt = [...spot];
+    if (jumped || !catAt) catAt = [...catSpot];
+    // To the other side of the mat it goes round the head end, not across the mat and through the trainer.
+    const spot = catAt[2] * catSpot[2] < -1 ? [MAT[2] + 16, 0, 0] : catSpot;
     const way = V.sub(spot, catAt); const far = V.len(way);
     const trot = far > 0.5;
     if (trot) catAt = V.add(catAt, V.mul(way, Math.min(far, 75 * wdt) / far));
