@@ -6,7 +6,7 @@
 # with an EMPTY instance: on first access the app walks you through the
 # initial setup (create an admin, optionally load demo data).
 # =============================================================================
-FROM php:8.4-apache
+FROM php:8.5-apache
 
 # zip for ZIP uploads of the Apple Health export (XMLReader is already included),
 # opcache for reasonable PHP performance on NAS hardware.
