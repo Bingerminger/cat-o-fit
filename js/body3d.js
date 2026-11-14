@@ -91,7 +91,25 @@ const p3 = (p, z = 0) => [p[0], -p[1], z];
  *   legs: { r, l: { hip, knee, ankle, heel, toe } }, arms: { r, l: { sh, elbow, wrist } } }}
  */
 export function lift(S, m = {}) {
-  return S.view === 'front' ? liftFront(S, m) : liftSide(S, m);
+  if (S.view !== 'front') return liftSide(S, m);
+  const b = liftFront(S, m);
+  return m.top ? onTheFloor(b) : b;
+}
+
+/**
+ * A picture drawn from above (an exercise lying on the floor, `top: true`): what the picture shows upright lies down –
+ * the picture's "up" runs along the mat, its viewer is the sky.
+ */
+function onTheFloor(b) {
+  const P = (p) => [p[1] - 65, p[2], p[0]];
+  const D = (v) => [v[1], v[2], v[0]];
+  const out = { ...b, pelvis: P(b.pelvis), chest: P(b.chest), spine: P(b.spine), head: P(b.head), lat: D(b.lat), latSh: D(b.latSh), fwd: D(b.fwd), up: D(b.up), headUp: D(b.headUp), headFwd: D(b.headFwd), legs: {}, arms: {} };
+  for (const side of ['r', 'l']) {
+    const g = b.legs[side]; const a = b.arms[side];
+    out.legs[side] = { hip: P(g.hip), knee: P(g.knee), ankle: P(g.ankle), heel: P(g.heel), toe: P(g.toe) };
+    out.arms[side] = { sh: P(a.sh), elbow: P(a.elbow), wrist: P(a.wrist) };
+  }
+  return aboveFloor(out);
 }
 
 function liftSide(S, m) {

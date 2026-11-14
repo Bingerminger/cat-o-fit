@@ -560,3 +560,73 @@ export function buildCat(M, at, face, fx = {}) {
   }
   loft(M, tail, 8, true, true);
 }
+
+/* ------------------------------ Equipment ------------------------------ */
+
+const GEAR = { iron: rgb('#2c313c'), grip: rgb('#9aa3b2'), accent: rgb('#ff5d52'), ball: rgb('#3aa7a0'), wood: rgb('#c9a27a'), wall: rgb('#b4aca6'), steel: rgb('#b9c0cc') };
+
+/** A box between two corners, with flat sides. */
+function box(M, lo, hi, c) {
+  const faces = [
+    [[1, 0, 0], [hi[0], lo[1], lo[2]], [0, 1, 0], [0, 0, 1]], [[-1, 0, 0], [lo[0], lo[1], lo[2]], [0, 0, 1], [0, 1, 0]],
+    [[0, 1, 0], [lo[0], hi[1], lo[2]], [0, 0, 1], [1, 0, 0]], [[0, -1, 0], [lo[0], lo[1], lo[2]], [1, 0, 0], [0, 0, 1]],
+    [[0, 0, 1], [lo[0], lo[1], hi[2]], [1, 0, 0], [0, 1, 0]], [[0, 0, -1], [lo[0], lo[1], lo[2]], [0, 1, 0], [1, 0, 0]],
+  ];
+  const size = [hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2]];
+  for (const [n, o, u, v] of faces) {
+    const du = V.mul(u, V.dot(u, size)); const dv = V.mul(v, V.dot(v, size));
+    const a = vert(M, o, n, c, 0); const b = vert(M, V.add(o, du), n, c, 0); const d = vert(M, V.add(V.add(o, du), dv), n, c, 0); const e = vert(M, V.add(o, dv), n, c, 0);
+    tri(M, a, b, d); tri(M, a, d, e);
+  }
+}
+/** A straight bar from a to b. */
+function rod(M, a, b, r, c) {
+  const tg = V.norm(V.sub(b, a)); const n = sideOf(tg, [0, 1, 0]); const bn = V.cross(tg, n);
+  loft(M, [{ p: a, n, b: bn, a: r, bp: r, bm: r, c }, { p: b, n, b: bn, a: r, bp: r, bm: r, c }], 8, true, true);
+}
+
+/**
+ * The equipment of an exercise. `m` is the motion (hold: what the hands hold – 'db' dumbbell, 'kb' kettlebell, 'ball';
+ * props: box [x, top, width], wall x, bar [x, height]), `hands` where the hands are: { r, l: { at, along } } (the grip
+ * and the direction of the forearm, stage units), `lat` the line across the body, `swap` for the other side.
+ */
+export function buildGear(M, m, hands, lat, swap = false) {
+  const hold = m.hold || {};
+  const side = (s) => (swap ? (s === 'r' ? 'l' : 'r') : s);
+  const dumbbell = (h) => {
+    // The handle lies across the forearm and across the body's side line – the way a hand closes round it.
+    let axis = V.cross(h.along, lat);
+    axis = V.len(axis) < 0.2 ? lat : V.norm(axis);
+    const a = V.add(h.at, V.mul(axis, -6.5)); const b = V.add(h.at, V.mul(axis, 6.5));
+    rod(M, a, b, 1.1, GEAR.grip);
+    for (const end of [a, b]) {
+      const n = sideOf(axis, [0, 1, 0]); const bn = V.cross(axis, n);
+      loft(M, [-2.2, 2.2].map((k) => ({ p: V.add(end, V.mul(axis, k)), n, b: bn, a: 4.4, bp: 4.4, bm: 4.4, c: GEAR.iron, e: 2.2 })), 12, true, true);
+    }
+  };
+  for (const s of ['r', 'l']) if (hold[s] === 'db') dumbbell(hands[side(s)]);
+  if (hold.both) {
+    const mid = V.lerp(hands.r.at, hands.l.at, 0.5);
+    const along = V.norm(V.add(hands.r.along, hands.l.along));
+    if (hold.both === 'db') dumbbell({ at: mid, along });
+    if (hold.both === 'ball') ellipsoid(M, V.add(mid, V.mul(along, 4)), [10.5, 0, 0], [0, 10.5, 0], [0, 0, 10.5], GEAR.ball, 0, 10, 14);
+    if (hold.both === 'kb') {
+      const c = V.add(mid, V.mul(along, 10));
+      ellipsoid(M, c, [7.4, 0, 0], [0, 7, 0], [0, 0, 7.4], GEAR.iron, 0, 9, 12);
+      // The handle: an arch from the bell up to the hands.
+      const up = V.mul(along, -1); const across = sideOf(up, lat);
+      const arch = [-1, -0.5, 0, 0.5, 1].map((k) => V.add(V.add(c, V.mul(up, 6 + 5.5 * (1 - k * k))), V.mul(across, k * 5.2)));
+      for (let i = 0; i + 1 < arch.length; i++) rod(M, arch[i], arch[i + 1], 1.15, GEAR.iron);
+    }
+  }
+  const props = m.props || {};
+  if (props.box) { const [x, top, w] = props.box; box(M, [x, 0, -24], [x + w, -top, 24], GEAR.wood); }
+  if (props.wall != null) { const x = props.wall; box(M, [x > 0 ? x : x - 7, 0, -90], [x > 0 ? x + 7 : x, 170, 90], GEAR.wall); }
+  if (props.bar) {
+    // A bar runs across the body: across the picture in a front view, into it in a side view.
+    const [x, y] = props.bar;
+    const ends = m.view === 'front' ? [[x - 46, -y, 0], [x + 46, -y, 0]] : [[x, -y, -46], [x, -y, 46]];
+    rod(M, ends[0], ends[1], 1.5, GEAR.steel);
+    for (const e of ends) rod(M, [e[0], 0, e[2]], e, 1.8, GEAR.iron);
+  }
+}

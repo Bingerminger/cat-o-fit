@@ -24,9 +24,9 @@ import { MOTIONS } from './exercise-motions.js';
 import { vec as V, bodyFlow, createFollower, blendBodies, aboveFloor, bodyPoints, solveLimb3 } from './body3d.js';
 import { showStateAt } from './show-program.js';
 import { createBodyDirector } from './stage-body.js';
-import { createMesh, buildTrainer, buildCat, plaitAnchor, STRIDE } from './stage-mesh.js';
+import { createMesh, buildCat, buildGear, STRIDE } from './stage-mesh.js';
 import { createStage, projectPoint } from './stage-gl.js';
-import { loadTrainer, poseSkeleton, skinMatrices, jointsForModel, modelToStage } from './stage-model.js';
+import { loadTrainer, poseSkeleton, skinMatrices, jointsForModel, modelToStage, stageScale } from './stage-model.js';
 import { retarget } from './stage-rig.js';
 
 /** The looks of the stage: how the trainer is lit and drawn, and the world that goes with it. */
@@ -98,12 +98,12 @@ export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {})
   }).catch((e) => { failed = e; });
   const trainer = createMesh(9000, 48000);
   const cat = createMesh(3000, 15000);
+  const gear = createMesh(2400, 9000);
   const bits = createMesh(1600, 2400);
   bits.flat = true; bits.noShadow = true;
   let dpr = Math.min(1.6, (typeof window !== 'undefined' && window.devicePixelRatio) || 1);
   let slow = 0; let lastWall = null; let wallT = 0;
   let lastT = null;
-  const plait = []; let plaitPrev = [];
   let confetti = []; let lastIndex = -1; let doneAt = null;
   const follower = createFollower();
   const bounds = new Map();
@@ -120,7 +120,7 @@ export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {})
       for (const p of bodyPoints(bodyFlow(m, (i / 10) * total, list))) for (let a = 0; a < 3; a++) { lo[a] = Math.min(lo[a], p[a]); hi[a] = Math.max(hi[a], p[a]); }
     }
     hi[1] += BODY.head + 3; lo[1] = 0;
-    const b = { c: [(lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2, (lo[2] + hi[2]) / 2], h: [(hi[0] - lo[0]) / 2 + 9, (hi[1] - lo[1]) / 2 + 6, (hi[2] - lo[2]) / 2 + 9], view: m.view === 'front' ? 'front' : 'side' };
+    const b = { c: [(lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2, (lo[2] + hi[2]) / 2], h: [(hi[0] - lo[0]) / 2 + 9, (hi[1] - lo[1]) / 2 + 6, (hi[2] - lo[2]) / 2 + 9], view: m.view === 'front' ? 'front' : 'side', wall: m.props && m.props.wall != null ? m.props.wall : null };
     bounds.set(key, b);
     return b;
   }
@@ -128,6 +128,8 @@ export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {})
   function cameraFor(seg, local, area, aspect, time, space = null) {
     const b = space || boundsOf(seg);
     const shot = shotAt(seg, local, b.view);
+    // A wall in the room: the camera stays on the side of it where she is.
+    if (b.wall != null) shot.yaw = (b.wall < 0 ? 1 : -1) * Math.max(10, Math.abs(shot.yaw));
     const fov = 33;
     const yaw = shot.yaw * RAD; const pitch = shot.pitch * RAD;
     const tan = Math.tan((fov * RAD) / 2);
@@ -173,39 +175,6 @@ export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {})
     const w = weight * clamp((c + 0.25) / 0.6, 0, 1);
     const f = V.norm(V.lerp(body.headFwd, to, clamp(w, 0, 0.62)));
     return { ...body, headFwd: f };
-  }
-
-  function swingPlait(body, dt, reset) {
-    const N = 5; const L = 5.6;
-    const a = plaitAnchor(body);
-    const back = V.mul(body.headFwd, -1);
-    if (reset || plait.length !== N || V.dist(plait[0], a) > 40) {
-      plait.length = 0;
-      for (let i = 0; i < N; i++) plait.push([a[0] + back[0] * i * 1.2, a[1] - i * L * 0.9, a[2] + back[2] * i * 1.2]);
-      plaitPrev = plait.map((p) => p.slice());
-    }
-    const h = clamp(dt, 0.001, 1 / 30);
-    plait[0] = a;
-    for (let i = 1; i < N; i++) {
-      const p = plait[i]; const q = plaitPrev[i];
-      const v = [(p[0] - q[0]) * 0.93, (p[1] - q[1]) * 0.93, (p[2] - q[2]) * 0.93];
-      plaitPrev[i] = p.slice();
-      // Gravity, and a little spring to the back of the head so the tail keeps its shape.
-      plait[i] = [p[0] + v[0] + back[0] * 14 * h * h * (N - i), p[1] + v[1] - 620 * h * h, p[2] + v[2] + back[2] * 14 * h * h * (N - i)];
-    }
-    for (let it = 0; it < 4; it++) {
-      for (let i = 1; i < N; i++) {
-        const d = V.sub(plait[i], plait[i - 1]); const l = V.len(d) || 1;
-        plait[i] = V.add(plait[i - 1], V.mul(d, L / l));
-        // Not through the head, the neck or the back.
-        for (const [c, r] of [[body.head, BODY.head + 2.6], [body.chest, 8.5], [V.lerp(body.chest, body.spine, 0.6), 8.5]]) {
-          const o = V.sub(plait[i], c); const ol = V.len(o);
-          if (ol < r) plait[i] = V.add(c, V.mul(ol > 1e-4 ? V.mul(o, 1 / ol) : back, r));
-        }
-        if (plait[i][1] < 1.5) plait[i][1] = 1.5;
-      }
-    }
-    return plait;
   }
 
   /* ---- Confetti ---- */
@@ -310,8 +279,18 @@ export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {})
     let model = null;
     if (fig) {
       // The model's skeleton takes the pose: contacts stay, her own proportions decide the rest.
-      skinMatrices(fig.model, poseSkeleton(fig.model, jointsForModel(retarget(body, fig.model.rig))), fig.bones);
+      const r = retarget(body, fig.model.rig);
+      skinMatrices(fig.model, poseSkeleton(fig.model, jointsForModel(r)), fig.bones);
       model = { bones: fig.bones, toStage: fig.toStage, look: lookName };
+      // What she holds, and what stands in the room for this exercise.
+      const k = stageScale(fig.model);
+      const hands = {};
+      for (const side of ['r', 'l']) {
+        const along = V.norm(V.sub(r.arms[side].wrist, r.arms[side].elbow));
+        hands[side] = { at: V.mul(V.add(r.arms[side].wrist, V.mul(along, 0.075)), k), along };
+      }
+      gear.reset();
+      if (!done) buildGear(gear, m, hands, body.lat, seg.side === 'b');
     }
 
     // Confetti when an exercise is done, and a lot of it at the end.
@@ -351,7 +330,7 @@ export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {})
     let pulse = 0;
     if (working && seg.cyc && local > seg.cyc * 0.98) pulse = clamp((local % seg.cyc) / 0.75, 0, 1);
 
-    const frame = { cam, world, time: wallT, beat: 1 - clamp((local % beat) / beat, 0, 1), pulse, pulseAt: [body.pelvis[0], body.pelvis[2]], meshes: [trainer, cat, bits], model, glow, mat: MAT, blobs };
+    const frame = { cam, world, time: wallT, beat: 1 - clamp((local % beat) / beat, 0, 1), pulse, pulseAt: [body.pelvis[0], body.pelvis[2]], meshes: [trainer, gear, cat, bits], model, glow, mat: MAT, blobs };
     // Confetti needs the camera axes: one frame late is fine.
     stepConfetti(wdt, lastAxes.r, lastAxes.u);
     const t0 = typeof performance !== 'undefined' ? performance.now() : 0;
