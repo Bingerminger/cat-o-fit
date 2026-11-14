@@ -100,9 +100,22 @@ function solve(root, end, a, b, pole) {
 
 /**
  * The model from its two files: `doc` (trainer.json) and `buffer` (trainer.bin as ArrayBuffer).
- * Returns { bones, index, rest, local, hipMid, rig, meshes: [{ name, kind, texture, hsv, position, normal, uv, bone, weight, indices }] }.
+ * Returns { bones, index, rest, local, hipMid, rig, meshes: [{ name, kind, texture, hsv, position, normal, uv, bone, weight, indices,
+ * morphs }] } – `morphs` are the face shapes of a mesh by name (FACE): the offset of every vertex at full strength.
  */
+export const FACE = ['blink', 'smile'];
 export function parseModel(doc, buffer) {
+  const morphsOf = (m) => {
+    const out = {};
+    for (const [name, s] of Object.entries(m.morphs || {})) {
+      // Stored sparse (which vertices, how far); spread out here, so that the graphics card can add it per vertex.
+      const which = new Uint16Array(buffer, s.index, s.count); const far = new Float32Array(buffer, s.delta, s.count * 3);
+      const full = new Float32Array(m.vertices * 3);
+      for (let i = 0; i < s.count; i++) full.set(far.subarray(i * 3, i * 3 + 3), which[i] * 3);
+      out[name] = full;
+    }
+    return out;
+  };
   const index = {};
   doc.bones.forEach((b, i) => { index[b.name] = i; });
   // Rest of every bone in the model's space: rotation and place.
@@ -118,6 +131,7 @@ export function parseModel(doc, buffer) {
     position: new Float32Array(buffer, m.position, m.vertices * 3), normal: new Float32Array(buffer, m.normal, m.vertices * 3),
     uv: new Float32Array(buffer, m.uv, m.vertices * 2), bone: new Uint8Array(buffer, m.bone, m.vertices * 4),
     weight: new Uint8Array(buffer, m.weight, m.vertices * 4), indices: new Uint16Array(buffer, m.index, m.indices),
+    morphs: morphsOf(m),
   }));
   return { bones: doc.bones, index, rest, local, hipMid: doc.hipMid, rig: doc.rig, meshes };
 }

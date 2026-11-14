@@ -102,7 +102,7 @@ export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {})
   const bits = createMesh(1600, 2400);
   bits.flat = true; bits.noShadow = true;
   let dpr = Math.min(1.6, (typeof window !== 'undefined' && window.devicePixelRatio) || 1);
-  let slow = 0; let lastWall = null; let wallT = 0;
+  let slow = 0; let lastWall = null; let wallT = 0; let smile = 0.3;
   let lastT = null;
   let confetti = []; let lastIndex = -1; let doneAt = null;
   const follower = createFollower();
@@ -260,19 +260,17 @@ export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {})
     body = faceCamera(body, cam.eye, upright ? (seg.kind === 'work' && !done ? 0.4 : 0.85) : 0.15);
     body = aboveFloor(body);
 
-    // Life: breath, blink, a smile that grows when it is done.
-    const blinkAt = wallT % 3.7;
-    const fx = {
-      breath: Math.sin(wallT * (seg.kind === 'work' ? 2.7 : 1.9)),
-      blink: blinkAt < 0.13 ? Math.sin((blinkAt / 0.13) * Math.PI) : 0,
-      smile: done ? 1 : seg.kind === 'work' ? 0.45 : 0.8,
-      mouth: 0,
-    };
+    // Life in the face: she blinks (now and then twice), and smiles – a little at work, more in the rests, most
+    // when it is done. The smile eases over, it does not switch.
+    const blinkAt = wallT % 3.7; const again = (wallT % 11.1) - 3.95;
+    const lid = (x) => (x > 0 && x < 0.16 ? Math.sin((x / 0.16) * Math.PI) : 0);
+    const smileTo = done ? 0.68 : seg.kind === 'work' ? 0.24 : 0.46;
+    smile += (smileTo - smile) * Math.min(1, wdt * 2.5);
+    const fx = { blink: Math.max(lid(blinkAt), lid(again)), smile };
     let glow = 0.22;
     if (!done && seg.kind === 'work' && seg.cyc) {
       const k = (local % seg.cyc) / seg.cyc;
       glow = 0.35 + 0.65 * Math.sin(k * Math.PI) ** 2;
-      fx.mouth = 0.5 * Math.sin(k * Math.PI) ** 2;
     }
     const m = motionOf(seg);
     trainer.reset();
@@ -281,7 +279,7 @@ export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {})
       // The model's skeleton takes the pose: contacts stay, her own proportions decide the rest.
       const r = retarget(body, fig.model.rig);
       skinMatrices(fig.model, poseSkeleton(fig.model, jointsForModel(r)), fig.bones);
-      model = { bones: fig.bones, toStage: fig.toStage, look: lookName };
+      model = { bones: fig.bones, toStage: fig.toStage, look: lookName, face: [fx.blink, fx.smile] };
       // What she holds, and what stands in the room for this exercise.
       const k = stageScale(fig.model);
       const hands = {};

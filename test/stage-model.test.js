@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { parseModel, poseSkeleton, skinMatrices, skinnedVertex, jointsForModel, modelToStage, stageScale } from '../js/stage-model.js';
+import { parseModel, poseSkeleton, skinMatrices, skinnedVertex, jointsForModel, modelToStage, stageScale, FACE } from '../js/stage-model.js';
 import { MOTIONS } from '../js/exercise-motions.js';
 import { cycleOf } from '../js/motion-rig.js';
 import { bodyFlow } from '../js/body3d.js';
@@ -79,4 +79,22 @@ test('Every exercise poses the skeleton with numbers only', () => {
       for (const b of pose) for (const x of [...b.r, ...b.t]) if (!Number.isFinite(x)) assert.fail(`${id}: a bone is not a number`);
     }
   }
+});
+
+test('The face: eyelids that close and a smile, as small offsets of the skin and of the lashes on it', () => {
+  const skin = model.meshes.find((m) => m.kind === 'skin');
+  const lashes = model.meshes.find((m) => m.name.startsWith('eyelash'));
+  const far = (shape) => { let most = 0; let moved = 0; for (let i = 0; i < shape.length; i += 3) { const d = Math.hypot(shape[i], shape[i + 1], shape[i + 2]); if (d > 0) moved += 1; most = Math.max(most, d); } return { most, moved }; };
+  for (const name of FACE) {
+    const shape = skin.morphs[name];
+    assert.ok(shape && shape.length === skin.position.length, `${name}: one offset per vertex of the skin`);
+    const { most, moved } = far(shape);
+    // A face shape moves a few hundred vertices by millimetres – not the body, and not by centimetres.
+    assert.ok(moved > 100 && moved < skin.position.length / 3 / 8, `${name}: ${moved} vertices move`);
+    assert.ok(most > 0.004 && most < 0.02, `${name}: moves up to ${(most * 1000).toFixed(1)} mm`);
+  }
+  // The lashes sit on the lids: they close with them.
+  assert.ok(lashes.morphs.blink && far(lashes.morphs.blink).most > 0.004, 'the lashes follow the lids');
+  // What has no face stays out of it.
+  for (const m of model.meshes) if (m.kind === 'hair' || m.kind === 'cloth' || m.kind === 'eye') assert.deepEqual(Object.keys(m.morphs), [], `${m.name} has no face shapes`);
 });

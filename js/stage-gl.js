@@ -14,6 +14,7 @@
    ========================================================================= */
 
 import { STRIDE } from './stage-mesh.js';
+import { FACE } from './stage-model.js';
 import { PRELUDE, FINISH, WORLDS, DEFAULT_WORLD } from './stage-worlds.js';
 
 const QUAD_VS = `
@@ -85,13 +86,15 @@ void main() { gl_FragColor = vec4(mix(uShadow, vec3(1.0), 0.45 * smoothstep(30.0
    floor (uFlatten) and its ink outline (uOutline pushes the surface out along its normal). */
 const SKIN_VS = `
 attribute vec3 aPos; attribute vec3 aNor; attribute vec2 aUV; attribute vec4 aBone; attribute vec4 aWeight;
+attribute vec3 aM0; attribute vec3 aM1; uniform vec2 uMorph;
 uniform mat4 uBones[23]; uniform mat4 uModel; uniform mat4 uVP;
 uniform float uOutline; uniform float uFlatten; uniform vec3 uSun;
 varying vec3 vPos; varying vec3 vNor; varying vec2 vUV; varying float vH;
 void main() {
   mat4 skin = aWeight.x * uBones[int(aBone.x)] + aWeight.y * uBones[int(aBone.y)] + aWeight.z * uBones[int(aBone.z)] + aWeight.w * uBones[int(aBone.w)];
   vec3 n = normalize((skin * vec4(aNor, 0.0)).xyz);
-  vec4 p = skin * vec4(aPos, 1.0);
+  // The face: closing eyelids and a smile are offsets of the resting surface, added before the bones move it.
+  vec4 p = skin * vec4(aPos + aM0 * uMorph.x + aM1 * uMorph.y, 1.0);
   p.xyz += n * uOutline;
   vec4 w = uModel * p;
   vNor = normalize((uModel * vec4(n, 0.0)).xyz); vUV = aUV; vH = w.y;
@@ -103,7 +106,7 @@ void main() {
 
 /* Looks (uLook): 0 natural – soft light, skin that lets light in, a rim against the sun · 1 drawn – two tones, a crisp
    rim, an ink line · 2 night – dark, light in two colours from the sides. Kinds (uKind): 0 skin, 1 hair, 2 cloth,
-   3 eye, 4 lashes and brows (cut out by their alpha). */
+   3 eye, 4 lashes and brows (both cut out by their alpha). */
 const SKIN_FS = `
 #ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
@@ -127,7 +130,8 @@ vec3 hsv2rgb(vec3 c) {
 void main() {
   if (uInk > 0.5) { gl_FragColor = vec4(0.09, 0.06, 0.12, 1.0); return; }
   vec4 t = texture2D(uTex, vUV);
-  if (uKind > 3.5 && t.a < 0.5) discard;
+  // Lashes and brows are cut out by their alpha – and so is the clear shell that lies over the eyeball.
+  if (uKind > 2.5 && t.a < 0.5) discard;
   vec3 base = t.rgb;
   if (uKind > 0.5 && uKind < 1.5) { vec3 h = rgb2hsv(base); base = hsv2rgb(vec3(fract(h.x + uHsv.x), clamp(h.y * uHsv.y, 0.0, 1.0), clamp(h.z * uHsv.z, 0.0, 1.0))); }
   vec3 alb = pow(base, vec3(2.2));
@@ -251,8 +255,8 @@ export function createStage(canvas) {
     const r = { worlds: {} };
     r.body = program(gl, BODY_VS, BODY_FS, ['aPos', 'aNor', 'aCol', 'aGlow', 'aSkin']);
     r.shadow = program(gl, SHADOW_VS, SHADOW_FS, ['aPos']);
-    r.skin = program(gl, SKIN_VS, SKIN_FS, ['aPos', 'aNor', 'aUV', 'aBone', 'aWeight']);
-    r.skinShadow = program(gl, SKIN_VS, SHADOW_FS, ['aPos', 'aNor', 'aUV', 'aBone', 'aWeight']);
+    r.skin = program(gl, SKIN_VS, SKIN_FS, ['aPos', 'aNor', 'aUV', 'aBone', 'aWeight', 'aM0', 'aM1']);
+    r.skinShadow = program(gl, SKIN_VS, SHADOW_FS, ['aPos', 'aNor', 'aUV', 'aBone', 'aWeight', 'aM0', 'aM1']);
     r.model = null;
     r.quad = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, r.quad);
@@ -285,6 +289,14 @@ export function createStage(canvas) {
       }
       const vbo = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, vbo); gl.bufferData(gl.ARRAY_BUFFER, buf, gl.STATIC_DRAW);
       const ibo = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, m.indices, gl.STATIC_DRAW);
+      // Face shapes (stage-model.js FACE), two offsets a vertex – only for the meshes that have some.
+      let mvbo = null;
+      const shapes = FACE.map((name) => (m.morphs || {})[name] || null);
+      if (shapes.some(Boolean)) {
+        const mf = new Float32Array(n * 6);
+        shapes.forEach((s, k) => { if (s) for (let i = 0; i < n; i++) mf.set(s.subarray(i * 3, i * 3 + 3), i * 6 + k * 3); });
+        mvbo = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, mvbo); gl.bufferData(gl.ARRAY_BUFFER, mf, gl.STATIC_DRAW);
+      }
       const tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
       const img = images[m.texture];
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
@@ -294,7 +306,7 @@ export function createStage(canvas) {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, mips ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      return { vbo, ibo, tex, count: m.indices.length, kind: KIND[m.kind] == null ? 2 : KIND[m.kind], hsv: m.hsv ? [m.hsv[0], m.hsv[1], m.hsv[2]] : [0, 1, 1] };
+      return { vbo, ibo, mvbo, tex, count: m.indices.length, kind: KIND[m.kind] == null ? 2 : KIND[m.kind], hsv: m.hsv ? [m.hsv[0], m.hsv[1], m.hsv[2]] : [0, 1, 1] };
     });
   }
   /** Gives the stage the trainer model (stage-model.js parseModel) and its texture images by file name. */
@@ -315,6 +327,14 @@ export function createStage(canvas) {
       if (!pick(m)) continue;
       gl.bindBuffer(gl.ARRAY_BUFFER, m.vbo); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, m.ibo);
       pointSkin();
+      if (m.mvbo) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, m.mvbo);
+        gl.enableVertexAttribArray(5); gl.vertexAttribPointer(5, 3, gl.FLOAT, false, 24, 0);
+        gl.enableVertexAttribArray(6); gl.vertexAttribPointer(6, 3, gl.FLOAT, false, 24, 12);
+      } else {
+        gl.disableVertexAttribArray(5); gl.disableVertexAttribArray(6);
+        gl.vertexAttrib3f(5, 0, 0, 0); gl.vertexAttrib3f(6, 0, 0, 0);
+      }
       if (each) each(m);
       gl.drawElements(gl.TRIANGLES, m.count, gl.UNSIGNED_SHORT, 0);
     }
@@ -387,8 +407,9 @@ export function createStage(canvas) {
       gl.useProgram(p.p);
       gl.uniformMatrix4fv(p.u.uVP, false, cam.vp); gl.uniformMatrix4fv(p.u.uModel, false, fig.toStage); gl.uniformMatrix4fv(p.u.uBones, false, fig.bones);
       gl.uniform3fv(p.u.uSun, def.sun); gl.uniform3fv(p.u.uShadow, def.shadow); gl.uniform1f(p.u.uFlatten, 1); gl.uniform1f(p.u.uOutline, 0);
+      gl.uniform2f(p.u.uMorph, 0, 0);
       drawModel((m) => m.kind !== 4 && m.kind !== 3, null);
-      for (let i = 1; i < 5; i++) gl.disableVertexAttribArray(i);
+      for (let i = 1; i < 7; i++) gl.disableVertexAttribArray(i);
     }
     gl.disable(gl.BLEND); gl.disable(gl.STENCIL_TEST);
 
@@ -416,6 +437,8 @@ export function createStage(canvas) {
       gl.uniform3fv(p.u.uKey, def.key); gl.uniform3fv(p.u.uSky, def.sky); gl.uniform3fv(p.u.uBounce, def.bounce);
       gl.uniform3fv(p.u.uFill, def.fill); gl.uniform3fv(p.u.uRim, def.rim); gl.uniform3fv(p.u.uRimB, def.rimB || def.rim);
       gl.uniform1f(p.u.uLook, look); gl.uniform1f(p.u.uBeat, frame.beat || 0); gl.uniform1f(p.u.uFlatten, 0);
+      const face = fig.face || [0, 0];
+      gl.uniform2f(p.u.uMorph, face[0] || 0, face[1] || 0);
       gl.activeTexture(gl.TEXTURE0); gl.uniform1i(p.u.uTex, 0);
       const each = (m) => { gl.bindTexture(gl.TEXTURE_2D, m.tex); gl.uniform1f(p.u.uKind, m.kind); gl.uniform3fv(p.u.uHsv, m.hsv); };
       gl.uniform1f(p.u.uInk, 0); gl.uniform1f(p.u.uOutline, 0);
@@ -428,7 +451,7 @@ export function createStage(canvas) {
         drawModel((m) => m.kind < 3, each);
         gl.disable(gl.CULL_FACE);
       }
-      for (let i = 1; i < 5; i++) gl.disableVertexAttribArray(i);
+      for (let i = 1; i < 7; i++) gl.disableVertexAttribArray(i);
     }
     return cam;
   }
