@@ -1360,7 +1360,7 @@
     "plank_up_down": "Plank up-down|Prancha comando|Prancha dinâmica",
     "side_plank_dip": "Side plank dips|Hip dips|Descida de quadril na prancha lateral",
     "reverse_plank": "Reverse plank|Prancha reversa|Prancha de costas",
-    "boat_hold": "Boat hold|Barco|Isometria em V",
+    "boat_hold": "Boat hold|Isometria em V",
     "swimmer": "Swimmer|Swimmers|Nadador de bruços",
     "forward_fold": "Forward fold|Inclinação à frente em pé|Flexão de tronco",
     "seated_forward_fold": "Seated forward fold|Inclinação à frente sentado|Alongamento de posterior sentado",
@@ -1369,7 +1369,7 @@
     "squat_to_stand": "Squat-to-stand|Agachamento segurando os pés|Do agachamento a em pé",
     "star_jump": "Star jumps|Salto estrela|Star jump",
     "tuck_jump": "Tuck jumps|Salto grupado|Tuck jump|Saltos com joelhos no peito",
-    "jump_rope": "Jump rope|Corda|Salto com corda|Rope skipping",
+    "jump_rope": "Jump rope|Salto com corda|Rope skipping",
     "split_jump": "Split jumps|Jumping lunges|Afundo com salto|Avanço saltado",
     "box_jump": "Box jumps|Box jump|Salto no caixote|Salto na caixa"
   },
