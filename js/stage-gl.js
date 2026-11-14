@@ -89,8 +89,9 @@ attribute vec3 aPos; attribute vec3 aNor; attribute vec2 aUV; attribute vec4 aBo
 attribute vec3 aM0; attribute vec3 aM1; uniform vec2 uMorph;
 uniform mat4 uBones[23]; uniform mat4 uModel; uniform mat4 uVP;
 uniform float uOutline; uniform float uFlatten; uniform vec3 uSun;
-varying vec3 vPos; varying vec3 vNor; varying vec2 vUV; varying float vH;
+varying vec3 vPos; varying vec3 vNor; varying vec2 vUV; varying float vH; varying float vRest;
 void main() {
+  vRest = aPos.z;
   mat4 skin = aWeight.x * uBones[int(aBone.x)] + aWeight.y * uBones[int(aBone.y)] + aWeight.z * uBones[int(aBone.z)] + aWeight.w * uBones[int(aBone.w)];
   vec3 n = normalize((skin * vec4(aNor, 0.0)).xyz);
   // The face: closing eyelids and a smile are offsets of the resting surface, added before the bones move it.
@@ -106,15 +107,16 @@ void main() {
 
 /* Looks (uLook): 0 natural – soft light, skin that lets light in, a rim against the sun · 1 drawn – two tones, a crisp
    rim, an ink line · 2 night – dark, light in two colours from the sides. Kinds (uKind): 0 skin, 1 hair, 2 cloth,
-   3 eye, 4 lashes and brows (both cut out by their alpha). */
+   3 eye, 4 lashes and brows (hair, eye and lashes are cut out by their alpha). */
 const SKIN_FS = `
 #ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
 #else
 precision mediump float;
 #endif
-varying vec3 vPos; varying vec3 vNor; varying vec2 vUV; varying float vH;
+varying vec3 vPos; varying vec3 vNor; varying vec2 vUV; varying float vH; varying float vRest;
 uniform sampler2D uTex; uniform float uKind; uniform vec3 uHsv; uniform float uLook; uniform float uInk; uniform float uBeat;
+uniform vec3 uSetFrom; uniform vec3 uSetTo; uniform float uSetBelow; uniform float uIris;
 uniform vec3 uEye; uniform vec3 uSun; uniform vec3 uKey; uniform vec3 uSky; uniform vec3 uBounce; uniform vec3 uFill; uniform vec3 uRim; uniform vec3 uRimB;
 vec3 rgb2hsv(vec3 c) {
   vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
@@ -130,10 +132,15 @@ vec3 hsv2rgb(vec3 c) {
 void main() {
   if (uInk > 0.5) { gl_FragColor = vec4(0.09, 0.06, 0.12, 1.0); return; }
   vec4 t = texture2D(uTex, vUV);
-  // Lashes and brows are cut out by their alpha – and so is the clear shell that lies over the eyeball.
-  if (uKind > 2.5 && t.a < 0.5) discard;
+  // Lashes and brows are cut out by their alpha – so are the clear shell that lies over the eyeball and the ends of
+  // hair (skin and cloth have none).
+  if (uKind > 0.5 && (uKind < 1.5 || uKind > 2.5) && t.a < 0.5) discard;
   vec3 base = t.rgb;
   if (uKind > 0.5 && uKind < 1.5) { vec3 h = rgb2hsv(base); base = hsv2rgb(vec3(fract(h.x + uHsv.x), clamp(h.y * uHsv.y, 0.0, 1.0), clamp(h.z * uHsv.z, 0.0, 1.0))); }
+  // A colour variant of the same model: her top in another colour (the paint of the top is matched by its colour,
+  // below the neck only – lips are close to that red), her iris in another hue (the white of the eye stays).
+  if (uKind < 0.5 && vRest < uSetBelow) base = mix(base, base * (uSetTo / uSetFrom), 1.0 - smoothstep(0.09, 0.18, distance(base, uSetFrom)));
+  if (uKind > 2.5 && uKind < 3.5) { vec3 h = rgb2hsv(base); if (h.y > 0.22) base = hsv2rgb(vec3(fract(h.x + uIris), h.y, h.z)); }
   vec3 alb = pow(base, vec3(2.2));
   vec3 n = normalize(vNor);
   vec3 v = normalize(uEye - vPos);
@@ -440,7 +447,12 @@ export function createStage(canvas) {
       const face = fig.face || [0, 0];
       gl.uniform2f(p.u.uMorph, face[0] || 0, face[1] || 0);
       gl.activeTexture(gl.TEXTURE0); gl.uniform1i(p.u.uTex, 0);
-      const each = (m) => { gl.bindTexture(gl.TEXTURE_2D, m.tex); gl.uniform1f(p.u.uKind, m.kind); gl.uniform3fv(p.u.uHsv, m.hsv); };
+      // Colours of a variant (stage-show.js TRAINERS): hair [hue shift, saturation, value], set: { from, to, below }, iris.
+      const pal = fig.palette || {};
+      const set = pal.set || null;
+      gl.uniform3fv(p.u.uSetFrom, set ? set.from : [1, 1, 1]); gl.uniform3fv(p.u.uSetTo, set ? set.to : [1, 1, 1]);
+      gl.uniform1f(p.u.uSetBelow, set ? set.below : -1e3); gl.uniform1f(p.u.uIris, pal.iris || 0);
+      const each = (m) => { gl.bindTexture(gl.TEXTURE_2D, m.tex); gl.uniform1f(p.u.uKind, m.kind); gl.uniform3fv(p.u.uHsv, m.kind === 1 && pal.hair ? pal.hair : m.hsv); };
       gl.uniform1f(p.u.uInk, 0); gl.uniform1f(p.u.uOutline, 0);
       drawModel((m) => m.kind !== 4, each);
       drawModel((m) => m.kind === 4, each);

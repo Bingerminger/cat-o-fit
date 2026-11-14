@@ -22,7 +22,7 @@ import { categoryMeta, loadExerciseTexts } from './exercises.js';
 import { exerciseArt } from './exercise-art.js';
 import { mountFigure } from './motion-figure.js';
 import { frameAt } from './motion-rig.js';
-import { mountStage, LOOKS } from './stage-show.js';
+import { mountStage, LOOKS, TRAINERS, DEFAULT_TRAINER } from './stage-show.js';
 import { loadTrainer } from './stage-model.js';
 import { stageError } from './stage-gl.js';
 import { buildShow, showStateAt, doseLabel, nextWorkAfter } from './show-program.js';
@@ -110,6 +110,8 @@ export function openShow(program, { onFinish = null } = {}) {
   let rest = program.rest;
   // Workouts start brisk, like a video to follow along; a plan session keeps the calm tempo its exercises are written in.
   let pace = PACES[prefs.showPace] ? prefs.showPace : (program.format === 'interval' ? 'brisk' : 'calm');
+  // Who leads the session on the 3D stage.
+  let trainer = TRAINERS[prefs.showTrainer] ? prefs.showTrainer : DEFAULT_TRAINER;
 
   const root = el('div', { class: 'show', role: 'dialog', 'aria-modal': 'true', 'aria-label': localizeUnits(program.title) });
   document.body.appendChild(root);
@@ -139,7 +141,8 @@ export function openShow(program, { onFinish = null } = {}) {
   function overview() {
     root.innerHTML = '';
     // Fetch the trainer model while the overview is read, so the stage has it when the session starts.
-    if (wantsStage()) loadTrainer().catch(() => { /* the stage reports it when it starts */ });
+    const fetchTrainer = () => { if (wantsStage()) loadTrainer(TRAINERS[trainer].base).catch(() => { /* the stage reports it when it starts */ }); };
+    fetchTrainer();
     const current = () => ({ ...program, rounds, rest, pace: PACES[pace] });
     const total = el('span', { class: 'show-ov__total' });
     const paint = () => {
@@ -166,6 +169,12 @@ export function openShow(program, { onFinish = null } = {}) {
       segmented([{ value: 'calm', label: t('workoutShow.paceCalm') }, { value: 'brisk', label: t('workoutShow.paceBrisk') }, { value: 'fast', label: t('workoutShow.paceFast') }], pace,
         (v) => { pace = v; store.setSetting('showPace', v); paint(); }, { label: t('workoutShow.pace') }),
     ]);
+    // The figure is a choice of the 3D stage; where that is off (reduced motion, no WebGL), there is nothing to choose.
+    const figure = wantsStage() ? el('div', { class: 'show-ov__stepper' }, [
+      el('span', { class: 'show-ov__label', text: t('workoutShow.trainer') }),
+      segmented([{ value: 'blond', label: t('workoutShow.trainerBlond') }, { value: 'red', label: t('workoutShow.trainerRed') }, { value: 'male', label: t('workoutShow.trainerMale') }], trainer,
+        (v) => { trainer = v; store.setSetting('showTrainer', v); fetchTrainer(); }, { label: t('workoutShow.trainer') }),
+    ]) : null;
     const voice = el('button', { class: `show-ov__toggle${voiceOn ? ' is-on' : ''}`, type: 'button', 'aria-pressed': String(voiceOn), disabled: !canSpeak(), onclick: () => {
       voiceOn = !voiceOn; store.setSetting('showVoice', voiceOn);
       voice.classList.toggle('is-on', voiceOn); voice.setAttribute('aria-pressed', String(voiceOn));
@@ -190,7 +199,7 @@ export function openShow(program, { onFinish = null } = {}) {
             stepper(t('workoutShow.roundsLabel'), () => rounds, (v) => { rounds = v; }, 1, 1, 6),
             stepper(t('motion.rest'), () => rest, (v) => { rest = v; }, 5, 5, 90, ' s'),
           ]),
-          tempo, music, hint, voice, go,
+          tempo, figure, music, hint, voice, go,
         ]),
       ]),
     ]));
@@ -233,7 +242,7 @@ export function openShow(program, { onFinish = null } = {}) {
     const canvas = wantsStage() ? el('canvas', { class: 'show__gl', 'aria-hidden': 'true' }) : null;
     let gl3d = null;
     let lookName = LOOKS[prefs.showLook] ? prefs.showLook : 'natural';
-    try { gl3d = canvas && typeof canvas.getContext === 'function' ? mountStage(canvas, show, { style: lookName }) : null; } catch { gl3d = null; }
+    try { gl3d = canvas && typeof canvas.getContext === 'function' ? mountStage(canvas, show, { style: lookName, trainer }) : null; } catch { gl3d = null; }
     // Why the drawn figure is shown instead – said on the stage, so nobody wonders where the 3D stage went.
     const inBrowser = typeof window !== 'undefined' && typeof window.matchMedia === 'function';
     const why = () => { const e = stageError(); return e ? `${t('workoutShow.stageOffDevice')} (${e.slice(0, 90)})` : t('workoutShow.stageOffDevice'); };

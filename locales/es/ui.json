@@ -3686,6 +3686,10 @@
     "lookNatural": "Natural",
     "lookNight": "Arena nocturna",
     "lookDrawn": "Dibujado",
+    "trainer": "Figura",
+    "trainerBlond": "Rubia",
+    "trainerRed": "Pelirroja",
+    "trainerMale": "Hombre",
     "exercises": {
       "one": "{count} ejercicio",
       "other": "{count} ejercicios"

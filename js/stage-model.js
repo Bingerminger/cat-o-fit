@@ -265,13 +265,14 @@ export function modelToStage(model) {
 
 /* ------------------------------ Loading ------------------------------ */
 
-let loading = null;
+const loads = new Map();
 
 /**
- * Loads the model and its textures once (the files are small, but they are files: call it when the session's
- * overview opens, so that the stage has them when it starts). Resolves to { model, images: { file name → image } }.
+ * Loads a model and its textures once per folder (the files are small, but they are files: call it when the
+ * session's overview opens, so that the stage has them when it starts). Resolves to { model, images: { file name → image } }.
  */
 export function loadTrainer(base = './assets/trainer/') {
+  let loading = loads.get(base);
   if (!loading) {
     loading = (async () => {
       const get = async (name) => { const r = await fetch(`${base}${name}`); if (!r.ok) throw new Error(`${name}: ${r.status}`); return r; };
@@ -286,7 +287,8 @@ export function loadTrainer(base = './assets/trainer/') {
       })));
       return { model, images };
     })();
-    loading.catch(() => { loading = null; });
+    loads.set(base, loading);
+    loading.catch(() => { loads.delete(base); });
   }
   return loading;
 }

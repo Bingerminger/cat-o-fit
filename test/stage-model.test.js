@@ -98,3 +98,45 @@ test('The face: eyelids that close and a smile, as small offsets of the skin and
   // What has no face stays out of it.
   for (const m of model.meshes) if (m.kind === 'hair' || m.kind === 'cloth' || m.kind === 'eye') assert.deepEqual(Object.keys(m.morphs), [], `${m.name} has no face shapes`);
 });
+
+test('The second model (a man): its own proportions, posed to the millimetre as in Blender, a face that moves', () => {
+  const mdir = new URL('../assets/trainer-m/', import.meta.url);
+  const mdoc = JSON.parse(readFileSync(new URL('trainer.json', mdir), 'utf8'));
+  const mbin = readFileSync(new URL('trainer.bin', mdir));
+  const man = parseModel(mdoc, mbin.buffer.slice(mbin.byteOffset, mbin.byteOffset + mbin.byteLength));
+  const fx = JSON.parse(readFileSync(new URL('./fixtures/trainer-m-pose.json', import.meta.url), 'utf8'));
+  assert.equal(man.bones.length, 23);
+  assert.equal(mdoc.bytes, mbin.byteLength);
+  // Taller and broader than her: nothing in the pipeline may assume her measures.
+  assert.ok(man.rig.hip > model.rig.hip + 0.05 && man.rig.shoulderW > model.rig.shoulderW + 0.03, 'his measures are his own');
+  const skin = man.meshes.find((m) => m.kind === 'skin');
+  assert.ok(fx.frames.length >= 3);
+  for (const fr of fx.frames) {
+    const pose = poseSkeleton(man, fr.input);
+    for (const [name, head] of Object.entries(fr.heads)) {
+      const d = dist(pose[man.index[name]].t, head);
+      assert.ok(d < 0.001, `frame ${fr.frame}: ${name} is ${(d * 1000).toFixed(2)} mm off`);
+    }
+    const mats = skinMatrices(man, pose);
+    fr.pick.forEach((vi, k) => {
+      const d = dist(skinnedVertex(skin, mats, vi), fr.verts[k]);
+      assert.ok(d < 0.001, `frame ${fr.frame}: vertex ${vi} is ${(d * 1000).toFixed(2)} mm off`);
+    });
+  }
+  for (const name of FACE) assert.ok(skin.morphs[name], `${name} is there`);
+  // Every exercise in his proportions: numbers only, feet on the floor when he stands.
+  for (const [id, m] of Object.entries(MOTIONS)) {
+    const list = cycleOf(m);
+    const total = list.reduce((s, p) => s + p.dur, 0);
+    for (let i = 0; i < 3; i++) {
+      const pose = poseSkeleton(man, jointsForModel(retarget(bodyFlow(m, (i / 3) * total, list), man.rig)));
+      for (const b of pose) for (const x of [...b.r, ...b.t]) if (!Number.isFinite(x)) assert.fail(`${id}: a bone is not a number`);
+    }
+  }
+  const stand = retarget(bodyFlow(MOTIONS.squat, 0, cycleOf(MOTIONS.squat)), man.rig);
+  const mats = skinMatrices(man, poseSkeleton(man, jointsForModel(stand)));
+  let lo = Infinity; let hi = -Infinity;
+  for (let i = 0; i < skin.position.length / 3; i += 7) { const p = skinnedVertex(skin, mats, i); lo = Math.min(lo, p[2]); hi = Math.max(hi, p[2]); }
+  assert.ok(hi > 1.7 && hi < 2.05, `his head is at ${hi.toFixed(2)} m`);
+  assert.ok(lo > -0.05, `something is ${lo.toFixed(2)} m under the floor`);
+});

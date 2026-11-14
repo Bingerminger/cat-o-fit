@@ -32,6 +32,18 @@ import { retarget } from './stage-rig.js';
 /** The looks of the stage: how the trainer is lit and drawn, and the world that goes with it. */
 export const LOOKS = { natural: 'beach', night: 'neon', drawn: 'pop' };
 
+/**
+ * Who leads the session. A trainer is a model (a folder with trainer.json, trainer.bin and textures) and, for a
+ * variant of the same model, its colours: hair [hue shift, saturation, value], the top repainted (`set`: the colour
+ * it has in the texture, the colour it gets, and the height below which it is looked for), the hue of the iris.
+ */
+export const TRAINERS = {
+  blond: { base: './assets/trainer/' },
+  red: { base: './assets/trainer/', palette: { hair: [-0.075, 1.75, 0.82], set: { from: [0.95, 0.33, 0.32], to: [0.04, 0.5, 0.42], below: 1.49 }, iris: -0.2 } },
+  male: { base: './assets/trainer-m/' },
+};
+export const DEFAULT_TRAINER = 'blond';
+
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 const smooth = (k) => { const x = clamp(k, 0, 1); return x * x * (3 - 2 * x); };
 const RAD = Math.PI / 180;
@@ -91,24 +103,29 @@ function shotAt(seg, local, view) {
  * `render(T, st, env)`: T show time, st = showStateAt(show, T),
  * env = { area: { x, y, w, h } free part of the canvas in 0…1, playing }.
  */
-export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {}) {
+export function mountStage(canvas, show, { style = 'natural', trainer = DEFAULT_TRAINER } = {}) {
   const stage = createStage(canvas);
   if (!stage) return null;
   let lookName = LOOKS[style] ? style : 'natural';
   // The trainer model: loaded once; the stage shows the world until it is there. If it cannot be had, the stage says
   // so by failing – the session then falls back to the drawn figure.
-  let fig = null; let failed = null;
-  loadTrainer().then(({ model, images }) => {
-    if (stage.setModel(model, images)) fig = { model, bones: new Float32Array(model.bones.length * 16), toStage: modelToStage(model) };
-    else failed = new Error('model');
-  }).catch((e) => { failed = e; });
-  const trainer = createMesh(9000, 48000);
+  let fig = null; let failed = null; let who = TRAINERS[trainer] ? trainer : DEFAULT_TRAINER;
+  function cast(name) {
+    const t = TRAINERS[name] || TRAINERS[DEFAULT_TRAINER];
+    loadTrainer(t.base).then(({ model, images }) => {
+      // Someone else was chosen while this one loaded.
+      if (who !== name) return;
+      if (stage.setModel(model, images)) fig = { model, bones: new Float32Array(model.bones.length * 16), toStage: modelToStage(model), palette: t.palette || null };
+      else failed = new Error('model');
+    }).catch((e) => { if (who === name) failed = e; });
+  }
+  cast(who);
   const cat = createMesh(3000, 15000);
   const gear = createMesh(2400, 9000);
   const bits = createMesh(1600, 2400);
   bits.flat = true; bits.noShadow = true;
   let dpr = Math.min(1.6, (typeof window !== 'undefined' && window.devicePixelRatio) || 1);
-  let slow = 0; let lastWall = null; let wallT = 0; let smile = 0.3; let catSit = 1; let catLong = 0; let catAt = null;
+  let slow = 0; let lastWall = null; let wallT = 0; let smile = 0.3; let catSit = 1; let catLong = 0; let catAt = null; let catFor = null; let catDone = false; let catSpot = CAT_AT;
   let lastT = null;
   let confetti = []; let lastIndex = -1; let doneAt = null;
   const follower = createFollower();
@@ -279,13 +296,12 @@ export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {})
       glow = 0.35 + 0.65 * Math.sin(k * Math.PI) ** 2;
     }
     const m = motionOf(seg);
-    trainer.reset();
     let model = null;
     if (fig) {
       // The model's skeleton takes the pose: contacts stay, her own proportions decide the rest.
       const r = retarget(body, fig.model.rig);
       skinMatrices(fig.model, poseSkeleton(fig.model, jointsForModel(r)), fig.bones);
-      model = { bones: fig.bones, toStage: fig.toStage, look: lookName, face: [fx.blink, fx.smile] };
+      model = { bones: fig.bones, toStage: fig.toStage, look: lookName, face: [fx.blink, fx.smile], palette: fig.palette };
       // What she holds, and what stands in the room for this exercise.
       const k = stageScale(fig.model);
       const hands = {};
@@ -327,7 +343,13 @@ export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {})
       sit: catSit,
     };
     // Its place follows the view; the way there it trots.
-    const spot = done || m.view === 'front' ? CAT_BESIDE : CAT_AT;
+    // Chosen once per section, on the side of the mat that is away from the camera.
+    if (catFor !== st.index || done !== catDone) {
+      catFor = st.index; catDone = done;
+      const base = done || m.view === 'front' ? CAT_BESIDE : CAT_AT;
+      catSpot = (cam.eye[2] - body.pelvis[2]) * base[2] > 0 ? [base[0], 0, -base[2]] : base;
+    }
+    const spot = catSpot;
     if (jumped || !catAt) catAt = [...spot];
     const way = V.sub(spot, catAt); const far = V.len(way);
     const trot = far > 0.5;
@@ -357,7 +379,7 @@ export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {})
     let pulse = 0;
     if (working && seg.cyc && local > seg.cyc * 0.98) pulse = clamp((local % seg.cyc) / 0.75, 0, 1);
 
-    const frame = { cam, world, time: wallT, beat: 1 - clamp((local % beat) / beat, 0, 1), pulse, pulseAt: [body.pelvis[0], body.pelvis[2]], meshes: [trainer, gear, cat, bits], model, glow, mat: MAT, blobs };
+    const frame = { cam, world, time: wallT, beat: 1 - clamp((local % beat) / beat, 0, 1), pulse, pulseAt: [body.pelvis[0], body.pelvis[2]], meshes: [gear, cat, bits], model, glow, mat: MAT, blobs };
     // Confetti needs the camera axes: one frame late is fine.
     stepConfetti(wdt, lastAxes.r, lastAxes.u);
     const t0 = typeof performance !== 'undefined' ? performance.now() : 0;
@@ -378,6 +400,9 @@ export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {})
     /** The look of the stage: 'natural' | 'night' | 'drawn'. */
     setLook(name) { if (LOOKS[name]) lookName = name; },
     get look() { return lookName; },
+    /** Who leads the session: a key of TRAINERS. The one before stays on stage until the new one is loaded. */
+    setTrainer(name) { if (TRAINERS[name] && name !== who) { who = name; cast(name); } },
+    get trainer() { return who; },
     /** Confetti from outside (a goal reached). */
     cheer(n = 90) { burst([0, 70, 0], n, 1.1); },
     destroy() { stage.destroy(); },

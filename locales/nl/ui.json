@@ -3686,6 +3686,10 @@
     "lookNatural": "Natuurlijk",
     "lookNight": "Nachtarena",
     "lookDrawn": "Getekend",
+    "trainer": "Figuur",
+    "trainerBlond": "Blond",
+    "trainerRed": "Rood",
+    "trainerMale": "Man",
     "exercises": {
       "one": "{count} oefening",
       "other": "{count} oefeningen"
