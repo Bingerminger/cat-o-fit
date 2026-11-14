@@ -106,7 +106,7 @@
   /* Note: .target-grid and .week-stats adapt via their own
      (content-dependent) grids – no fixed column grid on large screens,
      otherwise a few tiles slide into the left half (unbalanced). */
-  .ex-grid { grid-template-columns: repeat(3, 1fr); }
+  .ex-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 /* ---------- Wider iPad / desktop ---------- */

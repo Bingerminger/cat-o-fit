@@ -70,7 +70,14 @@ async function watchedContext(browser, where, { locale, viewport, origin, servic
   });
   const page = await ctx.newPage();
   const errors = [];
-  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+  page.on('console', (m) => {
+    if (m.type() !== 'error') return;
+    // WebKit words a request to the app's own server that a navigation cut off as "cannot load … due to access
+    // control checks". Every route here is a fresh navigation, so a sync still under way is cut off now and then –
+    // that is not an error of the app. (A request to another origin never gets this far: it is counted in `outside`.)
+    if (/cannot load .* due to access control checks/.test(m.text()) && m.text().includes(new URL(origin).host)) return;
+    errors.push(m.text());
+  });
   page.on('pageerror', (e) => errors.push(String(e)));
   page.on('response', (r) => { if (r.status() >= 400 && r.url().startsWith(origin)) errors.push(`HTTP ${r.status()} ${r.url().slice(origin.length)}`); });
   return { ctx, page, errors, outside, where };

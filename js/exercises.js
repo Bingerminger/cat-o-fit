@@ -461,6 +461,7 @@ export function render(view) {
   const catBar = segmented(cats, uiState.category, (v) => { uiState.category = v; drawGrid(); }, { label: t('exerciseLib.category') });
   catBar.style.width = 'max-content';
   catBar.style.minWidth = '100%';
+  catBar.classList.add('segmented--scroll');
   view.appendChild(el('div', { class: 'mt-2', style: { overflowX: 'auto', paddingBottom: '2px' } }, [catBar]));
 
   // Additional body-region filter (chips, horizontally scrollable).

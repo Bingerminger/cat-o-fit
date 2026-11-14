@@ -264,8 +264,10 @@
 .badge-card--t3.is-unlocked .badge-card__check { color: #7c5cff; }
 
 /* ---------- Exercise library ---------- */
-.ex-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-3); }
+/* Columns of equal width whatever a tile holds: a long word in one name must not widen its column and the page. */
+.ex-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); }
 .ex-card {
+  min-width: 0;
   display: flex; flex-direction: column; align-items: center; gap: 6px;
   padding: var(--sp-3); text-align: center;
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md);
@@ -275,7 +277,7 @@
 .ex-card:active { transform: scale(.98); }
 .ex-card__art { width: 100%; aspect-ratio: 3 / 2; }
 .ex-card__art svg { width: 100%; height: 100%; }
-.ex-card__name { font-weight: 700; font-size: .9rem; line-height: 1.15; }
+.ex-card__name { font-weight: 700; font-size: .9rem; line-height: 1.15; max-width: 100%; overflow-wrap: anywhere; hyphens: auto; -webkit-hyphens: auto; }
 .ex-card__meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: center; }
 .ex-detail__art {
   width: 100%; max-width: 320px; margin: 0 auto; aspect-ratio: 3 / 2;

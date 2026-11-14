@@ -436,6 +436,11 @@ body.is-anon .view { padding-bottom: calc(env(safe-area-inset-bottom) + var(--sp
   color: var(--text);
   box-shadow: var(--shadow-1);
 }
+/* A bar inside a container that scrolls sideways: every option keeps the width of its word. Without this the
+   options shrink to the container, and a long word ("Beweglichkeit") runs out of its box where the browser has no
+   hyphenation for the language or the font is wider. */
+.segmented--scroll { max-width: none; }
+.segmented--scroll .segmented__opt { flex: 0 0 auto; white-space: nowrap; hyphens: manual; -webkit-hyphens: manual; }
 
 /* Stepper (+/- for workout logging) */
 .stepper { display: inline-flex; align-items: center; gap: var(--sp-3); }
