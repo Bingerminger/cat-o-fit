@@ -19,12 +19,31 @@ import { vec as V, solveLimb3, poleOf } from './body3d.js';
 
 /** The trainer model's skeleton in metres (MakeHuman, rig "game_engine"; from its rest pose). */
 export const TRAINER_RIG = {
-  hip: 0.864, hipW: 0.091, thigh: 0.383, calf: 0.42, ankle: 0.067,
-  torso: 0.434, shoulderW: 0.158, upper: 0.243, lower: 0.223, wrist: 0.055,
+  hip: 0.9, hipW: 0.093, thigh: 0.41, calf: 0.426, ankle: 0.069,
+  torso: 0.443, shoulderW: 0.161, upper: 0.254, lower: 0.231, wrist: 0.055,
 };
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 const ramp = (x, a, b) => { const k = clamp((x - a) / (b - a), 0, 1); return k * k * (3 - 2 * k); };
+
+/** How far a foot may turn at the ankle, as the cosine between the foot (heel → toe) and the shin (knee → ankle). */
+const ANKLE = { up: -0.4, down: 0.74 };   // toes about 24° towards the shin · foot pointed about 48° from the right angle
+
+/**
+ * The direction of a foot within what an ankle allows. A drawing may tilt a foot any way (in a plank it was a
+ * slanted stroke along the leg); a real foot stands roughly at a right angle to its shin – on tiptoe the toes go
+ * down into the floor, they do not fold up against the leg.
+ */
+export function footWithinAnkle(foot, shin, front) {
+  const c = V.dot(foot, shin);
+  if (c >= ANKLE.up && c <= ANKLE.down) return foot;
+  let n = V.sub(foot, V.mul(shin, c));
+  if (V.len(n) < 1e-4) n = V.sub(front, V.mul(shin, V.dot(front, shin)));
+  if (V.len(n) < 1e-4) n = [0, -1, 0];
+  n = V.norm(n);
+  const k = clamp(c, ANKLE.up, ANKLE.down);
+  return V.norm(V.add(V.mul(shin, k), V.mul(n, Math.sqrt(1 - k * k))));
+}
 
 /**
  * A body (body3d.js) in the proportions of a rig. Returns { pelvis, chest, up, lat, latSh, fwd, headUp, headFwd,
@@ -56,11 +75,20 @@ export function retarget(b, R = TRAINER_RIG) {
   let pelvis = P(b.pelvis);
   const leg = R.thigh + R.calf - 0.004; const arm = R.upper + R.lower - 0.004;
   const standing = ['r', 'l'].filter((side) => foot[side].on > 0.5);
+  const stretch = {};
+  for (const side of ['r', 'l']) stretch[side] = Math.min(1, V.dist(b.legs[side].hip, b.legs[side].ankle) / (BODY.thigh + BODY.shin));
   const feet = standing.length ? V.mul(standing.reduce((sum, side) => V.add(sum, foot[side].at), [0, 0, 0]), 1 / standing.length) : null;
   for (let pass = 0; pass < 8; pass++) {
     for (const side of standing) {
       const d = V.sub(V.add(pelvis, V.mul(b.lat, legSide(side) * R.hipW)), foot[side].at); const l = V.len(d);
       if (l > leg) pelvis = V.add(pelvis, V.mul(d, (leg - l) / l));
+      else {
+        // A leg that the exercise stretches stays stretched: the hip keeps its share of the leg's full length.
+        // (The drawing bends an all but straight leg a little, to show its knee; the model's leg is then straight.)
+        const k = ramp(stretch[side], 0.95, 0.985);
+        const want = (stretch[side] + (0.999 - stretch[side]) * k) * leg;
+        if (l < want) pelvis = V.add(pelvis, V.mul(d, ((want - l) / l) * k / standing.length));
+      }
     }
     // What the shoulders have to give so that the carrying hands are in reach …
     let give = [0, 0, 0]; let n = 0;
@@ -88,7 +116,7 @@ export function retarget(b, R = TRAINER_RIG) {
     const free = V.add(V.add(hip, V.mul(dir(g.hip, g.knee), R.thigh)), V.mul(dir(g.knee, g.ankle), R.calf));
     const end = V.lerp(free, foot[side].at, foot[side].on);
     const solved = solveLimb3(hip, end, R.thigh, R.calf, poleOf(hip, end, g.hip, g.knee, g.ankle, b.fwd));
-    legs[side] = { hip, knee: solved.joint, ankle: solved.end, foot: dir(g.heel, g.toe), on: foot[side].on };
+    legs[side] = { hip, knee: solved.joint, ankle: solved.end, foot: footWithinAnkle(dir(g.heel, g.toe), dir(solved.joint, solved.end), b.fwd), on: foot[side].on };
     const a = b.arms[side];
     const sh = V.add(chest, V.mul(b.latSh, armSide(side) * R.shoulderW));
     const freeW = V.add(V.add(sh, V.mul(dir(a.sh, a.elbow), R.upper)), V.mul(dir(a.elbow, a.wrist), R.lower));

@@ -125,13 +125,14 @@ function liftSide(S, m) {
     const ankle = p3(g.end, s * STANCE);
     // The knee stays in the plane of its leg and goes out only as far as it goes forward: over the toes.
     let knee0 = p3(g.joint, s * ((BODY.hipW + STANCE) / 2 + TRACK.knee * offLine(S.hip, g.end, g.joint)));
-    // A leg that is all but straight bends its knee to the front of the body, whatever side the flat picture drew the
-    // slight bend on (a leg in a plank was drawn bent "upwards" – for a body that faces the floor that is backwards).
-    // A leg that is clearly bent is drawn the way it bends.
-    const axis = V.norm(V.sub(ankle, hip));
-    const off = V.sub(V.sub(knee0, hip), V.mul(axis, V.dot(V.sub(knee0, hip), axis)));
-    const inPlane = [off[0], off[1], 0];
-    if (V.len(inPlane) < 9 && V.dot(inPlane, fwd) < 0) knee0 = V.sub(knee0, V.mul(inPlane, 2));
+    // A knee is a hinge that folds one way only: seen from the side, the shin swings back from the line of the thigh,
+    // never forward. The flat picture did not always care (a leg in a plank was drawn bent "upwards", a crouch with
+    // the knees behind the hips) – where it bends the wrong way, the knee goes to the other side of the leg.
+    if ((knee0[0] - hip[0]) * (ankle[1] - knee0[1]) - (knee0[1] - hip[1]) * (ankle[0] - knee0[0]) > 0) {
+      const axis = V.norm(V.sub(ankle, hip));
+      const off = V.sub(V.sub(knee0, hip), V.mul(axis, V.dot(V.sub(knee0, hip), axis)));
+      knee0 = V.sub(knee0, V.mul([off[0], off[1], 0], 2));
+    }
     const knee = solveLimb3(hip, ankle, BODY.thigh, BODY.shin, knee0).joint;
     const foot = S.legs[side].foot;
     const dx = foot[1][0] - foot[0][0]; const dy = foot[1][1] - foot[0][1];
@@ -455,8 +456,13 @@ export function blendBodies(A, B, k, { rise = 0 } = {}) {
   for (const side of ['r', 'l']) {
     const sa = V.dot(V.sub(A.legs[side].hip, A.pelvis), A.lat) >= 0 ? 1 : -1;
     const hip = V.add(pelvis, V.mul(lat, sa * BODY.hipW));
-    const knee = V.add(hip, V.mul(nlerp(dir(A.legs[side].hip, A.legs[side].knee), dir(B.legs[side].hip, B.legs[side].knee), k), BODY.thigh));
-    const ankle = V.add(knee, V.mul(nlerp(dir(A.legs[side].knee, A.legs[side].ankle), dir(B.legs[side].knee, B.legs[side].ankle), k), BODY.shin));
+    const thigh = nlerp(dir(A.legs[side].hip, A.legs[side].knee), dir(B.legs[side].hip, B.legs[side].knee), k);
+    let shin = nlerp(dir(A.legs[side].knee, A.legs[side].ankle), dir(B.legs[side].knee, B.legs[side].ankle), k);
+    // Thigh and shin turn on their own ways – on the way a knee must not fold forward: then the shin takes the
+    // same bend on the right side of the thigh.
+    if (V.dot(V.cross(thigh, shin), lat) > 0) shin = V.norm(V.sub(V.mul(thigh, 2 * V.dot(thigh, shin)), shin));
+    const knee = V.add(hip, V.mul(thigh, BODY.thigh));
+    const ankle = V.add(knee, V.mul(shin, BODY.shin));
     const fd = nlerp(dir(A.legs[side].heel, A.legs[side].toe), dir(B.legs[side].heel, B.legs[side].toe), k);
     legs[side] = { hip, knee, ankle, heel: V.add(ankle, V.mul(fd, -BODY.heel)), toe: V.add(ankle, V.mul(fd, BODY.foot - BODY.heel)) };
     const sb = V.dot(V.sub(A.arms[side].sh, A.chest), A.latSh) >= 0 ? 1 : -1;
