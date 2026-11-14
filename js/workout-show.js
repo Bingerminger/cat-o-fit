@@ -390,7 +390,8 @@ export function openShow(program, { onFinish = null } = {}) {
       runEl.classList.remove('show__run--gl');
       stage.insertBefore(svg, stage.firstChild);
       scoreEl.hidden = true; cheerEl.hidden = true;
-      offNote.textContent = `${t('workoutShow.stageOffDevice')} (${String((e && e.message) || e).slice(0, 90)})`;
+      // The figure's files did not arrive (offline before they were ever fetched) – that is not the device's fault.
+      offNote.textContent = e && e.load ? t('workoutShow.stageOffLoad') : `${t('workoutShow.stageOffDevice')} (${String((e && e.message) || e).slice(0, 90)})`;
       offNote.hidden = false;
       figItem = -1; segIndex = -1;
     }

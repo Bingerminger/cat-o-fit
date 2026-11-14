@@ -121,7 +121,7 @@ large round of fixes for sync, plans, training figures, health values and import
   saved; an old, undated threshold pace in the profile does not count.
 - The strength hint “more weight” now comes after the second session with 12 reps – whoever just changed
   over sees “once more, then increase” once.
-- The image grows by about 4 MB (two trainer models, 189 voice clips). The models are fetched when a
+- The image grows by a few megabytes (two trainer models, 189 voice clips). The models are fetched when a
   follow-along session is opened for the first time; after that the stage works offline.
 
 ### Known limits

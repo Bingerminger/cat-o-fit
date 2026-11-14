@@ -3678,6 +3678,7 @@
     "comboLabel": "Combo",
     "stageOffMotion": "Getekende figuur: ‘Verminder beweging’ staat aan op dit apparaat",
     "stageOffDevice": "Getekende figuur: dit apparaat kan het 3D-podium niet tonen",
+    "stageOffLoad": "Getekende figuur: het 3D-figuur kon niet worden geladen – de eerste keer is er netwerk nodig",
     "pace": "Tempo",
     "paceCalm": "Rustig",
     "paceBrisk": "Vlot",

@@ -3678,6 +3678,7 @@
     "comboLabel": "Combo",
     "stageOffMotion": "Drawn figure: “Reduce motion” is switched on for this device",
     "stageOffDevice": "Drawn figure: this device cannot show the 3D stage",
+    "stageOffLoad": "Drawn figure: the 3D figure could not be loaded – it needs the network the first time",
     "pace": "Pace",
     "paceCalm": "Calm",
     "paceBrisk": "Brisk",

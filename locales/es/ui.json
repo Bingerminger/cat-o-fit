@@ -3678,6 +3678,7 @@
     "comboLabel": "Combo",
     "stageOffMotion": "Figura dibujada: «Reducir movimiento» está activado en este dispositivo",
     "stageOffDevice": "Figura dibujada: este dispositivo no puede mostrar el escenario 3D",
+    "stageOffLoad": "Figura dibujada: no se pudo cargar la figura 3D; la primera vez necesita conexión",
     "pace": "Ritmo",
     "paceCalm": "Tranquilo",
     "paceBrisk": "Ágil",

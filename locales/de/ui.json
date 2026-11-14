@@ -3678,6 +3678,7 @@
     "comboLabel": "Combo",
     "stageOffMotion": "Gezeichnete Figur: Am Gerät ist „Bewegung reduzieren“ eingeschaltet",
     "stageOffDevice": "Gezeichnete Figur: Dieses Gerät kann die 3D-Bühne nicht zeigen",
+    "stageOffLoad": "Gezeichnete Figur: Die 3D-Figur ließ sich nicht laden – beim ersten Mal braucht sie das Netz",
     "pace": "Tempo",
     "paceCalm": "Ruhig",
     "paceBrisk": "Flott",

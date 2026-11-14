@@ -117,7 +117,7 @@ export function mountStage(canvas, show, { style = 'natural', trainer = DEFAULT_
       if (who !== name) return;
       if (stage.setModel(model, images)) fig = { model, bones: new Float32Array(model.bones.length * 16), toStage: modelToStage(model), palette: t.palette || null };
       else failed = new Error('model');
-    }).catch((e) => { if (who === name) failed = e; });
+    }).catch((e) => { if (who === name) { failed = e instanceof Error ? e : new Error(String(e)); failed.load = true; } });
   }
   cast(who);
   const cat = createMesh(3000, 15000);
