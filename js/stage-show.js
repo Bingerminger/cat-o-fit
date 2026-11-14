@@ -41,8 +41,14 @@ const TAU = Math.PI * 2;
 const MAT = [0, 0, 104, 38];
 /** The space of the celebration at the end (a body standing, arms up, and the cat). */
 const CHEER_SPACE = { c: [14, 70, 10], h: [62, 82, 30], view: 'front' };
-/** Where the cat sits: at the head end of the mat, on its far side – it never sits between the camera and the trainer. */
+/**
+ * Where the cat trains: at the head end of the mat, on its far side – it never gets between the camera and the
+ * trainer. When she faces the camera, that place would be behind her legs: then it moves out to her side.
+ */
 const CAT_AT = [34, 0, -80];
+const CAT_BESIDE = [74, 0, -44];
+/** The cat is a little larger than life – a training partner, not a prop. */
+const CAT_SIZE = 1.3;
 
 /* ------------------------------ Shots ------------------------------ */
 
@@ -102,7 +108,7 @@ export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {})
   const bits = createMesh(1600, 2400);
   bits.flat = true; bits.noShadow = true;
   let dpr = Math.min(1.6, (typeof window !== 'undefined' && window.devicePixelRatio) || 1);
-  let slow = 0; let lastWall = null; let wallT = 0; let smile = 0.3;
+  let slow = 0; let lastWall = null; let wallT = 0; let smile = 0.3; let catSit = 1; let catLong = 0; let catAt = null;
   let lastT = null;
   let confetti = []; let lastIndex = -1; let doneAt = null;
   const follower = createFollower();
@@ -299,23 +305,43 @@ export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {})
     if (done && lastIndex !== -2) { burst([body.pelvis[0] - 40, 60, 0], 120, 1.2); burst([body.pelvis[0] + 40, 60, 0], 120, 1.2); }
     lastIndex = done ? -2 : st.index;
 
-    // The cat: watches, bobs with the music, joins in with a paw, stretches in the rests.
+    // The cat trains along: it jumps when she jumps, goes down when she goes down, lies long when she lies on the
+    // floor, gets up on all fours when she stands. In the rests it stretches; when it is done, it dances.
     const working = !done && seg.kind === 'work';
     const bob = Math.max(0, Math.sin((local / (beat * 2)) * TAU));
     const restK = !working && !done ? clamp(local / seg.dur, 0, 1) : 0;
+    const air = Math.max(0, Math.min(body.legs.r.ankle[1], body.legs.l.ankle[1]) - BODY.ankle - 1);
+    const lying = clamp((0.8 - body.headUp[1]) / 0.5, 0, 1) * clamp((62 - body.pelvis[1]) / 20, 0, 1);
+    const low = clamp((62 - body.pelvis[1]) / 30, 0, 1) * (1 - lying);
+    const restStretch = seg.kind === 'rest' || seg.kind === 'roundRest' ? smooth((restK - 0.25) / 0.15) * (1 - smooth((restK - 0.6) / 0.15)) : 0;
+    const ease = Math.min(1, wdt * 9);
+    catSit += ((working ? 0.3 + 0.7 * low : 1) - catSit) * ease;
+    catLong += ((working ? 0.85 * lying : restStretch) - catLong) * ease;
     const catFx = {
       tail: Math.sin((wallT / (beat * 4)) * TAU),
       look: body.head,
       blink: (wallT + 1.3) % 4.9 < 0.12 ? 1 : 0,
-      hop: done ? 9 * Math.abs(Math.sin(wallT * 5.2)) : working ? 1.6 * bob * bob : 0,
-      paw: working && seg.cyc ? Math.max(0, Math.sin((local / seg.cyc) * TAU)) ** 2 : done ? 1 : 0,
-      stretch: seg.kind === 'rest' || seg.kind === 'roundRest' ? smooth((restK - 0.25) / 0.15) * (1 - smooth((restK - 0.6) / 0.15)) : 0,
-      sit: 1,
+      hop: done ? 9 * Math.abs(Math.sin(wallT * 5.2)) : working ? Math.max(1.6 * bob * bob, Math.min(13, air * 0.8)) : 0,
+      paw: working && seg.cyc ? Math.max(0, Math.sin((local / seg.cyc) * TAU)) ** 2 * (1 - catLong) : done ? 1 : 0,
+      stretch: catLong,
+      sit: catSit,
     };
-    const toTrainer = V.norm([body.pelvis[0] - CAT_AT[0], 0, body.pelvis[2] - CAT_AT[2]]);
-    const toCam = V.norm([cam.eye[0] - CAT_AT[0], 0, cam.eye[2] - CAT_AT[2]]);
+    // Its place follows the view; the way there it trots.
+    const spot = done || m.view === 'front' ? CAT_BESIDE : CAT_AT;
+    if (jumped || !catAt) catAt = [...spot];
+    const way = V.sub(spot, catAt); const far = V.len(way);
+    const trot = far > 0.5;
+    if (trot) catAt = V.add(catAt, V.mul(way, Math.min(far, 75 * wdt) / far));
+    const toTrainer = V.norm([body.pelvis[0] - catAt[0], 0, body.pelvis[2] - catAt[2]]);
+    const toCam = V.norm([cam.eye[0] - catAt[0], 0, cam.eye[2] - catAt[2]]);
+    if (trot) { catFx.sit = 0.2; catFx.stretch = 0.25; catFx.paw = 0; catFx.hop = 2.6 * Math.abs(Math.sin(wallT * 13)); }
+    catFx.look = V.mul(V.sub(body.head, catAt), 1 / CAT_SIZE);
     cat.reset();
-    buildCat(cat, CAT_AT, V.norm(V.lerp(toTrainer, toCam, 0.45)), catFx);
+    buildCat(cat, [0, 0, 0], trot ? V.norm(way) : V.norm(V.lerp(toTrainer, toCam, 0.45)), catFx);
+    for (let i = 0; i < cat.nv; i++) {
+      const o = i * STRIDE;
+      cat.v[o] = cat.v[o] * CAT_SIZE + catAt[0]; cat.v[o + 1] *= CAT_SIZE; cat.v[o + 2] = cat.v[o + 2] * CAT_SIZE + catAt[2];
+    }
 
     // Soft shadows where the body meets the floor.
     const blobs = [];
@@ -325,7 +351,7 @@ export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {})
     }
     blobs.push([body.pelvis[0], body.pelvis[2], 36, clamp(1.15 - body.pelvis[1] / 34, 0.22, 1)]);
     blobs.push([body.chest[0], body.chest[2], 30, clamp(1 - body.chest[1] / 26, 0, 1)]);
-    blobs.push([CAT_AT[0] - 1, CAT_AT[2], 15, clamp(1 - catFx.hop / 8, 0.3, 0.9)]);
+    blobs.push([catAt[0] - 1, catAt[2], 15 * CAT_SIZE, clamp(1 - catFx.hop / 8, 0.3, 0.9)]);
 
     // Floor ring when a repetition is done.
     let pulse = 0;
