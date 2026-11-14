@@ -98,15 +98,8 @@ large round of fixes for sync, plans, training figures, health values and import
 
 ### Security
 
-- The sign-in in front of the app in the Docker image is enforced for every action, and error details go
-  to the log instead of the response.
-- The demo keeps every upload in the browser.
-- A router for PHP's built-in server keeps the data folder out of reach, and the documentation warns
-  about running without it; the nginx example carries every header.
-- The counter of wrong PIN attempts cannot be outrun; the nutrition lookup answers only with a session
-  and with the switch on; record IDs come from cryptographic randomness.
-- An admin without a PIN has a member's rights until they set one; the person who restores a full backup
-  on a new server stays a member.
+- The sign-in in front of the app in the Docker image is enforced for every action.
+- General hardening of the server, the image and the demo.
 - The published image is signed, comes with an SBOM and provenance, and is scanned for known
   vulnerabilities.
 
