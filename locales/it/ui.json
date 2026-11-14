@@ -1228,10 +1228,37 @@
     "burpee": "Burpee",
     "mountain_climber": "Mountain climber",
     "skater_jump": "Skater jump",
-    "bear_crawl": "Bear crawl"
+    "bear_crawl": "Bear crawl",
+    "front_raise": "Alzate frontali",
+    "floor_press": "Floor press",
+    "renegade_row": "Renegade row",
+    "decline_pushup": "Piegamenti con piedi rialzati",
+    "wall_pushup": "Piegamenti al muro",
+    "push_press": "Push press",
+    "box_squat": "Squat sulla sedia",
+    "triceps_kickback": "Kickback per i tricipiti",
+    "pullover": "Pullover con manubrio",
+    "single_leg_calf_raise": "Sollevamenti sui polpacci a una gamba",
+    "sit_up": "Sit-up",
+    "toe_touch": "Tocchi alle punte",
+    "plank_up_down": "Plank su e giù",
+    "side_plank_dip": "Plank laterale con discese del bacino",
+    "reverse_plank": "Plank rovesciato",
+    "boat_hold": "Posizione della barca",
+    "swimmer": "Nuotatore",
+    "forward_fold": "Piegamento in avanti in piedi",
+    "seated_forward_fold": "Piegamento in avanti da seduto",
+    "knee_hug": "Ginocchio al petto",
+    "lying_hamstring_stretch": "Allungamento dei femorali da sdraiato",
+    "squat_to_stand": "Squat to stand",
+    "star_jump": "Salti a stella",
+    "tuck_jump": "Salti raccolti",
+    "jump_rope": "Salto con la corda",
+    "split_jump": "Affondi saltati",
+    "box_jump": "Salti sul box"
   },
   "exerciseAliases": {
-    "squat": "Squat a corpo libero|Accosciata|Accosciate|Alzarsi e sedersi da una sedia",
+    "squat": "Squat a corpo libero|Accosciata|Accosciate",
     "lunge": "Affondo|Affondi in avanti|Lunge",
     "pushup": "Flessione|Piegamenti sulle braccia|Push-up",
     "deadlift": "Stacco|Stacchi rumeni|Cerniera d’anca|Romanian deadlift",
@@ -1318,7 +1345,33 @@
     "mountain_climber": "Mountain climbers|Scalatore|Scalatori",
     "skater_jump": "Skaters|Skater hops|Salti del pattinatore|Salti da pattinatore",
     "bear_crawl": "Bear crawls|Camminata dell’orso",
-    "incline_pushup": "Flessioni al muro"
+    "front_raise": "Front raise|Alzata frontale|Alzate frontali con manubri",
+    "floor_press": "Distensioni a terra|Panca a terra|Distensioni con manubri a terra",
+    "renegade_row": "Rematore in plank|Rematore renegade|Plank row",
+    "decline_pushup": "Piegamenti declinati|Decline push-up|Flessioni con piedi rialzati|Flessioni con i piedi rialzati",
+    "wall_pushup": "Flessioni al muro|Wall push-up|Piegamenti contro il muro",
+    "push_press": "Spinte con slancio|Push press con manubri|Distensioni con spinta",
+    "box_squat": "Alzarsi e sedersi da una sedia|Box squat|Squat al box|Squat sulla panca",
+    "triceps_kickback": "Triceps kickback|Kickback|Estensioni dei tricipiti a busto flesso",
+    "pullover": "Pullover|Pull-over|Pullover a terra",
+    "single_leg_calf_raise": "Polpacci a una gamba|Calf raise monopodalico|Sollevamento sulle punte a una gamba",
+    "sit_up": "Sit-ups|Addominali completi|Sollevamenti del busto",
+    "toe_touch": "Toe touches|Toe touch|Crunch a gambe verticali",
+    "plank_up_down": "Plank up-down|Commando plank|Plank dinamico",
+    "side_plank_dip": "Side plank dips|Hip dips|Discese del bacino in plank laterale",
+    "reverse_plank": "Reverse plank|Plank inverso|Plank supino",
+    "boat_hold": "Boat hold|Tenuta a V",
+    "swimmer": "Swimmer|Swimmers|Nuotatore a pancia in giù",
+    "forward_fold": "Forward fold|Flessione in avanti in piedi|Flessione del busto",
+    "seated_forward_fold": "Seated forward fold|Flessione in avanti da seduto|Allungamento dei femorali da seduto",
+    "knee_hug": "Knee hug|Allungamento ginocchio al petto|Abbraccio del ginocchio",
+    "lying_hamstring_stretch": "Femorali da sdraiato|Stretching dei femorali supino|Lying hamstring stretch",
+    "squat_to_stand": "Squat-to-stand|Squat con presa alle punte|Dallo squat in piedi",
+    "star_jump": "Star jumps|Salto a stella|Star jump",
+    "tuck_jump": "Tuck jumps|Salto raccolto|Tuck jump|Salti con ginocchia al petto",
+    "jump_rope": "Jump rope|Saltare la corda|Rope skipping",
+    "split_jump": "Split jumps|Jumping lunges|Affondo saltato|Affondi con salto",
+    "box_jump": "Box jumps|Box jump|Salto sul box|Salti sul plinto"
   },
   "session": {
     "rpeFromHr": "stimato dalla frequenza cardiaca",
@@ -1960,6 +2013,26 @@
     "fussball-praevention": {
       "title": "Prevenzione infortuni nel calcio",
       "subtitle": "Femorali, inguine, anche – come nel FIFA 11+"
+    },
+    "einsteiger": {
+      "title": "Inizio dolce",
+      "subtitle": "Con una sedia e un muro: forza senza ostacoli"
+    },
+    "hanteln-oberkoerper": {
+      "title": "Parte alta con i manubri",
+      "subtitle": "Spinta, trazione, spalle e braccia"
+    },
+    "rumpf-stark": {
+      "title": "Core forte",
+      "subtitle": "Plank, fianchi e schiena – livello avanzato"
+    },
+    "sprungkraft": {
+      "title": "Forza esplosiva",
+      "subtitle": "Corda, stella e box: salti con pause"
+    },
+    "dehnen-sanft": {
+      "title": "Allungamento dolce",
+      "subtitle": "Sciogliere schiena e parte posteriore delle gambe"
     },
     "cats": {
       "kraft": "Forza",
@@ -3597,6 +3670,26 @@
     "sayDone": "Fatto! Ottimo lavoro.",
     "logDone": "Segna come svolta",
     "counted": "Conteggiata come svolta",
+    "cheer1": "Grande!",
+    "cheer2": "Continua così!",
+    "cheer3": "Inarrestabile!",
+    "cheer4": "Fantastico!",
+    "pointsLabel": "punti",
+    "comboLabel": "Combo",
+    "stageOffMotion": "Figura disegnata: su questo dispositivo è attivo «Riduci movimento»",
+    "stageOffDevice": "Figura disegnata: questo dispositivo non può mostrare il palco 3D",
+    "pace": "Ritmo",
+    "paceCalm": "Calmo",
+    "paceBrisk": "Sostenuto",
+    "paceFast": "Veloce",
+    "look": "Stile",
+    "lookNatural": "Naturale",
+    "lookNight": "Arena notturna",
+    "lookDrawn": "Disegnato",
+    "trainer": "Figura",
+    "trainerBlond": "Bionda",
+    "trainerRed": "Rossa",
+    "trainerMale": "Uomo",
     "exercises": {
       "one": "{count} esercizio",
       "other": "{count} esercizi"

@@ -2875,5 +2875,869 @@
         "label": "Apoiar"
       }
     }
+  },
+  "front_raise": {
+    "muscles": [
+      "parte da frente dos ombros",
+      "parte superior do peito"
+    ],
+    "equipment": "halteres leves",
+    "steps": [
+      "Fique em pé, com um halter em cada mão à frente das coxas.",
+      "Eleve os dois braços à frente, quase estendidos, até a altura dos ombros.",
+      "Faça uma pausa curta sem inclinar o tronco para trás.",
+      "Desça devagar e com controle."
+    ],
+    "tip": "Escolha uma carga leve: quem trabalha são os ombros, não o impulso. 3×10–12 rep.",
+    "caution": "Com dor no ombro, suba só até onde não doer; não encolha os ombros.",
+    "progression": "Descida mais lenta (3 segundos), depois um pouco mais de carga ou um braço de cada vez.",
+    "gear": "halteres leves",
+    "phases": {
+      "0": {
+        "label": "Elevar à frente",
+        "cue": "Até os ombros, sem impulso"
+      },
+      "1": {
+        "label": "Em cima"
+      },
+      "2": {
+        "label": "Descer"
+      },
+      "3": {
+        "label": "Embaixo"
+      }
+    }
+  },
+  "floor_press": {
+    "muscles": [
+      "peito",
+      "tríceps",
+      "parte da frente dos ombros"
+    ],
+    "equipment": "dois halteres, colchonete",
+    "steps": [
+      "Deite de costas, joelhos flexionados, com um halter em cada mão acima do peito.",
+      "Desça a carga até a parte de cima dos braços encostar de leve no chão.",
+      "Os cotovelos apontam a cerca de 45°, não retos para os lados.",
+      "Empurre até estender os braços acima dos ombros."
+    ],
+    "tip": "O chão limita a amplitude e protege os ombros: um supino sem banco. 3×8–12 rep.",
+    "caution": "Não deixe os cotovelos caírem no chão; com dor nos punhos, mantenha-os retos.",
+    "progression": "Mais carga, uma descida mais lenta ou um braço de cada vez.",
+    "gear": "dois halteres",
+    "phases": {
+      "0": {
+        "label": "Descer",
+        "cue": "Os braços encostam de leve no chão"
+      },
+      "1": {
+        "label": "Embaixo"
+      },
+      "2": {
+        "label": "Empurrar",
+        "cue": "Carga acima dos ombros"
+      },
+      "3": {
+        "label": "Em cima"
+      }
+    }
+  },
+  "renegade_row": {
+    "muscles": [
+      "parte superior das costas",
+      "core",
+      "ombros",
+      "bíceps"
+    ],
+    "equipment": "dois halteres",
+    "steps": [
+      "Fique em prancha alta com as mãos sobre dois halteres e os pés um pouco mais afastados que os quadris.",
+      "Puxe um halter em direção às costelas, com o cotovelo junto ao corpo.",
+      "O quadril fica reto, sem girar.",
+      "Apoie a carga e troque de lado."
+    ],
+    "tip": "Uma base larga ajuda a manter o quadril parado. 3×6–8 rep. por lado.",
+    "caution": "Use halteres que não rolem (sextavados); com problemas no punho, prefira a remada apoiada em um banco.",
+    "progression": "Pés mais juntos, mais carga ou uma flexão entre as puxadas.",
+    "gear": "dois halteres",
+    "phases": {
+      "0": {
+        "label": "Puxar",
+        "cue": "Cotovelo junto ao corpo, quadril parado"
+      },
+      "1": {
+        "label": "Em cima"
+      },
+      "2": {
+        "label": "Apoiar"
+      },
+      "3": {
+        "label": "Prancha"
+      }
+    }
+  },
+  "decline_pushup": {
+    "muscles": [
+      "parte superior do peito",
+      "ombros",
+      "tríceps",
+      "core"
+    ],
+    "equipment": "banco ou degrau firme",
+    "steps": [
+      "Apoie os pés em um banco e as mãos no chão, um pouco mais afastadas que os ombros.",
+      "Mantenha o corpo em linha reta da cabeça aos calcanhares.",
+      "Desça o peito em direção ao chão, com os cotovelos para trás na diagonal.",
+      "Empurre com força para subir."
+    ],
+    "tip": "Quanto mais altos os pés, mais os ombros trabalham. 3×6–10 rep.",
+    "caution": "Não faça com dor no ombro ou no punho; pare quando o quadril começar a ceder.",
+    "progression": "Apoio mais alto, descida mais lenta e depois um pé fora do banco.",
+    "gear": "banco",
+    "phases": {
+      "0": {
+        "label": "Descer",
+        "cue": "Corpo reto, sem ceder no meio"
+      },
+      "1": {
+        "label": "Embaixo"
+      },
+      "2": {
+        "label": "Empurrar"
+      },
+      "3": {
+        "label": "Em cima"
+      }
+    }
+  },
+  "wall_pushup": {
+    "muscles": [
+      "peito",
+      "tríceps",
+      "ombros"
+    ],
+    "equipment": "parede",
+    "steps": [
+      "Fique a um braço de distância da parede, com as mãos na altura dos ombros.",
+      "Mantenha o corpo reto e flexione os braços até o nariz quase tocar a parede.",
+      "Os calcanhares ficam no chão.",
+      "Empurre a parede até estender os braços."
+    ],
+    "tip": "O jeito mais suave de começar as flexões: quanto mais longe os pés da parede, mais difícil. 3×10–15 rep.",
+    "caution": "Fique em um piso que não escorregue; os punhos não devem doer.",
+    "progression": "Pés mais para trás, depois flexões inclinadas em uma mesa ou banco.",
+    "gear": "parede",
+    "phases": {
+      "0": {
+        "label": "Até a parede",
+        "cue": "Corpo em linha, calcanhares no chão"
+      },
+      "1": {
+        "label": "Perto"
+      },
+      "2": {
+        "label": "Empurrar"
+      },
+      "3": {
+        "label": "Braços estendidos"
+      }
+    }
+  },
+  "push_press": {
+    "muscles": [
+      "ombros",
+      "tríceps",
+      "coxas",
+      "core"
+    ],
+    "equipment": "dois halteres",
+    "steps": [
+      "Fique em pé com os halteres nos ombros e os cotovelos um pouco à frente.",
+      "Flexione os joelhos rapidamente, com os calcanhares no chão.",
+      "Empurre com as pernas e leve a carga acima da cabeça em um só movimento.",
+      "Volte aos ombros com controle."
+    ],
+    "tip": "As pernas dão a partida e os braços finalizam: assim você move mais do que no desenvolvimento estrito. 3×6–8 rep.",
+    "caution": "Mantenha o core firme e não arqueie a lombar; não faça com dor aguda no ombro ou nas costas.",
+    "progression": "Mais carga, depois um braço de cada vez.",
+    "gear": "dois halteres",
+    "phases": {
+      "0": {
+        "label": "Flexionar",
+        "cue": "Flexão curta, calcanhares no chão"
+      },
+      "1": {
+        "label": "Empurrar para cima",
+        "cue": "As pernas começam, os braços terminam"
+      },
+      "2": {
+        "label": "Em cima"
+      },
+      "3": {
+        "label": "De volta aos ombros"
+      },
+      "4": {
+        "label": "Em pé"
+      }
+    }
+  },
+  "box_squat": {
+    "muscles": [
+      "coxas",
+      "glúteos"
+    ],
+    "equipment": "cadeira, banco ou caixote",
+    "steps": [
+      "Fique a um pé de distância de uma cadeira ou caixote, com os pés na largura dos ombros.",
+      "Leve o quadril para trás e sente devagar até tocar o assento.",
+      "Não se jogue: mantenha a tensão nos últimos centímetros.",
+      "Empurre pelos calcanhares e levante sem balançar."
+    ],
+    "tip": "Ensina um agachamento limpo e tira o medo de descer. 3×10–12 rep.",
+    "caution": "Use um assento que não escorregue; com dor no joelho, escolha um assento mais alto.",
+    "progression": "Assento mais baixo, depois um peso à frente do peito e, mais adiante, com uma perna só.",
+    "gear": "banco",
+    "phases": {
+      "0": {
+        "label": "Sentar",
+        "cue": "Quadril para trás até tocar o assento"
+      },
+      "1": {
+        "label": "Tocar"
+      },
+      "2": {
+        "label": "Levantar",
+        "cue": "Empurre pelos calcanhares, sem impulso"
+      },
+      "3": {
+        "label": "Em cima"
+      }
+    }
+  },
+  "triceps_kickback": {
+    "muscles": [
+      "tríceps"
+    ],
+    "equipment": "halteres leves",
+    "steps": [
+      "Incline o tronco à frente com as costas retas e os joelhos levemente flexionados.",
+      "Leve a parte de cima dos braços para junto do corpo, com os cotovelos flexionados.",
+      "Estenda os antebraços para trás até os braços ficarem retos.",
+      "Flexione devagar: a parte de cima dos braços não se move."
+    ],
+    "tip": "Carga leve, extensão completa e uma pausa curta atrás. 3×12–15 rep.",
+    "caution": "Mantenha as costas alongadas; com desconforto na lombar, apoie uma mão em um banco.",
+    "progression": "Segure a extensão por 2 segundos, depois um pouco mais de carga.",
+    "gear": "halteres leves",
+    "phases": {
+      "0": {
+        "label": "Estender para trás",
+        "cue": "Os braços ficam junto ao corpo"
+      },
+      "1": {
+        "label": "Estendido"
+      },
+      "2": {
+        "label": "Flexionar"
+      },
+      "3": {
+        "label": "Flexionado"
+      }
+    }
+  },
+  "pullover": {
+    "muscles": [
+      "grande dorsal",
+      "peito",
+      "tríceps",
+      "core"
+    ],
+    "equipment": "um halter, colchonete",
+    "steps": [
+      "Deite de costas, joelhos flexionados, segurando um halter com as duas mãos acima do peito.",
+      "Desça a carga em um arco amplo por trás da cabeça, com os braços quase estendidos.",
+      "As costelas ficam baixas, sem arquear a lombar.",
+      "Traga a carga de volta para cima do peito."
+    ],
+    "tip": "Vá só até onde os ombros permitirem sem a lombar arquear. 3×10–12 rep.",
+    "caution": "Não faça com dor aguda no ombro; segure bem o halter com as duas mãos.",
+    "progression": "Mais carga, uma descida mais lenta ou deitado atravessado em um banco.",
+    "gear": "um halter",
+    "phases": {
+      "0": {
+        "label": "Descer atrás da cabeça",
+        "cue": "Braços longos, costelas baixas"
+      },
+      "1": {
+        "label": "Alongamento"
+      },
+      "2": {
+        "label": "Voltar acima do peito"
+      },
+      "3": {
+        "label": "Em cima"
+      }
+    }
+  },
+  "single_leg_calf_raise": {
+    "muscles": [
+      "panturrilhas",
+      "tendão de Aquiles",
+      "musculatura do pé"
+    ],
+    "equipment": "nenhum (parede para o equilíbrio)",
+    "steps": [
+      "Fique em uma perna, com uma mão apoiada de leve na parede.",
+      "Suba na ponta do pé o mais alto que conseguir.",
+      "Segure um instante em cima.",
+      "Desça devagar e repita; depois troque de perna."
+    ],
+    "tip": "Um dos exercícios mais importantes para quem corre: a meta é 3×12–15 por perna.",
+    "caution": "Com dor aguda no tendão de Aquiles ou na panturrilha, comece com as duas pernas e sem dor.",
+    "progression": "Em um degrau com o calcanhar para fora, depois com peso na mão.",
+    "gear": "parede",
+    "phases": {
+      "0": {
+        "label": "Subir",
+        "cue": "Na ponta de um pé só"
+      },
+      "1": {
+        "label": "Segurar em cima"
+      },
+      "2": {
+        "label": "Descer",
+        "cue": "Desça devagar"
+      },
+      "3": {
+        "label": "Embaixo"
+      }
+    }
+  },
+  "sit_up": {
+    "muscles": [
+      "abdômen",
+      "flexores do quadril"
+    ],
+    "equipment": "colchonete",
+    "steps": [
+      "Deite de costas, joelhos flexionados, pés apoiados e mãos no peito.",
+      "Suba vértebra por vértebra até ficar sentado e ereto.",
+      "Os pés ficam no chão.",
+      "Desça devagar, desenrolando a coluna."
+    ],
+    "tip": "Enrole, não puxe de uma vez: o que conta é a descida lenta. 3×10–15 rep.",
+    "caution": "Não puxe o pescoço; com dor na lombar, prefira o crunch ou o dead bug.",
+    "progression": "Braços estendidos acima da cabeça, depois com um peso no peito.",
+    "phases": {
+      "0": {
+        "label": "Subir",
+        "cue": "Enrole a coluna, pés no chão"
+      },
+      "1": {
+        "label": "Em cima"
+      },
+      "2": {
+        "label": "Descer enrolando",
+        "cue": "Vértebra por vértebra"
+      },
+      "3": {
+        "label": "Embaixo"
+      }
+    }
+  },
+  "toe_touch": {
+    "muscles": [
+      "parte superior do abdômen"
+    ],
+    "equipment": "colchonete",
+    "steps": [
+      "Deite de costas e estenda as duas pernas na vertical.",
+      "Estenda os braços em direção às pontas dos pés.",
+      "Tire as escápulas do chão e alcance o mais alto que conseguir.",
+      "Desça os ombros devagar; as pernas continuam em cima."
+    ],
+    "tip": "Movimento curto e controlado: as pernas ficam paradas. 3×12–15 rep.",
+    "caution": "Mantenha o pescoço alongado; se a parte de trás das coxas for encurtada, flexione um pouco os joelhos.",
+    "progression": "Segure um peso leve nas mãos ou pare 2 segundos em cima.",
+    "phases": {
+      "0": {
+        "label": "Alcançar os pés",
+        "cue": "Escápulas fora do chão, pernas na vertical"
+      },
+      "1": {
+        "label": "Em cima"
+      },
+      "2": {
+        "label": "Descer"
+      },
+      "3": {
+        "label": "Embaixo"
+      }
+    }
+  },
+  "plank_up_down": {
+    "muscles": [
+      "core",
+      "ombros",
+      "tríceps"
+    ],
+    "equipment": "colchonete",
+    "steps": [
+      "Comece na prancha sobre os antebraços, com o corpo em linha reta.",
+      "Apoie uma mão, depois a outra, e empurre até a prancha alta.",
+      "Volte aos antebraços, um braço de cada vez.",
+      "Troque o braço que começa a cada repetição."
+    ],
+    "tip": "O quadril quase não deve balançar: uma base mais larga ajuda. 3×6–10 rep.",
+    "caution": "Não faça com dor no punho ou no ombro; pare quando a lombar ceder.",
+    "progression": "Pés mais juntos, ritmo mais lento, mais repetições.",
+    "phases": {
+      "0": {
+        "label": "Subir para as mãos",
+        "cue": "Uma mão de cada vez, quadril parado"
+      },
+      "1": {
+        "label": "Prancha alta"
+      },
+      "2": {
+        "label": "Descer para os antebraços"
+      },
+      "3": {
+        "label": "Prancha de antebraços"
+      }
+    }
+  },
+  "side_plank_dip": {
+    "muscles": [
+      "oblíquos",
+      "quadril",
+      "ombros"
+    ],
+    "equipment": "colchonete",
+    "steps": [
+      "Apoie-se de lado no antebraço, com o cotovelo abaixo do ombro e as pernas estendidas.",
+      "Desça o quadril até quase encostar no chão.",
+      "Suba de novo, um pouco acima da linha reta.",
+      "Faça todas as repetições e depois troque de lado."
+    ],
+    "tip": "Mova-se devagar e em um só plano, sem tombar para a frente ou para trás. 3×8–12 por lado.",
+    "caution": "Com dor no ombro, prefira a prancha lateral parada sobre os joelhos.",
+    "progression": "Eleve a perna de cima ou apoie um peso no quadril.",
+    "phases": {
+      "0": {
+        "label": "Descer o quadril",
+        "cue": "Quase no chão, sem apoiar"
+      },
+      "1": {
+        "label": "Subir o quadril",
+        "cue": "Empurre o chão com o antebraço"
+      },
+      "2": {
+        "label": "Em cima"
+      }
+    }
+  },
+  "reverse_plank": {
+    "muscles": [
+      "glúteos",
+      "parte de trás das coxas",
+      "lombar",
+      "ombros"
+    ],
+    "equipment": "colchonete",
+    "steps": [
+      "Sente com as pernas estendidas e as mãos atrás do quadril, com os dedos apontando para os pés.",
+      "Empurre o quadril para cima até o corpo formar uma linha reta.",
+      "Abra o peito e mantenha o pescoço alongado.",
+      "Segure e continue respirando com calma."
+    ],
+    "tip": "O par da prancha: abre os ombros e acorda a parte de trás do corpo. 3×20–30 s.",
+    "caution": "Com dor no punho ou no ombro, apoie-se nos antebraços.",
+    "progression": "Segure por mais tempo, depois eleve uma perna alternando.",
+    "phases": {
+      "0": {
+        "label": "Segurar",
+        "cue": "Quadril alto, corpo em linha"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Eleve o quadril"
+      }
+    }
+  },
+  "boat_hold": {
+    "muscles": [
+      "abdômen",
+      "flexores do quadril"
+    ],
+    "equipment": "colchonete",
+    "steps": [
+      "Sente com os joelhos flexionados e incline o tronco para trás com as costas alongadas.",
+      "Tire os pés do chão e estenda as pernas o quanto conseguir.",
+      "Estenda os braços à frente, paralelos ao chão.",
+      "Segure: peito aberto, sem arredondar as costas."
+    ],
+    "tip": "Melhor joelhos flexionados e costas alongadas do que pernas estendidas e costas curvadas. 3×15–30 s.",
+    "caution": "Com dor na lombar, mantenha os joelhos flexionados ou os calcanhares no chão.",
+    "progression": "Estenda totalmente as pernas, depois desça e suba devagar.",
+    "phases": {
+      "0": {
+        "label": "Segurar",
+        "cue": "Peito aberto, lombar alongada"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Incline para trás, eleve as pernas"
+      }
+    }
+  },
+  "swimmer": {
+    "muscles": [
+      "lombar",
+      "glúteos",
+      "ombros"
+    ],
+    "equipment": "colchonete",
+    "steps": [
+      "Deite de bruços com os braços estendidos à frente.",
+      "Tire um pouco os braços e as pernas do chão.",
+      "Eleve um braço e a perna oposta um pouco mais e alterne.",
+      "Batidas pequenas e calmas, com o olhar no chão."
+    ],
+    "tip": "Pouca amplitude, corpo longo: imagine alguém puxando você pelos dedos das mãos e dos pés. 3×20–30 s.",
+    "caution": "Não jogue a cabeça para trás; com dor nas costas, reduza a amplitude.",
+    "progression": "Bata por mais tempo ou mais devagar, com pausas curtas em cima.",
+    "phases": {
+      "0": {
+        "label": "Braço e perna oposta para cima",
+        "cue": "Batidas pequenas e calmas, pescoço longo"
+      },
+      "1": {
+        "label": "Trocar"
+      }
+    }
+  },
+  "forward_fold": {
+    "muscles": [
+      "parte de trás das coxas",
+      "panturrilhas",
+      "lombar"
+    ],
+    "equipment": "nenhum",
+    "steps": [
+      "Fique em pé com os pés na largura dos quadris.",
+      "Desça enrolando vértebra por vértebra, primeiro o queixo no peito.",
+      "Deixe os braços e a cabeça soltos, com os joelhos relaxados.",
+      "Respire com calma e desça um pouco mais a cada expiração."
+    ],
+    "tip": "Solte o peso, não puxe: a gravidade faz o trabalho. 2–3×30 s.",
+    "caution": "Suba devagar para não ficar tonto; com problemas de disco, flexione bem os joelhos.",
+    "progression": "Estenda as pernas aos poucos, com as mãos espalmadas no chão.",
+    "phases": {
+      "0": {
+        "label": "Segurar",
+        "cue": "Cabeça solta, joelhos relaxados"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Desça vértebra por vértebra"
+      }
+    }
+  },
+  "seated_forward_fold": {
+    "muscles": [
+      "parte de trás das coxas",
+      "panturrilhas",
+      "costas"
+    ],
+    "equipment": "colchonete",
+    "steps": [
+      "Sente ereto com as pernas estendidas e os dedos dos pés para cima.",
+      "Incline à frente a partir do quadril, com as costas alongadas.",
+      "Segure as canelas, os tornozelos ou os pés.",
+      "Segure e respire com calma."
+    ],
+    "tip": "Leve o peito à frente, não a testa: costas alongadas alongam mais do que costas curvadas. 2–3×30 s.",
+    "caution": "Sem balançar; se as costas arredondarem, sente sobre uma toalha dobrada ou flexione um pouco os joelhos.",
+    "progression": "Alcance mais longe com o tempo; mais adiante, segure os pés.",
+    "phases": {
+      "0": {
+        "label": "Segurar",
+        "cue": "Costas longas, mãos rumo aos pés"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Incline à frente a partir do quadril"
+      }
+    }
+  },
+  "knee_hug": {
+    "muscles": [
+      "glúteos",
+      "lombar",
+      "quadril"
+    ],
+    "equipment": "colchonete",
+    "steps": [
+      "Deite de costas com as duas pernas estendidas.",
+      "Puxe um joelho em direção ao peito com as duas mãos.",
+      "A outra perna fica estendida no chão.",
+      "Segure, respire com calma e depois troque de lado."
+    ],
+    "tip": "Gostoso depois da corrida e de muito tempo sentado: relaxa a lombar. 2×20–30 s por lado.",
+    "caution": "Com problemas no joelho, segure atrás da coxa em vez da canela.",
+    "progression": "Leve o joelho suavemente em direção ao ombro oposto.",
+    "phases": {
+      "0": {
+        "label": "Segurar",
+        "cue": "Outra perna longa, lombar relaxada"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Puxe um joelho em direção ao peito"
+      }
+    }
+  },
+  "lying_hamstring_stretch": {
+    "muscles": [
+      "parte de trás das coxas",
+      "panturrilhas"
+    ],
+    "equipment": "colchonete (opcional: faixa ou toalha)",
+    "steps": [
+      "Deite de costas com um pé apoiado no chão.",
+      "Eleve a outra perna e segure atrás da coxa.",
+      "Estenda o joelho até onde for possível sem dor.",
+      "Segure, respire com calma e depois troque de perna."
+    ],
+    "tip": "Mais gentil com as costas do que alongar em pé. 2×30 s por lado.",
+    "caution": "Sem balançar; sentir alongar é normal, dor atrás do joelho não é.",
+    "progression": "Passe uma toalha pelo pé e aproxime a perna, com a outra perna estendida.",
+    "phases": {
+      "0": {
+        "label": "Segurar",
+        "cue": "Perna o mais reta possível, quadril no chão"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Eleve uma perna e segure atrás da coxa"
+      }
+    }
+  },
+  "squat_to_stand": {
+    "muscles": [
+      "quadril",
+      "parte de trás das coxas",
+      "tornozelos",
+      "costas"
+    ],
+    "equipment": "nenhum",
+    "steps": [
+      "Em pé, com os pés na largura dos quadris, incline à frente e segure as pontas dos pés.",
+      "Desça para um agachamento profundo, com os cotovelos por dentro dos joelhos e o peito aberto.",
+      "Segure um instante e suba o quadril sem soltar os pés.",
+      "Suba enrolando a coluna até ficar em pé."
+    ],
+    "tip": "Um aquecimento completo para quadril, posterior de coxa e tornozelos em um só movimento. 5–8 rep. lentas.",
+    "caution": "Se os calcanhares saírem do chão, desça só até onde ficarem apoiados; flexione os joelhos ao inclinar.",
+    "progression": "No agachamento profundo, estenda um braço e depois o outro em direção ao teto.",
+    "phases": {
+      "0": {
+        "label": "Inclinar e segurar os pés"
+      },
+      "1": {
+        "label": "Descer ao agachamento profundo",
+        "cue": "Peito aberto, cotovelos entre os joelhos"
+      },
+      "2": {
+        "label": "Agachamento profundo"
+      },
+      "3": {
+        "label": "Quadril para cima, pernas longas"
+      },
+      "4": {
+        "label": "Subir enrolando"
+      },
+      "5": {
+        "label": "Em pé"
+      }
+    }
+  },
+  "star_jump": {
+    "muscles": [
+      "coxas",
+      "glúteos",
+      "panturrilhas",
+      "ombros"
+    ],
+    "equipment": "nenhum",
+    "steps": [
+      "Em pé, com os pés juntos, agache um pouco.",
+      "Salte com explosão e abra braços e pernas em forma de estrela.",
+      "Feche braços e pernas ainda no ar.",
+      "Aterrisse suave com os pés juntos e emende no salto seguinte."
+    ],
+    "tip": "Melhor alto do que rápido: cada salto o maior possível. 3×8–12 rep.",
+    "caution": "Aterrisse suave com os joelhos flexionados; não faça com problemas agudos no joelho ou no tornozelo.",
+    "progression": "Agache mais antes do salto, pausas mais curtas.",
+    "phases": {
+      "0": {
+        "label": "Agachar"
+      },
+      "1": {
+        "label": "Saltar em estrela",
+        "cue": "Braços e pernas abertos no ar"
+      },
+      "2": {
+        "label": "Aterrissar",
+        "cue": "Aterrisse suave, pés juntos"
+      },
+      "3": {
+        "label": "Em pé"
+      }
+    }
+  },
+  "tuck_jump": {
+    "muscles": [
+      "coxas",
+      "glúteos",
+      "panturrilhas",
+      "core"
+    ],
+    "equipment": "nenhum",
+    "steps": [
+      "Em pé, com os pés na largura dos quadris, flexione rapidamente.",
+      "Salte e puxe os dois joelhos em direção ao peito.",
+      "Fique ereto: os joelhos sobem, o peito não desce.",
+      "Aterrisse suave e se recomponha antes do salto seguinte."
+    ],
+    "tip": "Qualidade antes de quantidade: poucos saltos, altos e com aterrissagem limpa. 3×6–8 rep.",
+    "caution": "Impacto alto: não faça com problemas no joelho, tornozelo ou coluna, e só em piso que não escorregue.",
+    "progression": "Emende vários saltos sem pausa.",
+    "phases": {
+      "0": {
+        "label": "Flexionar"
+      },
+      "1": {
+        "label": "Saltar, joelhos para cima",
+        "cue": "Joelhos no peito, tronco ereto"
+      },
+      "2": {
+        "label": "Aterrissar",
+        "cue": "Aterrisse suave e sem barulho"
+      },
+      "3": {
+        "label": "Em pé"
+      }
+    }
+  },
+  "jump_rope": {
+    "muscles": [
+      "panturrilhas",
+      "pés",
+      "ombros",
+      "resistência"
+    ],
+    "equipment": "corda de pular (ou sem)",
+    "steps": [
+      "Fique em pé, com os cotovelos junto ao corpo e a corda atrás dos calcanhares.",
+      "Gire a corda a partir dos punhos.",
+      "Pule só o suficiente para a corda passar por baixo dos pés.",
+      "Aterrisse suave na parte da frente dos pés."
+    ],
+    "tip": "Também funciona sem corda: pulinhos pequenos e os punhos girando. 3×30–60 s.",
+    "caution": "Comece com intervalos curtos: panturrilhas e tendões de Aquiles precisam de tempo para se acostumar.",
+    "progression": "Alterne os pés, joelhos altos e, mais adiante, saltos duplos.",
+    "gear": "corda de pular",
+    "phases": {
+      "0": {
+        "label": "Pular",
+        "cue": "Pulinhos pequenos, os punhos giram"
+      },
+      "1": {
+        "label": "Aterrissar"
+      }
+    }
+  },
+  "split_jump": {
+    "muscles": [
+      "coxas",
+      "glúteos",
+      "panturrilhas"
+    ],
+    "equipment": "nenhum",
+    "steps": [
+      "Comece no avanço, com os dois joelhos flexionados.",
+      "Salte e troque as pernas no ar.",
+      "Aterrisse suave no avanço do outro lado.",
+      "O joelho da frente fica acima do pé e o tronco, ereto."
+    ],
+    "tip": "Use os braços como na corrida: dão altura e ritmo. 3×6–10 por lado.",
+    "caution": "Impacto alto: domine antes o avanço para trás; não faça com dor no joelho.",
+    "progression": "Aterrissagem mais baixa, mais repetições e depois com halteres leves.",
+    "phases": {
+      "0": {
+        "label": "Aterrissar no avanço",
+        "cue": "Suave, joelho da frente acima do pé"
+      },
+      "1": {
+        "label": "Embaixo"
+      },
+      "2": {
+        "label": "Saltar e trocar as pernas"
+      }
+    }
+  },
+  "box_jump": {
+    "muscles": [
+      "coxas",
+      "glúteos",
+      "panturrilhas"
+    ],
+    "equipment": "caixote ou degrau firme",
+    "steps": [
+      "Fique a um passo curto de um caixote firme.",
+      "Leve os braços para trás, flexione e salte para cima do caixote.",
+      "Aterrisse suave com o pé inteiro e fique totalmente ereto.",
+      "Desça um pé de cada vez: não pule para baixo."
+    ],
+    "tip": "Desça andando em vez de pular: isso poupa os tendões de Aquiles. 3×6–8 rep.",
+    "caution": "O caixote não pode escorregar nem tombar; comece baixo e só salte quando estiver descansado.",
+    "progression": "Caixote mais alto, depois saída sentado ou aterrissagem em uma perna.",
+    "gear": "caixote",
+    "phases": {
+      "0": {
+        "label": "Tomar impulso"
+      },
+      "1": {
+        "label": "Saltar",
+        "cue": "Os braços impulsionam, os joelhos sobem"
+      },
+      "2": {
+        "label": "Aterrissar no caixote",
+        "cue": "Aterrisse suave com o pé inteiro"
+      },
+      "3": {
+        "label": "Ficar ereto"
+      },
+      "4": {
+        "label": "Em cima"
+      },
+      "5": {
+        "label": "Descer"
+      },
+      "6": {
+        "label": "Em pé"
+      },
+      "7": {
+        "label": "Em pé"
+      }
+    }
   }
 }

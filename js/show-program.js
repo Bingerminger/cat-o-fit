@@ -239,14 +239,18 @@ function previewClips(it, side, dur, plan) {
 
 /**
  * Timeline of the session: sections { kind, i, round, side, dur, t0, bpm, style,
- * intensity, clips, reps?, cyc? } and total duration.
+ * intensity, clips, reps?, cyc? } and total duration. `program.pace` (default 1) speeds the movements up.
  * kind: ready · work · switch · rest · roundRest.
  */
 export function buildShow(program) {
   const style = program.style || 'power';
   const segs = [];
   const n = program.items.length;
-  const plans = program.items.map((it) => beatPlan(cycleOf(it.m, 'a'), style));
+  // A pace above 1 makes every movement that much quicker than written (a brisk session to follow along); the
+  // beat then fits itself to the quicker movement.
+  const pace = program.pace > 0 ? program.pace : 1;
+  const paced = (list) => (pace === 1 ? list : list.map((ph) => ({ ...ph, dur: ph.dur / pace })));
+  const plans = program.items.map((it) => beatPlan(paced(cycleOf(it.m, 'a')), style));
   const push = (seg) => segs.push(seg);
 
   for (let r = 1; r <= program.rounds; r++) {

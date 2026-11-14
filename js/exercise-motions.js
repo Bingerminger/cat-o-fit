@@ -659,7 +659,8 @@ M.lateral_raise = {
 M.band_pull_apart = {
   view: 'front', start: 'close', reps: 15, crop: -40, focus: ['upper', 'torso'], props: { band: [['rh', 'lh']] },
   keys: {
-    close: standFront({ arms: pair(at(-11, -97, { bend: 'down', fs: 0.62 }), at(11, -97, { bend: 'down', fs: 0.62 })) }),
+    // Arms long towards the viewer, hands shoulder-wide: from there they swing apart on one level.
+    close: standFront({ arms: pair(ang(-90, -90, { fs: 0.22 }), ang(90, 90, { fs: 0.22 })) }),
     open: standFront({ arms: pair(ang(-90, -90), ang(90, 90)) }),
   },
   seq: [
@@ -1102,7 +1103,7 @@ M.russian_twist = (() => {
   const hip = [0, -12];
   const legs = pair(at(-9, -26, { fs: [0.55, 0.62], bend: 'out' }), at(9, -26, { fs: [0.55, 0.62], bend: 'out' }));
   return {
-    view: 'front', start: 'mid', reps: 10, sides: 'alternate', focus: ['torso'],
+    view: 'front', start: 'mid', reps: 10, sides: 'alternate', focus: ['torso'], sit: { lean: 26, twist: 42, feet: 0 },
     keys: {
       mid: { hip, torso: 0, legs, arms: pair(at(-3, -32, { bend: 'out' }), at(3, -32, { bend: 'out' })) },
       side: { hip, torso: -8, legs, arms: pair(at(-30, -24, { bend: 'out' }), at(-25, -24, { bend: 'out' })) },
@@ -1499,6 +1500,421 @@ M.bear_crawl = {
   },
   seq: [{ to: 'step', s: 0.35, label: 'Hand and opposite foot forward', cue: 'Knees just above the floor' }, { to: 'base', s: 0.35, label: 'Set down' }],
 };
+
+/* ------------------------------ Since 4.2 ------------------------------ */
+
+M.front_raise = {
+  view: 'side', start: 'down', reps: 12, crop: -40, focus: ['upper'], hold: { r: 'db', l: 'db' },
+  keys: {
+    down: stand({ arms: pair(ang(4, 6), ang(1, 3)) }),
+    up: stand({ arms: pair(ang(88, 90), ang(85, 87)) }),
+  },
+  seq: [
+    { to: 'up', s: 1.2, label: 'Raise forward', cue: 'Up to shoulder height, no swinging', breath: 'aus' },
+    HOLD(0.4, 'Top'),
+    { to: 'down', s: 2, label: 'Lower', breath: 'ein' },
+    HOLD(0.2, 'Bottom'),
+  ],
+};
+
+M.floor_press = {
+  view: 'side', start: 'up', reps: 12, focus: ['upper', 'fore'], hold: { r: 'db', l: 'db' }, props: { mat: [-70, 46] },
+  keys: {
+    up: supine({ arms: pair(ang(180, 180), ang(178, 178)) }),
+    // The upper arms go out to the sides: the picture sees them short.
+    down: supine({ arms: pair(ang(84, 180, { fs: [0.5, 1] }), ang(82, 178, { fs: [0.5, 1] })) }),
+  },
+  seq: [
+    { to: 'down', s: 2, label: 'Lower', cue: 'Upper arms touch the floor lightly', breath: 'ein' },
+    HOLD(0.3, 'Bottom'),
+    { to: 'up', s: 1, label: 'Push up', cue: 'Weights over the shoulders', breath: 'aus' },
+    HOLD(0.4, 'Top'),
+  ],
+};
+
+M.renegade_row = (() => {
+  const top = bodyLine(PL_A, lineDeg(PL_A, -51));
+  const hx = top.sh[0] - 2; const hy = -8;
+  const rib = mv(mv(top.hip, tdir(top.torso), 22), fdir(top.torso), 5);
+  const base = { hip: top.hip, torso: top.torso, legs: TOES() };
+  return {
+    view: 'side', start: 'plank', reps: 8, sides: 'alternate', focus: ['upper', 'torso'], hold: { r: 'db', l: 'db' },
+    keys: {
+      plank: { ...base, arms: pair(at(hx, hy), at(hx - 3, hy)) },
+      row: { ...base, arms: pair(atP(rib, { bend: 'up' }), at(hx - 3, hy)) },
+    },
+    seq: [
+      { to: 'row', s: 1, label: 'Pull', cue: 'Elbow close to the body, hips still', breath: 'aus' },
+      HOLD(0.4, 'Top'),
+      { to: 'plank', s: 1.4, label: 'Lower down', breath: 'ein' },
+      HOLD(0.3, 'Plank'),
+    ],
+  };
+})();
+
+M.decline_pushup = (() => {
+  const top = -28; const A = [-56, top - 9];
+  const up = bodyLine(A, lineDeg(A, -47.5));
+  const low = bodyLine(A, lineDeg(A, -16));
+  const hx = (up.sh[0] + low.sh[0]) / 2 - 2;
+  return {
+    view: 'side', start: 'up', reps: 8, focus: ['upper', 'fore', 'torso'], props: { box: [A[0] - 26, top, 36] },
+    keys: {
+      up: { hip: up.hip, torso: up.torso, legs: TOES(A[0], A[1]), arms: pair(at(hx, HY), at(hx - 3, HY)) },
+      down: { hip: low.hip, torso: low.torso, legs: TOES(A[0], A[1]), arms: pair(at(hx, HY), at(hx - 3, HY)) },
+    },
+    seq: [
+      { to: 'down', s: 2, label: 'Lower', cue: 'Body straight, do not sag in the middle', breath: 'ein' },
+      HOLD(0.3, 'Bottom'),
+      { to: 'up', s: 1, label: 'Push up', breath: 'aus' },
+      HOLD(0.5, 'Top'),
+    ],
+  };
+})();
+
+M.wall_pushup = (() => {
+  const A = [-30, FY]; const wall = 34;
+  const lean = (deg) => ({ hip: mv(A, [Math.sin(deg * RAD), -Math.cos(deg * RAD)], B.thigh + B.shin - 0.6), torso: deg });
+  const hands = pair(at(wall - B.wrist, -100, { bend: 'down' }), at(wall - B.wrist, -102, { bend: 'down' }));
+  const legs = pair(at(A[0] + 1, FY), at(A[0] - 1, FY));
+  return {
+    view: 'side', start: 'up', reps: 12, focus: ['upper', 'fore'], props: { wall },
+    keys: { up: { ...lean(12), legs, arms: hands }, down: { ...lean(26), legs, arms: hands } },
+    seq: [
+      { to: 'down', s: 2, label: 'Lean in', cue: 'Body in one line, heels stay down', breath: 'ein' },
+      HOLD(0.3, 'Close'),
+      { to: 'up', s: 1, label: 'Push away', breath: 'aus' },
+      HOLD(0.4, 'Long arms'),
+    ],
+  };
+})();
+
+M.push_press = (() => {
+  const rack = (hip, t) => { const s = shoulderOf(hip, t); return pair(at(s[0] + 7, s[1] + 1, { bend: 'down' }), at(s[0] + 4, s[1] + 1, { bend: 'down' })); };
+  const dipHip = [-5, STAND + 9];
+  return {
+    view: 'side', start: 'rack', reps: 8, focus: ['upper', 'thigh'], hold: { r: 'db', l: 'db' },
+    keys: {
+      rack: stand({ arms: rack([0, STAND], 0) }),
+      dip: { hip: dipHip, torso: 8, legs: pair(at(2, FY), at(-2, FY)), arms: rack(dipHip, 8) },
+      press: stand({ arms: pair(ang(176, 178), ang(174, 176)) }),
+    },
+    seq: [
+      { to: 'dip', s: 0.5, label: 'Dip', cue: 'Short dip, heels stay down', breath: 'ein' },
+      { to: 'press', s: 0.6, label: 'Drive up', cue: 'Legs start, arms finish', breath: 'aus' },
+      HOLD(0.4, 'Top'),
+      { to: 'rack', s: 1.2, label: 'Back to the shoulders' },
+      HOLD(0.3, 'Standing'),
+    ],
+  };
+})();
+
+M.box_squat = {
+  view: 'side', start: 'up', reps: 10, focus: ['thigh', 'hip'], props: { box: [-50, -30, 32] },
+  keys: {
+    up: stand(),
+    sit: { hip: [-24, -39], torso: 20, legs: pair(at(2, FY), at(-2, FY)), arms: pair(ang(84, 88), ang(80, 84)) },
+  },
+  seq: [
+    { to: 'sit', s: 2, label: 'Sit back', cue: 'Hips back until you touch the box', breath: 'ein' },
+    HOLD(0.5, 'Touch'),
+    { to: 'up', s: 1.4, label: 'Stand up', cue: 'Push through the heels, no rocking', breath: 'aus' },
+    HOLD(0.5, 'Top'),
+  ],
+};
+
+M.triceps_kickback = (() => {
+  const base = { hip: [-12, -61], torso: 60, legs: pair(at(2, FY), at(-2, FY)) };
+  return {
+    view: 'side', start: 'bent', reps: 12, focus: ['upper'], hold: { r: 'db', l: 'db' },
+    keys: {
+      bent: { ...base, arms: pair(ang(-60, 24), ang(-62, 22)) },
+      long: { ...base, arms: pair(ang(-60, -64), ang(-62, -66)) },
+    },
+    seq: [
+      { to: 'long', s: 1, label: 'Extend back', cue: 'Upper arms stay beside the body', breath: 'aus' },
+      HOLD(0.5, 'Long'),
+      { to: 'bent', s: 1.6, label: 'Bend', breath: 'ein' },
+      HOLD(0.2, 'Bent'),
+    ],
+  };
+})();
+
+M.pullover = {
+  view: 'side', start: 'up', reps: 10, focus: ['upper', 'torso'], hold: { both: 'db' }, props: { mat: [-66, 46] },
+  keys: {
+    up: supine({ arms: pair(ang(178, 180), ang(176, 178)) }),
+    over: supine({ arms: pair(ang(-112, -104), ang(-114, -106)) }),
+  },
+  seq: [
+    { to: 'over', s: 2, label: 'Lower behind the head', cue: 'Arms long, ribs stay down', breath: 'ein' },
+    HOLD(0.3, 'Stretch'),
+    { to: 'up', s: 1.4, label: 'Pull back over the chest', breath: 'aus' },
+    HOLD(0.4, 'Top'),
+  ],
+};
+
+M.single_leg_calf_raise = (() => {
+  const hand = at(37, -96, { bend: 'down' });
+  return {
+    view: 'side', start: 'down', reps: 12, sides: 'each', focus: ['shin'], props: { wall: 40 },
+    keys: {
+      down: stand({ legs: pair(at(2, FY), at(-12, -22, { foot: 50 })), arms: pair(hand, ang(-3, 0)) }),
+      up: stand({ dx: 3, drop: -7.2, legs: pair(onToes(2), at(-9, -29, { foot: 50 })), arms: pair(hand, ang(-3, 0)) }),
+    },
+    seq: [UP(1, 'Onto the tiptoes of one foot'), HOLD(1, 'Hold at the top'), DOWN(2, 'Lower slowly', { label: 'Lower' }), HOLD(0.4, 'Bottom')],
+  };
+})();
+
+M.sit_up = (() => {
+  const hands = (t) => { const c = chestPt(SUP_HIP, t, 9, 13); return pair(atP(c, { bend: 'down' }), at(c[0] - 2, c[1], { bend: 'down' })); };
+  return {
+    view: 'side', start: 'down', reps: 12, focus: ['torso', 'hip'], props: { mat: [-70, 46] },
+    keys: {
+      down: supine({ arms: hands(-90) }),
+      up: supine({ torso: -14, curl: 6, head: 6, arms: hands(-14) }),
+    },
+    seq: [
+      { to: 'up', s: 1.4, label: 'Sit up', cue: 'Roll up, feet stay on the floor', breath: 'aus' },
+      HOLD(0.3, 'Top'),
+      { to: 'down', s: 2, label: 'Roll down', cue: 'Vertebra by vertebra', breath: 'ein' },
+      HOLD(0.3, 'Bottom'),
+    ],
+  };
+})();
+
+M.toe_touch = (() => {
+  const legs = () => pair(ang(178, 178), ang(176, 176));
+  return {
+    view: 'side', start: 'down', reps: 12, focus: ['torso'], props: { mat: [-70, 40] },
+    keys: {
+      down: supine({ legs: legs(), arms: pair(ang(176, 176), ang(174, 174)) }),
+      up: lifted(-62, { curl: 6, head: 10, legs: legs(), arms: pair(ang(146, 146), ang(144, 144)) }),
+    },
+    seq: [
+      { to: 'up', s: 1, label: 'Reach for the toes', cue: 'Shoulder blades lift, legs stay vertical', breath: 'aus' },
+      HOLD(0.4, 'Top'),
+      { to: 'down', s: 1.4, label: 'Lay down', breath: 'ein' },
+      HOLD(0.2, 'Bottom'),
+    ],
+  };
+})();
+
+M.plank_up_down = (() => {
+  const fx = PL_FA.sh[0] + 20;
+  const back = [-1, 0.3];
+  return {
+    view: 'side', start: 'low', reps: 8, focus: ['torso', 'upper'], props: { mat: [-64, 80] },
+    keys: {
+      low: { ...PL_FA, legs: TOES(), arms: pair(at(fx, HY, { bend: back }), at(fx - 2, HY, { bend: back })) },
+      high: { ...PU_TOP, legs: TOES(), arms: pair(at(PU_HAND, HY, { bend: back }), at(PU_HAND - 3, HY, { bend: back })) },
+    },
+    seq: [
+      { to: 'high', s: 1.2, label: 'Up onto the hands', cue: 'One hand after the other, hips still', breath: 'aus' },
+      HOLD(0.4, 'High plank'),
+      { to: 'low', s: 1.2, label: 'Down onto the forearms', breath: 'ein' },
+      HOLD(0.4, 'Forearm plank'),
+    ],
+  };
+})();
+
+M.side_plank_dip = (() => {
+  const shL = [37, -27];
+  const upHip = [-2, -26]; const dnHip = [-0.3, -13];
+  const legs = pair(at(-59, FY - 1, { bend: 'down' }), at(-60, FY - 7, { bend: 'down' }));
+  const arms = pair(ang(150, 172), ang(0, 70));
+  return {
+    view: 'front', start: 'up', reps: 10, sides: 'each', focus: ['torso', 'hip'],
+    keys: {
+      up: { hip: upHip, torso: torsoForLowShoulder(upHip, shL), legs, arms },
+      down: { hip: dnHip, torso: torsoForLowShoulder(dnHip, shL), legs, arms },
+    },
+    seq: [
+      { to: 'down', s: 1.2, label: 'Lower hips', cue: 'Just above the floor, do not rest', breath: 'ein' },
+      { to: 'up', s: 1.2, label: 'Lift hips', cue: 'Push the floor away with the forearm', breath: 'aus' },
+      HOLD(0.4, 'Top'),
+    ],
+  };
+})();
+
+M.reverse_plank = (() => {
+  const H = [-34, HY]; const A = [61, -5];
+  const line = lineFromShoulder([-30, -47], A);
+  const legs = pair(atP(A, { bend: 'up', foot: 140 }), at(A[0] - 2, A[1], { bend: 'up', foot: 140 }));
+  const arms = pair(atP(H, { bend: 'back' }), at(H[0] - 2, HY, { bend: 'back' }));
+  return {
+    view: 'side', start: 'hold', holdS: 20, focus: ['torso', 'hip', 'upper'], props: { mat: [-50, 76] },
+    intro: { from: 'sit', seq: [{ to: 'hold', s: 2, label: 'Lift your hips' }] },
+    keys: {
+      sit: { hip: [0, -10], torso: -35, legs, arms },
+      hold: { ...line, legs, arms },
+    },
+    seq: STILL('Hips high, body in one line'),
+  };
+})();
+
+M.boat_hold = {
+  view: 'side', start: 'hold', holdS: 20, focus: ['torso', 'thigh'], props: { mat: [-50, 70] },
+  intro: { from: 'sit', seq: [{ to: 'hold', s: 1.6, label: 'Lean back, lift your legs' }] },
+  keys: {
+    sit: { hip: [0, -10], torso: -10, legs: pair(at(44, FY, { bend: 'up' }), at(41, FY, { bend: 'up' })), arms: pair(ang(60, 80), ang(58, 78)) },
+    hold: { hip: [0, -10], torso: -34, curl: 3, legs: pair(ang(128, 128), ang(126, 126)), arms: pair(ang(96, 96), ang(94, 94)) },
+  },
+  seq: STILL('Chest open, lower back long'),
+};
+
+M.swimmer = {
+  view: 'side', start: 'base', holdS: 30, sides: 'alternate', focus: ['torso', 'hip'], props: { mat: [-70, 90] },
+  keys: {
+    base: prone({ torso: 82, curl: -2, arms: pair(ang(100, 100), ang(99, 99)), legs: pair(ang(-98, -98, { foot: -100 }), ang(-99, -99, { foot: -100 })) }),
+    lift: prone({ torso: 80, curl: -3, arms: pair(ang(114, 114), ang(97, 97)), legs: pair(ang(-96, -96, { foot: -100 }), ang(-110, -110, { foot: -105 })) }),
+  },
+  seq: [{ to: 'lift', s: 0.45, label: 'Arm and opposite leg up', cue: 'Small, calm beats, neck long' }, { to: 'base', s: 0.45, label: 'Switch' }],
+};
+
+M.forward_fold = {
+  view: 'side', start: 'fold', holdS: 30, focus: ['thigh', 'torso'],
+  intro: { from: 'base', seq: [{ to: 'fold', s: 2.5, label: 'Roll down vertebra by vertebra' }] },
+  keys: {
+    base: stand(),
+    fold: { hip: [-8, -63], torso: 148, head: 16, curl: 5, legs: pair(at(2, FY), at(-2, FY)), arms: pair(at(15, -6, { bend: [1, 0] }), at(12, -6, { bend: [1, 0] })) },
+  },
+  seq: STILL('Let the head hang, knees soft', 'calm'),
+};
+
+M.seated_forward_fold = (() => {
+  const hip = [-10, -10];
+  const legs = pair(ang(85, 85, { foot: 176 }), ang(84, 84, { foot: 176 }));
+  return {
+    view: 'side', start: 'fold', holdS: 30, focus: ['thigh', 'torso'], props: { mat: [-30, 70] },
+    intro: { from: 'up', seq: [{ to: 'fold', s: 2.5, label: 'Fold forward from the hips' }] },
+    keys: {
+      up: { hip, torso: 2, legs, arms: pair(ang(18, 84), ang(16, 82)) },
+      fold: { hip, torso: 58, curl: 6, head: 10, legs, arms: pair(at(46, -11, { bend: 'up' }), at(44, -11, { bend: 'up' })) },
+    },
+    seq: STILL('Back long, reach towards the feet', 'calm'),
+  };
+})();
+
+M.knee_hug = {
+  view: 'side', start: 'hug', holdS: 25, sides: 'each', focus: ['hip'], props: { mat: [-70, 76] },
+  intro: { from: 'base', seq: [{ to: 'hug', s: 2, label: 'Pull one knee to the chest' }] },
+  keys: {
+    base: supine({ legs: pair(ang(87, 87, { foot: 176 }), ang(86, 86, { foot: 176 })) }),
+    hug: supine({ legs: pair(ang(-148, 96), ang(86, 86, { foot: 176 })), arms: pair(at(-11, -36, { bend: 'up' }), at(-12, -35, { bend: 'up' })) }),
+  },
+  seq: STILL('Other leg long, lower back relaxed', 'calm'),
+};
+
+M.lying_hamstring_stretch = {
+  view: 'side', start: 'stretch', holdS: 30, sides: 'each', focus: ['thigh'], props: { mat: [-70, 46] },
+  intro: { from: 'base', seq: [{ to: 'stretch', s: 2.5, label: 'Raise one leg, hold it behind the thigh' }] },
+  keys: {
+    base: supine(),
+    stretch: supine({ legs: pair(ang(-172, -172), at(27, FY)), arms: pair(at(-1, -28, { bend: 'up' }), at(-2, -27, { bend: 'up' })) }),
+  },
+  seq: STILL('Leg as straight as it goes, hips stay down', 'calm'),
+};
+
+M.squat_to_stand = (() => {
+  const toes = () => pair(at(13, -6, { bend: [1, 0] }), at(10, -6, { bend: [1, 0] }));
+  const feet = () => pair(at(2, FY), at(-2, FY));
+  return {
+    view: 'side', start: 'stand', reps: 6, focus: ['thigh', 'hip'],
+    keys: {
+      stand: stand(),
+      fold: { hip: [-8, -62], torso: 142, head: 10, legs: feet(), arms: toes() },
+      squat: { hip: [-12, -22], torso: 44, legs: feet(), arms: toes() },
+    },
+    seq: [
+      { to: 'fold', s: 1.5, label: 'Fold down, hold your toes', breath: 'aus' },
+      { to: 'squat', s: 1.5, label: 'Sink into a deep squat', cue: 'Chest up, elbows inside the knees', breath: 'ein' },
+      HOLD(1, 'Deep squat'),
+      { to: 'fold', s: 1.5, label: 'Hips up, legs long', breath: 'aus' },
+      { to: 'stand', s: 1.5, label: 'Roll up', breath: 'ein' },
+      HOLD(0.3, 'Standing'),
+    ],
+  };
+})();
+
+M.star_jump = {
+  view: 'front', start: 'closed', thumb: 'star', reps: 12, focus: ['thigh', 'shin'],
+  keys: {
+    closed: standFront({ w: 6 }),
+    // Knees towards the viewer: the picture sees the legs short.
+    crouch: { hip: [0, -47], torso: 0, legs: pair(at(-8, FY, { fs: [0.62, 0.76] }), at(8, FY, { fs: [0.62, 0.76] })), arms: pair(ang(-14, -8), ang(14, 8)) },
+    star: { hip: [0, STAND_HIP - 16], torso: 0, legs: pair(at(-27, -24), at(27, -24)), arms: pair(ang(-132, -138), ang(132, 138)) },
+  },
+  seq: [
+    { to: 'crouch', s: 0.45, label: 'Crouch', breath: 'ein' },
+    { to: 'star', s: 0.32, label: 'Jump into a star', cue: 'Arms and legs wide in the air', breath: 'aus' },
+    { to: 'closed', s: 0.34, label: 'Land', cue: 'Land softly with the feet together' },
+    HOLD(0.25, 'Standing'),
+  ],
+};
+
+M.tuck_jump = {
+  view: 'side', start: 'up', reps: 8, focus: ['thigh', 'hip'],
+  keys: {
+    up: stand(),
+    dip: { hip: [-10, STAND_HIP + 20], torso: 28, legs: pair(at(2, FY), at(-2, FY)), arms: pair(ang(-30, -24), ang(-32, -26)) },
+    tuck: { hip: [0, STAND_HIP - 20], torso: 8, legs: pair(ang(78, -8, { foot: 60 }), ang(74, -12, { foot: 60 })), arms: pair(ang(60, 84), ang(56, 80)) },
+  },
+  seq: [
+    { to: 'dip', s: 0.6, label: 'Dip', breath: 'ein' },
+    { to: 'tuck', s: 0.35, label: 'Jump, knees up', cue: 'Knees to the chest, stay upright', breath: 'aus' },
+    { to: 'up', s: 0.4, label: 'Land', cue: 'Land softly and quietly' },
+    HOLD(0.6, 'Standing'),
+  ],
+};
+
+M.jump_rope = {
+  view: 'side', start: 'ground', holdS: 30, focus: ['shin'],
+  keys: {
+    ground: stand({ drop: -2, legs: pair(onToes(2, 55), onToes(-2, 55)), arms: pair(ang(-10, 62), ang(-12, 60)) }),
+    air: stand({ drop: -7, legs: pair(at(4, -11, { foot: 42 }), at(0, -11, { foot: 42 })), arms: pair(ang(-8, 74), ang(-10, 72)) }),
+  },
+  seq: [{ to: 'air', s: 0.22, label: 'Hop', cue: 'Small hops, wrists turn the rope' }, { to: 'ground', s: 0.22, label: 'Land' }],
+};
+
+M.split_jump = {
+  view: 'side', start: 'air', thumb: 'down', reps: 8, sides: 'alternate', focus: ['thigh', 'hip'],
+  keys: {
+    air: { hip: [-4, STAND_HIP - 6], torso: 0, legs: pair(at(-3, -13, { foot: 40 }), at(-3, -13, { foot: 40 })), arms: pair(ang(0, 40), ang(0, 40)) },
+    down: { hip: [-4, -42], torso: 2, legs: pair(at(24, FY), at(-34, -13, { foot: 64 })), arms: pair(ang(-34, 30), ang(40, 100)) },
+  },
+  seq: [
+    { to: 'down', s: 0.4, label: 'Land in a lunge', cue: 'Land softly, front knee over the foot', breath: 'ein' },
+    HOLD(0.25, 'Bottom'),
+    { to: 'air', s: 0.38, label: 'Jump and switch legs', breath: 'aus' },
+  ],
+};
+
+M.box_jump = (() => {
+  const top = -24;
+  const onBox = () => pair(at(36, top - B.ankle), at(32, top - B.ankle));
+  return {
+    view: 'side', start: 'up', reps: 8, focus: ['thigh', 'hip'], props: { box: [20, top, 40] },
+    keys: {
+      up: stand({ x: -8 }),
+      dip: { hip: [-18, STAND_HIP + 22], torso: 32, legs: pair(at(-6, FY), at(-10, FY)), arms: pair(ang(-34, -28), ang(-36, -30)) },
+      air: { hip: [14, STAND_HIP - 22], torso: 14, legs: pair(at(26, -42, { foot: 60 }), at(22, -42, { foot: 60 })), arms: pair(ang(100, 120), ang(96, 116)) },
+      land: { hip: [24, top - 42], torso: 28, legs: onBox(), arms: pair(ang(70, 84), ang(66, 80)) },
+      top: { hip: [34, top + STAND], torso: 0, legs: onBox(), arms: pair(ang(4, 8), ang(-3, 0)) },
+      back: { hip: [22, top - 46], torso: 8, legs: pair(at(36, top - B.ankle), at(6, -10, { foot: 70 })), arms: pair(ang(10, 16), ang(-6, -2)) },
+    },
+    seq: [
+      { to: 'dip', s: 0.6, label: 'Swing back', breath: 'ein' },
+      { to: 'air', s: 0.32, label: 'Jump', cue: 'Arms swing, knees come up', breath: 'aus' },
+      { to: 'land', s: 0.3, label: 'Land on the box', cue: 'Land softly on the whole foot' },
+      { to: 'top', s: 0.6, label: 'Stand tall' },
+      HOLD(0.3, 'Top'),
+      { to: 'back', s: 0.7, label: 'Step down' },
+      { to: 'up', s: 0.6, label: 'Standing' },
+      HOLD(0.3, 'Standing'),
+    ],
+  };
+})();
 
 export const MOTIONS = M;
 

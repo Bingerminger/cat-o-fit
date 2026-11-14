@@ -321,7 +321,7 @@
       "q": "Biblioteca de ejercicios",
       "aliases": "ejercicios|lista de ejercicios|animación|animacion|animaciones|seguir el ejercicio",
       "blocks": {
-        "0": "93 ejercicios de fuerza, core, movilidad, cardio y prevención, cada uno con una animación al ritmo del movimiento, además de instrucciones paso a paso, grupos musculares, material, dificultad, consejo, progresión y una nota de precaución. Incluyen ejercicios de Hyrox como los wall balls y los swings con pesa rusa, estiramientos de espalda y cadera, y ejercicios de prevención para correr y para el fútbol (curl nórdico de isquiotibiales, Copenhague, calentamiento FIFA 11+). Las sesiones de fútbol los sugieren directamente.",
+        "0": "120 ejercicios de fuerza, core, movilidad, cardio y prevención, cada uno con una animación al ritmo del movimiento, además de instrucciones paso a paso, grupos musculares, material, dificultad, consejo, progresión y una nota de precaución. Incluyen ejercicios de Hyrox como los wall balls y los swings con pesa rusa, estiramientos de espalda y cadera, y ejercicios de prevención para correr y para el fútbol (curl nórdico de isquiotibiales, Copenhague, calentamiento FIFA 11+). Las sesiones de fútbol los sugieren directamente.",
         "1": [
           "Filtra por categoría arriba (fuerza/core/movilidad/cardio) Y por zona del cuerpo (espalda, caderas, abdomen, piernas, tren superior), o busca en el campo de texto.",
           "Toca un ejercicio: la figura muestra el movimiento al ritmo del ejercicio, con los músculos que trabajan resaltados en color.",
@@ -340,7 +340,7 @@
         "0": "Una sesión entera de una vez, como un vídeo para seguir: la figura en pantalla demuestra cada ejercicio al ritmo, con una pausa intermedia que muestra una vista previa, cambios de lado y un descanso entre rondas. Pensado para un iPad o un móvil en el suelo; no tienes que tocar nada.",
         "1": [
           "Inicio: en una sesión de fuerza o de movilidad, toca “Seguir sin parar” (las cantidades salen de la descripción: “12×”, “30 s/lado”, “3 rondas”) o, en la Biblioteca de ejercicios, en “Entrenamientos”, elige uno del catálogo (búsqueda y filtros para fuerza, core, movilidad, cardio, correr y fútbol).",
-          "En el resumen, fija las rondas y el descanso, elige música e indicaciones de voz y toca “¡Vamos!”.",
+          "En el resumen, fija las rondas, el descanso y el ritmo, elige la figura que guía la sesión (Rubia, Pelirroja, Hombre), elige música e indicaciones de voz y toca “¡Vamos!”. El botón de destellos de la barra de control cambia el aspecto del escenario (playa, arena nocturna, dibujado).",
           "Música: un ritmo acorde con el ejercicio, cada movimiento en el compás; más suave durante las pausas. “Música propia” deja que, p. ej., Spotify siga sonando; para eso el dispositivo no debe estar en silencio.",
           "Las indicaciones de voz llegan durante las pausas (siguiente ejercicio, cambio de lado). Durante el ejercicio te guían los tonos: tres tonos antes de empezar, suenan las tres últimas repeticiones o segundos, un tono doble en “quedan 10 segundos” y un tono grave al final.",
           "Al tocar aparece la barra de control: pausa, atrás, adelante, música e indicaciones de voz sí/no, terminar. Al tocar la barra de secciones saltas a esa sección.",

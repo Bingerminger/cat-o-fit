@@ -28,16 +28,21 @@ const SAY_DE = {
   pike_pushup: 'Peik Pusch-app', biceps_curl: 'Bizeps-Körl', donkey_kick: 'Donkie Kick', russian_twist: 'Raschen Twist',
   reverse_crunch: 'Riwörs Krantsch', bicycle_crunch: 'Fahrrad-Krantsch', v_up: 'Wie-App', flutter_kicks: 'Flatter Kicks',
   worlds_greatest_stretch: 'Wörlds Greitest Stretsch', inchworm: 'Intschwörm', burpee: 'Börpie', mountain_climber: 'Mauntn Klaimer',
+  renegade_row: 'Renneged Rou', push_press: 'Pusch Press', sit_up: 'Sitt-app', triceps_kickback: 'Trizeps-Kickbäcks',
 };
 
 /** The same for the other recorded voices, but only for names a voice obviously cannot read (English
     loanwords it would spell out or break up); everything else is left to the voice. */
-const SAY_FR = { step_up: 'Step-eup', v_up: 'Vi-eup' };
+const SAY_FR = { step_up: 'Step-eup', v_up: 'Vi-eup', sit_up: 'Sit-eup', push_press: 'Pouch presse', squat_to_stand: 'Squat tou stande' };
 const SAY_ES = {
   dead_bug: 'Ded Bag', hollow_hold: 'Jólou Jóuld', wall_ball: 'Uol Bol', jumping_jack: 'Yámping Yak',
   burpee: 'Búrpi', worlds_greatest_stretch: 'Uérlds Gréitest Estrech',
+  sit_up: 'Sit-ap', push_press: 'Puch pres', squat_to_stand: 'Escuat tu estand',
 };
-const SAY_IT = { dead_bug: 'Ded Bag', hollow_hold: 'Olou Ould', bear_plank: 'Ber Plank', bear_crawl: 'Ber Crol', worlds_greatest_stretch: 'Uorlds Greitest Stretch' };
+const SAY_IT = {
+  dead_bug: 'Ded Bag', hollow_hold: 'Olou Ould', bear_plank: 'Ber Plank', bear_crawl: 'Ber Crol', worlds_greatest_stretch: 'Uorlds Greitest Stretch',
+  floor_press: 'Flor press', renegade_row: 'Renegheid rou', push_press: 'Pusc press', sit_up: 'Sit-ap', squat_to_stand: 'Squot tu stend',
+};
 const SAY = { de: SAY_DE, fr: SAY_FR, es: SAY_ES, it: SAY_IT };
 
 /** Name for speaking: without the parenthetical, difficult names phonetically (per language). */

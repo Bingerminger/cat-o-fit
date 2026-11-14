@@ -2875,5 +2875,869 @@
         "label": "Appoggia"
       }
     }
+  },
+  "front_raise": {
+    "muscles": [
+      "parte anteriore delle spalle",
+      "parte alta del petto"
+    ],
+    "equipment": "manubri leggeri",
+    "steps": [
+      "Stai in piedi, un manubrio per mano davanti alle cosce.",
+      "Solleva entrambe le braccia in avanti, quasi tese, fino all’altezza delle spalle.",
+      "Fai una breve pausa senza inclinarti all’indietro.",
+      "Scendi lentamente, con controllo."
+    ],
+    "tip": "Scegli un carico leggero: lavorano le spalle, non lo slancio. 3×10–12 rip.",
+    "caution": "In caso di dolore alla spalla, sali solo finché non fa male; non alzare le spalle.",
+    "progression": "Discesa più lenta (3 secondi), poi un po’ più di carico o un braccio alla volta.",
+    "gear": "manubri leggeri",
+    "phases": {
+      "0": {
+        "label": "Solleva in avanti",
+        "cue": "Fino alle spalle, senza slancio"
+      },
+      "1": {
+        "label": "In alto"
+      },
+      "2": {
+        "label": "Scendi"
+      },
+      "3": {
+        "label": "In basso"
+      }
+    }
+  },
+  "floor_press": {
+    "muscles": [
+      "petto",
+      "tricipiti",
+      "parte anteriore delle spalle"
+    ],
+    "equipment": "due manubri, tappetino",
+    "steps": [
+      "Sdraiati sulla schiena, ginocchia piegate, un manubrio per mano sopra il petto.",
+      "Abbassa i carichi finché la parte alta delle braccia sfiora il pavimento.",
+      "I gomiti puntano a circa 45° – non dritti verso l’esterno.",
+      "Spingi finché le braccia sono tese sopra le spalle."
+    ],
+    "tip": "Il pavimento limita l’escursione e protegge le spalle: una panca senza panca. 3×8–12 rip.",
+    "caution": "Non lasciar cadere i gomiti a terra; in caso di dolore ai polsi, tienili dritti.",
+    "progression": "Più carico, una discesa più lenta o un braccio alla volta.",
+    "gear": "due manubri",
+    "phases": {
+      "0": {
+        "label": "Scendi",
+        "cue": "Le braccia sfiorano il pavimento"
+      },
+      "1": {
+        "label": "In basso"
+      },
+      "2": {
+        "label": "Spingi",
+        "cue": "Carichi sopra le spalle"
+      },
+      "3": {
+        "label": "In alto"
+      }
+    }
+  },
+  "renegade_row": {
+    "muscles": [
+      "parte alta della schiena",
+      "core",
+      "spalle",
+      "bicipiti"
+    ],
+    "equipment": "due manubri",
+    "steps": [
+      "Mettiti in plank alto con le mani su due manubri, piedi un po’ più larghi delle anche.",
+      "Tira un manubrio verso le costole, con il gomito vicino al corpo.",
+      "Il bacino resta fermo – senza ruotare.",
+      "Appoggia il carico e cambia lato."
+    ],
+    "tip": "Un appoggio largo aiuta a tenere fermo il bacino. 3×6–8 rip. per lato.",
+    "caution": "Usa manubri che non rotolano (esagonali); con problemi ai polsi, meglio il rematore appoggiato a una panca.",
+    "progression": "Piedi più vicini, più carico o un piegamento tra una tirata e l’altra.",
+    "gear": "due manubri",
+    "phases": {
+      "0": {
+        "label": "Tira",
+        "cue": "Gomito vicino al corpo, bacino fermo"
+      },
+      "1": {
+        "label": "In alto"
+      },
+      "2": {
+        "label": "Appoggia"
+      },
+      "3": {
+        "label": "Plank"
+      }
+    }
+  },
+  "decline_pushup": {
+    "muscles": [
+      "parte alta del petto",
+      "spalle",
+      "tricipiti",
+      "core"
+    ],
+    "equipment": "panca o gradino stabile",
+    "steps": [
+      "Appoggia i piedi su una panca, le mani a terra un po’ più larghe delle spalle.",
+      "Tieni il corpo in linea dalla testa ai talloni.",
+      "Abbassa il petto verso il pavimento, gomiti indietro in diagonale.",
+      "Spingi con forza per risalire."
+    ],
+    "tip": "Più alti sono i piedi, più lavorano le spalle. 3×6–10 rip.",
+    "caution": "Non con dolore alla spalla o al polso; fermati quando il bacino inizia a cedere.",
+    "progression": "Appoggio più alto, discesa più lenta, poi un piede sollevato.",
+    "gear": "panca",
+    "phases": {
+      "0": {
+        "label": "Scendi",
+        "cue": "Corpo dritto, senza cedere al centro"
+      },
+      "1": {
+        "label": "In basso"
+      },
+      "2": {
+        "label": "Spingi"
+      },
+      "3": {
+        "label": "In alto"
+      }
+    }
+  },
+  "wall_pushup": {
+    "muscles": [
+      "petto",
+      "tricipiti",
+      "spalle"
+    ],
+    "equipment": "muro",
+    "steps": [
+      "Mettiti a un braccio di distanza dal muro, mani all’altezza delle spalle.",
+      "Tieni il corpo dritto e piega le braccia finché il naso quasi tocca il muro.",
+      "I talloni restano a terra.",
+      "Spingi via il muro finché le braccia sono tese."
+    ],
+    "tip": "Il modo più dolce per iniziare con i piegamenti: più i piedi sono lontani dal muro, più è difficile. 3×10–15 rip.",
+    "caution": "Stai su un pavimento che non scivola; i polsi non devono fare male.",
+    "progression": "Piedi più indietro, poi piegamenti inclinati su un tavolo o una panca.",
+    "gear": "muro",
+    "phases": {
+      "0": {
+        "label": "Verso il muro",
+        "cue": "Corpo in linea, talloni a terra"
+      },
+      "1": {
+        "label": "Vicino"
+      },
+      "2": {
+        "label": "Spingi via"
+      },
+      "3": {
+        "label": "Braccia tese"
+      }
+    }
+  },
+  "push_press": {
+    "muscles": [
+      "spalle",
+      "tricipiti",
+      "cosce",
+      "core"
+    ],
+    "equipment": "due manubri",
+    "steps": [
+      "Stai in piedi con i manubri sulle spalle, gomiti leggermente in avanti.",
+      "Piega brevemente le ginocchia, talloni a terra.",
+      "Spingi con le gambe e porta i carichi sopra la testa in un solo movimento.",
+      "Riportali alle spalle con controllo."
+    ],
+    "tip": "Le gambe avviano il carico, le braccia concludono: così sollevi più che nella distensione stretta. 3×6–8 rip.",
+    "caution": "Tieni il core attivo e non inarcare la schiena; non con dolore acuto a spalle o schiena.",
+    "progression": "Più carico, poi un braccio alla volta.",
+    "gear": "due manubri",
+    "phases": {
+      "0": {
+        "label": "Piega",
+        "cue": "Breve piegamento, talloni a terra"
+      },
+      "1": {
+        "label": "Spingi su",
+        "cue": "Le gambe avviano, le braccia chiudono"
+      },
+      "2": {
+        "label": "In alto"
+      },
+      "3": {
+        "label": "Di nuovo alle spalle"
+      },
+      "4": {
+        "label": "In piedi"
+      }
+    }
+  },
+  "box_squat": {
+    "muscles": [
+      "cosce",
+      "glutei"
+    ],
+    "equipment": "sedia, panca o box",
+    "steps": [
+      "Mettiti a un piede di distanza da una sedia o da un box, piedi alla larghezza delle spalle.",
+      "Porta le anche indietro e siediti lentamente fino a toccare la seduta.",
+      "Non lasciarti cadere – resta in tensione negli ultimi centimetri.",
+      "Spingi sui talloni e alzati senza dondolare."
+    ],
+    "tip": "Insegna uno squat pulito e toglie la paura di scendere. 3×10–12 rip.",
+    "caution": "Usa una seduta che non scivola; in caso di dolore al ginocchio scegli una seduta più alta.",
+    "progression": "Seduta più bassa, poi un peso davanti al petto, più avanti su una gamba.",
+    "gear": "panca",
+    "phases": {
+      "0": {
+        "label": "Siediti",
+        "cue": "Anche indietro fino a toccare la seduta"
+      },
+      "1": {
+        "label": "Tocca"
+      },
+      "2": {
+        "label": "Alzati",
+        "cue": "Spingi sui talloni, senza slancio"
+      },
+      "3": {
+        "label": "In alto"
+      }
+    }
+  },
+  "triceps_kickback": {
+    "muscles": [
+      "tricipiti"
+    ],
+    "equipment": "manubri leggeri",
+    "steps": [
+      "Fletti il busto in avanti con la schiena dritta, ginocchia leggermente piegate.",
+      "Porta la parte alta delle braccia lungo il corpo, gomiti piegati.",
+      "Distendi gli avambracci indietro finché le braccia sono dritte.",
+      "Piega lentamente – la parte alta delle braccia non si muove."
+    ],
+    "tip": "Carico leggero, estensione completa, una breve pausa dietro. 3×12–15 rip.",
+    "caution": "Tieni la schiena lunga; con fastidi lombari appoggia una mano su una panca.",
+    "progression": "Tieni l’estensione 2 secondi, poi un po’ più di carico.",
+    "gear": "manubri leggeri",
+    "phases": {
+      "0": {
+        "label": "Distendi indietro",
+        "cue": "Le braccia restano lungo il corpo"
+      },
+      "1": {
+        "label": "Disteso"
+      },
+      "2": {
+        "label": "Piega"
+      },
+      "3": {
+        "label": "Piegato"
+      }
+    }
+  },
+  "pullover": {
+    "muscles": [
+      "gran dorsale",
+      "petto",
+      "tricipiti",
+      "core"
+    ],
+    "equipment": "un manubrio, tappetino",
+    "steps": [
+      "Sdraiati sulla schiena, ginocchia piegate, un manubrio tenuto con due mani sopra il petto.",
+      "Abbassa il carico con un ampio arco dietro la testa, braccia quasi tese.",
+      "Le costole restano basse – senza inarcare.",
+      "Riporta il carico sopra il petto."
+    ],
+    "tip": "Vai solo fin dove le spalle lo permettono senza che la schiena si inarchi. 3×10–12 rip.",
+    "caution": "Non con dolore acuto alla spalla; tieni saldamente il manubrio con due mani.",
+    "progression": "Più carico, una discesa più lenta o sdraiato di traverso su una panca.",
+    "gear": "un manubrio",
+    "phases": {
+      "0": {
+        "label": "Scendi dietro la testa",
+        "cue": "Braccia lunghe, costole basse"
+      },
+      "1": {
+        "label": "Allungamento"
+      },
+      "2": {
+        "label": "Torna sopra il petto"
+      },
+      "3": {
+        "label": "In alto"
+      }
+    }
+  },
+  "single_leg_calf_raise": {
+    "muscles": [
+      "polpacci",
+      "tendine d’Achille",
+      "muscoli del piede"
+    ],
+    "equipment": "nessuno (muro per l’equilibrio)",
+    "steps": [
+      "Stai su una gamba, una mano appoggiata leggermente al muro.",
+      "Sali sull’avampiede più in alto che puoi.",
+      "Tieni un attimo in alto.",
+      "Scendi lentamente e ripeti; poi cambia gamba."
+    ],
+    "tip": "Uno degli esercizi più importanti per chi corre: l’obiettivo è 3×12–15 per gamba.",
+    "caution": "Con dolore acuto al tendine d’Achille o al polpaccio inizia su due gambe e resta senza dolore.",
+    "progression": "Su un gradino con il tallone nel vuoto, poi con un peso in mano.",
+    "gear": "muro",
+    "phases": {
+      "0": {
+        "label": "Su",
+        "cue": "Sull’avampiede di un solo piede"
+      },
+      "1": {
+        "label": "Tieni in alto"
+      },
+      "2": {
+        "label": "Scendi",
+        "cue": "Scendi lentamente"
+      },
+      "3": {
+        "label": "In basso"
+      }
+    }
+  },
+  "sit_up": {
+    "muscles": [
+      "addominali",
+      "flessori dell’anca"
+    ],
+    "equipment": "tappetino",
+    "steps": [
+      "Sdraiati sulla schiena, ginocchia piegate, piedi a terra, mani sul petto.",
+      "Sali vertebra dopo vertebra fino a sederti ben dritto.",
+      "I piedi restano a terra.",
+      "Torna giù lentamente."
+    ],
+    "tip": "Arrotola, non strappare: conta la discesa lenta. 3×10–15 rip.",
+    "caution": "Non tirare il collo; con dolore lombare meglio crunch o dead bug.",
+    "progression": "Braccia tese sopra la testa, poi con un peso sul petto.",
+    "phases": {
+      "0": {
+        "label": "Sali",
+        "cue": "Arrotola, piedi a terra"
+      },
+      "1": {
+        "label": "In alto"
+      },
+      "2": {
+        "label": "Srotola giù",
+        "cue": "Vertebra dopo vertebra"
+      },
+      "3": {
+        "label": "In basso"
+      }
+    }
+  },
+  "toe_touch": {
+    "muscles": [
+      "parte alta degli addominali"
+    ],
+    "equipment": "tappetino",
+    "steps": [
+      "Sdraiati sulla schiena e distendi entrambe le gambe in verticale.",
+      "Allunga le braccia verso le punte dei piedi.",
+      "Stacca le scapole da terra e arriva più in alto che puoi.",
+      "Appoggia lentamente le spalle, le gambe restano in alto."
+    ],
+    "tip": "Movimento breve e controllato – le gambe restano ferme. 3×12–15 rip.",
+    "caution": "Tieni il collo lungo; se la parte posteriore delle cosce è rigida, piega un po’ le ginocchia.",
+    "progression": "Tieni un peso leggero tra le mani o fermati 2 secondi in alto.",
+    "phases": {
+      "0": {
+        "label": "Verso le punte",
+        "cue": "Scapole su, gambe verticali"
+      },
+      "1": {
+        "label": "In alto"
+      },
+      "2": {
+        "label": "Appoggia"
+      },
+      "3": {
+        "label": "In basso"
+      }
+    }
+  },
+  "plank_up_down": {
+    "muscles": [
+      "core",
+      "spalle",
+      "tricipiti"
+    ],
+    "equipment": "tappetino",
+    "steps": [
+      "Inizia in plank sugli avambracci, corpo in linea.",
+      "Appoggia una mano, poi l’altra, e spingi fino al plank alto.",
+      "Torna sugli avambracci, un braccio alla volta.",
+      "Cambia il braccio che parte a ogni ripetizione."
+    ],
+    "tip": "Il bacino deve oscillare pochissimo – un appoggio più largo aiuta. 3×6–10 rip.",
+    "caution": "Non con dolore al polso o alla spalla; fermati quando la zona lombare cede.",
+    "progression": "Piedi più vicini, ritmo più lento, più ripetizioni.",
+    "phases": {
+      "0": {
+        "label": "Su sulle mani",
+        "cue": "Una mano dopo l’altra, bacino fermo"
+      },
+      "1": {
+        "label": "Plank alto"
+      },
+      "2": {
+        "label": "Giù sugli avambracci"
+      },
+      "3": {
+        "label": "Plank sugli avambracci"
+      }
+    }
+  },
+  "side_plank_dip": {
+    "muscles": [
+      "obliqui",
+      "anche",
+      "spalle"
+    ],
+    "equipment": "tappetino",
+    "steps": [
+      "Appoggiati di lato sull’avambraccio, gomito sotto la spalla, gambe tese.",
+      "Abbassa il bacino fin quasi a sfiorare il pavimento.",
+      "Risollevalo, un po’ più in alto della linea retta.",
+      "Fai tutte le ripetizioni, poi cambia lato."
+    ],
+    "tip": "Muoviti lentamente e su un solo piano – senza cadere in avanti o indietro. 3×8–12 per lato.",
+    "caution": "Con dolore alla spalla meglio il plank laterale statico sulle ginocchia.",
+    "progression": "Solleva la gamba di sopra o appoggia un peso sull’anca.",
+    "phases": {
+      "0": {
+        "label": "Abbassa il bacino",
+        "cue": "Appena sopra il pavimento, senza poggiare"
+      },
+      "1": {
+        "label": "Solleva il bacino",
+        "cue": "Spingi via il pavimento con l’avambraccio"
+      },
+      "2": {
+        "label": "In alto"
+      }
+    }
+  },
+  "reverse_plank": {
+    "muscles": [
+      "glutei",
+      "parte posteriore delle cosce",
+      "zona lombare",
+      "spalle"
+    ],
+    "equipment": "tappetino",
+    "steps": [
+      "Siediti a gambe tese, mani dietro le anche, dita verso i piedi.",
+      "Spingi il bacino in alto finché il corpo forma una linea retta.",
+      "Apri il petto e tieni il collo lungo.",
+      "Tieni e continua a respirare con calma."
+    ],
+    "tip": "Il contrario del plank: apre le spalle e risveglia la parte posteriore del corpo. 3×20–30 s.",
+    "caution": "Con dolore al polso o alla spalla appoggiati sugli avambracci.",
+    "progression": "Tieni più a lungo, poi solleva una gamba alternando.",
+    "phases": {
+      "0": {
+        "label": "Tieni",
+        "cue": "Bacino alto, corpo in linea"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Solleva il bacino"
+      }
+    }
+  },
+  "boat_hold": {
+    "muscles": [
+      "addominali",
+      "flessori dell’anca"
+    ],
+    "equipment": "tappetino",
+    "steps": [
+      "Siediti, ginocchia piegate, e inclinati indietro con la schiena lunga.",
+      "Stacca i piedi e distendi le gambe quanto riesci.",
+      "Allunga le braccia in avanti, parallele al pavimento.",
+      "Tieni – petto aperto, senza incurvare la schiena."
+    ],
+    "tip": "Meglio ginocchia piegate e schiena lunga che gambe tese e schiena curva. 3×15–30 s.",
+    "caution": "Con dolore lombare tieni le ginocchia piegate o i talloni a terra.",
+    "progression": "Distendi del tutto le gambe, poi scendi e risali lentamente.",
+    "phases": {
+      "0": {
+        "label": "Tieni",
+        "cue": "Petto aperto, zona lombare lunga"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Inclinati indietro, solleva le gambe"
+      }
+    }
+  },
+  "swimmer": {
+    "muscles": [
+      "zona lombare",
+      "glutei",
+      "spalle"
+    ],
+    "equipment": "tappetino",
+    "steps": [
+      "Sdraiati a pancia in giù, braccia tese in avanti.",
+      "Stacca leggermente braccia e gambe dal pavimento.",
+      "Solleva un braccio e la gamba opposta un po’ di più, poi alterna.",
+      "Battute piccole e calme – lo sguardo resta a terra."
+    ],
+    "tip": "Poca escursione, corpo lungo: immagina di essere tirato per le dita di mani e piedi. 3×20–30 s.",
+    "caution": "Non gettare la testa indietro; con mal di schiena riduci l’escursione.",
+    "progression": "Batti più a lungo o più lentamente, con brevi pause in alto.",
+    "phases": {
+      "0": {
+        "label": "Braccio e gamba opposta su",
+        "cue": "Battute piccole e calme, collo lungo"
+      },
+      "1": {
+        "label": "Cambia"
+      }
+    }
+  },
+  "forward_fold": {
+    "muscles": [
+      "parte posteriore delle cosce",
+      "polpacci",
+      "zona lombare"
+    ],
+    "equipment": "nessuno",
+    "steps": [
+      "Stai in piedi con i piedi alla larghezza delle anche.",
+      "Srotola la schiena vertebra dopo vertebra, prima il mento al petto.",
+      "Lascia pendere braccia e testa, ginocchia morbide.",
+      "Respira con calma e scendi un po’ di più a ogni espirazione."
+    ],
+    "tip": "Lasciati pendere, non tirare – lavora la gravità. 2–3×30 s.",
+    "caution": "Risali lentamente per evitare capogiri; con problemi ai dischi piega bene le ginocchia.",
+    "progression": "Distendi le gambe poco a poco, mani piatte a terra.",
+    "phases": {
+      "0": {
+        "label": "Tieni",
+        "cue": "Testa rilassata, ginocchia morbide"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Srotola vertebra dopo vertebra"
+      }
+    }
+  },
+  "seated_forward_fold": {
+    "muscles": [
+      "parte posteriore delle cosce",
+      "polpacci",
+      "schiena"
+    ],
+    "equipment": "tappetino",
+    "steps": [
+      "Siediti ben dritto, gambe tese, punte dei piedi verso l’alto.",
+      "Inclinati in avanti dalle anche, con la schiena lunga.",
+      "Afferra gli stinchi, le caviglie o i piedi.",
+      "Tieni e respira con calma."
+    ],
+    "tip": "Guida con il petto, non con la fronte: una schiena lunga allunga più di una curva. 2–3×30 s.",
+    "caution": "Senza molleggiare; se la schiena si incurva, siediti su un asciugamano piegato o piega un po’ le ginocchia.",
+    "progression": "Arriva più lontano con il tempo, più avanti afferra i piedi.",
+    "phases": {
+      "0": {
+        "label": "Tieni",
+        "cue": "Schiena lunga, mani verso i piedi"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Piegati in avanti dalle anche"
+      }
+    }
+  },
+  "knee_hug": {
+    "muscles": [
+      "glutei",
+      "zona lombare",
+      "anche"
+    ],
+    "equipment": "tappetino",
+    "steps": [
+      "Sdraiati sulla schiena con entrambe le gambe tese.",
+      "Porta un ginocchio al petto con entrambe le mani.",
+      "L’altra gamba resta lunga a terra.",
+      "Tieni, respira con calma, poi cambia lato."
+    ],
+    "tip": "Piacevole dopo la corsa e dopo tante ore seduti: rilassa la zona lombare. 2×20–30 s per lato.",
+    "caution": "Con problemi al ginocchio afferra dietro la coscia invece che sullo stinco.",
+    "progression": "Porta dolcemente il ginocchio verso la spalla opposta.",
+    "phases": {
+      "0": {
+        "label": "Tieni",
+        "cue": "Altra gamba lunga, schiena rilassata"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Porta un ginocchio al petto"
+      }
+    }
+  },
+  "lying_hamstring_stretch": {
+    "muscles": [
+      "parte posteriore delle cosce",
+      "polpacci"
+    ],
+    "equipment": "tappetino (facoltativi: elastico o asciugamano)",
+    "steps": [
+      "Sdraiati sulla schiena, un piede appoggiato a terra.",
+      "Solleva l’altra gamba e tienila dietro la coscia.",
+      "Distendi il ginocchio fin dove arriva senza dolore.",
+      "Tieni, respira con calma, poi cambia gamba."
+    ],
+    "tip": "Più gentile con la schiena rispetto all’allungamento in piedi. 2×30 s per lato.",
+    "caution": "Senza molleggiare; sentire tirare va bene, il dolore dietro il ginocchio no.",
+    "progression": "Passa un asciugamano attorno al piede e avvicina la gamba, con l’altra gamba distesa.",
+    "phases": {
+      "0": {
+        "label": "Tieni",
+        "cue": "Gamba più tesa possibile, bacino a terra"
+      }
+    },
+    "intro": {
+      "0": {
+        "label": "Solleva una gamba, tienila dietro la coscia"
+      }
+    }
+  },
+  "squat_to_stand": {
+    "muscles": [
+      "anche",
+      "parte posteriore delle cosce",
+      "caviglie",
+      "schiena"
+    ],
+    "equipment": "nessuno",
+    "steps": [
+      "In piedi, piedi alla larghezza delle anche, piegati in avanti e afferra le punte dei piedi.",
+      "Scendi in uno squat profondo, gomiti all’interno delle ginocchia, petto in fuori.",
+      "Tieni un attimo, poi spingi il bacino in alto tenendo le punte.",
+      "Srotola la schiena fino a tornare in piedi."
+    ],
+    "tip": "Un riscaldamento completo per anche, femorali e caviglie in un solo movimento. 5–8 rip. lente.",
+    "caution": "Se i talloni si staccano, scendi solo finché restano a terra; piega le ginocchia quando ti pieghi in avanti.",
+    "progression": "Nello squat profondo allunga un braccio, poi l’altro, verso il soffitto.",
+    "phases": {
+      "0": {
+        "label": "Piegati, afferra le punte"
+      },
+      "1": {
+        "label": "Scendi in squat profondo",
+        "cue": "Petto in fuori, gomiti tra le ginocchia"
+      },
+      "2": {
+        "label": "Squat profondo"
+      },
+      "3": {
+        "label": "Bacino su, gambe lunghe"
+      },
+      "4": {
+        "label": "Srotola su"
+      },
+      "5": {
+        "label": "In piedi"
+      }
+    }
+  },
+  "star_jump": {
+    "muscles": [
+      "cosce",
+      "glutei",
+      "polpacci",
+      "spalle"
+    ],
+    "equipment": "nessuno",
+    "steps": [
+      "In piedi a piedi uniti, piegati leggermente.",
+      "Salta in modo esplosivo aprendo braccia e gambe a stella.",
+      "Richiudi braccia e gambe in aria.",
+      "Atterra morbido a piedi uniti e riparti subito con il salto successivo."
+    ],
+    "tip": "Meglio in alto che veloce – ogni salto il più ampio possibile. 3×8–12 rip.",
+    "caution": "Atterra morbido a ginocchia piegate; non con problemi acuti a ginocchia o caviglie.",
+    "progression": "Piegamento più profondo prima del salto, pause più brevi.",
+    "phases": {
+      "0": {
+        "label": "Piegati"
+      },
+      "1": {
+        "label": "Salta a stella",
+        "cue": "Braccia e gambe larghe in aria"
+      },
+      "2": {
+        "label": "Atterra",
+        "cue": "Atterra morbido, piedi uniti"
+      },
+      "3": {
+        "label": "In piedi"
+      }
+    }
+  },
+  "tuck_jump": {
+    "muscles": [
+      "cosce",
+      "glutei",
+      "polpacci",
+      "core"
+    ],
+    "equipment": "nessuno",
+    "steps": [
+      "In piedi, piedi alla larghezza delle anche, piega brevemente le ginocchia.",
+      "Salta e porta entrambe le ginocchia verso il petto.",
+      "Resta dritto – salgono le ginocchia, non scende il petto.",
+      "Atterra morbido e riprenditi un attimo prima del salto successivo."
+    ],
+    "tip": "Qualità prima della quantità: pochi salti, alti, con un atterraggio pulito. 3×6–8 rip.",
+    "caution": "Impatto elevato – non con problemi a ginocchia, caviglie o schiena, e solo su un pavimento che non scivola.",
+    "progression": "Più salti di fila senza pausa.",
+    "phases": {
+      "0": {
+        "label": "Piega"
+      },
+      "1": {
+        "label": "Salta, ginocchia su",
+        "cue": "Ginocchia al petto, busto dritto"
+      },
+      "2": {
+        "label": "Atterra",
+        "cue": "Atterra morbido e silenzioso"
+      },
+      "3": {
+        "label": "In piedi"
+      }
+    }
+  },
+  "jump_rope": {
+    "muscles": [
+      "polpacci",
+      "piedi",
+      "spalle",
+      "resistenza"
+    ],
+    "equipment": "corda per saltare (o senza)",
+    "steps": [
+      "Stai dritto, gomiti vicini al corpo, la corda dietro i talloni.",
+      "Fai girare la corda con i polsi.",
+      "Salta solo quanto basta per far passare la corda sotto i piedi.",
+      "Atterra morbido sugli avampiedi."
+    ],
+    "tip": "Funziona anche senza corda: piccoli saltelli, i polsi girano. 3×30–60 s.",
+    "caution": "Inizia con intervalli brevi – polpacci e tendini d’Achille hanno bisogno di tempo per abituarsi.",
+    "progression": "Passo alternato, ginocchia alte, più avanti doppi giri.",
+    "gear": "corda per saltare",
+    "phases": {
+      "0": {
+        "label": "Salta",
+        "cue": "Piccoli saltelli, girano i polsi"
+      },
+      "1": {
+        "label": "Atterra"
+      }
+    }
+  },
+  "split_jump": {
+    "muscles": [
+      "cosce",
+      "glutei",
+      "polpacci"
+    ],
+    "equipment": "nessuno",
+    "steps": [
+      "Inizia in affondo, entrambe le ginocchia piegate.",
+      "Salta e scambia le gambe in aria.",
+      "Atterra morbido in affondo dall’altro lato.",
+      "Il ginocchio davanti resta sopra il piede, il busto dritto."
+    ],
+    "tip": "Usa le braccia come nella corsa: danno altezza e ritmo. 3×6–10 per lato.",
+    "caution": "Impatto elevato – padroneggia prima l’affondo indietro; non con dolore al ginocchio.",
+    "progression": "Atterraggio più basso, più ripetizioni, poi con manubri leggeri.",
+    "phases": {
+      "0": {
+        "label": "Atterra in affondo",
+        "cue": "Morbido, ginocchio davanti sopra il piede"
+      },
+      "1": {
+        "label": "In basso"
+      },
+      "2": {
+        "label": "Salta e scambia le gambe"
+      }
+    }
+  },
+  "box_jump": {
+    "muscles": [
+      "cosce",
+      "glutei",
+      "polpacci"
+    ],
+    "equipment": "box o gradino stabile",
+    "steps": [
+      "Mettiti a un passo corto da un box stabile.",
+      "Porta le braccia indietro, piega le gambe e salta sul box.",
+      "Atterra morbido su tutto il piede e raddrizzati del tutto.",
+      "Scendi un piede alla volta – non saltare giù."
+    ],
+    "tip": "Scendi camminando invece di saltare: così risparmi i tendini d’Achille. 3×6–8 rip.",
+    "caution": "Il box non deve scivolare né ribaltarsi; inizia basso e salta solo quando sei fresco.",
+    "progression": "Box più alto, poi partenza da seduto o atterraggio su una gamba.",
+    "gear": "box",
+    "phases": {
+      "0": {
+        "label": "Carica"
+      },
+      "1": {
+        "label": "Salta",
+        "cue": "Le braccia slanciano, le ginocchia salgono"
+      },
+      "2": {
+        "label": "Atterra sul box",
+        "cue": "Atterra morbido su tutto il piede"
+      },
+      "3": {
+        "label": "Raddrizzati"
+      },
+      "4": {
+        "label": "In alto"
+      },
+      "5": {
+        "label": "Scendi"
+      },
+      "6": {
+        "label": "In piedi"
+      },
+      "7": {
+        "label": "In piedi"
+      }
+    }
   }
 }

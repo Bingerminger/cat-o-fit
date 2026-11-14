@@ -321,7 +321,7 @@
       "q": "Bibliothèque d’exercices",
       "aliases": "exercices|liste d’exercices|animation|animations|suivre",
       "blocks": {
-        "0": "93 exercices de renforcement, de gainage, de mobilité, de cardio et de prévention – chacun sous forme d’animation au rythme du mouvement, avec des instructions pas à pas, les groupes musculaires, le matériel, la difficulté, un conseil, une progression et une mise en garde. On y trouve des exercices Hyrox comme les wall balls et les kettlebell swings, des étirements du dos et des hanches, et des exercices de prévention pour la course et le football (curl nordique, Copenhague, échauffement FIFA 11+). Les séances de football les proposent directement.",
+        "0": "120 exercices de renforcement, de gainage, de mobilité, de cardio et de prévention – chacun sous forme d’animation au rythme du mouvement, avec des instructions pas à pas, les groupes musculaires, le matériel, la difficulté, un conseil, une progression et une mise en garde. On y trouve des exercices Hyrox comme les wall balls et les kettlebell swings, des étirements du dos et des hanches, et des exercices de prévention pour la course et le football (curl nordique, Copenhague, échauffement FIFA 11+). Les séances de football les proposent directement.",
         "1": [
           "Filtre par catégorie en haut (renforcement/tronc/mobilité/cardio) ET par zone du corps (dos, hanches, abdos, jambes, haut du corps) – ou cherche dans le champ de texte.",
           "Appuie sur un exercice : la figure montre le mouvement au rythme de l’exercice, avec les muscles sollicités en couleur.",
@@ -340,7 +340,7 @@
         "0": "Une séance entière d’un seul tenant – comme une vidéo à suivre : la figure à l’écran démontre chaque exercice en rythme, avec entre deux une pause qui montre l’exercice suivant, les changements de côté et un repos entre les tours. Pensé pour un iPad ou un téléphone posé au sol ; tu n’as rien à toucher.",
         "1": [
           "Démarrer : dans une séance de renforcement ou de mobilité, appuie sur « Suivre d’une traite » – les quantités viennent de la description (« 12× », « 30 s/côté », « 3 tours ») – ou, dans la Bibliothèque d’exercices sous « Séances guidées », choisis-en une dans le catalogue (recherche et filtres pour renforcement, tronc, mobilité, cardio, course & football).",
-          "Sur l’aperçu, règle les tours et le repos, choisis la musique et les annonces vocales, puis appuie sur « C’est parti ».",
+          "Sur l’aperçu, règle les tours, le repos et le tempo, choisis le personnage qui montre les exercices (Blonde, Rousse, Homme), la musique et les annonces vocales, puis appuie sur « C’est parti ». Le bouton étincelle de la barre de commande change le style de la scène (plage, arène de nuit, dessiné).",
           "Musique : un rythme adapté à l’exercice, chaque mouvement tombe sur le temps ; plus doux pendant les pauses. « Ma musique » laisse par ex. Spotify continuer à jouer – pour cela, l’appareil ne doit pas être en mode silencieux.",
           "Les annonces vocales arrivent pendant les pauses (exercice suivant, changement de côté). Pendant l’exercice, des sons te guident : trois sons avant de commencer, les trois dernières répétitions ou secondes sont marquées, un double son à « plus que 10 secondes », un son grave à la fin.",
           "Un appui affiche la barre de commandes : pause, retour, avance, musique et annonces vocales activées/désactivées, terminer. Un appui sur la barre des sections saute à cette section.",

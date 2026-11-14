@@ -1228,10 +1228,37 @@
     "burpee": "Burpees",
     "mountain_climber": "Mountain climbers (escaladores)",
     "skater_jump": "Saltos de patinador",
-    "bear_crawl": "Caminhada do urso"
+    "bear_crawl": "Caminhada do urso",
+    "front_raise": "Elevações frontais",
+    "floor_press": "Supino no chão",
+    "renegade_row": "Remada na prancha",
+    "decline_pushup": "Flexões com os pés elevados",
+    "wall_pushup": "Flexões na parede",
+    "push_press": "Push press",
+    "box_squat": "Agachamento na cadeira",
+    "triceps_kickback": "Tríceps coice",
+    "pullover": "Pullover com halter",
+    "single_leg_calf_raise": "Elevações de panturrilha unilateral",
+    "sit_up": "Sit-up",
+    "toe_touch": "Toques nos pés",
+    "plank_up_down": "Prancha sobe e desce",
+    "side_plank_dip": "Prancha lateral com descida de quadril",
+    "reverse_plank": "Prancha invertida",
+    "boat_hold": "Postura do barco",
+    "swimmer": "Nadador",
+    "forward_fold": "Flexão à frente em pé",
+    "seated_forward_fold": "Flexão à frente sentado",
+    "knee_hug": "Joelho no peito",
+    "lying_hamstring_stretch": "Alongamento de posterior deitado",
+    "squat_to_stand": "Squat to stand",
+    "star_jump": "Saltos estrela",
+    "tuck_jump": "Saltos grupados",
+    "jump_rope": "Pular corda",
+    "split_jump": "Avanços com salto",
+    "box_jump": "Saltos no caixote"
   },
   "exerciseAliases": {
-    "squat": "Agachamento|Agachamento livre|Agachamento com o peso do corpo|Levantar e sentar da cadeira",
+    "squat": "Agachamento|Agachamento livre|Agachamento com o peso do corpo",
     "lunge": "Afundo|Avanço|Avanços|Lunge|Lunges",
     "pushup": "Flexão|Flexões|Flexão de braço|Flexão no chão",
     "deadlift": "Levantamento terra|Terra romeno|Stiff|Dobradiça de quadril",
@@ -1318,7 +1345,33 @@
     "mountain_climber": "Mountain climber|Escalador|Escaladores|Alpinista",
     "skater_jump": "Salto de patinador|Patinador|Skater jumps|Salto lateral de patinador",
     "bear_crawl": "Urso rastejando|Bear crawl|Bear crawls|Caminhada de urso",
-    "incline_pushup": "Flexões na parede"
+    "front_raise": "Front raise|Elevação frontal|Elevação frontal com halteres",
+    "floor_press": "Floor press|Supino com halteres no chão|Supino de solo",
+    "renegade_row": "Renegade row|Remada renegada|Remada em prancha com halteres",
+    "decline_pushup": "Flexão declinada|Decline push-up|Flexão com pés elevados",
+    "wall_pushup": "Flexão na parede|Wall push-up|Flexão contra a parede",
+    "push_press": "Desenvolvimento com impulso|Push press com halteres|Arremesso de ombros",
+    "box_squat": "Levantar e sentar da cadeira|Box squat|Agachamento no caixote|Agachamento no banco",
+    "triceps_kickback": "Triceps kickback|Kickback|Coice de tríceps",
+    "pullover": "Pullover|Pull-over|Pullover no chão",
+    "single_leg_calf_raise": "Panturrilha unilateral|Elevação de panturrilha em uma perna|Panturrilha em pé unilateral",
+    "sit_up": "Sit-ups|Abdominal completo|Abdominal sentando",
+    "toe_touch": "Toe touches|Toe touch|Abdominal com pernas na vertical",
+    "plank_up_down": "Plank up-down|Prancha comando|Prancha dinâmica",
+    "side_plank_dip": "Side plank dips|Hip dips|Descida de quadril na prancha lateral",
+    "reverse_plank": "Reverse plank|Prancha reversa|Prancha de costas",
+    "boat_hold": "Boat hold|Isometria em V",
+    "swimmer": "Swimmer|Swimmers|Nadador de bruços",
+    "forward_fold": "Forward fold|Inclinação à frente em pé|Flexão de tronco",
+    "seated_forward_fold": "Seated forward fold|Inclinação à frente sentado|Alongamento de posterior sentado",
+    "knee_hug": "Knee hug|Alongamento joelho no peito|Abraço de joelho",
+    "lying_hamstring_stretch": "Posterior de coxa deitado|Alongamento dos isquiotibiais deitado|Lying hamstring stretch",
+    "squat_to_stand": "Squat-to-stand|Agachamento segurando os pés|Do agachamento a em pé",
+    "star_jump": "Star jumps|Salto estrela|Star jump",
+    "tuck_jump": "Tuck jumps|Salto grupado|Tuck jump|Saltos com joelhos no peito",
+    "jump_rope": "Jump rope|Salto com corda|Rope skipping",
+    "split_jump": "Split jumps|Jumping lunges|Afundo com salto|Avanço saltado",
+    "box_jump": "Box jumps|Box jump|Salto no caixote|Salto na caixa"
   },
   "session": {
     "rpeFromHr": "estimado pela frequência cardíaca",
@@ -1960,6 +2013,26 @@
     "fussball-praevention": {
       "title": "Prevenção de lesões no futebol",
       "subtitle": "Posteriores, virilha, quadril – como no FIFA 11+"
+    },
+    "einsteiger": {
+      "title": "Começo suave",
+      "subtitle": "Com uma cadeira e uma parede: força sem barreiras"
+    },
+    "hanteln-oberkoerper": {
+      "title": "Parte superior com halteres",
+      "subtitle": "Empurrar, puxar, ombros e braços"
+    },
+    "rumpf-stark": {
+      "title": "Core forte",
+      "subtitle": "Pranchas, laterais e costas – nível avançado"
+    },
+    "sprungkraft": {
+      "title": "Potência de salto",
+      "subtitle": "Corda, estrela e caixote: saltos com pausas"
+    },
+    "dehnen-sanft": {
+      "title": "Alongamento suave",
+      "subtitle": "Soltar as costas e a parte de trás das pernas"
     },
     "cats": {
       "kraft": "Força",
@@ -3597,6 +3670,26 @@
     "sayDone": "Pronto! Ótimo trabalho.",
     "logDone": "Registrar como feito",
     "counted": "Contado como feito",
+    "cheer1": "Mandou bem!",
+    "cheer2": "Continue assim!",
+    "cheer3": "Imparável!",
+    "cheer4": "Demais!",
+    "pointsLabel": "pontos",
+    "comboLabel": "Combo",
+    "stageOffMotion": "Figura desenhada: “Reduzir movimento” está ativado neste aparelho",
+    "stageOffDevice": "Figura desenhada: este aparelho não consegue mostrar o palco 3D",
+    "pace": "Ritmo",
+    "paceCalm": "Calmo",
+    "paceBrisk": "Ágil",
+    "paceFast": "Rápido",
+    "look": "Visual",
+    "lookNatural": "Natural",
+    "lookNight": "Arena noturna",
+    "lookDrawn": "Desenhado",
+    "trainer": "Figura",
+    "trainerBlond": "Loira",
+    "trainerRed": "Ruiva",
+    "trainerMale": "Homem",
     "exercises": {
       "one": "{count} exercício",
       "other": "{count} exercícios"

@@ -878,10 +878,37 @@
     "burpee": "Burpee",
     "mountain_climber": "Mountain Climber (Bergsteiger)",
     "skater_jump": "Eisschnellläufer-Sprünge (Skater)",
-    "bear_crawl": "Bärengang"
+    "bear_crawl": "Bärengang",
+    "front_raise": "Frontheben",
+    "floor_press": "Bodendrücken",
+    "renegade_row": "Renegade Row",
+    "decline_pushup": "Liegestütz mit erhöhten Füßen",
+    "wall_pushup": "Wandliegestütz",
+    "push_press": "Push Press",
+    "box_squat": "Kniebeuge auf den Stuhl",
+    "triceps_kickback": "Trizeps-Kickbacks",
+    "pullover": "Überzüge mit der Kurzhantel",
+    "single_leg_calf_raise": "Einbeiniges Wadenheben",
+    "sit_up": "Sit-up",
+    "toe_touch": "Zehentipper",
+    "plank_up_down": "Stütz auf und ab",
+    "side_plank_dip": "Seitstütz mit Hüftheben",
+    "reverse_plank": "Umgekehrter Stütz",
+    "boat_hold": "Boot halten",
+    "swimmer": "Schwimmer",
+    "forward_fold": "Vorbeuge im Stand",
+    "seated_forward_fold": "Vorbeuge im Sitzen",
+    "knee_hug": "Knie zur Brust",
+    "lying_hamstring_stretch": "Beinrückseite im Liegen dehnen",
+    "squat_to_stand": "Hocke zum Stand",
+    "star_jump": "Sternsprünge",
+    "tuck_jump": "Hocksprünge",
+    "jump_rope": "Seilspringen",
+    "split_jump": "Ausfallschritt-Sprünge",
+    "box_jump": "Kastensprünge"
   },
   "exerciseAliases": {
-    "squat": "Kniebeugen|Kniebeuge|Sitz-Steh-Wechsel",
+    "squat": "Kniebeugen|Kniebeuge",
     "lunge": "Ausfallschritte|Ausfallschritt|Lunges",
     "pushup": "Liegestütz",
     "deadlift": "Kreuzheben|Rumänisches Kreuzheben",
@@ -968,7 +995,33 @@
     "mountain_climber": "Mountain Climber|Bergsteiger",
     "skater_jump": "Skater",
     "bear_crawl": "Bärengang|Bear Crawl",
-    "incline_pushup": "Wand-Liegestütz|Liegestütz an der Wand"
+    "front_raise": "Front Raise|Frontheben mit Kurzhanteln",
+    "floor_press": "Floor Press|Bankdrücken am Boden|Kurzhanteldrücken am Boden",
+    "renegade_row": "Rudern im Liegestütz|Plank-Rudern|Renegade Rows",
+    "decline_pushup": "Decline Push-up|Negativ-Liegestütz|Liegestütz Füße erhöht|Liegestütz mit Füßen erhöht",
+    "wall_pushup": "Liegestütz an der Wand|Wall Push-up|Wand-Liegestütz",
+    "push_press": "Schwungdrücken|Stoßdrücken|Push Press mit Kurzhanteln",
+    "box_squat": "Sitz-Steh-Wechsel|Box Squat|Stuhl-Kniebeuge|Kastenkniebeuge|Box Squats",
+    "triceps_kickback": "Triceps Kickback|Kickbacks|Trizeps Kickback",
+    "pullover": "Pullover|Überzug|Kurzhantel-Überzüge|Pull-over",
+    "single_leg_calf_raise": "Wadenheben einbeinig|Single-Leg Calf Raise",
+    "sit_up": "Sit-ups|Situp",
+    "toe_touch": "Toe Touches|Toe Touch|Crunch zu den Zehen",
+    "plank_up_down": "Plank Up-Downs|Up-Down Plank|Kommando-Plank|Plank auf und ab",
+    "side_plank_dip": "Side Plank Dips|Hip Dips|Seitstütz-Dips|Hüftdips",
+    "reverse_plank": "Reverse Plank|Rückstütz|Rückwärtiger Stütz",
+    "boat_hold": "Boat Hold|Bootshaltung|V-Sitz",
+    "swimmer": "Swimmer|Swimmers|Schwimmer in Bauchlage",
+    "forward_fold": "Forward Fold|Stehende Vorbeuge|Rumpfbeuge",
+    "seated_forward_fold": "Seated Forward Fold|Sitzende Vorbeuge|Beinrückseite im Sitzen dehnen",
+    "knee_hug": "Knee Hug|Knie-zur-Brust-Dehnung|Knie umarmen",
+    "lying_hamstring_stretch": "Hamstring-Dehnung im Liegen|Beinrückseite liegend|Lying Hamstring Stretch",
+    "squat_to_stand": "Squat to Stand|Squat-to-Stand|Zehengriff-Hocke",
+    "star_jump": "Star Jumps|Sternsprung|Star Jump",
+    "tuck_jump": "Tuck Jumps|Hocksprung|Tuck Jump|Kniehebesprünge",
+    "jump_rope": "Jump Rope|Rope Skipping|Springseil|Seilhüpfen",
+    "split_jump": "Split Jumps|Jumping Lunges|Wechselsprünge|Sprung-Ausfallschritte",
+    "box_jump": "Box Jumps|Box Jump|Kastensprung|Sprünge auf den Kasten"
   },
   "workoutEngine": {
     "warmup": "Einlaufen",
@@ -1960,6 +2013,26 @@
     "fussball-praevention": {
       "title": "Fußball-Prävention",
       "subtitle": "Oberschenkelrückseite, Leiste, Hüfte – wie im FIFA 11+"
+    },
+    "einsteiger": {
+      "title": "Sanfter Einstieg",
+      "subtitle": "Mit Stuhl und Wand: Kraft ohne Hürden"
+    },
+    "hanteln-oberkoerper": {
+      "title": "Oberkörper mit Kurzhanteln",
+      "subtitle": "Drücken, Ziehen, Schultern und Arme"
+    },
+    "rumpf-stark": {
+      "title": "Starker Rumpf",
+      "subtitle": "Stütz, Seite und Rücken – für Fortgeschrittene"
+    },
+    "sprungkraft": {
+      "title": "Sprungkraft",
+      "subtitle": "Seil, Stern und Kasten: Sprünge mit Pausen"
+    },
+    "dehnen-sanft": {
+      "title": "Sanft dehnen",
+      "subtitle": "Rücken und Beinrückseite in Ruhe lösen"
     },
     "cats": {
       "kraft": "Kraft",
@@ -3597,6 +3670,26 @@
     "sayDone": "Geschafft! Stark gemacht.",
     "logDone": "Als erledigt erfassen",
     "counted": "Als gemacht gezählt",
+    "cheer1": "Stark!",
+    "cheer2": "Weiter so!",
+    "cheer3": "Läuft bei dir!",
+    "cheer4": "Mega!",
+    "pointsLabel": "Punkte",
+    "comboLabel": "Combo",
+    "stageOffMotion": "Gezeichnete Figur: Am Gerät ist „Bewegung reduzieren“ eingeschaltet",
+    "stageOffDevice": "Gezeichnete Figur: Dieses Gerät kann die 3D-Bühne nicht zeigen",
+    "pace": "Tempo",
+    "paceCalm": "Ruhig",
+    "paceBrisk": "Flott",
+    "paceFast": "Schnell",
+    "look": "Look",
+    "lookNatural": "Natürlich",
+    "lookNight": "Nacht-Arena",
+    "lookDrawn": "Gezeichnet",
+    "trainer": "Figur",
+    "trainerBlond": "Blond",
+    "trainerRed": "Rot",
+    "trainerMale": "Mann",
     "exercises": {
       "one": "{count} Übung",
       "other": "{count} Übungen"

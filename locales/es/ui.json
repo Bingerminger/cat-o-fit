@@ -1228,10 +1228,37 @@
     "burpee": "Burpees",
     "mountain_climber": "Escaladores (mountain climbers)",
     "skater_jump": "Saltos de patinador",
-    "bear_crawl": "Caminata del oso"
+    "bear_crawl": "Caminata del oso",
+    "front_raise": "Elevaciones frontales",
+    "floor_press": "Press en el suelo",
+    "renegade_row": "Remo en plancha",
+    "decline_pushup": "Flexiones con pies elevados",
+    "wall_pushup": "Flexiones en la pared",
+    "push_press": "Push press",
+    "box_squat": "Sentadilla a la silla",
+    "triceps_kickback": "Patada de tríceps",
+    "pullover": "Pullover con mancuerna",
+    "single_leg_calf_raise": "Elevaciones de talón a una pierna",
+    "sit_up": "Sit-up",
+    "toe_touch": "Toques de pies",
+    "plank_up_down": "Plancha sube y baja",
+    "side_plank_dip": "Plancha lateral con bajadas de cadera",
+    "reverse_plank": "Plancha invertida",
+    "boat_hold": "Postura del barco",
+    "swimmer": "Nadador",
+    "forward_fold": "Flexión hacia delante de pie",
+    "seated_forward_fold": "Flexión hacia delante sentado",
+    "knee_hug": "Rodilla al pecho",
+    "lying_hamstring_stretch": "Estiramiento de isquiotibiales tumbado",
+    "squat_to_stand": "Squat to stand",
+    "star_jump": "Saltos de estrella",
+    "tuck_jump": "Saltos agrupados",
+    "jump_rope": "Saltar a la comba",
+    "split_jump": "Zancadas con salto",
+    "box_jump": "Saltos al cajón"
   },
   "exerciseAliases": {
-    "squat": "Sentadilla|Squats|Squat|Sentadillas con peso corporal|Levantarse de una silla",
+    "squat": "Sentadilla|Squats|Squat|Sentadillas con peso corporal",
     "lunge": "Zancada|Lunges|Lunge|Desplantes|Zancadas hacia delante",
     "pushup": "Flexión|Flexiones de brazos|Push-ups|Push-up|Lagartijas",
     "deadlift": "Peso muerto|Bisagra de cadera|Deadlift|Deadlifts",
@@ -1318,7 +1345,33 @@
     "mountain_climber": "Mountain climbers|Mountain climber|Escalador|Escaladores|Trepadores",
     "skater_jump": "Salto de patinador|Saltos laterales de patinador|Patinadores|Skater jumps|Skaters",
     "bear_crawl": "Gateo del oso|Arrastre del oso|Bear crawl|Bear crawls",
-    "incline_pushup": "Flexiones en la pared"
+    "front_raise": "Front raise|Elevación frontal|Elevaciones frontales con mancuernas",
+    "floor_press": "Floor press|Press de pecho en el suelo|Press con mancuernas en el suelo",
+    "renegade_row": "Renegade row|Remo renegado|Remo en plancha con mancuernas",
+    "decline_pushup": "Flexiones declinadas|Decline push-up|Flexión con pies elevados|Flexiones con los pies elevados",
+    "wall_pushup": "Flexiones contra la pared|Wall push-up|Flexión en la pared",
+    "push_press": "Press con impulso|Push press con mancuernas|Press de empuje",
+    "box_squat": "Levantarse de una silla|Box squat|Sentadilla al cajón|Sentadilla al banco",
+    "triceps_kickback": "Triceps kickback|Kickbacks|Patadas de tríceps",
+    "pullover": "Pullover|Pull-over|Pullover de pecho",
+    "single_leg_calf_raise": "Gemelos a una pierna|Elevación de talón unilateral|Elevaciones de gemelos a una pierna",
+    "sit_up": "Sit-ups|Abdominales completos|Incorporaciones",
+    "toe_touch": "Toe touches|Toe touch|Crunch con piernas verticales",
+    "plank_up_down": "Plank up-down|Plancha comando|Plancha dinámica",
+    "side_plank_dip": "Side plank dips|Hip dips|Bajadas de cadera en plancha lateral",
+    "reverse_plank": "Reverse plank|Plancha inversa|Plancha boca arriba",
+    "boat_hold": "Boat hold|Postura en V",
+    "swimmer": "Swimmer|Swimmers|Nadador boca abajo",
+    "forward_fold": "Forward fold|Pinza de pie|Flexión de tronco",
+    "seated_forward_fold": "Pinza sentado|Seated forward fold|Estiramiento de isquiotibiales sentado",
+    "knee_hug": "Knee hug|Estiramiento rodilla al pecho|Abrazo de rodilla",
+    "lying_hamstring_stretch": "Isquiotibiales tumbado|Estiramiento posterior del muslo tumbado|Lying hamstring stretch",
+    "squat_to_stand": "Squat-to-stand|Sentadilla agarrando los pies|De sentadilla a de pie",
+    "star_jump": "Star jumps|Salto de estrella|Star jump",
+    "tuck_jump": "Tuck jumps|Salto agrupado|Tuck jump|Saltos con rodillas al pecho",
+    "jump_rope": "Jump rope|Saltar la cuerda|Salto de cuerda",
+    "split_jump": "Split jumps|Jumping lunges|Zancada con salto|Zancadas saltando",
+    "box_jump": "Box jumps|Box jump|Salto al cajón|Saltos al banco"
   },
   "session": {
     "rpeFromHr": "estimado a partir de la frecuencia cardíaca",
@@ -1960,6 +2013,26 @@
     "fussball-praevention": {
       "title": "Prevención de lesiones en el fútbol",
       "subtitle": "Isquiotibiales, ingles, caderas: como en el FIFA 11+"
+    },
+    "einsteiger": {
+      "title": "Comienzo suave",
+      "subtitle": "Con una silla y una pared: fuerza sin barreras"
+    },
+    "hanteln-oberkoerper": {
+      "title": "Tren superior con mancuernas",
+      "subtitle": "Empujar, tirar, hombros y brazos"
+    },
+    "rumpf-stark": {
+      "title": "Core fuerte",
+      "subtitle": "Planchas, laterales y espalda: nivel avanzado"
+    },
+    "sprungkraft": {
+      "title": "Potencia de salto",
+      "subtitle": "Comba, estrella y cajón: saltos con pausas"
+    },
+    "dehnen-sanft": {
+      "title": "Estiramiento suave",
+      "subtitle": "Soltar la espalda y la parte posterior de las piernas"
     },
     "cats": {
       "kraft": "Fuerza",
@@ -3597,6 +3670,26 @@
     "sayDone": "¡Hecho! Buen trabajo.",
     "logDone": "Registrar como hecha",
     "counted": "Contada como hecha",
+    "cheer1": "¡Bien hecho!",
+    "cheer2": "¡Sigue así!",
+    "cheer3": "¡Imparable!",
+    "cheer4": "¡Genial!",
+    "pointsLabel": "puntos",
+    "comboLabel": "Combo",
+    "stageOffMotion": "Figura dibujada: «Reducir movimiento» está activado en este dispositivo",
+    "stageOffDevice": "Figura dibujada: este dispositivo no puede mostrar el escenario 3D",
+    "pace": "Ritmo",
+    "paceCalm": "Tranquilo",
+    "paceBrisk": "Ágil",
+    "paceFast": "Rápido",
+    "look": "Estilo",
+    "lookNatural": "Natural",
+    "lookNight": "Arena nocturna",
+    "lookDrawn": "Dibujado",
+    "trainer": "Figura",
+    "trainerBlond": "Rubia",
+    "trainerRed": "Pelirroja",
+    "trainerMale": "Hombre",
     "exercises": {
       "one": "{count} ejercicio",
       "other": "{count} ejercicios"
