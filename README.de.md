@@ -43,8 +43,9 @@ Laborwerte in SI- oder konventionellen Einheiten.
   Hyrox als Beta) oder Programme ganz ohne Wettkampf – eingerichtet nach Niveau und Lauftagen, Umfang ab
   deinem aktuellen Stand, Renntempo aus deiner Zielzeit, ab heute neu berechenbar, ohne die
   Vergangenheit anzufassen. Vereinstraining und Spiele sind feste Termine, um die sich der Plan legt.
-  Zu Kraft- und Mobility-Einheiten gibt es über 90 animierte Übungen zum Mitmachen im richtigen Takt –
-  oder die ganze Einheit am Stück wie ein Video, mit Musik im Takt und Ansagen.
+  Zu Kraft- und Mobility-Einheiten gibt es 120 animierte Übungen zum Mitmachen im richtigen Takt –
+  oder die ganze Einheit am Stück wie ein Video: auf einer 3D-Bühne, mit einer Figur deiner Wahl, Musik
+  im Takt und Ansagen.
 - **Belastung, die man versteht.** Belastungspunkte (Minuten × Anstrengung) über alle Sportarten,
   Lastverhältnis, Fitness/Ermüdung/Form – und **eine** Tagesempfehlung mit „Warum?“. Ohne
   Schutzversprechen, mit Rückgängig.
@@ -69,8 +70,8 @@ Laborwerte in SI- oder konventionellen Einheiten.
   <img src="docs/assets/de/51-team-dashboard.png" width="200" alt="Team/Familie-Dashboard" />
 </p>
 <p align="center">
-  <img src="docs/assets/de/ipad-01-dashboard.png" width="390" alt="„Heute“ am iPad mit Seitenleiste" />
-  <img src="docs/assets/de/ipad-50-team-dashboard.png" width="390" alt="Team/Familie am iPad" />
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/de/ipad-01-dashboard-dark.png" /><img src="docs/assets/de/ipad-01-dashboard.png" width="390" alt="„Heute“ am iPad mit Seitenleiste" /></picture>
+  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/de/ipad-50-team-dashboard-dark.png" /><img src="docs/assets/de/ipad-50-team-dashboard.png" width="390" alt="Team/Familie am iPad" /></picture>
 </p>
 
 > **Zweckbestimmung:** Cat-O-Fit dient der **Dokumentation und allgemeinen Information für gesunde

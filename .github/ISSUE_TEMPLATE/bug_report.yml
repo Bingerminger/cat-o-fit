@@ -41,6 +41,7 @@ body:
       label: App version
       description: "Shown at the very bottom of Settings, or at the top of the sidebar (iPad / computer)."
       options:
+        - "4.2.0"
         - "4.1.1"
         - "4.1.0"
         - "4.0.1"

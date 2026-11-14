@@ -189,8 +189,10 @@ function forecast() {
 export async function openBrowser({ base, headed = false, lang = 'de' }) {
   const { chromium } = await loadPlaywright();
   let browser;
-  try { browser = await chromium.launch({ channel: 'chrome', headless: !headed }); }
-  catch { browser = await chromium.launch({ headless: !headed }); }
+  // The follow-along stage is WebGL: let the browser use the graphics card it has (or its software renderer).
+  const args = ['--ignore-gpu-blocklist', '--enable-gpu', ...(process.platform === 'darwin' ? ['--use-angle=metal'] : [])];
+  try { browser = await chromium.launch({ channel: 'chrome', headless: !headed, args }); }
+  catch { browser = await chromium.launch({ headless: !headed, args }); }
   const context = await browser.newContext({
     viewport: PHONE, deviceScaleFactor: 1, isMobile: true, hasTouch: true,
     locale: LOCALES[lang], timezoneId: 'Europe/Berlin', colorScheme: 'light',
@@ -474,25 +476,41 @@ async function renderFlow({ page, h, server, lang }) {
 
   // ---- iPad ----
   await page.setViewportSize(TABLET);
+  // The pictures the READMEs show come in the dark scheme too (`<name>-dark`): the app follows the system scheme.
+  const DARK = ['ipad-01-dashboard', 'ipad-50-team-dashboard', 'ipad-60-labs'];
   for (const [name, hash] of [['ipad-01-dashboard', '#/'], ['ipad-40-exercises', '#/uebungen'],
     ['ipad-45-sidebar-sign-out', '#/settings'], ['ipad-50-team-dashboard', '#/family'], ['ipad-60-labs', '#/labor']]) {
     await h.go(hash);
     await h.shot(name);
+    if (DARK.includes(name) && h.wanted(name)) {
+      await page.emulateMedia({ colorScheme: 'dark' });
+      await h.settle(500);
+      await h.go(hash);
+      await h.shot(`${name}-dark`);
+      await page.emulateMedia({ colorScheme: 'light' });
+      await h.settle(500);
+    }
   }
-  // Follow along non-stop, landscape on the iPad: paused in the middle of the first squat.
+  // Follow along non-stop, landscape on the iPad: paused in the middle of the first squat. The session plays on
+  // the 3D stage – the one view that is rendered with motion allowed (with reduced motion it shows the drawn figure).
   await page.setViewportSize({ width: TABLET.height, height: TABLET.width });
   if (h.wanted('ipad-42-non-stop')) {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
     await page.evaluate(`(async () => {
-      const [{ openShow }, { programForWorkout }, { findWorkout }] = await Promise.all([import('/js/workout-show.js'), import('/js/show-program.js'), import('/js/workouts.js')]);
+      const [{ openShow }, { programForWorkout }, { findWorkout }, { loadTrainer }] = await Promise.all([import('/js/workout-show.js'), import('/js/show-program.js'), import('/js/workouts.js'), import('/js/stage-model.js')]);
       const s = document.createElement('style'); s.textContent = '.show__paused { display: none !important; }'; document.head.appendChild(s);
+      await loadTrainer().catch(() => {});
       const run = openShow(programForWorkout(findWorkout('ganzkoerper'))).start();
-      run.toggle();
       const work = run.show.segs.find((x) => x.kind === 'work');
-      run.seek(work.t0 + 2.6);
+      run.seek(work.t0 + 2.2);
+      // Let the body settle into the squat for a moment, then hold the picture.
+      await new Promise((r) => setTimeout(r, 700));
+      run.toggle();
     })()`);
-    await h.settle(500);
+    await h.settle(700);
     await h.shot('ipad-42-non-stop');
     await page.evaluate((label) => document.querySelector(`.show__ctl[aria-label="${label}"]`).click(), L('workoutShow.end'));
+    await page.emulateMedia({ reducedMotion: 'reduce' });
   }
   await page.setViewportSize(PHONE);
 

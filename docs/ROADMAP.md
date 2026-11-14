@@ -4,7 +4,7 @@ Planned development of Cat-O-Fit, in rough order of priority. What is already do
 [CHANGELOG](../CHANGELOG.md). Suggestions and help are welcome – see [CONTRIBUTING](../CONTRIBUTING.md).
 Deutsch: [Roadmap](de/ROADMAP.md).
 
-**As of:** 13 November 2026, v4.1.1.
+**As of:** 14 November 2026, v4.2.0.
 
 **Where to follow it:** each release has a [milestone](https://github.com/Bingerminger/cat-o-fit/milestones)
 with a tracking issue, and the [board](https://github.com/users/Bingerminger/projects/2) shows what is
@@ -12,29 +12,14 @@ accepted, planned, in progress and released. Ideas go into
 [Discussions › Ideas](https://github.com/Bingerminger/cat-o-fit/discussions/categories/ideas), where
 everyone can vote with 👍; bugs go into an [issue](https://github.com/Bingerminger/cat-o-fit/issues/new/choose).
 
-## In progress: v4.2 – Strength, movement and reliability
+## Done: v4.2.0 – Strength, movement and reliability
 
-Tracking issue: [#6](https://github.com/Bingerminger/cat-o-fit/issues/6).
-
-- **Strength in depth** – estimated 1RM, personal-record detection and a plate calculator; a rest
-  timer per exercise, starter programmes, sharing a plan as a file or PDF; your own exercises and saved
-  follow-along workouts; a workout assigned to a planned session.
-- **More realistic follow-along animations** for every exercise, and a male demonstrator figure as an
-  option next to the current one.
-- **A larger exercise library** – from 93 to about 120 animated exercises, in all seven languages and
-  with voice cues.
-- **Smarter plans** – the plan adjusts weekly volume itself from the load signals (today the coach
-  suggests a correction that you accept with one tap); a season with several races (main and secondary
-  races, short tapers and recovery in between); strength blocks that follow the plan phase (base,
-  race-specific, taper).
-- **Threshold pace, FTP and CSS** from a performance test, without a second pace source contradicting
-  the fitness estimate; **weather per session** – a run in the heat counts in the fitness estimate with
-  its cool-weather time, not just in a hint, and treadmill runs get no weather correction.
-- **Reliability** – sync between devices, starting without network, the plan generator, imports and
-  cycle and lab values at the edges; a reworked interface (contrast, focus, screen readers, empty views).
-- **Technical** – `storage.js` split into modules behind a facade (with a load test), a faster admin
-  backup (one request per member instead of one per area), tests in real browsers (Chromium and Safari's engine) and under a moved clock, and a
-  signed Docker image with a software bill of materials.
+Strength in depth (estimated 1RM, personal records, plate calculator, rest timer, starter programmes,
+your own exercises and workouts), following along on a 3D stage with a trainer you choose, a library of
+120 exercises, plans that adjust their volume and carry a season of several races, a performance test,
+weather per session – and a large round of fixes for sync, offline start, plans, imports and health
+values. Tracking issue: [#6](https://github.com/Bingerminger/cat-o-fit/issues/6). Details are in the
+[CHANGELOG](../CHANGELOG.md).
 
 ## Done: v4.1.0 – Your units
 

@@ -40,9 +40,9 @@ the first day of the week, and lab values in SI or conventional units.
 - **Plans that fit.** Periodized race plans from 5 km to the marathon (triathlon and Hyrox in beta) or
   programs without a race – set up by level and running days, volume starting from your history, race
   pace from your goal time, recalculated from today without touching the past. Club sessions are fixed
-  appointments the plan works around. Strength and mobility sessions come with over 90 animated exercises
-  you can follow along in time – or play the whole session hands-free like a workout video, with music
-  on the beat and voice cues.
+  appointments the plan works around. Strength and mobility sessions come with 120 animated exercises
+  you can follow along in time – or play the whole session hands-free like a workout video: on a 3D
+  stage, with a trainer you choose, music on the beat and voice cues.
 - **Load management you can read.** Session-RPE load (minutes × effort) across all sports, a decoupled
   acute:chronic ratio, fitness/fatigue/form – and **one** coach recommendation per day with its “why”.
   No injury-prevention promises.
@@ -60,8 +60,8 @@ the first day of the week, and lab values in SI or conventional units.
   dependencies, no build step, no database, 850+ automated tests, AGPL-3.0-or-later.
 
 <div align="center">
-<img src="docs/assets/en/ipad-01-dashboard.png" width="390" alt="“Today” on iPad: countdown, today's session, coach and load & form" />
-<img src="docs/assets/en/ipad-60-labs.png" width="390" alt="Lab values on iPad: energy availability, values with reference and sports corridor" />
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/en/ipad-01-dashboard-dark.png" /><img src="docs/assets/en/ipad-01-dashboard.png" width="390" alt="“Today” on iPad: countdown, today's session, coach and load & form" /></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/en/ipad-60-labs-dark.png" /><img src="docs/assets/en/ipad-60-labs.png" width="390" alt="Lab values on iPad: energy availability, values with reference and sports corridor" /></picture>
 <br><sub>“Today” and lab values on an iPad.</sub>
 </div>
 

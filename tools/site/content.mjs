@@ -56,10 +56,11 @@ export const TEXT = {
         id: 'strength', h: 'Follow along',
         points: [
           { c: 'exercises', t: '{exercises} animated exercises to follow along in time.' },
-          { c: 'non-stop', t: 'Or play a whole session hands-free like a workout video, with music on the beat and recorded voice cues.' },
+          { c: 'non-stop', t: 'Or play a whole session hands-free like a workout video – on a 3D stage, with a trainer you choose, music on the beat and recorded voice cues.' },
+          { c: 'strength-depth', t: 'Strength in depth: sets with a hint for the next step, estimated one-rep max, personal records and a plate calculator.' },
           { c: 'strength-import', t: 'Your strength history comes along from Strong, Hevy or FitNotes.' },
         ],
-        image: { file: '40-exercises.png', alt: 'Exercise library' },
+        image: { file: 'ipad-42-non-stop.png', alt: 'Following along non-stop: the trainer in a squat on the 3D stage, with time, cue and the next exercise beside her' },
       },
       {
         id: 'family', h: 'For the whole family',
@@ -159,10 +160,11 @@ export const TEXT = {
         id: 'strength', h: 'Mitmachen',
         points: [
           { c: 'exercises', t: '{exercises} animierte Übungen zum Mitmachen im Takt.' },
-          { c: 'non-stop', t: 'Oder eine ganze Einheit am Stück abspielen wie ein Workout-Video, mit Musik im Takt und eingesprochenen Ansagen.' },
+          { c: 'non-stop', t: 'Oder eine ganze Einheit am Stück abspielen wie ein Workout-Video – auf einer 3D-Bühne, mit einer Figur deiner Wahl, Musik im Takt und eingesprochenen Ansagen.' },
+          { c: 'strength-depth', t: 'Kraft in der Tiefe: Sätze mit Hinweis für den nächsten Schritt, geschätztes 1RM, Bestleistungen und ein Scheibenrechner.' },
           { c: 'strength-import', t: 'Deine Kraft-Historie kommt aus Strong, Hevy oder FitNotes mit.' },
         ],
-        image: { file: '40-exercises.png', alt: 'Übungs-Bibliothek' },
+        image: { file: 'ipad-42-non-stop.png', alt: 'Durchgehend mitmachen: die Trainerin in der Kniebeuge auf der 3D-Bühne, daneben Zeit, Hinweis und die nächste Übung' },
       },
       {
         id: 'family', h: 'Für die ganze Familie',

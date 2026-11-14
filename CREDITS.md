@@ -54,6 +54,15 @@ the source next to the switch and under "About & legal".
 | Screenshots in `docs/assets` | generated from the app with sample data | AGPL-3.0-or-later |
 | Lab ranges and target corridors | from specialist literature and laboratory information; source per value in the app and under [Methods & sources](docs/knowledge/methods-and-sources.md) | information for orientation only |
 
+## Trainer models
+
+The figures that lead the follow-along session on the 3D stage (`assets/trainer/`, `assets/trainer-m/`)
+are humans generated with **[MakeHuman](http://www.makehumancommunity.org)** through the Blender
+extension MPFB 2: base mesh, skin, hair, eyes, shoes and the face shapes are MakeHuman assets released
+as **CC0**; body shape, face, colours and the painted sportswear are settings of this project. Each
+folder has a `CREDITS.md` that lists every file with its source asset and licence. Nothing comes from a
+game, an avatar service or a motion library; the movement is this project's own exercise data.
+
 ## Voice clips
 
 The announcements in the follow-along workouts ("Rest. Next up: …", the exercise names, the

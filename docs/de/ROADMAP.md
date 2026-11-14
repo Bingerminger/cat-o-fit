@@ -4,7 +4,7 @@ Die geplante Entwicklung von Cat-O-Fit, grob nach Priorität. Was schon erledigt
 [CHANGELOG](../../CHANGELOG.md) (Englisch). Vorschläge und Hilfe sind willkommen – siehe
 [CONTRIBUTING](../../CONTRIBUTING.md). English: [Roadmap](../ROADMAP.md).
 
-**Stand:** 13. November 2026, v4.1.1.
+**Stand:** 14. November 2026, v4.2.0.
 
 **Wo du sie verfolgst:** Jedes Release hat einen [Meilenstein](https://github.com/Bingerminger/cat-o-fit/milestones)
 mit einem Sammel-Issue, und das [Board](https://github.com/users/Bingerminger/projects/2) zeigt, was
@@ -12,31 +12,14 @@ angenommen, geplant, in Arbeit und ausgeliefert ist. Ideen gehören in
 [Discussions › Ideas](https://github.com/Bingerminger/cat-o-fit/discussions/categories/ideas), dort
 können alle mit 👍 abstimmen; Fehler in ein [Issue](https://github.com/Bingerminger/cat-o-fit/issues/new/choose).
 
-## In Arbeit: v4.2 – Kraft, Bewegung und Verlässlichkeit
+## Erledigt: v4.2.0 – Kraft, Bewegung und Verlässlichkeit
 
-Sammel-Issue: [#6](https://github.com/Bingerminger/cat-o-fit/issues/6).
-
-- **Krafttraining in der Tiefe** – geschätztes 1RM, Bestleistungen erkennen und ein Scheibenrechner;
-  Pausentimer je Übung, Einsteigerprogramme, einen Plan als Datei oder PDF teilen; eigene Übungen und
-  gespeicherte Mitmach-Workouts; ein Workout einer geplanten Einheit zuordnen.
-- **Realistischere Vorturn-Animationen** für alle Übungen und eine männliche Vorturnfigur als Option
-  neben der heutigen.
-- **Eine größere Übungsbibliothek** – von 93 auf rund 120 animierte Übungen, in allen sieben Sprachen
-  und mit Ansagen.
-- **Klügere Pläne** – der Plan passt den Wochenumfang selbst an die Belastungssignale an (heute schlägt
-  der Coach eine Korrektur vor, die du mit einem Tipp übernimmst); eine Saison mit mehreren Rennen
-  (Haupt- und Nebenrennen, kurze Taper und Erholung dazwischen); Kraftblöcke, die der Planphase folgen
-  (Grundlage, rennspezifisch, Taper).
-- **Schwellenpace, FTP und CSS** aus einer Leistungsdiagnostik, ohne dass eine zweite Pace-Quelle der
-  Formschätzung widerspricht; **Wetter je Einheit** – ein Lauf in der Hitze zählt in der Formschätzung
-  mit seiner Zeit bei kühlem Wetter, nicht nur in einem Hinweis, und Laufband-Läufe bekommen keine
-  Wetterkorrektur.
-- **Verlässlichkeit** – Abgleich zwischen Geräten, Start ohne Netz, der Plan-Generator, Importe sowie
-  Zyklus- und Laborwerte an den Rändern; eine überarbeitete Oberfläche (Kontrast, Fokus,
-  Bildschirmleser, leere Ansichten).
-- **Technik** – `storage.js` in Module hinter einer Fassade aufgeteilt (mit Lasttest), ein schnelleres
-  Admin-Backup (eine Anfrage je Mitglied statt je Bereich), Tests in echten Browsern (Chromium und die Engine von Safari) und unter
-  verstellter Uhr sowie ein signiertes Docker-Image mit Stückliste (SBOM).
+Krafttraining in der Tiefe (geschätztes 1RM, Bestleistungen, Scheibenrechner, Pausentimer,
+Einsteigerprogramme, eigene Übungen und Workouts), Mitmachen auf einer 3D-Bühne mit einer Figur deiner
+Wahl, eine Bibliothek mit 120 Übungen, Pläne, die ihren Umfang anpassen und eine Saison mit mehreren
+Rennen tragen, eine Leistungsdiagnostik, Wetter je Einheit – und eine große Runde Korrekturen für
+Abgleich, Start ohne Netz, Pläne, Importe und Gesundheitswerte. Sammel-Issue:
+[#6](https://github.com/Bingerminger/cat-o-fit/issues/6). Details im [CHANGELOG](../../CHANGELOG.md).
 
 ## Erledigt: v4.1.0 – Deine Einheiten
 
