@@ -221,7 +221,47 @@ function liftFront(S, m) {
   }
   const head = p3(S.head);
   const headUp = V.norm(V.sub(head, chest));
-  return { view: 'front', pelvis, chest, spine, lat, latSh, fwd, up, head, headUp, headFwd: [0, 0, 1], legs, arms };
+  const body = { view: 'front', pelvis, chest, spine, lat, latSh, fwd, up, head, headUp, headFwd: [0, 0, 1], legs, arms };
+  return m.sit ? seated(body, m.sit) : body;
+}
+
+/**
+ * Sitting with the legs towards the viewer (`sit: { lean, twist, reach, feet }` on a front view). The picture draws
+ * such feet above the hips – that is perspective, not a place. In space the feet stand in front of the body (`feet`
+ * above the floor, the legs `reach` of their length long), the upper body leans back by `lean` degrees and turns up
+ * to `twist` degrees to the side its hands go to; hands the picture puts on the body are in front of it.
+ */
+function seated(b, o) {
+  const lean = (o.lean || 0) * RAD; const c = Math.cos(lean); const s = Math.sin(lean);
+  const backD = (v) => [v[0], v[1] * c + v[2] * s, v[2] * c - v[1] * s];
+  const back = (p) => V.add(b.pelvis, backD(V.sub(p, b.pelvis)));
+  const chest = back(b.chest);
+  const up = V.norm(V.sub(chest, b.pelvis));
+  const wristX = (b.arms.r.wrist[0] + b.arms.l.wrist[0]) / 2 - b.pelvis[0];
+  const turn = clamp(wristX / 28, -1, 1) * (o.twist || 0) * RAD;
+  const round = (p) => V.add(chest, rotate(V.sub(p, chest), up, turn));
+  const legs = {}; const arms = {};
+  for (const [side, sg] of [['r', -1], ['l', 1]]) {
+    const g = b.legs[side];
+    const y = BODY.ankle + (o.feet || 0);
+    const far = (BODY.thigh + BODY.shin) * (o.reach || 0.8);
+    const dx = g.ankle[0] - g.hip[0]; const dy = y - g.hip[1];
+    const ankle = [g.ankle[0], y, g.hip[2] + Math.sqrt(Math.max(1, far * far - dx * dx - dy * dy))];
+    const knee = solveLimb3(g.hip, ankle, BODY.thigh, BODY.shin, [g.hip[0] + sg * 4, g.hip[1] + 60, ankle[2] / 2]).joint;
+    const dirF = V.norm([sg * 0.14, o.feet ? 0.3 : 0, 1]);
+    legs[side] = { hip: g.hip, knee, ankle, heel: V.add(ankle, V.mul(dirF, -BODY.heel)), toe: V.add(ankle, V.mul(dirF, BODY.foot - BODY.heel)) };
+    const a = b.arms[side];
+    const sh = round(back(a.sh));
+    // A hand drawn on the torso is in front of it, not in it.
+    const onBody = clamp((BODY.shoulderW + 6 - Math.abs(a.wrist[0] - b.pelvis[0])) / 6, 0, 1);
+    const wrist0 = back([a.wrist[0], a.wrist[1], Math.max(a.wrist[2], 13 * onBody)]);
+    const pole = V.add(back(a.elbow), V.add(V.mul(b.lat, -sg * 8), [0, -6, 0]));
+    const limb = solveLimb3(sh, wrist0, BODY.upper, BODY.fore, pole);
+    arms[side] = { sh, elbow: limb.joint, wrist: limb.end };
+  }
+  const head = round(back(b.head));
+  const headFwd = V.norm(rotate(backD(b.headFwd), up, turn * 0.6));
+  return { ...b, chest, spine: V.lerp(b.pelvis, chest, 0.5), up, latSh: V.norm(rotate(backD(b.latSh), up, turn)), head, headUp: V.norm(V.sub(head, chest)), headFwd, legs, arms };
 }
 
 /* ------------------------------ Natural movement ------------------------------ */

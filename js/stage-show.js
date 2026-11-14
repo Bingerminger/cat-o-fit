@@ -289,6 +289,9 @@ export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {})
         const along = V.norm(V.sub(r.arms[side].wrist, r.arms[side].elbow));
         hands[side] = { at: V.mul(V.add(r.arms[side].wrist, V.mul(along, 0.075)), k), along };
       }
+      // A band runs between the hands, or round the thighs just above the knees.
+      hands.points = { rh: hands.r.at, lh: hands.l.at };
+      for (const side of ['r', 'l']) hands.points[`${side}k`] = V.mul(V.lerp(r.legs[side].knee, r.legs[side].hip, 0.16), k);
       gear.reset();
       if (!done) buildGear(gear, m, hands, body.lat, seg.side === 'b');
     }

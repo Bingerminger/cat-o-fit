@@ -6,7 +6,7 @@ import { BODY, cycleOf, introOf, frameAt, solvePose } from '../js/motion-rig.js'
 import { vec as V, lift, bodyAt, bodyFlow, createFollower, blendBodies, bodyPoints, solveLimb3 } from '../js/body3d.js';
 import { buildShow, programForWorkout } from '../js/show-program.js';
 import { WORKOUTS } from '../js/workouts.js';
-import { createMesh, buildTrainer, buildCat, plaitAnchor, STRIDE, TRAINERS } from '../js/stage-mesh.js';
+import { createMesh, buildCat, buildGear, STRIDE } from '../js/stage-mesh.js';
 import { cameraOf, projectPoint } from '../js/stage-gl.js';
 
 const sum = (list) => list.reduce((s, p) => s + p.dur, 0);
@@ -35,24 +35,30 @@ test('Every exercise, every side: a body with whole bones at every moment of its
   }
 });
 
-test('Every exercise as a surface: both trainers, numbers only, indices inside the mesh, room to spare', () => {
-  const mesh = createMesh();
+test('Equipment: every exercise that names some gets a surface – numbers only, indices inside the mesh', () => {
+  const mesh = createMesh(6000, 30000);
+  const seen = new Set();
   for (const [id, m] of Object.entries(MOTIONS)) {
     const list = cycleOf(m);
     const total = sum(list);
-    for (const look of Object.keys(TRAINERS)) {
-      for (let i = 0; i < 4; i++) {
-        const b = bodyAt(m, (i / 4) * total, list);
-        const a = plaitAnchor(b);
+    const kinds = [...Object.values(m.hold || {}), ...Object.keys(m.props || {}).filter((k) => !/mat/i.test(k))];
+    for (let i = 0; i < 4; i++) {
+      const b = bodyAt(m, (i / 4) * total, list);
+      const hands = {};
+      for (const s of ['r', 'l']) hands[s] = { at: b.arms[s].wrist, along: V.norm(V.sub(b.arms[s].wrist, b.arms[s].elbow)) };
+      hands.points = { rh: hands.r.at, lh: hands.l.at, rk: V.lerp(b.legs.r.knee, b.legs.r.hip, 0.16), lk: V.lerp(b.legs.l.knee, b.legs.l.hip, 0.16) };
+      for (const swap of [false, true]) {
         mesh.reset();
-        buildTrainer(mesh, b, look, new Set(m.focus || []), [a, [a[0], a[1] - 5, a[2]], [a[0], a[1] - 10, a[2]], [a[0], a[1] - 15, a[2]], [a[0], a[1] - 20, a[2]]], { blink: 0.5, breath: 1, smile: 1, mouth: 0.5 });
-        assert.ok(mesh.nv > 1000 && mesh.nv * STRIDE <= mesh.v.length * 0.6, `${id}/${look}: ${mesh.nv} vertices`);
-        assert.ok(mesh.ni <= mesh.i.length * 0.6, `${id}/${look}: ${mesh.ni} indices`);
-        for (let k = 0; k < mesh.nv * STRIDE; k++) if (!Number.isFinite(mesh.v[k])) assert.fail(`${id}/${look}: vertex value ${k} is not a number`);
-        for (let k = 0; k < mesh.ni; k++) if (mesh.i[k] >= mesh.nv) assert.fail(`${id}/${look}: index out of the mesh`);
+        buildGear(mesh, m, hands, b.lat, swap);
+        assert.equal(mesh.nv > 0, kinds.length > 0, `${id}: ${kinds.join(', ') || 'no equipment'} but ${mesh.nv} vertices`);
+        assert.ok(mesh.nv * STRIDE <= mesh.v.length * 0.7 && mesh.ni <= mesh.i.length * 0.7, `${id}: ${mesh.nv} vertices, ${mesh.ni} indices`);
+        for (let k = 0; k < mesh.nv * STRIDE; k++) if (!Number.isFinite(mesh.v[k])) assert.fail(`${id}: vertex value ${k} is not a number`);
+        for (let k = 0; k < mesh.ni; k++) if (mesh.i[k] >= mesh.nv) assert.fail(`${id}: index out of the mesh`);
       }
     }
+    for (const k of kinds) seen.add(k);
   }
+  for (const k of ['db', 'kb', 'ball', 'box', 'wall', 'bar', 'band']) assert.ok(seen.has(k), `no exercise with ${k} – the check would prove nothing`);
 });
 
 test('A way in that is played once rests in its first and last pose – the other end is not mixed in', () => {

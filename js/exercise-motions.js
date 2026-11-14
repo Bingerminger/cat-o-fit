@@ -659,7 +659,8 @@ M.lateral_raise = {
 M.band_pull_apart = {
   view: 'front', start: 'close', reps: 15, crop: -40, focus: ['upper', 'torso'], props: { band: [['rh', 'lh']] },
   keys: {
-    close: standFront({ arms: pair(at(-11, -97, { bend: 'down', fs: 0.62 }), at(11, -97, { bend: 'down', fs: 0.62 })) }),
+    // Arms long towards the viewer, hands shoulder-wide: from there they swing apart on one level.
+    close: standFront({ arms: pair(ang(-90, -90, { fs: 0.22 }), ang(90, 90, { fs: 0.22 })) }),
     open: standFront({ arms: pair(ang(-90, -90), ang(90, 90)) }),
   },
   seq: [
@@ -1102,7 +1103,7 @@ M.russian_twist = (() => {
   const hip = [0, -12];
   const legs = pair(at(-9, -26, { fs: [0.55, 0.62], bend: 'out' }), at(9, -26, { fs: [0.55, 0.62], bend: 'out' }));
   return {
-    view: 'front', start: 'mid', reps: 10, sides: 'alternate', focus: ['torso'],
+    view: 'front', start: 'mid', reps: 10, sides: 'alternate', focus: ['torso'], sit: { lean: 26, twist: 42, feet: 0 },
     keys: {
       mid: { hip, torso: 0, legs, arms: pair(at(-3, -32, { bend: 'out' }), at(3, -32, { bend: 'out' })) },
       side: { hip, torso: -8, legs, arms: pair(at(-30, -24, { bend: 'out' }), at(-25, -24, { bend: 'out' })) },
