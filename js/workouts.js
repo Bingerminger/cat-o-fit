@@ -132,12 +132,38 @@ export const WORKOUTS = [
   {
     id: 'fuesse-waden', cat: 'laufen', get title() { return t('workoutCatalog.fuesse-waden.title'); }, get subtitle() { return t('workoutCatalog.fuesse-waden.subtitle'); },
     style: 'power', level: 1, work: 40, rest: 15, rounds: 2, roundRest: 45,
-    items: ['calf_raise', 'soleus_raise', 'tibialis_raise', { id: 'ankle_rocks', work: 25 }, 'pogo_jumps', { id: 'calf_stretch', work: 30 }],
+    items: ['calf_raise', { id: 'single_leg_calf_raise', work: 25 }, 'soleus_raise', 'tibialis_raise', { id: 'ankle_rocks', work: 25 }, 'pogo_jumps', { id: 'calf_stretch', work: 30 }],
   },
   {
     id: 'fussball-praevention', cat: 'laufen', get title() { return t('workoutCatalog.fussball-praevention.title'); }, get subtitle() { return t('workoutCatalog.fussball-praevention.subtitle'); },
     style: 'power', level: 3, work: 40, rest: 20, rounds: 2, roundRest: 60,
     items: ['nordic_hamstring', { id: 'copenhagen', work: 25 }, { id: 'clamshell', work: 30 }, 'monster_walk', { id: 'side_plank', work: 25 }, { id: 'single_leg_deadlift', work: 30 }],
+  },
+  // ---- Since 4.2 ----
+  {
+    id: 'einsteiger', cat: 'kraft', get title() { return t('workoutCatalog.einsteiger.title'); }, get subtitle() { return t('workoutCatalog.einsteiger.subtitle'); },
+    style: 'groove', level: 1, work: 35, rest: 20, rounds: 2, roundRest: 45,
+    items: ['box_squat', 'wall_pushup', 'glute_bridge', 'calf_raise', 'bird_dog', 'swimmer'],
+  },
+  {
+    id: 'hanteln-oberkoerper', cat: 'kraft', get title() { return t('workoutCatalog.hanteln-oberkoerper.title'); }, get subtitle() { return t('workoutCatalog.hanteln-oberkoerper.subtitle'); },
+    style: 'power', level: 2, work: 40, rest: 20, rounds: 2, roundRest: 60,
+    items: ['floor_press', 'row', 'push_press', 'front_raise', 'triceps_kickback', 'pullover', 'renegade_row'],
+  },
+  {
+    id: 'rumpf-stark', cat: 'rumpf', get title() { return t('workoutCatalog.rumpf-stark.title'); }, get subtitle() { return t('workoutCatalog.rumpf-stark.subtitle'); },
+    style: 'groove', level: 3, work: 35, rest: 15, rounds: 2, roundRest: 45,
+    items: ['plank_up_down', { id: 'side_plank_dip', work: 25 }, 'toe_touch', { id: 'boat_hold', work: 25 }, { id: 'reverse_plank', work: 25 }, 'sit_up', 'swimmer'],
+  },
+  {
+    id: 'sprungkraft', cat: 'kondition', get title() { return t('workoutCatalog.sprungkraft.title'); }, get subtitle() { return t('workoutCatalog.sprungkraft.subtitle'); },
+    style: 'hiit', level: 3, work: 30, rest: 20, rounds: 3, roundRest: 45,
+    items: ['jump_rope', 'star_jump', 'split_jump', 'box_jump', 'tuck_jump', 'skater_jump'],
+  },
+  {
+    id: 'dehnen-sanft', cat: 'beweglichkeit', get title() { return t('workoutCatalog.dehnen-sanft.title'); }, get subtitle() { return t('workoutCatalog.dehnen-sanft.subtitle'); },
+    style: 'flow', level: 1, work: 40, rest: 10, rounds: 1,
+    items: ['squat_to_stand', 'forward_fold', 'seated_forward_fold', { id: 'knee_hug', work: 30 }, { id: 'lying_hamstring_stretch', work: 30 }, 'child_pose'],
   },
 ];
 

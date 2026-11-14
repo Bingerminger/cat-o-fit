@@ -1228,10 +1228,37 @@
     "burpee": "Burpees",
     "mountain_climber": "Mountain climbers",
     "skater_jump": "Sauts de patineur",
-    "bear_crawl": "Marche de l’ours"
+    "bear_crawl": "Marche de l’ours",
+    "front_raise": "Élévations frontales",
+    "floor_press": "Développé au sol",
+    "renegade_row": "Rowing en planche",
+    "decline_pushup": "Pompes pieds surélevés",
+    "wall_pushup": "Pompes contre le mur",
+    "push_press": "Push press",
+    "box_squat": "Squat sur chaise",
+    "triceps_kickback": "Extensions triceps penché",
+    "pullover": "Pull-over avec haltère",
+    "single_leg_calf_raise": "Montées sur pointe sur une jambe",
+    "sit_up": "Sit-up",
+    "toe_touch": "Crunch mains aux pieds",
+    "plank_up_down": "Planche monter-descendre",
+    "side_plank_dip": "Planche latérale, abaissés de hanche",
+    "reverse_plank": "Planche inversée",
+    "boat_hold": "Posture du bateau",
+    "swimmer": "Nageur",
+    "forward_fold": "Flexion avant debout",
+    "seated_forward_fold": "Flexion avant assise",
+    "knee_hug": "Genou à la poitrine",
+    "lying_hamstring_stretch": "Étirement des ischio-jambiers allongé",
+    "squat_to_stand": "Squat-to-stand",
+    "star_jump": "Sauts en étoile",
+    "tuck_jump": "Sauts groupés",
+    "jump_rope": "Corde à sauter",
+    "split_jump": "Fentes sautées",
+    "box_jump": "Sauts sur box"
   },
   "exerciseAliases": {
-    "squat": "Squat|Squats au poids du corps|Se lever d’une chaise",
+    "squat": "Squat|Squats au poids du corps",
     "lunge": "Fente|Fentes avant",
     "pushup": "Pompe|Push-ups|Push-up",
     "deadlift": "Soulevé de terre|Soulevés de terre roumains|Charnière de hanches",
@@ -1318,7 +1345,33 @@
     "mountain_climber": "Mountain climber|Grimpeurs|Escalade en planche",
     "skater_jump": "Sauts du patineur|Patineurs|Skaters",
     "bear_crawl": "Marche à quatre pattes|Bear crawl|Déplacement de l’ours",
-    "incline_pushup": "Pompes contre le mur"
+    "front_raise": "Front raise|Élévation frontale|Élévations frontales avec haltères",
+    "floor_press": "Floor press|Développé couché au sol|Développé haltères au sol",
+    "renegade_row": "Renegade row|Tirage en planche|Rowing renegade",
+    "decline_pushup": "Pompes déclinées|Decline push-up|Pompe pieds surélevés",
+    "wall_pushup": "Pompes au mur|Wall push-up|Pompe murale",
+    "push_press": "Développé poussé|Push press avec haltères|Développé avec élan",
+    "box_squat": "Se lever d’une chaise|Box squat|Squat sur box|Squat sur banc",
+    "triceps_kickback": "Kickback triceps|Kickbacks|Triceps kickback",
+    "pullover": "Pull-over|Pullover|Pull-over haltère",
+    "single_leg_calf_raise": "Mollets sur une jambe|Extension mollet unilatérale|Montée sur pointe unipodale",
+    "sit_up": "Sit-ups|Relevé de buste|Redressement assis",
+    "toe_touch": "Toe touches|Toe touch|Crunch jambes verticales",
+    "plank_up_down": "Plank up-down|Planche commando|Planche dynamique",
+    "side_plank_dip": "Side plank dips|Hip dips|Gainage latéral dynamique",
+    "reverse_plank": "Reverse plank|Planche dorsale|Gainage dorsal",
+    "boat_hold": "Boat hold|Bateau|Gainage en V",
+    "swimmer": "Swimmer|Swimmers|Nageur sur le ventre",
+    "forward_fold": "Forward fold|Pince debout|Flexion du buste",
+    "seated_forward_fold": "Pince assise|Seated forward fold|Étirement ischio-jambiers assis",
+    "knee_hug": "Knee hug|Étirement genou-poitrine|Genou poitrine",
+    "lying_hamstring_stretch": "Ischio-jambiers allongé|Étirement arrière de cuisse allongé|Lying hamstring stretch",
+    "squat_to_stand": "Squat to stand|Squat prise d’orteils|Du squat à debout",
+    "star_jump": "Star jumps|Saut en étoile|Star jump",
+    "tuck_jump": "Tuck jumps|Saut groupé|Tuck jump|Sauts genoux poitrine",
+    "jump_rope": "Jump rope|Saut à la corde|Rope skipping",
+    "split_jump": "Split jumps|Jumping lunges|Fente sautée",
+    "box_jump": "Box jumps|Box jump|Saut sur box|Sauts sur caisse"
   },
   "session": {
     "rpeFromHr": "estimé d’après la fréquence cardiaque",
@@ -1960,6 +2013,26 @@
     "fussball-praevention": {
       "title": "Prévention des blessures au football",
       "subtitle": "Ischio-jambiers, aines, hanches – comme dans le FIFA 11+"
+    },
+    "einsteiger": {
+      "title": "Débuter en douceur",
+      "subtitle": "Avec une chaise et un mur : du renforcement sans obstacle"
+    },
+    "hanteln-oberkoerper": {
+      "title": "Haut du corps avec haltères",
+      "subtitle": "Pousser, tirer, épaules et bras"
+    },
+    "rumpf-stark": {
+      "title": "Gainage costaud",
+      "subtitle": "Planches, côtés et dos – niveau avancé"
+    },
+    "sprungkraft": {
+      "title": "Détente et sauts",
+      "subtitle": "Corde, étoile et box : des sauts avec des pauses"
+    },
+    "dehnen-sanft": {
+      "title": "Étirements doux",
+      "subtitle": "Détendre le dos et l’arrière des jambes"
     },
     "cats": {
       "kraft": "Renforcement",

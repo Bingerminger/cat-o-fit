@@ -477,7 +477,7 @@ more than the odd big day.
 
 <img src="../assets/en/40-exercises.png" width="260" align="right" alt="Exercise library" />
 
-Under **More → Exercise library** you find **93 exercises** for **strength, core, mobility, cardio
+Under **More → Exercise library** you find **120 exercises** for **strength, core, mobility, cardio
 and prevention** – to accompany the strength and mobility sessions of your plan: from squats,
 push-ups and deadlifts, through Hyrox exercises such as wall balls, kettlebell swings and farmer’s
 carry, to stretches for the back and hips and the most important **prevention exercises for running

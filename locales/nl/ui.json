@@ -1228,10 +1228,37 @@
     "burpee": "Burpees",
     "mountain_climber": "Mountain climbers",
     "skater_jump": "Skater jumps",
-    "bear_crawl": "Bear crawl"
+    "bear_crawl": "Bear crawl",
+    "front_raise": "Front raises",
+    "floor_press": "Floor press",
+    "renegade_row": "Renegade row",
+    "decline_pushup": "Push-ups met verhoogde voeten",
+    "wall_pushup": "Push-ups tegen de muur",
+    "push_press": "Push press",
+    "box_squat": "Squat naar de stoel",
+    "triceps_kickback": "Triceps kickbacks",
+    "pullover": "Pullover met dumbbell",
+    "single_leg_calf_raise": "Kuitheffen op één been",
+    "sit_up": "Sit-up",
+    "toe_touch": "Toe touches",
+    "plank_up_down": "Plank op en neer",
+    "side_plank_dip": "Zijplank met heupdips",
+    "reverse_plank": "Omgekeerde plank",
+    "boat_hold": "Boothouding",
+    "swimmer": "Zwemmer",
+    "forward_fold": "Staande vooroverbuiging",
+    "seated_forward_fold": "Zittende vooroverbuiging",
+    "knee_hug": "Knie naar de borst",
+    "lying_hamstring_stretch": "Hamstringrek in lig",
+    "squat_to_stand": "Squat to stand",
+    "star_jump": "Stersprongen",
+    "tuck_jump": "Tuck jumps",
+    "jump_rope": "Touwtjespringen",
+    "split_jump": "Split jumps",
+    "box_jump": "Box jumps"
   },
   "exerciseAliases": {
-    "squat": "Squat|Air squats|Kniebuigingen|Opstaan uit een stoel",
+    "squat": "Squat|Air squats|Kniebuigingen",
     "lunge": "Lunge|Uitvalspassen|Voorwaartse lunges",
     "pushup": "Push-up|Opdrukken|Pushups",
     "deadlift": "Deadlift|Romanian deadlifts|Heupscharnier",
@@ -1318,7 +1345,33 @@
     "mountain_climber": "Mountain climber|Climbers|Bergbeklimmers",
     "skater_jump": "Skaters|Skater hops|Speed skaters|Schaatssprongen",
     "bear_crawl": "Bear crawls|Bear walk|Berengang",
-    "incline_pushup": "Push-ups tegen de muur"
+    "front_raise": "Front raise|Voorwaarts heffen|Front raises met dumbbells",
+    "floor_press": "Bankdrukken op de vloer|Dumbbell floor press|Drukken op de vloer",
+    "renegade_row": "Roeien in plank|Plank row|Renegade rows",
+    "decline_pushup": "Decline push-up|Decline push-ups|Push-up met voeten omhoog",
+    "wall_pushup": "Wall push-up|Muur-push-up|Opdrukken tegen de muur",
+    "push_press": "Push press met dumbbells|Stootdrukken|Drukken met beeninzet",
+    "box_squat": "Opstaan uit een stoel|Box squat|Stoel-squat|Box squats|Kniebuiging naar een bank",
+    "triceps_kickback": "Triceps kickback|Kickbacks|Triceps strekken voorovergebogen",
+    "pullover": "Pullover|Pull-over|Dumbbell pullover",
+    "single_leg_calf_raise": "Eenbenig kuitheffen|Single-leg calf raise|Calf raises op één been",
+    "sit_up": "Sit-ups|Situp|Opzitten",
+    "toe_touch": "Toe touch|Tenen aantikken|Crunch met benen omhoog",
+    "plank_up_down": "Plank up-downs|Up-down plank|Commando plank",
+    "side_plank_dip": "Side plank dips|Hip dips|Heupdips in zijplank",
+    "reverse_plank": "Reverse plank|Achterwaartse plank|Rugplank",
+    "boat_hold": "Boat hold|Boot|V-zit vasthouden",
+    "swimmer": "Swimmer|Swimmers|Zwemmer op de buik",
+    "forward_fold": "Forward fold|Vooroverbuigen in stand|Rompbuiging",
+    "seated_forward_fold": "Seated forward fold|Vooroverbuigen in zit|Hamstrings rekken in zit",
+    "knee_hug": "Knee hug|Knie-naar-borst-rek|Knie omarmen",
+    "lying_hamstring_stretch": "Liggende hamstringrek|Hamstrings rekken in ruglig|Lying hamstring stretch",
+    "squat_to_stand": "Squat-to-stand|Tenengreep-squat|Van squat naar stand",
+    "star_jump": "Star jumps|Stersprong|Star jump",
+    "tuck_jump": "Tuck jump|Hurksprongen|Kniehefsprongen",
+    "jump_rope": "Jump rope|Rope skipping|Springtouw|Touwspringen",
+    "split_jump": "Jumping lunges|Split jump|Uitvalssprongen|Lunge-sprongen",
+    "box_jump": "Box jump|Kastsprongen|Sprongen op een box"
   },
   "session": {
     "rpeFromHr": "geschat op basis van de hartslag",
@@ -1960,6 +2013,26 @@
     "fussball-praevention": {
       "title": "Blessurepreventie voetbal",
       "subtitle": "Hamstrings, lies, heupen – zoals in FIFA 11+"
+    },
+    "einsteiger": {
+      "title": "Zachte start",
+      "subtitle": "Met een stoel en een muur: kracht zonder drempels"
+    },
+    "hanteln-oberkoerper": {
+      "title": "Bovenlichaam met dumbbells",
+      "subtitle": "Drukken, trekken, schouders en armen"
+    },
+    "rumpf-stark": {
+      "title": "Sterke core",
+      "subtitle": "Planken, zijkant en rug – voor gevorderden"
+    },
+    "sprungkraft": {
+      "title": "Sprongkracht",
+      "subtitle": "Touw, ster en box: sprongen met pauzes"
+    },
+    "dehnen-sanft": {
+      "title": "Zacht rekken",
+      "subtitle": "Rug en achterkant van de benen losmaken"
     },
     "cats": {
       "kraft": "Kracht",

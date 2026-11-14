@@ -1228,10 +1228,37 @@
     "burpee": "Burpees",
     "mountain_climber": "Mountain climbers",
     "skater_jump": "Skater jumps",
-    "bear_crawl": "Bear crawl"
+    "bear_crawl": "Bear crawl",
+    "front_raise": "Front raises",
+    "floor_press": "Floor press",
+    "renegade_row": "Renegade row",
+    "decline_pushup": "Decline push-up",
+    "wall_pushup": "Wall push-up",
+    "push_press": "Push press",
+    "box_squat": "Box squat",
+    "triceps_kickback": "Triceps kickbacks",
+    "pullover": "Dumbbell pullover",
+    "single_leg_calf_raise": "Single-leg calf raises",
+    "sit_up": "Sit-up",
+    "toe_touch": "Toe touches",
+    "plank_up_down": "Plank up-downs",
+    "side_plank_dip": "Side plank hip dips",
+    "reverse_plank": "Reverse plank",
+    "boat_hold": "Boat hold",
+    "swimmer": "Swimmers",
+    "forward_fold": "Standing forward fold",
+    "seated_forward_fold": "Seated forward fold",
+    "knee_hug": "Knee to chest",
+    "lying_hamstring_stretch": "Lying hamstring stretch",
+    "squat_to_stand": "Squat to stand",
+    "star_jump": "Star jumps",
+    "tuck_jump": "Tuck jumps",
+    "jump_rope": "Jump rope",
+    "split_jump": "Split jumps",
+    "box_jump": "Box jumps"
   },
   "exerciseAliases": {
-    "squat": "Squat|Bodyweight squats|Sit-to-stand",
+    "squat": "Squat|Bodyweight squats",
     "lunge": "Lunge|Forward lunges",
     "pushup": "Push-up|Press-ups",
     "deadlift": "Deadlift|Romanian deadlifts|Hip hinge",
@@ -1318,7 +1345,33 @@
     "mountain_climber": "Mountain climber|Climbers",
     "skater_jump": "Skaters|Skater hops|Speed skaters",
     "bear_crawl": "Bear crawls|Bear walk",
-    "incline_pushup": "Wall push-ups|Wall push-up"
+    "front_raise": "Front raise|Dumbbell front raise",
+    "floor_press": "Dumbbell floor press|Chest press on the floor",
+    "renegade_row": "Plank row|Renegade rows",
+    "decline_pushup": "Feet-elevated push-up|Decline push-ups",
+    "wall_pushup": "Wall push-ups|Push-up against the wall",
+    "push_press": "Dumbbell push press",
+    "box_squat": "Sit-to-stand|Chair squat|Squat to a box|Box squats",
+    "triceps_kickback": "Triceps kickback|Kickbacks",
+    "pullover": "Pullover|Pull-over",
+    "single_leg_calf_raise": "Single-leg calf raise|One-leg calf raises",
+    "sit_up": "Sit-ups|Situp",
+    "toe_touch": "Toe touch crunch|Toe touch|Vertical leg crunch",
+    "plank_up_down": "Up-down plank|Plank to push-up|Commando plank",
+    "side_plank_dip": "Side plank dips|Hip dips|Side plank dip",
+    "reverse_plank": "Rear plank|Back plank",
+    "boat_hold": "Boat pose|V-sit hold|Boat",
+    "swimmer": "Swimmer|Prone swimmers|Swimming",
+    "forward_fold": "Forward fold|Forward bend",
+    "seated_forward_fold": "Seated forward bend|Seated hamstring stretch",
+    "knee_hug": "Knee hug|Knee-to-chest stretch|Single knee hug",
+    "lying_hamstring_stretch": "Supine hamstring stretch|Hamstring stretch lying down",
+    "squat_to_stand": "Squat-to-stand|Toe-grab squat",
+    "star_jump": "Star jump|Explosive star jumps",
+    "tuck_jump": "Tuck jump|Knee tuck jumps",
+    "jump_rope": "Skipping|Rope skipping|Skipping rope",
+    "split_jump": "Jumping lunges|Split jump|Lunge jumps",
+    "box_jump": "Box jump|Jumps onto a box"
   },
   "session": {
     "rpeFromHr": "estimated from heart rate",
@@ -1960,6 +2013,26 @@
     "fussball-praevention": {
       "title": "Football injury prevention",
       "subtitle": "Hamstrings, groin, hips – as in FIFA 11+"
+    },
+    "einsteiger": {
+      "title": "Gentle start",
+      "subtitle": "With a chair and a wall: strength without hurdles"
+    },
+    "hanteln-oberkoerper": {
+      "title": "Upper body with dumbbells",
+      "subtitle": "Press, pull, shoulders and arms"
+    },
+    "rumpf-stark": {
+      "title": "Strong core",
+      "subtitle": "Planks, sides and back – for the advanced"
+    },
+    "sprungkraft": {
+      "title": "Jump power",
+      "subtitle": "Rope, star and box: jumps with rests"
+    },
+    "dehnen-sanft": {
+      "title": "Gentle stretch",
+      "subtitle": "Ease the back and the back of the legs"
     },
     "cats": {
       "kraft": "Strength",

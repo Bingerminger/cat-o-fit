@@ -136,7 +136,7 @@ die Zeile Krafttraining: 3. Oktober 2026), aus der Dokumentation, den Preisseite
   Triathlon und Hyrox sind Beta. Daten von der Uhr kommen über Apple Health (automatisch per kostenlosem
   Kurzbefehl), Android Health Connect (über eine Brücken-App) sowie GPX-, TCX- und FIT-Dateien oder den
   ganzen Garmin- bzw. Strava-Export – eine direkte Verbindung zur Garmin- oder Strava-Cloud gibt es
-  nicht. Die App ist eine installierbare Web-App, keine App aus dem Store. Krafttraining: 93 animierte
+  nicht. Die App ist eine installierbare Web-App, keine App aus dem Store. Krafttraining: 120 animierte
   Übungen, Sätze mit Wiederholungen und Gewicht samt Hinweis für den nächsten Schritt, ganze Einheiten,
   die mit Musik im Takt und aufgenommenen Ansagen in sieben Sprachen von selbst durchlaufen, und ein
   Import deines Verlaufs aus Strong, Hevy oder FitNotes (CSV). Eine öffentliche Demo läuft im Browser.

@@ -165,11 +165,15 @@ function liftSide(S, m) {
   for (const [side, a, s] of [['r', armR, 1], ['l', armL, -1]]) {
     const sh = V.add(chest, V.mul(lat, s * BODY.shoulderW));
     // Hands that hold one thing together meet in front of the body; otherwise they stay at shoulder width.
-    const wz = both ? s * 3 : s * (BODY.shoulderW + 1.5);
+    // An arm the picture shortens points across the picture: out to its side (a press lying on the back, a fly).
+    const seen = S.arms[side];
+    const ez = depthOf(BODY.upper, len2(seen.root, seen.joint));
+    const fz = depthOf(BODY.fore, len2(seen.joint, seen.end));
+    const wz = both ? s * 3 : s * (BODY.shoulderW + 1.5 + ez + fz);
     const wrist = p3(a.end, wz);
     const planted = a.end[1] > -7;
     const out = (planted ? TRACK.elbowPlanted : TRACK.elbow) * offLine(S.sh, a.end, a.joint);
-    const elbow0 = p3(a.joint, s * ((both ? BODY.shoulderW * 0.95 : BODY.shoulderW + 1) + out));
+    const elbow0 = p3(a.joint, s * ((both ? BODY.shoulderW * 0.95 : BODY.shoulderW + 1) + out + ez));
     const elbow = solveLimb3(sh, wrist, BODY.upper, BODY.fore, elbow0).joint;
     arms[side] = { sh, elbow, wrist };
   }

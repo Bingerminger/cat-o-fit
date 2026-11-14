@@ -162,7 +162,7 @@ test('Recorded voices: every language in VOICE_LANGUAGES has a clip for every bu
   assert.ok(VOICE_LANGUAGES.includes('de'));
   assert.equal(new Set(VOICE_LANGUAGES).size, VOICE_LANGUAGES.length, 'no language twice');
   const keys = Object.keys(voiceTexts(EXERCISES));
-  assert.equal(keys.length, 190);
+  assert.equal(keys.length, 217);
   try {
     for (const lang of VOICE_LANGUAGES) {
       assert.ok(lang in languages(), `${lang} is a language of the app`);

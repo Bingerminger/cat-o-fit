@@ -16,7 +16,7 @@ for (const lang of ['de', 'en', 'fr', 'es', 'it', 'pt-BR', 'nl']) {
   test(`${lang}: the round of each programme strength session, nothing more`, async () => {
     await setLocale(lang);
     const gentle = unitsOf('mobility').find((u) => u.type === 'strength');
-    assert.deepEqual(ids(gentle), ['squat', 'incline_pushup', 'glute_bridge', 'calf_raise', 'bird_dog'], 'gentle strength');
+    assert.deepEqual(ids(gentle), ['box_squat', 'wall_pushup', 'glute_bridge', 'calf_raise', 'bird_dog'], 'gentle strength');
     const strength = unitsOf('strength').filter((u) => u.type === 'strength');
     const upper = strength.find((u) => ids(u).includes('dead_bug'));
     assert.deepEqual(ids(upper), ['pushup', 'row', 'overhead_press', 'plank', 'side_plank', 'dead_bug'], 'upper body with rows');

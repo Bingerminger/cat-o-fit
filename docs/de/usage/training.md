@@ -484,7 +484,7 @@ Konsistenz zählt mehr als einzelne Top-Tage.
 
 <img src="../../assets/de/40-exercises.png" width="260" align="right" alt="Übungs-Bibliothek" />
 
-Unter **Mehr → Übungs-Bibliothek** findest du **93 Übungen** für **Kraft, Rumpf, Beweglichkeit,
+Unter **Mehr → Übungs-Bibliothek** findest du **120 Übungen** für **Kraft, Rumpf, Beweglichkeit,
 Kondition und Prävention** – als Begleitung zu den Kraft- und Mobility-Einheiten deines Plans: von
 Kniebeuge, Liegestütz und Kreuzheben über Hyrox-Übungen wie Wall Ball, Kettlebell-Swing und Farmers Walk
 bis zu Dehnungen für Rücken und Hüfte und den wichtigsten **Präventionsübungen für Laufen und Fußball**

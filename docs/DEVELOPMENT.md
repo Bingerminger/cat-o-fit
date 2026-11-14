@@ -371,7 +371,7 @@ Do **not** break these rules in the store (`storage.js`) and backend (`storage.p
   Since v3.22.0, sessions list first the exercises named in the title/description (`exercisesInText`:
   name + `ALIASES`, only at the start of a word – a “jump squat” is not a “squat”; `exercisesForUnit`
   returns `{ named, suggested, all }`). `test/exercises.test.js` enforces `caution` and `progression`
-  (from `DETAIL_BY_ID`). 93 exercises, of which 8 prevention exercises as a football suggestion (`PREVENTION_IDS`).
+  (from `DETAIL_BY_ID`). 120 exercises, of which 8 prevention exercises as a football suggestion (`PREVENTION_IDS`).
 - **Animated exercises (since v3.22.0).** Every exercise has a movement sequence in `js/exercise-motions.js`
   (`MOTIONS`, key = exercise ID; `test/exercise-motions.test.js` enforces the mapping in both
   directions). A sequence is pure data: view (`side`/`front`), key poses (`keys`), start pose,
