@@ -548,7 +548,8 @@ Mitmachen, gedacht fürs iPad oder Handy ein, zwei Meter entfernt auf dem Boden:
   Schwierigkeit und den nötigen Geräten. Darunter Ganzkörper ohne Geräte, Oberkörper, Kurzhanteln,
   Kettlebell, Hyrox-Kraft, Po & Beine, Bauch, Tabata, Cardio ohne Springen, Mobility am Morgen,
   Hüfte frei, Schultern & Nacken, Abendroutine, Dehnen nach dem Laufen, Lauf-ABC, Füße & Waden und
-  Fußball-Prävention – jeweils mit fester Arbeits- und Pausenzeit.
+  Fußball-Prävention, ein sanfter Einstieg mit Stuhl und Wand, Oberkörper mit Kurzhanteln, ein starker
+  Rumpf, Sprungkraft und sanftes Dehnen – jeweils mit fester Arbeits- und Pausenzeit.
 - **Eigene Workouts:** **„Eigenes Workout zusammenstellen“** – Übungen aus der Bibliothek in deiner
   Reihenfolge, mit Belastungszeit, Pause und Runden. Sie stehen unter Workouts vorn und laufen wie die
   fertigen.
@@ -556,11 +557,24 @@ Mitmachen, gedacht fürs iPad oder Handy ein, zwei Meter entfernt auf dem Boden:
   ein fertiges oder eigenes Workout für diese Einheit; Mitmachen spielt dann dieses statt des Plantexts
   („Lösen“ führt zum Text zurück).
 
-Vor dem Start siehst du alle Übungen mit Menge und Dauer und stellst **Runden** und **Pause** ein. Dann
-**„Los geht’s“** – danach musst du nichts mehr antippen:
+Vor dem Start siehst du alle Übungen mit Menge und Dauer und stellst **Runden**, **Pause**, das
+**Tempo** (Ruhig · Flott · Schnell – Workouts starten flott, wie ein Video; eine Einheit aus dem Plan
+behält das ruhige Tempo, in dem ihre Übungen geschrieben sind) und die **Figur** ein, die vorturnt
+(Blond · Rot · Mann). Dann **„Los geht’s“** – danach musst du nichts mehr antippen:
 
-- Die Vorturnerin macht jede Übung **im Takt** vor; groß daneben stehen Name, Wiederholung bzw.
-  Restzeit, ein kurzer Technik-Hinweis und die Atmung, darunter **„Danach“** mit der nächsten Übung.
+- Die Vorturnfigur macht jede Übung **im Takt** auf einer Bühne im Raum vor: ein echter Körper mit
+  Skelett, mit Kurzhanteln, Kettlebell, Ball, Band, Kasten, Wand oder Stange, wo die Übung sie braucht.
+  Die Kamera geht mit – weit zum Auftakt, nah bei der Arbeit, in den Pausen einmal um den Ort. Groß
+  daneben stehen Name, Wiederholung bzw. Restzeit, ein kurzer Technik-Hinweis und die Atmung, darunter
+  **„Danach“** mit der nächsten Übung.
+- **Drei Looks** zum Umschalten, während es läuft (der Funkel-Knopf in der Steuerleiste): natürlich am
+  Strand, eine Nacht-Arena mit farbigem Licht oder gezeichnet mit Tuschelinie im Comic-Studio.
+- **Die Katze turnt mit:** Sie springt, wenn die Figur springt, geht bei jeder Kniebeuge mit nach
+  unten, legt sich bei Bodenübungen lang, streckt sich in den Pausen und tanzt am Ende.
+- Punkte, eine Combo und Sterne zählen mit, was du schaffst – nur für diese Sitzung; gespeichert wird
+  davon nichts.
+- Ist **Bewegung reduzieren** eingeschaltet oder kann das Gerät keine 3D-Grafik, zeigt die Sitzung
+  stattdessen die gezeichnete Vorturnerin der Übungs-Bibliothek und sagt das dazu.
 - In der **Pause** siehst du schon, was kommt (mit Probe-Wiederholung bzw. dem Weg in die Position);
   bei einseitigen Übungen gibt es einen eigenen **Seitenwechsel**, zwischen den Runden eine längere Pause.
 - **Musik:** ein Beat, der zur Übung passt – kräftig bei Kraft, ruhiger bei Rumpf, flächig bei

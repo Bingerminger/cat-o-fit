@@ -539,19 +539,33 @@ to follow along with, meant for an iPad or phone a metre or two away on the floo
   duration, difficulty and the equipment needed. They include full body without equipment, upper
   body, dumbbells, kettlebell, Hyrox strength, glutes & legs, abs, Tabata, cardio without jumping,
   morning mobility, free hips, shoulders & neck, an evening routine, stretching after a run, running
-  drills, feet & calves and football injury prevention – each with fixed work and rest times.
+  drills, feet & calves and football injury prevention, a gentle start with a chair and a wall, upper
+  body with dumbbells, a strong core, jump power and gentle stretching – each with fixed work and rest
+  times.
 - **Your own workouts:** **“Put together your own workout”** – library exercises in your order, with
   work time, rest and rounds. They appear first under Workouts and play like the ready-made ones.
 - **A workout for a planned session:** under “Follow along non-stop”, **“Assign a workout”** picks a
   ready-made or your own workout for that session; following along then plays it instead of the plan
   text (“Remove” goes back to the text).
 
-Before the start you see all exercises with amount and duration and set the **rounds** and **rest**.
+Before the start you see all exercises with amount and duration and set the **rounds**, the **rest**,
+the **tempo** (Calm · Brisk · Fast – workouts start brisk, like a video; a plan session keeps the calm
+tempo its exercises are written in) and the **figure** that leads the session (Blonde · Redhead · Man).
 Then **“Let’s go”** – after that you do not have to tap anything:
 
-- The instructor demonstrates every exercise **in rhythm**; beside her, large, you see the name,
-  repetition or time left, a short technique cue and the breathing, with **“Up next”** underneath
-  showing the next exercise.
+- The trainer demonstrates every exercise **in rhythm** on a stage in space: a real body with a
+  skeleton, with dumbbells, kettlebell, ball, band, box, wall or bar where the exercise needs them. The
+  camera moves with the session – wide at the start, close for the work, round the place in the rests.
+  Beside it, large, you see the name, repetition or time left, a short technique cue and the
+  breathing, with **“Up next”** underneath showing the next exercise.
+- **Three looks** to switch between while it runs (the sparkle button in the control bar): natural on
+  a beach, a night arena with coloured light, or drawn with an ink line in a comic studio.
+- **The cat trains along:** it jumps when the trainer jumps, goes down with every squat, lies long
+  during floor exercises, stretches in the rests and dances at the end.
+- Points, a combo and stars count what you get through – for this session only; nothing of it is
+  stored.
+- If **Reduce Motion** is switched on, or the device has no 3D graphics, the session shows the drawn
+  instructor of the exercise library instead and says so.
 - During the **rest** you already see what is coming (with a trial repetition, or the way into the
   position); one-sided exercises get a **switch of sides** of their own, and between the rounds there
   is a longer rest.

@@ -367,6 +367,13 @@ Pure logic in argument-based, testable modules; the views only consume it:
   (plan text → programme → timeline in beat, pure), `workout-show.js` (full-screen session),
   `music.js` (training music, generated live), `audio.js` (unlocking, tones, announcements, wake lock) and
   `workouts.js` (ready-made workouts).
+- **The 3D stage of following along (since 4.2):** `body3d.js` (a pose of the picture as a body in space,
+  flowing movement, a body with weight), `stage-body.js` (the body of a whole session including the ways
+  between exercises), `stage-rig.js` (the pose in the proportions of a model: contacts stay),
+  `stage-model.js` (the trainer model: reading it, posing its skeleton, face shapes – all pure),
+  `stage-mesh.js` (cat and equipment as triangles), `stage-worlds.js` (the three worlds as shaders),
+  `stage-gl.js` (the WebGL renderer) and `stage-show.js` (the direction: camera, cat, confetti, who leads).
+  The models live in `assets/trainer/` and `assets/trainer-m/` (MakeHuman, CC0 – see their `CREDITS.md`).
 - **Activities from files (since v3.21.0):** `gpx.js` (GPX/TCX → `buildActivity`: splits, time in
   HR zones, elevation gain with 3 m hysteresis, simplified route – Douglas-Peucker down to at most 150
   points, encoded as a polyline), `fit.js` (binary FIT: definitions, compressed timestamps, both

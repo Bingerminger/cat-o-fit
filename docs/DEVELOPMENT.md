@@ -397,6 +397,17 @@ Do **not** break these rules in the store (`storage.js`) and backend (`storage.p
   programme, `buildShow` the timeline (ready · work · switch · rest · roundRest). `beatPlan` puts
   every movement phase on half beats (fast ones on quarter beats) and every repetition on whole beats
   in the tempo range of the style; pauses last whole bars. `js/workout-show.js` is the full-screen view.
+  Since 4.2 the session plays on a **3D stage** (WebGL 1, no library): `js/body3d.js` lifts a solved pose
+  into space (`lift`; knees fold one way only, an arm the picture shortens in a side view points out to its
+  side, `top: true` lies down, `sit: { lean, twist }` is someone sitting towards the viewer),
+  `js/stage-rig.js retarget` fits it to the model's proportions (`model.rig` – never constants: the two
+  models differ), `js/stage-model.js poseSkeleton` poses the 23 bones. That port is checked against Blender
+  to the millimetre (`test/fixtures/trainer-pose.json`, `trainer-m-pose.json`). A model is a folder with
+  `trainer.json` (skeleton, meshes, rig measures), `trainer.bin` (vertex data, skin weights, the face shapes
+  `blink` and `smile` as sparse offsets) and textures; `stage-show.js TRAINERS` lists who can lead (a
+  model, or a colour variant of one). Check a new or changed exercise on the stage as well as in the
+  picture – a pose that reads well flat can bend a joint the wrong way in space. Without WebGL or with
+  reduced motion the session falls back to the drawn figure.
   **Rules from the iPad test:** the clock is always the screen clock (the audio clock stands still on iOS at
   every interruption – the picture froze). The music plays pre-computed loops
   (`music.js renderLoop`, four bars, tail mixed in at the front) and locks in per section with the correct phase;
