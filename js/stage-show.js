@@ -26,7 +26,11 @@ import { showStateAt } from './show-program.js';
 import { createBodyDirector } from './stage-body.js';
 import { createMesh, buildTrainer, buildCat, plaitAnchor, STRIDE } from './stage-mesh.js';
 import { createStage, projectPoint } from './stage-gl.js';
-import { DEFAULT_WORLD } from './stage-worlds.js';
+import { loadTrainer, poseSkeleton, skinMatrices, jointsForModel, modelToStage } from './stage-model.js';
+import { retarget } from './stage-rig.js';
+
+/** The looks of the stage: how the trainer is lit and drawn, and the world that goes with it. */
+export const LOOKS = { natural: 'beach', night: 'neon', drawn: 'pop' };
 
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 const smooth = (k) => { const x = clamp(k, 0, 1); return x * x * (3 - 2 * x); };
@@ -81,9 +85,17 @@ function shotAt(seg, local, view) {
  * `render(T, st, env)`: T show time, st = showStateAt(show, T),
  * env = { area: { x, y, w, h } free part of the canvas in 0…1, playing }.
  */
-export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } = {}) {
+export function mountStage(canvas, show, { look = 'f', style = 'natural' } = {}) {
   const stage = createStage(canvas);
   if (!stage) return null;
+  let lookName = LOOKS[style] ? style : 'natural';
+  // The trainer model: loaded once; the stage shows the world until it is there. If it cannot be had, the stage says
+  // so by failing – the session then falls back to the drawn figure.
+  let fig = null; let failed = null;
+  loadTrainer().then(({ model, images }) => {
+    if (stage.setModel(model, images)) fig = { model, bones: new Float32Array(model.bones.length * 16), toStage: modelToStage(model) };
+    else failed = new Error('model');
+  }).catch((e) => { failed = e; });
   const trainer = createMesh(9000, 48000);
   const cat = createMesh(3000, 15000);
   const bits = createMesh(1600, 2400);
@@ -232,6 +244,8 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
 
   /* ---- A frame ---- */
   function render(T, st, env = {}) {
+    if (failed) throw failed;
+    const world = LOOKS[lookName];
     const area = env.area || { x: 0, y: 0, w: 1, h: 1 };
     const wall = (typeof performance !== 'undefined' ? performance.now() : Date.now()) / 1000;
     const raw = lastWall == null ? 0 : wall - lastWall;
@@ -293,7 +307,12 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
     }
     const m = motionOf(seg);
     trainer.reset();
-    buildTrainer(trainer, body, look, new Set(done ? [] : m.focus || []), swingPlait(body, bodyDt, jumped && lastIndex < 0), fx);
+    let model = null;
+    if (fig) {
+      // The model's skeleton takes the pose: contacts stay, her own proportions decide the rest.
+      skinMatrices(fig.model, poseSkeleton(fig.model, jointsForModel(retarget(body, fig.model.rig))), fig.bones);
+      model = { bones: fig.bones, toStage: fig.toStage, look: lookName };
+    }
 
     // Confetti when an exercise is done, and a lot of it at the end.
     if (!jumped && lastIndex >= 0 && st.index !== lastIndex && show.segs[lastIndex].kind === 'work') burst([body.pelvis[0], 70, body.pelvis[2]], 70);
@@ -332,7 +351,7 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
     let pulse = 0;
     if (working && seg.cyc && local > seg.cyc * 0.98) pulse = clamp((local % seg.cyc) / 0.75, 0, 1);
 
-    const frame = { cam, world, time: wallT, beat: 1 - clamp((local % beat) / beat, 0, 1), pulse, pulseAt: [body.pelvis[0], body.pelvis[2]], meshes: [trainer, cat, bits], glow, mat: MAT, blobs };
+    const frame = { cam, world, time: wallT, beat: 1 - clamp((local % beat) / beat, 0, 1), pulse, pulseAt: [body.pelvis[0], body.pelvis[2]], meshes: [trainer, cat, bits], model, glow, mat: MAT, blobs };
     // Confetti needs the camera axes: one frame late is fine.
     stepConfetti(wdt, lastAxes.r, lastAxes.u);
     const t0 = typeof performance !== 'undefined' ? performance.now() : 0;
@@ -350,6 +369,9 @@ export function mountStage(canvas, show, { look = 'f', world = DEFAULT_WORLD } =
 
   return {
     render,
+    /** The look of the stage: 'natural' | 'night' | 'drawn'. */
+    setLook(name) { if (LOOKS[name]) lookName = name; },
+    get look() { return lookName; },
     /** Confetti from outside (a goal reached). */
     cheer(n = 90) { burst([0, 70, 0], n, 1.1); },
     destroy() { stage.destroy(); },

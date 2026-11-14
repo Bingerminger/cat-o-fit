@@ -3609,6 +3609,10 @@
     "paceCalm": "Calm",
     "paceBrisk": "Brisk",
     "paceFast": "Fast",
+    "look": "Look",
+    "lookNatural": "Natural",
+    "lookNight": "Night arena",
+    "lookDrawn": "Drawn",
     "exercises": {
       "one": "{count} exercise",
       "other": "{count} exercises"

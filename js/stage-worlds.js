@@ -147,6 +147,86 @@ vec3 world(vec3 ro, vec3 rd) {
 }
 `,
   },
+
+  /* A night arena: a dark, mirroring floor with a grid of light that beats with the music, a striped sun low
+     behind far ridges, stars. Light in two colours from the sides. */
+  neon: {
+    sun: dir(-20, 16),
+    key: [0.5, 0.3, 0.55], sky: [0.16, 0.14, 0.34], bounce: [0.2, 0.06, 0.24], fill: [0.62, 0.56, 0.7], rim: [2.2, 0.25, 1.5], rimB: [0.15, 1.5, 2.1],
+    shadow: [0.42, 0.36, 0.6], mat: [0.03, 0.2, 0.26], glow: [1.0, 0.4, 0.9],
+    glsl: `
+vec3 sky(vec3 d) {
+  float h = max(d.y, 0.0);
+  vec3 c = mix(vec3(0.42, 0.06, 0.4), vec3(0.015, 0.012, 0.07), pow(h, 0.42));
+  float sd = dot(d, uSun);
+  // The sun: a disc in two colours, cut into stripes towards the horizon.
+  float disc = smoothstep(0.972, 0.974, sd);
+  vec3 sun = mix(vec3(1.0, 0.16, 0.5), vec3(1.0, 0.82, 0.3), smoothstep(0.02, 0.36, d.y));
+  float cut = mix(step(0.42, fract(d.y * 34.0 - uTime * 0.03)), 1.0, smoothstep(0.16, 0.3, d.y));
+  c = mix(c, sun, disc * cut);
+  c += sun * pow(max(sd, 0.0), 22.0) * 0.3;
+  vec2 q = d.xz / (d.y + 0.25) * 46.0;
+  c += vec3(0.8, 0.85, 1.0) * step(0.9965, hash(floor(q))) * smoothstep(0.12, 0.5, h) * (0.6 + 0.4 * sin(uTime * 2.0 + q.x));
+  float az = atan(d.x, -d.z);
+  float ridge = 0.02 + 0.07 * noise(vec2(az * 5.0, 2.0)) * smoothstep(0.1, 0.7, abs(az + 0.35));
+  c = mix(c, vec3(0.03, 0.012, 0.08), 1.0 - smoothstep(ridge - 0.003, ridge + 0.003, d.y));
+  return c;
+}
+
+vec3 world(vec3 ro, vec3 rd) {
+  if (rd.y > -0.0005) return sky(rd);
+  float t = -ro.y / rd.y;
+  vec3 p = ro + rd * t;
+  float far = 1.0 - exp(-t * 0.0007);
+  vec3 col = vec3(0.022, 0.016, 0.06);
+  // The floor mirrors the sky a little.
+  float fres = pow(1.0 - max(-rd.y, 0.0), 4.0);
+  col += sky(reflect(rd, vec3(0.0, 1.0, 0.0))) * (0.1 + 0.5 * fres);
+  // The grid: lines of light, brighter on the beat.
+  vec2 cell = p.xz / 58.0;
+  vec2 g = abs(fract(cell) - 0.5);
+  vec2 w = fwidth(cell) * 1.5 + 0.012;
+  float line = max(smoothstep(0.5 - w.x, 0.5, g.x), smoothstep(0.5 - w.y, 0.5, g.y));
+  col += vec3(1.0, 0.12, 0.78) * line * (0.75 + 0.7 * uBeat * uBeat) * (1.0 - far);
+  col = ground(col, p.xz);
+  return mix(col, vec3(0.42, 0.06, 0.4), far * 0.9);
+}
+`,
+  },
+
+  /* A bright studio as from a comic: a warm wall of colour with a big disc and halftone dots, a mint floor. */
+  pop: {
+    sun: dir(-28, 34),
+    key: [1.15, 1.05, 0.95], sky: [0.92, 0.88, 0.96], bounce: [0.7, 0.62, 0.6], fill: [0.3, 0.28, 0.3], rim: [1.2, 1.1, 1.0],
+    shadow: [0.56, 0.5, 0.72], mat: [0.98, 0.42, 0.4], glow: [1.0, 0.85, 0.3],
+    glsl: `
+vec3 wall(vec3 d) {
+  vec3 c = mix(vec3(1.0, 0.8, 0.56), vec3(0.98, 0.48, 0.6), smoothstep(0.0, 0.55, d.y));
+  c = mix(c, vec3(0.6, 0.4, 0.86), smoothstep(0.45, 1.0, d.y));
+  float sd = dot(d, uSun);
+  c = mix(c, vec3(1.0, 0.95, 0.74), smoothstep(0.9, 0.902, sd));
+  c = mix(c, vec3(1.0, 0.62, 0.5), smoothstep(0.9605, 0.9625, sd));
+  // Halftone dots, largest at the horizon.
+  vec2 cellp = fract(gl_FragCoord.xy / (uRes.y / 46.0)) - 0.5;
+  float size = 0.36 * (1.0 - smoothstep(0.0, 0.5, d.y));
+  c = mix(c, c * vec3(0.86, 0.8, 0.9), 1.0 - smoothstep(size - 0.04, size, length(cellp)));
+  return c;
+}
+
+vec3 world(vec3 ro, vec3 rd) {
+  if (rd.y > -0.0005) return wall(rd);
+  float t = -ro.y / rd.y;
+  vec3 p = ro + rd * t;
+  float far = 1.0 - exp(-t * 0.0009);
+  vec3 col = mix(vec3(0.34, 0.8, 0.74), vec3(0.24, 0.62, 0.66), smoothstep(0.0, 700.0, length(p.xz)));
+  // Rings round the mat that swell on the beat.
+  float ring = sin(length(p.xz) * 0.035 - uTime * 0.8) * 0.5 + 0.5;
+  col = mix(col, col * 1.08, smoothstep(0.6, 0.62, ring) * (0.5 + 0.5 * uBeat));
+  col = ground(col, p.xz);
+  return mix(col, wall(vec3(rd.x, 0.002, rd.z)), far);
+}
+`,
+  },
 };
 
 export const DEFAULT_WORLD = 'beach';

@@ -22,7 +22,8 @@ import { categoryMeta, loadExerciseTexts } from './exercises.js';
 import { exerciseArt } from './exercise-art.js';
 import { mountFigure } from './motion-figure.js';
 import { frameAt } from './motion-rig.js';
-import { mountStage } from './stage-show.js';
+import { mountStage, LOOKS } from './stage-show.js';
+import { loadTrainer } from './stage-model.js';
 import { stageError } from './stage-gl.js';
 import { buildShow, showStateAt, doseLabel, nextWorkAfter } from './show-program.js';
 import { createMusic } from './music.js';
@@ -137,6 +138,8 @@ export function openShow(program, { onFinish = null } = {}) {
   /* ------------------------------ Overview ------------------------------ */
   function overview() {
     root.innerHTML = '';
+    // Fetch the trainer model while the overview is read, so the stage has it when the session starts.
+    if (wantsStage()) loadTrainer().catch(() => { /* the stage reports it when it starts */ });
     const current = () => ({ ...program, rounds, rest, pace: PACES[pace] });
     const total = el('span', { class: 'show-ov__total' });
     const paint = () => {
@@ -229,7 +232,8 @@ export function openShow(program, { onFinish = null } = {}) {
     // The 3D stage (stage-show.js) fills the whole screen behind everything; without WebGL the drawn figure stays.
     const canvas = wantsStage() ? el('canvas', { class: 'show__gl', 'aria-hidden': 'true' }) : null;
     let gl3d = null;
-    try { gl3d = canvas && typeof canvas.getContext === 'function' ? mountStage(canvas, show) : null; } catch { gl3d = null; }
+    let lookName = LOOKS[prefs.showLook] ? prefs.showLook : 'natural';
+    try { gl3d = canvas && typeof canvas.getContext === 'function' ? mountStage(canvas, show, { style: lookName }) : null; } catch { gl3d = null; }
     // Why the drawn figure is shown instead – said on the stage, so nobody wonders where the 3D stage went.
     const inBrowser = typeof window !== 'undefined' && typeof window.matchMedia === 'function';
     const why = () => { const e = stageError(); return e ? `${t('workoutShow.stageOffDevice')} (${e.slice(0, 90)})` : t('workoutShow.stageOffDevice'); };
@@ -290,12 +294,22 @@ export function openShow(program, { onFinish = null } = {}) {
     const playBtn = el('button', { class: 'show__ctl show__ctl--main', type: 'button', onclick: () => toggle() });
     const musicBtn = el('button', { class: 'show__ctl', type: 'button', title: t('workoutShow.music'), onclick: () => toggleMusic() }, [icon('music')]);
     const voiceBtn = el('button', { class: 'show__ctl', type: 'button', title: t('workoutShow.voice'), disabled: !canSpeak(), onclick: () => toggleVoice() }, [icon('mic')]);
+    // The look of the 3D stage: tap through natural → night arena → drawn.
+    const lookLabel = () => ({ natural: t('workoutShow.lookNatural'), night: t('workoutShow.lookNight'), drawn: t('workoutShow.lookDrawn') }[lookName]);
+    const lookBtn = el('button', { class: 'show__ctl', type: 'button', title: `${t('workoutShow.look')}: ${lookLabel()}`, 'aria-label': `${t('workoutShow.look')}: ${lookLabel()}`, onclick: () => {
+      const names = Object.keys(LOOKS);
+      lookName = names[(names.indexOf(lookName) + 1) % names.length];
+      if (gl3d) gl3d.setLook(lookName);
+      store.setSetting('showLook', lookName);
+      lookBtn.title = `${t('workoutShow.look')}: ${lookLabel()}`; lookBtn.setAttribute('aria-label', lookBtn.title);
+      toast(lookBtn.title);
+    } }, [icon('sparkles')]);
     const controls = el('div', { class: 'show__controls' }, [
       el('button', { class: 'show__ctl', type: 'button', title: t('workoutShow.previous'), 'aria-label': t('workoutShow.previous'), onclick: () => skip(-1) }, [icon('back')]),
       playBtn,
       el('button', { class: 'show__ctl', type: 'button', title: t('common.next'), 'aria-label': t('common.next'), onclick: () => skip(1) }, [icon('skip')]),
       el('span', { class: 'show__spacer' }),
-      left, musicBtn, voiceBtn,
+      left, gl3d ? lookBtn : null, musicBtn, voiceBtn,
       el('button', { class: 'show__ctl', type: 'button', title: t('workoutShow.end'), 'aria-label': t('workoutShow.end'), onclick: close }, [icon('x')]),
     ]);
     const paused = el('button', { class: 'show__paused', type: 'button', onclick: () => toggle() }, [icon('play'), el('span', { text: t('workoutShow.pausedResume') })]);

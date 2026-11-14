@@ -3609,6 +3609,10 @@
     "paceCalm": "Rustig",
     "paceBrisk": "Vlot",
     "paceFast": "Snel",
+    "look": "Stijl",
+    "lookNatural": "Natuurlijk",
+    "lookNight": "Nachtarena",
+    "lookDrawn": "Getekend",
     "exercises": {
       "one": "{count} oefening",
       "other": "{count} oefeningen"
