@@ -191,3 +191,28 @@ test('Pace: a brisk session moves quicker than written, and still on the beat', 
     near(beats * 2, Math.round(beats * 2), 1e-6, 'a repetition lasts whole or half beats');
   }
 });
+
+test('The cat changes sides round the end of the mat – never across it, and it arrives', async () => {
+  const { catWay } = await import('../js/stage-show.js');
+  const onMat = (p) => Math.abs(p[0]) <= 104 && Math.abs(p[2]) <= 38;
+  const walk = (from, to, way = catWay) => {
+    let at = [...from]; let crossed = false;
+    for (let i = 0; i < 4000; i++) {
+      const aim = way(at, to); const d = [aim[0] - at[0], 0, aim[2] - at[2]]; const far = Math.hypot(d[0], d[2]);
+      if (far < 0.5 && aim === to) return { arrived: true, crossed };
+      const step = Math.min(far, 75 / 60);
+      if (far > 1e-9) at = [at[0] + (d[0] * step) / far, 0, at[2] + (d[2] * step) / far];
+      if (onMat(at)) crossed = true;
+    }
+    return { arrived: false, crossed };
+  };
+  for (const [from, to] of [[[34, 0, -80], [34, 0, 80]], [[74, 0, -44], [34, 0, 80]], [[34, 0, 80], [74, 0, -44]], [[74, 0, 44], [74, 0, -44]]]) {
+    const r = walk(from, to);
+    assert.ok(r.arrived, `from ${from} to ${to}: it never gets there`);
+    assert.ok(!r.crossed, `from ${from} to ${to}: it walks over the mat`);
+  }
+  // On the same side it goes straight.
+  assert.deepEqual(catWay([34, 0, -80], [74, 0, -44]), [74, 0, -44]);
+  // The straight line it would take otherwise does cross the mat: this is what the detour is for.
+  assert.ok(walk([34, 0, -80], [34, 0, 80], (at, to) => to).crossed, 'a straight line would not cross – the check would prove nothing');
+});

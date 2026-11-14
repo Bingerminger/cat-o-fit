@@ -62,6 +62,18 @@ const CAT_BESIDE = [74, 0, -44];
 /** The cat is a little larger than life – a training partner, not a prop. */
 const CAT_SIZE = 1.3;
 
+/**
+ * Where the cat heads next on its way from `at` to its place `spot`: straight there – unless the place is on the
+ * other side of the mat. Then it goes out along its own side to beyond the head end, across there, and in again
+ * on the other side: never over the mat, where the trainer is.
+ */
+export function catWay(at, spot) {
+  const end = MAT[2] + 16; const beside = MAT[3] + 12;
+  if (at[2] * spot[2] < -1) return at[0] < end - 2 ? [end, 0, at[2]] : [end, 0, 0];
+  if (at[0] > MAT[2] && Math.abs(at[2]) < beside - 2) return [end, 0, Math.sign(spot[2] || 1) * beside];
+  return spot;
+}
+
 /* ------------------------------ Shots ------------------------------ */
 
 /** Angles for the work, per authoring view: yaw and pitch in degrees, zoom (1 = the body fills the free area), drift of the yaw. */
@@ -350,17 +362,17 @@ export function mountStage(canvas, show, { style = 'natural', trainer = DEFAULT_
       catSpot = (cam.eye[2] - body.pelvis[2]) * base[2] > 0 ? [base[0], 0, -base[2]] : base;
     }
     if (jumped || !catAt) catAt = [...catSpot];
-    // To the other side of the mat it goes round the head end, not across the mat and through the trainer.
-    const spot = catAt[2] * catSpot[2] < -1 ? [MAT[2] + 16, 0, 0] : catSpot;
+    const spot = catWay(catAt, catSpot);
     const way = V.sub(spot, catAt); const far = V.len(way);
-    const trot = far > 0.5;
-    if (trot) catAt = V.add(catAt, V.mul(way, Math.min(far, 75 * wdt) / far));
+    // On the way as long as it is not at its place (a point it only passes is not its place).
+    const trot = far > 0.5 || spot !== catSpot;
+    if (far > 1e-6) catAt = V.add(catAt, V.mul(way, Math.min(far, 75 * wdt) / far));
     const toTrainer = V.norm([body.pelvis[0] - catAt[0], 0, body.pelvis[2] - catAt[2]]);
     const toCam = V.norm([cam.eye[0] - catAt[0], 0, cam.eye[2] - catAt[2]]);
     if (trot) { catFx.sit = 0.2; catFx.stretch = 0.25; catFx.paw = 0; catFx.hop = 2.6 * Math.abs(Math.sin(wallT * 13)); }
     catFx.look = V.mul(V.sub(body.head, catAt), 1 / CAT_SIZE);
     cat.reset();
-    buildCat(cat, [0, 0, 0], trot ? V.norm(way) : V.norm(V.lerp(toTrainer, toCam, 0.45)), catFx);
+    buildCat(cat, [0, 0, 0], trot && far > 0.01 ? V.norm(way) : V.norm(V.lerp(toTrainer, toCam, 0.45)), catFx);
     for (let i = 0; i < cat.nv; i++) {
       const o = i * STRIDE;
       cat.v[o] = cat.v[o] * CAT_SIZE + catAt[0]; cat.v[o + 1] *= CAT_SIZE; cat.v[o + 2] = cat.v[o + 2] * CAT_SIZE + catAt[2];
