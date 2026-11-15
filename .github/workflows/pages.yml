@@ -59,6 +59,18 @@ jobs:
             node tools/build-demo.mjs --out dist/site
           fi
 
+      # Imprint and privacy live centrally at bingerminger.github.io/impressum/. The link goes into
+      # the footer of every project page (not the demo) here, so it does not depend on the release.
+      - name: Link to imprint and privacy
+        run: |
+          n=0
+          for f in $(find dist/site -name '*.html' -not -path 'dist/site/demo/*'); do
+            perl -0pi -e 's#(<footer><div class="wrap">\s*<ul>)#$1\n<li><a href="https://bingerminger.github.io/impressum/">Impressum · Privacy</a></li>#' "$f"
+            grep -q 'bingerminger.github.io/impressum/' "$f" && n=$((n+1))
+          done
+          echo "Impressum-Link in $n Seiten"
+          [ "$n" -gt 0 ]
+
       - name: Upload
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
