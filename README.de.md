@@ -9,6 +9,7 @@ Triathlon, mit Ernährung, Zyklus und Laborwerten im Trainingskontext. Ohne Abo,
 deinem eigenen Server.
 
 [![CI](https://github.com/Bingerminger/cat-o-fit/actions/workflows/ci.yml/badge.svg)](https://github.com/Bingerminger/cat-o-fit/actions/workflows/ci.yml)
+[![Version](https://img.shields.io/github/v/release/Bingerminger/cat-o-fit?label=version&color=blue)](CHANGELOG.md)
 [![License: AGPL-3.0-or-later](https://img.shields.io/badge/Lizenz-AGPL--3.0--or--later-success.svg)](LICENSE)
 [![dependencies: 0](https://img.shields.io/badge/Abh%C3%A4ngigkeiten-0-success.svg)](package.json)
 [![Docker](https://img.shields.io/badge/Docker-amd64%20%7C%20arm64-2496ed.svg)](docs/de/operations/installation.md)
