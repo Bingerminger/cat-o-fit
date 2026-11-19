@@ -1642,7 +1642,7 @@
     },
     "regenWeekLost": "Gli spostamenti e le modifiche manuali di questa settimana andranno persi.",
     "strengthOff": "No",
-    "strengthHint": "Fase di base fino a {n}× a settimana, costruzione e picco una volta per mantenere, niente nello scarico. Di preferenza in un giorno lontano da sedute impegnative e impegni fissi – mai il giorno prima di una partita o di una gara.",
+    "strengthHint": "{n}× ogni settimana fino allo scarico: prima forza generale, poi salti per la potenza, poi sedute brevi per mantenere; niente nello scarico. Di preferenza in un giorno lontano da sedute impegnative e impegni fissi – mai il giorno prima di una partita o di una gara.",
     "levelLineStrength": "Forza fino a {n}× a settimana",
     "sideRaces": {
       "title": "Gare della stagione",

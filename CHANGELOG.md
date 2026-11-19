@@ -32,13 +32,19 @@ Race plans with fixed commitments build up again – in 4.2.0 such a plan could 
 - **Level suggestion:** one long run in the last four weeks – a race, for instance – no longer makes
   *Advanced* on its own; the weekly volume counts. The suggestion affects new plans only.
 
+### Changed
+
+- **Strength in run plans: the number you chose in every week up to the taper.** Before, only the base
+  phase carried it, and build, peak and deload weeks one session. What the sessions hold still follows
+  the phase (general strength, jumps for power, short sessions to keep it); the taper stays free. From
+  the build phase on a second session is the week's fourth demanding one – the week check says so.
+
 ### For existing installations
 
 - Race plans show **“New plan logic available”** once more. If your plan has fixed commitments,
   recalculate it from today (the past stays as it is, and so do sessions you added or moved yourself) –
   and have a look at the level while you are there. The runs of plans without fixed commitments are built
-  exactly as before; in a week around a season race such a plan may now hold the strength session it
-  lacked.
+  exactly as before; its strength sessions follow the new number when you recalculate.
 
 ### Tests
 

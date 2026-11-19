@@ -15,7 +15,7 @@
         leaves its kilometres to the runs that remain: the plan gets as far as one built for that many
         run days. Where sessions moved, the shortest easy run sits where the day has to be gentlest
         (before a match, next to the long run, next to a demanding commitment);
-   - S  strength (run plans): the phase's number – first on calm days, then, the person's choice
+   - S  strength (run plans): the chosen number in every week up to the taper – first on calm days, then, the person's choice
         coming first, on the day that disturbs least; never on a commitment or a demanding run, never
         the day before a match or race, never in the race week;
    - W  one week built alone equals that week of the whole plan;
@@ -313,7 +313,7 @@ function strengthViolations(units, event, tag) {
   return bad;
 }
 
-test('PLAN-S: strength in run plans follows the phase – on calm days first, the chosen number all the same', () => {
+test('PLAN-S: strength in run plans – the chosen number in every week up to the taper, on calm days first', () => {
   const bad = [];
   const S_MASKS = ['none', 'football Tue+Thu', 'football Fri', 'football Mon+Wed', 'match Sun', 'football Mon+Wed, match Sun'];
   for (const key of ['10k', 'hm', 'marathon']) for (const days of DAYS) for (const mask of S_MASKS) for (const strengthDays of [1, 2]) {
@@ -329,7 +329,7 @@ test('PLAN-S: strength in run plans follows the phase – on calm days first, th
       const str = list.filter((u) => u.type === 'strength');
       const phase = plan.phases.find((p) => w >= p.startWeek && w <= p.endWeek).key;
       const target = weekVolumes(plan, volumeConfig(plan, event, plan.paces || {}))[w] || {};
-      const max = target.taper || phase === 'taper' ? 0 : phase === 'base' && !target.deload ? strengthDays : 1;
+      const max = target.taper || phase === 'taper' ? 0 : strengthDays;   // every week up to the taper
       if (str.length > max) bad.push(`${tag} W${w} (${phase}): ${str.length} strength sessions, at most ${max}`);
       // The chosen number is planned wherever the week has the days for it: not a commitment, not a
       // demanding run, not the day before a match, and two strength days are never neighbours.
@@ -340,9 +340,11 @@ test('PLAN-S: strength in run plans follows the phase – on calm days first, th
       let room = 0; let last = null;
       for (const d of open) { if (!last || diffDays(last, d) > 1) { room++; last = d; } }
       if (str.length < Math.min(max, room)) bad.push(`${tag} W${w} (${phase}): ${str.length} strength sessions, ${max} chosen and room for ${room}`);
-      // A week without commitments and with four or more run days has calm days: strength stays off
-      // the neighbours of the demanding runs, and the week stays at three demanding sessions.
-      if (mask === 'none' && days >= 4 && !target.deload && !target.taper && phase !== 'taper') {
+      // A base week without commitments and with four or more run days has calm days: strength stays
+      // off the neighbours of the demanding runs, and the week stays at three demanding sessions.
+      // (From the build phase on the week holds a quality session and the long run: the second strength
+      // session is the person's choice, and the week check says that it is the fourth demanding one.)
+      if (mask === 'none' && days >= 4 && phase === 'base' && !target.deload && !target.taper) {
         const hardAll = new Set(list.filter((u) => u.type !== 'strength' && isHard(u)).map((u) => u.date));
         for (const s2 of str) if (hardAll.has(addDays(s2.date, 1)) || hardAll.has(addDays(s2.date, -1))) bad.push(`${tag} W${w}: strength next to a demanding session although the week has calm days (${s2.date})`);
         const hardWithout = units.filter((u) => u.week === w && isHard(u)).length;

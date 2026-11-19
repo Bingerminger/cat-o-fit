@@ -1642,7 +1642,7 @@
     },
     "regenWeekLost": "Les déplacements et modifications manuelles de cette semaine seront perdus.",
     "strengthOff": "Non",
-    "strengthHint": "Phase de fondation jusqu’à {n}× par semaine, développement et pic une fois pour entretenir, rien pendant l’affûtage. De préférence un jour éloigné des séances exigeantes et des engagements fixes – jamais la veille d’un match ou d’une course.",
+    "strengthHint": "{n}× chaque semaine jusqu’à l’affûtage – d’abord force générale, puis sauts pour la puissance, puis courtes séances d’entretien – rien pendant l’affûtage. De préférence un jour éloigné des séances exigeantes et des engagements fixes – jamais la veille d’un match ou d’une course.",
     "levelLineStrength": "Renforcement jusqu’à {n}× par semaine",
     "sideRaces": {
       "title": "Courses de la saison",

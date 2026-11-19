@@ -1642,7 +1642,7 @@
     },
     "regenWeekLost": "Verplaatsingen en handmatige wijzigingen in deze week gaan verloren.",
     "strengthOff": "Uit",
-    "strengthHint": "Basisfase tot {n}× per week, opbouw en piek één keer om het te onderhouden, niets in de taper. Bij voorkeur op een dag uit de buurt van zware trainingen en vaste afspraken – nooit de dag voor een wedstrijd.",
+    "strengthHint": "{n}× in elke week tot de taper – eerst algemene kracht, dan sprongen voor explosiviteit, dan korte trainingen om het te onderhouden; niets in de taper. Bij voorkeur op een dag uit de buurt van zware trainingen en vaste afspraken – nooit de dag voor een wedstrijd.",
     "levelLineStrength": "Kracht tot {n}× per week",
     "sideRaces": {
       "title": "Wedstrijden van het seizoen",

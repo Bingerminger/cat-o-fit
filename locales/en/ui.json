@@ -1642,7 +1642,7 @@
     },
     "regenWeekLost": "Moves and manual changes in this week will be lost.",
     "strengthOff": "Off",
-    "strengthHint": "Base phase up to {n}× a week, build and peak once to keep it, none in the taper. Preferably on a day away from demanding sessions and fixed commitments – never the day before a match or race.",
+    "strengthHint": "{n}× in every week up to the taper – general strength first, then jumps for power, then short sessions to keep it; none in the taper. Preferably on a day away from demanding sessions and fixed commitments – never the day before a match or race.",
     "levelLineStrength": "Strength up to {n}× a week",
     "sideRaces": {
       "title": "Season races",

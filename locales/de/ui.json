@@ -1642,7 +1642,7 @@
     },
     "regenWeekLost": "Verschiebungen und manuelle Änderungen dieser Woche gehen verloren.",
     "strengthOff": "Aus",
-    "strengthHint": "Grundlage bis zu {n}× pro Woche, Aufbau und Spitze 1× zur Erhaltung, im Tapering keine. Am liebsten an einem Tag abseits harter Einheiten und Termine – nie am Tag vor einem Spiel oder Rennen.",
+    "strengthHint": "{n}× in jeder Woche bis zum Tapering – erst allgemeine Kraft, dann Sprungkraft, dann kurze Einheiten zum Erhalten; im Tapering keine. Am liebsten an einem Tag abseits harter Einheiten und Termine – nie am Tag vor einem Spiel oder Rennen.",
     "levelLineStrength": "Kraft bis {n}× pro Woche",
     "sideRaces": {
       "title": "Saisonrennen",

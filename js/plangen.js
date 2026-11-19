@@ -1143,13 +1143,12 @@ function isHardCommit(c) {
   return type === 'match' || (type === 'cross_football' && c.intensity !== 'leicht');
 }
 
-/** Strength sessions a run plan carries in a week (see buildWeekUnits): `strengthDays` (0–2) in the
-    base phase, one in build and peak, none in the taper, at most one in a deload week. */
+/** Strength sessions a run plan carries in a week (see buildWeekUnits): the number the person chose
+    (`strengthDays`, 0–2) in every week up to the taper, none in the taper. Since 4.2.1 – before, build,
+    peak and deload weeks carried one; what the sessions hold still follows the phase (RUN_STRENGTH). */
 export function runStrengthDose(strengthDays, phaseKey, info = {}) {
   const max = Math.max(0, Math.min(2, strengthDays | 0));
-  if (!max || info.taper || phaseKey === 'taper') return 0;
-  const dose = phaseKey === 'base' ? max : 1;
-  return info.deload ? Math.min(dose, 1) : dose;
+  return !max || info.taper || phaseKey === 'taper' ? 0 : max;
 }
 
 /** Strength for runners by phase: general strength in the base phase, power (jumps) in the build
@@ -1526,9 +1525,9 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
     const easy = resolveRole('recovery', ctxAt(u.date, isoDow(u.date)));
     if (easy) { if (u.relocatedFrom) easy.relocatedFrom = u.relocatedFrom; out[i] = easy; } else out.splice(i, 1);
   }
-  // Strength that follows the plan phase (run plans with `strengthDays`, since 4.2): up to the chosen
-  // number in the base phase, once in build and peak to keep it, none in the taper, one at most in a
-  // deload week. First on days that are neither demanding themselves nor next to a demanding session
+  // Strength in run plans (`strengthDays`, since 4.2): the chosen number in every week up to the
+  // taper – general strength in the base phase, power in build, short maintenance in peak –, none in
+  // the taper. First on days that are neither demanding themselves nor next to a demanding session
   // or commitment – preferably after an easy run –, while the week stays at three demanding sessions.
   // What is still missing then is planned all the same (since 4.2.1: the number the person chose comes
   // first – a week with football twice and a match got no strength at all): on the day that disturbs

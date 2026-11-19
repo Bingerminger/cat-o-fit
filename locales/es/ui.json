@@ -1642,7 +1642,7 @@
     },
     "regenWeekLost": "Los cambios de día y las modificaciones manuales de esta semana se perderán.",
     "strengthOff": "No",
-    "strengthHint": "Fase de base hasta {n}× por semana, desarrollo y pico una vez para mantener, nada en la puesta a punto. De preferencia en un día alejado de sesiones exigentes y compromisos fijos; nunca el día antes de un partido o una carrera.",
+    "strengthHint": "{n}× cada semana hasta la puesta a punto: primero fuerza general, luego saltos para la potencia, luego sesiones cortas para mantener; nada en la puesta a punto. De preferencia en un día alejado de sesiones exigentes y compromisos fijos; nunca el día antes de un partido o una carrera.",
     "levelLineStrength": "Fuerza hasta {n}× por semana",
     "sideRaces": {
       "title": "Carreras de la temporada",

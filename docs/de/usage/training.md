@@ -43,9 +43,9 @@ So legst du dein Ziel an:
      macht noch kein *Leistung*); du kannst es ändern.
    - **Lauftage pro Woche** – 3 bis 6. Mehr Tage tragen mehr Umfang; die zwei Schlüsseleinheiten
      (Dienstag, Samstag) liegen nie direkt nebeneinander.
-   - **Kraft im Plan** – aus (Voreinstellung), 1× oder 2×. Die Kraft folgt der Planphase: allgemeine
-     Kraft bis zur gewählten Zahl in der Grundlage, einmal im Aufbau (Sprünge für die Sprungkraft) und in
-     der Spitze (kurz, zum Erhalten), keine im Tapering. Sie kommt auf einen Tag, der nicht neben einer
+   - **Kraft im Plan** – aus (Voreinstellung), 1× oder 2×. Die gewählte Zahl wird in jeder Woche
+     bis zum Tapering eingeplant, im Tapering keine; der Inhalt folgt der Planphase: allgemeine Kraft in der
+     Grundlage, Sprünge für die Sprungkraft im Aufbau, kurze Einheiten zum Erhalten in der Spitze. Sie kommt auf einen Tag, der nicht neben einer
      harten Einheit oder einem harten Termin liegt, wenn die Woche einen hat, am liebsten direkt nach einem
      lockeren Lauf. Hat sie keinen – etwa mit zweimal Fußball und einem Spiel –, wird die gewählte Zahl
      trotzdem eingeplant, an dem Tag, der am wenigsten stört: nie auf einem Termin oder am Tag eines

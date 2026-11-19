@@ -43,9 +43,9 @@ This is how you set your goal:
      *Advanced*); you can change it.
    - **Run days per week** – 3 to 6. More days carry more volume; the two key sessions
      (Tuesday, Saturday) never fall on consecutive days.
-   - **Strength in the plan** – off (default), 1× or 2×. Strength follows the plan phase: general
-     strength up to the chosen number in the base phase, once in build (jumps for power) and peak (short,
-     to keep it), none in the taper. It goes on a day that is not next to a demanding session or
+   - **Strength in the plan** – off (default), 1× or 2×. The number you choose is planned in
+     every week up to the taper, none in the taper; what the sessions hold follows the plan phase: general
+     strength in the base phase, jumps for power in build, short sessions in peak to keep it. It goes on a day that is not next to a demanding session or
      commitment where the week has one, preferably right after an easy run. Where it has none – football
      twice a week and a match, say – the number you chose is planned all the same, on the day that
      disturbs least: never on a commitment or on the day of a long run or quality session, never the day

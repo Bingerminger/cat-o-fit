@@ -1642,7 +1642,7 @@
     },
     "regenWeekLost": "Mudanças de dia e alterações manuais nesta semana serão perdidas.",
     "strengthOff": "Não",
-    "strengthHint": "Fase de base até {n}× por semana, construção e pico uma vez para manter, nada no polimento. De preferência em um dia longe de treinos exigentes e compromissos fixos – nunca na véspera de um jogo ou de uma prova.",
+    "strengthHint": "{n}× em todas as semanas até o polimento – primeiro força geral, depois saltos para a potência, depois treinos curtos para manter; nada no polimento. De preferência em um dia longe de treinos exigentes e compromissos fixos – nunca na véspera de um jogo ou de uma prova.",
     "levelLineStrength": "Força até {n}× por semana",
     "sideRaces": {
       "title": "Provas da temporada",
