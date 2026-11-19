@@ -97,14 +97,13 @@ function report(name, violations) {
 }
 
 /* ---------------- V: volume ---------------- */
-test('PLAN-V: the sessions of a week keep the volume rules', () => {
+/** The volume rules of one plan, as violations. `under`: the plan has fixed commitments – a week may
+    then stay under its target (a run found no day, the others are at their limits), never above it. */
+function volumeViolations({ plan, event, units }, tag, under = false) {
   const bad = [];
-  for (const key of Object.keys(DIST)) for (const level of LEVELS) for (const days of DAYS) for (const hist of HISTORY) {
-    const { plan, event, units } = makePlan({ key, level, days, hist });
     const cfg = volumeConfig(plan, event, plan.paces || {});
     const targets = weekVolumes(plan, cfg);
     const weeks = byWeek(units, plan.weeks);
-    const tag = `${key}/${level}/${days}d/hist ${hist.weekKm || 0}`;
     let lastFull = null; let maxBuild = 0;
     for (let w = 1; w <= plan.weeks; w++) {
       const list = weeks[w];
@@ -112,9 +111,11 @@ test('PLAN-V: the sessions of a week keep the volume rules', () => {
       const info = targets[w] || {};
       const raceWeek = list.some((u) => u.type === 'race');
       const walking = w <= cfg.runWalkWeeks + 1;
-      if (!raceWeek && !walking && info.km && sum > info.km * 1.05 + 1) bad.push(`${tag} W${w}: ${sum} km of sessions, target ${info.km}`);
+      // The floor: runs are not shorter than 3–4 km. A tiny week whose runs all sit there may end above its target.
+      const atFloor = list.filter((u) => RUN.has(u.type) && !u.fixed).every((u) => (u.targetDistanceKm || 0) <= 4);
+      if (!raceWeek && !walking && info.km && sum > info.km * 1.05 + 1 && !(under && atFloor)) bad.push(`${tag} W${w}: ${sum} km of sessions, target ${info.km}`);
       // …and not far below it either (a plan that silently shrinks is as wrong as one that jumps).
-      if (!raceWeek && !walking && info.km >= 15 && sum < info.km * 0.8) bad.push(`${tag} W${w}: only ${sum} km of sessions, target ${info.km}`);
+      if (!under && !raceWeek && !walking && info.km >= 15 && sum < info.km * 0.8) bad.push(`${tag} W${w}: only ${sum} km of sessions, target ${info.km}`);
       if (!info.taper && !info.deload && !walking && lastFull && sum > lastFull * (1 + cfg.step) + 1.5) {
         bad.push(`${tag} W${w}: ${lastFull} → ${sum} km (+${Math.round((sum / lastFull - 1) * 100)} %, step ${Math.round(cfg.step * 100)} %)`);
       }
@@ -131,8 +132,24 @@ test('PLAN-V: the sessions of a week keep the volume rules', () => {
         bad.push(`${tag} W${w}: quality ${q.targetDistanceKm} km longer than the long run ${long.targetDistanceKm} km`);
       }
     }
+  return bad;
+}
+
+test('PLAN-V: the sessions of a week keep the volume rules', () => {
+  const bad = [];
+  for (const key of Object.keys(DIST)) for (const level of LEVELS) for (const days of DAYS) for (const hist of HISTORY) {
+    bad.push(...volumeViolations(makePlan({ key, level, days, hist }), `${key}/${level}/${days}d/hist ${hist.weekKm || 0}`));
   }
   report('volume', bad);
+});
+
+test('PLAN-V: also with fixed commitments – no week above its target, no jump, deload and taper as promised', () => {
+  const bad = [];
+  for (const key of Object.keys(DIST)) for (const level of LEVELS) for (const days of DAYS) for (const hist of [{}, { weekKm: 10, longKm: 6 }, { weekKm: 60, longKm: 22 }]) for (const mask of Object.keys(MASKS)) {
+    if (mask === 'none') continue;
+    bad.push(...volumeViolations(makePlan({ key, level, days, hist, commitments: MASKS[mask] }), `${key}/${level}/${days}d/hist ${hist.weekKm || 0}/${mask}`, true));
+  }
+  report('volume with commitments', bad);
 });
 
 /* ---------------- P: placement next to fixed commitments ---------------- */

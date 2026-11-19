@@ -144,7 +144,7 @@
     ],
     "commitments": [
       {
-        "id": "c-mwnvt2rq-l0psp",
+        "id": "c-mwnwhm3a-4tl8f",
         "type": "cross_football",
         "label": "Fußballtraining",
         "dow": 1,
@@ -155,7 +155,7 @@
         "desc": "Mannschaftstraining – zählt als Cross-Training (Antritte, Schnelligkeit, Spielfreude). Gut aufwärmen – etwa mit dem Fußball-Aufwärmen nach FIFA 11+ aus der Übungs-Bibliothek –, danach 5–10 min locker auslaufen. War es intensiv, die nächste Laufeinheit etwas lockerer angehen."
       },
       {
-        "id": "c-mwnvt2rq-6ytk3",
+        "id": "c-mwnwhm3a-06snv",
         "type": "cross_football",
         "label": "Fußballtraining",
         "dow": 3,
@@ -166,7 +166,7 @@
         "desc": "Mannschaftstraining – zählt als Cross-Training (Antritte, Schnelligkeit, Spielfreude). Gut aufwärmen – etwa mit dem Fußball-Aufwärmen nach FIFA 11+ aus der Übungs-Bibliothek –, danach 5–10 min locker auslaufen. War es intensiv, die nächste Laufeinheit etwas lockerer angehen."
       },
       {
-        "id": "c-mwnvt2rq-vwz8f",
+        "id": "c-mwnwhm3a-w32aj",
         "type": "match",
         "label": "Fußballspiel",
         "dow": 7,
@@ -199,7 +199,7 @@
     ],
     "units": [
       {
-        "id": "u-mwnvt2s7-dbunh",
+        "id": "u-mwnwhm3p-2vafu",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-06-15",
@@ -218,14 +218,14 @@
         "intervals": null,
         "status": "erledigt",
         "executedSessionId": "demo-fb19",
-        "commitmentId": "c-mwnvt2rq-l0psp",
+        "commitmentId": "c-mwnwhm3a-4tl8f",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.639Z",
-        "updatedAt": "2026-11-19T18:26:31.639Z"
+        "createdAt": "2026-11-19T18:45:36.421Z",
+        "updatedAt": "2026-11-19T18:45:36.421Z"
       },
       {
-        "id": "u-mwnvt2s6-bejdq",
+        "id": "u-mwnwhm3p-zqdct",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-06-16",
@@ -245,11 +245,11 @@
         "intervals": null,
         "status": "erledigt",
         "executedSessionId": "demo-pu1",
-        "createdAt": "2026-11-19T18:26:31.638Z",
-        "updatedAt": "2026-11-19T18:26:31.638Z"
+        "createdAt": "2026-11-19T18:45:36.421Z",
+        "updatedAt": "2026-11-19T18:45:36.421Z"
       },
       {
-        "id": "u-mwnvt2s7-h8yxv",
+        "id": "u-mwnwhm3p-0p999",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-06-17",
@@ -268,14 +268,14 @@
         "intervals": null,
         "status": "erledigt",
         "executedSessionId": "demo-fb17",
-        "commitmentId": "c-mwnvt2rq-6ytk3",
+        "commitmentId": "c-mwnwhm3a-06snv",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.639Z",
-        "updatedAt": "2026-11-19T18:26:31.639Z"
+        "createdAt": "2026-11-19T18:45:36.421Z",
+        "updatedAt": "2026-11-19T18:45:36.421Z"
       },
       {
-        "id": "u-mwnvt2s6-mjvpq",
+        "id": "u-mwnwhm3p-92jp1",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-06-18",
@@ -295,11 +295,11 @@
         "intervals": null,
         "status": "erledigt",
         "executedSessionId": "demo-pu2",
-        "createdAt": "2026-11-19T18:26:31.638Z",
-        "updatedAt": "2026-11-19T18:26:31.638Z"
+        "createdAt": "2026-11-19T18:45:36.421Z",
+        "updatedAt": "2026-11-19T18:45:36.421Z"
       },
       {
-        "id": "u-mwnvt2s6-h2nc2",
+        "id": "u-mwnwhm3p-2xiit",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-06-20",
@@ -319,11 +319,11 @@
         "intervals": null,
         "status": "erledigt",
         "executedSessionId": "demo-pu3",
-        "createdAt": "2026-11-19T18:26:31.638Z",
-        "updatedAt": "2026-11-19T18:26:31.638Z"
+        "createdAt": "2026-11-19T18:45:36.421Z",
+        "updatedAt": "2026-11-19T18:45:36.421Z"
       },
       {
-        "id": "u-mwnvt2s6-1xs9t",
+        "id": "u-mwnwhm3p-k5w61",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-06-21",
@@ -343,11 +343,11 @@
         "intervals": null,
         "status": "erledigt",
         "executedSessionId": "demo-pu4",
-        "createdAt": "2026-11-19T18:26:31.638Z",
-        "updatedAt": "2026-11-19T18:26:31.638Z"
+        "createdAt": "2026-11-19T18:45:36.421Z",
+        "updatedAt": "2026-11-19T18:45:36.421Z"
       },
       {
-        "id": "u-mwnvt2s6-a18h0",
+        "id": "u-mwnwhm3p-d5tvu",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-06-21",
@@ -367,11 +367,11 @@
         "intervals": null,
         "status": "erledigt",
         "executedSessionId": "demo-pu5",
-        "createdAt": "2026-11-19T18:26:31.638Z",
-        "updatedAt": "2026-11-19T18:26:31.638Z"
+        "createdAt": "2026-11-19T18:45:36.421Z",
+        "updatedAt": "2026-11-19T18:45:36.421Z"
       },
       {
-        "id": "u-mwnvt2s7-1ag14",
+        "id": "u-mwnwhm3q-9rds8",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-06-22",
@@ -390,14 +390,14 @@
         "intervals": null,
         "status": "erledigt",
         "executedSessionId": "demo-fb12",
-        "commitmentId": "c-mwnvt2rq-l0psp",
+        "commitmentId": "c-mwnwhm3a-4tl8f",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.639Z",
-        "updatedAt": "2026-11-19T18:26:31.639Z"
+        "createdAt": "2026-11-19T18:45:36.422Z",
+        "updatedAt": "2026-11-19T18:45:36.422Z"
       },
       {
-        "id": "u-mwnvt2s7-tzyzr",
+        "id": "u-mwnwhm3q-xwr32",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-06-23",
@@ -417,11 +417,11 @@
         "intervals": null,
         "status": "erledigt",
         "executedSessionId": "demo-pu6",
-        "createdAt": "2026-11-19T18:26:31.639Z",
-        "updatedAt": "2026-11-19T18:26:31.639Z"
+        "createdAt": "2026-11-19T18:45:36.422Z",
+        "updatedAt": "2026-11-19T18:45:36.422Z"
       },
       {
-        "id": "u-mwnvt2s7-aonaw",
+        "id": "u-mwnwhm3q-94xfr",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-06-24",
@@ -440,14 +440,14 @@
         "intervals": null,
         "status": "erledigt",
         "executedSessionId": "demo-fb10",
-        "commitmentId": "c-mwnvt2rq-6ytk3",
+        "commitmentId": "c-mwnwhm3a-06snv",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.639Z",
-        "updatedAt": "2026-11-19T18:26:31.639Z"
+        "createdAt": "2026-11-19T18:45:36.422Z",
+        "updatedAt": "2026-11-19T18:45:36.422Z"
       },
       {
-        "id": "u-mwnvt2s7-uv1ga",
+        "id": "u-mwnwhm3q-fyq1p",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-06-25",
@@ -467,11 +467,11 @@
         "intervals": null,
         "status": "erledigt",
         "executedSessionId": "demo-pu7",
-        "createdAt": "2026-11-19T18:26:31.639Z",
-        "updatedAt": "2026-11-19T18:26:31.639Z"
+        "createdAt": "2026-11-19T18:45:36.422Z",
+        "updatedAt": "2026-11-19T18:45:36.422Z"
       },
       {
-        "id": "u-mwnvt2s7-kniad",
+        "id": "u-mwnwhm3q-ih2hy",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-06-27",
@@ -491,11 +491,11 @@
         "intervals": null,
         "status": "erledigt",
         "executedSessionId": "demo-pu8",
-        "createdAt": "2026-11-19T18:26:31.639Z",
-        "updatedAt": "2026-11-19T18:26:31.639Z"
+        "createdAt": "2026-11-19T18:45:36.422Z",
+        "updatedAt": "2026-11-19T18:45:36.422Z"
       },
       {
-        "id": "u-mwnvt2s7-nvt9z",
+        "id": "u-mwnwhm3q-w2c7h",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-06-28",
@@ -515,11 +515,11 @@
         "intervals": null,
         "status": "erledigt",
         "executedSessionId": "demo-pu9",
-        "createdAt": "2026-11-19T18:26:31.639Z",
-        "updatedAt": "2026-11-19T18:26:31.639Z"
+        "createdAt": "2026-11-19T18:45:36.422Z",
+        "updatedAt": "2026-11-19T18:45:36.422Z"
       },
       {
-        "id": "u-mwnvt2s7-rzfsh",
+        "id": "u-mwnwhm3q-2egcx",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-06-28",
@@ -539,11 +539,11 @@
         "intervals": null,
         "status": "erledigt",
         "executedSessionId": "demo-pu10",
-        "createdAt": "2026-11-19T18:26:31.639Z",
-        "updatedAt": "2026-11-19T18:26:31.639Z"
+        "createdAt": "2026-11-19T18:45:36.422Z",
+        "updatedAt": "2026-11-19T18:45:36.422Z"
       },
       {
-        "id": "u-mwnvt2s8-oveip",
+        "id": "u-mwnwhm3q-gitrx",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-06-29",
@@ -562,14 +562,14 @@
         "intervals": null,
         "status": "erledigt",
         "executedSessionId": "demo-fb5",
-        "commitmentId": "c-mwnvt2rq-l0psp",
+        "commitmentId": "c-mwnwhm3a-4tl8f",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.640Z",
-        "updatedAt": "2026-11-19T18:26:31.640Z"
+        "createdAt": "2026-11-19T18:45:36.422Z",
+        "updatedAt": "2026-11-19T18:45:36.422Z"
       },
       {
-        "id": "u-mwnvt2s8-i8chf",
+        "id": "u-mwnwhm3q-pd4m1",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-06-30",
@@ -589,11 +589,11 @@
         "intervals": null,
         "status": "erledigt",
         "executedSessionId": "demo-pu11",
-        "createdAt": "2026-11-19T18:26:31.640Z",
-        "updatedAt": "2026-11-19T18:26:31.640Z"
+        "createdAt": "2026-11-19T18:45:36.422Z",
+        "updatedAt": "2026-11-19T18:45:36.422Z"
       },
       {
-        "id": "u-mwnvt2s8-1y3o1",
+        "id": "u-mwnwhm3q-rcvty",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-01",
@@ -612,14 +612,14 @@
         "intervals": null,
         "status": "erledigt",
         "executedSessionId": "demo-fb3",
-        "commitmentId": "c-mwnvt2rq-6ytk3",
+        "commitmentId": "c-mwnwhm3a-06snv",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.640Z",
-        "updatedAt": "2026-11-19T18:26:31.640Z"
+        "createdAt": "2026-11-19T18:45:36.422Z",
+        "updatedAt": "2026-11-19T18:45:36.422Z"
       },
       {
-        "id": "u-mwnvt2s8-9p0mp",
+        "id": "u-mwnwhm3q-l1hkz",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-02",
@@ -639,11 +639,11 @@
         "intervals": null,
         "status": "erledigt",
         "executedSessionId": "demo-pu12",
-        "createdAt": "2026-11-19T18:26:31.640Z",
-        "updatedAt": "2026-11-19T18:26:31.640Z"
+        "createdAt": "2026-11-19T18:45:36.422Z",
+        "updatedAt": "2026-11-19T18:45:36.422Z"
       },
       {
-        "id": "u-mwnvt2s8-grdt2",
+        "id": "u-mwnwhm3q-31s73",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-04",
@@ -663,11 +663,11 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.640Z",
-        "updatedAt": "2026-11-19T18:26:31.640Z"
+        "createdAt": "2026-11-19T18:45:36.422Z",
+        "updatedAt": "2026-11-19T18:45:36.422Z"
       },
       {
-        "id": "u-mwnvt2s8-5mt4d",
+        "id": "u-mwnwhm3q-vh93r",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-05",
@@ -687,11 +687,11 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.640Z",
-        "updatedAt": "2026-11-19T18:26:31.640Z"
+        "createdAt": "2026-11-19T18:45:36.422Z",
+        "updatedAt": "2026-11-19T18:45:36.422Z"
       },
       {
-        "id": "u-mwnvt2s8-ka0pk",
+        "id": "u-mwnwhm3q-ick4e",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-05",
@@ -711,11 +711,11 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.640Z",
-        "updatedAt": "2026-11-19T18:26:31.640Z"
+        "createdAt": "2026-11-19T18:45:36.422Z",
+        "updatedAt": "2026-11-19T18:45:36.422Z"
       },
       {
-        "id": "u-mwnvt2s8-4vr4i",
+        "id": "u-mwnwhm3r-gikl3",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-06",
@@ -734,14 +734,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-l0psp",
+        "commitmentId": "c-mwnwhm3a-4tl8f",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.640Z",
-        "updatedAt": "2026-11-19T18:26:31.640Z"
+        "createdAt": "2026-11-19T18:45:36.423Z",
+        "updatedAt": "2026-11-19T18:45:36.423Z"
       },
       {
-        "id": "u-mwnvt2s8-6be7y",
+        "id": "u-mwnwhm3r-msf16",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-07",
@@ -761,11 +761,11 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.640Z",
-        "updatedAt": "2026-11-19T18:26:31.640Z"
+        "createdAt": "2026-11-19T18:45:36.423Z",
+        "updatedAt": "2026-11-19T18:45:36.423Z"
       },
       {
-        "id": "u-mwnvt2s8-z1qvr",
+        "id": "u-mwnwhm3r-i56l8",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-08",
@@ -784,14 +784,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-6ytk3",
+        "commitmentId": "c-mwnwhm3a-06snv",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.640Z",
-        "updatedAt": "2026-11-19T18:26:31.640Z"
+        "createdAt": "2026-11-19T18:45:36.423Z",
+        "updatedAt": "2026-11-19T18:45:36.423Z"
       },
       {
-        "id": "u-mwnvt2s8-ihjyq",
+        "id": "u-mwnwhm3r-b85v1",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-09",
@@ -811,11 +811,11 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.640Z",
-        "updatedAt": "2026-11-19T18:26:31.640Z"
+        "createdAt": "2026-11-19T18:45:36.423Z",
+        "updatedAt": "2026-11-19T18:45:36.423Z"
       },
       {
-        "id": "u-mwnvt2s8-izrwo",
+        "id": "u-mwnwhm3r-ujwr0",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-11",
@@ -835,11 +835,11 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.640Z",
-        "updatedAt": "2026-11-19T18:26:31.640Z"
+        "createdAt": "2026-11-19T18:45:36.423Z",
+        "updatedAt": "2026-11-19T18:45:36.423Z"
       },
       {
-        "id": "u-mwnvt2s8-xu0lk",
+        "id": "u-mwnwhm3r-bnsd3",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-12",
@@ -859,11 +859,11 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.640Z",
-        "updatedAt": "2026-11-19T18:26:31.640Z"
+        "createdAt": "2026-11-19T18:45:36.423Z",
+        "updatedAt": "2026-11-19T18:45:36.423Z"
       },
       {
-        "id": "u-mwnvt2s8-ojy18",
+        "id": "u-mwnwhm3r-xnnt3",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-12",
@@ -883,11 +883,11 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.640Z",
-        "updatedAt": "2026-11-19T18:26:31.640Z"
+        "createdAt": "2026-11-19T18:45:36.423Z",
+        "updatedAt": "2026-11-19T18:45:36.423Z"
       },
       {
-        "id": "u-mwnvt2s9-7knad",
+        "id": "u-mwnwhm3r-buia5",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-13",
@@ -906,14 +906,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-l0psp",
+        "commitmentId": "c-mwnwhm3a-4tl8f",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.641Z",
-        "updatedAt": "2026-11-19T18:26:31.641Z"
+        "createdAt": "2026-11-19T18:45:36.423Z",
+        "updatedAt": "2026-11-19T18:45:36.423Z"
       },
       {
-        "id": "u-mwnvt2s9-780rb",
+        "id": "u-mwnwhm3r-tg8ep",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-15",
@@ -932,14 +932,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-6ytk3",
+        "commitmentId": "c-mwnwhm3a-06snv",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.641Z",
-        "updatedAt": "2026-11-19T18:26:31.641Z"
+        "createdAt": "2026-11-19T18:45:36.423Z",
+        "updatedAt": "2026-11-19T18:45:36.423Z"
       },
       {
-        "id": "u-mwnvt2s9-dy0ry",
+        "id": "u-mwnwhm3r-enh7c",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-16",
@@ -948,7 +948,7 @@
         "phase": "base",
         "type": "easy",
         "title": "Lockerer Dauerlauf",
-        "targetDistanceKm": 18,
+        "targetDistanceKm": 11,
         "targetDurationMin": null,
         "targetPaceSecPerKm": 363,
         "targetPaceMaxSecPerKm": 417,
@@ -959,11 +959,11 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.641Z",
-        "updatedAt": "2026-11-19T18:26:31.641Z"
+        "createdAt": "2026-11-19T18:45:36.423Z",
+        "updatedAt": "2026-11-19T18:45:36.423Z"
       },
       {
-        "id": "u-mwnvt2s9-0g9o5",
+        "id": "u-mwnwhm3r-04m8d",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-17",
@@ -972,7 +972,7 @@
         "phase": "base",
         "type": "recovery",
         "title": "Regenerationslauf",
-        "targetDistanceKm": 8,
+        "targetDistanceKm": 6,
         "targetDurationMin": null,
         "targetPaceSecPerKm": 412,
         "targetPaceMaxSecPerKm": 452,
@@ -983,12 +983,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.641Z",
-        "updatedAt": "2026-11-19T18:26:31.641Z",
+        "createdAt": "2026-11-19T18:45:36.423Z",
+        "updatedAt": "2026-11-19T18:45:36.423Z",
         "relocatedFrom": "2026-07-19"
       },
       {
-        "id": "u-mwnvt2s9-4dtu2",
+        "id": "u-mwnwhm3r-42a57",
         "planId": "demo-plan1",
         "eventId": "demo-e2",
         "date": "2026-07-18",
@@ -1008,12 +1008,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.641Z",
-        "updatedAt": "2026-11-19T18:26:31.641Z",
+        "createdAt": "2026-11-19T18:45:36.423Z",
+        "updatedAt": "2026-11-19T18:45:36.423Z",
         "sideRace": "C"
       },
       {
-        "id": "u-mwnvt2s9-o34du",
+        "id": "u-mwnwhm3r-j67hr",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-19",
@@ -1032,14 +1032,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-vwz8f",
+        "commitmentId": "c-mwnwhm3a-w32aj",
         "fixed": true,
         "intensity": null,
-        "createdAt": "2026-11-19T18:26:31.641Z",
-        "updatedAt": "2026-11-19T18:26:31.641Z"
+        "createdAt": "2026-11-19T18:45:36.423Z",
+        "updatedAt": "2026-11-19T18:45:36.423Z"
       },
       {
-        "id": "u-mwnvt2sa-3tso0",
+        "id": "u-mwnwhm3s-nlj1a",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-20",
@@ -1058,14 +1058,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-l0psp",
+        "commitmentId": "c-mwnwhm3a-4tl8f",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.642Z",
-        "updatedAt": "2026-11-19T18:26:31.642Z"
+        "createdAt": "2026-11-19T18:45:36.424Z",
+        "updatedAt": "2026-11-19T18:45:36.424Z"
       },
       {
-        "id": "u-mwnvt2sa-6m53p",
+        "id": "u-mwnwhm3s-8k6qp",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-21",
@@ -1085,12 +1085,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.642Z",
-        "updatedAt": "2026-11-19T18:26:31.642Z",
+        "createdAt": "2026-11-19T18:45:36.424Z",
+        "updatedAt": "2026-11-19T18:45:36.424Z",
         "relocatedFrom": "2026-07-23"
       },
       {
-        "id": "u-mwnvt2sa-mrsza",
+        "id": "u-mwnwhm3s-lusln",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-22",
@@ -1109,14 +1109,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-6ytk3",
+        "commitmentId": "c-mwnwhm3a-06snv",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.642Z",
-        "updatedAt": "2026-11-19T18:26:31.642Z"
+        "createdAt": "2026-11-19T18:45:36.424Z",
+        "updatedAt": "2026-11-19T18:45:36.424Z"
       },
       {
-        "id": "u-mwnvt2sa-1r0sj",
+        "id": "u-mwnwhm3s-vp0rp",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-23",
@@ -1136,13 +1136,13 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.642Z",
-        "updatedAt": "2026-11-19T18:26:31.642Z",
+        "createdAt": "2026-11-19T18:45:36.424Z",
+        "updatedAt": "2026-11-19T18:45:36.424Z",
         "downgradedFrom": "quality",
         "relocatedFrom": "2026-07-21"
       },
       {
-        "id": "u-mwnvt2s9-wr2kf",
+        "id": "u-mwnwhm3s-crdf3",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-24",
@@ -1162,12 +1162,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.641Z",
-        "updatedAt": "2026-11-19T18:26:31.641Z",
+        "createdAt": "2026-11-19T18:45:36.424Z",
+        "updatedAt": "2026-11-19T18:45:36.424Z",
         "relocatedFrom": "2026-07-25"
       },
       {
-        "id": "u-mwnvt2s9-77nbr",
+        "id": "u-mwnwhm3s-4ahng",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-25",
@@ -1187,12 +1187,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.641Z",
-        "updatedAt": "2026-11-19T18:26:31.641Z",
+        "createdAt": "2026-11-19T18:45:36.424Z",
+        "updatedAt": "2026-11-19T18:45:36.424Z",
         "relocatedFrom": "2026-07-26"
       },
       {
-        "id": "u-mwnvt2sa-wmr3y",
+        "id": "u-mwnwhm3s-4wgu8",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-26",
@@ -1211,14 +1211,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-vwz8f",
+        "commitmentId": "c-mwnwhm3a-w32aj",
         "fixed": true,
         "intensity": null,
-        "createdAt": "2026-11-19T18:26:31.642Z",
-        "updatedAt": "2026-11-19T18:26:31.642Z"
+        "createdAt": "2026-11-19T18:45:36.424Z",
+        "updatedAt": "2026-11-19T18:45:36.424Z"
       },
       {
-        "id": "u-mwnvt2sa-ujgxb",
+        "id": "u-mwnwhm3t-jk49w",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-27",
@@ -1237,14 +1237,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-l0psp",
+        "commitmentId": "c-mwnwhm3a-4tl8f",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.642Z",
-        "updatedAt": "2026-11-19T18:26:31.642Z"
+        "createdAt": "2026-11-19T18:45:36.425Z",
+        "updatedAt": "2026-11-19T18:45:36.425Z"
       },
       {
-        "id": "u-mwnvt2sa-a7vjc",
+        "id": "u-mwnwhm3t-re007",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-28",
@@ -1264,12 +1264,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.642Z",
-        "updatedAt": "2026-11-19T18:26:31.642Z",
+        "createdAt": "2026-11-19T18:45:36.425Z",
+        "updatedAt": "2026-11-19T18:45:36.425Z",
         "relocatedFrom": "2026-07-30"
       },
       {
-        "id": "u-mwnvt2sa-76isn",
+        "id": "u-mwnwhm3t-pkl80",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-29",
@@ -1288,14 +1288,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-6ytk3",
+        "commitmentId": "c-mwnwhm3a-06snv",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.642Z",
-        "updatedAt": "2026-11-19T18:26:31.642Z"
+        "createdAt": "2026-11-19T18:45:36.425Z",
+        "updatedAt": "2026-11-19T18:45:36.425Z"
       },
       {
-        "id": "u-mwnvt2sa-289wo",
+        "id": "u-mwnwhm3t-zsahx",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-30",
@@ -1315,13 +1315,13 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.642Z",
-        "updatedAt": "2026-11-19T18:26:31.642Z",
+        "createdAt": "2026-11-19T18:45:36.425Z",
+        "updatedAt": "2026-11-19T18:45:36.425Z",
         "downgradedFrom": "quality",
         "relocatedFrom": "2026-07-28"
       },
       {
-        "id": "u-mwnvt2sa-v9v65",
+        "id": "u-mwnwhm3s-xvhej",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-07-31",
@@ -1341,12 +1341,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.642Z",
-        "updatedAt": "2026-11-19T18:26:31.642Z",
+        "createdAt": "2026-11-19T18:45:36.424Z",
+        "updatedAt": "2026-11-19T18:45:36.424Z",
         "relocatedFrom": "2026-08-01"
       },
       {
-        "id": "u-mwnvt2sa-bpukv",
+        "id": "u-mwnwhm3s-h0sz4",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-01",
@@ -1366,12 +1366,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.642Z",
-        "updatedAt": "2026-11-19T18:26:31.642Z",
+        "createdAt": "2026-11-19T18:45:36.424Z",
+        "updatedAt": "2026-11-19T18:45:36.424Z",
         "relocatedFrom": "2026-08-02"
       },
       {
-        "id": "u-mwnvt2sa-r98sb",
+        "id": "u-mwnwhm3t-183pa",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-02",
@@ -1390,14 +1390,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-vwz8f",
+        "commitmentId": "c-mwnwhm3a-w32aj",
         "fixed": true,
         "intensity": null,
-        "createdAt": "2026-11-19T18:26:31.642Z",
-        "updatedAt": "2026-11-19T18:26:31.642Z"
+        "createdAt": "2026-11-19T18:45:36.425Z",
+        "updatedAt": "2026-11-19T18:45:36.425Z"
       },
       {
-        "id": "u-mwnvt2sb-ovzz2",
+        "id": "u-mwnwhm3t-cl9x0",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-03",
@@ -1416,14 +1416,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-l0psp",
+        "commitmentId": "c-mwnwhm3a-4tl8f",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.643Z",
-        "updatedAt": "2026-11-19T18:26:31.643Z"
+        "createdAt": "2026-11-19T18:45:36.425Z",
+        "updatedAt": "2026-11-19T18:45:36.425Z"
       },
       {
-        "id": "u-mwnvt2sa-0i9vq",
+        "id": "u-mwnwhm3t-3d96m",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-04",
@@ -1443,12 +1443,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.642Z",
-        "updatedAt": "2026-11-19T18:26:31.642Z",
+        "createdAt": "2026-11-19T18:45:36.425Z",
+        "updatedAt": "2026-11-19T18:45:36.425Z",
         "downgradedFrom": "quality"
       },
       {
-        "id": "u-mwnvt2sb-xm5ah",
+        "id": "u-mwnwhm3t-4tbf0",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-05",
@@ -1467,14 +1467,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-6ytk3",
+        "commitmentId": "c-mwnwhm3a-06snv",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.643Z",
-        "updatedAt": "2026-11-19T18:26:31.643Z"
+        "createdAt": "2026-11-19T18:45:36.425Z",
+        "updatedAt": "2026-11-19T18:45:36.425Z"
       },
       {
-        "id": "u-mwnvt2sb-vhe0a",
+        "id": "u-mwnwhm3t-1vv6g",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-06",
@@ -1483,7 +1483,7 @@
         "phase": "build",
         "type": "easy",
         "title": "Lockerer Dauerlauf",
-        "targetDistanceKm": 18,
+        "targetDistanceKm": 14,
         "targetDurationMin": null,
         "targetPaceSecPerKm": 363,
         "targetPaceMaxSecPerKm": 417,
@@ -1494,11 +1494,11 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.643Z",
-        "updatedAt": "2026-11-19T18:26:31.643Z"
+        "createdAt": "2026-11-19T18:45:36.425Z",
+        "updatedAt": "2026-11-19T18:45:36.425Z"
       },
       {
-        "id": "u-mwnvt2sb-w6dl1",
+        "id": "u-mwnwhm3t-oflsn",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-08",
@@ -1518,11 +1518,11 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.643Z",
-        "updatedAt": "2026-11-19T18:26:31.643Z"
+        "createdAt": "2026-11-19T18:45:36.425Z",
+        "updatedAt": "2026-11-19T18:45:36.425Z"
       },
       {
-        "id": "u-mwnvt2sb-5rcrt",
+        "id": "u-mwnwhm3t-hbu1h",
         "planId": "demo-plan1",
         "eventId": "demo-e3",
         "date": "2026-08-09",
@@ -1542,12 +1542,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.643Z",
-        "updatedAt": "2026-11-19T18:26:31.643Z",
+        "createdAt": "2026-11-19T18:45:36.425Z",
+        "updatedAt": "2026-11-19T18:45:36.425Z",
         "sideRace": "B"
       },
       {
-        "id": "u-mwnvt2sb-g6f8v",
+        "id": "u-mwnwhm3t-g8bd3",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-10",
@@ -1566,14 +1566,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-l0psp",
+        "commitmentId": "c-mwnwhm3a-4tl8f",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.643Z",
-        "updatedAt": "2026-11-19T18:26:31.643Z"
+        "createdAt": "2026-11-19T18:45:36.425Z",
+        "updatedAt": "2026-11-19T18:45:36.425Z"
       },
       {
-        "id": "u-mwnvt2sb-tv70a",
+        "id": "u-mwnwhm3t-3lelj",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-11",
@@ -1593,12 +1593,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.643Z",
-        "updatedAt": "2026-11-19T18:26:31.643Z",
+        "createdAt": "2026-11-19T18:45:36.425Z",
+        "updatedAt": "2026-11-19T18:45:36.425Z",
         "downgradedFrom": "quality"
       },
       {
-        "id": "u-mwnvt2sb-f3n3b",
+        "id": "u-mwnwhm3t-34w64",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-12",
@@ -1617,14 +1617,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-6ytk3",
+        "commitmentId": "c-mwnwhm3a-06snv",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.643Z",
-        "updatedAt": "2026-11-19T18:26:31.643Z"
+        "createdAt": "2026-11-19T18:45:36.425Z",
+        "updatedAt": "2026-11-19T18:45:36.425Z"
       },
       {
-        "id": "u-mwnvt2sb-cd1co",
+        "id": "u-mwnwhm3t-xbx5d",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-13",
@@ -1644,11 +1644,11 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.643Z",
-        "updatedAt": "2026-11-19T18:26:31.643Z"
+        "createdAt": "2026-11-19T18:45:36.425Z",
+        "updatedAt": "2026-11-19T18:45:36.425Z"
       },
       {
-        "id": "u-mwnvt2sb-701fj",
+        "id": "u-mwnwhm3t-8munt",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-14",
@@ -1668,12 +1668,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.643Z",
-        "updatedAt": "2026-11-19T18:26:31.643Z",
+        "createdAt": "2026-11-19T18:45:36.425Z",
+        "updatedAt": "2026-11-19T18:45:36.425Z",
         "relocatedFrom": "2026-08-15"
       },
       {
-        "id": "u-mwnvt2sb-jqbbf",
+        "id": "u-mwnwhm3t-wjw5y",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-15",
@@ -1693,12 +1693,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.643Z",
-        "updatedAt": "2026-11-19T18:26:31.643Z",
+        "createdAt": "2026-11-19T18:45:36.425Z",
+        "updatedAt": "2026-11-19T18:45:36.425Z",
         "relocatedFrom": "2026-08-16"
       },
       {
-        "id": "u-mwnvt2sb-cqxt0",
+        "id": "u-mwnwhm3t-z7ej9",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-16",
@@ -1717,14 +1717,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-vwz8f",
+        "commitmentId": "c-mwnwhm3a-w32aj",
         "fixed": true,
         "intensity": null,
-        "createdAt": "2026-11-19T18:26:31.643Z",
-        "updatedAt": "2026-11-19T18:26:31.643Z"
+        "createdAt": "2026-11-19T18:45:36.425Z",
+        "updatedAt": "2026-11-19T18:45:36.425Z"
       },
       {
-        "id": "u-mwnvt2sc-6r0mh",
+        "id": "u-mwnwhm3u-u3h3j",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-17",
@@ -1743,14 +1743,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-l0psp",
+        "commitmentId": "c-mwnwhm3a-4tl8f",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.644Z",
-        "updatedAt": "2026-11-19T18:26:31.644Z"
+        "createdAt": "2026-11-19T18:45:36.426Z",
+        "updatedAt": "2026-11-19T18:45:36.426Z"
       },
       {
-        "id": "u-mwnvt2sc-4gtpt",
+        "id": "u-mwnwhm3u-2md9i",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-18",
@@ -1770,12 +1770,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.644Z",
-        "updatedAt": "2026-11-19T18:26:31.644Z",
+        "createdAt": "2026-11-19T18:45:36.426Z",
+        "updatedAt": "2026-11-19T18:45:36.426Z",
         "relocatedFrom": "2026-08-20"
       },
       {
-        "id": "u-mwnvt2sc-g3p9y",
+        "id": "u-mwnwhm3u-byt90",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-19",
@@ -1794,14 +1794,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-6ytk3",
+        "commitmentId": "c-mwnwhm3a-06snv",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.644Z",
-        "updatedAt": "2026-11-19T18:26:31.644Z"
+        "createdAt": "2026-11-19T18:45:36.426Z",
+        "updatedAt": "2026-11-19T18:45:36.426Z"
       },
       {
-        "id": "u-mwnvt2sc-84e9g",
+        "id": "u-mwnwhm3u-1u6ep",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-20",
@@ -1821,13 +1821,13 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.644Z",
-        "updatedAt": "2026-11-19T18:26:31.644Z",
+        "createdAt": "2026-11-19T18:45:36.426Z",
+        "updatedAt": "2026-11-19T18:45:36.426Z",
         "downgradedFrom": "quality",
         "relocatedFrom": "2026-08-18"
       },
       {
-        "id": "u-mwnvt2sc-rfa4f",
+        "id": "u-mwnwhm3u-esm2o",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-21",
@@ -1848,12 +1848,12 @@
         "raceBlockKm": 5.5,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.644Z",
-        "updatedAt": "2026-11-19T18:26:31.644Z",
+        "createdAt": "2026-11-19T18:45:36.426Z",
+        "updatedAt": "2026-11-19T18:45:36.426Z",
         "relocatedFrom": "2026-08-22"
       },
       {
-        "id": "u-mwnvt2sc-0r6cs",
+        "id": "u-mwnwhm3u-54ta7",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-22",
@@ -1873,12 +1873,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.644Z",
-        "updatedAt": "2026-11-19T18:26:31.644Z",
+        "createdAt": "2026-11-19T18:45:36.426Z",
+        "updatedAt": "2026-11-19T18:45:36.426Z",
         "relocatedFrom": "2026-08-23"
       },
       {
-        "id": "u-mwnvt2sc-3fsp1",
+        "id": "u-mwnwhm3u-ex3bj",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-23",
@@ -1897,14 +1897,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-vwz8f",
+        "commitmentId": "c-mwnwhm3a-w32aj",
         "fixed": true,
         "intensity": null,
-        "createdAt": "2026-11-19T18:26:31.644Z",
-        "updatedAt": "2026-11-19T18:26:31.644Z"
+        "createdAt": "2026-11-19T18:45:36.426Z",
+        "updatedAt": "2026-11-19T18:45:36.426Z"
       },
       {
-        "id": "u-mwnvt2sc-kz3qm",
+        "id": "u-mwnwhm3u-taj0h",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-24",
@@ -1923,14 +1923,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-l0psp",
+        "commitmentId": "c-mwnwhm3a-4tl8f",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.644Z",
-        "updatedAt": "2026-11-19T18:26:31.644Z"
+        "createdAt": "2026-11-19T18:45:36.426Z",
+        "updatedAt": "2026-11-19T18:45:36.426Z"
       },
       {
-        "id": "u-mwnvt2sc-xe72l",
+        "id": "u-mwnwhm3u-kdrhg",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-25",
@@ -1950,12 +1950,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.644Z",
-        "updatedAt": "2026-11-19T18:26:31.644Z",
+        "createdAt": "2026-11-19T18:45:36.426Z",
+        "updatedAt": "2026-11-19T18:45:36.426Z",
         "relocatedFrom": "2026-08-27"
       },
       {
-        "id": "u-mwnvt2sc-fgefo",
+        "id": "u-mwnwhm3u-rtf07",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-26",
@@ -1974,14 +1974,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-6ytk3",
+        "commitmentId": "c-mwnwhm3a-06snv",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.644Z",
-        "updatedAt": "2026-11-19T18:26:31.644Z"
+        "createdAt": "2026-11-19T18:45:36.426Z",
+        "updatedAt": "2026-11-19T18:45:36.426Z"
       },
       {
-        "id": "u-mwnvt2sc-6gq9p",
+        "id": "u-mwnwhm3u-z6203",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-27",
@@ -2001,13 +2001,13 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.644Z",
-        "updatedAt": "2026-11-19T18:26:31.644Z",
+        "createdAt": "2026-11-19T18:45:36.426Z",
+        "updatedAt": "2026-11-19T18:45:36.426Z",
         "downgradedFrom": "quality",
         "relocatedFrom": "2026-08-25"
       },
       {
-        "id": "u-mwnvt2sc-yabix",
+        "id": "u-mwnwhm3u-mu10i",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-28",
@@ -2028,12 +2028,12 @@
         "raceBlockKm": 5.5,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.644Z",
-        "updatedAt": "2026-11-19T18:26:31.644Z",
+        "createdAt": "2026-11-19T18:45:36.426Z",
+        "updatedAt": "2026-11-19T18:45:36.426Z",
         "relocatedFrom": "2026-08-29"
       },
       {
-        "id": "u-mwnvt2sc-j764u",
+        "id": "u-mwnwhm3u-neckv",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-29",
@@ -2053,12 +2053,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.644Z",
-        "updatedAt": "2026-11-19T18:26:31.644Z",
+        "createdAt": "2026-11-19T18:45:36.426Z",
+        "updatedAt": "2026-11-19T18:45:36.426Z",
         "relocatedFrom": "2026-08-30"
       },
       {
-        "id": "u-mwnvt2sc-wulcx",
+        "id": "u-mwnwhm3u-jm00j",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-30",
@@ -2077,14 +2077,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-vwz8f",
+        "commitmentId": "c-mwnwhm3a-w32aj",
         "fixed": true,
         "intensity": null,
-        "createdAt": "2026-11-19T18:26:31.644Z",
-        "updatedAt": "2026-11-19T18:26:31.644Z"
+        "createdAt": "2026-11-19T18:45:36.426Z",
+        "updatedAt": "2026-11-19T18:45:36.426Z"
       },
       {
-        "id": "u-mwnvt2sd-rocn1",
+        "id": "u-mwnwhm3v-16siw",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-08-31",
@@ -2103,14 +2103,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-l0psp",
+        "commitmentId": "c-mwnwhm3a-4tl8f",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.645Z",
-        "updatedAt": "2026-11-19T18:26:31.645Z"
+        "createdAt": "2026-11-19T18:45:36.427Z",
+        "updatedAt": "2026-11-19T18:45:36.427Z"
       },
       {
-        "id": "u-mwnvt2sd-5p395",
+        "id": "u-mwnwhm3v-v0opr",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-09-01",
@@ -2130,12 +2130,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.645Z",
-        "updatedAt": "2026-11-19T18:26:31.645Z",
+        "createdAt": "2026-11-19T18:45:36.427Z",
+        "updatedAt": "2026-11-19T18:45:36.427Z",
         "relocatedFrom": "2026-09-03"
       },
       {
-        "id": "u-mwnvt2sd-1d40s",
+        "id": "u-mwnwhm3v-al40k",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-09-02",
@@ -2154,14 +2154,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-6ytk3",
+        "commitmentId": "c-mwnwhm3a-06snv",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.645Z",
-        "updatedAt": "2026-11-19T18:26:31.645Z"
+        "createdAt": "2026-11-19T18:45:36.427Z",
+        "updatedAt": "2026-11-19T18:45:36.427Z"
       },
       {
-        "id": "u-mwnvt2sd-rlz9b",
+        "id": "u-mwnwhm3v-x3sf0",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-09-03",
@@ -2181,13 +2181,13 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.645Z",
-        "updatedAt": "2026-11-19T18:26:31.645Z",
+        "createdAt": "2026-11-19T18:45:36.427Z",
+        "updatedAt": "2026-11-19T18:45:36.427Z",
         "downgradedFrom": "quality",
         "relocatedFrom": "2026-09-01"
       },
       {
-        "id": "u-mwnvt2sd-gruwx",
+        "id": "u-mwnwhm3v-tk03y",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-09-04",
@@ -2207,12 +2207,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.645Z",
-        "updatedAt": "2026-11-19T18:26:31.645Z",
+        "createdAt": "2026-11-19T18:45:36.427Z",
+        "updatedAt": "2026-11-19T18:45:36.427Z",
         "relocatedFrom": "2026-09-05"
       },
       {
-        "id": "u-mwnvt2sd-cypm5",
+        "id": "u-mwnwhm3v-ducur",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-09-05",
@@ -2232,12 +2232,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.645Z",
-        "updatedAt": "2026-11-19T18:26:31.645Z",
+        "createdAt": "2026-11-19T18:45:36.427Z",
+        "updatedAt": "2026-11-19T18:45:36.427Z",
         "relocatedFrom": "2026-09-06"
       },
       {
-        "id": "u-mwnvt2sd-keuc4",
+        "id": "u-mwnwhm3v-rs6e1",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-09-06",
@@ -2256,14 +2256,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-vwz8f",
+        "commitmentId": "c-mwnwhm3a-w32aj",
         "fixed": true,
         "intensity": null,
-        "createdAt": "2026-11-19T18:26:31.645Z",
-        "updatedAt": "2026-11-19T18:26:31.645Z"
+        "createdAt": "2026-11-19T18:45:36.427Z",
+        "updatedAt": "2026-11-19T18:45:36.427Z"
       },
       {
-        "id": "u-mwnvt2sd-nx69r",
+        "id": "u-mwnwhm3v-64xfr",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-09-07",
@@ -2282,14 +2282,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-l0psp",
+        "commitmentId": "c-mwnwhm3a-4tl8f",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.645Z",
-        "updatedAt": "2026-11-19T18:26:31.645Z"
+        "createdAt": "2026-11-19T18:45:36.427Z",
+        "updatedAt": "2026-11-19T18:45:36.427Z"
       },
       {
-        "id": "u-mwnvt2sd-fpqqw",
+        "id": "u-mwnwhm3v-w6xcf",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-09-08",
@@ -2309,12 +2309,12 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.645Z",
-        "updatedAt": "2026-11-19T18:26:31.645Z",
+        "createdAt": "2026-11-19T18:45:36.427Z",
+        "updatedAt": "2026-11-19T18:45:36.427Z",
         "downgradedFrom": "quality"
       },
       {
-        "id": "u-mwnvt2sd-0tkir",
+        "id": "u-mwnwhm3v-7ml2h",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-09-09",
@@ -2333,14 +2333,14 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "commitmentId": "c-mwnvt2rq-6ytk3",
+        "commitmentId": "c-mwnwhm3a-06snv",
         "fixed": true,
         "intensity": "normal",
-        "createdAt": "2026-11-19T18:26:31.645Z",
-        "updatedAt": "2026-11-19T18:26:31.645Z"
+        "createdAt": "2026-11-19T18:45:36.427Z",
+        "updatedAt": "2026-11-19T18:45:36.427Z"
       },
       {
-        "id": "u-mwnvt2sd-oj3rm",
+        "id": "u-mwnwhm3v-wglop",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-09-11",
@@ -2360,11 +2360,11 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.645Z",
-        "updatedAt": "2026-11-19T18:26:31.645Z"
+        "createdAt": "2026-11-19T18:45:36.427Z",
+        "updatedAt": "2026-11-19T18:45:36.427Z"
       },
       {
-        "id": "u-mwnvt2sd-qdt47",
+        "id": "u-mwnwhm3v-i9n4a",
         "planId": "demo-plan1",
         "eventId": "demo-e1",
         "date": "2026-09-12",
@@ -2384,8 +2384,8 @@
         "intervals": null,
         "status": "geplant",
         "executedSessionId": null,
-        "createdAt": "2026-11-19T18:26:31.645Z",
-        "updatedAt": "2026-11-19T18:26:31.645Z"
+        "createdAt": "2026-11-19T18:45:36.427Z",
+        "updatedAt": "2026-11-19T18:45:36.427Z"
       }
     ],
     "generated": true,

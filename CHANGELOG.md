@@ -36,15 +36,18 @@ Race plans with fixed commitments build up again – in 4.2.0 such a plan could 
 
 - Race plans show **“New plan logic available”** once more. If your plan has fixed commitments,
   recalculate it from today (the past stays as it is, and so do sessions you added or moved yourself) –
-  and have a look at the level while you are there. Plans without fixed commitments are built exactly as
-  before.
+  and have a look at the level while you are there. The runs of plans without fixed commitments are built
+  exactly as before; in a week around a season race such a plan may now hold the strength session it
+  lacked.
 
 ### Tests
 
 - A new plan invariant over all patterns of fixed commitments, long plans from a small start and a
   combined pattern (football twice a week plus a match): the plan gets as far as one built for the run
   days that remain, the person keeps their runs while a day is free, and the easy runs are ordered by how
-  gentle their day has to be. The strength invariant states the new rules. Both were red before the fix.
+  gentle their day has to be. The weekly volume rules (no week above its target, no jump, deload, taper)
+  are now checked with fixed commitments too, and the strength invariant states the new rules. All of them
+  were red before the fix.
 
 ## [4.2.0] – 2026-11-14
 

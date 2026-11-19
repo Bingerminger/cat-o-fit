@@ -483,6 +483,7 @@ function allocate(cfg, info, roles, phaseKey, qualityKm = null, refit = false) {
     for (const walk of small) {
       const a = allocateWith(cfg, info, roles, phaseKey, qualityKm, walk, refit);
       if (Math.abs(a.fitTotal - info.km) <= 0.75) return a;
+      if (near && info.taper && a.fitTotal > info.km) break;   // the taper never goes above its target
       if (!near || Math.abs(a.fitTotal - info.km) < Math.abs(near.fitTotal - info.km)) near = a;
     }
     return near;
@@ -1460,6 +1461,8 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   };
   for (const p of [...place].sort((a, b) => EASY_LAST.has(a.role) - EASY_LAST.has(b.role))) {
     if (p.drop || !blocked(p.date)) continue;
+    // A side race is the session of its day: the easy run it replaces is not made up elsewhere.
+    if (EASY_LAST.has(p.role) && sideOn(p.date)) { p.drop = true; continue; }
     if (!RELOCATABLE.has(p.role)) { p.drop = true; p.lost = true; continue; }
     // A key role keeps its distance wherever it lands: at its own day it may have been an easy run of
     // the race build-up, on an earlier day it is a real long run or quality session again.
@@ -1479,9 +1482,10 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   // strides – the week is fitted again to what takes place (the days stay as placed). Otherwise the
   // week ends below its target and the next one may rise only from there (see `prev` above): with a
   // match on the day of the recovery run a plan never got beyond some 16 km a week.
-  const lostRuns = place.filter((p) => p.lost && RUN_ROLES.includes(p.role));
+  // (A week with a side race is lighter by design and keeps what it has.)
+  const lostRuns = sideHere.length ? [] : place.filter((p) => p.lost && RUN_ROLES.includes(p.role));
   const easedKm = place.some((p) => p.role === 'quality' && p.downgrade && !p.drop) && alloc.quality > STRIDES_MAX_KM ? STRIDES_MAX_KM : null;
-  if (lostRuns.length || easedKm) {
+  if (lostRuns.length || (easedKm && !sideHere.length)) {
     const left = { ...roles };
     for (const p of lostRuns) left[p.role] = Math.max(0, (left[p.role] || 0) - 1);
     alloc = allocate(cfg, info, left, phase.key, easedKm ?? qKm, true);
@@ -1507,7 +1511,7 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
     + (longDay && Math.abs(diffDays(d, longDay)) === 1 ? 2 : 0)
     + (hardCommit.has(addDays(d, 1)) || hardCommit.has(addDays(d, -1)) ? 1 : 0);
   const easyMade = made.filter(easyRun);
-  if (easyMade.length > 1 && made.some((m) => m.p.date !== m.p.wish)
+  if (easyMade.length > 1 && !sideHere.length && made.some((m) => m.p.date !== m.p.wish)
       && easyMade.some((x) => easyMade.some((y) => gentle(x.p.date) > gentle(y.p.date) && x.unit.targetDistanceKm > y.unit.targetDistanceKm))) {
     const days = easyMade.map((m) => m.p.date).sort((x, y) => (gentle(y) - gentle(x)) || x.localeCompare(y));
     const byKm = [...easyMade].sort((x, y) => (x.unit.targetDistanceKm - y.unit.targetDistanceKm) || x.p.date.localeCompare(y.p.date));
