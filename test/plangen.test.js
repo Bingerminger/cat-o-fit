@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { addDays, isoDow, diffDays } from '../js/ui.js';
 import {
   generatePlanUnits, buildWeekUnits, makePhases, weekTemplateFor, planCommitments, coveredFixed,
-  planReadiness, volumeConfig, weekVolumes, trainingHistory, suggestLevel, raceKey, LEGACY_COMMITMENT_IDS,
+  planReadiness, volumeConfig, weekVolumes, trainingHistory, suggestLevel, levelOf, raceKey, LEGACY_COMMITMENT_IDS,
   DEFAULT_WEEK_TEMPLATE, TRIATHLON_TEMPLATE, HYROX_TEMPLATE,
 } from '../js/plangen.js';
 import { planPaces, pacesFromVdot, racePaceFromVdot } from '../js/vdot.js';
@@ -173,6 +173,13 @@ test('History and level suggestion', () => {
   assert.equal(suggestLevel(h), 'fortgeschritten');
   assert.equal(suggestLevel({}), 'einsteiger');
   assert.equal(suggestLevel({ weekKm: 45 }), 'leistung');
+  // One long run alone – a race – does not make "Performance" (since 4.2.1): the weekly volume counts.
+  assert.equal(suggestLevel({ weekKm: 9, longKm: 21 }), 'fortgeschritten');
+  assert.equal(suggestLevel({ weekKm: 25, longKm: 18 }), 'leistung');
+  assert.equal(suggestLevel({ weekKm: 24.5, longKm: 30 }), 'fortgeschritten');
+  assert.equal(suggestLevel({ longKm: 10 }), 'fortgeschritten');
+  // A plan stored without a level keeps the level the earlier rule read from its history.
+  assert.equal(levelOf({ baseWeekKm: 9, baseLongKm: 21 }), 'leistung');
 });
 
 test('T16/T17: deload weeks and tapering in the long run', () => {

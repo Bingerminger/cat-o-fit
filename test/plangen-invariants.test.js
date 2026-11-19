@@ -10,9 +10,14 @@
         demanding sessions the plan builds never fall on consecutive days;
    - R  race week: the day before is a short shakeout, two days before is free;
    - M  a standard marathon plan reaches the volume the race prediction asks for;
-   - C  fixed commitments do not stall the plan: when a commitment takes the day of a run, the runs
-        that remain carry the week – the plan gets as far as one built for that many run days; and when
-        they push the long run next to another run, that day carries the shortest easy run of the week;
+   - C  fixed commitments do not stall the plan (since 4.2.1): a run whose day a commitment takes moves
+        to a free day – the person keeps their number of runs while a day is free –, and what finds none
+        leaves its kilometres to the runs that remain: the plan gets as far as one built for that many
+        run days. Where sessions moved, the shortest easy run sits where the day has to be gentlest
+        (before a match, next to the long run, next to a demanding commitment);
+   - S  strength (run plans): the phase's number – first on calm days, then, the person's choice
+        coming first, on the day that disturbs least; never on a commitment or a demanding run, never
+        the day before a match or race, never in the race week;
    - W  one week built alone equals that week of the whole plan;
    - B  side races (B/C, since 4.2): one race session each, a B race with shakeout and a free day
         before, nothing demanding the day before or in the recovery days after, a C race instead of
@@ -82,7 +87,7 @@ function makePlan({ key, level, days, hist = {}, commitments = [], weeks = DIST[
 const runWalk = (u) => !!(u.intervals && (u.intervals.segments || []).some((s) => s.walk));
 const runKm = (list) => list.filter((u) => RUN.has(u.type) && !u.fixed && !runWalk(u)).reduce((a, u) => a + (Number(u.targetDistanceKm) || 0), 0);
 const byWeek = (units, weeks) => Array.from({ length: weeks + 1 }, (_, w) => units.filter((u) => u.week === w));
-const isKey = (u) => !u.fixed && u.type !== 'race' && (u.type === 'long' || isHard(u));
+const isKey = (u) => !u.fixed && u.type !== 'race' && u.type !== 'strength' && (u.type === 'long' || isHard(u));
 const hardCommitDates = (units) => new Set(units.filter((u) => u.fixed && isHard(u)).map((u) => u.date));
 
 function report(name, violations) {
@@ -152,8 +157,8 @@ function placementViolations(units, plan, event, tag) {
     }
   }
   // Two demanding sessions of the plan on consecutive days (also across a week boundary).
-  const demanding = units.filter((u) => !u.fixed && u.type !== 'race' && isHard(u));
-  const hardAll = units.filter((u) => isHard(u) && u.type !== 'race');
+  const demanding = units.filter((u) => !u.fixed && u.type !== 'race' && u.type !== 'strength' && isHard(u));
+  const hardAll = units.filter((u) => isHard(u) && u.type !== 'race' && u.type !== 'strength');
   for (const u of demanding) {
     if (diffDays(u.date, raceDate) <= 6) continue;
     const n = hardAll.find((x) => x !== u && x.date === addDays(u.date, 1) && !(x.fixed && u.fixed));
@@ -240,17 +245,29 @@ test('PLAN-C: when a commitment takes the day of a run, the runs that remain car
     const { plan, event, units } = makePlan({ key, level, days, hist, commitments: MASKS[mask], weeks: LONG[key] });
     const isFull = full(plan, event);
     const weeks = byWeek(units, plan.weeks);
+    const hard = hardCommitDates(units);
+    const matches = new Set(units.filter((u) => u.fixed && u.type === 'match').map((u) => u.date));
+    const fixedDays = new Set(units.filter((u) => u.fixed).map((u) => u.date));
     const runsOf = (list) => list.filter((u) => RUN.has(u.type) && !u.fixed && !runWalk(u)).length;
     let peak = 0; let fewest = 9;
     for (let w = 2; w <= plan.weeks; w++) {
       if (!isFull(w) || weeks[w].some((u) => u.type === 'race')) continue;
       peak = Math.max(peak, runKm(weeks[w]));
       fewest = Math.min(fewest, runsOf(weeks[w]));
-      // The day before the long run carries the week's shortest easy run (the templates keep it free).
-      const long = weeks[w].find((u) => u.type === 'long' && !u.fixed);
-      const easy = weeks[w].filter((u) => !u.fixed && (u.type === 'easy' || u.type === 'recovery') && !isHard(u) && u.targetDistanceKm > 0 && diffDays(u.date, event.date) > 6);
-      const eve = long && easy.find((u) => u.date === addDays(long.date, -1));
-      if (eve && easy.some((u) => u.targetDistanceKm < eve.targetDistanceKm)) bad.push(`${key}/${level}/${days}d/${mask} W${w}: ${eve.targetDistanceKm} km the day before the long run although a shorter easy run is in the week`);
+      // Where sessions moved, the shortest easy run sits where the day has to be gentlest.
+      if (weeks[w].some((u) => u.relocatedFrom)) {
+        const long = weeks[w].find((u) => u.type === 'long' && !u.fixed);
+        const gentle = (d) => (matches.has(addDays(d, 1)) ? 4 : 0) + (long && Math.abs(diffDays(d, long.date)) === 1 ? 2 : 0)
+          + (hard.has(addDays(d, 1)) || hard.has(addDays(d, -1)) ? 1 : 0);
+        const easy = weeks[w].filter((u) => !u.fixed && (u.type === 'easy' || u.type === 'recovery') && !isHard(u) && u.targetDistanceKm > 0 && diffDays(u.date, event.date) > 6);
+        for (const x of easy) for (const y of easy) {
+          if (gentle(x.date) > gentle(y.date) && x.targetDistanceKm > y.targetDistanceKm) bad.push(`${key}/${level}/${days}d/${mask} W${w}: ${x.targetDistanceKm} km on ${x.date}, the gentler day, ${y.targetDistanceKm} km on ${y.date}`);
+        }
+      }
+      // The person keeps their number of runs while the week has a day for each (a walk counts: small weeks walk).
+      const free = Array.from({ length: 7 }, (_, i) => addDays(addDays(plan.startDate, (w - 1) * 7), i)).filter((d) => !fixedDays.has(d)).length;
+      const moving = weeks[w].filter((u) => !u.fixed && (RUN.has(u.type) || u.type === 'walk')).length;
+      if (moving < Math.min(days, free)) bad.push(`${key}/${level}/${days}d/${mask} W${w}: ${moving} runs, ${days} chosen and ${free} days free`);
     }
     // The same plan for a person who runs on that many days and has no commitments.
     const ref = makePlan({ key, level, days: Math.max(3, Math.min(days, fewest)), hist, weeks: LONG[key] });
@@ -262,14 +279,34 @@ test('PLAN-C: when a commitment takes the day of a run, the runs that remain car
 });
 
 /* ---------------- S: strength that follows the plan phase ---------------- */
-test('PLAN-S: strength in run plans follows the phase, never next to a demanding day, never a fourth demanding session', () => {
+/** Where strength may never sit, whatever the week looks like. */
+function strengthViolations(units, event, tag) {
   const bad = [];
-  const S_MASKS = ['none', 'football Tue+Thu', 'football Fri', 'football Mon+Wed', 'match Sun'];
+  const fixedDays = new Set(units.filter((u) => u.fixed).map((u) => u.date));
+  const hardRuns = new Set(units.filter((u) => !u.fixed && u.type !== 'strength' && u.type !== 'race' && isHard(u)).map((u) => u.date));
+  const noEve = new Set(units.filter((u) => u.type === 'race' || (u.fixed && u.type === 'match')).map((u) => u.date));
+  const str = units.filter((u) => u.type === 'strength' && !u.fixed);
+  for (const u of str) {
+    if (fixedDays.has(u.date)) bad.push(`${tag}: strength on the day of a fixed commitment (${u.date})`);
+    if (hardRuns.has(u.date)) bad.push(`${tag}: strength on the day of a long run or quality session (${u.date})`);
+    if (noEve.has(addDays(u.date, 1))) bad.push(`${tag}: strength the day before a match or race (${u.date})`);
+    if (diffDays(u.date, event.date) <= 6) bad.push(`${tag}: strength in the race week (${u.date})`);
+    if (str.some((x) => x !== u && Math.abs(diffDays(x.date, u.date)) === 1)) bad.push(`${tag}: strength on two days in a row (${u.date})`);
+  }
+  return bad;
+}
+
+test('PLAN-S: strength in run plans follows the phase – on calm days first, the chosen number all the same', () => {
+  const bad = [];
+  const S_MASKS = ['none', 'football Tue+Thu', 'football Fri', 'football Mon+Wed', 'match Sun', 'football Mon+Wed, match Sun'];
   for (const key of ['10k', 'hm', 'marathon']) for (const days of DAYS) for (const mask of S_MASKS) for (const strengthDays of [1, 2]) {
     const { plan, event, units } = makePlan({ key, level: 'fortgeschritten', days, commitments: MASKS[mask] });
     const withS = generatePlanUnits({ ...plan, strengthDays }, event, {});
     const tag = `${key}/${days}d/${mask}/strength ${strengthDays}`;
-    bad.push(...placementViolations(withS, plan, event, tag));
+    bad.push(...placementViolations(withS, plan, event, tag));   // the runs keep their rules
+    bad.push(...strengthViolations(withS, event, tag));
+    const fixedDays = new Set(withS.filter((u) => u.fixed).map((u) => u.date));
+    const matchEves = new Set(withS.filter((u) => u.fixed && u.type === 'match').map((u) => addDays(u.date, -1)));
     for (let w = 1; w <= plan.weeks; w++) {
       const list = withS.filter((u) => u.week === w || (u.fixed && u.week === w));
       const str = list.filter((u) => u.type === 'strength');
@@ -277,12 +314,22 @@ test('PLAN-S: strength in run plans follows the phase, never next to a demanding
       const target = weekVolumes(plan, volumeConfig(plan, event, plan.paces || {}))[w] || {};
       const max = target.taper || phase === 'taper' ? 0 : phase === 'base' && !target.deload ? strengthDays : 1;
       if (str.length > max) bad.push(`${tag} W${w} (${phase}): ${str.length} strength sessions, at most ${max}`);
-      if (str.some((s) => diffDays(s.date, event.date) <= 6)) bad.push(`${tag} W${w}: strength in the race week`);
-      const hardWithout = units.filter((u) => u.week === w && isHard(u)).length;
-      const hardWith = list.filter(isHard).length;
-      if (str.length && hardWith > Math.max(3, hardWithout)) bad.push(`${tag} W${w}: strength makes ${hardWith} demanding sessions`);
-      if (mask === 'none' && days >= 4 && !target.deload && !target.taper && phase !== 'taper' && str.length < max) {
-        bad.push(`${tag} W${w} (${phase}): only ${str.length} of ${max} strength sessions although the week has room`);
+      // The chosen number is planned wherever the week has the days for it: not a commitment, not a
+      // demanding run, not the day before a match, and two strength days are never neighbours.
+      const hardRuns = new Set(list.filter((u) => !u.fixed && u.type !== 'strength' && isHard(u)).map((u) => u.date));
+      const ws = addDays(plan.startDate, (w - 1) * 7);
+      const open = Array.from({ length: 7 }, (_, i) => addDays(ws, i)).filter((d) => d >= plan.startDate && diffDays(d, event.date) > 6
+        && !fixedDays.has(d) && !hardRuns.has(d) && !matchEves.has(d));
+      let room = 0; let last = null;
+      for (const d of open) { if (!last || diffDays(last, d) > 1) { room++; last = d; } }
+      if (str.length < Math.min(max, room)) bad.push(`${tag} W${w} (${phase}): ${str.length} strength sessions, ${max} chosen and room for ${room}`);
+      // A week without commitments and with four or more run days has calm days: strength stays off
+      // the neighbours of the demanding runs, and the week stays at three demanding sessions.
+      if (mask === 'none' && days >= 4 && !target.deload && !target.taper && phase !== 'taper') {
+        const hardAll = new Set(list.filter((u) => u.type !== 'strength' && isHard(u)).map((u) => u.date));
+        for (const s2 of str) if (hardAll.has(addDays(s2.date, 1)) || hardAll.has(addDays(s2.date, -1))) bad.push(`${tag} W${w}: strength next to a demanding session although the week has calm days (${s2.date})`);
+        const hardWithout = units.filter((u) => u.week === w && isHard(u)).length;
+        if (str.length && list.filter(isHard).length > Math.max(3, hardWithout)) bad.push(`${tag} W${w}: strength makes ${list.filter(isHard).length} demanding sessions`);
       }
       // The run sessions do not change.
       const runs = (l) => l.filter((u) => u.type !== 'strength').map((u) => `${u.date}|${u.type}|${u.targetDistanceKm}`).sort().join();
