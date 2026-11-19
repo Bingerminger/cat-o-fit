@@ -462,24 +462,38 @@ function longTarget(cfg, info) {
 /** Distributes the weekly volume over the roles of the week. The long run keeps
     its share also of the actual weekly total and becomes clearly shorter in the
     taper (two weeks before ≤ 75 %, one week before ≤ 55 % of the peak). */
-function allocate(cfg, info, roles, phaseKey, qualityKm = null) {
+function allocate(cfg, info, roles, phaseKey, qualityKm = null, refit = false) {
   // Brisk walking instead of short extra and recovery runs below WALK_BELOW_KM; above it, the extra
   // runs and then the recovery run turn into walks only as far as the shortest sensible runs (3 km
   // each) would otherwise exceed the week's target – the least walking that fits, or the closest.
-  if (info.km < WALK_BELOW_KM) return allocateWith(cfg, info, roles, phaseKey, qualityKm, { extra: true, recovery: true });
+  if (info.km < WALK_BELOW_KM) {
+    // …unless the runs that are left cannot reach the week's target that way (a commitment took the
+    // day of the continuous run): then the recovery run, then the extra runs are run after all – the
+    // most walking that still gets there, or the closest.
+    const small = [{ extra: true, recovery: true }];
+    if (roles.recovery) small.push({ extra: true, recovery: false });
+    if (roles.extra) small.push({ extra: false, recovery: false });
+    let near = null;
+    for (const walk of small) {
+      const a = allocateWith(cfg, info, roles, phaseKey, qualityKm, walk, refit);
+      if (Math.abs(a.fitTotal - info.km) <= 0.75) return a;
+      if (!near || Math.abs(a.fitTotal - info.km) < Math.abs(near.fitTotal - info.km)) near = a;
+    }
+    return near;
+  }
   const tries = [{ extra: false, recovery: false }];
   if (roles.extra) tries.push({ extra: true, recovery: false });
   if (roles.recovery) tries.push({ extra: true, recovery: true });
   let best = null;
   for (const walk of tries) {
-    const a = allocateWith(cfg, info, roles, phaseKey, qualityKm, walk);
+    const a = allocateWith(cfg, info, roles, phaseKey, qualityKm, walk, refit);
     if (a.fitTotal <= info.km + 0.75) return a;
     if (!best || Math.abs(a.fitTotal - info.km) < Math.abs(best.fitTotal - info.km)) best = a;
   }
   return best;
 }
 
-function allocateWith(cfg, info, roles, phaseKey, qualityKm, walk) {
+function allocateWith(cfg, info, roles, phaseKey, qualityKm, walk, refit = false) {
   const V = info.km;
   // Base phase: continuous run with strides (≤ 12 km), otherwise a structured session (≤ 16 km).
   const qMax = phaseKey === 'base' && !info.taper ? 12 : 16;
@@ -499,8 +513,11 @@ function allocateWith(cfg, info, roles, phaseKey, qualityKm, walk) {
     : 0;
   let extra = nExtra ? r05(clamp((rest - endurance * nEnd) / nExtra, 3, 10)) : 0;
   const others = () => quality * nQ + recovery * nRec + extra * nExtra + endurance * nEnd;
-  // The long run keeps its share of what is actually run, not only of the target.
-  const capLong = () => { long = Math.min(long, Math.floor(((others() * cfg.longShare) / (1 - cfg.longShare)) * 2) / 2); };
+  // The long run keeps its share of what is actually run, not only of the target. `refit` (a week fitted
+  // again after a commitment took a run): the other runs start small and grow below – the long run is
+  // measured against them again afterwards instead of staying at its first, too small share.
+  const longWish = r05(long);
+  const capLong = () => { long = Math.min(refit ? longWish : long, Math.floor(((others() * cfg.longShare) / (1 - cfg.longShare)) * 2) / 2); };
   capLong();
   long = Math.max(3, r05(long));
   // The week's sessions add up to the week's target: the easy runs give or take in steps of 0.5 km,
@@ -512,7 +529,7 @@ function allocateWith(cfg, info, roles, phaseKey, qualityKm, walk) {
     { n: nRec, min: 3, max: upTo(8), get: () => recovery, set: (v) => { recovery = v; } },
   ].filter((f) => f.n);
   const total = () => others() + long * (roles.long ? 1 : 0);
-  for (let round = 0; round < 2; round++) {
+  for (let round = 0; round < (refit ? 4 : 2); round++) {
     for (let guard = 0; guard < 200; guard++) {
       const S = total();
       if (S > V + 0.75) {
@@ -1140,13 +1157,15 @@ function runStrengthUnit(ctx) {
   return mkUnit(ctx, 'strength', { dur: s.dur, title: s.title, desc: s.desc });
 }
 
+/** Longest easy run with strides that stands in for a quality session (km). */
+const STRIDES_MAX_KM = 12;
 /** Substitute for a quality session that would otherwise sit directly next to a hard commitment,
     or that does not fit a small week (`dist`: its length then). */
 function stridesUnit(ctx, dist = null) {
   const raceWeek = ctx.daysToRace <= 6;
   const short = ctx.cfg.level === 'einsteiger' ? 3 : ctx.cfg.level === 'leistung' ? 5 : 4;
   const unit = mkUnit(ctx, 'easy', {
-    dist: raceWeek ? short : dist ?? r05(clamp(ctx.alloc.quality || ctx.alloc.endurance || 6, 4, 12)), pace: pace(ctx.pz, 'easy'), paceKey: 'easy',
+    dist: raceWeek ? short : dist ?? r05(clamp(ctx.alloc.quality || ctx.alloc.endurance || 6, 4, STRIDES_MAX_KM)), pace: pace(ctx.pz, 'easy'), paceKey: 'easy',
     title: t('plangen.strides.title'),
     desc: raceWeek
       ? t('plangen.strides.raceWeekDesc')
@@ -1271,13 +1290,14 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   // The quality session is shaped first; the week's other runs are fitted around its real length
   // (otherwise its fixed warm-up and cool-down push a small week far above its target).
   const qRow = tpl.find((row) => row.units.some((x) => x.role === 'quality'));
+  let qKm = null;
   if (qRow) {
     const qDate = dateOfDow(weekStart, qRow.dow);
     const dq = raceDate ? diffDays(qDate, raceDate) : Infinity;
     const runWalkWeek = week <= cfg.runWalkWeeks && week < plan.weeks - 1;
     if (dq > 6 && !runWalkWeek) {
       const q = qualityUnit({ plan, event, date: qDate, week, phase, pz, sport, cfg, info, alloc, dow: qRow.dow, daysToRace: dq });
-      if (q && q.targetDistanceKm) alloc = allocate(cfg, info, roles, phase.key, q.targetDistanceKm);
+      if (q && q.targetDistanceKm) { qKm = q.targetDistanceKm; alloc = allocate(cfg, info, roles, phase.key, qKm); }
     }
   }
 
@@ -1397,7 +1417,7 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
       const score = (hardCommit.has(addDays(d, 1)) ? 1 : 0) + (nextToKey(d) ? 2 : 0) + Math.abs(diffDays(k.wish, d)) / 10;
       if (!best || score < best.score) best = { d, score };
     }
-    if (!best) { k.drop = true; continue; }
+    if (!best) { k.drop = true; k.lost = true; continue; }
     k.date = best.d;
     keyDates.add(best.d);
     if (best.d !== k.wish && rowAt(best.d)) swapRow.set(best.d, k.wish);
@@ -1427,7 +1447,7 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
   };
   for (const p of place) {
     if (p.drop || !blocked(p.date)) continue;
-    if (!RELOCATABLE.has(p.role)) { p.drop = true; continue; }
+    if (!RELOCATABLE.has(p.role)) { p.drop = true; p.lost = true; continue; }
     // A key role keeps its distance wherever it lands: at its own day it may have been an easy run of
     // the race build-up, on an earlier day it is a real long run or quality session again.
     let alt = KEY_ROLES.has(p.role) && !p.downgrade ? findFreeDay(p.date, true) : null;
@@ -1436,21 +1456,49 @@ export function buildWeekUnits(plan, event, profile = {}, week, opts = {}) {
       if (p.role === 'quality') p.downgrade = true;
       alt = findFreeDay(p.date, false);
     }
-    if (!alt) { p.drop = true; continue; }
+    if (!alt) { p.drop = true; p.lost = true; continue; }
     p.date = alt;
     usedDates.add(alt);
   }
 
-  const out = [];
-  for (const p of place) {
-    if (p.drop) continue;
+  // The runs that remain carry the week: a run whose day a commitment took, and that found no other
+  // day, takes no kilometres with it, and neither does a quality session eased to a shorter run with
+  // strides – the week is fitted again to what takes place (the days stay as placed). Otherwise the
+  // week ends below its target and the next one may rise only from there (see `prev` above): with a
+  // match on the day of the recovery run a plan never got beyond some 16 km a week.
+  const lostRuns = place.filter((p) => p.lost && RUN_ROLES.includes(p.role));
+  const easedKm = place.some((p) => p.role === 'quality' && p.downgrade && !p.drop) && alloc.quality > STRIDES_MAX_KM ? STRIDES_MAX_KM : null;
+  if (lostRuns.length || easedKm) {
+    const left = { ...roles };
+    for (const p of lostRuns) left[p.role] = Math.max(0, (left[p.role] || 0) - 1);
+    alloc = allocate(cfg, info, left, phase.key, easedKm ?? qKm, true);
+  }
+
+  const make = (p) => {
     const ctx = ctxAt(p.date, p.dow);
     const unit = p.downgrade ? stridesUnit(ctx) : resolveRole(p.role, ctx);
-    if (unit) {
-      if (p.date !== p.wish) unit.relocatedFrom = p.wish;
-      out.push(unit);
+    if (unit && p.date !== p.wish) unit.relocatedFrom = p.wish;
+    return unit;
+  };
+  const made = place.filter((p) => !p.drop).map((p) => ({ p, unit: make(p) })).filter((m) => m.unit);
+  // The day before the long run carries the shortest easy run of the week. The templates keep that
+  // day free; when commitments push the long run next to another run, that run trades its day with
+  // a shorter easy one (otherwise the continuous run, the second-longest of the week, sits right
+  // before the longest).
+  const easyRun = (m) => (m.unit.type === 'easy' || m.unit.type === 'recovery') && !isHard(m.unit) && m.unit.targetDistanceKm > 0
+    && dtr(m.p.date) > 6 && sideDtr(m.p.date) == null && !sideUneasy(m.p.date);
+  const longMade = made.find((m) => m.unit.type === 'long');
+  const eveMade = longMade && made.find((m) => m.p.date === addDays(longMade.p.date, -1) && easyRun(m));
+  if (eveMade) {
+    const shorter = made.filter((m) => m !== eveMade && easyRun(m) && m.unit.targetDistanceKm < eveMade.unit.targetDistanceKm)
+      .sort((a, b) => a.unit.targetDistanceKm - b.unit.targetDistanceKm)[0];
+    if (shorter) {
+      [eveMade.p.date, shorter.p.date] = [shorter.p.date, eveMade.p.date];
+      eveMade.unit = make(eveMade.p);
+      shorter.unit = make(shorter.p);
     }
   }
+  const out = made.filter((m) => m.unit).map((m) => m.unit);
   // Around a side race nothing demanding is left: what found no other day becomes an easy run
   // (the day before a B race the shakeout).
   for (let i = out.length - 1; i >= 0; i--) {

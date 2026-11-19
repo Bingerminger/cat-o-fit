@@ -10,6 +10,9 @@
         demanding sessions the plan builds never fall on consecutive days;
    - R  race week: the day before is a short shakeout, two days before is free;
    - M  a standard marathon plan reaches the volume the race prediction asks for;
+   - C  fixed commitments do not stall the plan: when a commitment takes the day of a run, the runs
+        that remain carry the week – the plan gets as far as one built for that many run days; and when
+        they push the long run next to another run, that day carries the shortest easy run of the week;
    - W  one week built alone equals that week of the whole plan;
    - B  side races (B/C, since 4.2): one race session each, a B race with shakeout and a free day
         before, nothing demanding the day before or in the recovery days after, a C race instead of
@@ -55,6 +58,7 @@ const MASKS = {
   'football Sat': [fb(6)],
   'football Tue': [fb(2)],
   'light football Tue+Thu': [fb(2, 'leicht'), fb(4, 'leicht')],
+  'football Mon+Wed, match Sun': [fb(1), fb(3), match(7)],
 };
 
 /** A plan as createPlanForEvent builds it – without the store. */
@@ -222,6 +226,39 @@ test('PLAN-M: a standard marathon plan reaches the volume behind the race predic
     if (best4 < weekNeeded) bad.push(`marathon/${level}/${days}d: best four weeks ${best4.toFixed(1)} km/week, the prediction asks for ${weekNeeded}`);
   }
   report('marathon', bad);
+});
+
+/* ---------------- C: fixed commitments do not stall the plan ---------------- */
+test('PLAN-C: when a commitment takes the day of a run, the runs that remain carry the week', () => {
+  // Long plans from a small start: the weeks have room to grow, so a plan that stops growing shows.
+  const LONG = { hm: 24, marathon: 30 };
+  const hist = { weekKm: 10, longKm: 6 };
+  const full = (plan, event) => { const t = weekVolumes(plan, volumeConfig(plan, event, plan.paces || {})); return (w) => t[w] && !t[w].deload && !t[w].taper; };
+  const bad = [];
+  for (const key of Object.keys(LONG)) for (const level of LEVELS) for (const days of [4, 5, 6]) for (const mask of Object.keys(MASKS)) {
+    if (mask === 'none') continue;
+    const { plan, event, units } = makePlan({ key, level, days, hist, commitments: MASKS[mask], weeks: LONG[key] });
+    const isFull = full(plan, event);
+    const weeks = byWeek(units, plan.weeks);
+    const runsOf = (list) => list.filter((u) => RUN.has(u.type) && !u.fixed && !runWalk(u)).length;
+    let peak = 0; let fewest = 9;
+    for (let w = 2; w <= plan.weeks; w++) {
+      if (!isFull(w) || weeks[w].some((u) => u.type === 'race')) continue;
+      peak = Math.max(peak, runKm(weeks[w]));
+      fewest = Math.min(fewest, runsOf(weeks[w]));
+      // The day before the long run carries the week's shortest easy run (the templates keep it free).
+      const long = weeks[w].find((u) => u.type === 'long' && !u.fixed);
+      const easy = weeks[w].filter((u) => !u.fixed && (u.type === 'easy' || u.type === 'recovery') && !isHard(u) && u.targetDistanceKm > 0 && diffDays(u.date, event.date) > 6);
+      const eve = long && easy.find((u) => u.date === addDays(long.date, -1));
+      if (eve && easy.some((u) => u.targetDistanceKm < eve.targetDistanceKm)) bad.push(`${key}/${level}/${days}d/${mask} W${w}: ${eve.targetDistanceKm} km the day before the long run although a shorter easy run is in the week`);
+    }
+    // The same plan for a person who runs on that many days and has no commitments.
+    const ref = makePlan({ key, level, days: Math.max(3, Math.min(days, fewest)), hist, weeks: LONG[key] });
+    const refFull = full(ref.plan, ref.event);
+    const refPeak = Math.max(...byWeek(ref.units, ref.plan.weeks).map((list, w) => (w >= 2 && refFull(w) ? runKm(list) : 0)));
+    if (peak < refPeak * 0.8) bad.push(`${key}/${level}/${days}d/${mask}: peaks at ${peak} km a week in ${fewest} runs – a plan for that many run days reaches ${refPeak}`);
+  }
+  report('commitments', bad);
 });
 
 /* ---------------- S: strength that follows the plan phase ---------------- */
