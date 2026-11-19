@@ -39,15 +39,18 @@ So legst du dein Ziel an:
 3. **Speichern** – du landest auf der Ziel-Seite mit Countdown und Zielpace.
 4. Tippe auf **„Plan erstellen“**. Eine kurze Einrichtung fragt:
    - **Niveau** – *Einsteiger*, *Fortgeschritten* oder *Leistung*. Die App schlägt eines aus deinen
-     letzten vier Wochen vor (Wochenumfang, längster Lauf); du kannst es ändern.
+     letzten vier Wochen vor (Wochenumfang, längster Lauf – ein einzelner langer Lauf, etwa ein Wettkampf,
+     macht noch kein *Leistung*); du kannst es ändern.
    - **Lauftage pro Woche** – 3 bis 6. Mehr Tage tragen mehr Umfang; die zwei Schlüsseleinheiten
      (Dienstag, Samstag) liegen nie direkt nebeneinander.
    - **Kraft im Plan** – aus (Voreinstellung), 1× oder 2×. Die Kraft folgt der Planphase: allgemeine
      Kraft bis zur gewählten Zahl in der Grundlage, einmal im Aufbau (Sprünge für die Sprungkraft) und in
-     der Spitze (kurz, zum Erhalten), keine im Tapering. Sie kommt nur auf einen Tag, der nicht neben einer
-     harten Einheit oder einem harten Termin liegt, am liebsten direkt nach einem lockeren Lauf, und nur so
-     lange die Woche bei drei harten Einheiten bleibt – mit zweimal Fußball pro Woche ist kein Platz mehr,
-     und der Plan legt keine an.
+     der Spitze (kurz, zum Erhalten), keine im Tapering. Sie kommt auf einen Tag, der nicht neben einer
+     harten Einheit oder einem harten Termin liegt, wenn die Woche einen hat, am liebsten direkt nach einem
+     lockeren Lauf. Hat sie keinen – etwa mit zweimal Fußball und einem Spiel –, wird die gewählte Zahl
+     trotzdem eingeplant, an dem Tag, der am wenigsten stört: nie auf einem Termin oder am Tag eines
+     langen Laufs oder einer Qualitätseinheit, nie am Tag vor einem Spiel oder Rennen, nie an zwei Tagen
+     hintereinander. Die Wochenprüfung sagt es dir, wenn daraus viele harte Tage werden.
    - **Feste Termine** – etwa Vereinstraining oder Spiele. Standardmäßig gibt es **keine**; du kannst
      sie eintragen oder aus einem anderen laufenden Plan übernehmen (dann erscheinen sie nicht doppelt).
    - Dazu siehst du die **Zielpaces**: Sie kommen aus deiner **Zielzeit**. Liegt die Zielzeit deutlich

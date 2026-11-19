@@ -591,7 +591,7 @@
         "1": [
           "Elige tus días de entrenamiento de fútbol (p. ej. lun y mié) e indica la duración y la intensidad (ligera/normal/intensa).",
           "Añade partidos recurrentes con una fecha de inicio (p. ej. “desde el 19/08, todos los domingos, 2 h”): cuentan como carga dura.",
-          "En un día de partido, la sesión planificada se cae; la semana se planifica en torno a los compromisos fijos."
+          "En un día de partido, la carrera planificada pasa a un día libre (solo la movilidad se cae); la semana se planifica en torno a los compromisos fijos."
         ],
         "2": "El fútbol se parece al HIIT y gasta mucha energía: a partir de “normal”, un día de fútbol cuenta como día exigente (entra por completo en la carga y la forma). El plan nunca pone una sesión de calidad ni una tirada larga justo al lado de un compromiso exigente; si no hay un día tranquilo, la sesión de calidad pasa a ser “Suave con progresivos”. Si el partido fue intenso y después aún te espera una sesión dura, el coach te sugiere tomártela con más calma."
       }

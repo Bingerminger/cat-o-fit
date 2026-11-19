@@ -1604,7 +1604,7 @@
     "recalcPlan": "Recalcular plano",
     "raceDay": "Dia de prova!",
     "newLogic": "Nova lógica de plano disponível",
-    "newLogicText": "Lógica do plano aprimorada: cada semana respeita suas regras de volume, longões e treinos de qualidade nunca ficam ao lado de um compromisso fixo exigente, e o dia antes da prova é um trote de soltura curto. Se quiser, o app recalcula seu plano a partir de hoje – o passado continua como está, assim como os treinos que você adicionou ou mudou de dia.",
+    "newLogicText": "Lógica do plano aprimorada: cada semana respeita suas regras de volume, longões e treinos de qualidade nunca ficam ao lado de um compromisso fixo exigente, uma corrida cujo dia é ocupado por um compromisso fixo passa para um dia livre em vez de sair, e o dia antes da prova é um trote de soltura curto. Se quiser, o app recalcula seu plano a partir de hoje – o passado continua como está, assim como os treinos que você adicionou ou mudou de dia.",
     "statRunKm": "{unit} de corrida planejados",
     "statSessions": "Treinos",
     "statDone": "Feitos",
@@ -1642,7 +1642,7 @@
     },
     "regenWeekLost": "Mudanças de dia e alterações manuais nesta semana serão perdidas.",
     "strengthOff": "Não",
-    "strengthHint": "Fase de base até {n}× por semana, construção e pico uma vez para manter, nada no polimento. Só em dias que não ficam ao lado de um treino exigente ou de um compromisso fixo exigente.",
+    "strengthHint": "Fase de base até {n}× por semana, construção e pico uma vez para manter, nada no polimento. De preferência em um dia longe de treinos exigentes e compromissos fixos – nunca na véspera de um jogo ou de uma prova.",
     "levelLineStrength": "Força até {n}× por semana",
     "sideRaces": {
       "title": "Provas da temporada",

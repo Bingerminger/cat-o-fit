@@ -1604,7 +1604,7 @@
     "recalcPlan": "Recalculate plan",
     "raceDay": "Race day!",
     "newLogic": "New plan logic available",
-    "newLogicText": "Improved plan logic: every week keeps its volume rules, long runs and quality sessions never sit next to a demanding fixed commitment, and the day before the race is a short shakeout. If you like, the app recalculates your plan from today – the past stays as it is, and so do sessions you added or moved yourself.",
+    "newLogicText": "Improved plan logic: every week keeps its volume rules, long runs and quality sessions never sit next to a demanding fixed commitment, a run whose day a fixed commitment takes moves to a free day instead of dropping out, and the day before the race is a short shakeout. If you like, the app recalculates your plan from today – the past stays as it is, and so do sessions you added or moved yourself.",
     "statRunKm": "Planned run {unit}",
     "statSessions": "Sessions",
     "statDone": "Done",
@@ -1642,7 +1642,7 @@
     },
     "regenWeekLost": "Moves and manual changes in this week will be lost.",
     "strengthOff": "Off",
-    "strengthHint": "Base phase up to {n}× a week, build and peak once to keep it, none in the taper. Only on days that are not next to a demanding session or fixed commitment.",
+    "strengthHint": "Base phase up to {n}× a week, build and peak once to keep it, none in the taper. Preferably on a day away from demanding sessions and fixed commitments – never the day before a match or race.",
     "levelLineStrength": "Strength up to {n}× a week",
     "sideRaces": {
       "title": "Season races",

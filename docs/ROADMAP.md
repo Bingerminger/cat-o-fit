@@ -4,7 +4,7 @@ Planned development of Cat-O-Fit, in rough order of priority. What is already do
 [CHANGELOG](../CHANGELOG.md). Suggestions and help are welcome – see [CONTRIBUTING](../CONTRIBUTING.md).
 Deutsch: [Roadmap](de/ROADMAP.md).
 
-**As of:** 14 November 2026, v4.2.0.
+**As of:** 19 November 2026, v4.2.1.
 
 **Where to follow it:** each release has a [milestone](https://github.com/Bingerminger/cat-o-fit/milestones)
 with a tracking issue, and the [board](https://github.com/users/Bingerminger/projects/2) shows what is

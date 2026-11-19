@@ -7,6 +7,45 @@ Cat-O-Fit was developed privately, in German, up to v3.23.x. This repository and
 with v4.0.0, the first public release. Copies of v3.23.x or earlier that were handed out stay under the
 MIT licence they came with.
 
+## [4.2.1] – 2026-11-19
+
+Race plans with fixed commitments build up again – in 4.2.0 such a plan could stop growing at some
+16 km a week – and they keep what you chose: the number of runs and the strength sessions.
+
+### Fixed
+
+- **Race plans with fixed commitments stopped growing** (4.2.0 only). When a fixed commitment took the
+  day of a run – with four or more run days a match on the day of the recovery run is enough –, the run
+  was dropped together with its kilometres. The week ended below its target, the next week may rise only
+  from the last one as planned, and the plan stayed at some 16 km a week, also for a marathon. Now the
+  runs that take place carry the week.
+- **A run whose day a fixed commitment takes moves to a free day** instead of being dropped; only
+  mobility drops out on a commitment day. You keep the number of runs you chose while the week has a day
+  for each. A run that finds no free day leaves its kilometres to the others.
+- **Strength in run plans** was not planned at all in a week with several demanding commitments
+  (football twice a week and a match, say). Calm days still come first; what is missing of the number
+  you chose is planned all the same on the day that disturbs least – never on a commitment or on the day
+  of a long run or quality session, never the day before a match or race, never on two days in a row.
+- **Where sessions had to move, the shortest easy run sits where the day has to be gentlest:** the day
+  before a match first, then the days next to the long run. Before, the week's second-longest run could
+  land right before the long run.
+- **Level suggestion:** one long run in the last four weeks – a race, for instance – no longer makes
+  *Advanced* on its own; the weekly volume counts. The suggestion affects new plans only.
+
+### For existing installations
+
+- Race plans show **“New plan logic available”** once more. If your plan has fixed commitments,
+  recalculate it from today (the past stays as it is, and so do sessions you added or moved yourself) –
+  and have a look at the level while you are there. Plans without fixed commitments are built exactly as
+  before.
+
+### Tests
+
+- A new plan invariant over all patterns of fixed commitments, long plans from a small start and a
+  combined pattern (football twice a week plus a match): the plan gets as far as one built for the run
+  days that remain, the person keeps their runs while a day is free, and the easy runs are ordered by how
+  gentle their day has to be. The strength invariant states the new rules. Both were red before the fix.
+
 ## [4.2.0] – 2026-11-14
 
 Strength in depth, following along on a 3D stage with a real trainer, a library of 120 exercises – and a

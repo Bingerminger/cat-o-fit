@@ -591,7 +591,7 @@
         "1": [
           "Choose your football training days (e.g. Mon & Wed) and give the duration and intensity (light/normal/intense).",
           "Add recurring matches with a start date (e.g. “from 19 Aug, every Sunday, 2 h”) – they count as hard load.",
-          "On a match day the planned session drops out; the week is planned around the fixed commitments."
+          "On a match day the planned run moves to a free day (only mobility drops out); the week is planned around the fixed commitments."
         ],
         "2": "Football is HIIT-like and costs a lot of energy: from “normal” upwards, a football day counts as a demanding day (it feeds fully into load & form). The plan never puts a quality session or long run directly next to a demanding commitment – if there is no quiet day, the quality session becomes “Easy with strides”. If you played hard and a tough session is still coming up afterwards, the coach suggests taking it more easily."
       }

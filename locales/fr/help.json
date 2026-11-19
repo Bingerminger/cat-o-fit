@@ -591,7 +591,7 @@
         "1": [
           "Choisis tes jours d’entraînement de football (par ex. lun. & mer.) et indique la durée et l’intensité (légère/normale/intense).",
           "Ajoute les matchs récurrents avec une date de début (par ex. « à partir du 19 août, tous les dimanches, 2 h ») – ils comptent comme charge dure.",
-          "Un jour de match, la séance prévue disparaît ; la semaine est planifiée autour des engagements fixes."
+          "Un jour de match, la course prévue passe à un jour libre (seule la mobilité disparaît) ; la semaine est planifiée autour des engagements fixes."
         ],
         "2": "Le football s’apparente au HIIT et coûte beaucoup d’énergie : à partir de « normale », un jour de football compte comme un jour exigeant (il entre pleinement dans charge & fraîcheur). Le plan ne place jamais de séance de qualité ni de sortie longue juste à côté d’un engagement exigeant – s’il n’y a pas de jour calme, la séance de qualité devient « Facile avec accélérations ». Si tu as joué dur et qu’une séance difficile arrive ensuite, le coach suggère de la prendre plus tranquillement."
       }

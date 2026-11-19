@@ -20,9 +20,11 @@ import { PREDICTION_VOLUME } from './suggestions.js';
 
 import { t, tp } from './i18n.js';
 
-/** Generator version. Plans without this field come from earlier versions: they
-    stay unchanged until someone chooses "Recalculate from today". */
-export const PLAN_GEN = 3;
+/** Generator version. Plans without this field or with an earlier number come from earlier versions:
+    they stay unchanged until someone chooses "Recalculate from today".
+    4 (v4.2.1): fixed commitments no longer stall the plan – runs move to a free day, the runs that
+    remain carry the week, strength is planned as often as chosen. */
+export const PLAN_GEN = 4;
 
 export const PLAN_LEVELS = {
   einsteiger: { get label() { return t('plangen.levels.einsteiger.label'); }, get hint() { return t('plangen.levels.einsteiger.hint'); } },

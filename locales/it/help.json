@@ -591,7 +591,7 @@
         "1": [
           "Scegli i tuoi giorni di allenamento di calcio (per esempio lun e mer) e indica durata e intensità (leggera/normale/intensa).",
           "Aggiungi le partite ricorrenti con una data di inizio (per esempio “dal 19 ago, ogni domenica, 2 h”) – contano come carico alto.",
-          "Nel giorno di una partita la sessione pianificata salta; la settimana viene pianificata intorno agli impegni fissi."
+          "Nel giorno di una partita la corsa pianificata passa a un giorno libero (salta solo la mobilità); la settimana viene pianificata intorno agli impegni fissi."
         ],
         "2": "Il calcio è simile all’HIIT e consuma molta energia: da “normale” in su, un giorno di calcio conta come giorno impegnativo (confluisce per intero in carico e freschezza). Il piano non mette mai una sessione di qualità o un lungo subito accanto a un impegno impegnativo – se non c’è un giorno tranquillo, la sessione di qualità diventa “Facile con allunghi”. Se hai giocato duro e dopo ti aspetta ancora una sessione pesante, il coach propone di affrontarla con più calma."
       }

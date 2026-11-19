@@ -1604,7 +1604,7 @@
     "recalcPlan": "Recalculer le plan",
     "raceDay": "Jour de course !",
     "newLogic": "Nouvelle logique de plan disponible",
-    "newLogicText": "Logique de plan améliorée : chaque semaine respecte ses règles de volume, les sorties longues et les séances de qualité ne tombent jamais à côté d’un engagement fixe exigeant, et la veille de la course est un court décrassage. Si tu le souhaites, l’app recalcule ton plan à partir d’aujourd’hui – le passé reste tel quel, tout comme les séances que tu as ajoutées ou déplacées toi-même.",
+    "newLogicText": "Logique de plan améliorée : chaque semaine respecte ses règles de volume, les sorties longues et les séances de qualité ne tombent jamais à côté d’un engagement fixe exigeant, une course dont le jour est pris par un engagement fixe passe à un jour libre au lieu de disparaître, et la veille de la course est un court décrassage. Si tu le souhaites, l’app recalcule ton plan à partir d’aujourd’hui – le passé reste tel quel, tout comme les séances que tu as ajoutées ou déplacées toi-même.",
     "statRunKm": "{unit} de course prévus",
     "statSessions": "Séances",
     "statDone": "Faites",
@@ -1642,7 +1642,7 @@
     },
     "regenWeekLost": "Les déplacements et modifications manuelles de cette semaine seront perdus.",
     "strengthOff": "Non",
-    "strengthHint": "Phase de fondation jusqu’à {n}× par semaine, développement et pic une fois pour entretenir, rien pendant l’affûtage. Seulement les jours qui ne sont pas voisins d’une séance exigeante ou d’un engagement fixe exigeant.",
+    "strengthHint": "Phase de fondation jusqu’à {n}× par semaine, développement et pic une fois pour entretenir, rien pendant l’affûtage. De préférence un jour éloigné des séances exigeantes et des engagements fixes – jamais la veille d’un match ou d’une course.",
     "levelLineStrength": "Renforcement jusqu’à {n}× par semaine",
     "sideRaces": {
       "title": "Courses de la saison",

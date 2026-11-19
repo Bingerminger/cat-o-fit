@@ -1604,7 +1604,7 @@
     "recalcPlan": "Schema herberekenen",
     "raceDay": "Wedstrijddag!",
     "newLogic": "Nieuwe schemalogica beschikbaar",
-    "newLogicText": "Verbeterde planlogica: elke week houdt zich aan zijn omvangsregels, duurlopen en kwaliteitstrainingen liggen nooit naast een zware vaste afspraak, en de dag voor de wedstrijd is een korte uitloop. Als je wilt, berekent de app je plan vanaf vandaag opnieuw – het verleden blijft zoals het is, net als trainingen die je zelf hebt toegevoegd of verplaatst.",
+    "newLogicText": "Verbeterde planlogica: elke week houdt zich aan zijn omvangsregels, duurlopen en kwaliteitstrainingen liggen nooit naast een zware vaste afspraak, een loop waarvan de dag door een vaste afspraak bezet is verhuist naar een vrije dag in plaats van te vervallen, en de dag voor de wedstrijd is een korte uitloop. Als je wilt, berekent de app je plan vanaf vandaag opnieuw – het verleden blijft zoals het is, net als trainingen die je zelf hebt toegevoegd of verplaatst.",
     "statRunKm": "Geplande loopafstand ({unit})",
     "statSessions": "Trainingen",
     "statDone": "Gedaan",
@@ -1642,7 +1642,7 @@
     },
     "regenWeekLost": "Verplaatsingen en handmatige wijzigingen in deze week gaan verloren.",
     "strengthOff": "Uit",
-    "strengthHint": "Basisfase tot {n}× per week, opbouw en piek één keer om het te onderhouden, niets in de taper. Alleen op dagen die niet naast een zware training of een zware vaste afspraak liggen.",
+    "strengthHint": "Basisfase tot {n}× per week, opbouw en piek één keer om het te onderhouden, niets in de taper. Bij voorkeur op een dag uit de buurt van zware trainingen en vaste afspraken – nooit de dag voor een wedstrijd.",
     "levelLineStrength": "Kracht tot {n}× per week",
     "sideRaces": {
       "title": "Wedstrijden van het seizoen",

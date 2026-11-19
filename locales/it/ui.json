@@ -1604,7 +1604,7 @@
     "recalcPlan": "Ricalcola piano",
     "raceDay": "Giorno della gara!",
     "newLogic": "Nuova logica del piano disponibile",
-    "newLogicText": "Logica del piano migliorata: ogni settimana rispetta le sue regole di volume, i lunghi e le sedute di qualità non cadono mai accanto a un impegno fisso impegnativo, e il giorno prima della gara è uno shakeout breve. Se vuoi, l’app ricalcola il tuo piano da oggi: il passato resta com’è, così come le sedute che hai aggiunto o spostato tu.",
+    "newLogicText": "Logica del piano migliorata: ogni settimana rispetta le sue regole di volume, i lunghi e le sedute di qualità non cadono mai accanto a un impegno fisso impegnativo, una corsa il cui giorno è occupato da un impegno fisso passa a un giorno libero invece di saltare, e il giorno prima della gara è uno shakeout breve. Se vuoi, l’app ricalcola il tuo piano da oggi: il passato resta com’è, così come le sedute che hai aggiunto o spostato tu.",
     "statRunKm": "{unit} di corsa pianificati",
     "statSessions": "Sessioni",
     "statDone": "Svolte",
@@ -1642,7 +1642,7 @@
     },
     "regenWeekLost": "Gli spostamenti e le modifiche manuali di questa settimana andranno persi.",
     "strengthOff": "No",
-    "strengthHint": "Fase di base fino a {n}× a settimana, costruzione e picco una volta per mantenere, niente nello scarico. Solo nei giorni che non sono accanto a una seduta impegnativa o a un impegno fisso impegnativo.",
+    "strengthHint": "Fase di base fino a {n}× a settimana, costruzione e picco una volta per mantenere, niente nello scarico. Di preferenza in un giorno lontano da sedute impegnative e impegni fissi – mai il giorno prima di una partita o di una gara.",
     "levelLineStrength": "Forza fino a {n}× a settimana",
     "sideRaces": {
       "title": "Gare della stagione",
